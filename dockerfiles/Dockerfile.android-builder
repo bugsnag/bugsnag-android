@@ -2,11 +2,12 @@ ARG BRANCH_NAME
 FROM 855461928731.dkr.ecr.us-west-1.amazonaws.com/android:ci-${BRANCH_NAME} as android
 
 WORKDIR /app
-
-# Build and upload to the local maven as version 9.9.9
-RUN ./gradlew -PVERSION_NAME=9.9.9 assembleRelease publishToMavenLocal
+ENV FIXTURE_PROJECT=/app/features/fixtures/mazerunner
 
 COPY features/ /app/features
 
-ENV FIXTURE_PROJECT=/app/features/fixtures/mazerunner
-CMD ./gradlew -p=${FIXTURE_PROJECT} assembleRelease && cp ${FIXTURE_PROJECT}/build/outputs/apk/release/mazerunner-release.apk /app/build/fixture.apk
+CMD ./gradlew -p=${FIXTURE_PROJECT} assembleRelease \
+  -PMINIMAL_FIXTURE=${MINIMAL_FIXTURE} \
+  -PTEST_FIXTURE_NDK_VERSION=${TEST_FIXTURE_NDK_VERSION} \
+  -PTEST_FIXTURE_NAME=${TEST_FIXTURE_NAME} \
+  && cp -R ${FIXTURE_PROJECT}/app/build/outputs/apk/release /app/build

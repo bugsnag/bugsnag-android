@@ -7,16 +7,10 @@ Commands can be run on the entire project, or on an individual module:
 ./gradlew bugsnag-plugin-android-anr:build // builds bugsnag-plugin-android-anr module only
 ```
 
-## Static analysis
-
-```shell
-./gradlew lint checkstyle detekt
-```
-
 ## Running Tests Locally
 
 Running the full test suite requires a connected android device or emulator. JVM tests can be run
-in isolation by only running the `check` task.
+in isolation by only running the `check` task. The `check` task also runs all static analysis checks:
 
 ```shell
 ./gradlew check connectedCheck
@@ -60,7 +54,6 @@ Ensure that the following environment variables are set:
 
 * `BROWSER_STACK_USERNAME`: The BrowserStack App Automate Username
 * `BROWSER_STACK_ACCESS_KEY`: The BrowserStack App Automate Access Key
-* `NDK_VERSION`: The version of NDK that should be used to build the app
 
 Run `make remote-test`
 

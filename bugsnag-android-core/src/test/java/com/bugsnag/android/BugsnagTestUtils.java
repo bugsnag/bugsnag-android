@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -49,7 +48,7 @@ final class BugsnagTestUtils {
         Event event = new Event(
                 exc,
                 BugsnagTestUtils.generateImmutableConfig(),
-                HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION),
+                SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION),
                 NoopLogger.INSTANCE
         );
         event.setApp(generateAppWithState());

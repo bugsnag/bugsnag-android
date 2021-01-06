@@ -17,6 +17,25 @@
 * Add configuration option to control maximum number of persisted events/sessions
   [#980](https://github.com/bugsnag/bugsnag-android/pull/980)
 
+* Increase kotlin dependency version to 1.3.72
+  [#1050](https://github.com/bugsnag/bugsnag-android/pull/1050)
+
+## 5.4.0 (2020-12-14)
+
+* Make `event.unhandled` overridable for NDK errors
+  [#1037](https://github.com/bugsnag/bugsnag-android/pull/1037)
+
+* Make `event.unhandled` overridable for React Native errors
+  [#1039](https://github.com/bugsnag/bugsnag-android/pull/1039)
+
+* Make `event.unhandled` overridable for JVM errors
+  [#1025](https://github.com/bugsnag/bugsnag-android/pull/1025)
+
+### Bug fixes
+
+* Prevent potential SHA-1 hash mismatch in Bugsnag-Integrity header for session requests
+  [#1043](https://github.com/bugsnag/bugsnag-android/pull/1043)
+
 ## 5.3.1 (2020-12-09)
 
 ### Bug fixes

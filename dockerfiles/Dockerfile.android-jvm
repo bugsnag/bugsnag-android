@@ -1,9 +1,0 @@
-ARG BRANCH_NAME
-FROM 855461928731.dkr.ecr.us-west-1.amazonaws.com/android:ci-${BRANCH_NAME} as android
-
-WORKDIR /app
-
-RUN apt-get install -y cppcheck
-
-COPY examples/sdk-app-example/ examples/sdk-app-example/
-COPY config/ config/

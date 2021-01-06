@@ -6,6 +6,15 @@ apply plugin: "com.android.library"
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig.minSdkVersion rootProject.ext.minSdkVersion
+    ndkVersion rootProject.ext.ndkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+    packagingOptions {
+        pickFirst "**/*.so"
+    }
 }
 
 dependencies {

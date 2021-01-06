@@ -1,7 +1,7 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.HandledState.REASON_HANDLED_EXCEPTION;
 import static com.bugsnag.android.ImmutableConfigKt.sanitiseConfiguration;
+import static com.bugsnag.android.SeverityReason.REASON_HANDLED_EXCEPTION;
 
 import android.app.ActivityManager;
 import android.app.Application;
@@ -600,9 +600,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      */
     public void notify(@NonNull Throwable exc, @Nullable OnErrorCallback onError) {
         if (exc != null) {
-            HandledState handledState = HandledState.newInstance(REASON_HANDLED_EXCEPTION);
+            SeverityReason severityReason = SeverityReason.newInstance(REASON_HANDLED_EXCEPTION);
             Metadata metadata = metadataState.getMetadata();
-            Event event = new Event(exc, immutableConfig, handledState, metadata, logger);
+            Event event = new Event(exc, immutableConfig, severityReason, metadata, logger);
             populateAndNotifyAndroidEvent(event, onError);
         } else {
             logNull("notify");
@@ -615,10 +615,10 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      * Should only ever be called from the {@link ExceptionHandler}.
      */
     void notifyUnhandledException(@NonNull Throwable exc, Metadata metadata,
-                                  @HandledState.SeverityReason String severityReason,
+                                  @SeverityReason.SeverityReasonType String severityReason,
                                   @Nullable String attributeValue) {
-        HandledState handledState
-                = HandledState.newInstance(severityReason, Severity.ERROR, attributeValue);
+        SeverityReason handledState
+                = SeverityReason.newInstance(severityReason, Severity.ERROR, attributeValue);
         Metadata data = Metadata.Companion.merge(metadataState.getMetadata(), metadata);
         Event event = new Event(exc, immutableConfig, handledState, data, logger);
         populateAndNotifyAndroidEvent(event, null);

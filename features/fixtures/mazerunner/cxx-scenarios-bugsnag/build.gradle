@@ -1,0 +1,95 @@
+plugins {
+    id "com.android.library"
+    id "kotlin-android"
+}
+
+apply plugin: "io.gitlab.arturbosch.detekt"
+apply plugin: "org.jlleitschuh.gradle.ktlint"
+
+android {
+    compileSdkVersion 30
+
+    defaultConfig {
+        minSdkVersion 14
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+    kotlinOptions {
+        jvmTarget = "1.6"
+    }
+    lintOptions {
+        tasks.lint.enabled = false
+    }
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+        }
+    }
+}
+
+dependencies {
+    implementation project(":jvm-scenarios")
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "com.bugsnag:bugsnag-android:9.9.9"
+}
+
+apply from: "../../../../gradle/detekt.gradle"
+apply from: "../../../../gradle/checkstyle.gradle"
+
+// extract SO files from the bugsnag AARs.
+// This task will not be required once BAGP supports library modules,
+// or when bugsnag-android supports cmake dependencies.
+
+
+import com.android.build.gradle.tasks.ExternalNativeBuildTask
+
+project.afterEvaluate {
+    def buildTasks = project.tasks.withType(ExternalNativeBuildTask)
+    def soExtractionTask = project.tasks.register("bugsnagSoExtractionTask", BugsnagSoExtractionTask)
+    buildTasks.forEach { it.dependsOn(soExtractionTask) }
+}
+
+class BugsnagSoExtractionTask extends DefaultTask {
+
+    @TaskAction
+    def extractSoFiles() {
+        File file = findAarFile()
+
+        project.copy {
+            from(project.zipTree(file))
+            into("$project.buildDir/intermediates/bugsnag-libs")
+        }
+    }
+
+    File findAarFile() {
+        File file = null
+
+        project.configurations.each { config ->
+            if (!config.name.contains("CompileClasspath")) {
+                return
+            }
+
+            Set<ResolvedDependency> deps = config
+                    .resolvedConfiguration
+                    .firstLevelModuleDependencies
+                    .findAll { it.moduleGroup == "com.bugsnag" }
+                    .toList()
+
+            deps.forEach {
+                def artifact = it.allModuleArtifacts.find {
+                    it.id.componentIdentifier.toString().contains("bugsnag-plugin-android-ndk")
+                }
+                file = artifact.file
+            }
+        }
+        return file
+    }
+}

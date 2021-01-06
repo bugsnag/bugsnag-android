@@ -120,8 +120,7 @@ released bugsnag-android, then run:
 ./gradlew assembleRelease publishToMavenLocal
 ```
 
-This installs bugsnag-android to a local maven repository. The example app should automatically use
-this version when you next run the app.
+This installs bugsnag-android to a local maven repository. To use it in the example app, you'll need to modify its `build.gradle` to set the `com.bugsnag:bugsnag-android` dependency version to match (near the bottom of the file).
 
 # Releasing a New Version
 

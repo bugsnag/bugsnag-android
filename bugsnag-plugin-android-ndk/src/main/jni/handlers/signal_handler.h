@@ -18,8 +18,8 @@
  * * sigaction(2), sigaltstack(2)
  */
 
-#include "bugsnag_ndk.h"
 #include "../utils/build.h"
+#include "bugsnag_ndk.h"
 
 #ifdef __cplusplus
 extern "C" {

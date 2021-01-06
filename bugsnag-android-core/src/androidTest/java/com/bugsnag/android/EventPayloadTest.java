@@ -28,8 +28,8 @@ public class EventPayloadTest {
     public void setUp() {
         ImmutableConfig config = BugsnagTestUtils.generateImmutableConfig();
         RuntimeException exception = new RuntimeException("Something broke");
-        HandledState handledState = HandledState.newInstance(HandledState.REASON_ANR);
-        Event event = new Event(exception, config, handledState, NoopLogger.INSTANCE);
+        SeverityReason severityReason = SeverityReason.newInstance(SeverityReason.REASON_ANR);
+        Event event = new Event(exception, config, severityReason, NoopLogger.INSTANCE);
         event.setApp(generateAppWithState());
         event.setDevice(generateDeviceWithState());
         eventPayload = new EventPayload("api-key", event, new Notifier());

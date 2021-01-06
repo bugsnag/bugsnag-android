@@ -1,5 +1,5 @@
-#include "string.h"
 #include "stack_unwinder_libunwindstack.h"
+#include "string.h"
 #include <stdlib.h>
 #include <ucontext.h>
 #include <unwindstack/Elf.h>
@@ -8,9 +8,9 @@
 #include <unwindstack/Memory.h>
 #include <unwindstack/Regs.h>
 
-ssize_t
-bsg_unwind_stack_libunwindstack(bugsnag_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
-                                siginfo_t *info, void *user_context) {
+ssize_t bsg_unwind_stack_libunwindstack(
+    bugsnag_stackframe stacktrace[BUGSNAG_FRAMES_MAX], siginfo_t *info,
+    void *user_context) {
   if (user_context == NULL) {
     return 0; // only handle unwinding from signals
   }

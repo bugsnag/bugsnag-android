@@ -1,8 +1,5 @@
 <?xml version="1.0" ?>
 <SmellBaseline>
   <ManuallySuppressedIssues></ManuallySuppressedIssues>
-  <CurrentIssues>
-    <ID>EmptyFunctionBlock:BugsnagReactNativePlugin.kt$BugsnagReactNativePlugin${}</ID>
-    <ID>TooManyFunctions:BugsnagReactNativePlugin.kt$BugsnagReactNativePlugin : Plugin</ID>
-  </CurrentIssues>
+  <CurrentIssues></CurrentIssues>
 </SmellBaseline>

@@ -14,12 +14,13 @@ Scenario: Unhandled Java Exception with loaded configuration
     And the event "unhandled" is true
     And the event "severity" equals "error"
     And the event "severityReason.type" equals "unhandledException"
+    And the event "severityReason.unhandledOverridden" is false
 
     # Stacktrace validation
     And the payload field "events.0.exceptions.0.stacktrace" is a non-empty array
     And the event "exceptions.0.stacktrace.0.method" ends with "UnhandledJavaLoadedConfigScenario.startScenario"
     And the exception "stacktrace.0.file" equals "UnhandledJavaLoadedConfigScenario.java"
-    And the event "exceptions.0.stacktrace.0.lineNumber" equals 29
+    And the event "exceptions.0.stacktrace.0.lineNumber" equals 25
     And the event "exceptions.0.stacktrace.0.inProject" is true
 
     # App data
@@ -67,7 +68,7 @@ Scenario: Unhandled Java Exception with loaded configuration
     And the event "user.id" is not null
 
     # Breadcrumbs
-    And the event has a "state" breadcrumb named "Bugsnag loaded"
+    And the event has a "state" breadcrumb named "Connectivity changed"
 
     # Threads validation
     And the payload field "events.0.threads" is a non-empty array
@@ -94,6 +95,11 @@ Scenario: Signal exception with overwritten config
     And the event "severity" equals "error"
     And the event "severityReason.type" equals "signal"
     And the event "severityReason.attributes.signalType" equals "SIGSEGV"
+    And the event "severityReason.type" equals "signal"
+    And the event "severityReason.attributes.signalType" equals "SIGSEGV"
+    And the event "severityReason.unhandledOverridden" is false
+    And the event "session.events.handled" equals 0
+    And the event "session.events.unhandled" equals 1
 
     # Stacktrace validation
     And the payload field "events.0.exceptions.0.stacktrace" is a non-empty array
@@ -145,7 +151,6 @@ Scenario: Signal exception with overwritten config
     And the event "user.name" equals "CXXSignalSmokeScenario"
 
     # Breadcrumbs
-    And the event has a "state" breadcrumb named "Bugsnag loaded"
     And the event has a "manual" breadcrumb named "CXXSignalSmokeScenario"
 
 @skip_android_8_1
@@ -166,6 +171,7 @@ Scenario: ANR detection
     And the event "unhandled" is true
     And the event "severity" equals "error"
     And the event "severityReason.type" equals "anrError"
+    And the event "severityReason.unhandledOverridden" is false
 
     # Stacktrace validation
     And the payload field "events.0.exceptions.0.stacktrace" is a non-empty array

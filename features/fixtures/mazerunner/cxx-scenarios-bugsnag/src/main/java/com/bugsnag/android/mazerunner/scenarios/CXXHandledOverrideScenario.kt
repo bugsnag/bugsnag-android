@@ -1,0 +1,28 @@
+package com.bugsnag.android.mazerunner.scenarios
+
+import android.content.Context
+import com.bugsnag.android.Bugsnag
+import com.bugsnag.android.Configuration
+
+internal class CXXHandledOverrideScenario(
+    config: Configuration,
+    context: Context
+) : Scenario(config, context) {
+
+    init {
+        System.loadLibrary("cxx-scenarios-bugsnag")
+        config.autoTrackSessions = false
+        disableSessionDelivery(config)
+    }
+
+    external fun activate()
+
+    override fun run() {
+        super.run()
+
+        if (eventMetaData != "non-crashy") {
+            Bugsnag.startSession()
+            activate()
+        }
+    }
+}

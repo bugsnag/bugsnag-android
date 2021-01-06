@@ -56,7 +56,7 @@ internal class AnrPlugin : Plugin {
         val event = NativeInterface.createEvent(
             exc,
             client,
-            HandledState.newInstance(HandledState.REASON_ANR)
+            SeverityReason.newInstance(SeverityReason.REASON_ANR)
         )
         val err = event.errors[0]
         err.errorClass = "ANR"

@@ -96,7 +96,9 @@ internal fun sanitiseConfiguration(
     val packageName = appContext.packageName
     val packageManager = appContext.packageManager
     val packageInfo = runCatching { packageManager.getPackageInfo(packageName, 0) }.getOrNull()
-    val appInfo = runCatching { packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA ) }.getOrNull()
+    val appInfo = runCatching {
+        packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA )
+    }.getOrNull()
 
     // populate releaseStage
     if (configuration.releaseStage == null) {
