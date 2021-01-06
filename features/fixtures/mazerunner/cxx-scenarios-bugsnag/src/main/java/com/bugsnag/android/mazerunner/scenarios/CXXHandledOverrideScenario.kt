@@ -6,8 +6,9 @@ import com.bugsnag.android.Configuration
 
 internal class CXXHandledOverrideScenario(
     config: Configuration,
-    context: Context
-) : Scenario(config, context) {
+    context: Context,
+    eventMetadata: String?
+) : Scenario(config, context, eventMetadata) {
 
     init {
         System.loadLibrary("cxx-scenarios-bugsnag")
@@ -17,10 +18,10 @@ internal class CXXHandledOverrideScenario(
 
     external fun activate()
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
 
-        if (eventMetaData != "non-crashy") {
+        if (eventMetadata != "non-crashy") {
             Bugsnag.startSession()
             activate()
         }

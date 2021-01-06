@@ -6,8 +6,9 @@ import com.bugsnag.android.mazerunner.addNaughtyStringMetadata
 
 internal class CXXNaughtyStringsScenario(
     config: Configuration,
-    context: Context
-) : Scenario(config, context) {
+    context: Context,
+    eventMetadata: String?
+) : Scenario(config, context, eventMetadata) {
 
     init {
         System.loadLibrary("cxx-scenarios")
@@ -16,12 +17,12 @@ internal class CXXNaughtyStringsScenario(
 
     external fun crash()
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         addNaughtyStringMetadata(javaClass)
         Thread.sleep(200) // allow metadata to sync across JNI layer
 
-        if (eventMetaData != "non-crashy") {
+        if (eventMetadata != "non-crashy") {
             crash()
         }
     }
