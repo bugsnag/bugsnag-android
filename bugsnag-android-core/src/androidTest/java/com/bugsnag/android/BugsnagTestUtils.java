@@ -1,6 +1,5 @@
 package com.bugsnag.android;
 
-import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
 
@@ -12,7 +11,6 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.nio.file.Files;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -43,19 +41,6 @@ final class BugsnagTestUtils {
     static JSONArray streamableToJsonArray(JsonStream.Streamable streamable)
         throws JSONException, IOException {
         return new JSONArray(streamableToString(streamable));
-    }
-
-    static Event generateEvent() {
-        Throwable exc = new RuntimeException();
-        Event event = new Event(
-                exc,
-                BugsnagTestUtils.generateImmutableConfig(),
-                HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION),
-                NoopLogger.INSTANCE
-        );
-        event.setApp(generateAppWithState());
-        event.setDevice(generateDeviceWithState());
-        return event;
     }
 
     static Client generateClient(Configuration config) {
