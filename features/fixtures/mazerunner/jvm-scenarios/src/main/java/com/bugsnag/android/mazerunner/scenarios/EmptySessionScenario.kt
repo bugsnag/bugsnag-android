@@ -24,7 +24,7 @@ internal class EmptySessionScenario(
             disableAllDelivery(config)
         } else {
             val files = dir.listFiles()
-            Log.d("Bugsnag", "Empty sessions: ${files}")
+            Log.d("Bugsnag", "Empty sessions: $files")
             files.forEach { it.writeText("") }
         }
     }

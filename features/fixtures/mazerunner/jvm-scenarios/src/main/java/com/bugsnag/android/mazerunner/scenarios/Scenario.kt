@@ -3,15 +3,21 @@ package com.bugsnag.android.mazerunner.scenarios
 import android.app.Activity
 import android.app.Application
 import android.content.BroadcastReceiver
-import android.os.Bundle
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
-
-import com.bugsnag.android.*
+import com.bugsnag.android.Bugsnag
+import com.bugsnag.android.Configuration
+import com.bugsnag.android.Delivery
+import com.bugsnag.android.DeliveryParams
+import com.bugsnag.android.DeliveryStatus
+import com.bugsnag.android.EventPayload
+import com.bugsnag.android.Session
+import com.bugsnag.android.createDefaultDelivery
 import com.bugsnag.android.mazerunner.BugsnagIntentParams
 import com.bugsnag.android.mazerunner.log
 import com.bugsnag.android.mazerunner.multiprocess.MultiProcessService
@@ -21,7 +27,7 @@ abstract class Scenario(
     protected val config: Configuration,
     protected val context: Context,
     protected val eventMetadata: String?
-): Application.ActivityLifecycleCallbacks {
+) : Application.ActivityLifecycleCallbacks {
 
     /**
      * Initializes Bugsnag. It is possible to override this method if the scenario requires
@@ -35,7 +41,6 @@ abstract class Scenario(
      * Runs code which should result in Bugsnag capturing an error or session.
      */
     open fun startScenario() {
-
     }
 
     /**
@@ -97,16 +102,19 @@ abstract class Scenario(
         callback: () -> Unit = {}
     ) {
         val filter = IntentFilter(MultiProcessService.ACTION_LAUNCHED_MULTI_PROCESS)
-        context.registerReceiver(object: BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
+        context.registerReceiver(
+            object : BroadcastReceiver() {
+                override fun onReceive(context: Context?, intent: Intent?) {
 
-                // explicitly post on the main thread to avoid
-                // the broadcast receiver wrapping exceptions
-                Handler(Looper.getMainLooper()).post {
-                    callback()
+                    // explicitly post on the main thread to avoid
+                    // the broadcast receiver wrapping exceptions
+                    Handler(Looper.getMainLooper()).post {
+                        callback()
+                    }
                 }
-            }
-        }, filter)
+            },
+            filter
+        )
 
         val intent = Intent(context, MultiProcessService::class.java)
         params.encode(intent)
@@ -117,7 +125,7 @@ abstract class Scenario(
      * Returns true if the scenario is running from the background service
      */
     protected fun isRunningFromBackgroundService() = findCurrentProcessName() ==
-            "com.example.bugsnag.android.mazerunner.multiprocess"
+        "com.example.bugsnag.android.mazerunner.multiprocess"
 
     /* Activity lifecycle callback overrides */
 

@@ -1,15 +1,12 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
-import android.content.Context;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.Configuration;
 
 import android.content.Context;
+
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * Sends an unhandled exception to Bugsnag.

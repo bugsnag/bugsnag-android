@@ -1,8 +1,6 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
-import android.os.Handler
-import android.os.HandlerThread
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.mazerunner.BugsnagIntentParams
 
@@ -26,11 +24,13 @@ internal class MultiProcessUnhandledExceptionScenario(
             throw generateException()
         } else if (eventMetadata == "multi-process-service") {
             if (!isRunningFromBackgroundService()) {
-                launchMultiProcessService(BugsnagIntentParams.fromConfig(
-                    config,
-                    javaClass.simpleName,
-                    eventMetadata
-                ))
+                launchMultiProcessService(
+                    BugsnagIntentParams.fromConfig(
+                        config,
+                        javaClass.simpleName,
+                        eventMetadata
+                    )
+                )
             } else {
                 runOnBgThread {
                     throw generateException()
@@ -38,13 +38,14 @@ internal class MultiProcessUnhandledExceptionScenario(
             }
         } else {
             if (!isRunningFromBackgroundService()) {
-                launchMultiProcessService(BugsnagIntentParams.fromConfig(
-                    config,
-                    null,
-                    eventMetadata
-                ))
+                launchMultiProcessService(
+                    BugsnagIntentParams.fromConfig(
+                        config,
+                        null,
+                        eventMetadata
+                    )
+                )
             }
         }
     }
-
 }

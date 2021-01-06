@@ -6,10 +6,10 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
-import java.util.Collections;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import java.util.Collections;
 
 public class AppNotRespondingOutsideReleaseStagesScenario extends Scenario {
 

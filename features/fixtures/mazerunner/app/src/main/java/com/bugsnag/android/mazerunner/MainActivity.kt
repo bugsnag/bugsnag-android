@@ -42,10 +42,13 @@ class MainActivity : Activity() {
              * Enqueues the test case with a delay on the main thread. This avoids the Activity wrapping
              * unhandled Exceptions
              */
-            window.decorView.postDelayed({
-                log("Executing scenario")
-                scenario!!.startScenario()
-            }, 1)
+            window.decorView.postDelayed(
+                {
+                    log("Executing scenario")
+                    scenario!!.startScenario()
+                },
+                1
+            )
         }
 
         val clearUserData = findViewById<Button>(R.id.clearUserData)

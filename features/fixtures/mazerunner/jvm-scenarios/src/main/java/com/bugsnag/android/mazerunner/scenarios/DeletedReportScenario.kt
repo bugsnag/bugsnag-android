@@ -26,10 +26,10 @@ internal class DeletedReportScenario(
             val baseDelivery = createDefaultDelivery()
             val errDir = File(context.cacheDir, "bugsnag-errors")
 
-                config.delivery = object : Delivery {
-                    override fun deliver(payload: Session, deliveryParams: DeliveryParams): DeliveryStatus {
-                        return baseDelivery.deliver(payload, deliveryParams)
-                    }
+            config.delivery = object : Delivery {
+                override fun deliver(payload: Session, deliveryParams: DeliveryParams): DeliveryStatus {
+                    return baseDelivery.deliver(payload, deliveryParams)
+                }
 
                 override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
                     // delete files before they can be delivered

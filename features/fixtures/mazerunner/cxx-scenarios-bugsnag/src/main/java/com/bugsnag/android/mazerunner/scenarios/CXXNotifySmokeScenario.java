@@ -1,14 +1,14 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
-import android.content.Context;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.Configuration;
 import com.bugsnag.android.Event;
 import com.bugsnag.android.OnErrorCallback;
+
+import android.content.Context;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class CXXNotifySmokeScenario extends Scenario {
 

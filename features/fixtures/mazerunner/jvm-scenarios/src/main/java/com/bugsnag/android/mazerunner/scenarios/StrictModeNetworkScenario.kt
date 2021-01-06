@@ -21,10 +21,12 @@ internal class StrictModeNetworkScenario(
 
     override fun startScenario() {
         super.startScenario()
-        StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder()
-            .detectNetwork()
-            .penaltyDeath()
-            .build())
+        StrictMode.setThreadPolicy(
+            StrictMode.ThreadPolicy.Builder()
+                .detectNetwork()
+                .penaltyDeath()
+                .build()
+        )
 
         val urlConnection = URL("http://example.com").openConnection() as HttpURLConnection
         urlConnection.doOutput = true

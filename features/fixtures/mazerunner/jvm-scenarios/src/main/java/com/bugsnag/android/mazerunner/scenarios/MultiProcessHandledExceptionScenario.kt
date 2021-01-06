@@ -36,5 +36,4 @@ internal class MultiProcessHandledExceptionScenario(
             Bugsnag.notify(generateException())
         }
     }
-
 }

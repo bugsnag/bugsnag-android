@@ -107,7 +107,7 @@ Scenario: Notify Kotlin exception with overwritten configuration
     And the payload field "events.0.exceptions.0.stacktrace" is a non-empty array
     And the event "exceptions.0.stacktrace.0.method" ends with "generateException"
     And the exception "stacktrace.0.file" equals "Scenario.kt"
-    And the event "exceptions.0.stacktrace.0.lineNumber" equals 72
+    And the event "exceptions.0.stacktrace.0.lineNumber" equals 88
     And the event "exceptions.0.stacktrace.0.inProject" is true
 
     # Overwritten App data

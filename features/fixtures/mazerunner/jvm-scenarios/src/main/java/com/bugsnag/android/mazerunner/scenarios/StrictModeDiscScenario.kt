@@ -20,10 +20,12 @@ internal class StrictModeDiscScenario(
 
     override fun startScenario() {
         super.startScenario()
-        StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder()
-            .detectDiskWrites()
-            .penaltyDeath()
-            .build())
+        StrictMode.setThreadPolicy(
+            StrictMode.ThreadPolicy.Builder()
+                .detectDiskWrites()
+                .penaltyDeath()
+                .build()
+        )
         val file = File(context.cacheDir, "fake")
         file.writeBytes("test".toByteArray())
     }

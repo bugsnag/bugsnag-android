@@ -7,7 +7,7 @@ fun log(msg: String) {
     Log.d("BugsnagMazeRunner", msg)
 }
 
-internal fun getBugsnagLogger() = object: Logger {
+internal fun getBugsnagLogger() = object : Logger {
     private val TAG = "Bugsnag"
 
     override fun e(msg: String) {
