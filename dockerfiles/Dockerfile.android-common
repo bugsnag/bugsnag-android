@@ -1,7 +1,7 @@
 FROM openjdk:11-jdk-buster
 
 RUN apt-get update
-RUN apt-get install -y wget maven gnupg1 cppcheck libncurses5 jq
+RUN apt-get install -y wget maven gnupg1 cppcheck libncurses5 jq git
 RUN apt-get clean
 
 ENV ANDROID_SDK_ROOT="/sdk"
