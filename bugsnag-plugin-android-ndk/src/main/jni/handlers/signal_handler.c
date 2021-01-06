@@ -2,9 +2,9 @@
 
 #include <bugsnag_ndk.h>
 #include <errno.h>
+#include <event.h>
 #include <fcntl.h>
 #include <pthread.h>
-#include <event.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>

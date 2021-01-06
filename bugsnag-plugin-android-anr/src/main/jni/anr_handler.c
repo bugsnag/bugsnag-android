@@ -1,10 +1,10 @@
 #include "anr_handler.h"
+#include <android/log.h>
 #include <errno.h>
+#include <jni.h>
 #include <pthread.h>
 #include <signal.h>
 #include <string.h>
-#include <android/log.h>
-#include <jni.h>
 
 #include "utils/string.h"
 
@@ -26,7 +26,6 @@ static jobject obj_plugin = NULL;
 /* The previous SIGQUIT handler */
 struct sigaction bsg_sigquit_sigaction_previous;
 
-
 void bsg_notify_anr_detected(JNIEnv *env) {
   (*env)->CallVoidMethod(env, obj_plugin, mthd_notify_anr_detected);
 }
@@ -41,7 +40,8 @@ bool bsg_configure_anr_jni(JNIEnv *env) {
   }
 
   jclass clz = (*env)->FindClass(env, "com/bugsnag/android/AnrPlugin");
-  mthd_notify_anr_detected = (*env)->GetMethodID(env, clz, "notifyAnrDetected", "()V");
+  mthd_notify_anr_detected =
+      (*env)->GetMethodID(env, clz, "notifyAnrDetected", "()V");
   return true;
 }
 
@@ -56,14 +56,16 @@ void bsg_handle_sigquit(int signum, siginfo_t *info, void *user_context) {
     } else if (result == JNI_EDETACHED) { // attach before calling JNI
       if ((*bsg_jvm)->AttachCurrentThread(bsg_jvm, &env, NULL) == 0) {
         bsg_notify_anr_detected(env);
-        (*bsg_jvm)->DetachCurrentThread(bsg_jvm); // detach to restore initial condition
+        (*bsg_jvm)->DetachCurrentThread(
+            bsg_jvm); // detach to restore initial condition
       }
     } // All other results are error codes
   }
 
   // Invoke previous handler, if a custom handler has been set
-  // This can be conditionally switched off on certain platforms (e.g. Unity) where
-  // this behaviour is not desirable due to Unity's implementation failing with a SIGSEGV
+  // This can be conditionally switched off on certain platforms (e.g. Unity)
+  // where this behaviour is not desirable due to Unity's implementation failing
+  // with a SIGSEGV
   if (invokePrevHandler) {
     struct sigaction previous = bsg_sigquit_sigaction_previous;
     if (previous.sa_flags & SA_SIGINFO) {
@@ -85,9 +87,9 @@ void *bsg_monitor_anrs(void *_arg) {
   sigemptyset(&handler.sa_mask);
   handler.sa_sigaction = bsg_handle_sigquit;
 
-  // remove SA_ONSTACK flag as we don't require information about the SIGQUIT signal.
-  // specifying this flag results in a crash when performing a JNI call. For further context
-  // see https://issuetracker.google.com/issues/37035211
+  // remove SA_ONSTACK flag as we don't require information about the SIGQUIT
+  // signal. specifying this flag results in a crash when performing a JNI call.
+  // For further context see https://issuetracker.google.com/issues/37035211
   handler.sa_flags = SA_SIGINFO;
   int success = sigaction(SIGQUIT, &handler, &bsg_sigquit_sigaction_previous);
   if (success != 0) {
@@ -97,7 +99,8 @@ void *bsg_monitor_anrs(void *_arg) {
   return NULL;
 }
 
-bool bsg_handler_install_anr(JNIEnv *env, jobject plugin, jboolean callPreviousSigquitHandler) {
+bool bsg_handler_install_anr(JNIEnv *env, jobject plugin,
+                             jboolean callPreviousSigquitHandler) {
   pthread_mutex_lock(&bsg_anr_handler_config);
   invokePrevHandler = callPreviousSigquitHandler;
 
