@@ -10,15 +10,17 @@ import com.bugsnag.android.Configuration
  */
 internal class AppNotRespondingDisabledScenario(
     config: Configuration,
-    context: Context
-) : Scenario(config, context) {
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
+
     init {
         config.autoTrackSessions = false
         config.enabledErrorTypes.anrs = false
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         val main = Handler(Looper.getMainLooper())
         main.postDelayed(
             Runnable {

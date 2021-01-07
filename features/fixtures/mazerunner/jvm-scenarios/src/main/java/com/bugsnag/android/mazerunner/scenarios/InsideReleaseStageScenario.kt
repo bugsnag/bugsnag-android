@@ -9,16 +9,18 @@ import com.bugsnag.android.Configuration
  */
 internal class InsideReleaseStageScenario(
     config: Configuration,
-    context: Context
-) : Scenario(config, context) {
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
+
     init {
         config.autoTrackSessions = false
         config.releaseStage = "prod"
         config.enabledReleaseStages = setOf("prod")
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         Bugsnag.notify(RuntimeException("InsideReleaseStageScenario"))
     }
 }

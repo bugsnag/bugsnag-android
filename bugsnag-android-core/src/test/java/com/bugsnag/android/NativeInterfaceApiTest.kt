@@ -17,7 +17,7 @@ import org.mockito.Mockito.`when`
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
-import java.io.File
+import java.nio.file.Files
 
 /**
  * Verifies that method calls are forwarded onto the appropriate method on Client,
@@ -73,10 +73,11 @@ internal class NativeInterfaceApiTest {
     }
 
     @Test
-    fun getNativeReportPath() {
-        `when`(client.getAppContext()).thenReturn(context)
-        `when`(context.cacheDir).thenReturn(File("f"))
-        assertTrue(NativeInterface.getNativeReportPath().endsWith("/bugsnag-native/"))
+    fun getNativeReportPathPersistenceDirectory() {
+        val customDir = Files.createTempDirectory("custom").toFile()
+        `when`(immutableConfig.persistenceDirectory).thenReturn(customDir)
+        val observed = NativeInterface.getNativeReportPath()
+        assertEquals("${customDir.absolutePath}/bugsnag-native", observed)
     }
 
     @Test

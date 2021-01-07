@@ -10,14 +10,16 @@ import com.bugsnag.android.flushAllSessions
  */
 internal class ManualSessionScenario(
     config: Configuration,
-    context: Context
-) : Scenario(config, context) {
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
+
     init {
         config.autoTrackSessions = false
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         Bugsnag.setUser("123", "user@example.com", "Joe Bloggs")
         Bugsnag.startSession()
         flushAllSessions()

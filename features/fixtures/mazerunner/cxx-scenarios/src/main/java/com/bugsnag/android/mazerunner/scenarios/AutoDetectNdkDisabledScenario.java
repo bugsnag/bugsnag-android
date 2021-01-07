@@ -5,6 +5,7 @@ import com.bugsnag.android.Configuration;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class AutoDetectNdkDisabledScenario extends Scenario {
 
@@ -16,16 +17,18 @@ public class AutoDetectNdkDisabledScenario extends Scenario {
 
     /**
      */
-    public AutoDetectNdkDisabledScenario(@NonNull Configuration config, @NonNull Context context) {
-        super(config, context);
+    public AutoDetectNdkDisabledScenario(@NonNull Configuration config,
+                                         @NonNull Context context,
+                                         @Nullable String eventMetadata) {
+        super(config, context, eventMetadata);
         config.setAutoTrackSessions(false);
         config.getEnabledErrorTypes().setNdkCrashes(false);
     }
 
     @Override
-    public void run() {
-        super.run();
-        String metadata = getEventMetaData();
+    public void startScenario() {
+        super.startScenario();
+        String metadata = getEventMetadata();
         if (metadata != null && metadata.equals("non-crashy")) {
             return;
         }

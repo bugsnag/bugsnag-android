@@ -12,8 +12,10 @@ import com.bugsnag.android.Severity
  */
 internal class HandledKotlinSmokeScenario(
     config: Configuration,
-    context: Context
-) : Scenario(config, context) {
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
+
     init {
         config.autoTrackSessions = false
         config.appType = "Overwritten"
@@ -41,8 +43,8 @@ internal class HandledKotlinSmokeScenario(
         )
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         Bugsnag.leaveBreadcrumb("HandledKotlinSmokeScenario")
         Bugsnag.notify(generateException())
     }

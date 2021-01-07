@@ -9,16 +9,18 @@ import com.bugsnag.android.Configuration
  */
 internal class SessionPersistUserDisabledScenario(
     config: Configuration,
-    context: Context
-) : Scenario(config, context) {
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
+
     init {
         config.autoTrackSessions = false
         config.persistUser = false
     }
 
-    override fun run() {
-        super.run()
-        if (eventMetaData != "no_user") {
+    override fun startScenario() {
+        super.startScenario()
+        if (eventMetadata != "no_user") {
             Bugsnag.setUser("12345", "test@test.test", "test user")
         }
         Bugsnag.startSession()

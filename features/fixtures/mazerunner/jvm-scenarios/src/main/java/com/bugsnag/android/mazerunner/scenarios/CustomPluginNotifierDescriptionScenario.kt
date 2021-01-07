@@ -6,16 +6,17 @@ import com.bugsnag.android.Configuration
 
 internal class CustomPluginNotifierDescriptionScenario(
     config: Configuration,
-    context: Context
-) : Scenario(config, context) {
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
 
     init {
         config.autoTrackSessions = false
         config.addPlugin(CustomPluginExample())
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         Bugsnag.notify(RuntimeException())
     }
 }

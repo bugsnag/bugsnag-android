@@ -1,6 +1,5 @@
 package com.bugsnag.android.mazerunner.scenarios
 
-import android.app.Activity
 import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
@@ -8,29 +7,26 @@ import java.io.File
 
 internal class EmptyReportScenario(
     config: Configuration,
-    context: Context
-) : Scenario(config, context) {
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
 
     init {
         config.autoTrackSessions = false
+        val errDir = File(context.cacheDir, "bugsnag-errors")
 
-        if (context is Activity) {
-            eventMetaData = context.intent.getStringExtra("EVENT_METADATA")
-            val errDir = File(context.cacheDir, "bugsnag-errors")
-
-            if (eventMetaData != "non-crashy") {
-                disableAllDelivery(config)
-            } else {
-                val files = errDir.listFiles()
-                files.forEach { it.writeText("") }
-            }
+        if (eventMetadata != "non-crashy") {
+            disableAllDelivery(config)
+        } else {
+            val files = errDir.listFiles()
+            files.forEach { it.writeText("") }
         }
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
 
-        if (eventMetaData != "non-crashy") {
+        if (eventMetadata != "non-crashy") {
             Bugsnag.notify(java.lang.RuntimeException("Whoops"))
         }
     }

@@ -116,7 +116,6 @@ public class ClientFacadeTest {
                 sessionTracker,
                 activityBreadcrumbCollector,
                 sessionLifecycleCallback,
-                sharedPrefs,
                 connectivity,
                 storageManager,
                 logger,
@@ -168,9 +167,12 @@ public class ClientFacadeTest {
     @Test
     public void setUserValid() {
         client.setUser("123", "joe@example.com", "Joe");
-        verify(userState, times(1)).setUser("123", "joe@example.com", "Joe");
+        User joe = new User("123", "joe@example.com", "Joe");
+        verify(userState, times(1)).setUser(joe);
+
         client.setUser(null, null, null);
-        verify(userState, times(1)).setUser(null, null, null);
+        User emptyUser = new User(null, null, null);
+        verify(userState, times(1)).setUser(emptyUser);
     }
 
     @Test

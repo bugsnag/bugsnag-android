@@ -9,16 +9,18 @@ import java.util.LinkedList
  */
 internal class OomScenario(
     config: Configuration,
-    context: Context
-) : Scenario(config, context) {
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
+
     init {
         config.autoTrackSessions = false
     }
 
     private val queue = LinkedList<Array<String>>()
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         while (true) {
             val array = Array(
                 Int.MAX_VALUE,

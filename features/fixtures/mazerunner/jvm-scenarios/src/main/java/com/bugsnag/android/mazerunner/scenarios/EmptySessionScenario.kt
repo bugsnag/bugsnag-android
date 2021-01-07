@@ -1,6 +1,5 @@
 package com.bugsnag.android.mazerunner.scenarios
 
-import android.app.Activity
 import android.content.Context
 import android.os.Handler
 import android.os.HandlerThread
@@ -12,30 +11,28 @@ import java.io.File
 
 internal class EmptySessionScenario(
     config: Configuration,
-    context: Context
-) : Scenario(config, context) {
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
 
     init {
         config.autoTrackSessions = false
 
-        if (context is Activity) {
-            eventMetaData = context.intent.getStringExtra("EVENT_METADATA")
-            val dir = File(context.cacheDir, "bugsnag-sessions")
+        val dir = File(context.cacheDir, "bugsnag-sessions")
 
-            if (eventMetaData != "non-crashy") {
-                disableAllDelivery(config)
-            } else {
-                val files = dir.listFiles()
-                Log.d("Bugsnag", "Empty sessions: $files")
-                files.forEach { it.writeText("") }
-            }
+        if (eventMetadata != "non-crashy") {
+            disableAllDelivery(config)
+        } else {
+            val files = dir.listFiles()
+            Log.d("Bugsnag", "Empty sessions: $files")
+            files.forEach { it.writeText("") }
         }
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
 
-        if (eventMetaData != "non-crashy") {
+        if (eventMetadata != "non-crashy") {
             Bugsnag.startSession()
         }
 

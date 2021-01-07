@@ -9,8 +9,10 @@ import com.bugsnag.android.OnErrorCallback
  */
 internal class UnhandledExceptionApiKeyChangeScenario(
     config: Configuration,
-    context: Context
-) : Scenario(config, context) {
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
+
     init {
         config.autoTrackSessions = false
         config.addOnError(
@@ -21,8 +23,8 @@ internal class UnhandledExceptionApiKeyChangeScenario(
         )
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         throw generateException()
     }
 }

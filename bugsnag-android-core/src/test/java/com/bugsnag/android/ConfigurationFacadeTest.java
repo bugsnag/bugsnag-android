@@ -11,6 +11,9 @@ import androidx.annotation.NonNull;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -170,6 +173,30 @@ public class ConfigurationFacadeTest {
     public void maxBreadcrumbsValid() {
         config.setMaxBreadcrumbs(66);
         assertEquals(66, config.impl.getMaxBreadcrumbs());
+    }
+
+    @Test
+    public void maxPersistedEventsValid() {
+        config.setMaxPersistedEvents(55);
+        assertEquals(55, config.impl.getMaxPersistedEvents());
+    }
+
+    @Test
+    public void maxPersistedEventsInvalid() {
+        config.setMaxPersistedEvents(-1);
+        assertEquals(32, config.impl.getMaxPersistedEvents());
+    }
+
+    @Test
+    public void maxPersistedSessionsValid() {
+        config.setMaxPersistedSessions(55);
+        assertEquals(55, config.impl.getMaxPersistedSessions());
+    }
+
+    @Test
+    public void maxPersistedSessionsInvalid() {
+        config.setMaxPersistedSessions(-1);
+        assertEquals(128, config.impl.getMaxPersistedSessions());
     }
 
     @Test
@@ -482,6 +509,15 @@ public class ConfigurationFacadeTest {
     public void setUserValid() {
         config.setUser(null, null, null);
         assertEquals(new User(null, null, null), config.getUser());
+    }
+
+    @Test
+    public void setPersistenceDirectoryValid() throws IOException {
+        File dir = Files.createTempDirectory("foo").toFile();
+        config.setPersistenceDirectory(dir);
+        assertEquals(dir, config.getPersistenceDirectory());
+        config.setPersistenceDirectory(null);
+        assertNull(config.getPersistenceDirectory());
     }
 
     @Test

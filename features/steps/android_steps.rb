@@ -223,3 +223,10 @@ rescue Selenium::WebDriver::Error::NoSuchElementError
   # Ignore - we have seen clicks fail like this despite having just checked for the element's presence
   $logger.warn 'NoSuchElementError'
 end
+
+# Temporary workaround until PLAT-4845 is implemented
+Then("I sort the requests by {string}") do |comparator|
+  Server.stored_requests.sort_by! { |request|
+    read_key_path(request[:body], comparator)
+  }
+end

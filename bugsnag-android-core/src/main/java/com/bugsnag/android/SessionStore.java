@@ -1,7 +1,5 @@
 package com.bugsnag.android;
 
-import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -34,15 +32,23 @@ class SessionStore extends FileStore {
         }
     };
 
-    SessionStore(@NonNull Context appContext, @NonNull Logger logger, @Nullable Delegate delegate) {
-        super(appContext, "/bugsnag-sessions/", 128, SESSION_COMPARATOR, logger, delegate);
+    SessionStore(@NonNull ImmutableConfig config,
+                 @NonNull Logger logger,
+                 @Nullable Delegate delegate) {
+        super(new File(config.getPersistenceDirectory(), "bugsnag-sessions"),
+                config.getMaxPersistedSessions(),
+                SESSION_COMPARATOR,
+                logger,
+                delegate);
     }
 
     @NonNull
     @Override
     String getFilename(Object object) {
-        return String.format(Locale.US, "%s%s%d_v2.json",
-            storeDirectory, UUID.randomUUID().toString(), System.currentTimeMillis());
+        return String.format(Locale.US,
+                "%s%d_v2.json",
+                UUID.randomUUID().toString(),
+                System.currentTimeMillis());
     }
 
 }

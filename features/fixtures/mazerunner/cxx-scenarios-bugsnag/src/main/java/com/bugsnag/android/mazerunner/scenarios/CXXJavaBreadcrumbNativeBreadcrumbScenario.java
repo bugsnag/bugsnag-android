@@ -7,6 +7,7 @@ import android.content.Context;
 import android.os.Handler;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class CXXJavaBreadcrumbNativeBreadcrumbScenario extends Scenario {
 
@@ -20,13 +21,14 @@ public class CXXJavaBreadcrumbNativeBreadcrumbScenario extends Scenario {
     private Handler handler = new Handler();
 
     public CXXJavaBreadcrumbNativeBreadcrumbScenario(@NonNull Configuration config,
-                                                     @NonNull Context context) {
-        super(config, context);
+                                                     @NonNull Context context,
+                                                     @Nullable String eventMetadata) {
+        super(config, context, eventMetadata);
     }
 
     @Override
-    public void run() {
-        super.run();
+    public void startScenario() {
+        super.startScenario();
         Bugsnag.leaveBreadcrumb("Reverse thrusters");
         activate();
     }

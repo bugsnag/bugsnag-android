@@ -8,6 +8,7 @@ import com.bugsnag.android.OnErrorCallback;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class CXXNotifySmokeScenario extends Scenario {
 
@@ -18,14 +19,16 @@ public class CXXNotifySmokeScenario extends Scenario {
 
     public native void activate();
 
-    public CXXNotifySmokeScenario(@NonNull Configuration config, @NonNull Context context) {
-        super(config, context);
+    public CXXNotifySmokeScenario(@NonNull Configuration config,
+                                  @NonNull Context context,
+                                  @Nullable String eventMetadata) {
+        super(config, context, eventMetadata);
         config.setAutoTrackSessions(false);
     }
 
     @Override
-    public void run() {
-        super.run();
+    public void startScenario() {
+        super.startScenario();
         Bugsnag.addOnError(new OnErrorCallback() {
             @Override
             public boolean onError(@NonNull Event event) {

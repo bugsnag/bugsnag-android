@@ -8,12 +8,12 @@ import java.lang.RuntimeException
 
 internal class LoadConfigurationFromManifestScenario(
     config: Configuration,
-    context: Context
-) : Scenario(config, context) {
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
 
-    override fun run() {
-        super.run()
-        var testConfig = Configuration.load(this.context)
+    override fun startBugsnag() {
+        val testConfig = Configuration.load(this.context)
         testConfig.addOnError(
             OnErrorCallback { event ->
                 event.addMetadata("test", "foo", "bar")
@@ -23,7 +23,10 @@ internal class LoadConfigurationFromManifestScenario(
         )
 
         Bugsnag.start(this.context, testConfig)
+    }
 
+    override fun startScenario() {
+        super.startScenario()
         Bugsnag.leaveBreadcrumb("Test breadcrumb 1")
         Bugsnag.leaveBreadcrumb("Test breadcrumb 2")
         Bugsnag.leaveBreadcrumb("Test breadcrumb 3")

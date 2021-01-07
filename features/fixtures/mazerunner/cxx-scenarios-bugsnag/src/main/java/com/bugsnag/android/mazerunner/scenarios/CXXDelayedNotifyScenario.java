@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Handler;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class CXXDelayedNotifyScenario extends Scenario {
 
@@ -18,13 +19,15 @@ public class CXXDelayedNotifyScenario extends Scenario {
     private boolean didActivate = false;
     private Handler handler = new Handler();
 
-    public CXXDelayedNotifyScenario(@NonNull Configuration config, @NonNull Context context) {
-        super(config, context);
+    public CXXDelayedNotifyScenario(@NonNull Configuration config,
+                                    @NonNull Context context,
+                                    @Nullable String eventMetadata) {
+        super(config, context, eventMetadata);
     }
 
     @Override
-    public void run() {
-        super.run();
+    public void startScenario() {
+        super.startScenario();
         if (didActivate) {
             return;
         }

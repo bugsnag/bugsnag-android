@@ -13,8 +13,9 @@ import com.bugsnag.android.flushAllSessions
  */
 internal class ResumedSessionScenario(
     config: Configuration,
-    context: Context
-) : Scenario(config, context) {
+    context: Context,
+    eventMetadata: String?
+) : Scenario(config, context, eventMetadata) {
 
     companion object {
         private const val SLEEP_MS: Long = 100
@@ -24,8 +25,8 @@ internal class ResumedSessionScenario(
         config.autoTrackSessions = false
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         val client = Bugsnag.getClient()
         val thread = HandlerThread("HandlerThread")
         thread.start()
@@ -43,7 +44,7 @@ internal class ResumedSessionScenario(
                 Log.d("Bugsnag - Resumed", "First exception sent")
                 Thread.sleep(SLEEP_MS)
 
-// send 2nd exception after resuming a session
+                // send 2nd exception after resuming a session
                 client.pauseSession()
                 Log.d("Bugsnag - Resumed", "First session paused")
                 Thread.sleep(SLEEP_MS)

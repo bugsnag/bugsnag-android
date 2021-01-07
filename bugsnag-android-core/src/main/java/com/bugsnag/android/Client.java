@@ -8,7 +8,6 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Environment;
 import android.os.storage.StorageManager;
@@ -44,8 +43,6 @@ import java.util.concurrent.RejectedExecutionException;
 @SuppressWarnings({"checkstyle:JavadocTagContinuationIndentation", "ConstantConditions"})
 public class Client implements MetadataAware, CallbackAware, UserAware {
 
-    private static final String SHARED_PREF_KEY = "com.bugsnag.android";
-
     final ImmutableConfig immutableConfig;
 
     final MetadataState metadataState;
@@ -75,8 +72,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     private final SystemBroadcastReceiver systemBroadcastReceiver;
     private final ActivityBreadcrumbCollector activityBreadcrumbCollector;
     private final SessionLifecycleCallback sessionLifecycleCallback;
-
-    private final SharedPreferences sharedPrefs;
 
     private final Connectivity connectivity;
     private final StorageManager storageManager;
@@ -147,13 +142,10 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         contextState = new ContextState();
         contextState.setContext(configuration.getContext());
 
-        sessionStore = new SessionStore(appContext, logger, null);
+        sessionStore = new SessionStore(immutableConfig, logger, null);
         sessionTracker = new SessionTracker(immutableConfig, callbackState, this,
                 sessionStore, logger);
         metadataState = copyMetadataState(configuration);
-
-        // Set up and collect constant app and device diagnostics
-        sharedPrefs = appContext.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
 
         ActivityManager am =
                 (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
@@ -161,24 +153,20 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         appDataCollector = new AppDataCollector(appContext, appContext.getPackageManager(),
                 immutableConfig, sessionTracker, am, logger);
 
-        UserRepository userRepository = new UserRepository(sharedPrefs,
-                immutableConfig.getPersistUser());
-        userState = new UserState(userRepository);
-        User user = configuration.getUser();
-
-        if (user.getId() != null || user.getEmail() != null || user.getName() != null) {
-            userState.setUser(user.getId(), user.getEmail(), user.getName());
-        }
+        // load the device + user information
+        SharedPrefMigrator sharedPrefMigrator = new SharedPrefMigrator(appContext);
+        DeviceIdStore deviceIdStore = new DeviceIdStore(appContext, sharedPrefMigrator, logger);
+        String deviceId = deviceIdStore.loadDeviceId();
+        UserStore userStore = new UserStore(immutableConfig, deviceId, sharedPrefMigrator, logger);
+        userState = userStore.load(configuration.getUser());
+        sharedPrefMigrator.deleteLegacyPrefs();
 
         DeviceBuildInfo info = DeviceBuildInfo.Companion.defaultInfo();
         Resources resources = appContext.getResources();
-        String id = userRepository.getDeviceId();
-        deviceDataCollector = new DeviceDataCollector(connectivity, appContext, resources, id, info,
-                Environment.getDataDirectory(), logger);
-
+        deviceDataCollector = new DeviceDataCollector(connectivity, appContext,
+                resources, deviceId, info, Environment.getDataDirectory(), logger);
 
         if (appContext instanceof Application) {
-
             Application application = (Application) appContext;
             sessionLifecycleCallback = new SessionLifecycleCallback(sessionTracker);
             application.registerActivityLifecycleCallbacks(sessionLifecycleCallback);
@@ -207,7 +195,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         InternalReportDelegate delegate = new InternalReportDelegate(appContext, logger,
                 immutableConfig, storageManager, appDataCollector, deviceDataCollector,
                 sessionTracker, notifier);
-        eventStore = new EventStore(immutableConfig, appContext, logger, notifier, delegate);
+        eventStore = new EventStore(immutableConfig, logger, notifier, delegate);
 
         deliveryDelegate = new DeliveryDelegate(logger, eventStore,
                 immutableConfig, breadcrumbState, notifier);
@@ -270,7 +258,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             SessionTracker sessionTracker,
             ActivityBreadcrumbCollector activityBreadcrumbCollector,
             SessionLifecycleCallback sessionLifecycleCallback,
-            SharedPreferences sharedPrefs,
             Connectivity connectivity,
             StorageManager storageManager,
             Logger logger,
@@ -291,7 +278,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         this.sessionTracker = sessionTracker;
         this.activityBreadcrumbCollector = activityBreadcrumbCollector;
         this.sessionLifecycleCallback = sessionLifecycleCallback;
-        this.sharedPrefs = sharedPrefs;
         this.connectivity = connectivity;
         this.storageManager = storageManager;
         this.logger = logger;
@@ -460,7 +446,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      */
     @Override
     public void setUser(@Nullable String id, @Nullable String email, @Nullable String name) {
-        userState.setUser(id, email, name);
+        userState.setUser(new User(id, email, name));
     }
 
     /**

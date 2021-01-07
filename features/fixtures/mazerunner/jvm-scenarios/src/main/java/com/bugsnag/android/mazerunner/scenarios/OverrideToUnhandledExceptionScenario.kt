@@ -10,16 +10,17 @@ import com.bugsnag.android.OnSessionCallback
  */
 internal class OverrideToUnhandledExceptionScenario(
     config: Configuration,
-    context: Context
-) : Scenario(config, context) {
+    context: Context,
+    eventMetadata: String?
+) : Scenario(config, context, eventMetadata) {
 
     init {
         config.autoTrackSessions = false
         config.addOnSession(OnSessionCallback { false })
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         Bugsnag.startSession()
         Bugsnag.notify(generateException()) {
             it.isUnhandled = true

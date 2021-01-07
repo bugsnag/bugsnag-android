@@ -9,15 +9,17 @@ import com.bugsnag.android.Configuration
  */
 internal class DisableAutoDetectErrorsScenario(
     config: Configuration,
-    context: Context
-) : Scenario(config, context) {
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
+
     init {
         config.autoTrackSessions = false
         config.enabledErrorTypes.unhandledExceptions = false
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         throw RuntimeException("Should never appear")
     }
 }
