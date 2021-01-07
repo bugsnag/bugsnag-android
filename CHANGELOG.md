@@ -2,6 +2,9 @@
 
 ## 5.5.0 (2021-01-07)
 
+This release supports initializing Bugsnag in multi processes apps. If your app uses Bugsnag in multiple processes, you should initialize Bugsnag
+with a unique `persistenceDirectory` value for each process. Please see [the docs](https://docs.bugsnag.com/platforms/android/faq/#does-bugsnag-support-multi-process-apps) for further information.
+
 * Store user information in persistenceDirectory
   [#1017](https://github.com/bugsnag/bugsnag-android/pull/1017)
 
