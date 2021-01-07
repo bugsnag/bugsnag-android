@@ -237,27 +237,6 @@ steps:
     soft_fail:
       - exit_status: "*"
 
-  - label: ':android: Android 9 NDK r21 end-to-end tests'
-    depends_on:
-      - "fixture-r21"
-      - "android-9-smoke"
-    timeout_in_minutes: 60
-    plugins:
-      artifacts#v1.2.0:
-        download: "build/release/fixture-r21.apk"
-      docker-compose#v3.7.0:
-        run: android-maze-runner
-        command:
-          - "features/full_tests"
-          - "--app=/app/build/release/fixture-r21.apk"
-          - "--farm=bs"
-          - "--device=ANDROID_9_0"
-          - "--username=$BROWSER_STACK_USERNAME"
-          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
-          - "--fail-fast"
-    concurrency: 9
-    concurrency_group: 'browserstack-app'
-
   - label: ':android: Android 10 NDK r21 end-to-end tests'
     depends_on:
       - "fixture-r21"
