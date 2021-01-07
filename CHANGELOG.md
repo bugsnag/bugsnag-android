@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 5.5.0 (2021-01-07)
 
 * Store user information in persistenceDirectory
   [#1017](https://github.com/bugsnag/bugsnag-android/pull/1017)
