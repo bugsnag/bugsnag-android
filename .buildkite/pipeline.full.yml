@@ -54,8 +54,6 @@ steps:
           - "--app=/app/build/release/fixture-minimal.apk"
           - "--farm=bs"
           - "--device=ANDROID_9_0"
-          - "--username=$BROWSER_STACK_USERNAME"
-          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
           - "features/full_tests/handled_exception.feature"
     concurrency: 9
@@ -111,8 +109,6 @@ steps:
           - "--app=/app/build/release/fixture-r16.apk"
           - "--farm=bs"
           - "--device=ANDROID_4_4"
-          - "--username=$BROWSER_STACK_USERNAME"
-          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
@@ -135,8 +131,6 @@ steps:
           - "--app=/app/build/release/fixture-r16.apk"
           - "--farm=bs"
           - "--device=ANDROID_5_0"
-          - "--username=$BROWSER_STACK_USERNAME"
-          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
@@ -158,8 +152,6 @@ steps:
           - "--app=/app/build/release/fixture-r16.apk"
           - "--farm=bs"
           - "--device=ANDROID_6_0"
-          - "--username=$BROWSER_STACK_USERNAME"
-          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
@@ -182,8 +174,6 @@ steps:
           - "--app=/app/build/release/fixture-r19.apk"
           - "--farm=bs"
           - "--device=ANDROID_7_1"
-          - "--username=$BROWSER_STACK_USERNAME"
-          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
@@ -206,8 +196,6 @@ steps:
           - "--app=/app/build/release/fixture-r19.apk"
           - "--farm=bs"
           - "--device=ANDROID_8_0"
-          - "--username=$BROWSER_STACK_USERNAME"
-          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
@@ -229,8 +217,6 @@ steps:
           - "--app=/app/build/release/fixture-r19.apk"
           - "--farm=bs"
           - "--device=ANDROID_8_1"
-          - "--username=$BROWSER_STACK_USERNAME"
-          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
@@ -252,8 +238,6 @@ steps:
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_10_0"
-          - "--username=$BROWSER_STACK_USERNAME"
-          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
@@ -273,8 +257,6 @@ steps:
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_11_0"
-          - "--username=$BROWSER_STACK_USERNAME"
-          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
