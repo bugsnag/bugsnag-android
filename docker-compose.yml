@@ -44,8 +44,9 @@ services:
   android-maze-runner:
     image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner-releases:latest-v3-cli
     environment:
-      VERBOSE:
       DEBUG:
+      BUILDKITE:
+      BUILDKITE_PIPELINE_NAME:
     volumes:
       - ./build:/app/build
       - ./maze-output:/app/maze-output
