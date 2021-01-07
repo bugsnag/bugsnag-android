@@ -505,7 +505,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
      * Sets the maximum number of persisted sessions which will be stored. Once the threshold is
      * reached, the oldest session will be deleted.
      *
-     * By default, 32 sessions are persisted.
+     * By default, 128 sessions are persisted.
      */
     public int getMaxPersistedSessions() {
         return impl.getMaxPersistedSessions();
@@ -515,7 +515,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
      * Sets the maximum number of persisted sessions which will be stored. Once the threshold is
      * reached, the oldest session will be deleted.
      *
-     * By default, 32 sessions are persisted.
+     * By default, 128 sessions are persisted.
      */
     public void setMaxPersistedSessions(int maxPersistedSessions) {
         if (maxPersistedSessions >= 0) {

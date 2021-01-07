@@ -47,7 +47,7 @@ class ManifestConfigLoaderTest {
             // misc
             assertEquals(maxBreadcrumbs, 25)
             assertEquals(maxPersistedEvents, 32)
-            assertEquals(maxPersistedSessions, 32)
+            assertEquals(maxPersistedSessions, 128)
             assertEquals(launchCrashThresholdMs, 5000)
             assertEquals("android", appType)
         }

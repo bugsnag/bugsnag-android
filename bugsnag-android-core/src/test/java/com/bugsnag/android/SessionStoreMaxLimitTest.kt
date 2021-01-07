@@ -37,11 +37,11 @@ class SessionStoreMaxLimitTest {
         val sessionStore = createSessionStore(convertToImmutableConfig(config))
 
         val session = generateSession()
-        repeat(40) {
+        repeat(140) {
             sessionStore.write(session)
         }
         val files = sessionDir.list()
-        assertEquals(32, files.size)
+        assertEquals(128, files.size)
     }
 
     @Test

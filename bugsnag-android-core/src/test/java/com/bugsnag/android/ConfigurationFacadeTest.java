@@ -196,7 +196,7 @@ public class ConfigurationFacadeTest {
     @Test
     public void maxPersistedSessionsInvalid() {
         config.setMaxPersistedSessions(-1);
-        assertEquals(32, config.impl.getMaxPersistedSessions());
+        assertEquals(128, config.impl.getMaxPersistedSessions());
     }
 
     @Test
