@@ -16,7 +16,7 @@ internal class MultiProcessUnhandledCXXErrorScenario(
     init {
         config.autoTrackSessions = false
         System.loadLibrary("bugsnag-ndk")
-        System.loadLibrary("entrypoint")
+        System.loadLibrary("cxx-scenarios-bugsnag")
     }
 
     external fun activate()
