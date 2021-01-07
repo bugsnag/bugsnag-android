@@ -1,14 +1,6 @@
 FROM 855461928731.dkr.ecr.us-west-1.amazonaws.com/android:latest as android
 
-RUN echo Building CI image for NDK version r16b
-
-RUN apt-get clean
-RUN apt-get install maven
-
 WORKDIR /app
-
-ENV ANDROID_NDK_HOME="${ANDROID_HOME}/android-ndk-r16b"
-ENV PATH="${ANDROID_NDK_HOME}:${PATH}"
 
 # Force download of gradle zip early to avoid repeating
 # if Docker cache is invalidated by branch changes.
@@ -17,20 +9,12 @@ COPY gradle/ /app/gradle/
 ENV GRADLE_OPTS="-Dorg.gradle.daemon=false"
 RUN ./gradlew
 
-# Setup signing
-RUN apt-get install -y gnupg1
-COPY features/scripts/generate_gpg_key generate_gpg_key
-RUN gpg1 --gen-key --batch generate_gpg_key
-RUN gpg1 --list-keys | awk -F '[/\ ]' 'FNR==3{printf "signing.keyId=%s\n", $5}' >> ~/.gradle/gradle.properties
-RUN echo "signing.password=password" >> ~/.gradle/gradle.properties
-RUN echo "signing.secretKeyRingFile=/root/.gnupg/secring.gpg" >> ~/.gradle/gradle.properties
-
 # Copy remaining Gradle files
 COPY build.gradle settings.gradle /app/
 
 # Build the example app - needed for Espresso tests
 COPY examples/ examples/
-RUN ./gradlew -p examples/sdk-app-example assembleRelease
+RUN cd examples/sdk-app-example && ./gradlew assembleRelease
 
 # Branch specifics
 COPY bugsnag-android/ bugsnag-android/
@@ -40,5 +24,8 @@ COPY bugsnag-android-core/ bugsnag-android-core/
 COPY bugsnag-plugin-android-ndk/ bugsnag-plugin-android-ndk/
 COPY bugsnag-plugin-react-native/ bugsnag-plugin-react-native/
 COPY scripts/ scripts/
+COPY config/ config/
+COPY LICENSE LICENSE
 
-RUN ./gradlew
+# Build and upload to the local maven as version 9.9.9
+RUN ./gradlew assembleRelease publishToMavenLocal -PVERSION_NAME=9.9.9 -PABI_FILTERS=arm64-v8a,armeabi,armeabi-v7a,x86,x86_64

@@ -1,0 +1,4 @@
+include ':cxx-scenarios-bugsnag'
+include ':cxx-scenarios'
+include ':jvm-scenarios'
+include ':app'

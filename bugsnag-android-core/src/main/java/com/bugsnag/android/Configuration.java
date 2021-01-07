@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.io.File;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -188,6 +189,43 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
      */
     public void setPersistUser(boolean persistUser) {
         impl.setPersistUser(persistUser);
+    }
+
+    /**
+     * Sets the directory where event and session JSON payloads should be persisted if a network
+     * request is not successful. If you use Bugsnag in multiple processes, then a unique
+     * persistenceDirectory <b>must</b> be configured for each process to prevent duplicate
+     * requests being made by each instantiation of Bugsnag.
+     * <p/>
+     * The persistenceDirectory also stores user information if {@link #getPersistUser()} has been
+     * set to true.
+     * <p/>
+     * By default, bugsnag sets the persistenceDirectory to {@link Context#getCacheDir()}.
+     * <p/>
+     * If the persistenceDirectory is changed between application launches, no attempt will be made
+     * to deliver events or sessions cached in the previous location.
+     */
+    @Nullable
+    public File getPersistenceDirectory() {
+        return impl.getPersistenceDirectory();
+    }
+
+    /**
+     * Sets the directory where event and session JSON payloads should be persisted if a network
+     * request is not successful. If you use Bugsnag in multiple processes, then a unique
+     * persistenceDirectory <b>must</b> be configured for each process to prevent duplicate
+     * requests being made by each instantiation of Bugsnag.
+     * <p/>
+     * The persistenceDirectory also stores user information if {@link #getPersistUser()} has been
+     * set to true.
+     * <p/>
+     * By default, bugsnag sets the persistenceDirectory to {@link Context#getCacheDir()}.
+     * <p/>
+     * If the persistenceDirectory is changed between application launches, no attempt will be made
+     * to deliver events or sessions cached in the previous location.
+     */
+    public void setPersistenceDirectory(@Nullable File directory) {
+        impl.setPersistenceDirectory(directory);
     }
 
     /**
@@ -434,6 +472,58 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
             getLogger().e(String.format(Locale.US, "Invalid configuration value detected. "
                     + "Option maxBreadcrumbs should be an integer between 0-100. "
                     + "Supplied value is %d", maxBreadcrumbs));
+        }
+    }
+
+    /**
+     * Sets the maximum number of persisted events which will be stored. Once the threshold is
+     * reached, the oldest event will be deleted.
+     *
+     * By default, 32 events are persisted.
+     */
+    public int getMaxPersistedEvents() {
+        return impl.getMaxPersistedEvents();
+    }
+
+    /**
+     * Sets the maximum number of persisted events which will be stored. Once the threshold is
+     * reached, the oldest event will be deleted.
+     *
+     * By default, 32 events are persisted.
+     */
+    public void setMaxPersistedEvents(int maxPersistedEvents) {
+        if (maxPersistedEvents >= 0) {
+            impl.setMaxPersistedEvents(maxPersistedEvents);
+        } else {
+            getLogger().e(String.format(Locale.US, "Invalid configuration value detected. "
+                    + "Option maxPersistedEvents should be a positive integer."
+                    + "Supplied value is %d", maxPersistedEvents));
+        }
+    }
+
+    /**
+     * Sets the maximum number of persisted sessions which will be stored. Once the threshold is
+     * reached, the oldest session will be deleted.
+     *
+     * By default, 128 sessions are persisted.
+     */
+    public int getMaxPersistedSessions() {
+        return impl.getMaxPersistedSessions();
+    }
+
+    /**
+     * Sets the maximum number of persisted sessions which will be stored. Once the threshold is
+     * reached, the oldest session will be deleted.
+     *
+     * By default, 128 sessions are persisted.
+     */
+    public void setMaxPersistedSessions(int maxPersistedSessions) {
+        if (maxPersistedSessions >= 0) {
+            impl.setMaxPersistedSessions(maxPersistedSessions);
+        } else {
+            getLogger().e(String.format(Locale.US, "Invalid configuration value detected. "
+                    + "Option maxPersistedSessions should be a positive integer."
+                    + "Supplied value is %d", maxPersistedSessions));
         }
     }
 

@@ -1,9 +1,9 @@
 #ifndef BSG_STACK_UNWINDER_H
 #define BSG_STACK_UNWINDER_H
 
+#include "build.h"
 #include <event.h>
 #include <signal.h>
-#include "build.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -16,7 +16,6 @@ typedef enum {
   BSG_CUSTOM_UNWIND,
 } bsg_unwinder;
 
-
 /**
  * Based on the current environment, determine what unwinding library to use.
  *
@@ -25,8 +24,7 @@ typedef enum {
  * libcorkscrew.
  * Everything else: custom unwinding logic
  */
-void bsg_set_unwind_types(int apiLevel, bool is32bit,
-                          bsg_unwinder *signal_type,
+void bsg_set_unwind_types(int apiLevel, bool is32bit, bsg_unwinder *signal_type,
                           bsg_unwinder *other_type);
 
 /**
@@ -37,7 +35,7 @@ void bsg_set_unwind_types(int apiLevel, bool is32bit,
  * @return the number of frames
  */
 ssize_t bsg_unwind_stack(bsg_unwinder unwind_style,
-                     bugsnag_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
+                         bugsnag_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
                          siginfo_t *info, void *user_context) __asyncsafe;
 
 #ifdef __cplusplus

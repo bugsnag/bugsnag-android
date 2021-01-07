@@ -5,4 +5,4 @@
 #else
 #define __asyncsafe
 #endif
-#endif //BUGSNAG_ANDROID_BUILD_H
+#endif // BUGSNAG_ANDROID_BUILD_H

@@ -1,1 +1,2 @@
-include(":sdk-app-example")
+include ":app"
+rootProject.name = "Bugsnag Example"

@@ -1,117 +1,36 @@
-repositories {
-    mavenLocal()
-    google()
+allprojects {
+    repositories {
+        mavenLocal()
+        google()
 
-    // ignore already published artefacts in jcenter/bintray in favour of mavenLocal artefact
-    mavenCentral() {
-        content {
-            excludeModule("com.bugsnag", "bugsnag-android")
+        // ignore already published artefacts in jcenter/bintray in favour of mavenLocal artefact
+        mavenCentral() {
+            content {
+                excludeModule("com.bugsnag", "bugsnag-android")
+            }
         }
-    }
-    jcenter {
-        content {
-            excludeModule("com.bugsnag", "bugsnag-android")
+        jcenter {
+            content {
+                excludeModule("com.bugsnag", "bugsnag-android")
+            }
         }
     }
 }
 
-apply plugin: 'com.android.application'
 buildscript {
     repositories {
         google()
         mavenCentral()
         jcenter()
+        maven { url "https://plugins.gradle.org/m2/" }
     }
-    ext.kotlin_version = '1.3.72'
+    ext.kotlin_version = "1.3.72"
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.0'
-        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:5.3.0'
+        classpath 'com.android.tools.build:gradle:4.1.1'
+        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:5.6.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.0.0-RC16"
+        classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.14.1"
+        classpath "org.jlleitschuh.gradle:ktlint-gradle:9.4.1"
     }
 }
-apply plugin: 'kotlin-android'
-apply plugin: "io.gitlab.arturbosch.detekt"
-
-android {
-    compileSdkVersion 29
-
-    defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 29
-        versionCode 34
-        versionName "1.1.14"
-        manifestPlaceholders = [
-            // omit any of the following placeholders to use the default values
-            bugsnagApiKey: "abc12312312312312312312312312312",
-            bugsnagAppType: "test",
-            bugsnagAppVersion: "7.5.3",
-            bugsnagAutoDetectErrors: true,
-            bugsnagAutoTrackSessions: false,
-            bugsnagBuildUuid: "test-7.5.3",
-            bugsnagDiscardClasses: "com.domain.ClassName,com.domain.SecondClassName",
-            bugsnagEnabledReleaseStages: "production,development,testing",
-            bugsnagEndpoint: "http://bs-local.com:9339",
-            bugsnagEndpointSessions: "http://bs-local.com:9339",
-            bugsnagLaunchCrashThresholdMs: 10000,
-            bugsnagMaxBreadcrumbs: 1,
-            bugsnagPersistUser: false,
-            bugsnagProjectPackages: "java.net.UnknownHostException,com.example.Custom",
-            bugsnagRedactedKeys: "filter_me",
-            bugsnagReleaseStage: "testing",
-            bugsnagSendThreads: "always",
-            bugsnagVersionCode: 753,
-        ]
-    }
-    signingConfigs {
-        release {
-            keyAlias "password"
-            keyPassword "password"
-            storeFile file("../fakekeys.jks")
-            storePassword "password"
-        }
-    }
-    buildTypes {
-        release {
-            minifyEnabled true // obfuscation disabled to simplify maze
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
-        }
-    }
-    externalNativeBuild {
-        cmake {
-            path 'CMakeLists.txt'
-        }
-    }
-    sourceSets {
-        main {
-            jniLibs.srcDirs = ['libs']
-        }
-    }
-    // adding custom jniLibs results in dupe SO files, ignore
-    packagingOptions {
-        pickFirst '**/*.so'
-    }
-    lintOptions {
-        tasks.lint.enabled = false
-    }
-}
-
-dependencies {
-    implementation "com.bugsnag:bugsnag-android:9.9.9"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "androidx.annotation:annotation:1.1.0"
-}
-
-apply plugin: 'com.bugsnag.android.gradle'
-
-bugsnag {
-    uploadNdkMappings = true
-    uploadJvmMappings = false
-    reportBuilds = false
-    failOnUploadError = false
-}
-
-apply from: "../../../gradle/detekt.gradle"
-apply from: "../../../gradle/checkstyle.gradle"

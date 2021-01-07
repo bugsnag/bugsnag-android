@@ -11,8 +11,11 @@ import android.util.Log
 /**
  * Sends 2 exceptions, 1 before resuming a session, and 1 after resuming a session.
  */
-internal class ResumedSessionScenario(config: Configuration,
-                                      context: Context) : Scenario(config, context) {
+internal class ResumedSessionScenario(
+    config: Configuration,
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
 
     companion object {
         private const val SLEEP_MS: Long = 100
@@ -22,8 +25,8 @@ internal class ResumedSessionScenario(config: Configuration,
         config.autoTrackSessions = false
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         val client = Bugsnag.getClient()
         val thread = HandlerThread("HandlerThread")
         thread.start()

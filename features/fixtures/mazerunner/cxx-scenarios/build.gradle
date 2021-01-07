@@ -1,0 +1,45 @@
+plugins {
+    id "com.android.library"
+    id "kotlin-android"
+}
+
+apply plugin: "io.gitlab.arturbosch.detekt"
+apply plugin: "org.jlleitschuh.gradle.ktlint"
+
+android {
+    compileSdkVersion 30
+
+    defaultConfig {
+        minSdkVersion 14
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+    kotlinOptions {
+        jvmTarget = "1.6"
+    }
+    lintOptions {
+        tasks.lint.enabled = false
+    }
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+        }
+    }
+}
+
+dependencies {
+    implementation project(":jvm-scenarios")
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
+
+apply from: "../bugsnag-dependency.gradle"
+apply from: "../../../../gradle/detekt.gradle"
+apply from: "../../../../gradle/checkstyle.gradle"

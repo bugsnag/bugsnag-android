@@ -12,8 +12,11 @@ import com.bugsnag.android.Configuration
 /**
  * Sends an automated session payload to Bugsnag.
  */
-internal class AutoSessionSmokeScenario(config: Configuration,
-                                        context: Context) : Scenario(config, context) {
+internal class AutoSessionSmokeScenario(
+    config: Configuration,
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
 
     override fun onActivityResumed(activity: Activity) {
         super.onActivityResumed(activity)
@@ -22,8 +25,8 @@ internal class AutoSessionSmokeScenario(config: Configuration,
         }
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         registerActivityLifecycleCallbacks()
         context.startActivity(Intent("com.bugsnag.android.mazerunner.UPDATE_CONTEXT"))
     }

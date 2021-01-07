@@ -2,19 +2,14 @@ package com.bugsnag.android;
 
 import static com.bugsnag.android.BugsnagTestUtils.generateClient;
 import static com.bugsnag.android.BugsnagTestUtils.generateConfiguration;
-import static com.bugsnag.android.BugsnagTestUtils.getSharedPrefs;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
-import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.filters.SmallTest;
 
@@ -38,14 +33,9 @@ import java.util.concurrent.TimeUnit;
 @SmallTest
 public class ClientTest {
 
-    private static final String USER_ID = "123456";
-    private static final String USER_EMAIL = "mr.test@email.com";
-    private static final String USER_NAME = "Mr Test";
-
     private Context context;
     private Configuration config;
     private Client client;
-    private User user;
 
     /**
      * Generates a configuration and clears sharedPrefs values to begin the test with a clean slate
@@ -53,7 +43,6 @@ public class ClientTest {
     @Before
     public void setUp() {
         context = ApplicationProvider.getApplicationContext();
-        clearSharedPrefs();
         config = generateConfiguration();
     }
 
@@ -62,32 +51,10 @@ public class ClientTest {
      */
     @After
     public void tearDown() {
-        clearSharedPrefs();
         if (client != null) {
             client.close();
             client = null;
         }
-    }
-
-    private void clearSharedPrefs() {
-        // Make sure no user is stored
-        SharedPreferences sharedPref = getSharedPrefs(context);
-        sharedPref.edit()
-            .remove("user.id")
-            .remove("user.email")
-            .remove("user.name")
-            .commit();
-    }
-
-    private SharedPreferences setUserPrefs() {
-        // Set a user in prefs
-        SharedPreferences sharedPref = getSharedPrefs(context);
-        sharedPref.edit()
-            .putString("user.id", USER_ID)
-            .putString("user.email", USER_EMAIL)
-            .putString("user.name", USER_NAME)
-            .commit();
-        return sharedPref;
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -100,58 +67,6 @@ public class ClientTest {
         // Notify should not crash
         client = BugsnagTestUtils.generateClient();
         client.notify(new RuntimeException("Testing"));
-    }
-
-    @Test
-    public void testRestoreUserFromPrefs() {
-        setUserPrefs();
-
-        config.setPersistUser(true);
-        config.setDelivery(BugsnagTestUtils.generateDelivery());
-        client = new Client(context, config);
-
-        client.addOnError(new OnErrorCallback() {
-            @Override
-            public boolean onError(@NonNull Event event) {
-                // Pull out the user information
-                ClientTest.this.user = event.getUser();
-                return true;
-            }
-        });
-
-        client.notify(new RuntimeException("Testing"));
-
-        // Check the user details have been set
-        assertEquals(USER_ID, user.getId());
-        assertEquals(USER_EMAIL, user.getEmail());
-        assertEquals(USER_NAME, user.getName());
-    }
-
-    @Test
-    public void testStoreUserInPrefs() {
-        config.setPersistUser(true);
-        client = new Client(context, config);
-        client.setUser(USER_ID, USER_EMAIL, USER_NAME);
-
-        // Check that the user was store in prefs
-        SharedPreferences sharedPref = getSharedPrefs(context);
-        assertEquals(USER_ID, sharedPref.getString("user.id", null));
-        assertEquals(USER_EMAIL, sharedPref.getString("user.email", null));
-        assertEquals(USER_NAME, sharedPref.getString("user.name", null));
-    }
-
-    @Test
-    public void testStoreUserInPrefsDisabled() {
-        config.setPersistUser(false);
-        client = new Client(context, config);
-        client.setUser(USER_ID, USER_EMAIL, USER_NAME);
-
-        // Check that the user was not stored in prefs
-        SharedPreferences sharedPref = getSharedPrefs(context);
-        assertNotNull(sharedPref.getString("install.iud", null));
-        assertFalse(sharedPref.contains("user.id"));
-        assertFalse(sharedPref.contains("user.email"));
-        assertFalse(sharedPref.contains("user.name"));
     }
 
     @Test
@@ -309,41 +224,6 @@ public class ClientTest {
         data.put("foo", "bar");
         data.put("second", "another value");
         assertEquals(data, client.getMetadata("test_section"));
-    }
-
-    @Test
-    public void testUserCloned() {
-        config.setUser("123", "test@example.com", "Tess Derby");
-        client = new Client(context, config);
-        User user = client.getUser();
-        assertEquals("123", user.getId());
-        assertEquals("Tess Derby", user.getName());
-        assertEquals("test@example.com", user.getEmail());
-    }
-
-    @Test
-    public void testUserNotCloned() {
-        client = new Client(context, config);
-        User user = client.getUser();
-        assertNotNull(user.getId()); // use an auto-generated-id
-        assertNull(user.getName());
-        assertNull(user.getEmail());
-    }
-
-    @Test
-    public void testDeviceIdNotUserId() {
-        config.setUser("123", "test@example.com", "Tess Derby");
-        client = new Client(context, config);
-        assertEquals("123", client.getUser().getId());
-        assertNotEquals("123", client.getDeviceDataCollector().generateDevice().getId());
-    }
-
-    @Test
-    public void testDeviceIdEqualsUserId() {
-        client = new Client(context, config);
-        String userId = client.getUser().getId();
-        String deviceId = client.getDeviceDataCollector().generateDevice().getId();
-        assertEquals(userId, deviceId);
     }
 
     /**

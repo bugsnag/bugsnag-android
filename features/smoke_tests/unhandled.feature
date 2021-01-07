@@ -18,9 +18,9 @@ Scenario: Unhandled Java Exception with loaded configuration
 
     # Stacktrace validation
     And the payload field "events.0.exceptions.0.stacktrace" is a non-empty array
-    And the event "exceptions.0.stacktrace.0.method" ends with "UnhandledJavaLoadedConfigScenario.run"
+    And the event "exceptions.0.stacktrace.0.method" ends with "UnhandledJavaLoadedConfigScenario.startScenario"
     And the exception "stacktrace.0.file" equals "UnhandledJavaLoadedConfigScenario.java"
-    And the event "exceptions.0.stacktrace.0.lineNumber" equals 26
+    And the event "exceptions.0.stacktrace.0.lineNumber" equals 28
     And the event "exceptions.0.stacktrace.0.inProject" is true
 
     # App data
@@ -68,7 +68,7 @@ Scenario: Unhandled Java Exception with loaded configuration
     And the event "user.id" is not null
 
     # Breadcrumbs
-    And the event has a "state" breadcrumb named "Bugsnag loaded"
+    And the event has a "state" breadcrumb named "Connectivity changed"
 
     # Threads validation
     And the payload field "events.0.threads" is a non-empty array
@@ -151,7 +151,6 @@ Scenario: Signal exception with overwritten config
     And the event "user.name" equals "CXXSignalSmokeScenario"
 
     # Breadcrumbs
-    And the event has a "state" breadcrumb named "Bugsnag loaded"
     And the event has a "manual" breadcrumb named "CXXSignalSmokeScenario"
 
 @skip_android_8_1
