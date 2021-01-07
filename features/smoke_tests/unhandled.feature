@@ -18,9 +18,9 @@ Scenario: Unhandled Java Exception with loaded configuration
 
     # Stacktrace validation
     And the payload field "events.0.exceptions.0.stacktrace" is a non-empty array
-    And the event "exceptions.0.stacktrace.0.method" ends with "UnhandledJavaLoadedConfigScenario.run"
+    And the event "exceptions.0.stacktrace.0.method" ends with "UnhandledJavaLoadedConfigScenario.startScenario"
     And the exception "stacktrace.0.file" equals "UnhandledJavaLoadedConfigScenario.java"
-    And the event "exceptions.0.stacktrace.0.lineNumber" equals 25
+    And the event "exceptions.0.stacktrace.0.lineNumber" equals 28
     And the event "exceptions.0.stacktrace.0.inProject" is true
 
     # App data

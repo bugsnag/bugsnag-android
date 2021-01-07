@@ -14,15 +14,16 @@ import com.bugsnag.android.writeErrorToStore
  */
 internal class AsyncErrorDoubleFlushScenario(
     config: Configuration,
-    context: Context
-) : Scenario(config, context) {
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
 
     init {
         config.delivery = createSlowDelivery()
         config.autoTrackSessions = false
     }
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
 
         val event = generateEvent(Bugsnag.getClient())
         event.context = "AsyncErrorDoubleFlushScenario"

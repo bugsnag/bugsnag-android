@@ -9,15 +9,17 @@ import com.bugsnag.android.Configuration
  */
 internal class BreadcrumbDisabledScenario(
     config: Configuration,
-    context: Context
-) : Scenario(config, context) {
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
+
     init {
         config.autoTrackSessions = false
         config.enabledBreadcrumbTypes = emptySet()
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         Bugsnag.leaveBreadcrumb("Hello Breadcrumb!")
         Bugsnag.notify(generateException())
     }

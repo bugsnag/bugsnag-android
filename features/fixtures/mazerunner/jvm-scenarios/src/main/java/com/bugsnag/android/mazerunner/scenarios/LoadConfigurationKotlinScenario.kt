@@ -10,12 +10,12 @@ import java.lang.RuntimeException
 
 internal class LoadConfigurationKotlinScenario(
     config: Configuration,
-    context: Context
-) : Scenario(config, context) {
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
 
-    override fun run() {
-        super.run()
-        var testConfig = Configuration("78978978978978978978978978978978")
+    override fun startBugsnag() {
+        val testConfig = Configuration("78978978978978978978978978978978")
         testConfig.apiKey = "45645645645645645645645645645645"
         testConfig.appVersion = "0.9.8"
         testConfig.appType = "kotlin"
@@ -41,7 +41,10 @@ internal class LoadConfigurationKotlinScenario(
         )
 
         Bugsnag.start(this.context, testConfig)
+    }
 
+    override fun startScenario() {
+        super.startScenario()
         Bugsnag.leaveBreadcrumb("Test breadcrumb 1")
         Bugsnag.leaveBreadcrumb("Test breadcrumb 2")
         Bugsnag.leaveBreadcrumb("Test breadcrumb 3")

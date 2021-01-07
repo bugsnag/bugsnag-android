@@ -1,7 +1,5 @@
 package com.bugsnag.android;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
 
@@ -10,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Date;
@@ -44,10 +43,6 @@ final class BugsnagTestUtils {
         return new JSONArray(streamableToString(streamable));
     }
 
-    static SharedPreferences getSharedPrefs(Context context) {
-        return context.getSharedPreferences("com.bugsnag.android", Context.MODE_PRIVATE);
-    }
-
     static Client generateClient(Configuration config) {
         config.setDelivery(generateDelivery());
         return new Client(ApplicationProvider.getApplicationContext(), config);
@@ -73,8 +68,12 @@ final class BugsnagTestUtils {
         return convert(generateConfiguration());
     }
 
-
     static ImmutableConfig convert(Configuration config) {
+        try {
+            config.setPersistenceDirectory(File.createTempFile("tmp", null));
+        } catch (IOException ignored) {
+            // swallow
+        }
         return ImmutableConfigKt.convertToImmutableConfig(config, null);
     }
 

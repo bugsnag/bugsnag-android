@@ -4,7 +4,9 @@ import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.Configuration;
 
 import android.content.Context;
+
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * Sends an unhandled exception to Bugsnag.
@@ -12,13 +14,14 @@ import androidx.annotation.NonNull;
 public class UnhandledJavaLoadedConfigScenario extends Scenario {
 
     public UnhandledJavaLoadedConfigScenario(@NonNull Configuration config,
-                                             @NonNull Context context) {
-        super(config, context);
+                                             @NonNull Context context,
+                                             @Nullable String eventMetadata) {
+        super(config, context, eventMetadata);
     }
 
     @Override
-    public void run() {
-        super.run();
+    public void startScenario() {
+        super.startScenario();
         Configuration testConfig = Configuration.load(this.getContext());
         testConfig.setAutoTrackSessions(false);
         Bugsnag.start(this.getContext(), testConfig);

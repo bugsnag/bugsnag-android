@@ -11,8 +11,9 @@ import com.bugsnag.android.OnSessionCallback
  */
 internal class OverrideToHandledExceptionScenario(
     config: Configuration,
-    context: Context
-) : Scenario(config, context) {
+    context: Context,
+    eventMetadata: String?
+) : Scenario(config, context, eventMetadata) {
     init {
         config.autoTrackSessions = true
         config.addOnError(
@@ -24,10 +25,10 @@ internal class OverrideToHandledExceptionScenario(
         config.addOnSession(OnSessionCallback { false })
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         Bugsnag.startSession()
-        if (eventMetaData != "non-crashy") {
+        if (eventMetadata != "non-crashy") {
             throw generateException()
         }
     }

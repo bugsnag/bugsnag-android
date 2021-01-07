@@ -2,6 +2,9 @@ package com.bugsnag.android;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -18,6 +21,12 @@ final class BugsnagTestUtils {
         Configuration configuration = new Configuration("5d1ec5bd39a74caa1267142706a7fb21");
         configuration.setDelivery(generateDelivery());
         configuration.setLogger(NoopLogger.INSTANCE);
+        try {
+            File dir = Files.createTempDirectory("test").toFile();
+            configuration.setPersistenceDirectory(dir);
+        } catch (IOException ignored) {
+            // ignore IO exception
+        }
         return configuration;
     }
 
@@ -27,6 +36,11 @@ final class BugsnagTestUtils {
 
     static EventPayload generateEventPayload(ImmutableConfig config) {
         return new EventPayload(config.getApiKey(), generateEvent(), new Notifier());
+    }
+
+    static Session generateSession() {
+        return new Session("test", new Date(), new User(), false,
+                new Notifier(), NoopLogger.INSTANCE);
     }
 
     static Event generateEvent() {

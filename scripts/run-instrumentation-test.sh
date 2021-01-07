@@ -4,7 +4,7 @@ timestamp() {
   date +"%T"
 }
 
-export APP_LOCATION=examples/sdk-app-example/build/outputs/apk/release/sdk-app-example-release.apk
+export APP_LOCATION=examples/sdk-app-example/app/build/outputs/apk/release/app-release.apk
 export TEST_LOCATION=bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk
 
 # First app.  This is not actually used, but must be present and different to the test app.
@@ -54,7 +54,7 @@ status_response=$(curl -s -u "$BROWSER_STACK_USERNAME:$BROWSER_STACK_ACCESS_KEY"
 status=$(echo "$status_response" | jq -r ".status")
 
 WAIT_COUNT=0
-until [ "$status" == "\"done\"" ] || [ "$status" == "\"error\"" ] || [ $WAIT_COUNT -eq 100 ]; do
+until [ "$status" == "\"done\"" ] || [ "$status" == "\"error\"" ] || [ "$status" == "\"failed\"" ] || [ $WAIT_COUNT -eq 100 ]; do
     echo "Android Tests [$(timestamp)]: Current test status: $status, Time waited: $((WAIT_COUNT * 15))"
     ((WAIT_COUNT++))
     sleep 15

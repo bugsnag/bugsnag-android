@@ -9,14 +9,16 @@ import com.bugsnag.android.Configuration
  */
 internal class UserDisabledScenario(
     config: Configuration,
-    context: Context
-) : Scenario(config, context) {
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
+
     init {
         config.autoTrackSessions = false
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         Bugsnag.setUser(null, null, null)
         Bugsnag.notify(generateException())
     }

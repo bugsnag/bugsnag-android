@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class CXXRemoveDataScenario extends Scenario {
 
@@ -18,14 +19,16 @@ public class CXXRemoveDataScenario extends Scenario {
 
     public native void activate();
 
-    public CXXRemoveDataScenario(@NonNull Configuration config, @NonNull Context context) {
-        super(config, context);
+    public CXXRemoveDataScenario(@NonNull Configuration config,
+                                 @NonNull Context context,
+                                 @Nullable String eventMetadata) {
+        super(config, context, eventMetadata);
         config.setAutoTrackSessions(false);
     }
 
     @Override
-    public void run() {
-        super.run();
+    public void startScenario() {
+        super.startScenario();
         Bugsnag.addMetadata("persist", "keep", "foo");
         Bugsnag.addMetadata("persist", "remove", "bar");
         Bugsnag.addMetadata("remove", "foo", "bar");

@@ -10,16 +10,17 @@ import com.bugsnag.android.createCustomHeaderDelivery
  */
 internal class CustomClientSessionScenario(
     config: Configuration,
-    context: Context
-) : Scenario(config, context) {
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
 
     init {
         config.delivery = createCustomHeaderDelivery()
         config.autoTrackSessions = false
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         Bugsnag.startSession()
     }
 }

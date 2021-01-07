@@ -5,6 +5,7 @@ import com.bugsnag.android.Configuration;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class CXXConfigurationMetadataNativeCrashScenario extends Scenario {
 
@@ -17,10 +18,11 @@ public class CXXConfigurationMetadataNativeCrashScenario extends Scenario {
     /**
      */
     public CXXConfigurationMetadataNativeCrashScenario(@NonNull Configuration config,
-                                                @NonNull Context context) {
-        super(config, context);
+                                                       @NonNull Context context,
+                                                       @Nullable String eventMetadata) {
+        super(config, context, eventMetadata);
         config.setAutoTrackSessions(false);
-        String metadata = getEventMetaData();
+        String metadata = getEventMetadata();
         if (metadata == null || !metadata.equals("no-metadata")) {
             config.addMetadata("fruit", "apple", "gala");
             config.addMetadata("fruit", "counters", 47);
@@ -29,8 +31,8 @@ public class CXXConfigurationMetadataNativeCrashScenario extends Scenario {
     }
 
     @Override
-    public void run() {
-        super.run();
+    public void startScenario() {
+        super.startScenario();
         int value = activate();
         System.out.println("The result: " + value);
     }

@@ -1,7 +1,5 @@
 package com.bugsnag.android;
 
-import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -30,13 +28,12 @@ abstract class FileStore {
          *
          * @param exception the error encountered reading/delivering the file
          * @param errorFile file which could not be (de)serialized correctly
-         * @param context the context used to group the exception
+         * @param context   the context used to group the exception
          */
         void onErrorIOFailure(Exception exception, File errorFile, String context);
     }
 
-    @Nullable
-    final String storeDirectory;
+    private final File storageDir;
     private final int maxStoreCount;
     private final Comparator<File> comparator;
 
@@ -45,43 +42,56 @@ abstract class FileStore {
     private final Logger logger;
     private final EventStore.Delegate delegate;
 
-    FileStore(@NonNull Context appContext, String folder,
-              int maxStoreCount, Comparator<File> comparator, Logger logger, Delegate delegate) {
+    FileStore(@NonNull File storageDir,
+              int maxStoreCount,
+              Comparator<File> comparator,
+              Logger logger,
+              Delegate delegate) {
         this.maxStoreCount = maxStoreCount;
         this.comparator = comparator;
         this.logger = logger;
         this.delegate = delegate;
+        this.storageDir = storageDir;
+        isStorageDirValid(storageDir);
+    }
 
-        String path;
+    /**
+     * Checks whether the storage directory is a writable directory. If it is not,
+     * this method will attempt to create the directory.
+     *
+     * If the directory could not be created then an error will be logged.
+     */
+    private boolean isStorageDirValid(@NonNull File storageDir) {
         try {
-            path = appContext.getCacheDir().getAbsolutePath() + folder;
-
-            File outFile = new File(path);
-            outFile.mkdirs();
-            if (!outFile.exists()) {
-                this.logger.w("Could not prepare file storage directory");
-                path = null;
+            if (!storageDir.isDirectory() || !storageDir.canWrite()) {
+                if (!storageDir.mkdirs()) {
+                    this.logger.e("Could not prepare storage directory at "
+                            + storageDir.getAbsolutePath());
+                    return false;
+                }
             }
         } catch (Exception exception) {
-            this.logger.w("Could not prepare file storage directory", exception);
-            path = null;
+            this.logger.e("Could not prepare file storage directory", exception);
+            return false;
         }
-        this.storeDirectory = path;
+        return true;
     }
 
     void enqueueContentForDelivery(String content, String filename) {
-        if (storeDirectory == null) {
+        if (!isStorageDirValid(storageDir)) {
             return;
         }
         discardOldestFileIfNeeded();
+
         lock.lock();
         Writer out = null;
+        String filePath = new File(storageDir, filename).getAbsolutePath();
         try {
-            FileOutputStream fos = new FileOutputStream(filename);
+            FileOutputStream fos = new FileOutputStream(filePath);
             out = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
             out.write(content);
         } catch (Exception exc) {
-            File eventFile = new File(filename);
+            File eventFile = new File(filePath);
 
             if (delegate != null) {
                 delegate.onErrorIOFailure(exc, eventFile, "NDK Crash report copy");
@@ -103,11 +113,14 @@ abstract class FileStore {
 
     @Nullable
     String write(@NonNull JsonStream.Streamable streamable) {
-        if (storeDirectory == null) {
+        if (!isStorageDirValid(storageDir)) {
+            return null;
+        }
+        if (maxStoreCount == 0) {
             return null;
         }
         discardOldestFileIfNeeded();
-        String filename = getFilename(streamable);
+        String filename = new File(storageDir, getFilename(streamable)).getAbsolutePath();
 
         JsonStream stream = null;
         lock.lock();
@@ -137,22 +150,29 @@ abstract class FileStore {
     }
 
     void discardOldestFileIfNeeded() {
-        // Limit number of saved errors to prevent disk space issues
-        File exceptionDir = new File(storeDirectory);
-        if (exceptionDir.isDirectory()) {
-            File[] files = exceptionDir.listFiles();
+        // Limit number of saved payloads to prevent disk space issues
+        if (isStorageDirValid(storageDir)) {
+            File[] listFiles = storageDir.listFiles();
 
-            if (files != null && files.length >= maxStoreCount) {
+            if (listFiles == null) {
+                return;
+            }
+
+            List<File> files = new ArrayList<>(Arrays.asList(listFiles));
+
+            if (files.size() >= maxStoreCount) {
                 // Sort files then delete the first one (oldest timestamp)
-                Arrays.sort(files, comparator);
+                Collections.sort(files, comparator);
 
-                for (int k = 0; k < files.length && files.length >= maxStoreCount; k++) {
-                    File oldestFile = files[k];
+                for (int k = 0; k < files.size() && files.size() >= maxStoreCount; k++) {
+                    File oldestFile = files.get(k);
 
                     if (!queuedFiles.contains(oldestFile)) {
                         logger.w(String.format("Discarding oldest error as stored "
-                            + "error limit reached (%s)", oldestFile.getPath()));
+                                + "error limit reached (%s)", oldestFile.getPath()));
                         deleteStoredFiles(Collections.singleton(oldestFile));
+                        files.remove(k);
+                        k--;
                     }
                 }
             }
@@ -167,22 +187,18 @@ abstract class FileStore {
         try {
             List<File> files = new ArrayList<>();
 
-            if (storeDirectory != null) {
-                File dir = new File(storeDirectory);
+            if (isStorageDirValid(storageDir)) {
+                File[] values = storageDir.listFiles();
 
-                if (dir.exists() && dir.isDirectory()) {
-                    File[] values = dir.listFiles();
-
-                    if (values != null) {
-                        for (File value : values) {
-                            // delete any tombstoned/empty files, as they contain no useful info
-                            if (value.length() == 0) {
-                                if (!value.delete()) {
-                                    value.deleteOnExit();
-                                }
-                            } else if (value.isFile() && !queuedFiles.contains(value)) {
-                                files.add(value);
+                if (values != null) {
+                    for (File value : values) {
+                        // delete any tombstoned/empty files, as they contain no useful info
+                        if (value.length() == 0) {
+                            if (!value.delete()) {
+                                value.deleteOnExit();
                             }
+                        } else if (value.isFile() && !queuedFiles.contains(value)) {
+                            files.add(value);
                         }
                     }
                 }

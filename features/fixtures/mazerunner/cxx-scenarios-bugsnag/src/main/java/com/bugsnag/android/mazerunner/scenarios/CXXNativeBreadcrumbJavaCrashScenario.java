@@ -5,6 +5,7 @@ import com.bugsnag.android.Configuration;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class CXXNativeBreadcrumbJavaCrashScenario extends Scenario {
 
@@ -16,13 +17,14 @@ public class CXXNativeBreadcrumbJavaCrashScenario extends Scenario {
     public native void activate();
 
     public CXXNativeBreadcrumbJavaCrashScenario(@NonNull Configuration config,
-                                                @NonNull Context context) {
-        super(config, context);
+                                                @NonNull Context context,
+                                                @Nullable String eventMetadata) {
+        super(config, context, eventMetadata);
     }
 
     @Override
-    public void run() {
-        super.run();
+    public void startScenario() {
+        super.startScenario();
         activate();
         String[] items = new String[]{"one","two"};
         System.out.println("Last item is: " + items[2]);

@@ -11,14 +11,15 @@ import com.bugsnag.android.mazerunner.addNaughtyStringMetadata
  */
 internal class NaughtyStringScenario(
     config: Configuration,
-    context: Context
-) : Scenario(config, context) {
+    context: Context,
+    eventMetadata: String?
+) : Scenario(config, context, eventMetadata) {
     init {
         config.autoTrackSessions = false
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         addNaughtyStringMetadata(javaClass)
         Bugsnag.notify(generateException())
     }

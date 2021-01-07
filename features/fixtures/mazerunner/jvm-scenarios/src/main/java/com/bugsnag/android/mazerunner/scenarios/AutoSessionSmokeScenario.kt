@@ -12,8 +12,9 @@ import com.bugsnag.android.mazerunner.InterceptingDelivery
  */
 internal class AutoSessionSmokeScenario(
     config: Configuration,
-    context: Context
-) : Scenario(config, context) {
+    context: Context,
+    eventMetadata: String?
+) : Scenario(config, context, eventMetadata) {
 
     init {
         val baseDelivery = createDefaultDelivery()
@@ -26,8 +27,8 @@ internal class AutoSessionSmokeScenario(
         }
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         context.startActivity(Intent("com.bugsnag.android.mazerunner.UPDATE_CONTEXT"))
     }
 }

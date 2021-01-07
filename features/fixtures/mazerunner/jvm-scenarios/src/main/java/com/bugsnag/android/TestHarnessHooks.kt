@@ -85,7 +85,7 @@ fun generateEvent(client: Client): Event {
         client,
         SeverityReason.newInstance(SeverityReason.REASON_ANR)
     )
-    event.app = generateAppWithState()
+    event.app = generateAppWithState(client.config)
     event.device = generateDeviceWithState()
     return event
 }

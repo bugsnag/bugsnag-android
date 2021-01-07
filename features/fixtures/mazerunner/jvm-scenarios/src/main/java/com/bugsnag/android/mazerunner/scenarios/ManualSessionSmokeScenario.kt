@@ -11,8 +11,9 @@ import com.bugsnag.android.mazerunner.InterceptingDelivery
  */
 internal class ManualSessionSmokeScenario(
     config: Configuration,
-    context: Context
-) : Scenario(config, context) {
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
 
     init {
         config.autoTrackSessions = false
@@ -34,8 +35,8 @@ internal class ManualSessionSmokeScenario(
         }
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         Bugsnag.setUser("123", "ABC.CBA.CA", "ManualSessionSmokeScenario")
         Bugsnag.startSession()
     }

@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.Handler;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class CXXStartSessionScenario extends Scenario {
 
@@ -19,15 +20,17 @@ public class CXXStartSessionScenario extends Scenario {
 
     public native int crash(int counter);
 
-    public CXXStartSessionScenario(@NonNull Configuration config, @NonNull Context context) {
-        super(config, context);
+    public CXXStartSessionScenario(@NonNull Configuration config,
+                                   @NonNull Context context,
+                                   @Nullable String eventMetadata) {
+        super(config, context, eventMetadata);
         config.setAutoTrackSessions(false);
     }
 
     @Override
-    public void run() {
-        super.run();
-        String metadata = getEventMetaData();
+    public void startScenario() {
+        super.startScenario();
+        String metadata = getEventMetadata();
 
         if (metadata == null || !metadata.equals("non-crashy")) {
             Bugsnag.getClient().startSession();

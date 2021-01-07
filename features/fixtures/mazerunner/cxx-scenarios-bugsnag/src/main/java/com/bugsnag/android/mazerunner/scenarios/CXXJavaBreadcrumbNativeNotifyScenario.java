@@ -6,6 +6,7 @@ import com.bugsnag.android.Configuration;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class CXXJavaBreadcrumbNativeNotifyScenario extends Scenario {
 
@@ -17,13 +18,14 @@ public class CXXJavaBreadcrumbNativeNotifyScenario extends Scenario {
     public native void activate();
 
     public CXXJavaBreadcrumbNativeNotifyScenario(@NonNull Configuration config,
-                                                 @NonNull Context context) {
-        super(config, context);
+                                                 @NonNull Context context,
+                                                 @Nullable String eventMetadata) {
+        super(config, context, eventMetadata);
     }
 
     @Override
-    public void run() {
-        super.run();
+    public void startScenario() {
+        super.startScenario();
         Bugsnag.leaveBreadcrumb("Initiate lift");
         Bugsnag.leaveBreadcrumb("Disable lift");
         activate();

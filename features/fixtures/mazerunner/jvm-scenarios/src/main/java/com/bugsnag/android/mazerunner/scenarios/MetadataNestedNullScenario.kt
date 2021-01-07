@@ -10,15 +10,16 @@ import java.util.HashMap
  */
 internal class MetadataNestedNullScenario(
     config: Configuration,
-    context: Context
-) : Scenario(config, context) {
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
 
     init {
         config.autoTrackSessions = false
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
 
         val configMap = HashMap<String, Any?>()
         configMap["test"] = null

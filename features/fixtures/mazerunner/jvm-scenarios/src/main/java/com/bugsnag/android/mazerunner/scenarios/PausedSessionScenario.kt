@@ -13,8 +13,9 @@ import com.bugsnag.android.flushAllSessions
  */
 internal class PausedSessionScenario(
     config: Configuration,
-    context: Context
-) : Scenario(config, context) {
+    context: Context,
+    eventMetadata: String?
+) : Scenario(config, context, eventMetadata) {
 
     companion object {
         private const val SLEEP_MS: Long = 100
@@ -24,8 +25,8 @@ internal class PausedSessionScenario(
         config.autoTrackSessions = false
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         val client = Bugsnag.getClient()
         val thread = HandlerThread("HandlerThread")
         thread.start()
@@ -43,7 +44,7 @@ internal class PausedSessionScenario(
                 Log.d("Bugsnag - Stopped", "First exception sent")
                 Thread.sleep(SLEEP_MS)
 
-// send 2nd exception which should not include session info
+                // send 2nd exception which should not include session info
                 client.pauseSession()
                 Log.d("Bugsnag - Stopped", "First session paused")
                 Thread.sleep(SLEEP_MS)
