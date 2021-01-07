@@ -11,8 +11,8 @@ services:
       context: .
       dockerfile: dockerfiles/Dockerfile.android-ci-base
     environment:
-      BROWSER_STACK_USERNAME:
-      BROWSER_STACK_ACCESS_KEY:
+      MAZE_DEVICE_FARM_USERNAME:
+      MAZE_DEVICE_FARM_ACCESS_KEY:
       INSTRUMENTATION_DEVICES:
 
   android-builder:

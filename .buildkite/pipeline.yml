@@ -154,8 +154,6 @@ steps:
           - "--app=/app/build/release/fixture-r16.apk"
           - "--farm=bs"
           - "--device=ANDROID_4_4"
-          - "--username=$BROWSER_STACK_USERNAME"
-          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
@@ -176,8 +174,6 @@ steps:
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_11_0"
-          - "--username=$BROWSER_STACK_USERNAME"
-          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
