@@ -38,10 +38,8 @@ internal class MultiProcessUnhandledCXXErrorScenario(
                     )
                 )
             } else {
-                runOnBgThread {
-                    user1()
-                    activate()
-                }
+                user1()
+                activate()
             }
         } else {
             if (!isRunningFromBackgroundService()) {
