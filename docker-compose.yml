@@ -47,6 +47,8 @@ services:
       DEBUG:
       BUILDKITE:
       BUILDKITE_PIPELINE_NAME:
+      MAZE_DEVICE_FARM_USERNAME:
+      MAZE_DEVICE_FARM_ACCESS_KEY:
     volumes:
       - ./build:/app/build
       - ./maze-output:/app/maze-output
