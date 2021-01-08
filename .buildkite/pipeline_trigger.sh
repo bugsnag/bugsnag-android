@@ -12,6 +12,7 @@ elif [[ "$BUILDKITE_MESSAGE" == *"[full ci]"* ||
   echo "Unit and static tests will be run"
   echo "All instrumentation tests will be run"
   echo "All end-to-end tests will be run on all supported Android versions"
+  buildkite-agent pipeline upload .buildkite/pipeline.quick.yml
   buildkite-agent pipeline upload .buildkite/pipeline.full.yml
 elif [[ "$BUILDKITE_MESSAGE" == *"[gated-full ci]"* ||
   "$BUILDKITE_PULL_REQUEST_BASE_BRANCH" == "next" ||
