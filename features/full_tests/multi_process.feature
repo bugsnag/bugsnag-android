@@ -92,8 +92,8 @@ Scenario: Unhandled NDK error
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the request payload contains a completed handled native report
     And the payload field "events" is an array with 1 elements
-    And the exception "errorClass" equals "SIGTRAP"
-    And the exception "message" equals "Trace/breakpoint trap"
+    And the exception "errorClass" equals "SIGABRT"
+    And the exception "message" equals "Abort program"
     And the event "unhandled" is true
     And the payload field "events.0.metaData.process.name" equals "com.bugsnag.android.mazerunner"
     And the payload field "events.0.device.id" is stored as the value "first_device_id"
@@ -105,8 +105,8 @@ Scenario: Unhandled NDK error
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the request payload contains a completed handled native report
     And the payload field "events" is an array with 1 elements
-    And the exception "errorClass" equals "SIGTRAP"
-    And the exception "message" equals "Trace/breakpoint trap"
+    And the exception "errorClass" equals "SIGABRT"
+    And the exception "message" equals "Abort program"
     And the event "unhandled" is true
     And the payload field "events.0.metaData.process.name" equals "com.example.bugsnag.android.mazerunner.multiprocess"
     And the payload field "events.0.device.id" equals the stored value "first_device_id"

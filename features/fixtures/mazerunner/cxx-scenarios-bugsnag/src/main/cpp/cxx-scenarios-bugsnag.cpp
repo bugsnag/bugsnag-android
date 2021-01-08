@@ -322,7 +322,7 @@ Java_com_bugsnag_android_mazerunner_scenarios_MultiProcessUnhandledCXXErrorScena
 JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_MultiProcessUnhandledCXXErrorScenario_activate(JNIEnv *env,
                                                                                              jobject instance) {
-  __builtin_trap();
+  abort();
 }
 
 }
