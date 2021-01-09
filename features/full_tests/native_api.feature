@@ -9,18 +9,18 @@ Feature: Native API
         And the exception "message" equals "9 out of 10 adults do not get their 5-a-day"
         And the event "unhandled" is false
 
-    Scenario: Starting a session, notifying, followed by a C crash
-        When I run "CXXSessionInfoCrashScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
-        And I configure Bugsnag for "CXXSessionInfoCrashScenario"
-        And I wait to receive 4 requests
-        And I discard the oldest request
-        And I discard the oldest request
-        And I discard the oldest request
-        Then the request payload contains a completed handled native report
-        And the event contains session info
-        And the payload field "events.0.session.events.unhandled" equals 1
-        And the payload field "events.0.session.events.handled" equals 2
+#    Scenario: Starting a session, notifying, followed by a C crash
+#        When I run "CXXSessionInfoCrashScenario" and relaunch the app
+#        And I configure the app to run in the "non-crashy" state
+#        And I configure Bugsnag for "CXXSessionInfoCrashScenario"
+#        And I wait to receive 4 requests
+#        And I discard the oldest request
+#        And I discard the oldest request
+#        And I discard the oldest request
+#        Then the request payload contains a completed handled native report
+#        And the event contains session info
+#        And the payload field "events.0.session.events.unhandled" equals 1
+#        And the payload field "events.0.session.events.handled" equals 2
 
     Scenario: Set extraordinarily long app information
         When I run "CXXExtraordinaryLongStringScenario" and relaunch the app
