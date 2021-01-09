@@ -129,6 +129,8 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_9_0"
           - "--retry=1"
+          - "--strict-undefined"
+          - "--strict-pending"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
