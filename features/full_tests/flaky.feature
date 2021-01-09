@@ -98,3 +98,8 @@ Feature: Known flaky scenarios.
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the event "context" equals "AsyncErrorLaunchScenario"
 
+  Scenario: Only 1 request sent if multiple connectivity changes occur
+    When I run "AsyncErrorDoubleFlushScenario"
+    Then I wait to receive a request
+    And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And the event "context" equals "AsyncErrorDoubleFlushScenario"
