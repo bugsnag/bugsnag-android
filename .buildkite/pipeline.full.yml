@@ -271,7 +271,7 @@ steps:
         run: android-maze-runner
         command:
           - "features/full_tests/flaky.feature"
-          - "--retry=1"
+          - "--retry=2"
           - "--strict-undefined"
           - "--strict-pending"
           - "--app=/app/build/release/fixture-r16.apk"
@@ -292,7 +292,7 @@ steps:
         run: android-maze-runner
         command:
           - "features/full_tests/flaky.feature"
-          - "--retry=1"
+          - "--retry=2"
           - "--strict-undefined"
           - "--strict-pending"
           - "--app=/app/build/release/fixture-r16.apk"
@@ -315,7 +315,7 @@ steps:
         run: android-maze-runner
         command:
           - "features/full_tests/flaky.feature"
-          - "--retry=1"
+          - "--retry=2"
           - "--strict-undefined"
           - "--strict-pending"
           - "--app=/app/build/release/fixture-r16.apk"
@@ -336,7 +336,7 @@ steps:
         run: android-maze-runner
         command:
           - "features/full_tests/flaky.feature"
-          - "--retry=1"
+          - "--retry=2"
           - "--strict-undefined"
           - "--strict-pending"
           - "--app=/app/build/release/fixture-r19.apk"
@@ -357,7 +357,7 @@ steps:
         run: android-maze-runner
         command:
           - "features/full_tests/flaky.feature"
-          - "--retry=1"
+          - "--retry=2"
           - "--strict-undefined"
           - "--strict-pending"
           - "--app=/app/build/release/fixture-r19.apk"
@@ -380,7 +380,7 @@ steps:
         run: android-maze-runner
         command:
           - "features/full_tests/flaky.feature"
-          - "--retry=1"
+          - "--retry=2"
           - "--strict-undefined"
           - "--strict-pending"
           - "--app=/app/build/release/fixture-r19.apk"
@@ -403,7 +403,7 @@ steps:
         run: android-maze-runner
         command:
           - "features/full_tests/flaky.feature"
-          - "--retry=1"
+          - "--retry=2"
           - "--strict-undefined"
           - "--strict-pending"
           - "--app=/app/build/release/fixture-r21.apk"
@@ -424,7 +424,7 @@ steps:
         run: android-maze-runner
         command:
           - "features/full_tests/flaky.feature"
-          - "--retry=1"
+          - "--retry=2"
           - "--strict-undefined"
           - "--strict-pending"
           - "--app=/app/build/release/fixture-r21.apk"
