@@ -93,7 +93,7 @@ steps:
         run: android-maze-runner
         command:
           - "features/full_tests"
-          - "-e features/full_tests/flaky.feature"
+          - "--exclude=features/full_tests/flaky.feature"
           - "--app=/app/build/release/fixture-r16.apk"
           - "--farm=bs"
           - "--device=ANDROID_4_4"
@@ -116,7 +116,7 @@ steps:
         run: android-maze-runner
         command:
           - "features/full_tests"
-          - "-e features/full_tests/flaky.feature"
+          - "--exclude=features/full_tests/flaky.feature"
           - "--app=/app/build/release/fixture-r16.apk"
           - "--farm=bs"
           - "--device=ANDROID_5_0"
@@ -138,7 +138,7 @@ steps:
         run: android-maze-runner
         command:
           - "features/full_tests"
-          - "-e features/full_tests/flaky.feature"
+          - "--exclude=features/full_tests/flaky.feature"
           - "--app=/app/build/release/fixture-r16.apk"
           - "--farm=bs"
           - "--device=ANDROID_6_0"
@@ -161,7 +161,7 @@ steps:
         run: android-maze-runner
         command:
           - "features/full_tests"
-          - "-e features/full_tests/flaky.feature"
+          - "--exclude=features/full_tests/flaky.feature"
           - "--app=/app/build/release/fixture-r19.apk"
           - "--farm=bs"
           - "--device=ANDROID_7_1"
@@ -184,7 +184,7 @@ steps:
         run: android-maze-runner
         command:
           - "features/full_tests"
-          - "-e features/full_tests/flaky.feature"
+          - "--exclude=features/full_tests/flaky.feature"
           - "--app=/app/build/release/fixture-r19.apk"
           - "--farm=bs"
           - "--device=ANDROID_8_0"
@@ -206,7 +206,7 @@ steps:
         run: android-maze-runner
         command:
           - "features/full_tests"
-          - "-e features/full_tests/flaky.feature"
+          - "--exclude=features/full_tests/flaky.feature"
           - "--app=/app/build/release/fixture-r19.apk"
           - "--farm=bs"
           - "--device=ANDROID_8_1"
@@ -228,7 +228,7 @@ steps:
         run: android-maze-runner
         command:
           - "features/full_tests"
-          - "-e features/full_tests/flaky.feature"
+          - "--exclude=features/full_tests/flaky.feature"
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_10_0"
@@ -248,7 +248,7 @@ steps:
         run: android-maze-runner
         command:
           - "features/full_tests"
-          - "-e features/full_tests/flaky.feature"
+          - "--exclude=features/full_tests/flaky.feature"
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_11_0"
