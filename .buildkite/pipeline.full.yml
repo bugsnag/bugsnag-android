@@ -259,7 +259,7 @@ steps:
   #
   # Flaky features
   #
-  - label: ':android: Android 4.4 NDK r16 end-to-end tests'
+  - label: ':android: Flaky Android 4.4 NDK r16 end-to-end tests'
     depends_on:
       - "fixture-r16"
       - "android-4-4-smoke"
@@ -278,7 +278,7 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: Android 5 NDK r16 end-to-end tests'
+  - label: ':android: Flaky Android 5 NDK r16 end-to-end tests'
     depends_on:
       - "fixture-r16"
       - "android-5-smoke"
@@ -299,7 +299,7 @@ steps:
     soft_fail:
       - exit_status: "*"
 
-  - label: ':android: Android 6 NDK r16 end-to-end tests'
+  - label: ':android: Flaky Android 6 NDK r16 end-to-end tests'
     depends_on:
       - "fixture-r16"
       - "android-6-smoke"
@@ -318,7 +318,7 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: Android 7 NDK r19 end-to-end tests'
+  - label: ':android: Flaky Android 7 NDK r19 end-to-end tests'
     depends_on:
       - "fixture-r19"
       - "android-7-smoke"
@@ -337,7 +337,7 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: Android 8.0 NDK r19 end-to-end tests'
+  - label: ':android: Flaky Android 8.0 NDK r19 end-to-end tests'
     depends_on:
       - "fixture-r19"
       - "android-8-smoke"
@@ -358,7 +358,7 @@ steps:
     soft_fail:
       - exit_status: "*"
 
-  - label: ':android: Android 8.1 NDK r19 end-to-end tests'
+  - label: ':android: Flaky Android 8.1 NDK r19 end-to-end tests'
     depends_on:
       - "fixture-r19"
       - "android-8-1-smoke"
@@ -379,7 +379,7 @@ steps:
     soft_fail:
       - exit_status: "*"
 
-  - label: ':android: Android 10 NDK r21 end-to-end tests'
+  - label: ':android: Flaky Android 10 NDK r21 end-to-end tests'
     depends_on:
       - "fixture-r21"
       - "android-10-smoke"
@@ -398,7 +398,7 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: Android 11 NDK r21 end-to-end tests'
+  - label: ':android: Flaky Android 11 NDK r21 end-to-end tests'
     depends_on:
       - "fixture-r21"
       - "android-11-smoke"
