@@ -113,7 +113,7 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: Android 9 NDK r21 end-to-end tests'
+  - label: ':android: Android 9 NDK r21 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r21"
       - "android-9-smoke"
@@ -124,7 +124,28 @@ steps:
       docker-compose#v3.7.0:
         run: android-maze-runner
         command:
-          - "features/full_tests"
+          - "features/full_tests/batch_1"
+          - "--app=/app/build/release/fixture-r21.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_9_0"
+          - "--retry=1"
+          - "--strict-undefined"
+          - "--strict-pending"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: Android 9 NDK r21 end-to-end tests - batch 2'
+    depends_on:
+      - "fixture-r21"
+      - "android-9-smoke"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/release/fixture-r21.apk"
+      docker-compose#v3.7.0:
+        run: android-maze-runner
+        command:
+          - "features/full_tests/batch_2"
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_9_0"

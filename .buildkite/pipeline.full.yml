@@ -42,7 +42,7 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_9_0"
           - "--fail-fast"
-          - "features/full_tests/handled_exception.feature"
+          - "features/full_tests/batch_1/handled_exception.feature"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -81,7 +81,7 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: Android 4.4 NDK r16 end-to-end tests'
+  - label: ':android: Android 4.4 NDK r16 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r16"
       - "android-4-4-smoke"
@@ -100,7 +100,7 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: Android 4.4 NDK r16 end-to-end tests'
+  - label: ':android: Android 4.4 NDK r16 end-to-end tests - batch 2'
     depends_on:
       - "fixture-r16"
       - "android-4-4-smoke"
@@ -122,7 +122,7 @@ steps:
     soft_fail:
       - exit_status: "*"
 
-  - label: ':android: Android 5 NDK r16 end-to-end tests'
+  - label: ':android: Android 5 NDK r16 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r16"
       - "android-5-smoke"
@@ -143,7 +143,7 @@ steps:
     soft_fail:
       - exit_status: "*"
 
-  - label: ':android: Android 5 NDK r16 end-to-end tests'
+  - label: ':android: Android 5 NDK r16 end-to-end tests - batch 2'
     depends_on:
       - "fixture-r16"
       - "android-5-smoke"
@@ -164,7 +164,7 @@ steps:
     soft_fail:
       - exit_status: "*"
 
-  - label: ':android: Android 6 NDK r16 end-to-end tests'
+  - label: ':android: Android 6 NDK r16 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r16"
       - "android-6-smoke"
@@ -183,7 +183,7 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: Android 6 NDK r16 end-to-end tests'
+  - label: ':android: Android 6 NDK r16 end-to-end tests - batch 2'
     depends_on:
       - "fixture-r16"
       - "android-6-smoke"
@@ -205,7 +205,7 @@ steps:
     soft_fail:
       - exit_status: "*"
 
-  - label: ':android: Android 7 NDK r19 end-to-end tests'
+  - label: ':android: Android 7 NDK r19 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r19"
       - "android-7-smoke"
@@ -224,7 +224,7 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: Android 7 NDK r19 end-to-end tests'
+  - label: ':android: Android 7 NDK r19 end-to-end tests - batch 2'
     depends_on:
       - "fixture-r19"
       - "android-7-smoke"
@@ -268,7 +268,7 @@ steps:
     soft_fail:
       - exit_status: "*"
 
-  - label: ':android: Android 8.1 NDK r19 end-to-end tests'
+  - label: ':android: Android 8.1 NDK r19 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r19"
       - "android-8-1-smoke"
@@ -287,7 +287,7 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: Android 8.1 NDK r19 end-to-end tests'
+  - label: ':android: Android 8.1 NDK r19 end-to-end tests - batch 2'
     depends_on:
       - "fixture-r19"
       - "android-8-1-smoke"
@@ -306,7 +306,7 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: Android 10 NDK r21 end-to-end tests'
+  - label: ':android: Android 10 NDK r21 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r21"
       - "android-10-smoke"
@@ -325,7 +325,7 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: Android 10 NDK r21 end-to-end tests'
+  - label: ':android: Android 10 NDK r21 end-to-end tests - batch 2'
     depends_on:
       - "fixture-r21"
       - "android-10-smoke"
@@ -344,7 +344,7 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: Android 11 NDK r21 end-to-end tests'
+  - label: ':android: Android 11 NDK r21 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r21"
       - "android-11-smoke"
@@ -363,7 +363,7 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: Android 11 NDK r21 end-to-end tests'
+  - label: ':android: Android 11 NDK r21 end-to-end tests - batch 2'
     depends_on:
       - "fixture-r21"
       - "android-11-smoke"
@@ -388,7 +388,6 @@ steps:
   - label: ':hankey: Flaky Android 4.4 NDK r16 end-to-end tests'
     depends_on:
       - "fixture-r16"
-      - "android-4-4-smoke"
     timeout_in_minutes: 90
     plugins:
       artifacts#v1.2.0:
@@ -409,7 +408,6 @@ steps:
   - label: ':hankey: Flaky Android 5 NDK r16 end-to-end tests'
     depends_on:
       - "fixture-r16"
-      - "android-5-smoke"
     timeout_in_minutes: 90
     plugins:
       artifacts#v1.2.0:
@@ -432,7 +430,6 @@ steps:
   - label: ':hankey: Flaky Android 6 NDK r16 end-to-end tests'
     depends_on:
       - "fixture-r16"
-      - "android-6-smoke"
     timeout_in_minutes: 90
     plugins:
       artifacts#v1.2.0:
@@ -453,7 +450,6 @@ steps:
   - label: ':hankey: Flaky Android 7 NDK r19 end-to-end tests'
     depends_on:
       - "fixture-r19"
-      - "android-7-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -474,7 +470,6 @@ steps:
   - label: ':hankey: Flaky Android 8.0 NDK r19 end-to-end tests'
     depends_on:
       - "fixture-r19"
-      - "android-8-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -497,7 +492,6 @@ steps:
   - label: ':hankey: Flaky Android 8.1 NDK r19 end-to-end tests'
     depends_on:
       - "fixture-r19"
-      - "android-8-1-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -520,7 +514,6 @@ steps:
   - label: ':hankey: Flaky Android 10 NDK r21 end-to-end tests'
     depends_on:
       - "fixture-r21"
-      - "android-10-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -541,7 +534,6 @@ steps:
   - label: ':hankey: Flaky Android 11 NDK r21 end-to-end tests'
     depends_on:
       - "fixture-r21"
-      - "android-11-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
