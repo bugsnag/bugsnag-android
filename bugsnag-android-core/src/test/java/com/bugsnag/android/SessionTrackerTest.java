@@ -55,6 +55,7 @@ public class SessionTrackerTest {
      */
     @Before
     public void setUp() {
+        when(client.getNotifier()).thenReturn(new Notifier());
         when(client.getAppContext()).thenReturn(context);
         when(client.getAppDataCollector()).thenReturn(appDataCollector);
         when(appDataCollector.generateApp()).thenReturn(app);

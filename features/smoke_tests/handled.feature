@@ -13,12 +13,13 @@ Scenario: Notify caught Java exception with default configuration
     And the event "unhandled" is false
     And the event "severity" equals "warning"
     And the event "severityReason.type" equals "handledException"
+    And the event "severityReason.unhandledOverridden" is false
 
     # Stacktrace validation
     And the payload field "events.0.exceptions.0.stacktrace" is a non-empty array
-    And the event "exceptions.0.stacktrace.0.method" ends with "HandledJavaSmokeScenario.run"
+    And the event "exceptions.0.stacktrace.0.method" ends with "HandledJavaSmokeScenario.startScenario"
     And the exception "stacktrace.0.file" equals "HandledJavaSmokeScenario.java"
-    And the event "exceptions.0.stacktrace.0.lineNumber" equals 48
+    And the event "exceptions.0.stacktrace.0.lineNumber" equals 51
     And the event "exceptions.0.stacktrace.0.inProject" is true
 
     # App data
@@ -68,7 +69,7 @@ Scenario: Notify caught Java exception with default configuration
     And the payload field "events.0.user.id" equals the stored value "device_id"
 
     # Breadcrumbs
-    And the event has a "state" breadcrumb named "Bugsnag loaded"
+    And the event has a "state" breadcrumb named "Connectivity changed"
     And the event has a "manual" breadcrumb named "HandledJavaSmokeScenario"
     # [PLAT-5534] A potential source of flakes
     #And the event "breadcrumbs.2.metaData.source" equals "BreadcrumbCallback"
@@ -100,12 +101,13 @@ Scenario: Notify Kotlin exception with overwritten configuration
     And the event "unhandled" is false
     And the event "severity" equals "error"
     And the event "severityReason.type" equals "userCallbackSetSeverity"
+    And the event "severityReason.unhandledOverridden" is false
 
     # Stacktrace validation
     And the payload field "events.0.exceptions.0.stacktrace" is a non-empty array
     And the event "exceptions.0.stacktrace.0.method" ends with "generateException"
     And the exception "stacktrace.0.file" equals "Scenario.kt"
-    And the event "exceptions.0.stacktrace.0.lineNumber" equals 73
+    And the event "exceptions.0.stacktrace.0.lineNumber" equals 93
     And the event "exceptions.0.stacktrace.0.inProject" is true
 
     # Overwritten App data
@@ -153,6 +155,7 @@ Scenario: Handled C functionality
     And the event "unhandled" is false
     And the event "severity" equals "error"
     And the event "severityReason.type" equals "userCallbackSetSeverity"
+    And the event "severityReason.unhandledOverridden" is false
 
     # App data
     And the event "app.buildUUID" is not null

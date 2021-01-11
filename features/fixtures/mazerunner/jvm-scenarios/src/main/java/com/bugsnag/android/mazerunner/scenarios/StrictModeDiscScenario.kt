@@ -8,20 +8,25 @@ import java.io.File
 /**
  * Generates a strictmode exception caused by writing to disc on main thread
  */
-internal class StrictModeDiscScenario(config: Configuration,
-                                      context: Context) : Scenario(config, context) {
+internal class StrictModeDiscScenario(
+    config: Configuration,
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
+
     init {
         config.autoTrackSessions = false
     }
 
-    override fun run() {
-        super.run()
-        StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder()
-            .detectDiskWrites()
-            .penaltyDeath()
-            .build())
+    override fun startScenario() {
+        super.startScenario()
+        StrictMode.setThreadPolicy(
+            StrictMode.ThreadPolicy.Builder()
+                .detectDiskWrites()
+                .penaltyDeath()
+                .build()
+        )
         val file = File(context.cacheDir, "fake")
         file.writeBytes("test".toByteArray())
     }
-
 }

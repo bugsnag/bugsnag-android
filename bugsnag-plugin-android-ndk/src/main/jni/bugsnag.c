@@ -1,11 +1,11 @@
 /** \brief The public API
  */
+#include "../assets/include/bugsnag.h"
 #include "bugsnag_ndk.h"
 #include "event.h"
+#include "metadata.h"
 #include "utils/stack_unwinder.h"
 #include "utils/string.h"
-#include "metadata.h"
-#include "../assets/include/bugsnag.h"
 #include <jni.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -75,7 +75,8 @@ jbyteArray bsg_byte_ary_from_string(JNIEnv *env, char *text) {
 
 void bsg_release_byte_ary(JNIEnv *env, jbyteArray array, char *original_text) {
   if (array != NULL) {
-    (*env)->ReleaseByteArrayElements(env, array, (jbyte *)original_text, JNI_COMMIT);
+    (*env)->ReleaseByteArrayElements(env, array, (jbyte *)original_text,
+                                     JNI_COMMIT);
   }
 }
 
@@ -149,23 +150,22 @@ void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
 }
 
 void bugsnag_set_binary_arch(JNIEnv *env) {
-    jclass interface_class =
-        (*env)->FindClass(env, "com/bugsnag/android/NativeInterface");
-    jmethodID set_arch_method = (*env)->GetStaticMethodID(
-        env, interface_class, "setBinaryArch", "(Ljava/lang/String;)V");
+  jclass interface_class =
+      (*env)->FindClass(env, "com/bugsnag/android/NativeInterface");
+  jmethodID set_arch_method = (*env)->GetStaticMethodID(
+      env, interface_class, "setBinaryArch", "(Ljava/lang/String;)V");
 
-    jstring arch = (*env)->NewStringUTF(env, bsg_binary_arch());
-    (*env)->CallStaticVoidMethod(env, interface_class, set_arch_method, arch);
-    (*env)->DeleteLocalRef(env, arch);
-    (*env)->DeleteLocalRef(env, interface_class);
+  jstring arch = (*env)->NewStringUTF(env, bsg_binary_arch());
+  (*env)->CallStaticVoidMethod(env, interface_class, set_arch_method, arch);
+  (*env)->DeleteLocalRef(env, arch);
+  (*env)->DeleteLocalRef(env, interface_class);
 }
 
 void bugsnag_set_user_env(JNIEnv *env, char *id, char *email, char *name) {
   jclass interface_class =
       (*env)->FindClass(env, "com/bugsnag/android/NativeInterface");
-  jmethodID set_user_method = (*env)->GetStaticMethodID(
-      env, interface_class, "setUser",
-      "([B[B[B)V");
+  jmethodID set_user_method =
+      (*env)->GetStaticMethodID(env, interface_class, "setUser", "([B[B[B)V");
 
   jbyteArray jid = bsg_byte_ary_from_string(env, id);
   jbyteArray jemail = bsg_byte_ary_from_string(env, email);
@@ -210,14 +210,14 @@ void bugsnag_leave_breadcrumb_env(JNIEnv *env, char *message,
                                   bugsnag_breadcrumb_type type) {
   jclass interface_class =
       (*env)->FindClass(env, "com/bugsnag/android/NativeInterface");
-  jmethodID leave_breadcrumb_method = (*env)->GetStaticMethodID(
-      env, interface_class, "leaveBreadcrumb",
-      "([BLcom/bugsnag/android/BreadcrumbType;)V");
+  jmethodID leave_breadcrumb_method =
+      (*env)->GetStaticMethodID(env, interface_class, "leaveBreadcrumb",
+                                "([BLcom/bugsnag/android/BreadcrumbType;)V");
   jclass type_class =
       (*env)->FindClass(env, "com/bugsnag/android/BreadcrumbType");
 
   jobject jtype = (*env)->GetStaticObjectField(
-          env, type_class, bsg_parse_jcrumb_type(env, type, type_class));
+      env, type_class, bsg_parse_jcrumb_type(env, type, type_class));
   jbyteArray jmessage = bsg_byte_ary_from_string(env, message);
   (*env)->CallStaticVoidMethod(env, interface_class, leave_breadcrumb_method,
                                jmessage, jtype);

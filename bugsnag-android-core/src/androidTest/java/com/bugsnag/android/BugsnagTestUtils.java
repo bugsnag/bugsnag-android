@@ -1,7 +1,5 @@
 package com.bugsnag.android;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
 
@@ -10,11 +8,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 
 final class BugsnagTestUtils {
 
@@ -35,10 +33,6 @@ final class BugsnagTestUtils {
         return writer.toString();
     }
 
-    static JSONObject mapToJson(Map<String, Object> map) {
-        return new JSONObject(map);
-    }
-
     static JSONObject streamableToJson(JsonStream.Streamable streamable)
         throws JSONException, IOException {
         return new JSONObject(streamableToString(streamable));
@@ -47,10 +41,6 @@ final class BugsnagTestUtils {
     static JSONArray streamableToJsonArray(JsonStream.Streamable streamable)
         throws JSONException, IOException {
         return new JSONArray(streamableToString(streamable));
-    }
-
-    static SharedPreferences getSharedPrefs(Context context) {
-        return context.getSharedPreferences("com.bugsnag.android", Context.MODE_PRIVATE);
     }
 
     static Client generateClient(Configuration config) {
@@ -78,19 +68,13 @@ final class BugsnagTestUtils {
         return convert(generateConfiguration());
     }
 
-
     static ImmutableConfig convert(Configuration config) {
+        try {
+            config.setPersistenceDirectory(File.createTempFile("tmp", null));
+        } catch (IOException ignored) {
+            // swallow
+        }
         return ImmutableConfigKt.convertToImmutableConfig(config, null);
-    }
-
-    static SessionTracker generateSessionTracker() {
-        Configuration config = generateConfiguration();
-        return new SessionTracker(convert(config), config.impl.callbackState,
-                BugsnagTestUtils.generateClient(), generateSessionStore(), NoopLogger.INSTANCE);
-    }
-
-    static Connectivity generateConnectivity() {
-        return new ConnectivityCompat(ApplicationProvider.getApplicationContext(), null);
     }
 
     static Device generateDevice() {
@@ -104,12 +88,6 @@ final class BugsnagTestUtils {
         return new DeviceWithState(buildInfo, null, null, null,
                 109230923452L, runtimeVersions, 22234423124L, 92340255592L,
                 "portrait", new Date(0));
-    }
-
-    @NonNull
-    static SessionStore generateSessionStore() {
-        Context applicationContext = ApplicationProvider.getApplicationContext();
-        return new SessionStore(applicationContext, NoopLogger.INSTANCE, null);
     }
 
     public static Delivery generateDelivery() {

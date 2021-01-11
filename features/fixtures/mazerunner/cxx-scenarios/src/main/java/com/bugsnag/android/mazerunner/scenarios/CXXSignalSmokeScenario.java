@@ -1,11 +1,5 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
-import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
-
-import androidx.annotation.NonNull;
-
 import com.bugsnag.android.Breadcrumb;
 import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.Configuration;
@@ -13,6 +7,13 @@ import com.bugsnag.android.Event;
 import com.bugsnag.android.OnBreadcrumbCallback;
 import com.bugsnag.android.OnErrorCallback;
 import com.bugsnag.android.Severity;
+
+import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -26,8 +27,13 @@ public class CXXSignalSmokeScenario extends Scenario {
 
     public native int crash(int value);
 
-    public CXXSignalSmokeScenario(@NonNull Configuration config, @NonNull Context context) {
-        super(config, context);
+    /**
+     *
+     */
+    public CXXSignalSmokeScenario(@NonNull Configuration config,
+                                  @NonNull Context context,
+                                  @Nullable String eventMetadata) {
+        super(config, context, eventMetadata);
         config.setAutoTrackSessions(false);
         config.setAppType("Overwritten");
         config.setAppVersion("9.9.9");
@@ -61,11 +67,13 @@ public class CXXSignalSmokeScenario extends Scenario {
                 return true;
             }
         });
+        disableSessionDelivery(config);
     }
 
     @Override
-    public void run() {
-        super.run();
+    public void startScenario() {
+        super.startScenario();
+        Bugsnag.startSession();
         Bugsnag.leaveBreadcrumb("CXXSignalSmokeScenario");
         Handler main = new Handler(Looper.getMainLooper());
         main.postDelayed(new Runnable() {

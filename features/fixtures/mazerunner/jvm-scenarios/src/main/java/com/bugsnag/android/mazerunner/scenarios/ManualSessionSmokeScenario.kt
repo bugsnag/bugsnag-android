@@ -1,15 +1,19 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
-import com.bugsnag.android.*
-import com.bugsnag.android.JavaHooks.generateDelivery
-import com.bugsnag.android.InterceptingDelivery
+import com.bugsnag.android.Bugsnag
+import com.bugsnag.android.Configuration
+import com.bugsnag.android.createDefaultDelivery
+import com.bugsnag.android.mazerunner.InterceptingDelivery
 
 /**
  * Sends an exception after pausing the session
  */
-internal class ManualSessionSmokeScenario(config: Configuration,
-                                          context: Context) : Scenario(config, context) {
+internal class ManualSessionSmokeScenario(
+    config: Configuration,
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
 
     init {
         config.autoTrackSessions = false
@@ -29,11 +33,10 @@ internal class ManualSessionSmokeScenario(config: Configuration,
             }
             state++
         }
-
     }
 
-    override fun run() {
-        super.run()
+    override fun startScenario() {
+        super.startScenario()
         Bugsnag.setUser("123", "ABC.CBA.CA", "ManualSessionSmokeScenario")
         Bugsnag.startSession()
     }

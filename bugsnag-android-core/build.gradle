@@ -9,6 +9,18 @@ apply plugin: "io.gitlab.arturbosch.detekt"
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig.minSdkVersion rootProject.ext.minSdkVersion
+    ndkVersion rootProject.ext.ndkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+    kotlinOptions {
+        jvmTarget = "1.6"
+    }
+    packagingOptions {
+        pickFirst "**/*.so"
+    }
 }
 
 apply from: "../gradle/dependencies.gradle"

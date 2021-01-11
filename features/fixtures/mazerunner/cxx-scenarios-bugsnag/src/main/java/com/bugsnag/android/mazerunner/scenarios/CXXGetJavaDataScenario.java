@@ -5,6 +5,7 @@ import com.bugsnag.android.Configuration;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class CXXGetJavaDataScenario extends Scenario {
 
@@ -18,8 +19,10 @@ public class CXXGetJavaDataScenario extends Scenario {
     /**
      *
      */
-    public CXXGetJavaDataScenario(@NonNull Configuration config, @NonNull Context context) {
-        super(config, context);
+    public CXXGetJavaDataScenario(@NonNull Configuration config,
+                                  @NonNull Context context,
+                                  @Nullable String eventMetadata) {
+        super(config, context, eventMetadata);
         config.setAutoTrackSessions(false);
         config.addMetadata("notData", "vals", "passMetaData");
         config.setAppVersion("passAppVersion");
@@ -28,8 +31,8 @@ public class CXXGetJavaDataScenario extends Scenario {
     }
 
     @Override
-    public void run() {
-        super.run();
+    public void startScenario() {
+        super.startScenario();
         activate();
     }
 }

@@ -9,22 +9,27 @@ import java.net.URL
 /**
  * Generates a strictmode exception caused by performing a network request on the main thread
  */
-internal class StrictModeNetworkScenario(config: Configuration,
-                                         context: Context) : Scenario(config, context) {
+internal class StrictModeNetworkScenario(
+    config: Configuration,
+    context: Context,
+    eventMetadata: String
+) : Scenario(config, context, eventMetadata) {
+
     init {
         config.autoTrackSessions = false
     }
 
-    override fun run() {
-        super.run()
-        StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder()
-            .detectNetwork()
-            .penaltyDeath()
-            .build())
+    override fun startScenario() {
+        super.startScenario()
+        StrictMode.setThreadPolicy(
+            StrictMode.ThreadPolicy.Builder()
+                .detectNetwork()
+                .penaltyDeath()
+                .build()
+        )
 
         val urlConnection = URL("http://example.com").openConnection() as HttpURLConnection
         urlConnection.doOutput = true
         urlConnection.responseMessage
     }
-
 }

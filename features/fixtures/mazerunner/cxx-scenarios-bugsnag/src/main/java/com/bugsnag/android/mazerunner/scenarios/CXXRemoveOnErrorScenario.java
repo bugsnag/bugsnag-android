@@ -5,6 +5,7 @@ import com.bugsnag.android.Configuration;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class CXXRemoveOnErrorScenario extends Scenario {
 
@@ -18,15 +19,17 @@ public class CXXRemoveOnErrorScenario extends Scenario {
     /**
      * 
      */
-    public CXXRemoveOnErrorScenario(@NonNull Configuration config, @NonNull Context context) {
-        super(config, context);
+    public CXXRemoveOnErrorScenario(@NonNull Configuration config,
+                                    @NonNull Context context,
+                                    @Nullable String eventMetadata) {
+        super(config, context, eventMetadata);
         config.setAutoTrackSessions(false);
         config.setContext("CXXRemoveOnErrorScenario");
     }
 
     @Override
-    public void run() {
-        super.run();
+    public void startScenario() {
+        super.startScenario();
         activate();
     }
 }

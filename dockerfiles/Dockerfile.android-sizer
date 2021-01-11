@@ -1,23 +1,14 @@
 ARG BRANCH_NAME
 FROM 855461928731.dkr.ecr.us-west-1.amazonaws.com/android:ci-${BRANCH_NAME} as android
 
-# Build and upload to the local maven as version 9.9.9
-RUN sed -i -e 's/VERSION_NAME=.*/VERSION_NAME=9.9.9/g' gradle.properties
-
-RUN ./gradlew assembleRelease publishToMavenLocal -PABI_FILTERS=arm64-v8a,armeabi,armeabi-v7a,x86,x86_64
-
-COPY features features
-
 # Download the bundle tool
 RUN apt-get install -y ruby-full
 
+COPY features features
 WORKDIR /app/features/fixtures/minimalapp
-RUN curl -LJO https://github.com/google/bundletool/releases/download/1.0.0/bundletool-all-1.0.0.jar
-RUN mv bundletool-all-1.0.0.jar bundletool.jar
 
 RUN gem install bundler
 RUN bundle install
 
 COPY .git .git
-
 CMD bundle exec danger

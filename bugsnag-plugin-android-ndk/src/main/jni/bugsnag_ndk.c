@@ -6,10 +6,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "handlers/signal_handler.h"
-#include "handlers/cpp_handler.h"
-#include "metadata.h"
 #include "event.h"
+#include "handlers/cpp_handler.h"
+#include "handlers/signal_handler.h"
+#include "metadata.h"
 #include "utils/serializer.h"
 #include "utils/string.h"
 
@@ -57,15 +57,16 @@ void bugsnag_remove_on_error() {
 bool bsg_run_on_error() {
   bsg_on_error on_error = bsg_global_env->on_error;
   if (on_error != NULL) {
-      return on_error(&bsg_global_env->next_event);
+    return on_error(&bsg_global_env->next_event);
   }
   return true;
 }
 
 JNIEXPORT void JNICALL Java_com_bugsnag_android_NdkPlugin_enableCrashReporting(
-        JNIEnv *env, jobject _this) {
+    JNIEnv *env, jobject _this) {
   if (bsg_global_env == NULL) {
-    BUGSNAG_LOG("Attempted to enable crash reporting without first calling install()");
+    BUGSNAG_LOG(
+        "Attempted to enable crash reporting without first calling install()");
     return;
   }
   bsg_handler_install_signal(bsg_global_env);
@@ -73,23 +74,26 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_NdkPlugin_enableCrashReporting(
 }
 
 JNIEXPORT void JNICALL Java_com_bugsnag_android_NdkPlugin_disableCrashReporting(
-        JNIEnv *env, jobject _this) {
+    JNIEnv *env, jobject _this) {
   bsg_handler_uninstall_signal();
   bsg_handler_uninstall_cpp();
 }
 
-JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_enableCrashReporting(
-    JNIEnv *env, jobject _this) {
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_ndk_NativeBridge_enableCrashReporting(JNIEnv *env,
+                                                               jobject _this) {
   if (bsg_global_env == NULL) {
-    BUGSNAG_LOG("Attempted to enable crash reporting without first calling install()");
+    BUGSNAG_LOG(
+        "Attempted to enable crash reporting without first calling install()");
     return;
   }
   bsg_handler_install_signal(bsg_global_env);
   bsg_handler_install_cpp(bsg_global_env);
 }
 
-JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_disableCrashReporting(
-    JNIEnv *env, jobject _this) {
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_ndk_NativeBridge_disableCrashReporting(JNIEnv *env,
+                                                                jobject _this) {
   bsg_handler_uninstall_signal();
   bsg_handler_uninstall_cpp();
 }
@@ -128,7 +132,8 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   }
 
   const char *api_key = (*env)->GetStringUTFChars(env, _api_key, 0);
-  bsg_strncpy_safe(bugsnag_env->next_event.api_key, (char *) api_key, sizeof(bugsnag_env->next_event.api_key));
+  bsg_strncpy_safe(bugsnag_env->next_event.api_key, (char *)api_key,
+                   sizeof(bugsnag_env->next_event.api_key));
   (*env)->ReleaseStringUTFChars(env, _api_key, api_key);
 
   bsg_global_env = bugsnag_env;
@@ -141,31 +146,33 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
   static pthread_mutex_t bsg_native_delivery_mutex = PTHREAD_MUTEX_INITIALIZER;
   pthread_mutex_lock(&bsg_native_delivery_mutex);
   const char *event_path = (*env)->GetStringUTFChars(env, _report_path, 0);
-  bugsnag_event *event =
-          bsg_deserialize_event_from_file((char *) event_path);
+  bugsnag_event *event = bsg_deserialize_event_from_file((char *)event_path);
 
   if (event != NULL) {
     char *payload = bsg_serialize_event_to_json_string(event);
     if (payload != NULL) {
       jclass interface_class =
           (*env)->FindClass(env, "com/bugsnag/android/NativeInterface");
-      jmethodID jdeliver_method =
-          (*env)->GetStaticMethodID(env, interface_class, "deliverReport",
-                                    "([B[BLjava/lang/String;)V");
+      jmethodID jdeliver_method = (*env)->GetStaticMethodID(
+          env, interface_class, "deliverReport", "([B[BLjava/lang/String;)V");
       size_t payload_length = bsg_strlen(payload);
       jbyteArray jpayload = (*env)->NewByteArray(env, payload_length);
-      (*env)->SetByteArrayRegion(env, jpayload, 0, payload_length, (jbyte *)payload);
+      (*env)->SetByteArrayRegion(env, jpayload, 0, payload_length,
+                                 (jbyte *)payload);
 
       size_t stage_length = bsg_strlen(event->app.release_stage);
       jbyteArray jstage = (*env)->NewByteArray(env, stage_length);
-      (*env)->SetByteArrayRegion(env, jstage, 0, stage_length, (jbyte *)event->app.release_stage);
+      (*env)->SetByteArrayRegion(env, jstage, 0, stage_length,
+                                 (jbyte *)event->app.release_stage);
 
       jstring japi_key = (*env)->NewStringUTF(env, event->api_key);
       (*env)->CallStaticVoidMethod(env, interface_class, jdeliver_method,
                                    jstage, jpayload, japi_key);
       (*env)->DeleteLocalRef(env, japi_key);
-      (*env)->ReleaseByteArrayElements(env, jpayload, (jbyte *)payload, 0); // <-- frees payload
-      (*env)->ReleaseByteArrayElements(env, jstage, (jbyte *)event->app.release_stage, JNI_COMMIT);
+      (*env)->ReleaseByteArrayElements(env, jpayload, (jbyte *)payload,
+                                       0); // <-- frees payload
+      (*env)->ReleaseByteArrayElements(
+          env, jstage, (jbyte *)event->app.release_stage, JNI_COMMIT);
       (*env)->DeleteLocalRef(env, jpayload);
       (*env)->DeleteLocalRef(env, jstage);
     } else {
@@ -197,15 +204,15 @@ Java_com_bugsnag_android_ndk_NativeBridge_addHandledEvent(JNIEnv *env,
 JNIEXPORT void JNICALL
 Java_com_bugsnag_android_ndk_NativeBridge_addUnhandledEvent(JNIEnv *env,
                                                             jobject _this) {
-    if (bsg_global_env == NULL)
-        return;
-    bsg_request_env_write_lock();
-    bugsnag_event *event = &bsg_global_env->next_event;
+  if (bsg_global_env == NULL)
+    return;
+  bsg_request_env_write_lock();
+  bugsnag_event *event = &bsg_global_env->next_event;
 
-    if (bugsnag_event_has_session(event)) {
-        event->unhandled_events++;
-    }
-    bsg_release_env_write_lock();
+  if (bugsnag_event_has_session(event)) {
+    event->unhandled_events++;
+  }
+  bsg_release_env_write_lock();
 }
 
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_startedSession(
@@ -226,16 +233,16 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_startedSession(
 
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_pausedSession(
     JNIEnv *env, jobject _this) {
-    if (bsg_global_env == NULL) {
-        return;
-    }
-    bsg_request_env_write_lock();
-    bugsnag_event *event = &bsg_global_env->next_event;
-    memset(event->session_id, 0, strlen(event->session_id));
-    memset(event->session_start, 0, strlen(event->session_start));
-    event->handled_events = 0;
-    event->unhandled_events = 0;
-    bsg_release_env_write_lock();
+  if (bsg_global_env == NULL) {
+    return;
+  }
+  bsg_request_env_write_lock();
+  bugsnag_event *event = &bsg_global_env->next_event;
+  memset(event->session_id, 0, strlen(event->session_id));
+  memset(event->session_start, 0, strlen(event->session_start));
+  event->handled_events = 0;
+  event->unhandled_events = 0;
+  bsg_release_env_write_lock();
 }
 
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_addBreadcrumb(
@@ -357,7 +364,8 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateLowMemory(JNIEnv *env,
   if (bsg_global_env == NULL)
     return;
   bsg_request_env_write_lock();
-  bugsnag_event_add_metadata_bool(&bsg_global_env->next_event, "app", "lowMemory", (bool)new_value);
+  bugsnag_event_add_metadata_bool(&bsg_global_env->next_event, "app",
+                                  "lowMemory", (bool)new_value);
   bsg_release_env_write_lock();
 }
 
@@ -404,7 +412,8 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateUserId(
                     : (char *)(*env)->GetStringUTFChars(env, new_value, 0);
   bsg_request_env_write_lock();
   bugsnag_event event = bsg_global_env->next_event;
-  bugsnag_event_set_user(&bsg_global_env->next_event, value, event.user.email, event.user.name);
+  bugsnag_event_set_user(&bsg_global_env->next_event, value, event.user.email,
+                         event.user.name);
   bsg_release_env_write_lock();
   if (new_value != NULL) {
     (*env)->ReleaseStringUTFChars(env, new_value, value);
@@ -420,7 +429,8 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateUserName(
                     : (char *)(*env)->GetStringUTFChars(env, new_value, 0);
   bsg_request_env_write_lock();
   bugsnag_event event = bsg_global_env->next_event;
-  bugsnag_event_set_user(&bsg_global_env->next_event, event.user.id, event.user.email, value);
+  bugsnag_event_set_user(&bsg_global_env->next_event, event.user.id,
+                         event.user.email, value);
   bsg_release_env_write_lock();
   if (new_value != NULL) {
     (*env)->ReleaseStringUTFChars(env, new_value, value);
@@ -438,7 +448,8 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateUserEmail(JNIEnv *env,
                     : (char *)(*env)->GetStringUTFChars(env, new_value, 0);
   bsg_request_env_write_lock();
   bugsnag_event event = bsg_global_env->next_event;
-  bugsnag_event_set_user(&bsg_global_env->next_event, event.user.id, value, event.user.name);
+  bugsnag_event_set_user(&bsg_global_env->next_event, event.user.id, value,
+                         event.user.name);
   bsg_release_env_write_lock();
   if (new_value != NULL) {
     (*env)->ReleaseStringUTFChars(env, new_value, value);
@@ -471,7 +482,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_addMetadataDouble(
   char *key = (char *)(*env)->GetStringUTFChars(env, key_, 0);
   bsg_request_env_write_lock();
   bugsnag_event_add_metadata_double(&bsg_global_env->next_event, tab, key,
-                                    (double) value_);
+                                    (double)value_);
   bsg_release_env_write_lock();
   (*env)->ReleaseStringUTFChars(env, tab_, tab);
   (*env)->ReleaseStringUTFChars(env, key_, key);
@@ -486,7 +497,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_addMetadataBoolean(
   char *key = (char *)(*env)->GetStringUTFChars(env, key_, 0);
   bsg_request_env_write_lock();
   bugsnag_event_add_metadata_bool(&bsg_global_env->next_event, tab, key,
-                                  (bool) value_);
+                                  (bool)value_);
   bsg_release_env_write_lock();
   (*env)->ReleaseStringUTFChars(env, tab_, tab);
   (*env)->ReleaseStringUTFChars(env, key_, key);
@@ -529,17 +540,22 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateMetadata(
   bsg_release_env_write_lock();
 }
 
-JNIEXPORT jobject JNICALL Java_com_bugsnag_android_ndk_NativeBridge_getSignalStackTrace(
-        JNIEnv *env, jobject _this, jlong info, jlong userContext) {
+JNIEXPORT jobject JNICALL
+Java_com_bugsnag_android_ndk_NativeBridge_getSignalStackTrace(
+    JNIEnv *env, jobject _this, jlong info, jlong userContext) {
   siginfo_t *p_info = (siginfo_t *)info;
   void *p_user_context = (void *)userContext;
 
   jclass list_class = (*env)->FindClass(env, "java/util/LinkedList");
   jmethodID list_init = (*env)->GetMethodID(env, list_class, "<init>", "()V");
-  jmethodID list_add  = (*env)->GetMethodID(env, list_class, "add", "(Ljava/lang/Object;)Z");
-  jclass frame_class = (*env)->FindClass(env, "com/bugsnag/android/NativeStackframe");
-  jmethodID frame_init = (*env)->GetMethodID(env, frame_class, "<init>",
-                                             "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Number;Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Long;)V");
+  jmethodID list_add =
+      (*env)->GetMethodID(env, list_class, "add", "(Ljava/lang/Object;)Z");
+  jclass frame_class =
+      (*env)->FindClass(env, "com/bugsnag/android/NativeStackframe");
+  jmethodID frame_init = (*env)->GetMethodID(
+      env, frame_class, "<init>",
+      "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Number;Ljava/lang/"
+      "Long;Ljava/lang/Long;Ljava/lang/Long;)V");
   jclass int_class = (*env)->FindClass(env, "java/lang/Integer");
   jmethodID int_init = (*env)->GetMethodID(env, int_class, "<init>", "(I)V");
   jclass long_class = (*env)->FindClass(env, "java/lang/Long");
@@ -548,30 +564,31 @@ JNIEXPORT jobject JNICALL Java_com_bugsnag_android_ndk_NativeBridge_getSignalSta
   jobject jlist = (*env)->NewObject(env, list_class, list_init);
 
   if (bsg_global_env == NULL) {
-    BUGSNAG_LOG("Attempted to fetch stack trace without first calling install()");
+    BUGSNAG_LOG(
+        "Attempted to fetch stack trace without first calling install()");
     return jlist;
   }
 
   bsg_global_env->next_event.error.frame_count = bsg_unwind_stack(
-          bsg_global_env->signal_unwind_style,
-          bsg_global_env->next_event.error.stacktrace, p_info, p_user_context);
+      bsg_global_env->signal_unwind_style,
+      bsg_global_env->next_event.error.stacktrace, p_info, p_user_context);
   const ssize_t frame_count = bsg_global_env->next_event.error.frame_count;
   bugsnag_stackframe *frames = bsg_global_env->next_event.error.stacktrace;
-  for(int i = 0; i < frame_count; i++) {
+  for (int i = 0; i < frame_count; i++) {
     bugsnag_stackframe *frame = frames + i;
-    jobject jmethod = (*env)->NewStringUTF(env,frame->method);
-    jobject jfilename = (*env)->NewStringUTF(env,frame->filename);
-    jobject jline_number = (*env)->NewObject(env, int_class, int_init, (jint)frame->line_number);
-    jobject jframe_address = (*env)->NewObject(env, long_class, long_init, (jlong)frame->frame_address);
-    jobject jsymbol_address = (*env)->NewObject(env, long_class, long_init, (jlong)frame->symbol_address);
-    jobject jload_address = (*env)->NewObject(env, long_class, long_init, (jlong)frame->load_address);
-    jobject jframe = (*env)->NewObject(env, frame_class, frame_init,
-                                       jmethod,
-                                       jfilename,
-                                       jline_number,
-                                       jframe_address,
-                                       jsymbol_address,
-                                       jload_address);
+    jobject jmethod = (*env)->NewStringUTF(env, frame->method);
+    jobject jfilename = (*env)->NewStringUTF(env, frame->filename);
+    jobject jline_number =
+        (*env)->NewObject(env, int_class, int_init, (jint)frame->line_number);
+    jobject jframe_address = (*env)->NewObject(env, long_class, long_init,
+                                               (jlong)frame->frame_address);
+    jobject jsymbol_address = (*env)->NewObject(env, long_class, long_init,
+                                                (jlong)frame->symbol_address);
+    jobject jload_address = (*env)->NewObject(env, long_class, long_init,
+                                              (jlong)frame->load_address);
+    jobject jframe = (*env)->NewObject(env, frame_class, frame_init, jmethod,
+                                       jfilename, jline_number, jframe_address,
+                                       jsymbol_address, jload_address);
     (*env)->CallBooleanMethod(env, jlist, list_add, jframe);
     (*env)->DeleteLocalRef(env, jmethod);
     (*env)->DeleteLocalRef(env, jfilename);

@@ -3,50 +3,52 @@ package com.bugsnag.android.mazerunner
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
-import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
-import com.bugsnag.android.EndpointConfiguration
-import com.bugsnag.android.Logger
-import com.bugsnag.android.TestCaseFactory
 import com.bugsnag.android.mazerunner.scenarios.Scenario
 
 class MainActivity : Activity() {
 
     private val apiKeyKey = "BUGSNAG_API_KEY"
+    lateinit var prefs: SharedPreferences
 
-    private val factory = TestCaseFactory()
+    var scenario: Scenario? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         log("Launched mazerunner fixture MainActivity")
+        prefs = getPreferences(Context.MODE_PRIVATE)
 
         // Attempt to dismiss any system dialogs (such as "MazeRunner crashed")
         val closeDialog = Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
         sendBroadcast(closeDialog)
 
-        val bugsnagStarter = findViewById<Button>(R.id.startBugsnagButton)
-
-        bugsnagStarter.setOnClickListener {
-            val scenarioPicker = findViewById<EditText>(R.id.scenarioText)
-            val scenario = scenarioPicker.text.toString()
-            val scenarioMetaData = findViewById<EditText>(R.id.scenarioMetaData)
-            val metaData = scenarioMetaData.text.toString()
-            startBugsnag(scenario, metaData)
+        // load the scenario first, which initialises bugsnag without running any crashy code
+        findViewById<Button>(R.id.startBugsnagButton).setOnClickListener {
+            scenario = loadScenarioFromUi()
         }
 
-        val scenarioStarter = findViewById<Button>(R.id.startScenarioButton)
+        // execute the pre-loaded scenario, or load it then execute it if needed
+        findViewById<Button>(R.id.startScenarioButton).setOnClickListener {
+            if (scenario == null) {
+                scenario = loadScenarioFromUi()
+            }
 
-        scenarioStarter.setOnClickListener {
-            val scenarioPicker = findViewById<EditText>(R.id.scenarioText)
-            val scenario = scenarioPicker.text.toString()
-            val scenarioMetaData = findViewById<EditText>(R.id.scenarioMetaData)
-            val metaData = scenarioMetaData.text.toString()
-            executeScenario(scenario, metaData)
+            /**
+             * Enqueues the test case with a delay on the main thread. This avoids the Activity wrapping
+             * unhandled Exceptions
+             */
+            window.decorView.postDelayed(
+                {
+                    log("Executing scenario")
+                    scenario!!.startScenario()
+                },
+                1
+            )
         }
 
         val clearUserData = findViewById<Button>(R.id.clearUserData)
@@ -66,125 +68,53 @@ class MainActivity : Activity() {
         }
     }
 
-    private fun apiKeyStored(): Boolean {
-        val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return false
-        return sharedPref.contains(apiKeyKey)
+    private fun loadScenarioFromUi(): Scenario {
+        val scenarioPicker = findViewById<EditText>(R.id.scenarioText)
+        val eventType = scenarioPicker.text.toString()
+        val eventMetadata = findViewById<EditText>(R.id.scenarioMetaData)
+        val metadata = eventMetadata.text.toString()
+
+        val config = loadConfigFromUi()
+        return Scenario.load(this, config, eventType, metadata).apply {
+            startBugsnag()
+        }
     }
 
+    private fun loadConfigFromUi(): Configuration {
+        val apiKeyField = findViewById<EditText>(R.id.manualApiKey)
+        val notifyEndpointField = findViewById<EditText>(R.id.notifyEndpoint)
+        val sessionEndpointField = findViewById<EditText>(R.id.sessionEndpoint)
+
+        val manualMode = apiKeyField.text.isNotEmpty()
+        val apiKey = when {
+            manualMode -> apiKeyField.text.toString()
+            else -> "a35a2a72bd230ac0aa0f52715bbdc6aa"
+        }
+
+        if (manualMode) {
+            log("Running in manual mode with API key: $apiKey")
+            setStoredApiKey(apiKey)
+        }
+        val notify = notifyEndpointField.text.toString()
+        val sessions = sessionEndpointField.text.toString()
+        return prepareConfig(apiKey, notify, sessions)
+    }
+
+    private fun apiKeyStored() = prefs.contains(apiKeyKey)
+
     private fun setStoredApiKey(apiKey: String) {
-        val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
-        with (sharedPref.edit()) {
+        with(prefs.edit()) {
             putString(apiKeyKey, apiKey)
             commit()
         }
     }
 
     private fun clearStoredApiKey() {
-        val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
-        with (sharedPref.edit()) {
+        with(prefs.edit()) {
             remove(apiKeyKey)
             commit()
         }
     }
 
-    private fun getStoredApiKey(): String? {
-        val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return ""
-        return sharedPref.getString(apiKeyKey, "")
-    }
-
-    private fun startBugsnag(eventType: String, metaData: String) {
-        val config = prepareConfig()
-        loadScenario(config, eventType, metaData)
-
-        Bugsnag.start(this, config)
-    }
-
-    private fun executeScenario(eventType: String, metaData: String) {
-        val config = prepareConfig()
-        val testCase = loadScenario(config, eventType, metaData)
-
-        if (metaData != "skipBugsnag") {
-            Bugsnag.start(this, config)
-        }
-
-        /**
-         * Enqueues the test case with a delay on the main thread. This avoids the Activity wrapping
-         * unhandled Exceptions
-         */
-        window.decorView.postDelayed({
-            log("Executing scenario $eventType")
-            testCase.run()
-        }, 1)
-    }
-
-    private fun loadScenario(configuration: Configuration, eventType: String, eventMetaData: String): Scenario {
-        log("Loading scenario $eventType with metadata $eventMetaData")
-        this.intent.putExtra("EVENT_METADATA", eventMetaData)
-        val testCase = factory.testCaseForName(eventType, configuration, this)
-        testCase.eventMetaData = eventMetaData
-        return testCase
-    }
-
-    private fun prepareConfig(): Configuration {
-        val apiKeyField = findViewById<EditText>(R.id.manualApiKey)
-        val notifyEndpointField = findViewById<EditText>(R.id.notifyEndpoint)
-        val sessionEndpointField = findViewById<EditText>(R.id.sessionEndpoint)
-        val config: Configuration
-        if (apiKeyField.text.isNotEmpty()) {
-            val manualApiKey = apiKeyField.text.toString()
-            log("Running in manual mode with API key: $manualApiKey")
-            config = Configuration(manualApiKey)
-            setStoredApiKey(manualApiKey)
-        } else {
-            config = Configuration("a35a2a72bd230ac0aa0f52715bbdc6aa")
-            config.endpoints = EndpointConfiguration(notifyEndpointField.text.toString(),
-                                                     sessionEndpointField.text.toString())
-        }
-        config.enabledErrorTypes.ndkCrashes = true
-        config.enabledErrorTypes.anrs = true
-        config.logger = getBugsnagLogger()
-        return config
-    }
-
-    private fun getBugsnagLogger(): Logger {
-        return object: Logger {
-            private val TAG = "Bugsnag"
-
-            override fun e(msg: String) {
-                Log.e(TAG, msg)
-            }
-
-            override fun e(msg: String, throwable: Throwable) {
-                Log.e(TAG, msg, throwable)
-            }
-
-            override fun w(msg: String) {
-                Log.w(TAG, msg)
-            }
-
-            override fun w(msg: String, throwable: Throwable) {
-                Log.w(TAG, msg, throwable)
-            }
-
-            override fun i(msg: String) {
-                Log.i(TAG, msg)
-            }
-
-            override fun i(msg: String, throwable: Throwable) {
-                Log.i(TAG, msg, throwable)
-            }
-
-            override fun d(msg: String) {
-                Log.d(TAG, msg)
-            }
-
-            override fun d(msg: String, throwable: Throwable) {
-                Log.d(TAG, msg, throwable)
-            }
-        }
-    }
-}
-
-internal fun log(msg: String) {
-    Log.d("BugsnagMazeRunner", msg)
+    private fun getStoredApiKey() = prefs.getString(apiKeyKey, "")
 }

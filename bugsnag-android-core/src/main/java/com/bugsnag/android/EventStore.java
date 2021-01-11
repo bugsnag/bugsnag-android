@@ -1,7 +1,5 @@
 package com.bugsnag.android;
 
-import android.content.Context;
-
 import androidx.annotation.NonNull;
 
 import java.io.File;
@@ -23,7 +21,6 @@ class EventStore extends FileStore {
 
     private static final long LAUNCH_CRASH_TIMEOUT_MS = 2000;
     private static final int LAUNCH_CRASH_POLL_MS = 50;
-    private static final int MAX_EVENT_COUNT = 32;
 
     volatile boolean flushOnLaunchCompleted = false;
     private final Semaphore semaphore = new Semaphore(1);
@@ -49,9 +46,14 @@ class EventStore extends FileStore {
     };
 
     EventStore(@NonNull ImmutableConfig config,
-               @NonNull Context appContext, @NonNull Logger logger,
-               Notifier notifier, Delegate delegate) {
-        super(appContext, "/bugsnag-errors/", MAX_EVENT_COUNT, EVENT_COMPARATOR, logger, delegate);
+               @NonNull Logger logger,
+               Notifier notifier,
+               Delegate delegate) {
+        super(new File(config.getPersistenceDirectory(), "bugsnag-errors"),
+                config.getMaxPersistedEvents(),
+                EVENT_COMPARATOR,
+                logger,
+                delegate);
         this.config = config;
         this.logger = logger;
         this.delegate = delegate;
@@ -109,10 +111,6 @@ class EventStore extends FileStore {
      * Flush any on-disk errors to Bugsnag
      */
     void flushAsync() {
-        if (storeDirectory == null) {
-            return;
-        }
-
         try {
             Async.run(new Runnable() {
                 @Override
@@ -194,14 +192,12 @@ class EventStore extends FileStore {
     String getFilename(Object object) {
         EventFilenameInfo eventInfo
                 = EventFilenameInfo.Companion.fromEvent(object, null, config);
-        String encodedInfo = eventInfo.encode();
-        return String.format(Locale.US, "%s%s", storeDirectory, encodedInfo);
+        return eventInfo.encode();
     }
 
     String getNdkFilename(Object object, String apiKey) {
         EventFilenameInfo eventInfo
                 = EventFilenameInfo.Companion.fromEvent(object, apiKey, config);
-        String encodedInfo = eventInfo.encode();
-        return String.format(Locale.US, "%s%s", storeDirectory, encodedInfo);
+        return eventInfo.encode();
     }
 }

@@ -20,17 +20,17 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware {
 
     Event(@Nullable Throwable originalError,
           @NonNull ImmutableConfig config,
-          @NonNull HandledState handledState,
+          @NonNull SeverityReason severityReason,
           @NonNull Logger logger) {
-        this(originalError, config, handledState, new Metadata(), logger);
+        this(originalError, config, severityReason, new Metadata(), logger);
     }
 
     Event(@Nullable Throwable originalError,
           @NonNull ImmutableConfig config,
-          @NonNull HandledState handledState,
+          @NonNull SeverityReason severityReason,
           @NonNull Metadata metadata,
           @NonNull Logger logger) {
-        this(new EventInternal(originalError, config, handledState, metadata), logger);
+        this(new EventInternal(originalError, config, severityReason, metadata), logger);
     }
 
     Event(@NonNull EventInternal impl, @NonNull Logger logger) {
@@ -289,9 +289,25 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware {
     /**
      * Whether the event was a crash (i.e. unhandled) or handled error in which the system
      * continued running.
+     *
+     * Unhandled errors count towards your stability score. If you don't want certain errors
+     * to count towards your stability score, you can alter this property through an
+     * {@link OnErrorCallback}.
      */
     public boolean isUnhandled() {
-        return impl.isUnhandled();
+        return impl.getUnhandled();
+    }
+
+    /**
+     * Whether the event was a crash (i.e. unhandled) or handled error in which the system
+     * continued running.
+     *
+     * Unhandled errors count towards your stability score. If you don't want certain errors
+     * to count towards your stability score, you can alter this property through an
+     * {@link OnErrorCallback}.
+     */
+    public void setUnhandled(boolean unhandled) {
+        impl.setUnhandled(unhandled);
     }
 
     protected boolean shouldDiscardClass() {

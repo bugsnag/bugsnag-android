@@ -17,7 +17,7 @@ Instrumentation tests require an Android emulator or device to run, and they can
 
 # Static analysis
 
-Several static analysis checks are run against bugsnag-android to maintain the quality of the codebase. `./gradlew lint ktlintCheck detekt checkstyle` runs them all at once.
+Several static analysis checks are run against bugsnag-android to maintain the quality of the codebase. `./gradlew check` runs them all at once.
 
 ## Android Lint
 
@@ -104,7 +104,6 @@ Ensure that the following environment variables are set:
 
 * `BROWSER_STACK_USERNAME`: The BrowserStack App Automate Username
 * `BROWSER_STACK_ACCESS_KEY`: The BrowserStack App Automate Access Key
-* `NDK_VERSION`: The version of NDK that should be used to build the app
 
 Run `make remote-test`
 

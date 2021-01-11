@@ -5,8 +5,10 @@ import com.bugsnag.android.Configuration;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class CXXUserInfoScenario extends Scenario {
+
     static {
         System.loadLibrary("bugsnag-ndk");
         System.loadLibrary("cxx-scenarios-bugsnag");
@@ -14,14 +16,16 @@ public class CXXUserInfoScenario extends Scenario {
 
     public native void activate();
 
-    public CXXUserInfoScenario(@NonNull Configuration config, @NonNull Context context) {
-        super(config, context);
+    public CXXUserInfoScenario(@NonNull Configuration config,
+                               @NonNull Context context,
+                               @Nullable String eventMetadata) {
+        super(config, context, eventMetadata);
         config.setAutoTrackSessions(false);
     }
 
     @Override
-    public void run() {
-        super.run();
+    public void startScenario() {
+        super.startScenario();
         activate();
     }
 }

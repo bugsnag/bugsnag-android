@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -26,7 +27,7 @@ public class EventFacadeTest {
         logger = new InterceptingLogger();
         config = BugsnagTestUtils.generateImmutableConfig();
         event = new Event(new RuntimeException(), config,
-                HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION), logger);
+                SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION), logger);
     }
 
     @Test
@@ -182,5 +183,14 @@ public class EventFacadeTest {
     public void setUserValid() {
         event.setUser(null, null, null);
         assertEquals(new User(null, null, null), event.getUser());
+    }
+
+    @Test
+    public void unhandledValid() {
+        assertFalse(event.isUnhandled());
+        event.setUnhandled(true);
+        assertTrue(event.isUnhandled());
+        event.setUnhandled(false);
+        assertFalse(event.isUnhandled());
     }
 }

@@ -342,4 +342,8 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXAbortScenario_crash(JNIEnv *env
     printf("This one here: %ld\n", (long) crash_abort(x > 0));
 }
 
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXNaughtyStringsScenario_crash(JNIEnv *env, jobject instance) {
+  abort();
+}
 }

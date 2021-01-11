@@ -72,11 +72,12 @@ Scenario: Dereference a null pointer
         And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXDoubleFreeScenario"
         And I wait to receive a request
-        And the exception "errorClass" equals "SIGSEGV"
-        And the exception "message" equals "Segmentation violation (invalid memory reference)"
         And the exception "type" equals "c"
         And the event "severity" equals "error"
         And the event "unhandled" is true
+        # Fix as part of PLAT-5643
+        # And the exception "errorClass" equals "SIGSEGV"
+        # And the exception "message" equals "Segmentation violation (invalid memory reference)"
 
     Scenario: Improper object type cast
         When I run "CXXImproperTypecastScenario" and relaunch the app
@@ -101,80 +102,6 @@ Scenario: Dereference a null pointer
         And the exception "message" equals one of:
             | Abort program |
             | Segmentation violation (invalid memory reference) |
-        And the exception "type" equals "c"
-        And the event "severity" equals "error"
-        And the event "unhandled" is true
-
-    Scenario: Raise SIGILL
-        When I run "CXXSigillScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
-        And I configure Bugsnag for "CXXSigillScenario"
-        And I wait to receive a request
-        And the request payload contains a completed unhandled native report
-        And the exception "errorClass" equals "SIGILL"
-        And the exception "message" equals one of:
-            | Illegal instruction   |
-            | Trace/breakpoint trap |
-        And the exception "type" equals "c"
-        And the event "severity" equals "error"
-        And the event "unhandled" is true
-
-    Scenario: Raise SIGSEGV
-        When I run "CXXSigsegvScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
-        And I configure Bugsnag for "CXXSigsegvScenario"
-        And I wait to receive a request
-        And the request payload contains a completed unhandled native report
-        And the exception "errorClass" equals "SIGSEGV"
-        And the exception "message" equals "Segmentation violation (invalid memory reference)"
-        And the exception "type" equals "c"
-        And the event "severity" equals "error"
-        And the event "unhandled" is true
-
-    Scenario: Raise SIGABRT
-        When I run "CXXSigabrtScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
-        And I configure Bugsnag for "CXXSigabrtScenario"
-        And I wait to receive a request
-        And the request payload contains a completed unhandled native report
-        And the exception "errorClass" equals "SIGABRT"
-        And the exception "message" equals "Abort program"
-        And the exception "type" equals "c"
-        And the event "severity" equals "error"
-        And the event "unhandled" is true
-
-    Scenario: Raise SIGBUS
-        When I run "CXXSigbusScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
-        And I configure Bugsnag for "CXXSigbusScenario"
-        And I wait to receive a request
-        And the request payload contains a completed unhandled native report
-        And the exception "errorClass" equals "SIGBUS"
-        And the exception "message" equals "Bus error (bad memory access)"
-        And the exception "type" equals "c"
-        And the event "severity" equals "error"
-        And the event "unhandled" is true
-
-    Scenario: Raise SIGFPE
-        When I run "CXXSigfpeScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
-        And I configure Bugsnag for "CXXSigfpeScenario"
-        And I wait to receive a request
-        And the request payload contains a completed unhandled native report
-        And the exception "errorClass" equals "SIGFPE"
-        And the exception "message" equals "Floating-point exception"
-        And the exception "type" equals "c"
-        And the event "severity" equals "error"
-        And the event "unhandled" is true
-
-    Scenario: Raise SIGTRAP
-        When I run "CXXSigtrapScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
-        And I configure Bugsnag for "CXXSigtrapScenario"
-        And I wait to receive a request
-        And the request payload contains a completed unhandled native report
-        And the exception "errorClass" equals "SIGTRAP"
-        And the exception "message" equals "Trace/breakpoint trap"
         And the exception "type" equals "c"
         And the event "severity" equals "error"
         And the event "unhandled" is true
@@ -208,25 +135,3 @@ Scenario: Dereference a null pointer
         And the first significant stack frame methods and files should match:
             | something_innocuous | | libmonochrome.so |
             | Java_com_bugsnag_android_mazerunner_scenarios_CXXExternalStackElementScenario_crash | | libcxx-scenarios.so |
-
-    Scenario: Throwing an exception in C++
-        When I run "CXXExceptionScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
-        And I configure Bugsnag for "CXXExceptionScenario"
-        And I wait to receive a request
-        And the request payload contains a completed unhandled native report
-        And the event "severity" equals "error"
-        And the event "unhandled" is true
-        And the exception "errorClass" equals "SIGABRT"
-        And the exception "message" equals "Abort program"
-
-    Scenario: Throwing an object in C++
-        When I run "CXXThrowSomethingScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
-        And I configure Bugsnag for "CXXThrowSomethingScenario"
-        And I wait to receive a request
-        And the request payload contains a completed unhandled native report
-        And the event "severity" equals "error"
-        And the event "unhandled" is true
-        And the exception "errorClass" equals "SIGABRT"
-        And the exception "message" equals "Abort program"

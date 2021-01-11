@@ -1,4 +1,6 @@
 detekt {
     input = files("src/androidTest", "src/main/java", "src/test")
     baseline = file("detekt-baseline.xml")
+    buildUponDefaultConfig = true
+    config = files("$rootDir/config/detekt/detekt.yml")
 }

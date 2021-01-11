@@ -46,6 +46,19 @@ For information on how to build the library and develop changes see [DEVELOPMENT
 
 ## Testing
 For information on running the tests see [TESTING.md](TESTING.md)
+Full details of how to build and run tests can be found in [the testing guide](TESTING.md)
 
-## Releasing
-Full details of how to release can be found in [RELEASING.md](RELEASING.md)
+## Installing/testing against a local maven repository
+
+Change `VERSION_NAME` in `gradle.properties` to a version higher than the currently
+released bugsnag-android, then run:
+
+```shell
+./gradlew assembleRelease publishToMavenLocal
+```
+
+This installs bugsnag-android to a local maven repository. To use it in the example app, you'll need to modify its `build.gradle` to set the `com.bugsnag:bugsnag-android` dependency version to match (near the bottom of the file).
+
+# Releasing a New Version
+
+Full details of how to release can be found in [the release guide](RELEASING.md)

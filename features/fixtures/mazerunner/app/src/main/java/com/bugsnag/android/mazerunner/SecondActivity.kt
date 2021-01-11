@@ -10,5 +10,4 @@ class SecondActivity : Activity() {
         setContentView(R.layout.activity_main)
         log("Launched mazerunner fixture SecondActivity")
     }
-
 }

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.io.File;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Date;
@@ -47,9 +48,14 @@ public class NativeInterface {
         return getClient().getContext();
     }
 
+    /**
+     * Retrieves the directory used to store native crash reports
+     */
     @NonNull
     public static String getNativeReportPath() {
-        return getClient().getAppContext().getCacheDir().getAbsolutePath() + "/bugsnag-native/";
+        ImmutableConfig config = getClient().getConfig();
+        File persistenceDirectory = config.getPersistenceDirectory();
+        return new File(persistenceDirectory, "bugsnag-native").getAbsolutePath();
     }
 
     /**
@@ -384,8 +390,8 @@ public class NativeInterface {
     @NonNull
     public static Event createEvent(@Nullable Throwable exc,
                                     @NonNull Client client,
-                                    @NonNull HandledState handledState) {
-        return new Event(exc, client.getConfig(), handledState, client.logger);
+                                    @NonNull SeverityReason severityReason) {
+        return new Event(exc, client.getConfig(), severityReason, client.logger);
     }
 
     @NonNull

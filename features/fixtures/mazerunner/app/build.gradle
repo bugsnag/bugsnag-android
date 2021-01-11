@@ -1,13 +1,14 @@
 apply plugin: "com.android.application"
 apply plugin: "kotlin-android"
+apply plugin: "io.gitlab.arturbosch.detekt"
+apply plugin: "org.jlleitschuh.gradle.ktlint"
 
 android {
-    compileSdkVersion 29
-    ndkVersion "16.1.4479499"
+    compileSdkVersion 30
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 34
         versionName "1.1.14"
         manifestPlaceholders = [
@@ -47,7 +48,9 @@ android {
             signingConfig signingConfigs.release
         }
     }
-    // adding custom jniLibs results in dupe SO files, ignore
+
+    // adding custom jniLibs results in dupe SO files, ignore build error by
+    // picking SO file. see https://developer.android.com/studio/releases/gradle-plugin#cmake-imported-targets
     packagingOptions {
         pickFirst "**/*.so"
     }
@@ -55,15 +58,31 @@ android {
         tasks.lint.enabled = false
     }
 
+    if (project.hasProperty("TEST_FIXTURE_NDK_VERSION")) {
+        def version = project.property("TEST_FIXTURE_NDK_VERSION")
+        project.logger.lifecycle("Building test fixture with custom NDK version '$version'")
+        ndkVersion = version
+    } else {
+        project.logger.lifecycle("Building test fixture with default NDK version")
+        ndkVersion = "16.1.4479499"
+    }
+
     // conditionally alter the filename depending on the fixture
     applicationVariants.all { variant ->
         variant.outputs.all {
-            if (project.hasProperty("MINIMAL_FIXTURE") && "true" == project.property("MINIMAL_FIXTURE")) {
-                outputFileName = "minimal-fixture.apk"
+            if (project.hasProperty("TEST_FIXTURE_NAME")) {
+                outputFileName = project.property("TEST_FIXTURE_NAME")
             } else {
                 outputFileName = "fixture.apk"
             }
         }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+    kotlinOptions {
+        jvmTarget = "1.6"
     }
 }
 
@@ -74,9 +93,6 @@ dependencies {
     if (project.hasProperty("MINIMAL_FIXTURE") && "true" == project.property("MINIMAL_FIXTURE")) {
         // don't include NDK scenarios that require linking against bugsnag-plugin-android-ndk
     } else {
-        implementation project(":cxx-scenarios")
-    }
-    if (!("true" == project.findProperty("MINIMAL_FIXTURE"))) {
         implementation project(":cxx-scenarios-bugsnag")
     }
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -84,3 +100,5 @@ dependencies {
 }
 
 apply from: "../bugsnag-dependency.gradle"
+apply from: "../../../../gradle/detekt.gradle"
+apply from: "../../../../gradle/checkstyle.gradle"

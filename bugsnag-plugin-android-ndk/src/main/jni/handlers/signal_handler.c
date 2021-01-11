@@ -2,9 +2,9 @@
 
 #include <bugsnag_ndk.h>
 #include <errno.h>
+#include <event.h>
 #include <fcntl.h>
 #include <pthread.h>
-#include <event.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -181,7 +181,6 @@ void bsg_handle_signal(int signum, siginfo_t *info,
   bsg_global_env->handling_crash = true;
   bsg_global_env->next_event.unhandled = true;
   bsg_populate_event_as(bsg_global_env);
-  bsg_global_env->next_event.unhandled_events++;
   bsg_global_env->next_event.error.frame_count = bsg_unwind_stack(
       bsg_global_env->signal_unwind_style,
       bsg_global_env->next_event.error.stacktrace, info, user_context);
@@ -197,6 +196,7 @@ void bsg_handle_signal(int signum, siginfo_t *info,
     }
   }
   if (bsg_run_on_error()) {
+    bsg_increment_unhandled_count(&bsg_global_env->next_event);
     bsg_serialize_event_to_file(bsg_global_env);
   }
   bsg_handler_uninstall_signal();

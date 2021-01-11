@@ -24,10 +24,10 @@ public class ConcurrentCallbackTest {
     @Mock
     Session session;
 
-    private final HandledState handledState
-            = HandledState.newInstance(HandledState.REASON_HANDLED_EXCEPTION);
+    private final SeverityReason severityReason
+            = SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION);
     private final Event event = new Event(new RuntimeException(),
-            generateImmutableConfig(), handledState, NoopLogger.INSTANCE);
+            generateImmutableConfig(), severityReason, NoopLogger.INSTANCE);
 
     @Test
     public void testOnErrorConcurrentModification() {

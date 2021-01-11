@@ -5,6 +5,7 @@ import com.bugsnag.android.Configuration;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class CXXAnrScenario extends Scenario {
 
@@ -14,14 +15,16 @@ public class CXXAnrScenario extends Scenario {
 
     public native void crash();
 
-    public CXXAnrScenario(@NonNull Configuration config, @NonNull Context context) {
-        super(config, context);
+    public CXXAnrScenario(@NonNull Configuration config,
+                          @NonNull Context context,
+                          @Nullable String eventMetadata) {
+        super(config, context, eventMetadata);
         config.setAutoTrackSessions(false);
     }
 
     @Override
-    public void run() {
-        super.run();
+    public void startScenario() {
+        super.startScenario();
         crash();
     }
 }

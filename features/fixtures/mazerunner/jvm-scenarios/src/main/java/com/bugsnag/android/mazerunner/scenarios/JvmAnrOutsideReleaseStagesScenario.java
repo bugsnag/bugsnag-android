@@ -1,34 +1,40 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
+import com.bugsnag.android.Configuration;
+
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.bugsnag.android.Bugsnag;
-import com.bugsnag.android.Configuration;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.Collections;
 
-import androidx.annotation.NonNull;
 
 public class JvmAnrOutsideReleaseStagesScenario extends Scenario {
 
-    public JvmAnrOutsideReleaseStagesScenario(@NonNull Configuration config, @NonNull Context context) {
-        super(config, context);
+    /**
+     * Initializes bugsnag with custom release stages
+     */
+    public JvmAnrOutsideReleaseStagesScenario(@NonNull Configuration config,
+                                              @NonNull Context context,
+                                              @Nullable String eventMetadata) {
+        super(config, context, eventMetadata);
         config.setAutoTrackSessions(false);
         config.setEnabledReleaseStages(Collections.singleton("fee-fi-fo-fum"));
     }
 
     @Override
-    public void run() {
-        super.run();
+    public void startScenario() {
+        super.startScenario();
         Handler main = new Handler(Looper.getMainLooper());
         main.postDelayed(new Runnable() {
             @Override
             public void run() {
                 try {
                     while (true) { }
-                } catch (Exception _ex) {
+                } catch (Exception exc) {
                     // Catch possible thread interruption exception
                 }
             }

@@ -13,6 +13,45 @@
 * Support native stack traces in the ANR plugin
    [#972](https://github.com/bugsnag/bugsnag-android/pull/972)
 
+## 5.5.0 (2021-01-07)
+
+This release supports initializing Bugsnag in multi processes apps. If your app uses Bugsnag in multiple processes, you should initialize Bugsnag
+with a unique `persistenceDirectory` value for each process. Please see [the docs](https://docs.bugsnag.com/platforms/android/faq/#does-bugsnag-support-multi-process-apps) for further information.
+
+* Store user information in persistenceDirectory
+  [#1017](https://github.com/bugsnag/bugsnag-android/pull/1017)
+
+* Use consistent device ID for multi process apps
+  [#1013](https://github.com/bugsnag/bugsnag-android/pull/1013)
+
+* Create synchronized store for user information
+  [#1010](https://github.com/bugsnag/bugsnag-android/pull/1010)
+
+* Add persistenceDirectory config option for controlling event/session storage
+  [#998](https://github.com/bugsnag/bugsnag-android/pull/998)
+
+* Add configuration option to control maximum number of persisted events/sessions
+  [#980](https://github.com/bugsnag/bugsnag-android/pull/980)
+
+* Increase kotlin dependency version to 1.3.72
+  [#1050](https://github.com/bugsnag/bugsnag-android/pull/1050)
+
+## 5.4.0 (2020-12-14)
+
+* Make `event.unhandled` overridable for NDK errors
+  [#1037](https://github.com/bugsnag/bugsnag-android/pull/1037)
+
+* Make `event.unhandled` overridable for React Native errors
+  [#1039](https://github.com/bugsnag/bugsnag-android/pull/1039)
+
+* Make `event.unhandled` overridable for JVM errors
+  [#1025](https://github.com/bugsnag/bugsnag-android/pull/1025)
+
+### Bug fixes
+
+* Prevent potential SHA-1 hash mismatch in Bugsnag-Integrity header for session requests
+  [#1043](https://github.com/bugsnag/bugsnag-android/pull/1043)
+
 ## 5.3.1 (2020-12-09)
 
 ### Bug fixes

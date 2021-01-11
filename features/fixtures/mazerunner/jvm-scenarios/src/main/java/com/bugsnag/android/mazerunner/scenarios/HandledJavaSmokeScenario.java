@@ -10,6 +10,7 @@ import com.bugsnag.android.OnErrorCallback;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.Map;
 
@@ -18,14 +19,16 @@ import java.util.Map;
  */
 public class HandledJavaSmokeScenario extends Scenario {
 
-    public HandledJavaSmokeScenario(@NonNull Configuration config, @NonNull Context context) {
-        super(config, context);
+    public HandledJavaSmokeScenario(@NonNull Configuration config,
+                                    @NonNull Context context,
+                                    @Nullable String eventMetadata) {
+        super(config, context, eventMetadata);
         config.setAutoTrackSessions(false);
     }
 
     @Override
-    public void run() {
-        super.run();
+    public void startScenario() {
+        super.startScenario();
         Bugsnag.addOnBreadcrumb(new OnBreadcrumbCallback() {
             @Override
             public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
@@ -46,8 +49,8 @@ public class HandledJavaSmokeScenario extends Scenario {
         Bugsnag.leaveBreadcrumb("HandledJavaSmokeScenario");
         try {
             throw new IllegalStateException(getClass().getSimpleName());
-        } catch (RuntimeException e) {
-            Bugsnag.notify(e);
+        } catch (RuntimeException exc) {
+            Bugsnag.notify(exc);
         }
     }
 }

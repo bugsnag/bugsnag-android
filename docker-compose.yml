@@ -14,14 +14,6 @@ services:
       BROWSER_STACK_USERNAME:
       BROWSER_STACK_ACCESS_KEY:
       INSTRUMENTATION_DEVICES:
-      NDK_VERSION:
-
-  android-jvm:
-    build:
-      context: .
-      dockerfile: dockerfiles/Dockerfile.android-jvm
-      args:
-        BRANCH_NAME: ${BRANCH_NAME}
 
   android-builder:
     build:
@@ -31,6 +23,8 @@ services:
         BRANCH_NAME: ${BRANCH_NAME}
     environment:
       MINIMAL_FIXTURE:
+      TEST_FIXTURE_NDK_VERSION:
+      TEST_FIXTURE_NAME:
     volumes:
       - ./build:/app/build
 
