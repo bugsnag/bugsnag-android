@@ -1,10 +1,14 @@
 #!/usr/bin/env sh
 
-if [[ "$BUILDKITE_MESSAGE" == *"[barebones ci]"* ]]; then
+barebones_description() {
   echo "Running barebones build due to commit messages"
   echo "Unit and static tests will be run"
   echo "Minimal instrumentation tests will be run"
   echo "End-to-end smoke tests will be run on minimum and maximum supported Android versions"
+}
+
+if [[ "$BUILDKITE_MESSAGE" == *"[barebones ci]"* ]]; then
+  barebones_description
 elif [[ "$BUILDKITE_MESSAGE" == *"[full ci]"* ||
   "$BUILDKITE_BRANCH" == "next" ||
   "$BUILDKITE_BRANCH" == "master" ]]; then
@@ -12,6 +16,7 @@ elif [[ "$BUILDKITE_MESSAGE" == *"[full ci]"* ||
   echo "Unit and static tests will be run"
   echo "All instrumentation tests will be run"
   echo "All end-to-end tests will be run on all supported Android versions"
+  # Add files in reverse as BK insert them in place - leading to them reversing in the resulting pipeline
   buildkite-agent pipeline upload .buildkite/pipeline.full.yml
   buildkite-agent pipeline upload .buildkite/pipeline.quick.yml
 elif [[ "$BUILDKITE_MESSAGE" == *"[gated-full ci]"* ||
@@ -24,6 +29,7 @@ elif [[ "$BUILDKITE_MESSAGE" == *"[gated-full ci]"* ||
   echo "If the full build is triggered this will:"
   echo "  Run the instrumentation tests against all supported Android versions"
   echo "  Run the full end-to-end tests on all supported Android versions"
+  # Add files in reverse as BK insert them in place - leading to them reversing in the resulting pipeline
   buildkite-agent pipeline upload .buildkite/block.step.yml
   buildkite-agent pipeline upload .buildkite/pipeline.quick.yml
 elif [[ "$BUILDKITE_MESSAGE" == *"[quick ci]"* ]]; then
@@ -31,11 +37,9 @@ elif [[ "$BUILDKITE_MESSAGE" == *"[quick ci]"* ]]; then
   echo "Unit and static tests will be run"
   echo "Minimal instrumentation tests will be run"
   echo "End-to-end smoke tests will be run on all supported Android versions"
+  echo "All end-to-end tests will be run on a single supported Android versions"
   buildkite-agent pipeline upload .buildkite/pipeline.quick.yml
 else
-  echo "Running barebones build by default"
-  echo "Unit and static tests will be run"
-  echo "Minimal instrumentation tests will be run"
-  echo "End-to-end smoke tests will be run on minimum and maximum supported Android versions"
+  barebones_description
 fi
 

@@ -1,5 +1,6 @@
 Feature: The notifier handles user data containing unusual strings
 
+@Flaky
 Scenario: Test handled JVM error
     When I run "NaughtyStringScenario"
     Then I wait to receive a request
