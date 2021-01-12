@@ -23,6 +23,8 @@ open class BaseCrashyActivity : AppCompatActivity() {
 
     private external fun crashFromCXX()
 
+    private external fun anrFromCXX()
+
     private external fun notifyFromCXX()
 
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,6 +44,12 @@ open class BaseCrashyActivity : AppCompatActivity() {
             Thread.sleep(10000)
             showSnackbar()
         }
+
+        val nativeAnrBtn: View = findViewById(R.id.btn_native_anr)
+        nativeAnrBtn.setOnClickListener {
+            anrFromCXX()
+        }
+
     }
 
     /**

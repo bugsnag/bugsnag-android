@@ -34,6 +34,7 @@ internal class AnrPlugin : Plugin {
     private lateinit var client: Client
     private val collector = AnrDetailsCollector()
 
+    private external fun setUnwindFunction(unwindFunction: Long)
     private external fun enableAnrReporting(callPreviousSigquitHandler: Boolean)
     private external fun disableAnrReporting()
 
@@ -46,6 +47,16 @@ internal class AnrPlugin : Plugin {
         }
 
         if (loaded) {
+            @Suppress("UNCHECKED_CAST")
+            val clz = Class.forName("com.bugsnag.android.NdkPlugin") as Class<Plugin>
+            val ndkPlugin = client.getPlugin(clz)
+            if (ndkPlugin != null) {
+                val method = ndkPlugin.javaClass.getMethod("getUnwindStackFunction")
+                @Suppress("UNCHECKED_CAST")
+                val function = method.invoke(ndkPlugin) as Long
+                setUnwindFunction(function)
+            }
+
             // this must be run from the main thread as the SIGQUIT is sent to the main thread,
             // and if the handler is installed on a background thread instead we receive no signal
             Handler(Looper.getMainLooper()).post(
@@ -66,25 +77,14 @@ internal class AnrPlugin : Plugin {
      * Notifies bugsnag that an ANR has occurred, by generating an Error report and populating it
      * with details of the ANR. Intended for internal use only.
      */
-    private fun notifyAnrDetected(info: Long, userContext: Long) {
+    private fun notifyAnrDetected(nativeTrace: List<NativeStackframe>) {
         try {
             // generate a full report as soon as possible, then wait for extra process error info
             var stackTrace = Looper.getMainLooper().thread.stackTrace
-            var nativeTrace: List<NativeStackframe>? = null
 
-            @Suppress("UNCHECKED_CAST")
-            val clz = Class.forName("com.bugsnag.android.NdkPlugin") as Class<Plugin>
-            val ndkPlugin = client.getPlugin(clz)
-            if (ndkPlugin != null) {
+            if (nativeTrace.size > 0) {
                 val nativeAnrIndex = getNativeANRIndex(stackTrace)
                 if (nativeAnrIndex >= 0) {
-                    val method = ndkPlugin.javaClass.getMethod(
-                        "getSignalStackTrace",
-                        Long::class.java,
-                        Long::class.java
-                    )
-                    @Suppress("UNCHECKED_CAST")
-                    nativeTrace = method.invoke(ndkPlugin, info, userContext) as List<NativeStackframe>
                     stackTrace = stackTrace.drop(nativeAnrIndex).toTypedArray()
                 }
             }
@@ -101,7 +101,7 @@ internal class AnrPlugin : Plugin {
             err.errorMessage = "Application did not respond to UI input"
 
             // append native stackframes to error/thread stacktrace
-            if (nativeTrace != null) {
+            if (nativeTrace.size > 0) {
                 // update error stacktrace
                 val nativeFrames = nativeTrace.map { Stackframe(it) }
                 err.stacktrace.addAll(0, nativeFrames)

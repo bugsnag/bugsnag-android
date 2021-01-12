@@ -228,3 +228,8 @@ void bugsnag_leave_breadcrumb_env(JNIEnv *env, char *message,
   (*env)->DeleteLocalRef(env, type_class);
   (*env)->DeleteLocalRef(env, interface_class);
 }
+
+ssize_t bsg_unwind_stack_default(bugsnag_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
+                                 siginfo_t *info, void *user_context) __asyncsafe {
+  return bsg_unwind_stack(bsg_configured_unwind_style(), stacktrace, info, user_context);
+}

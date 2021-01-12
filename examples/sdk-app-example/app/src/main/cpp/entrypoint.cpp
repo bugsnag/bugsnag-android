@@ -1,5 +1,6 @@
 #include <bugsnag.h>
 #include <jni.h>
+#include <unistd.h>
 
 extern "C" {
 
@@ -20,6 +21,10 @@ bool my_on_error_b(void *event) {
   return true;
 }
 
+static void sleep_long_time() {
+  sleep(100000);
+}
+
 JNIEXPORT void JNICALL
 Java_com_example_bugsnag_android_ExampleApplication_performNativeBugsnagSetup(
     JNIEnv *env, jobject instance) {
@@ -30,6 +35,12 @@ JNIEXPORT void JNICALL
 Java_com_example_bugsnag_android_BaseCrashyActivity_crashFromCXX(
     JNIEnv *env, jobject instance) {
   crash_write_read_only();
+}
+
+JNIEXPORT void JNICALL
+Java_com_example_bugsnag_android_BaseCrashyActivity_anrFromCXX(
+        JNIEnv *env, jobject instance) {
+  sleep(100000);
 }
 
 JNIEXPORT void JNICALL
