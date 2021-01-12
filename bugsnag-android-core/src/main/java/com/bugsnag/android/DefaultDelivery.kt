@@ -10,14 +10,24 @@ import java.net.URL
 internal class DefaultDelivery(private val connectivity: Connectivity?, val logger: Logger) : Delivery {
 
     override fun deliver(payload: Session, deliveryParams: DeliveryParams): DeliveryStatus {
-        val status = deliver(deliveryParams.endpoint, payload, deliveryParams.headers)
-        logger.i("Session API request finished with status $status")
+        var status: DeliveryStatus = DeliveryStatus.UNDELIVERED
+        var attempts = 0
+        while (status != DeliveryStatus.DELIVERED && attempts < 3) {
+            attempts++
+            status = deliver(deliveryParams.endpoint, payload, deliveryParams.headers)
+            logger.i("Session API request finished with status $status, attempt $attempts")
+        }
         return status
     }
 
     override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
-        val status = deliver(deliveryParams.endpoint, payload, deliveryParams.headers)
-        logger.i("Error API request finished with status $status")
+        var status: DeliveryStatus = DeliveryStatus.UNDELIVERED
+        var attempts = 0
+        while (status != DeliveryStatus.DELIVERED && attempts < 3) {
+            attempts++
+            status = deliver(deliveryParams.endpoint, payload, deliveryParams.headers)
+            logger.i("Error API request finished with status $status, attempt $attempts")
+        }
         return status
     }
 
