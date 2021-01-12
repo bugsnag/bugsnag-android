@@ -1,5 +1,6 @@
 Feature: Loading values into the configuration
 
+@Flaky
 Scenario: Load configuration initialised from the Manifest
     When I run "LoadConfigurationFromManifestScenario"
     Then I wait to receive a request
