@@ -12,6 +12,7 @@
     <ID>LongParameterList:ThreadState.kt$ThreadState$( exc: Throwable?, isUnhandled: Boolean, sendThreads: ThreadSendPolicy, projectPackages: Collection&lt;String&gt;, logger: Logger, currentThread: java.lang.Thread = java.lang.Thread.currentThread(), stackTraces: MutableMap&lt;java.lang.Thread, Array&lt;StackTraceElement&gt;&gt; = java.lang.Thread.getAllStackTraces() )</ID>
     <ID>LongParameterList:ThreadState.kt$ThreadState$( stackTraces: MutableMap&lt;java.lang.Thread, Array&lt;StackTraceElement&gt;&gt;, currentThread: java.lang.Thread, exc: Throwable?, isUnhandled: Boolean, projectPackages: Collection&lt;String&gt;, logger: Logger )</ID>
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$299</ID>
+    <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$3</ID>
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$429</ID>
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$499</ID>
     <ID>MatchingDeclarationName:Breadcrumb.kt$BreadcrumbInternal : Streamable</ID>
