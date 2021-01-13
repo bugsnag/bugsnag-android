@@ -26,12 +26,6 @@ class IOUtils {
         }
     }
 
-    static void close(@Nullable final URLConnection conn) {
-        if (conn instanceof HttpURLConnection) {
-            ((HttpURLConnection) conn).disconnect();
-        }
-    }
-
     static int copy(@NonNull final Reader input,
                     @NonNull final Writer output) throws IOException {
         char[] buffer = new char[DEFAULT_BUFFER_SIZE];

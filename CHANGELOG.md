@@ -1,5 +1,10 @@
 # Changelog
 
+## TBD
+
+* Alter HTTP requests to stop using chunked transfer encoding
+  [#1077](https://github.com/bugsnag/bugsnag-android/pull/1077)
+
 ## 5.5.0 (2021-01-07)
 
 This release supports initializing Bugsnag in multi processes apps. If your app uses Bugsnag in multiple processes, you should initialize Bugsnag

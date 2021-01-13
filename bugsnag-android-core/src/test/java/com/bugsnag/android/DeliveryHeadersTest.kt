@@ -2,10 +2,10 @@ package com.bugsnag.android
 
 import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
 import org.junit.Assert
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotEquals
-import org.junit.Assert.assertTrue
+import org.junit.Assert.*
 import org.junit.Test
+import java.io.BufferedWriter
+import java.io.StringWriter
 import java.util.Date
 
 class DeliveryHeadersTest {
@@ -15,8 +15,10 @@ class DeliveryHeadersTest {
     @Test
     fun computeSha1Digest() {
         val payload = BugsnagTestUtils.generateEventPayload(generateImmutableConfig())
-        val firstSha = requireNotNull(computeSha1Digest(payload))
-        val secondSha = requireNotNull(computeSha1Digest(payload))
+        val payload1 = serializeJsonPayload(payload)
+        val firstSha = requireNotNull(computeSha1Digest(payload1))
+        val payload2 = serializeJsonPayload(payload)
+        val secondSha = requireNotNull(computeSha1Digest(payload2))
 
         // the hash equals the expected value
         assertTrue(firstSha.matches(sha1Regex))
@@ -26,7 +28,8 @@ class DeliveryHeadersTest {
 
         // altering the streamable alters the hash
         payload.event!!.device.id = "50923"
-        val differentSha = requireNotNull(computeSha1Digest(payload))
+        val payload3 = serializeJsonPayload(payload)
+        val differentSha = requireNotNull(computeSha1Digest(payload3))
         assertNotEquals(firstSha, differentSha)
         assertTrue(differentSha.matches(sha1Regex))
     }
@@ -37,24 +40,18 @@ class DeliveryHeadersTest {
         val payload = BugsnagTestUtils.generateEventPayload(config)
         val headers = config.getErrorApiDeliveryParams(payload).headers
         assertEquals(config.apiKey, headers["Bugsnag-Api-Key"])
-        Assert.assertNotNull(headers["Bugsnag-Sent-At"])
-        Assert.assertNotNull(headers["Bugsnag-Payload-Version"])
-
-        val integrity = requireNotNull(headers["Bugsnag-Integrity"])
-        assertTrue(integrity.matches(sha1Regex))
+        assertEquals("application/json", headers["Content-Type"])
+        assertNotNull(headers["Bugsnag-Sent-At"])
+        assertNotNull(headers["Bugsnag-Payload-Version"])
     }
 
     @Test
     fun verifySessionApiHeaders() {
         val config = generateImmutableConfig()
-        val user = User("123", "hi@foo.com", "Li")
-        val session = Session("abc", Date(0), user, 1, 0, Notifier(), NoopLogger)
-        val headers = config.getSessionApiDeliveryParams(session).headers
+        val headers = config.getSessionApiDeliveryParams().headers
         assertEquals(config.apiKey, headers["Bugsnag-Api-Key"])
-        Assert.assertNotNull(headers["Bugsnag-Sent-At"])
-        Assert.assertNotNull(headers["Bugsnag-Payload-Version"])
-
-        val integrity = requireNotNull(headers["Bugsnag-Integrity"])
-        assertTrue(integrity.matches(sha1Regex))
+        assertEquals("application/json", headers["Content-Type"])
+        assertNotNull(headers["Bugsnag-Sent-At"])
+        assertNotNull(headers["Bugsnag-Payload-Version"])
     }
 }
