@@ -30,15 +30,15 @@ When("I configure Bugsnag for {string}") do |event_type|
 end
 
 When("I close and relaunch the app") do
-  MazeRunner.driver.close_app
-  MazeRunner.driver.launch_app
+  Maze.driver.close_app
+  Maze.driver.launch_app
 end
 
 When("I relaunch the app after a crash") do
   # This step should only be used when the app has crashed, but the notifier needs a little
   # time to write the crash report before being forced to reopen.  From trials, 2s was not enough.
   sleep(5)
-  MazeRunner.driver.launch_app
+  Maze.driver.launch_app
 end
 
 When("I tap the screen {int} times") do |count|
@@ -223,9 +223,9 @@ Then("the event has a {string} breadcrumb with the message {string}") do |type, 
 end
 
 def click_if_present(element)
-  return unless MazeRunner.driver.wait_for_element(element, 1)
+  return unless Maze.driver.wait_for_element(element, 1)
 
-  MazeRunner.driver.click_element(element)
+  Maze.driver.click_element(element)
 rescue Selenium::WebDriver::Error::NoSuchElementError
   # Ignore - we have seen clicks fail like this despite having just checked for the element's presence
   $logger.warn 'NoSuchElementError'
