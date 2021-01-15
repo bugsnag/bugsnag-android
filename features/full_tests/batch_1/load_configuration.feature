@@ -2,7 +2,7 @@ Feature: Loading values into the configuration
 
 Scenario: Load configuration initialised from the Manifest
     When I run "LoadConfigurationFromManifestScenario"
-    Then I wait to receive a request
+    Then I wait to receive an error
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier with the apiKey "abc12312312312312312312312312312"
     And the exception "message" equals "LoadConfigurationFromManifestScenario"
     And the event "app.releaseStage" equals "testing"
@@ -17,7 +17,7 @@ Scenario: Load configuration initialised from the Manifest
 
 Scenario: Load configuration initialised with Kotlin
     When I run "LoadConfigurationKotlinScenario"
-    Then I wait to receive a request
+    Then I wait to receive an error
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier with the apiKey "45645645645645645645645645645645"
     And the exception "message" equals "LoadConfigurationKotlinScenario"
     And the event "app.releaseStage" equals "kotlin"
@@ -32,7 +32,7 @@ Scenario: Load configuration initialised with Kotlin
 
 Scenario: Load configuration initialised with nulls
     When I run "LoadConfigurationNullsScenario"
-    Then I wait to receive a request
+    Then I wait to receive an error
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier with the apiKey "12312312312312312312312312312312"
     And the exception "message" equals "LoadConfigurationNullsScenario"
     And the event "app.releaseStage" equals "production"

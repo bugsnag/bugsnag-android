@@ -2,7 +2,7 @@ Feature: Native User API
 
     Scenario: Adding user information in C followed by notifying in C
         When I run "CXXUserInfoScenario"
-        And I wait to receive a request
+        And I wait to receive an error
         Then the request payload contains a completed handled native report
         And the exception "errorClass" equals "Connection lost"
         And the exception "message" equals "No antenna detected"
@@ -18,7 +18,7 @@ Feature: Native User API
         And I run "CXXJavaUserInfoNativeCrashScenario" and relaunch the app
         And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXJavaUserInfoNativeCrashScenario"
-        And I wait to receive a request
+        And I wait to receive an error
         Then the request payload contains a completed handled native report
         And the exception "errorClass" equals one of:
             | SIGILL |
@@ -32,7 +32,7 @@ Feature: Native User API
     Scenario: Set user in Native layer followed by a Java crash
         When I run "CXXNativeUserInfoJavaCrashScenario" and relaunch the app
         And I configure Bugsnag for "CXXNativeUserInfoJavaCrashScenario"
-        And I wait to receive a request
+        And I wait to receive an error
         Then the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
         And the error payload field "events" is an array with 1 elements
         And the event "user.id" equals "24601"

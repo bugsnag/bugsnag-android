@@ -3,7 +3,7 @@ Feature: Unhandled smoke tests
 Scenario: Unhandled Java Exception with loaded configuration
     When I run "UnhandledJavaLoadedConfigScenario" and relaunch the app
     And I configure Bugsnag for "UnhandledJavaLoadedConfigScenario"
-    And I wait to receive a request
+    And I wait to receive an error
     Then the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
 
     # Exception details
@@ -83,7 +83,7 @@ Scenario: Unhandled Java Exception with loaded configuration
 Scenario: Signal exception with overwritten config
     When I run "CXXSignalSmokeScenario" and relaunch the app
     And I configure Bugsnag for "CXXSignalSmokeScenario"
-    And I wait to receive a request
+    And I wait to receive an error
     Then the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
 
     # Exception details
@@ -160,7 +160,7 @@ Scenario: ANR detection
     And I tap the screen 3 times
     And I wait for 4 seconds
     And I clear any error dialogue
-    And I wait to receive a request
+    And I wait to receive an error
 
     # Exception details
     Then the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier

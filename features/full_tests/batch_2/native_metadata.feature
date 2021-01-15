@@ -2,7 +2,7 @@ Feature: Native Metadata API
 
     Scenario: Add custom metadata followed by notifying in C
         When I run "CXXCustomMetadataNativeNotifyScenario"
-        And I wait to receive a request
+        And I wait to receive an error
         And the request payload contains a completed handled native report
         And the exception "errorClass" equals "Twitter Overdose"
         And the exception "message" equals "Turn off the internet and go outside"
@@ -16,7 +16,7 @@ Feature: Native Metadata API
         When I run "CXXCustomMetadataNativeCrashScenario" and relaunch the app
         And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXCustomMetadataNativeCrashScenario"
-        And I wait to receive a request
+        And I wait to receive an error
         And the request payload contains a completed handled native report
         And the exception "errorClass" equals one of:
             | SIGILL |
@@ -32,7 +32,7 @@ Feature: Native Metadata API
         When I run "CXXConfigurationMetadataNativeCrashScenario" and relaunch the app
         And I configure the app to run in the "non-metadata" state
         And I configure Bugsnag for "CXXConfigurationMetadataNativeCrashScenario"
-        And I wait to receive a request
+        And I wait to receive an error
         And the request payload contains a completed handled native report
         And the exception "errorClass" equals one of:
             | SIGILL |
@@ -65,7 +65,7 @@ Feature: Native Metadata API
     Scenario: Get Java data in the Native layer
         When I run "CXXGetJavaDataScenario" and relaunch the app
         And I configure Bugsnag for "CXXGetJavaDataScenario"
-        And I wait to receive a request
+        And I wait to receive an error
         Then the request payload contains a completed unhandled native report
         And the event "unhandled" is true
         And the event "metaData.data.context" equals "passContext"

@@ -2,7 +2,7 @@ Feature: Session Tracking
 
 Scenario: Automatic Session Tracking sends
     When I run "AutoSessionScenario"
-    And I wait to receive a request
+    And I wait to receive an error
     Then the request is valid for the session reporting API version "1.0" for the "Android Bugsnag Notifier" notifier
     And the Bugsnag-Integrity header is valid
     And the error payload field "notifier.name" equals "Android Bugsnag Notifier"
@@ -15,7 +15,7 @@ Scenario: Automatic Session Tracking sends
 
 Scenario: Manual Session sends
     When I run "ManualSessionScenario"
-    And I wait to receive a request
+    And I wait to receive an error
     Then the request is valid for the session reporting API version "1.0" for the "Android Bugsnag Notifier" notifier
     And the Bugsnag-Integrity header is valid
     And the error payload field "sessions" is an array with 1 elements
@@ -27,13 +27,13 @@ Scenario: Manual Session sends
 
 Scenario: Set Auto Capture Sessions sends
     When I run "SessionSetAutoCaptureScenario"
-    And I wait to receive a request
+    And I wait to receive an error
     Then the request is valid for the session reporting API version "1.0" for the "Android Bugsnag Notifier" notifier
     And the Bugsnag-Integrity header is valid
 
 Scenario: User is persisted between sessions
     When I run "SessionPersistUserScenario"
-    And I wait to receive a request
+    And I wait to receive an error
     Then the request is valid for the session reporting API version "1.0" for the "Android Bugsnag Notifier" notifier
     And the Bugsnag-Integrity header is valid
     And the session "user.id" equals "12345"
@@ -43,7 +43,7 @@ Scenario: User is persisted between sessions
     And I close and relaunch the app
     And I configure the app to run in the "no_user" state
     And I run "SessionPersistUserScenario"
-    And I wait to receive a request
+    And I wait to receive an error
     Then the request is valid for the session reporting API version "1.0" for the "Android Bugsnag Notifier" notifier
     And the Bugsnag-Integrity header is valid
     And the session "user.id" equals "12345"
@@ -52,7 +52,7 @@ Scenario: User is persisted between sessions
 
 Scenario: User is not persisted between sessions
     When I run "SessionPersistUserDisabledScenario"
-    And I wait to receive a request
+    And I wait to receive an error
     Then the request is valid for the session reporting API version "1.0" for the "Android Bugsnag Notifier" notifier
     And the Bugsnag-Integrity header is valid
     And the session "user.id" equals "12345"
@@ -62,7 +62,7 @@ Scenario: User is not persisted between sessions
     And I close and relaunch the app
     And I configure the app to run in the "no_user" state
     And I run "SessionPersistUserDisabledScenario"
-    And I wait to receive a request
+    And I wait to receive an error
     Then the request is valid for the session reporting API version "1.0" for the "Android Bugsnag Notifier" notifier
     And the Bugsnag-Integrity header is valid
     And the session "user.id" is not null

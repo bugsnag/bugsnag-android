@@ -4,7 +4,7 @@ Feature: Raising native signals
         When I run "CXXSigillScenario" and relaunch the app
         And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXSigillScenario"
-        And I wait to receive a request
+        And I wait to receive an error
         And the request payload contains a completed unhandled native report
         And the exception "errorClass" equals "SIGILL"
         And the exception "message" equals one of:
@@ -18,7 +18,7 @@ Feature: Raising native signals
         When I run "CXXSigsegvScenario" and relaunch the app
         And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXSigsegvScenario"
-        And I wait to receive a request
+        And I wait to receive an error
         And the request payload contains a completed unhandled native report
         And the exception "errorClass" equals "SIGSEGV"
         And the exception "message" equals "Segmentation violation (invalid memory reference)"
@@ -30,7 +30,7 @@ Feature: Raising native signals
         When I run "CXXSigabrtScenario" and relaunch the app
         And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXSigabrtScenario"
-        And I wait to receive a request
+        And I wait to receive an error
         And the request payload contains a completed unhandled native report
         And the exception "errorClass" equals "SIGABRT"
         And the exception "message" equals "Abort program"
@@ -42,7 +42,7 @@ Feature: Raising native signals
         When I run "CXXSigbusScenario" and relaunch the app
         And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXSigbusScenario"
-        And I wait to receive a request
+        And I wait to receive an error
         And the request payload contains a completed unhandled native report
         And the exception "errorClass" equals "SIGBUS"
         And the exception "message" equals "Bus error (bad memory access)"
@@ -54,7 +54,7 @@ Feature: Raising native signals
         When I run "CXXSigfpeScenario" and relaunch the app
         And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXSigfpeScenario"
-        And I wait to receive a request
+        And I wait to receive an error
         And the request payload contains a completed unhandled native report
         And the exception "errorClass" equals "SIGFPE"
         And the exception "message" equals "Floating-point exception"
@@ -66,7 +66,7 @@ Feature: Raising native signals
         When I run "CXXSigtrapScenario" and relaunch the app
         And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXSigtrapScenario"
-        And I wait to receive a request
+        And I wait to receive an error
         And the request payload contains a completed unhandled native report
         And the exception "errorClass" equals "SIGTRAP"
         And the exception "message" equals "Trace/breakpoint trap"
