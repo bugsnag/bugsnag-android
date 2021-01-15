@@ -16,8 +16,6 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
-    soft_fail:
-      - exit_status: "*"
 
   - label: ':android: Android 6 NDK r16 smoke tests'
     key: 'android-6-smoke'
@@ -72,8 +70,6 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
-    soft_fail:
-      - exit_status: "*"
 
   - label: ':android: Android 8.1 NDK r19 smoke tests'
     key: 'android-8-1-smoke'
@@ -92,8 +88,6 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
-    soft_fail:
-      - exit_status: "*"
 
   - label: ':android: Android 9 NDK r21 smoke tests'
     key: 'android-9-smoke'
