@@ -58,27 +58,27 @@ When("I configure the app to run in the {string} state") do |event_metadata|
 end
 
 Then("the exception reflects a signal was raised") do
-  value = read_key_path(Server.current_request[:body], "events.0.exceptions.0")
+  value = read_key_path(Maze::Server.current_request[:body], "events.0.exceptions.0")
   error_class = value["errorClass"]
   assert_block("The errorClass was not from a signal: #{error_class}") do
     %w[SIGFPE SIGILL SIGSEGV SIGABRT SIGTRAP SIGBUS].include? error_class
   end
 end
 Then("the event {string} string is empty") do |keypath|
-  value = read_key_path(Server.current_request[:body], keypath)
+  value = read_key_path(Maze::Server.current_request[:body], keypath)
   assert_block("The #{keypath} is not empty: '#{value}'") do
     value.nil? or value.length == 0
   end
 end
 
 Then("the event {string} is greater than {int}") do |keypath, int|
-  value = read_key_path(Server.current_request[:body], "events.0.#{keypath}")
+  value = read_key_path(Maze::Server.current_request[:body], "events.0.#{keypath}")
   assert_false(value.nil?, "The event #{keypath} is nil")
   assert_true(value > int)
 end
 
 Then("the exception {string} equals one of:") do |keypath, possible_values|
-  value = read_key_path(Server.current_request[:body], "events.0.exceptions.0.#{keypath}")
+  value = read_key_path(Maze::Server.current_request[:body], "events.0.exceptions.0.#{keypath}")
   assert_includes(possible_values.raw.flatten, value)
 end
 
@@ -87,7 +87,7 @@ end
 # @param expected_values [Array] A table dictating the expected files and methods of the frames
 #   The first two entries are methods (enabling flexibility across SDKs), the third is the file name
 Then("the first significant stack frame methods and files should match:") do |expected_values|
-  stacktrace = read_key_path(Server.current_request[:body], "events.0.exceptions.0.stacktrace")
+  stacktrace = read_key_path(Maze::Server.current_request[:body], "events.0.exceptions.0.stacktrace")
   expected_frame_values = expected_values.raw
   significant_frames = stacktrace.each_with_index.map do |frame, index|
     method = `c++filt -_ _#{frame["method"]}`.chomp
@@ -158,7 +158,7 @@ Then("the request payload contains a completed unhandled native report") do
       And the report contains the required fields
       And the stacktrace contains native frame information
   }
-  stack = read_key_path(Server.current_request[:body], "events.0.exceptions.0.stacktrace")
+  stack = read_key_path(Maze::Server.current_request[:body], "events.0.exceptions.0.stacktrace")
     stack.each_with_index do |frame, index|
       assert_not_nil(frame['symbolAddress'], "The symbolAddress of frame #{index} is nil")
       assert_not_nil(frame['frameAddress'], "The frameAddress of frame #{index} is nil")
@@ -177,7 +177,7 @@ end
 
 Then("the stacktrace contains native frame information") do
   step("the payload field \"events.0.exceptions.0.stacktrace\" is a non-empty array")
-  stack = read_key_path(Server.current_request[:body], "events.0.exceptions.0.stacktrace")
+  stack = read_key_path(Maze::Server.current_request[:body], "events.0.exceptions.0.stacktrace")
   stack.each_with_index do |frame, index|
     assert_not_nil(frame['method'], "The method of frame #{index} is nil")
     assert_not_nil(frame['lineNumber'], "The lineNumber of frame #{index} is nil")
@@ -207,12 +207,12 @@ Then("the request is valid for the error reporting API version {string} for the 
 end
 
 Then("the event has {int} breadcrumbs") do |expected_count|
-  value = Server.current_request[:body]["events"].first["breadcrumbs"]
+  value = Maze::Server.current_request[:body]["events"].first["breadcrumbs"]
   fail("Incorrect number of breadcrumbs found: #{value.length()}, expected: #{expected_count}") if value.length() != expected_count.to_i
 end
 
 Then("the event has a {string} breadcrumb with the message {string}") do |type, message|
-  value = read_key_path(Server.current_request[:body], "events.0.breadcrumbs")
+  value = read_key_path(Maze::Server.current_request[:body], "events.0.breadcrumbs")
   found = false
   value.each do |crumb|
     if crumb["type"] == type and crumb["name"] == message
@@ -233,7 +233,7 @@ end
 
 # Temporary workaround until PLAT-4845 is implemented
 Then("I sort the requests by {string}") do |comparator|
-  Server.stored_requests.sort_by! { |request|
+  Maze::Server.stored_requests.sort_by! { |request|
     read_key_path(request[:body], comparator)
   }
 end
