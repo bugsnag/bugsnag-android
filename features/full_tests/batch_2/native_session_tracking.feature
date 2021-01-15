@@ -8,7 +8,7 @@ Scenario: Paused session is not in payload of unhandled NDK error
     Then the request is valid for the session reporting API version "1.0" for the "Android Bugsnag Notifier" notifier
     And I discard the oldest request
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the payload field "events.0.session" is null
+    And the error payload field "events.0.session" is null
 
 Scenario: Started session is in payload of unhandled NDK error
     And I run "CXXStartSessionScenario" and relaunch the app
@@ -18,4 +18,4 @@ Scenario: Started session is in payload of unhandled NDK error
     Then the request is valid for the session reporting API version "1.0" for the "Android Bugsnag Notifier" notifier
     And I discard the oldest request
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the payload field "events.0.session.events.unhandled" equals 1
+    And the error payload field "events.0.session.events.unhandled" equals 1

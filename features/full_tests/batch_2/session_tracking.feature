@@ -5,8 +5,8 @@ Scenario: Automatic Session Tracking sends
     And I wait to receive a request
     Then the request is valid for the session reporting API version "1.0" for the "Android Bugsnag Notifier" notifier
     And the Bugsnag-Integrity header is valid
-    And the payload field "notifier.name" equals "Android Bugsnag Notifier"
-    And the payload field "sessions" is an array with 1 elements
+    And the error payload field "notifier.name" equals "Android Bugsnag Notifier"
+    And the error payload field "sessions" is an array with 1 elements
     And the session "user.id" equals "123"
     And the session "user.email" equals "user@example.com"
     And the session "user.name" equals "Joe Bloggs"
@@ -18,7 +18,7 @@ Scenario: Manual Session sends
     And I wait to receive a request
     Then the request is valid for the session reporting API version "1.0" for the "Android Bugsnag Notifier" notifier
     And the Bugsnag-Integrity header is valid
-    And the payload field "sessions" is an array with 1 elements
+    And the error payload field "sessions" is an array with 1 elements
     And the session "user.id" equals "123"
     And the session "user.email" equals "user@example.com"
     And the session "user.name" equals "Joe Bloggs"

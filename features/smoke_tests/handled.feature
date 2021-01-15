@@ -6,7 +6,7 @@ Scenario: Notify caught Java exception with default configuration
     Then the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
 
     # Exception details
-    And the payload field "events" is an array with 1 elements
+    And the error payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "java.lang.IllegalStateException"
     And the exception "message" equals "HandledJavaSmokeScenario"
     And the exception "type" equals "android"
@@ -16,7 +16,7 @@ Scenario: Notify caught Java exception with default configuration
     And the event "severityReason.unhandledOverridden" is false
 
     # Stacktrace validation
-    And the payload field "events.0.exceptions.0.stacktrace" is a non-empty array
+    And the error payload field "events.0.exceptions.0.stacktrace" is a non-empty array
     And the event "exceptions.0.stacktrace.0.method" ends with "HandledJavaSmokeScenario.startScenario"
     And the exception "stacktrace.0.file" equals "HandledJavaSmokeScenario.java"
     And the event "exceptions.0.stacktrace.0.lineNumber" equals 51
@@ -29,18 +29,18 @@ Scenario: Notify caught Java exception with default configuration
     And the event "app.type" equals "android"
     And the event "app.version" equals "1.1.14"
     And the event "app.versionCode" equals 34
-    And the payload field "events.0.app.duration" is an integer
-    And the payload field "events.0.app.durationInForeground" is an integer
+    And the error payload field "events.0.app.duration" is an integer
+    And the error payload field "events.0.app.durationInForeground" is an integer
     And the event "app.inForeground" is true
-    And the payload field "events.0.metaData.app.memoryUsage" is greater than 0
+    And the error payload field "events.0.metaData.app.memoryUsage" is greater than 0
     And the event "metaData.app.name" equals "MazeRunner"
     And the event "metaData.app.lowMemory" is false
 
     # Device data
-    And the payload field "events.0.device.cpuAbi" is a non-empty array
+    And the error payload field "events.0.device.cpuAbi" is a non-empty array
     And the event "device.jailbroken" is false
     And the event "device.id" is not null
-    And the payload field "events.0.device.id" is stored as the value "device_id"
+    And the error payload field "events.0.device.id" is stored as the value "device_id"
     And the event "device.locale" is not null
     And the event "device.manufacturer" is not null
     And the event "device.model" is not null
@@ -49,9 +49,9 @@ Scenario: Notify caught Java exception with default configuration
     And the event "device.runtimeVersions" is not null
     And the event "device.runtimeVersions.androidApiLevel" is not null
     And the event "device.runtimeVersions.osBuild" is not null
-    And the payload field "events.0.device.totalMemory" is greater than 0
-    And the payload field "events.0.device.freeDisk" is greater than 0
-    And the payload field "events.0.device.freeMemory" is greater than 0
+    And the error payload field "events.0.device.totalMemory" is greater than 0
+    And the error payload field "events.0.device.freeDisk" is greater than 0
+    And the error payload field "events.0.device.freeMemory" is greater than 0
     And the event "device.orientation" equals "portrait"
     And the event "device.time" is a timestamp
     And the event "metaData.device.locationStatus" is not null
@@ -66,7 +66,7 @@ Scenario: Notify caught Java exception with default configuration
 
     # User
     And the event "user.id" is not null
-    And the payload field "events.0.user.id" equals the stored value "device_id"
+    And the error payload field "events.0.user.id" equals the stored value "device_id"
 
     # Breadcrumbs
     And the event has a "state" breadcrumb named "Bugsnag loaded"
@@ -79,11 +79,11 @@ Scenario: Notify caught Java exception with default configuration
     And the event "metaData.TestData.CallbackMetadata" is true
 
     # Threads validation
-    And the payload field "events.0.threads" is a non-empty array
-    And the payload field "events.0.threads.0.id" is an integer
+    And the error payload field "events.0.threads" is a non-empty array
+    And the error payload field "events.0.threads.0.id" is an integer
     And the event "threads.0.name" is not null
     And the event "threads.0.type" equals "android"
-    And the payload field "events.0.threads.0.stacktrace" is a non-empty array
+    And the error payload field "events.0.threads.0.stacktrace" is a non-empty array
     And the event "threads.0.stacktrace.0.method" is not null
     And the event "threads.0.stacktrace.0.file" is not null
     And the event "threads.0.stacktrace.0.lineNumber" is not null
@@ -94,7 +94,7 @@ Scenario: Notify Kotlin exception with overwritten configuration
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
 
     # Exception details
-    And the payload field "events" is an array with 1 elements
+    And the error payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "HandledKotlinSmokeScenario"
     And the exception "type" equals "android"
@@ -104,7 +104,7 @@ Scenario: Notify Kotlin exception with overwritten configuration
     And the event "severityReason.unhandledOverridden" is false
 
     # Stacktrace validation
-    And the payload field "events.0.exceptions.0.stacktrace" is a non-empty array
+    And the error payload field "events.0.exceptions.0.stacktrace" is a non-empty array
     And the event "exceptions.0.stacktrace.0.method" ends with "generateException"
     And the exception "stacktrace.0.file" equals "Scenario.kt"
     And the event "exceptions.0.stacktrace.0.lineNumber" equals 93
@@ -132,11 +132,11 @@ Scenario: Notify Kotlin exception with overwritten configuration
     And the event "metaData.TestData.redacted" equals "[REDACTED]"
 
     # Threads validation
-    And the payload field "events.0.threads" is a non-empty array
-    And the payload field "events.0.threads.0.id" is an integer
+    And the error payload field "events.0.threads" is a non-empty array
+    And the error payload field "events.0.threads.0.id" is an integer
     And the event "threads.0.name" is not null
     And the event "threads.0.type" equals "android"
-    And the payload field "events.0.threads.0.stacktrace" is a non-empty array
+    And the error payload field "events.0.threads.0.stacktrace" is a non-empty array
     And the event "threads.0.stacktrace.0.method" is not null
     And the event "threads.0.stacktrace.0.file" is not null
     And the event "threads.0.stacktrace.0.lineNumber" is not null
@@ -147,11 +147,11 @@ Scenario: Handled C functionality
 
     # Exception details
     Then the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the payload field "events" is an array with 1 elements
+    And the error payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "CXXNotifySmokeScenario"
     And the exception "message" equals "Smoke test scenario"
     And the exception "type" equals "c"
-    And the payload field "events.0.exceptions.0.stacktrace" is a non-empty array
+    And the error payload field "events.0.exceptions.0.stacktrace" is a non-empty array
     And the event "unhandled" is false
     And the event "severity" equals "error"
     And the event "severityReason.type" equals "userCallbackSetSeverity"
@@ -164,15 +164,15 @@ Scenario: Handled C functionality
     And the event "app.type" equals "android"
     And the event "app.version" equals "1.1.14"
     And the event "app.versionCode" equals 34
-    And the payload field "events.0.app.duration" is an integer
-    And the payload field "events.0.app.durationInForeground" is an integer
+    And the error payload field "events.0.app.duration" is an integer
+    And the error payload field "events.0.app.durationInForeground" is an integer
     And the event "app.inForeground" is true
 
     # Device data
-    And the payload field "events.0.device.cpuAbi" is a non-empty array
+    And the error payload field "events.0.device.cpuAbi" is a non-empty array
     And the event "device.jailbroken" is false
     And the event "device.id" is not null
-    And the payload field "events.0.device.id" is stored as the value "device_id"
+    And the error payload field "events.0.device.id" is stored as the value "device_id"
     And the event "device.locale" is not null
     And the event "device.manufacturer" is not null
     And the event "device.model" is not null
@@ -181,9 +181,9 @@ Scenario: Handled C functionality
     And the event "device.runtimeVersions" is not null
     And the event "device.runtimeVersions.androidApiLevel" is not null
     And the event "device.runtimeVersions.osBuild" is not null
-    And the payload field "events.0.device.totalMemory" is greater than 0
-    And the payload field "events.0.device.freeDisk" is greater than 0
-    And the payload field "events.0.device.freeMemory" is greater than 0
+    And the error payload field "events.0.device.totalMemory" is greater than 0
+    And the error payload field "events.0.device.freeDisk" is greater than 0
+    And the error payload field "events.0.device.freeMemory" is greater than 0
     And the event "device.orientation" equals "portrait"
     And the event "device.time" is a timestamp
 
@@ -198,11 +198,11 @@ Scenario: Handled C functionality
     And the event "metaData.TestData.Source" equals "ClientCallback"
 
     # Threads validation
-    And the payload field "events.0.threads" is a non-empty array
-    And the payload field "events.0.threads.0.id" is an integer
+    And the error payload field "events.0.threads" is a non-empty array
+    And the error payload field "events.0.threads.0.id" is an integer
     And the event "threads.0.name" is not null
     And the event "threads.0.type" equals "android"
-    And the payload field "events.0.threads.0.stacktrace" is a non-empty array
+    And the error payload field "events.0.threads.0.stacktrace" is a non-empty array
     And the event "threads.0.stacktrace.0.method" is not null
     And the event "threads.0.stacktrace.0.file" is not null
     And the event "threads.0.stacktrace.0.lineNumber" is not null

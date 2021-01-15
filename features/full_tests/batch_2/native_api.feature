@@ -19,8 +19,8 @@ Feature: Native API
         And I discard the oldest request
         Then the request payload contains a completed handled native report
         And the event contains session info
-        And the payload field "events.0.session.events.unhandled" equals 1
-        And the payload field "events.0.session.events.handled" equals 2
+        And the error payload field "events.0.session.events.unhandled" equals 1
+        And the error payload field "events.0.session.events.handled" equals 2
 
     Scenario: Set extraordinarily long app information
         When I run "CXXExtraordinaryLongStringScenario" and relaunch the app

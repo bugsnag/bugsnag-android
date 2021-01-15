@@ -12,7 +12,7 @@ Feature: Native User API
         And the event "user.email" is null
         And the event "unhandled" is false
         And the event "app.binaryArch" is not null
-        And the payload field "events.0.device.cpuAbi" is a non-empty array
+        And the error payload field "events.0.device.cpuAbi" is a non-empty array
 
     Scenario: Adding user information in Java followed by a C crash
         And I run "CXXJavaUserInfoNativeCrashScenario" and relaunch the app
@@ -34,7 +34,7 @@ Feature: Native User API
         And I configure Bugsnag for "CXXNativeUserInfoJavaCrashScenario"
         And I wait to receive a request
         Then the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-        And the payload field "events" is an array with 1 elements
+        And the error payload field "events" is an array with 1 elements
         And the event "user.id" equals "24601"
         And the event "user.email" equals "test@test.test"
         And the event "user.name" equals "test user"
