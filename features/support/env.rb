@@ -35,8 +35,7 @@ Before('@skip_below_android_5') do |scenario|
 end
 
 Before('@skip_android_8_1') do |scenario|
-  # TODO See what happens nowadays
-  # skip_this_scenario("Skipping scenario") if MazeRunner.config.os_version == 8.1
+  skip_this_scenario("Skipping scenario") if MazeRunner.config.os_version == 8.1
 end
 
 Before('@skip_android_10') do |scenario|
