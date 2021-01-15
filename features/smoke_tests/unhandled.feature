@@ -4,7 +4,7 @@ Scenario: Unhandled Java Exception with loaded configuration
     When I run "UnhandledJavaLoadedConfigScenario" and relaunch the app
     And I configure Bugsnag for "UnhandledJavaLoadedConfigScenario"
     And I wait to receive an error
-    Then the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
 
     # Exception details
     And the error payload field "events" is an array with 1 elements
@@ -84,7 +84,7 @@ Scenario: Signal exception with overwritten config
     When I run "CXXSignalSmokeScenario" and relaunch the app
     And I configure Bugsnag for "CXXSignalSmokeScenario"
     And I wait to receive an error
-    Then the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
 
     # Exception details
     And the error payload field "events" is an array with 1 elements
@@ -163,7 +163,7 @@ Scenario: ANR detection
     And I wait to receive an error
 
     # Exception details
-    Then the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the error payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "ANR"
     And the exception "message" starts with " Input dispatching timed out"

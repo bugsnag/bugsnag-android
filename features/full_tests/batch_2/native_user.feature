@@ -33,7 +33,7 @@ Feature: Native User API
         When I run "CXXNativeUserInfoJavaCrashScenario" and relaunch the app
         And I configure Bugsnag for "CXXNativeUserInfoJavaCrashScenario"
         And I wait to receive an error
-        Then the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+        Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
         And the error payload field "events" is an array with 1 elements
         And the event "user.id" equals "24601"
         And the event "user.email" equals "test@test.test"

@@ -3,7 +3,7 @@ Feature: Loading values into the configuration
 Scenario: Load configuration initialised from the Manifest
     When I run "LoadConfigurationFromManifestScenario"
     Then I wait to receive an error
-    And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier with the apiKey "abc12312312312312312312312312312"
+    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier with the apiKey "abc12312312312312312312312312312"
     And the exception "message" equals "LoadConfigurationFromManifestScenario"
     And the event "app.releaseStage" equals "testing"
     And the error payload field "events.0.breadcrumbs" is an array with 1 elements
@@ -18,7 +18,7 @@ Scenario: Load configuration initialised from the Manifest
 Scenario: Load configuration initialised with Kotlin
     When I run "LoadConfigurationKotlinScenario"
     Then I wait to receive an error
-    And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier with the apiKey "45645645645645645645645645645645"
+    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier with the apiKey "45645645645645645645645645645645"
     And the exception "message" equals "LoadConfigurationKotlinScenario"
     And the event "app.releaseStage" equals "kotlin"
     And the error payload field "events.0.breadcrumbs" is an array with 1 elements
@@ -33,7 +33,7 @@ Scenario: Load configuration initialised with Kotlin
 Scenario: Load configuration initialised with nulls
     When I run "LoadConfigurationNullsScenario"
     Then I wait to receive an error
-    And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier with the apiKey "12312312312312312312312312312312"
+    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier with the apiKey "12312312312312312312312312312312"
     And the exception "message" equals "LoadConfigurationNullsScenario"
     And the event "app.releaseStage" equals "production"
     And the event "metaData.test.foo" equals "bar"

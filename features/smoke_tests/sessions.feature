@@ -37,7 +37,7 @@ Scenario: Automated sessions send
 
     # Error payload
     Then I wait to receive an error
-    And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the error payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "AutoSessionSmokeScenario"
@@ -68,7 +68,7 @@ Scenario: Manual session control works
     Then I wait to receive 3 errors
 
     # First handled request
-    And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "ManualSessionSmokeScenario"
     And the event "unhandled" is false
@@ -82,7 +82,7 @@ Scenario: Manual session control works
     And I discard the oldest error
 
     # Second handled request
-    And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "ManualSessionSmokeScenario"
     And the event "unhandled" is false
@@ -93,7 +93,7 @@ Scenario: Manual session control works
     And I discard the oldest error
 
     # First unhandled request
-    And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "ManualSessionSmokeScenario"
     And the event "unhandled" is true

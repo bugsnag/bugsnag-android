@@ -3,7 +3,7 @@ Feature: Handled smoke tests
 Scenario: Notify caught Java exception with default configuration
     When I run "HandledJavaSmokeScenario"
     And I wait to receive an error
-    Then the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
 
     # Exception details
     And the error payload field "events" is an array with 1 elements
@@ -91,7 +91,7 @@ Scenario: Notify caught Java exception with default configuration
 Scenario: Notify Kotlin exception with overwritten configuration
     When I run "HandledKotlinSmokeScenario"
     Then I wait to receive an error
-    And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
 
     # Exception details
     And the error payload field "events" is an array with 1 elements
@@ -146,7 +146,7 @@ Scenario: Handled C functionality
     And I wait to receive an error
 
     # Exception details
-    Then the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the error payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "CXXNotifySmokeScenario"
     And the exception "message" equals "Smoke test scenario"
