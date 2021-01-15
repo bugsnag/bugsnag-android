@@ -58,7 +58,7 @@ When("I configure the app to run in the {string} state") do |event_metadata|
 end
 
 Then("the exception reflects a signal was raised") do
-  value = read_key_path(Maze::Server.current_request[:body], "events.0.exceptions.0")
+  value = read_key_path(Maze::Server.errors.current[:body], "events.0.exceptions.0")
   error_class = value["errorClass"]
   assert_block("The errorClass was not from a signal: #{error_class}") do
     %w[SIGFPE SIGILL SIGSEGV SIGABRT SIGTRAP SIGBUS].include? error_class
@@ -78,7 +78,7 @@ Then("the event {string} is greater than {int}") do |keypath, int|
 end
 
 Then("the exception {string} equals one of:") do |keypath, possible_values|
-  value = read_key_path(Maze::Server.current_request[:body], "events.0.exceptions.0.#{keypath}")
+  value = read_key_path(Maze::Server.errors.current[:body], "events.0.exceptions.0.#{keypath}")
   assert_includes(possible_values.raw.flatten, value)
 end
 
@@ -87,7 +87,7 @@ end
 # @param expected_values [Array] A table dictating the expected files and methods of the frames
 #   The first two entries are methods (enabling flexibility across SDKs), the third is the file name
 Then("the first significant stack frame methods and files should match:") do |expected_values|
-  stacktrace = read_key_path(Maze::Server.current_request[:body], "events.0.exceptions.0.stacktrace")
+  stacktrace = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.exceptions.0.stacktrace")
   expected_frame_values = expected_values.raw
   significant_frames = stacktrace.each_with_index.map do |frame, index|
     method = `c++filt -_ _#{frame["method"]}`.chomp
@@ -111,38 +111,38 @@ end
 
 Then("the report contains the required fields") do
   steps %Q{
-    And the payload field "notifier.name" is not null
-    And the payload field "notifier.url" is not null
-    And the payload field "notifier.version" is not null
-    And the payload field "events" is a non-empty array
-    And the payload field "events.0.unhandled" is not null
-    And the payload field "events.0.app.duration" is not null
-    And the payload field "events.0.app.durationInForeground" is not null
-    And the payload field "events.0.app.id" equals "com.bugsnag.android.mazerunner"
-    And the payload field "events.0.app.inForeground" is not null
-    And the payload field "events.0.app.releaseStage" is not null
-    And the payload field "events.0.app.type" equals "android"
-    And the payload field "events.0.app.version" is not null
-    And the payload field "events.0.app.versionCode" equals 34
-    And the payload field "events.0.device.id" is not null
-    And the payload field "events.0.device.locale" is not null
-    And the payload field "events.0.device.manufacturer" is not null
-    And the payload field "events.0.device.model" is not null
-    And the payload field "events.0.device.orientation" is not null
-    And the payload field "events.0.device.osName" equals "android"
-    And the payload field "events.0.device.time" is not null
-    And the payload field "events.0.device.totalMemory" is not null
-    And the payload field "events.0.device.runtimeVersions.osBuild" is not null
-    And the payload field "events.0.metaData.app.name" equals "MazeRunner"
-    And the payload field "events.0.metaData.device.brand" is not null
-    And the payload field "events.0.metaData.device.dpi" is not null
-    And the payload field "events.0.metaData.device.locationStatus" is not null
-    And the payload field "events.0.metaData.device.networkAccess" is not null
-    And the payload field "events.0.metaData.device.screenDensity" is not null
-    And the payload field "events.0.metaData.device.screenResolution" is not null
-    And the payload field "events.0.severity" is not null
-    And the payload field "events.0.severityReason.type" is not null
-    And the payload field "events.0.device.cpuAbi" is a non-empty array
+    And the error payload field "notifier.name" is not null
+    And the error payload field "notifier.url" is not null
+    And the error payload field "notifier.version" is not null
+    And the error payload field "events" is a non-empty array
+    And the error payload field "events.0.unhandled" is not null
+    And the error payload field "events.0.app.duration" is not null
+    And the error payload field "events.0.app.durationInForeground" is not null
+    And the error payload field "events.0.app.id" equals "com.bugsnag.android.mazerunner"
+    And the error payload field "events.0.app.inForeground" is not null
+    And the error payload field "events.0.app.releaseStage" is not null
+    And the error payload field "events.0.app.type" equals "android"
+    And the error payload field "events.0.app.version" is not null
+    And the error payload field "events.0.app.versionCode" equals 34
+    And the error payload field "events.0.device.id" is not null
+    And the error payload field "events.0.device.locale" is not null
+    And the error payload field "events.0.device.manufacturer" is not null
+    And the error payload field "events.0.device.model" is not null
+    And the error payload field "events.0.device.orientation" is not null
+    And the error payload field "events.0.device.osName" equals "android"
+    And the error payload field "events.0.device.time" is not null
+    And the error payload field "events.0.device.totalMemory" is not null
+    And the error payload field "events.0.device.runtimeVersions.osBuild" is not null
+    And the error payload field "events.0.metaData.app.name" equals "MazeRunner"
+    And the error payload field "events.0.metaData.device.brand" is not null
+    And the error payload field "events.0.metaData.device.dpi" is not null
+    And the error payload field "events.0.metaData.device.locationStatus" is not null
+    And the error payload field "events.0.metaData.device.networkAccess" is not null
+    And the error payload field "events.0.metaData.device.screenDensity" is not null
+    And the error payload field "events.0.metaData.device.screenResolution" is not null
+    And the error payload field "events.0.severity" is not null
+    And the error payload field "events.0.severityReason.type" is not null
+    And the error payload field "events.0.device.cpuAbi" is a non-empty array
   }
 end
 
@@ -158,7 +158,7 @@ Then("the request payload contains a completed unhandled native report") do
       And the report contains the required fields
       And the stacktrace contains native frame information
   }
-  stack = read_key_path(Maze::Server.current_request[:body], "events.0.exceptions.0.stacktrace")
+  stack = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.exceptions.0.stacktrace")
     stack.each_with_index do |frame, index|
       assert_not_nil(frame['symbolAddress'], "The symbolAddress of frame #{index} is nil")
       assert_not_nil(frame['frameAddress'], "The frameAddress of frame #{index} is nil")
@@ -168,16 +168,16 @@ end
 
 Then("the event contains session info") do
   steps %Q{
-    Then the payload field "events.0.session.startedAt" is not null
-    And the payload field "events.0.session.id" is not null
-    And the payload field "events.0.session.events.handled" is not null
-    And the payload field "events.0.session.events.unhandled" is not null
+    Then the error payload field "events.0.session.startedAt" is not null
+    And the error payload field "events.0.session.id" is not null
+    And the error payload field "events.0.session.events.handled" is not null
+    And the error payload field "events.0.session.events.unhandled" is not null
   }
 end
 
 Then("the stacktrace contains native frame information") do
-  step("the payload field \"events.0.exceptions.0.stacktrace\" is a non-empty array")
-  stack = read_key_path(Maze::Server.current_request[:body], "events.0.exceptions.0.stacktrace")
+  step("the error payload field \"events.0.exceptions.0.stacktrace\" is a non-empty array")
+  stack = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.exceptions.0.stacktrace")
   stack.each_with_index do |frame, index|
     assert_not_nil(frame['method'], "The method of frame #{index} is nil")
     assert_not_nil(frame['lineNumber'], "The lineNumber of frame #{index} is nil")
@@ -185,12 +185,12 @@ Then("the stacktrace contains native frame information") do
 end
 
 Then("the event has {int} breadcrumbs") do |expected_count|
-  value = Maze::Server.current_request[:body]["events"].first["breadcrumbs"]
+  value = Maze::Server.errors.current[:body]["events"].first["breadcrumbs"]
   fail("Incorrect number of breadcrumbs found: #{value.length()}, expected: #{expected_count}") if value.length() != expected_count.to_i
 end
 
 Then("the event has a {string} breadcrumb with the message {string}") do |type, message|
-  value = read_key_path(Maze::Server.current_request[:body], "events.0.breadcrumbs")
+  value = read_key_path(Maze::Server.errors.current[:body], "events.0.breadcrumbs")
   found = false
   value.each do |crumb|
     if crumb["type"] == type and crumb["name"] == message
@@ -211,7 +211,7 @@ end
 
 # Temporary workaround until PLAT-4845 is implemented
 Then("I sort the requests by {string}") do |comparator|
-  Maze::Server.stored_requests.sort_by! { |request|
+  Maze::Server.errors.remaining.sort_by { |request|
     read_key_path(request[:body], comparator)
   }
 end
