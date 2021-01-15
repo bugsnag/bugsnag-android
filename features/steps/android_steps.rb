@@ -64,18 +64,6 @@ Then("the exception reflects a signal was raised") do
     %w[SIGFPE SIGILL SIGSEGV SIGABRT SIGTRAP SIGBUS].include? error_class
   end
 end
-Then("the event {string} string is empty") do |keypath|
-  value = read_key_path(Maze::Server.current_request[:body], keypath)
-  assert_block("The #{keypath} is not empty: '#{value}'") do
-    value.nil? or value.length == 0
-  end
-end
-
-Then("the event {string} is greater than {int}") do |keypath, int|
-  value = read_key_path(Maze::Server.current_request[:body], "events.0.#{keypath}")
-  assert_false(value.nil?, "The event #{keypath} is nil")
-  assert_true(value > int)
-end
 
 Then("the exception {string} equals one of:") do |keypath, possible_values|
   value = read_key_path(Maze::Server.errors.current[:body], "events.0.exceptions.0.#{keypath}")
