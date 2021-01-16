@@ -3,7 +3,7 @@ Feature: Native Context API
     Scenario: Changing intents followed by notifying in C
         When I run "CXXAutoContextScenario"
         And I wait to receive an error
-        Then the request payload contains a completed handled native report
+        Then the error payload contains a completed handled native report
         And the event "severity" equals "info"
         And the event "context" equals "SecondActivity"
         And the exception "errorClass" equals "Hello hello"
@@ -15,7 +15,7 @@ Feature: Native Context API
         And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXUpdateContextCrashScenario"
         And I wait to receive an error
-        Then the request payload contains a completed handled native report
+        Then the error payload contains a completed handled native report
         And the event "severity" equals "error"
         And the event "context" equals "Everest"
         And the exception "errorClass" equals one of:

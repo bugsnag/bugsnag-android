@@ -134,14 +134,14 @@ Then("the report contains the required fields") do
   }
 end
 
-Then("the request payload contains a completed handled native report") do
+Then("the error payload contains a completed handled native report") do
   steps %Q{
       And the report contains the required fields
       And the stacktrace contains native frame information
   }
 end
 
-Then("the request payload contains a completed unhandled native report") do
+Then("the error payload contains a completed unhandled native report") do
   steps %Q{
       And the report contains the required fields
       And the stacktrace contains native frame information
@@ -198,7 +198,7 @@ rescue Selenium::WebDriver::Error::NoSuchElementError
 end
 
 # Temporary workaround until PLAT-4845 is implemented
-Then("I sort the requests by {string}") do |comparator|
+Then("I sort the errors by {string}") do |comparator|
   Maze::Server.errors.remaining.sort_by { |request|
     Maze::Helper.read_key_path(request[:body], comparator)
   }

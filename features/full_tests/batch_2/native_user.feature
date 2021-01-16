@@ -3,7 +3,7 @@ Feature: Native User API
     Scenario: Adding user information in C followed by notifying in C
         When I run "CXXUserInfoScenario"
         And I wait to receive an error
-        Then the request payload contains a completed handled native report
+        Then the error payload contains a completed handled native report
         And the exception "errorClass" equals "Connection lost"
         And the exception "message" equals "No antenna detected"
         And the event "severity" equals "info"
@@ -19,7 +19,7 @@ Feature: Native User API
         And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXJavaUserInfoNativeCrashScenario"
         And I wait to receive an error
-        Then the request payload contains a completed handled native report
+        Then the error payload contains a completed handled native report
         And the exception "errorClass" equals one of:
             | SIGILL |
             | SIGTRAP |

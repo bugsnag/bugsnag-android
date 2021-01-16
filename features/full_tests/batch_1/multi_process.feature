@@ -2,8 +2,8 @@ Feature: Reporting errors in multi process apps
 
 Scenario: Handled JVM error
     When I run "MultiProcessHandledExceptionScenario"
-    Then I wait to receive 2 requests
-    And I sort the requests by "events.0.metaData.process.name"
+    Then I wait to receive 2 errors
+    And I sort the errors by "events.0.metaData.process.name"
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the error payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "java.lang.RuntimeException"
@@ -15,7 +15,7 @@ Scenario: Handled JVM error
     And the error payload field "events.0.user.name" equals "MultiProcessHandledExceptionScenario"
     And the error payload field "events.0.user.email" equals "background@example.com"
 
-    Then I discard the oldest request
+    Then I discard the oldest error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the error payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "java.lang.RuntimeException"
@@ -36,8 +36,8 @@ Scenario: Unhandled JVM error
     And I run "MultiProcessUnhandledExceptionScenario" and relaunch the app
     And I configure the app to run in the "non-crashy" state
     And I run "MultiProcessUnhandledExceptionScenario"
-    Then I wait to receive 2 requests
-    And I sort the requests by "events.0.metaData.process.name"
+    Then I wait to receive 2 errors
+    And I sort the errors by "events.0.metaData.process.name"
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the error payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "java.lang.RuntimeException"
@@ -45,7 +45,7 @@ Scenario: Unhandled JVM error
     And the event "unhandled" is true
     And the error payload field "events.0.metaData.process.name" equals "com.bugsnag.android.mazerunner"
 
-    Then I discard the oldest request
+    Then I discard the oldest error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the error payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "java.lang.RuntimeException"
@@ -55,10 +55,10 @@ Scenario: Unhandled JVM error
 
 Scenario: Handled NDK error
     When I run "MultiProcessHandledCXXErrorScenario"
-    Then I wait to receive 2 requests
-    And I sort the requests by "events.0.metaData.process.name"
+        Then I wait to receive 2 errors
+    And I sort the errors by "events.0.metaData.process.name"
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the request payload contains a completed handled native report
+    And the error payload contains a completed handled native report
     And the error payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "activate"
     And the exception "message" equals "MultiProcessHandledCXXErrorScenario"
@@ -67,9 +67,9 @@ Scenario: Handled NDK error
     And the error payload field "events.0.device.id" is stored as the value "first_device_id"
     And the error payload field "events.0.user.id" equals the stored value "first_device_id"
 
-    Then I discard the oldest request
+    Then I discard the oldest error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the request payload contains a completed handled native report
+    And the error payload contains a completed handled native report
     And the error payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "activate"
     And the exception "message" equals "MultiProcessHandledCXXErrorScenario"
@@ -87,10 +87,10 @@ Scenario: Unhandled NDK error
     And I run "MultiProcessUnhandledCXXErrorScenario" and relaunch the app
     And I configure the app to run in the "non-crashy" state
     And I run "MultiProcessUnhandledCXXErrorScenario"
-    Then I wait to receive 2 requests
-    And I sort the requests by "events.0.metaData.process.name"
+    Then I wait to receive 2 errors
+    And I sort the errors by "events.0.metaData.process.name"
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the request payload contains a completed handled native report
+    And the error payload contains a completed handled native report
     And the error payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "SIGABRT"
     And the exception "message" equals "Abort program"
@@ -101,9 +101,9 @@ Scenario: Unhandled NDK error
     And the error payload field "events.0.user.name" equals "MultiProcessUnhandledCXXErrorScenario"
     And the error payload field "events.0.user.email" equals "2@example.com"
 
-    Then I discard the oldest request
+    Then I discard the oldest error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the request payload contains a completed handled native report
+    And the error payload contains a completed handled native report
     And the error payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "SIGABRT"
     And the exception "message" equals "Abort program"
@@ -116,8 +116,8 @@ Scenario: Unhandled NDK error
 
 Scenario: User/device information is migrated from SharedPreferences
     When I run "SharedPrefMigrationScenario"
-    Then I wait to receive 2 requests
-    And I sort the requests by "events.0.metaData.process.name"
+    Then I wait to receive 2 errors
+    And I sort the errors by "events.0.metaData.process.name"
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the error payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "java.lang.RuntimeException"
@@ -129,7 +129,7 @@ Scenario: User/device information is migrated from SharedPreferences
     And the error payload field "events.0.user.name" equals "SharedPrefMigrationScenario"
     And the error payload field "events.0.user.email" equals "3@example.com"
 
-    Then I discard the oldest request
+    Then I discard the oldest error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the error payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "java.lang.RuntimeException"

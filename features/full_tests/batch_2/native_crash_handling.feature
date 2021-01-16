@@ -5,7 +5,7 @@ Scenario: Dereference a null pointer
         And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXNullPointerScenario"
         And I wait to receive an error
-        And the request payload contains a completed unhandled native report
+        And the error payload contains a completed unhandled native report
         And the exception "errorClass" equals one of:
           | SIGILL |
           | SIGTRAP |
@@ -32,7 +32,7 @@ Scenario: Dereference a null pointer
         And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXStackoverflowScenario"
         And I wait to receive an error
-        And the request payload contains a completed unhandled native report
+        And the error payload contains a completed unhandled native report
         And the exception reflects a signal was raised
         And the exception "type" equals "c"
         And the event "severity" equals "error"
@@ -43,7 +43,7 @@ Scenario: Dereference a null pointer
         And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXTrapScenario"
         And I wait to receive an error
-        And the request payload contains a completed unhandled native report
+        And the error payload contains a completed unhandled native report
         And the exception "errorClass" equals one of:
           | SIGILL |
           | SIGTRAP |
@@ -95,7 +95,7 @@ Scenario: Dereference a null pointer
         And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXAbortScenario"
         And I wait to receive an error
-        And the request payload contains a completed unhandled native report
+        And the error payload contains a completed unhandled native report
         And the exception "errorClass" equals one of:
             | SIGABRT |
             | SIGSEGV |
@@ -122,7 +122,7 @@ Scenario: Dereference a null pointer
         And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXExternalStackElementScenario"
         And I wait to receive an error
-        And the request payload contains a completed unhandled native report
+        And the error payload contains a completed unhandled native report
         And the event "severity" equals "error"
         And the event "unhandled" is true
         And the exception "errorClass" equals one of:
