@@ -58,7 +58,7 @@ When("I configure the app to run in the {string} state") do |event_metadata|
 end
 
 Then("the exception reflects a signal was raised") do
-  value = read_key_path(Maze::Server.errors.current[:body], "events.0.exceptions.0")
+  value = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.exceptions.0")
   error_class = value["errorClass"]
   assert_block("The errorClass was not from a signal: #{error_class}") do
     %w[SIGFPE SIGILL SIGSEGV SIGABRT SIGTRAP SIGBUS].include? error_class
@@ -66,7 +66,7 @@ Then("the exception reflects a signal was raised") do
 end
 
 Then("the exception {string} equals one of:") do |keypath, possible_values|
-  value = read_key_path(Maze::Server.errors.current[:body], "events.0.exceptions.0.#{keypath}")
+  value = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.exceptions.0.#{keypath}")
   assert_includes(possible_values.raw.flatten, value)
 end
 
@@ -178,7 +178,7 @@ Then("the event has {int} breadcrumbs") do |expected_count|
 end
 
 Then("the event has a {string} breadcrumb with the message {string}") do |type, message|
-  value = read_key_path(Maze::Server.errors.current[:body], "events.0.breadcrumbs")
+  value = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.breadcrumbs")
   found = false
   value.each do |crumb|
     if crumb["type"] == type and crumb["name"] == message
@@ -200,6 +200,6 @@ end
 # Temporary workaround until PLAT-4845 is implemented
 Then("I sort the requests by {string}") do |comparator|
   Maze::Server.errors.remaining.sort_by { |request|
-    read_key_path(request[:body], comparator)
+    Maze::Helper.read_key_path(request[:body], comparator)
   }
 end
