@@ -43,7 +43,7 @@ services:
 
   android-maze-runner:
     # TODO: Update to latest-v4-cli
-    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner:integration-separate-endpoints-cli
+    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner:tms-corrections-for-notifiers-cli
     environment:
       DEBUG:
       BUILDKITE:
