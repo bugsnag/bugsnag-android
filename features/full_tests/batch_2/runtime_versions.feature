@@ -18,7 +18,7 @@ Scenario: Runtime versions included in NDK error
 
 Scenario: Runtime versions included in session
     When I run "ManualSessionScenario"
-    Then I wait to receive an error
+    Then I wait to receive a session
     And the session is valid for the session reporting API version "1.0" for the "Android Bugsnag Notifier" notifier
-    And the error payload field "device.runtimeVersions.androidApiLevel" is not null
-    And the error payload field "device.runtimeVersions.osBuild" is not null
+    And the session payload field "device.runtimeVersions.androidApiLevel" is not null
+    And the session payload field "device.runtimeVersions.osBuild" is not null
