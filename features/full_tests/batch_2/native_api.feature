@@ -9,7 +9,6 @@ Feature: Native API
         And the exception "message" equals "9 out of 10 adults do not get their 5-a-day"
         And the event "unhandled" is false
 
-    #@Flaky
     Scenario: Starting a session, notifying, followed by a C crash
         When I run "CXXSessionInfoCrashScenario" and relaunch the app
         And I configure the app to run in the "non-crashy" state
