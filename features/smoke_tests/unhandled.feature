@@ -68,7 +68,7 @@ Scenario: Unhandled Java Exception with loaded configuration
     And the event "user.id" is not null
 
     # Breadcrumbs
-    And the event has a "state" breadcrumb named "Connectivity changed"
+    And the event has a "state" breadcrumb named "Bugsnag loaded"
 
     # Threads validation
     And the payload field "events.0.threads" is a non-empty array
