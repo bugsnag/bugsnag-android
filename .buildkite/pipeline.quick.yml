@@ -107,6 +107,7 @@ steps:
           - "--retry=1"
           - "--strict-undefined"
           - "--strict-pending"
+          - "not @Flaky"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -128,6 +129,29 @@ steps:
           - "--retry=1"
           - "--strict-undefined"
           - "--strict-pending"
+          - "not @Flaky"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
+  - label: ':hankey: Flaky Android 9 NDK r21 end-to-end tests'
+    depends_on:
+      - "fixture-r21"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/release/fixture-r21.apk"
+      docker-compose#v3.7.0:
+        run: android-maze-runner
+        command:
+          - "features/full_tests"
+          - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
+          - "--app=/app/build/release/fixture-r21.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_9_0"
+          - "--tags=@Flaky"
+          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
