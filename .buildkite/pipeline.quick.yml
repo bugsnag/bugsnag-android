@@ -107,6 +107,7 @@ steps:
           - "--retry=1"
           - "--strict-undefined"
           - "--strict-pending"
+          - "--tags"
           - "not @Flaky"
     concurrency: 9
     concurrency_group: 'browserstack-app'
@@ -129,6 +130,7 @@ steps:
           - "--retry=1"
           - "--strict-undefined"
           - "--strict-pending"
+          - "--tags"
           - "not @Flaky"
     concurrency: 9
     concurrency_group: 'browserstack-app'
