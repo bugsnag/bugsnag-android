@@ -16,8 +16,6 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
-    soft_fail:
-      - exit_status: "*"
 
   - label: ':android: Android 6 NDK r16 smoke tests'
     key: 'android-6-smoke'
@@ -55,26 +53,6 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: Android 8.0 NDK r19 smoke tests'
-    key: 'android-8-smoke'
-    depends_on: "fixture-r19"
-    timeout_in_minutes: 60
-    plugins:
-      artifacts#v1.2.0:
-        download: "build/release/fixture-r19.apk"
-      docker-compose#v3.7.0:
-        run: android-maze-runner
-        command:
-          - "features/smoke_tests"
-          - "--app=/app/build/release/fixture-r19.apk"
-          - "--farm=bs"
-          - "--device=ANDROID_8_0"
-          - "--fail-fast"
-    concurrency: 9
-    concurrency_group: 'browserstack-app'
-    soft_fail:
-      - exit_status: "*"
-
   - label: ':android: Android 8.1 NDK r19 smoke tests'
     key: 'android-8-1-smoke'
     depends_on: "fixture-r19"
@@ -92,8 +70,6 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
-    soft_fail:
-      - exit_status: "*"
 
   - label: ':android: Android 9 NDK r21 smoke tests'
     key: 'android-9-smoke'
@@ -131,6 +107,7 @@ steps:
           - "--retry=1"
           - "--strict-undefined"
           - "--strict-pending"
+          - "not @Flaky"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -152,6 +129,29 @@ steps:
           - "--retry=1"
           - "--strict-undefined"
           - "--strict-pending"
+          - "not @Flaky"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
+  - label: ':hankey: Flaky Android 9 NDK r21 end-to-end tests'
+    depends_on:
+      - "fixture-r21"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/release/fixture-r21.apk"
+      docker-compose#v3.7.0:
+        run: android-maze-runner
+        command:
+          - "features/full_tests"
+          - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
+          - "--app=/app/build/release/fixture-r21.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_9_0"
+          - "--tags=@Flaky"
+          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 

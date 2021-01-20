@@ -1,6 +1,5 @@
 Feature: Verify the Bugsnag Initialization methods
 
-@Flaky
 Scenario: Test Bugsnag initializes correctly
     When I run "BugsnagInitScenario"
     And I wait to receive a request

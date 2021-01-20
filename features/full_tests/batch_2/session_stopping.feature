@@ -11,6 +11,7 @@ Scenario: When a session is paused the error has no session information
     And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the payload field "events.0.session" is null
 
+@Flaky    
 Scenario: When a session is resumed the error uses the previous session information
     When I run "ResumedSessionScenario"
     Then I wait to receive 3 requests

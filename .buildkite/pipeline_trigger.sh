@@ -11,7 +11,8 @@ if [[ "$BUILDKITE_MESSAGE" == *"[barebones ci]"* ]]; then
   barebones_description
 elif [[ "$BUILDKITE_MESSAGE" == *"[full ci]"* ||
   "$BUILDKITE_BRANCH" == "next" ||
-  "$BUILDKITE_BRANCH" == "master" ]]; then
+  "$BUILDKITE_BRANCH" == "master" ||
+  ! -z "$FULL_SCHEDULED_BUILD" ]]; then
   echo "Running full build"
   echo "Unit and static tests will be run"
   echo "All instrumentation tests will be run"
