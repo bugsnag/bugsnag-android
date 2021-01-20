@@ -20,6 +20,7 @@
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun shouldDiscardClass(): Boolean</ID>
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun updateSeverityInternal(severity: Severity)</ID>
     <ID>ProtectedMemberInFinalClass:PluginClient.kt$PluginClient$protected val plugins: Set&lt;Plugin&gt;</ID>
+    <ID>ReturnCount:DefaultDelivery.kt$DefaultDelivery$fun deliver( urlString: String, streamable: JsonStream.Streamable, headers: Map&lt;String, String?&gt; ): DeliveryStatus</ID>
     <ID>VariableNaming:EventInternal.kt$EventInternal$/** * @return user information associated with this Event */ internal var _user = User(null, null, null)</ID>
   </CurrentIssues>
 </SmellBaseline>
