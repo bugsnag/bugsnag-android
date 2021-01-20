@@ -4,6 +4,7 @@ $api_key = "a35a2a72bd230ac0aa0f52715bbdc6aa"
 
 AfterConfiguration do |_config|
   Maze.config.receive_no_requests_wait = 10
+  Maze.config.receive_requests_wait = 60
 end
 
 Before('@skip') do |scenario|

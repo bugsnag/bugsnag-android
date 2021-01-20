@@ -105,6 +105,9 @@ steps:
           - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    # TODO: 2021/01/20 Currently experiencing issues with Appium session stability
+    soft_fail:
+      - exit_status: *
 
   - label: ':android: Android 4.4 NDK r16 end-to-end tests - batch 2'
     depends_on:
@@ -127,6 +130,9 @@ steps:
           - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    # TODO: 2021/01/20 Currently experiencing issues with Appium session stability
+    soft_fail:
+      - exit_status: *
 
   - label: ':android: Android 5 NDK r16 end-to-end tests - batch 1'
     depends_on:
