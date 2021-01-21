@@ -23,7 +23,9 @@ bool __attribute__((noinline)) run_back(int value, int boundary) {
 
 extern "C" {
 
-static char * __attribute__((used)) somefakefunc(void) {};
+static char * __attribute__((used)) somefakefunc(void) {
+  return NULL;
+};
 
 typedef struct {
   int field1;
@@ -46,12 +48,17 @@ int crash_floating_point(int counter) {
     }
 }
 
-int crash_null_pointer(bool route) {
-  int *i;
-  if (route)
-    *i = NULL;
+// Non-static so that it could in theory be modified in another module.
+// This prevents optimizing the crash away due to UB.
+int *int_ptr_null_94841ef2 = NULL;
 
-  int j = 34 / *i;
+// Make the compiler REALLY REALLY believe that int_ptr_null_94841ef2 could be modified.
+void set_null_pointer_sgsdfg(int* new_value) {
+  int_ptr_null_94841ef2 = new_value;
+}
+
+int crash_null_pointer(bool route) {
+  int j = 34 / *int_ptr_null_94841ef2;
 
   return j;
 }
@@ -90,7 +97,7 @@ int __attribute__((noinline)) trigger_an_exception(bool value) {
     return 405;
 }
 
-char *crash_improper_cast(int counter) {
+char *crash_improper_cast(intptr_t counter) {
   reporter_t *report = (reporter_t *)counter;
 
   return report->field2;

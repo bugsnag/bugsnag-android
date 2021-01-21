@@ -94,26 +94,25 @@ __Your session will periodically expire__, so you'll need to run this command to
 
 Remote tests can be run against real devices provided by BrowserStack. In order to run these tests, you need:
 
-A BrowserStack App Automate Username: `BROWSER_STACK_USERNAME`
-A BrowserStack App Automate Access Key: `BROWSER_STACK_ACCESS_KEY`
+A BrowserStack App Automate Username: `MAZE_DEVICE_FARM_USERNAME`
+A BrowserStack App Automate Access Key: `MAZE_DEVICE_FARM_ACCESS_KEY`
 A local docker and docker-compose installation.
 
 ### Instrumentation tests
 
 Ensure that the following environment variables are set:
 
-* `BROWSER_STACK_USERNAME`: The BrowserStack App Automate Username
-* `BROWSER_STACK_ACCESS_KEY`: The BrowserStack App Automate Access Key
+* `MAZE_DEVICE_FARM_USERNAME`: The BrowserStack App Automate Username
+* `MAZE_DEVICE_FARM_ACCESS_KEY`: The BrowserStack App Automate Access Key
 
 Run `make remote-test`
 
 ### End-to-end tests
 
 Ensure that the following environment variables are set:
-* `BROWSER_STACK_USERNAME`: Your BrowserStack App Automate Username
-* `BROWSER_STACK_ACCESS_KEY`: You BrowserStack App Automate Access Key
-
-See https://www.browserstack.com/local-testing/app-automate for details of the required local testing binary.
+* `MAZE_DEVICE_FARM_USERNAME`: Your BrowserStack App Automate Username
+* `MAZE_DEVICE_FARM_ACCESS_KEY`: You BrowserStack App Automate Access Key
+* `MAZE_BS_LOCAL`: Location of the BrowserStack local testing binary (see https://www.browserstack.com/local-testing/app-automate).
 
 1. Build the test fixture `make test-fixture`
 1. Check the contents of `Gemfile` to select the version of `maze-runner` to use
@@ -123,9 +122,6 @@ See https://www.browserstack.com/local-testing/app-automate for details of the r
     bundle exec maze-runner --app=build/fixture.apk                 \
                             --farm=bs                               \
                             --device=ANDROID_9_0                    \
-                            --username=$BROWSER_STACK_USERNAME      \
-                            --access-key=$BROWSER_STACK_ACCESS_KEY  \
-                            --bs-local=~/BrowserStackLocal          \
                             features/smoke_tests/unhandled.feature
     ```
 1. To run all features, omit the final argument.

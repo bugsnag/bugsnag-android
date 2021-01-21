@@ -40,7 +40,7 @@ Scenario: User is persisted between sessions
     And the session "user.email" equals "test@test.test"
     And the session "user.name" equals "test user"
     When I discard the oldest request
-    And I relaunch the app
+    And I close and relaunch the app
     And I configure the app to run in the "no_user" state
     And I run "SessionPersistUserScenario"
     And I wait to receive a request
@@ -59,7 +59,7 @@ Scenario: User is not persisted between sessions
     And the session "user.email" equals "test@test.test"
     And the session "user.name" equals "test user"
     When I discard the oldest request
-    And I relaunch the app
+    And I close and relaunch the app
     And I configure the app to run in the "no_user" state
     And I run "SessionPersistUserDisabledScenario"
     And I wait to receive a request

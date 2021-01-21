@@ -10,7 +10,7 @@ When("I run {string} and relaunch the app") do |event_type|
   steps %Q{
     When I run "#{event_type}"
     And I clear any error dialogue
-    And I relaunch the app
+    And I relaunch the app after a crash
   }
 end
 
@@ -29,8 +29,15 @@ When("I configure Bugsnag for {string}") do |event_type|
   }
 end
 
-When("I relaunch the app") do
+When("I close and relaunch the app") do
   MazeRunner.driver.close_app
+  MazeRunner.driver.launch_app
+end
+
+When("I relaunch the app after a crash") do
+  # This step should only be used when the app has crashed, but the notifier needs a little
+  # time to write the crash report before being forced to reopen.  From trials, 2s was not enough.
+  sleep(5)
   MazeRunner.driver.launch_app
 end
 

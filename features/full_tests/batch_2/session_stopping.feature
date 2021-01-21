@@ -25,6 +25,7 @@ Scenario: When a session is resumed the error uses the previous session informat
     And the payload field "events.0.session.events.handled" equals 2
     And the payload field "events.0.session.id" equals the stored value "resumed_session_id"
 
+@Flaky
 Scenario: When a new session is started the error uses different session information
     When I run "NewSessionScenario"
     Then I wait to receive 4 requests
