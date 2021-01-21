@@ -2,7 +2,7 @@
 
 ## 5.5.1 (2021-01-21)
 
-* Alter ANR SIGQUIT handler to stop interfering with Google's ANR handler
+* Alter ANR SIGQUIT handler to stop interfering with Google's ANR reporting, and to avoid unsafe JNI calls from within a signal handler
   [#1078](https://github.com/bugsnag/bugsnag-android/pull/1078)
 
 * Alter HTTP requests to stop using chunked transfer encoding
