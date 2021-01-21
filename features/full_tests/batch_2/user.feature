@@ -28,6 +28,7 @@ Scenario: Only User email field set
     And the event "user.email" equals "user@example.com"
     And the event "user.name" is null
 
+@Flaky
 Scenario: All user fields set
     When I run "UserEnabledScenario"
     And I wait to receive a request

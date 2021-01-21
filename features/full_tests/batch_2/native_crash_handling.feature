@@ -6,12 +6,8 @@ Scenario: Dereference a null pointer
         And I configure Bugsnag for "CXXNullPointerScenario"
         And I wait to receive a request
         And the request payload contains a completed unhandled native report
-        And the exception "errorClass" equals one of:
-          | SIGILL |
-          | SIGTRAP |
-        And the exception "message" equals one of:
-            | Illegal instruction   |
-            | Trace/breakpoint trap |
+        And the exception "errorClass" equals "SIGSEGV"
+        And the exception "message" equals "Segmentation violation (invalid memory reference)"
         And the exception "type" equals "c"
         And the event "severity" equals "error"
         And the event "unhandled" is true

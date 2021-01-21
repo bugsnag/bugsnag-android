@@ -17,7 +17,7 @@ internal class JvmAnrMinimalFixtureScenario(
 
     init {
         config.autoTrackSessions = false
-        config.enabledErrorTypes.anrs = true
+        config.enabledErrorTypes.anrs = false
     }
 
     override fun startScenario() {
