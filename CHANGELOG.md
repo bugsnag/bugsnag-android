@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 5.5.1 (2021-01-21)
 
 * Alter HTTP requests to stop using chunked transfer encoding
   [#1077](https://github.com/bugsnag/bugsnag-android/pull/1077)
