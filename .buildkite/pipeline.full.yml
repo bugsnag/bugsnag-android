@@ -38,13 +38,14 @@ steps:
       docker-compose#v3.7.0:
         run: android-maze-runner
         command:
+          - "features/full_tests/batch_1/handled_exception.feature"
           - "--app=/app/build/release/fixture-minimal.apk"
           - "--farm=bs"
           - "--device=ANDROID_9_0"
-          - "--username=$BROWSER_STACK_USERNAME"
-          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
-          - "features/full_tests/handled_exception.feature"
+          - "--tags"
+          - "not @Flaky"
+          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -83,7 +84,7 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: Android 4.4 NDK r16 end-to-end tests'
+  - label: ':android: Android 4.4 NDK r16 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r16"
       - "android-4-4-smoke"
@@ -94,20 +95,46 @@ steps:
       docker-compose#v3.7.0:
         run: android-maze-runner
         command:
-          - "features/full_tests"
+          - "features/full_tests/batch_1"
           - "--app=/app/build/release/fixture-r16.apk"
           - "--farm=bs"
           - "--device=ANDROID_4_4"
-          - "--username=$BROWSER_STACK_USERNAME"
-          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
+          - "--tags"
+          - "not @Flaky"
+          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
-    # temp workaround browserstack network issue where 400 status codes fail the tests
+    # TODO: 2021/01/20 Currently experiencing issues with Appium session stability
     soft_fail:
       - exit_status: "*"
 
-  - label: ':android: Android 5 NDK r16 end-to-end tests'
+  - label: ':android: Android 4.4 NDK r16 end-to-end tests - batch 2'
+    depends_on:
+      - "fixture-r16"
+      - "android-4-4-smoke"
+    timeout_in_minutes: 90
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/release/fixture-r16.apk"
+      docker-compose#v3.7.0:
+        run: android-maze-runner
+        command:
+          - "features/full_tests/batch_2"
+          - "--app=/app/build/release/fixture-r16.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_4_4"
+          - "--fail-fast"
+          - "--tags"
+          - "not @Flaky"
+          - "--resilient"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+    # TODO: 2021/01/20 Currently experiencing issues with Appium session stability
+    soft_fail:
+      - exit_status: "*"
+
+  - label: ':android: Android 5 NDK r16 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r16"
       - "android-5-smoke"
@@ -118,19 +145,40 @@ steps:
       docker-compose#v3.7.0:
         run: android-maze-runner
         command:
-          - "features/full_tests"
+          - "features/full_tests/batch_1"
           - "--app=/app/build/release/fixture-r16.apk"
           - "--farm=bs"
           - "--device=ANDROID_5_0"
-          - "--username=$BROWSER_STACK_USERNAME"
-          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
+          - "--tags"
+          - "not @Flaky"
+          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
-    soft_fail:
-      - exit_status: "*"
 
-  - label: ':android: Android 6 NDK r16 end-to-end tests'
+  - label: ':android: Android 5 NDK r16 end-to-end tests - batch 2'
+    depends_on:
+      - "fixture-r16"
+      - "android-5-smoke"
+    timeout_in_minutes: 90
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/release/fixture-r16.apk"
+      docker-compose#v3.7.0:
+        run: android-maze-runner
+        command:
+          - "features/full_tests/batch_2"
+          - "--app=/app/build/release/fixture-r16.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_5_0"
+          - "--fail-fast"
+          - "--tags"
+          - "not @Flaky"
+          - "--resilient"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: Android 6 NDK r16 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r16"
       - "android-6-smoke"
@@ -141,20 +189,40 @@ steps:
       docker-compose#v3.7.0:
         run: android-maze-runner
         command:
-          - "features/full_tests"
+          - "features/full_tests/batch_1"
           - "--app=/app/build/release/fixture-r16.apk"
           - "--farm=bs"
           - "--device=ANDROID_6_0"
-          - "--username=$BROWSER_STACK_USERNAME"
-          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
+          - "--tags"
+          - "not @Flaky"
+          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
-    # temp workaround browserstack network issue where 400 status codes fail the tests
-    soft_fail:
-      - exit_status: "*"
 
-  - label: ':android: Android 7 NDK r19 end-to-end tests'
+  - label: ':android: Android 6 NDK r16 end-to-end tests - batch 2'
+    depends_on:
+      - "fixture-r16"
+      - "android-6-smoke"
+    timeout_in_minutes: 90
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/release/fixture-r16.apk"
+      docker-compose#v3.7.0:
+        run: android-maze-runner
+        command:
+          - "features/full_tests/batch_2"
+          - "--app=/app/build/release/fixture-r16.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_6_0"
+          - "--fail-fast"
+          - "--tags"
+          - "not @Flaky"
+          - "--resilient"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: Android 7 NDK r19 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r19"
       - "android-7-smoke"
@@ -165,23 +233,21 @@ steps:
       docker-compose#v3.7.0:
         run: android-maze-runner
         command:
-          - "features/full_tests"
+          - "features/full_tests/batch_1"
           - "--app=/app/build/release/fixture-r19.apk"
           - "--farm=bs"
           - "--device=ANDROID_7_1"
-          - "--username=$BROWSER_STACK_USERNAME"
-          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
+          - "--tags"
+          - "not @Flaky"
+          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
-    # temp workaround browserstack network issue where 400 status codes fail the tests
-    soft_fail:
-      - exit_status: "*"
 
-  - label: ':android: Android 8.0 NDK r19 end-to-end tests'
+  - label: ':android: Android 7 NDK r19 end-to-end tests - batch 2'
     depends_on:
       - "fixture-r19"
-      - "android-8-smoke"
+      - "android-7-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -189,19 +255,18 @@ steps:
       docker-compose#v3.7.0:
         run: android-maze-runner
         command:
-          - "features/full_tests"
+          - "features/full_tests/batch_2"
           - "--app=/app/build/release/fixture-r19.apk"
           - "--farm=bs"
-          - "--device=ANDROID_8_0"
-          - "--username=$BROWSER_STACK_USERNAME"
-          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
+          - "--device=ANDROID_7_1"
           - "--fail-fast"
+          - "--tags"
+          - "not @Flaky"
+          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
-    soft_fail:
-      - exit_status: "*"
 
-  - label: ':android: Android 8.1 NDK r19 end-to-end tests'
+  - label: ':android: Android 8.1 NDK r19 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r19"
       - "android-8-1-smoke"
@@ -212,40 +277,40 @@ steps:
       docker-compose#v3.7.0:
         run: android-maze-runner
         command:
-          - "features/full_tests"
+          - "features/full_tests/batch_1"
           - "--app=/app/build/release/fixture-r19.apk"
           - "--farm=bs"
           - "--device=ANDROID_8_1"
-          - "--username=$BROWSER_STACK_USERNAME"
-          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
+          - "--tags"
+          - "not @Flaky"
+          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
-    soft_fail:
-      - exit_status: "*"
 
-  - label: ':android: Android 9 NDK r21 end-to-end tests'
+  - label: ':android: Android 8.1 NDK r19 end-to-end tests - batch 2'
     depends_on:
-      - "fixture-r21"
-      - "android-9-smoke"
+      - "fixture-r19"
+      - "android-8-1-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
-        download: "build/release/fixture-r21.apk"
+        download: "build/release/fixture-r19.apk"
       docker-compose#v3.7.0:
         run: android-maze-runner
         command:
-          - "features/full_tests"
-          - "--app=/app/build/release/fixture-r21.apk"
+          - "features/full_tests/batch_2"
+          - "--app=/app/build/release/fixture-r19.apk"
           - "--farm=bs"
-          - "--device=ANDROID_9_0"
-          - "--username=$BROWSER_STACK_USERNAME"
-          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
+          - "--device=ANDROID_8_1"
           - "--fail-fast"
+          - "--tags"
+          - "not @Flaky"
+          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: Android 10 NDK r21 end-to-end tests'
+  - label: ':android: Android 10 NDK r21 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r21"
       - "android-10-smoke"
@@ -256,17 +321,40 @@ steps:
       docker-compose#v3.7.0:
         run: android-maze-runner
         command:
-          - "features/full_tests"
+          - "features/full_tests/batch_1"
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_10_0"
-          - "--username=$BROWSER_STACK_USERNAME"
-          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
+          - "--tags"
+          - "not @Flaky"
+          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: Android 11 NDK r21 end-to-end tests'
+  - label: ':android: Android 10 NDK r21 end-to-end tests - batch 2'
+    depends_on:
+      - "fixture-r21"
+      - "android-10-smoke"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/release/fixture-r21.apk"
+      docker-compose#v3.7.0:
+        run: android-maze-runner
+        command:
+          - "features/full_tests/batch_2"
+          - "--app=/app/build/release/fixture-r21.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_10_0"
+          - "--fail-fast"
+          - "--tags"
+          - "not @Flaky"
+          - "--resilient"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: Android 11 NDK r21 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r21"
       - "android-11-smoke"
@@ -277,12 +365,192 @@ steps:
       docker-compose#v3.7.0:
         run: android-maze-runner
         command:
-          - "features/full_tests"
+          - "features/full_tests/batch_1"
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_11_0"
-          - "--username=$BROWSER_STACK_USERNAME"
-          - "--access-key=$BROWSER_STACK_ACCESS_KEY"
           - "--fail-fast"
+          - "--tags"
+          - "not @Flaky"
+          - "--resilient"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: Android 11 NDK r21 end-to-end tests - batch 2'
+    depends_on:
+      - "fixture-r21"
+      - "android-11-smoke"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/release/fixture-r21.apk"
+      docker-compose#v3.7.0:
+        run: android-maze-runner
+        command:
+          - "features/full_tests/batch_2"
+          - "--app=/app/build/release/fixture-r21.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_11_0"
+          - "--fail-fast"
+          - "--tags"
+          - "not @Flaky"
+          - "--resilient"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
+  #
+  # Flaky features
+  #
+  - label: ':hankey: Flaky Android 4.4 NDK r16 end-to-end tests'
+    depends_on:
+      - "fixture-r16"
+    timeout_in_minutes: 90
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/release/fixture-r16.apk"
+      docker-compose#v3.7.0:
+        run: android-maze-runner
+        command:
+          - "features/full_tests"
+          - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
+          - "--app=/app/build/release/fixture-r16.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_4_4"
+          - "--tags=@Flaky"
+          - "--resilient"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
+  - label: ':hankey: Flaky Android 5 NDK r16 end-to-end tests'
+    depends_on:
+      - "fixture-r16"
+    timeout_in_minutes: 90
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/release/fixture-r16.apk"
+      docker-compose#v3.7.0:
+        run: android-maze-runner
+        command:
+          - "features/full_tests"
+          - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
+          - "--app=/app/build/release/fixture-r16.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_5_0"
+          - "--tags=@Flaky"
+          - "--resilient"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
+  - label: ':hankey: Flaky Android 6 NDK r16 end-to-end tests'
+    depends_on:
+      - "fixture-r16"
+    timeout_in_minutes: 90
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/release/fixture-r16.apk"
+      docker-compose#v3.7.0:
+        run: android-maze-runner
+        command:
+          - "features/full_tests"
+          - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
+          - "--app=/app/build/release/fixture-r16.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_6_0"
+          - "--tags=@Flaky"
+          - "--resilient"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
+  - label: ':hankey: Flaky Android 7 NDK r19 end-to-end tests'
+    depends_on:
+      - "fixture-r19"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/release/fixture-r19.apk"
+      docker-compose#v3.7.0:
+        run: android-maze-runner
+        command:
+          - "features/full_tests"
+          - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
+          - "--app=/app/build/release/fixture-r19.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_7_1"
+          - "--tags=@Flaky"
+          - "--resilient"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
+  - label: ':hankey: Flaky Android 8.1 NDK r19 end-to-end tests'
+    depends_on:
+      - "fixture-r19"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/release/fixture-r19.apk"
+      docker-compose#v3.7.0:
+        run: android-maze-runner
+        command:
+          - "features/full_tests"
+          - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
+          - "--app=/app/build/release/fixture-r19.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_8_1"
+          - "--tags=@Flaky"
+          - "--resilient"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
+  - label: ':hankey: Flaky Android 10 NDK r21 end-to-end tests'
+    depends_on:
+      - "fixture-r21"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/release/fixture-r21.apk"
+      docker-compose#v3.7.0:
+        run: android-maze-runner
+        command:
+          - "features/full_tests"
+          - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
+          - "--app=/app/build/release/fixture-r21.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_10_0"
+          - "--tags=@Flaky"
+          - "--resilient"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
+  - label: ':hankey: Flaky Android 11 NDK r21 end-to-end tests'
+    depends_on:
+      - "fixture-r21"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/release/fixture-r21.apk"
+      docker-compose#v3.7.0:
+        run: android-maze-runner
+        command:
+          - "features/full_tests"
+          - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
+          - "--app=/app/build/release/fixture-r21.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_11_0"
+          - "--tags=@Flaky"
+          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'

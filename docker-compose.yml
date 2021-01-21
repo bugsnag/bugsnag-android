@@ -11,8 +11,8 @@ services:
       context: .
       dockerfile: dockerfiles/Dockerfile.android-ci-base
     environment:
-      BROWSER_STACK_USERNAME:
-      BROWSER_STACK_ACCESS_KEY:
+      MAZE_DEVICE_FARM_USERNAME:
+      MAZE_DEVICE_FARM_ACCESS_KEY:
       INSTRUMENTATION_DEVICES:
 
   android-builder:
@@ -42,10 +42,14 @@ services:
       BUILDKITE_REPO:
 
   android-maze-runner:
-    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner-releases:latest-v3-cli
+    # TODO: Update to latest-v4-cli
+    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner:tms-corrections-for-notifiers-cli
     environment:
-      VERBOSE:
       DEBUG:
+      BUILDKITE:
+      BUILDKITE_PIPELINE_NAME:
+      MAZE_DEVICE_FARM_USERNAME:
+      MAZE_DEVICE_FARM_ACCESS_KEY:
     volumes:
       - ./build:/app/build
       - ./maze-output:/app/maze-output
