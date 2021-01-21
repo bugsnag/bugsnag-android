@@ -4,6 +4,9 @@
 
 * Alter HTTP requests to stop using chunked transfer encoding
   [#1077](https://github.com/bugsnag/bugsnag-android/pull/1077)
+  
+* Allow null device IDs, preventing rare crash in Bugsnag initialization
+  [#1083](https://github.com/bugsnag/bugsnag-android/pull/1083)
 
 ## 5.5.0 (2021-01-07)
 

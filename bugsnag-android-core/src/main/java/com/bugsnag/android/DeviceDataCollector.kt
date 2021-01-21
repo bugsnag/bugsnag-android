@@ -20,7 +20,7 @@ internal class DeviceDataCollector(
     private val connectivity: Connectivity,
     private val appContext: Context,
     private val resources: Resources?,
-    private val installId: String,
+    private val deviceId: String?,
     private val buildInfo: DeviceBuildInfo,
     private val dataDirectory: File,
     private val logger: Logger
@@ -47,7 +47,7 @@ internal class DeviceDataCollector(
         buildInfo,
         cpuAbi,
         rooted,
-        installId,
+        deviceId,
         locale,
         calculateTotalMemory(),
         runtimeVersions.toMutableMap()
@@ -56,7 +56,7 @@ internal class DeviceDataCollector(
     fun generateDeviceWithState(now: Long) = DeviceWithState(
         buildInfo,
         rooted,
-        installId,
+        deviceId,
         locale,
         calculateTotalMemory(),
         runtimeVersions.toMutableMap(),
