@@ -58,7 +58,6 @@ steps:
   - label: ':android: Android 7 Instrumentation tests'
     depends_on:
       - "android-ci"
-      - "NDK-smoke-test"
     timeout_in_minutes: 30
     command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
     plugins:
@@ -72,7 +71,6 @@ steps:
   - label: ':android: Android 9 Instrumentation tests'
     depends_on:
       - "android-ci"
-      - "NDK-smoke-test"
     timeout_in_minutes: 30
     command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
     plugins:
