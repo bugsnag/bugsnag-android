@@ -114,11 +114,11 @@ Ensure that the following environment variables are set:
 * `MAZE_DEVICE_FARM_ACCESS_KEY`: You BrowserStack App Automate Access Key
 * `MAZE_BS_LOCAL`: Location of the BrowserStack local testing binary (see https://www.browserstack.com/local-testing/app-automate).
 
-1. Build the test fixture `make test-fixture`
+1. Build the test fixtures `make test-fixtures` (separate fixtures are built with and without the NDK/ANR plugins)
 1. Check the contents of `Gemfile` to select the version of `maze-runner` to use
 1. To run a single feature:
     ```shell script
-    make test-fixture && \
+    make test-fixtures && \
     bundle exec maze-runner --app=build/fixture.apk                 \
                             --farm=bs                               \
                             --device=ANDROID_9_0                    \
