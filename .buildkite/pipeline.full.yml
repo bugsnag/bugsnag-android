@@ -530,7 +530,7 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_11_0"
           - "--tags=@Flaky"
-     concurrency: 9
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Minimal fixture end-to-end tests'
