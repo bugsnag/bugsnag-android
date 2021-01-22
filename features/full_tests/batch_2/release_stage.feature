@@ -15,16 +15,16 @@ Scenario: Exception reported when release stages empty
 
 Scenario: Exception reported when inside release stage
     When I run "InsideReleaseStageScenario"
-    Then I wait to receive a request
-    And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the payload field "notifier.name" equals "Android Bugsnag Notifier"
-    And the payload field "events" is an array with 1 elements
+    Then I wait to receive an error
+    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And the error payload field "notifier.name" equals "Android Bugsnag Notifier"
+    And the error payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "InsideReleaseStageScenario"
 
 Scenario: Exception reported when inside Notify release stage array
     When I run "ArrayEnabledReleaseStageScenario"
-    Then I wait to receive a request
-    And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    Then I wait to receive an error
+    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "ArrayEnabledReleaseStageScenario"

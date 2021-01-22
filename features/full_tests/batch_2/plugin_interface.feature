@@ -7,8 +7,8 @@ Feature: Add custom behavior through a plugin interface
 
     Scenario: Changing payload notifier description
         When I run "CustomPluginNotifierDescriptionScenario"
-        Then I wait to receive a request
+        Then I wait to receive an error
         Then the event "context" equals "Foo Handler Library"
-        And the payload field "events" is an array with 1 elements
+        And the error payload field "events" is an array with 1 elements
         And the exception "errorClass" equals "java.lang.RuntimeException"
 

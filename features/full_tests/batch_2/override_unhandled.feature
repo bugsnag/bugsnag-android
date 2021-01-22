@@ -2,8 +2,8 @@ Feature: Overriding unhandled state
 
 Scenario: Non-fatal exception overridden to unhandled
     When I run "OverrideToUnhandledExceptionScenario"
-    Then I wait to receive a request
-    And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    Then I wait to receive an error
+    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "OverrideToUnhandledExceptionScenario"
     And the event "unhandled" is true
@@ -17,8 +17,8 @@ Scenario: Fatal exception overridden to handled
     When I run "OverrideToHandledExceptionScenario" and relaunch the app
     And I configure the app to run in the "non-crashy" state
     And I configure Bugsnag for "OverrideToHandledExceptionScenario"
-    And I wait to receive a request
-    And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And I wait to receive an error
+    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "OverrideToHandledExceptionScenario"
     And the event "unhandled" is false
@@ -32,8 +32,8 @@ Scenario: CXX error overridden to handled
     When I run "CXXHandledOverrideScenario" and relaunch the app
     And I configure the app to run in the "non-crashy" state
     And I configure Bugsnag for "CXXHandledOverrideScenario"
-    And I wait to receive a request
-    And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And I wait to receive an error
+    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "errorClass" equals "SIGABRT"
     And the exception "message" equals "Abort program"
     And the event "unhandled" is false
