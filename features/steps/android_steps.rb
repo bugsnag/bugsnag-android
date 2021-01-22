@@ -189,8 +189,8 @@ Then("the event has a {string} breadcrumb with the message {string}") do |type, 
 end
 
 Then("the exception stacktrace matches the thread stacktrace") do
-  exc_trace = read_key_path(Server.current_request[:body], "events.0.exceptions.0.stacktrace")
-  thread_trace = read_key_path(Server.current_request[:body], "events.0.threads.0.stacktrace")
+  exc_trace = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.exceptions.0.stacktrace")
+  thread_trace = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.threads.0.stacktrace")
   assert_equal(exc_trace.length(), thread_trace.length(), "Exception and thread stacktraces are different lengths.")
 
   thread_trace.each_with_index do |thread_frame, index|
@@ -208,7 +208,6 @@ rescue Selenium::WebDriver::Error::NoSuchElementError
   $logger.warn 'NoSuchElementError'
 end
 
-# Temporary workaround until PLAT-4845 is implemented
 Then("I sort the errors by {string}") do |comparator|
   Maze::Server.errors.remaining.sort_by { |request|
     Maze::Helper.read_key_path(request[:body], comparator)
