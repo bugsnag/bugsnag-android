@@ -45,7 +45,6 @@ steps:
           - "--fail-fast"
           - "--tags"
           - "not @Flaky"
-          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -102,7 +101,6 @@ steps:
           - "--fail-fast"
           - "--tags"
           - "not @Flaky"
-          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
     # TODO: 2021/01/20 Currently experiencing issues with Appium session stability
@@ -127,7 +125,6 @@ steps:
           - "--fail-fast"
           - "--tags"
           - "not @Flaky"
-          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
     # TODO: 2021/01/20 Currently experiencing issues with Appium session stability
@@ -152,7 +149,6 @@ steps:
           - "--fail-fast"
           - "--tags"
           - "not @Flaky"
-          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -174,7 +170,6 @@ steps:
           - "--fail-fast"
           - "--tags"
           - "not @Flaky"
-          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -196,7 +191,6 @@ steps:
           - "--fail-fast"
           - "--tags"
           - "not @Flaky"
-          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -218,7 +212,6 @@ steps:
           - "--fail-fast"
           - "--tags"
           - "not @Flaky"
-          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -240,7 +233,6 @@ steps:
           - "--fail-fast"
           - "--tags"
           - "not @Flaky"
-          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -262,7 +254,6 @@ steps:
           - "--fail-fast"
           - "--tags"
           - "not @Flaky"
-          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -284,7 +275,6 @@ steps:
           - "--fail-fast"
           - "--tags"
           - "not @Flaky"
-          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -306,7 +296,6 @@ steps:
           - "--fail-fast"
           - "--tags"
           - "not @Flaky"
-          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -328,7 +317,6 @@ steps:
           - "--fail-fast"
           - "--tags"
           - "not @Flaky"
-          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -350,7 +338,6 @@ steps:
           - "--fail-fast"
           - "--tags"
           - "not @Flaky"
-          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -372,7 +359,6 @@ steps:
           - "--fail-fast"
           - "--tags"
           - "not @Flaky"
-          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -394,7 +380,6 @@ steps:
           - "--fail-fast"
           - "--tags"
           - "not @Flaky"
-          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -419,7 +404,6 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_4_4"
           - "--tags=@Flaky"
-          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -441,7 +425,6 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_5_0"
           - "--tags=@Flaky"
-          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -463,7 +446,6 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_6_0"
           - "--tags=@Flaky"
-          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -485,7 +467,6 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_7_1"
           - "--tags=@Flaky"
-          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -507,7 +488,6 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_8_1"
           - "--tags=@Flaky"
-          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -529,7 +509,6 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_10_0"
           - "--tags=@Flaky"
-          - "--resilient"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -551,8 +530,7 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_11_0"
           - "--tags=@Flaky"
-          - "--resilient"
-    concurrency: 9
+     concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Minimal fixture end-to-end tests'
