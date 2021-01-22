@@ -42,9 +42,6 @@ class DeliveryHeadersTest {
         assertNotNull(headers["Bugsnag-Sent-At"])
         assertNotNull(headers["Bugsnag-Payload-Version"])
         assertNotNull(headers["Bugsnag-Stacktrace-Types"])
-
-        val integrity = requireNotNull(headers["Bugsnag-Integrity"])
-        assertTrue(integrity.matches(sha1Regex))
     }
 
     @Test
@@ -56,9 +53,6 @@ class DeliveryHeadersTest {
         assertNotNull(headers["Bugsnag-Sent-At"])
         assertNotNull(headers["Bugsnag-Payload-Version"])
         assertNull(headers["Bugsnag-Stacktrace-Types"])
-
-        val integrity = requireNotNull(headers["Bugsnag-Integrity"])
-        assertTrue(integrity.matches(sha1Regex))
     }
 
     @Test
