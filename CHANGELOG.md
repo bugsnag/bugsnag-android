@@ -13,6 +13,17 @@
 * Support native stack traces in the ANR plugin
    [#972](https://github.com/bugsnag/bugsnag-android/pull/972)
 
+## 5.5.1 (2021-01-21)
+
+* Alter ANR SIGQUIT handler to stop interfering with Google's ANR reporting, and to avoid unsafe JNI calls from within a signal handler
+  [#1078](https://github.com/bugsnag/bugsnag-android/pull/1078)
+
+* Alter HTTP requests to stop using chunked transfer encoding
+  [#1077](https://github.com/bugsnag/bugsnag-android/pull/1077)
+  
+* Allow null device IDs, preventing rare crash in Bugsnag initialization
+  [#1083](https://github.com/bugsnag/bugsnag-android/pull/1083)
+
 ## 5.5.0 (2021-01-07)
 
 This release supports initializing Bugsnag in multi processes apps. If your app uses Bugsnag in multiple processes, you should initialize Bugsnag
