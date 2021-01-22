@@ -1,5 +1,10 @@
 # Changelog
 
+## TBD
+
+* Check internal JNI calls for pending exceptions and no-op
+  [#1088](https://github.com/bugsnag/bugsnag-android/pull/1088)
+
 ## 5.5.1 (2021-01-21)
 
 * Alter ANR SIGQUIT handler to stop interfering with Google's ANR reporting, and to avoid unsafe JNI calls from within a signal handler
