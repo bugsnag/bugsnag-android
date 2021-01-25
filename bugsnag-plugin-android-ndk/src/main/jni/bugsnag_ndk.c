@@ -10,6 +10,7 @@
 #include "handlers/cpp_handler.h"
 #include "handlers/signal_handler.h"
 #include "metadata.h"
+#include "safejni.h"
 #include "utils/serializer.h"
 #include "utils/string.h"
 
@@ -151,10 +152,21 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
   if (event != NULL) {
     char *payload = bsg_serialize_event_to_json_string(event);
     if (payload != NULL) {
+
+      // lookup com/bugsnag/android/NativeInterface
       jclass interface_class =
-          (*env)->FindClass(env, "com/bugsnag/android/NativeInterface");
-      jmethodID jdeliver_method = (*env)->GetStaticMethodID(
+          bsg_safe_find_class(env, "com/bugsnag/android/NativeInterface");
+      if (interface_class == NULL) {
+        return;
+      }
+
+      // lookup NativeInterface.deliverReport()
+      jmethodID jdeliver_method = bsg_safe_get_static_method_id(
           env, interface_class, "deliverReport", "([B[BLjava/lang/String;)V");
+      if (jdeliver_method == NULL) {
+        return;
+      }
+
       size_t payload_length = bsg_strlen(payload);
       jbyteArray jpayload = (*env)->NewByteArray(env, payload_length);
       (*env)->SetByteArrayRegion(env, jpayload, 0, payload_length,
