@@ -11,19 +11,15 @@ Scenario: ANR triggered in CXX code is captured
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "errorClass" equals "ANR"
     And the exception "message" starts with " Input dispatching timed out"
-    # TODO: Replace once native ANR support is re-added
-    # And the error "Bugsnag-Stacktrace-Types" header equals "android,c"
-    And the error "Bugsnag-Stacktrace-Types" header equals "android"
+    And the error "Bugsnag-Stacktrace-Types" header equals "android,c"
     And the error payload field "events.0.exceptions.0.type" equals "android"
     And the error payload field "events.0.threads.0.type" equals "android"
-    # TODO: Re-enable once native ANR support is re-added
-    # And the error payload field "events.0.exceptions.0.stacktrace.0.type" equals "c"
-    # And the error payload field "events.0.exceptions.0.stacktrace.1.type" equals "c"
-    # And the error payload field "events.0.exceptions.0.stacktrace.19.type" is null
-    # And the error payload field "events.0.threads.0.stacktrace.0.type" equals "c"
-    # And the error payload field "events.0.threads.0.stacktrace.1.type" equals "c"
-    # And the error payload field "events.0.threads.0.stacktrace.19.type" is null
-    And the exception stacktrace matches the thread stacktrace
+    And the error payload field "events.0.exceptions.0.stacktrace.0.type" equals "c"
+    And the error payload field "events.0.exceptions.0.stacktrace.1.type" equals "c"
+    And the error payload field "events.0.exceptions.0.stacktrace.19.type" is null
+    And the error payload field "events.0.threads.0.stacktrace.0.type" is null
+    And the error payload field "events.0.threads.0.stacktrace.1.type" is null
+    And the error payload field "events.0.threads.0.stacktrace.19.type" is null
 
 @skip_android_8_1
 Scenario: ANR triggered in CXX code is captured even when NDK detection is disabled

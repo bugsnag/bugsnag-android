@@ -1,7 +1,6 @@
 package com.bugsnag.android
 
 import com.bugsnag.android.ndk.NativeBridge
-import java.util.LinkedList
 
 internal class NdkPlugin : Plugin {
 
@@ -44,11 +43,11 @@ internal class NdkPlugin : Plugin {
 
     override fun unload() = disableCrashReporting()
 
-    fun getSignalStackTrace(info: Long, userContext: Long): List<NativeStackframe> {
+    fun getUnwindStackFunction(): Long {
         val bridge = nativeBridge
         if (bridge != null) {
-            return bridge.getSignalStackTrace(info, userContext)
+            return bridge.getUnwindStackFunction()
         }
-        return LinkedList<NativeStackframe>()
+        return 0
     }
 }

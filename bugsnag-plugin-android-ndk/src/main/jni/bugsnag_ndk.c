@@ -540,65 +540,12 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateMetadata(
   bsg_release_env_write_lock();
 }
 
-JNIEXPORT jobject JNICALL
-Java_com_bugsnag_android_ndk_NativeBridge_getSignalStackTrace(
-    JNIEnv *env, jobject _this, jlong info, jlong userContext) {
-  siginfo_t *p_info = (siginfo_t *)info;
-  void *p_user_context = (void *)userContext;
+ssize_t bsg_unwind_stack_default(bugsnag_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
+                                 siginfo_t *info, void *user_context) __asyncsafe;
 
-  jclass list_class = (*env)->FindClass(env, "java/util/LinkedList");
-  jmethodID list_init = (*env)->GetMethodID(env, list_class, "<init>", "()V");
-  jmethodID list_add =
-      (*env)->GetMethodID(env, list_class, "add", "(Ljava/lang/Object;)Z");
-  jclass frame_class =
-      (*env)->FindClass(env, "com/bugsnag/android/NativeStackframe");
-  jmethodID frame_init = (*env)->GetMethodID(
-      env, frame_class, "<init>",
-      "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Number;Ljava/lang/"
-      "Long;Ljava/lang/Long;Ljava/lang/Long;)V");
-  jclass int_class = (*env)->FindClass(env, "java/lang/Integer");
-  jmethodID int_init = (*env)->GetMethodID(env, int_class, "<init>", "(I)V");
-  jclass long_class = (*env)->FindClass(env, "java/lang/Long");
-  jmethodID long_init = (*env)->GetMethodID(env, long_class, "<init>", "(J)V");
-
-  jobject jlist = (*env)->NewObject(env, list_class, list_init);
-
-  if (bsg_global_env == NULL) {
-    BUGSNAG_LOG(
-        "Attempted to fetch stack trace without first calling install()");
-    return jlist;
-  }
-
-  bsg_global_env->next_event.error.frame_count = bsg_unwind_stack(
-      bsg_global_env->signal_unwind_style,
-      bsg_global_env->next_event.error.stacktrace, p_info, p_user_context);
-  const ssize_t frame_count = bsg_global_env->next_event.error.frame_count;
-  bugsnag_stackframe *frames = bsg_global_env->next_event.error.stacktrace;
-  for (int i = 0; i < frame_count; i++) {
-    bugsnag_stackframe *frame = frames + i;
-    jobject jmethod = (*env)->NewStringUTF(env, frame->method);
-    jobject jfilename = (*env)->NewStringUTF(env, frame->filename);
-    jobject jline_number =
-        (*env)->NewObject(env, int_class, int_init, (jint)frame->line_number);
-    jobject jframe_address = (*env)->NewObject(env, long_class, long_init,
-                                               (jlong)frame->frame_address);
-    jobject jsymbol_address = (*env)->NewObject(env, long_class, long_init,
-                                                (jlong)frame->symbol_address);
-    jobject jload_address = (*env)->NewObject(env, long_class, long_init,
-                                              (jlong)frame->load_address);
-    jobject jframe = (*env)->NewObject(env, frame_class, frame_init, jmethod,
-                                       jfilename, jline_number, jframe_address,
-                                       jsymbol_address, jload_address);
-    (*env)->CallBooleanMethod(env, jlist, list_add, jframe);
-    (*env)->DeleteLocalRef(env, jmethod);
-    (*env)->DeleteLocalRef(env, jfilename);
-    (*env)->DeleteLocalRef(env, jline_number);
-    (*env)->DeleteLocalRef(env, jframe_address);
-    (*env)->DeleteLocalRef(env, jsymbol_address);
-    (*env)->DeleteLocalRef(env, jload_address);
-    (*env)->DeleteLocalRef(env, jframe);
-  }
-  return jlist;
+JNIEXPORT jlong JNICALL
+Java_com_bugsnag_android_ndk_NativeBridge_getUnwindStackFunction(JNIEnv *env, jobject thiz) {
+  return (jlong)bsg_unwind_stack_default;
 }
 
 #ifdef __cplusplus

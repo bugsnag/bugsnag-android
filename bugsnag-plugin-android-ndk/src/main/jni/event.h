@@ -4,18 +4,13 @@
 #include "../assets/include/event.h"
 #include <stdbool.h>
 #include <sys/types.h>
+#include "bsg_unwind.h"
 #ifndef BUGSNAG_METADATA_MAX
 /**
  * Maximum number of values stored in metadata. Configures a default if not
  * defined.
  */
 #define BUGSNAG_METADATA_MAX 128
-#endif
-#ifndef BUGSNAG_FRAMES_MAX
-/**
- *  Number of frames in a stacktrace. Configures a default if not defined.
- */
-#define BUGSNAG_FRAMES_MAX 192
 #endif
 #ifndef BUGSNAG_CRUMBS_MAX
 /**
