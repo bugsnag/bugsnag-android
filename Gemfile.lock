@@ -1,7 +1,9 @@
-PATH
-  remote: ../maze-runner
+GIT
+  remote: https://github.com/bugsnag/maze-runner
+  revision: e850ec9483b5cf3a7553f964ca0df9b5c5638b6e
+  tag: v4.3.0
   specs:
-    bugsnag-maze-runner (4.0.0)
+    bugsnag-maze-runner (4.3.0)
       appium_lib (~> 10.2)
       boring (~> 0.1.0)
       cucumber (~> 3.1.2)
@@ -61,7 +63,7 @@ GEM
       racc (~> 1.4)
     optimist (3.0.1)
     os (1.0.1)
-    power_assert (1.2.0)
+    power_assert (2.0.0)
     racc (1.5.2)
     rake (12.3.3)
     rubyzip (2.3.0)
