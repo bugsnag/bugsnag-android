@@ -54,12 +54,14 @@ jfieldID bsg_parse_jseverity(JNIEnv *env, bugsnag_severity severity,
                              jclass severity_class) {
   const char *severity_sig = "Lcom/bugsnag/android/Severity;";
   if (severity == BSG_SEVERITY_ERR) {
-    return (*env)->GetStaticFieldID(env, severity_class, "ERROR", severity_sig);
+    return bsg_safe_get_static_field_id(env, severity_class, "ERROR",
+                                        severity_sig);
   } else if (severity == BSG_SEVERITY_WARN) {
-    return (*env)->GetStaticFieldID(env, severity_class, "WARNING",
-                                    severity_sig);
+    return bsg_safe_get_static_field_id(env, severity_class, "WARNING",
+                                        severity_sig);
   } else {
-    return (*env)->GetStaticFieldID(env, severity_class, "INFO", severity_sig);
+    return bsg_safe_get_static_field_id(env, severity_class, "INFO",
+                                        severity_sig);
   }
 }
 
@@ -70,61 +72,17 @@ void bsg_release_byte_ary(JNIEnv *env, jbyteArray array, char *original_text) {
   }
 }
 
-void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
-                        bugsnag_severity severity) {
-  bugsnag_stackframe stacktrace[BUGSNAG_FRAMES_MAX];
-  ssize_t frame_count =
-      bsg_unwind_stack(bsg_configured_unwind_style(), stacktrace, NULL, NULL);
-
-  // lookup com/bugsnag/android/NativeInterface
-  jclass interface_class =
-      bsg_safe_find_class(env, "com/bugsnag/android/NativeInterface");
-  if (interface_class == NULL) {
-    return;
-  }
-
-  // lookup NativeInterface.notify()
-  jmethodID notify_method = bsg_safe_get_static_method_id(
-      env, interface_class, "notify",
-      "([B[BLcom/bugsnag/android/Severity;[Ljava/lang/StackTraceElement;)V");
-  if (notify_method == NULL) {
-    return;
-  }
-
-  // lookup java/lang/StackTraceElement
-  jclass trace_class = bsg_safe_find_class(env, "java/lang/StackTraceElement");
-  if (trace_class == NULL) {
-    return;
-  }
-
-  // lookup com/bugsnag/android/Severity
-  jclass severity_class =
-      bsg_safe_find_class(env, "com/bugsnag/android/Severity");
-  if (severity_class == NULL) {
-    return;
-  }
-
-  // lookup StackTraceElement constructor
-  jmethodID trace_constructor = bsg_safe_get_method_id(
-      env, trace_class, "<init>",
-      "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V");
-  if (trace_constructor == NULL) {
-    return;
-  }
-
-  // create StackTraceElement array
-  jobjectArray trace = bsg_safe_new_object_array(env, frame_count, trace_class);
-  if (trace == NULL) {
-    return;
-  }
-
+void bsg_populate_notify_stacktrace(JNIEnv *env, bugsnag_stackframe *stacktrace,
+                                    ssize_t frame_count, jclass trace_class,
+                                    jmethodID trace_constructor,
+                                    jobjectArray trace) {
   for (int i = 0; i < frame_count; i++) {
     bugsnag_stackframe frame = stacktrace[i];
 
     // create Java string objects for class/filename/method
     jstring class = bsg_safe_new_string_utf(env, "");
     if (class == NULL) {
-      continue;
+      goto exit;
     }
 
     jstring filename = bsg_safe_new_string_utf(env, frame.filename);
@@ -137,86 +95,188 @@ void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
     } else {
       method = bsg_safe_new_string_utf(env, frame.method);
     }
+
+    // create StackTraceElement object
     jobject jframe =
-        (*env)->NewObject(env, trace_class, trace_constructor, class, method,
-                          filename, frame.line_number);
+        bsg_safe_new_object(env, trace_class, trace_constructor, class, method,
+                            filename, frame.line_number);
+    if (jframe == NULL) {
+      goto exit;
+    }
 
     bsg_safe_set_object_array_element(env, trace, i, jframe);
+    goto exit;
+
+  exit:
     (*env)->DeleteLocalRef(env, filename);
     (*env)->DeleteLocalRef(env, class);
     (*env)->DeleteLocalRef(env, method);
   }
+}
 
-  // Create a severity Error
-  jobject jseverity = (*env)->GetStaticObjectField(
-      env, severity_class, bsg_parse_jseverity(env, severity, severity_class));
+void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
+                        bugsnag_severity severity) {
+  jclass interface_class = NULL;
+  jmethodID notify_method = NULL;
+  jclass trace_class = NULL;
+  jclass severity_class = NULL;
+  jmethodID trace_constructor = NULL;
+  jobjectArray trace = NULL;
+  jfieldID severity_field = NULL;
+  jobject jseverity = NULL;
+  jbyteArray jname = NULL;
+  jbyteArray jmessage = NULL;
 
-  jbyteArray jname = bsg_byte_ary_from_string(env, name);
-  jbyteArray jmessage = bsg_byte_ary_from_string(env, message);
+  bugsnag_stackframe stacktrace[BUGSNAG_FRAMES_MAX];
+  ssize_t frame_count =
+      bsg_unwind_stack(bsg_configured_unwind_style(), stacktrace, NULL, NULL);
+
+  // lookup com/bugsnag/android/NativeInterface
+  interface_class =
+      bsg_safe_find_class(env, "com/bugsnag/android/NativeInterface");
+  if (interface_class == NULL) {
+    goto exit;
+  }
+
+  // lookup NativeInterface.notify()
+  notify_method = bsg_safe_get_static_method_id(
+      env, interface_class, "notify",
+      "([B[BLcom/bugsnag/android/Severity;[Ljava/lang/StackTraceElement;)V");
+  if (notify_method == NULL) {
+    goto exit;
+  }
+
+  // lookup java/lang/StackTraceElement
+  trace_class = bsg_safe_find_class(env, "java/lang/StackTraceElement");
+  if (trace_class == NULL) {
+    goto exit;
+  }
+
+  // lookup com/bugsnag/android/Severity
+  severity_class = bsg_safe_find_class(env, "com/bugsnag/android/Severity");
+  if (severity_class == NULL) {
+    goto exit;
+  }
+
+  // lookup StackTraceElement constructor
+  trace_constructor = bsg_safe_get_method_id(
+      env, trace_class, "<init>",
+      "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V");
+  if (trace_constructor == NULL) {
+    goto exit;
+  }
+
+  // create StackTraceElement array
+  trace = bsg_safe_new_object_array(env, frame_count, trace_class);
+  if (trace == NULL) {
+    goto exit;
+  }
+
+  // populate stacktrace object
+  bsg_populate_notify_stacktrace(env, stacktrace, frame_count, trace_class,
+                                 trace_constructor, trace);
+
+  // get the severity field
+  severity_field = bsg_parse_jseverity(env, severity, severity_class);
+  if (severity_field == NULL) {
+    goto exit;
+  }
+  // get the error severity object
+  jseverity =
+      bsg_safe_get_static_object_field(env, severity_class, severity_field);
+  if (jseverity == NULL) {
+    goto exit;
+  }
+
+  jname = bsg_byte_ary_from_string(env, name);
+  jmessage = bsg_byte_ary_from_string(env, message);
 
   // set application's binary arch
   bugsnag_set_binary_arch(env);
 
-  (*env)->CallStaticVoidMethod(env, interface_class, notify_method, jname,
-                               jmessage, jseverity, trace);
+  bsg_safe_call_static_void_method(env, interface_class, notify_method, jname,
+                                   jmessage, jseverity, trace);
 
-  bsg_release_byte_ary(env, jname, name);
-  bsg_release_byte_ary(env, jmessage, message);
+  goto exit;
+
+exit:
+  if (jname != NULL) {
+    bsg_release_byte_ary(env, jname, name);
+  }
+  if (jmessage != NULL) {
+    bsg_release_byte_ary(env, jmessage, message);
+  }
   (*env)->DeleteLocalRef(env, jname);
   (*env)->DeleteLocalRef(env, jmessage);
 
-  (*env)->DeleteLocalRef(env, trace_class);
-  (*env)->DeleteLocalRef(env, trace);
-  (*env)->DeleteLocalRef(env, severity_class);
-  (*env)->DeleteLocalRef(env, jseverity);
   (*env)->DeleteLocalRef(env, interface_class);
+  (*env)->DeleteLocalRef(env, notify_method);
+  (*env)->DeleteLocalRef(env, trace_class);
+  (*env)->DeleteLocalRef(env, severity_class);
+  (*env)->DeleteLocalRef(env, trace_constructor);
+  (*env)->DeleteLocalRef(env, trace);
+  (*env)->DeleteLocalRef(env, severity_field);
+  (*env)->DeleteLocalRef(env, jseverity);
 }
 
 void bugsnag_set_binary_arch(JNIEnv *env) {
+  jclass interface_class = NULL;
+  jmethodID set_arch_method = NULL;
+  jstring arch = NULL;
+
   // lookup com/bugsnag/android/NativeInterface
-  jclass interface_class =
+  interface_class =
       bsg_safe_find_class(env, "com/bugsnag/android/NativeInterface");
   if (interface_class == NULL) {
-    return;
+    goto exit;
   }
 
   // lookup NativeInterface.setBinaryArch()
-  jmethodID set_arch_method = bsg_safe_get_static_method_id(
+  set_arch_method = bsg_safe_get_static_method_id(
       env, interface_class, "setBinaryArch", "(Ljava/lang/String;)V");
   if (set_arch_method == NULL) {
-    return;
+    goto exit;
   }
 
   // call NativeInterface.setBinaryArch()
-  jstring arch = bsg_safe_new_string_utf(env, bsg_binary_arch());
+  arch = bsg_safe_new_string_utf(env, bsg_binary_arch());
   if (arch != NULL) {
-    (*env)->CallStaticVoidMethod(env, interface_class, set_arch_method, arch);
+    bsg_safe_call_static_void_method(env, interface_class, set_arch_method,
+                                     arch);
   }
+
+  goto exit;
+
+exit:
   (*env)->DeleteLocalRef(env, arch);
+  (*env)->DeleteLocalRef(env, set_arch_method);
   (*env)->DeleteLocalRef(env, interface_class);
 }
 
 void bugsnag_set_user_env(JNIEnv *env, char *id, char *email, char *name) {
   // lookup com/bugsnag/android/NativeInterface
-  jclass interface_class =
+  jclass interface_class = NULL;
+  jmethodID set_user_method = NULL;
+
+  interface_class =
       bsg_safe_find_class(env, "com/bugsnag/android/NativeInterface");
   if (interface_class == NULL) {
-    return;
+    goto exit;
   }
 
   // lookup NativeInterface.setUser()
-  jmethodID set_user_method = bsg_safe_get_static_method_id(
-      env, interface_class, "setUser", "([B[B[B)V");
+  set_user_method = bsg_safe_get_static_method_id(env, interface_class,
+                                                  "setUser", "([B[B[B)V");
   if (set_user_method == NULL) {
-    return;
+    goto exit;
   }
 
   jbyteArray jid = bsg_byte_ary_from_string(env, id);
   jbyteArray jemail = bsg_byte_ary_from_string(env, email);
   jbyteArray jname = bsg_byte_ary_from_string(env, name);
 
-  (*env)->CallStaticVoidMethod(env, interface_class, set_user_method, jid,
-                               jemail, jname);
+  bsg_safe_call_static_void_method(env, interface_class, set_user_method, jid,
+                                   jemail, jname);
 
   bsg_release_byte_ary(env, jid, id);
   bsg_release_byte_ary(env, jemail, email);
@@ -225,64 +285,90 @@ void bugsnag_set_user_env(JNIEnv *env, char *id, char *email, char *name) {
   (*env)->DeleteLocalRef(env, jid);
   (*env)->DeleteLocalRef(env, jemail);
   (*env)->DeleteLocalRef(env, jname);
+
+  goto exit;
+
+exit:
   (*env)->DeleteLocalRef(env, interface_class);
+  (*env)->DeleteLocalRef(env, set_user_method);
 }
 
 jfieldID bsg_parse_jcrumb_type(JNIEnv *env, bugsnag_breadcrumb_type type,
                                jclass type_class) {
   const char *type_sig = "Lcom/bugsnag/android/BreadcrumbType;";
   if (type == BSG_CRUMB_USER) {
-    return (*env)->GetStaticFieldID(env, type_class, "USER", type_sig);
+    return bsg_safe_get_static_field_id(env, type_class, "USER", type_sig);
   } else if (type == BSG_CRUMB_ERROR) {
-    return (*env)->GetStaticFieldID(env, type_class, "ERROR", type_sig);
+    return bsg_safe_get_static_field_id(env, type_class, "ERROR", type_sig);
   } else if (type == BSG_CRUMB_LOG) {
-    return (*env)->GetStaticFieldID(env, type_class, "LOG", type_sig);
+    return bsg_safe_get_static_field_id(env, type_class, "LOG", type_sig);
   } else if (type == BSG_CRUMB_NAVIGATION) {
-    return (*env)->GetStaticFieldID(env, type_class, "NAVIGATION", type_sig);
+    return bsg_safe_get_static_field_id(env, type_class, "NAVIGATION",
+                                        type_sig);
   } else if (type == BSG_CRUMB_PROCESS) {
-    return (*env)->GetStaticFieldID(env, type_class, "PROCESS", type_sig);
+    return bsg_safe_get_static_field_id(env, type_class, "PROCESS", type_sig);
   } else if (type == BSG_CRUMB_REQUEST) {
-    return (*env)->GetStaticFieldID(env, type_class, "REQUEST", type_sig);
+    return bsg_safe_get_static_field_id(env, type_class, "REQUEST", type_sig);
   } else if (type == BSG_CRUMB_STATE) {
-    return (*env)->GetStaticFieldID(env, type_class, "STATE", type_sig);
+    return bsg_safe_get_static_field_id(env, type_class, "STATE", type_sig);
   } else { // MANUAL is the default type
-    return (*env)->GetStaticFieldID(env, type_class, "MANUAL", type_sig);
+    return bsg_safe_get_static_field_id(env, type_class, "MANUAL", type_sig);
   }
 }
 
 void bugsnag_leave_breadcrumb_env(JNIEnv *env, char *message,
                                   bugsnag_breadcrumb_type type) {
+  jclass interface_class = NULL;
+  jmethodID leave_breadcrumb_method = NULL;
+  jclass type_class = NULL;
+  jfieldID crumb_type = NULL;
+  jobject jtype = NULL;
+  jbyteArray jmessage = NULL;
+
   // lookup com/bugsnag/android/NativeInterface
-  jclass interface_class =
+  interface_class =
       bsg_safe_find_class(env, "com/bugsnag/android/NativeInterface");
   if (interface_class == NULL) {
-    return;
+    goto exit;
   }
 
   // lookup NativeInterface.leaveBreadcrumb()
-  jmethodID leave_breadcrumb_method = bsg_safe_get_static_method_id(
+  leave_breadcrumb_method = bsg_safe_get_static_method_id(
       env, interface_class, "leaveBreadcrumb",
       "([BLcom/bugsnag/android/BreadcrumbType;)V");
-  if (interface_class == NULL) {
-    return;
+  if (leave_breadcrumb_method == NULL) {
+    goto exit;
   }
 
   // lookup com/bugsnag/android/BreadcrumbType
-  jclass type_class =
-      bsg_safe_find_class(env, "com/bugsnag/android/BreadcrumbType");
-  if (interface_class == NULL) {
-    return;
+  type_class = bsg_safe_find_class(env, "com/bugsnag/android/BreadcrumbType");
+  if (type_class == NULL) {
+    goto exit;
   }
 
-  jobject jtype = (*env)->GetStaticObjectField(
-      env, type_class, bsg_parse_jcrumb_type(env, type, type_class));
-  jbyteArray jmessage = bsg_byte_ary_from_string(env, message);
-  (*env)->CallStaticVoidMethod(env, interface_class, leave_breadcrumb_method,
-                               jmessage, jtype);
+  // get breadcrumb type fieldID
+  crumb_type = bsg_parse_jcrumb_type(env, type, type_class);
+  if (crumb_type == NULL) {
+    goto exit;
+  }
+
+  // get the breadcrumb type
+  jtype = bsg_safe_get_static_object_field(env, type_class, crumb_type);
+  if (jtype == NULL) {
+    goto exit;
+  }
+  jmessage = bsg_byte_ary_from_string(env, message);
+  bsg_safe_call_static_void_method(env, interface_class,
+                                   leave_breadcrumb_method, jmessage, jtype);
+
+  goto exit;
+
+exit:
   bsg_release_byte_ary(env, jmessage, message);
+  (*env)->DeleteLocalRef(env, interface_class);
+  (*env)->DeleteLocalRef(env, leave_breadcrumb_method);
+  (*env)->DeleteLocalRef(env, type_class);
+  (*env)->DeleteLocalRef(env, crumb_type);
   (*env)->DeleteLocalRef(env, jtype);
   (*env)->DeleteLocalRef(env, jmessage);
-
-  (*env)->DeleteLocalRef(env, type_class);
-  (*env)->DeleteLocalRef(env, interface_class);
 }

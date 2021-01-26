@@ -250,7 +250,7 @@ jobject bsg_get_map_value_obj(JNIEnv *env, bsg_jni_cache *jni_cache,
   }
 
   jobject obj =
-      (*env)->CallObjectMethod(env, map, jni_cache->hash_map_get, key);
+      bsg_safe_call_object_method(env, map, jni_cache->hash_map_get, key);
   (*env)->DeleteLocalRef(env, key);
   return obj;
 }
@@ -321,7 +321,7 @@ int bsg_populate_cpu_abi_from_map(JNIEnv *env, bsg_jni_cache *jni_cache,
   }
 
   jobjectArray _value =
-      (*env)->CallObjectMethod(env, map, jni_cache->hash_map_get, key);
+      bsg_safe_call_object_method(env, map, jni_cache->hash_map_get, key);
   if (_value != NULL) {
     int count = (*env)->GetArrayLength(env, _value);
 
@@ -346,30 +346,40 @@ int bsg_populate_cpu_abi_from_map(JNIEnv *env, bsg_jni_cache *jni_cache,
 
 void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,
                                  jobject metadata) {
+  bsg_jni_cache *jni_cache = NULL;
+  jobject keyset = NULL;
+  jobject keylist = NULL;
+
   if (metadata == NULL) {
-    return;
+    goto exit;
   }
-  bsg_jni_cache *jni_cache = bsg_populate_jni_cache(env);
+  jni_cache = bsg_populate_jni_cache(env);
   if (jni_cache == NULL) {
-    return;
+    goto exit;
   }
 
   // get size of metadata map
   jint map_size = bsg_safe_call_int_method(env, metadata, jni_cache->map_size);
   if (map_size == -1) {
-    return;
+    goto exit;
   }
 
-  jobject keyset =
-      (*env)->CallObjectMethod(env, metadata, jni_cache->map_key_set);
-  jobject keylist = (*env)->NewObject(
-      env, jni_cache->arraylist, jni_cache->arraylist_init_with_obj, keyset);
+  // create a list of metadata keys
+  keyset = bsg_safe_call_object_method(env, metadata, jni_cache->map_key_set);
+  if (keyset == NULL) {
+    goto exit;
+  }
+  keylist = bsg_safe_new_object(env, jni_cache->arraylist,
+                                jni_cache->arraylist_init_with_obj, keyset);
+  if (keylist == NULL) {
+    goto exit;
+  }
 
   for (int i = 0; i < map_size; i++) {
-    jstring _key = (*env)->CallObjectMethod(env, keylist,
-                                            jni_cache->arraylist_get, (jint)i);
+    jstring _key = bsg_safe_call_object_method(
+        env, keylist, jni_cache->arraylist_get, (jint)i);
     jobject _value =
-        (*env)->CallObjectMethod(env, metadata, jni_cache->map_get, _key);
+        bsg_safe_call_object_method(env, metadata, jni_cache->map_get, _key);
 
     if (_key == NULL || _value == NULL) {
       (*env)->DeleteLocalRef(env, _key);
@@ -381,6 +391,9 @@ void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,
       (*env)->ReleaseStringUTFChars(env, _key, key);
     }
   }
+  goto exit;
+
+exit:
   free(jni_cache);
   (*env)->DeleteLocalRef(env, keyset);
   (*env)->DeleteLocalRef(env, keylist);
@@ -402,8 +415,11 @@ char *bsg_binary_arch() {
 
 void bsg_populate_app_data(JNIEnv *env, bsg_jni_cache *jni_cache,
                            bugsnag_event *event) {
-  jobject data = (*env)->CallStaticObjectMethod(
+  jobject data = bsg_safe_call_static_object_method(
       env, jni_cache->native_interface, jni_cache->get_app_data);
+  if (data == NULL) {
+    return;
+  }
 
   bsg_strncpy_safe(event->app.binary_arch, bsg_binary_arch(),
                    sizeof(event->app.binary_arch));
@@ -479,8 +495,11 @@ void populate_device_metadata(JNIEnv *env, bsg_jni_cache *jni_cache,
 
 void bsg_populate_device_data(JNIEnv *env, bsg_jni_cache *jni_cache,
                               bugsnag_event *event) {
-  jobject data = (*env)->CallStaticObjectMethod(
+  jobject data = bsg_safe_call_static_object_method(
       env, jni_cache->native_interface, jni_cache->get_device_data);
+  if (data == NULL) {
+    return;
+  }
 
   bsg_populate_cpu_abi_from_map(env, jni_cache, data, &event->device);
 
@@ -528,8 +547,11 @@ void bsg_populate_device_data(JNIEnv *env, bsg_jni_cache *jni_cache,
 
 void bsg_populate_user_data(JNIEnv *env, bsg_jni_cache *jni_cache,
                             bugsnag_event *event) {
-  jobject data = (*env)->CallStaticObjectMethod(
+  jobject data = bsg_safe_call_static_object_method(
       env, jni_cache->native_interface, jni_cache->get_user_data);
+  if (data == NULL) {
+    return;
+  }
   bsg_copy_map_value_string(env, jni_cache, data, "id", event->user.id,
                             sizeof(event->user.id));
   bsg_copy_map_value_string(env, jni_cache, data, "name", event->user.name,
@@ -541,7 +563,7 @@ void bsg_populate_user_data(JNIEnv *env, bsg_jni_cache *jni_cache,
 
 void bsg_populate_context(JNIEnv *env, bsg_jni_cache *jni_cache,
                           bugsnag_event *event) {
-  jstring _context = (*env)->CallStaticObjectMethod(
+  jstring _context = bsg_safe_call_static_object_method(
       env, jni_cache->native_interface, jni_cache->get_context);
   if (_context != NULL) {
     const char *value = (*env)->GetStringUTFChars(env, (jstring)_context, 0);
@@ -584,61 +606,115 @@ void bsg_populate_metadata_value(JNIEnv *env, bugsnag_metadata *dst,
   }
 }
 
-void bsg_populate_metadata(JNIEnv *env, bugsnag_metadata *dst,
-                           jobject metadata) {
-  bsg_jni_cache *jni_cache = bsg_populate_jni_cache(env);
-  if (jni_cache == NULL) {
+void bsg_populate_metadata_obj(JNIEnv *env, bugsnag_metadata *dst,
+                               bsg_jni_cache *jni_cache, char *section,
+                               jobject section_keylist, int index) {
+  jstring section_key = bsg_safe_call_object_method(
+      env, section_keylist, jni_cache->arraylist_get, (jint)index);
+  if (section_key == NULL) {
     return;
   }
+  char *name = (char *)(*env)->GetStringUTFChars(env, section_key, 0);
+  jobject _value = bsg_safe_call_object_method(env, section, jni_cache->map_get,
+                                               section_key);
+  bsg_populate_metadata_value(env, dst, jni_cache, section, name, _value);
+  (*env)->ReleaseStringUTFChars(env, section_key, name);
+  (*env)->DeleteLocalRef(env, _value);
+}
+
+void bsg_populate_metadata_section(JNIEnv *env, bugsnag_metadata *dst,
+                                   jobject metadata, bsg_jni_cache *jni_cache,
+                                   jobject keylist, int i) {
+  jstring _key = NULL;
+  char *section = NULL;
+  jobject _section = NULL;
+  jobject section_keyset = NULL;
+  jobject section_keylist = NULL;
+
+  _key = bsg_safe_call_object_method(env, keylist, jni_cache->arraylist_get,
+                                     (jint)i);
+  if (_key == NULL) {
+    goto exit;
+  }
+  section = (char *)(*env)->GetStringUTFChars(env, _key, 0);
+  _section =
+      bsg_safe_call_object_method(env, metadata, jni_cache->map_get, _key);
+  if (_section == NULL) {
+    goto exit;
+  }
+  jint section_size =
+      bsg_safe_call_int_method(env, _section, jni_cache->map_size);
+  if (section_size == -1) {
+    goto exit;
+  }
+  section_keyset =
+      bsg_safe_call_object_method(env, _section, jni_cache->map_key_set);
+  if (section_keyset == NULL) {
+    goto exit;
+  }
+
+  section_keylist =
+      bsg_safe_new_object(env, jni_cache->arraylist,
+                          jni_cache->arraylist_init_with_obj, section_keyset);
+  if (section_keylist == NULL) {
+    goto exit;
+  }
+  for (int j = 0; j < section_size; j++) {
+    bsg_populate_metadata_obj(env, dst, jni_cache, section, section_keylist, j);
+  }
+  goto exit;
+
+exit:
+  (*env)->ReleaseStringUTFChars(env, _key, section);
+  (*env)->DeleteLocalRef(env, section_keyset);
+  (*env)->DeleteLocalRef(env, section_keylist);
+  (*env)->DeleteLocalRef(env, _section);
+}
+
+void bsg_populate_metadata(JNIEnv *env, bugsnag_metadata *dst,
+                           jobject metadata) {
+  jobject keyset = NULL;
+  jobject keylist = NULL;
+  bsg_jni_cache *jni_cache = bsg_populate_jni_cache(env);
+
+  if (jni_cache == NULL) {
+    goto exit;
+  }
   if (metadata == NULL) {
-    metadata = (*env)->CallStaticObjectMethod(env, jni_cache->native_interface,
-                                              jni_cache->get_metadata);
+    metadata = bsg_safe_call_static_object_method(
+        env, jni_cache->native_interface, jni_cache->get_metadata);
   }
   if (metadata != NULL) {
     int size = bsg_safe_call_int_method(env, metadata, jni_cache->map_size);
     if (size == -1) {
-      return;
+      goto exit;
     }
-    jobject keyset =
-        (*env)->CallObjectMethod(env, metadata, jni_cache->map_key_set);
-    jobject keylist = (*env)->NewObject(
-        env, jni_cache->arraylist, jni_cache->arraylist_init_with_obj, keyset);
+
+    // create a list of metadata keys
+    keyset = bsg_safe_call_static_object_method(env, metadata,
+                                                jni_cache->map_key_set);
+    if (keyset == NULL) {
+      goto exit;
+    }
+    keylist = bsg_safe_new_object(env, jni_cache->arraylist,
+                                  jni_cache->arraylist_init_with_obj, keyset);
+    if (keylist == NULL) {
+      goto exit;
+    }
 
     for (int i = 0; i < size; i++) {
-      jstring _key = (*env)->CallObjectMethod(
-          env, keylist, jni_cache->arraylist_get, (jint)i);
-      char *section = (char *)(*env)->GetStringUTFChars(env, _key, 0);
-      jobject _section =
-          (*env)->CallObjectMethod(env, metadata, jni_cache->map_get, _key);
-      jint section_size =
-          bsg_safe_call_int_method(env, _section, jni_cache->map_size);
-      if (section_size == -1) {
-        break;
-      }
-      jobject section_keyset =
-          (*env)->CallObjectMethod(env, _section, jni_cache->map_key_set);
-      jobject section_keylist =
-          (*env)->NewObject(env, jni_cache->arraylist,
-                            jni_cache->arraylist_init_with_obj, section_keyset);
-      for (int j = 0; j < section_size; j++) {
-        jstring section_key = (*env)->CallObjectMethod(
-            env, section_keylist, jni_cache->arraylist_get, (jint)j);
-        char *name = (char *)(*env)->GetStringUTFChars(env, section_key, 0);
-        jobject _value = (*env)->CallObjectMethod(
-            env, section, jni_cache->map_get, section_key);
-        bsg_populate_metadata_value(env, dst, jni_cache, section, name, _value);
-        (*env)->ReleaseStringUTFChars(env, section_key, name);
-        (*env)->DeleteLocalRef(env, _value);
-      }
-      (*env)->ReleaseStringUTFChars(env, _key, section);
-      (*env)->DeleteLocalRef(env, section_keyset);
-      (*env)->DeleteLocalRef(env, section_keylist);
-      (*env)->DeleteLocalRef(env, _section);
+      bsg_populate_metadata_section(env, dst, metadata, jni_cache, keylist, i);
     }
-    (*env)->DeleteLocalRef(env, keyset);
-    (*env)->DeleteLocalRef(env, keylist);
   } else {
     dst->value_count = 0;
   }
-  free(jni_cache);
+  goto exit;
+
+// cleanup
+exit:
+  if (jni_cache != NULL) {
+    free(jni_cache);
+  }
+  (*env)->DeleteLocalRef(env, keyset);
+  (*env)->DeleteLocalRef(env, keylist);
 }

@@ -185,8 +185,8 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
       // call NativeInterface.deliverReport()
       jstring japi_key = bsg_safe_new_string_utf(env, event->api_key);
       if (japi_key != NULL) {
-        (*env)->CallStaticVoidMethod(env, interface_class, jdeliver_method,
-                                     jstage, jpayload, japi_key);
+        bsg_safe_call_static_void_method(env, interface_class, jdeliver_method,
+                                         jstage, jpayload, japi_key);
       }
       (*env)->DeleteLocalRef(env, japi_key);
     } else {
@@ -200,18 +200,18 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
   (*env)->ReleaseStringUTFChars(env, _report_path, event_path);
   goto exit;
 
-  exit:
-    pthread_mutex_unlock(&bsg_native_delivery_mutex);
-    if (jpayload != NULL) {
-      (*env)->ReleaseByteArrayElements(env, jpayload, (jbyte *)payload,
-                                       0); // <-- frees payload
-    }
-    if (jstage != NULL) {
-      (*env)->ReleaseByteArrayElements(
-          env, jstage, (jbyte *)event->app.release_stage, JNI_COMMIT);
-    }
-    (*env)->DeleteLocalRef(env, jpayload);
-    (*env)->DeleteLocalRef(env, jstage);
+exit:
+  pthread_mutex_unlock(&bsg_native_delivery_mutex);
+  if (jpayload != NULL) {
+    (*env)->ReleaseByteArrayElements(env, jpayload, (jbyte *)payload,
+                                     0); // <-- frees payload
+  }
+  if (jstage != NULL) {
+    (*env)->ReleaseByteArrayElements(
+        env, jstage, (jbyte *)event->app.release_stage, JNI_COMMIT);
+  }
+  (*env)->DeleteLocalRef(env, jpayload);
+  (*env)->DeleteLocalRef(env, jstage);
 }
 
 JNIEXPORT void JNICALL
