@@ -243,7 +243,12 @@ bsg_jni_cache *bsg_populate_jni_cache(JNIEnv *env) {
 
 jobject bsg_get_map_value_obj(JNIEnv *env, bsg_jni_cache *jni_cache,
                               jobject map, const char *_key) {
-  jstring key = (*env)->NewStringUTF(env, _key);
+  // create Java string object for map key
+  jstring key = bsg_safe_new_string_utf(env, _key);
+  if (key == NULL) {
+    return NULL;
+  }
+
   jobject obj =
       (*env)->CallObjectMethod(env, map, jni_cache->hash_map_get, key);
   (*env)->DeleteLocalRef(env, key);
@@ -267,8 +272,8 @@ long bsg_get_map_value_long(JNIEnv *env, bsg_jni_cache *jni_cache, jobject map,
   jobject _value = bsg_get_map_value_obj(env, jni_cache, map, _key);
 
   if (_value != NULL) {
-    long value = (long)(*env)->CallDoubleMethod(env, _value,
-                                                jni_cache->number_double_value);
+    long value = bsg_safe_call_double_method(env, _value,
+                                             jni_cache->number_double_value);
     (*env)->DeleteLocalRef(env, _value);
     return value;
   }
@@ -280,8 +285,8 @@ float bsg_get_map_value_float(JNIEnv *env, bsg_jni_cache *jni_cache,
   jobject _value = bsg_get_map_value_obj(env, jni_cache, map, _key);
 
   if (_value != NULL) {
-    float value = (float)(*env)->CallFloatMethod(env, _value,
-                                                 jni_cache->float_float_value);
+    float value =
+        bsg_safe_call_float_method(env, _value, jni_cache->float_float_value);
     (*env)->DeleteLocalRef(env, _value);
     return value;
   }
@@ -294,7 +299,7 @@ int bsg_get_map_value_int(JNIEnv *env, bsg_jni_cache *jni_cache, jobject map,
 
   if (_value != NULL) {
     jint value =
-        (int)(*env)->CallIntMethod(env, _value, jni_cache->integer_int_value);
+        bsg_safe_call_int_method(env, _value, jni_cache->integer_int_value);
     (*env)->DeleteLocalRef(env, _value);
     return value;
   }
@@ -304,23 +309,33 @@ int bsg_get_map_value_int(JNIEnv *env, bsg_jni_cache *jni_cache, jobject map,
 bool bsg_get_map_value_bool(JNIEnv *env, bsg_jni_cache *jni_cache, jobject map,
                             const char *_key) {
   jobject obj = bsg_get_map_value_obj(env, jni_cache, map, _key);
-  return (*env)->CallBooleanMethod(env, obj, jni_cache->boolean_bool_value);
+  return bsg_safe_call_boolean_method(env, obj, jni_cache->boolean_bool_value);
 }
 
 int bsg_populate_cpu_abi_from_map(JNIEnv *env, bsg_jni_cache *jni_cache,
                                   jobject map, bsg_device_info *device) {
-  jstring key = (*env)->NewStringUTF(env, "cpuAbi");
+  // create Java string object for map key
+  jstring key = bsg_safe_new_string_utf(env, "cpuAbi");
+  if (key == NULL) {
+    return 0;
+  }
+
   jobjectArray _value =
       (*env)->CallObjectMethod(env, map, jni_cache->hash_map_get, key);
   if (_value != NULL) {
     int count = (*env)->GetArrayLength(env, _value);
 
+    // get the ABI as a Java string and copy it to bsg_device_info
     for (int i = 0; i < count && i < sizeof(device->cpu_abi); i++) {
-      jstring abi_ = (jstring)((*env)->GetObjectArrayElement(env, _value, i));
-      char *abi = (char *)(*env)->GetStringUTFChars(env, abi_, 0);
+      jstring jabi = bsg_safe_get_object_array_element(env, _value, i);
+      if (jabi == NULL) {
+        break;
+      }
+
+      char *abi = (char *)(*env)->GetStringUTFChars(env, jabi, 0);
       bsg_strncpy_safe(device->cpu_abi[i].value, abi,
                        sizeof(device->cpu_abi[i].value));
-      (*env)->ReleaseStringUTFChars(env, abi_, abi);
+      (*env)->ReleaseStringUTFChars(env, jabi, abi);
       device->cpu_abi_count++;
     }
     (*env)->DeleteLocalRef(env, _value);
@@ -339,7 +354,12 @@ void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,
     return;
   }
 
-  int map_size = (int)(*env)->CallIntMethod(env, metadata, jni_cache->map_size);
+  // get size of metadata map
+  jint map_size = bsg_safe_call_int_method(env, metadata, jni_cache->map_size);
+  if (map_size == -1) {
+    return;
+  }
+
   jobject keyset =
       (*env)->CallObjectMethod(env, metadata, jni_cache->map_key_set);
   jobject keylist = (*env)->NewObject(
@@ -548,12 +568,14 @@ void bsg_populate_metadata_value(JNIEnv *env, bugsnag_metadata *dst,
                                  bsg_jni_cache *jni_cache, char *section,
                                  char *name, jobject _value) {
   if ((*env)->IsInstanceOf(env, _value, jni_cache->number)) {
-    double value =
-        (*env)->CallDoubleMethod(env, _value, jni_cache->number_double_value);
+    // add a double metadata value
+    double value = bsg_safe_call_double_method(env, _value,
+                                               jni_cache->number_double_value);
     bsg_add_metadata_value_double(dst, section, name, value);
   } else if ((*env)->IsInstanceOf(env, _value, jni_cache->boolean)) {
-    bool value =
-        (*env)->CallBooleanMethod(env, _value, jni_cache->boolean_bool_value);
+    // add a boolean metadata value
+    bool value = bsg_safe_call_boolean_method(env, _value,
+                                              jni_cache->boolean_bool_value);
     bsg_add_metadata_value_bool(dst, section, name, value);
   } else if ((*env)->IsInstanceOf(env, _value, jni_cache->string)) {
     char *value = (char *)(*env)->GetStringUTFChars(env, _value, 0);
@@ -573,19 +595,26 @@ void bsg_populate_metadata(JNIEnv *env, bugsnag_metadata *dst,
                                               jni_cache->get_metadata);
   }
   if (metadata != NULL) {
-    int size = (int)(*env)->CallIntMethod(env, metadata, jni_cache->map_size);
+    int size = bsg_safe_call_int_method(env, metadata, jni_cache->map_size);
+    if (size == -1) {
+      return;
+    }
     jobject keyset =
         (*env)->CallObjectMethod(env, metadata, jni_cache->map_key_set);
     jobject keylist = (*env)->NewObject(
         env, jni_cache->arraylist, jni_cache->arraylist_init_with_obj, keyset);
+
     for (int i = 0; i < size; i++) {
       jstring _key = (*env)->CallObjectMethod(
           env, keylist, jni_cache->arraylist_get, (jint)i);
       char *section = (char *)(*env)->GetStringUTFChars(env, _key, 0);
       jobject _section =
           (*env)->CallObjectMethod(env, metadata, jni_cache->map_get, _key);
-      int section_size =
-          (int)(*env)->CallIntMethod(env, _section, jni_cache->map_size);
+      jint section_size =
+          bsg_safe_call_int_method(env, _section, jni_cache->map_size);
+      if (section_size == -1) {
+        break;
+      }
       jobject section_keyset =
           (*env)->CallObjectMethod(env, _section, jni_cache->map_key_set);
       jobject section_keylist =

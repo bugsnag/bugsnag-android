@@ -63,17 +63,6 @@ jfieldID bsg_parse_jseverity(JNIEnv *env, bugsnag_severity severity,
   }
 }
 
-jbyteArray bsg_byte_ary_from_string(JNIEnv *env, char *text) {
-  if (text == NULL) {
-    return NULL;
-  }
-  size_t text_length = bsg_strlen(text);
-  jbyteArray jtext = (*env)->NewByteArray(env, text_length);
-  (*env)->SetByteArrayRegion(env, jtext, 0, text_length, (jbyte *)text);
-
-  return jtext;
-}
-
 void bsg_release_byte_ary(JNIEnv *env, jbyteArray array, char *original_text) {
   if (array != NULL) {
     (*env)->ReleaseByteArrayElements(env, array, (jbyte *)original_text,
@@ -123,28 +112,36 @@ void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
     return;
   }
 
-  jobjectArray trace = (*env)->NewObjectArray(
-      env, (jsize)frame_count,
-      bsg_safe_find_class(env, "java/lang/StackTraceElement"), NULL);
+  // create StackTraceElement array
+  jobjectArray trace = bsg_safe_new_object_array(env, frame_count, trace_class);
+  if (trace == NULL) {
+    return;
+  }
 
   for (int i = 0; i < frame_count; i++) {
     bugsnag_stackframe frame = stacktrace[i];
-    jstring class = (*env)->NewStringUTF(env, "");
-    jstring filename = (*env)->NewStringUTF(env, frame.filename);
+
+    // create Java string objects for class/filename/method
+    jstring class = bsg_safe_new_string_utf(env, "");
+    if (class == NULL) {
+      continue;
+    }
+
+    jstring filename = bsg_safe_new_string_utf(env, frame.filename);
     jstring method;
     if (strlen(frame.method) == 0) {
       char *frame_address = malloc(sizeof(char) * 32);
       sprintf(frame_address, "0x%lx", (unsigned long)frame.frame_address);
-      method = (*env)->NewStringUTF(env, frame_address);
+      method = bsg_safe_new_string_utf(env, frame_address);
       free(frame_address);
     } else {
-      method = (*env)->NewStringUTF(env, frame.method);
+      method = bsg_safe_new_string_utf(env, frame.method);
     }
     jobject jframe =
         (*env)->NewObject(env, trace_class, trace_constructor, class, method,
                           filename, frame.line_number);
 
-    (*env)->SetObjectArrayElement(env, trace, i, jframe);
+    bsg_safe_set_object_array_element(env, trace, i, jframe);
     (*env)->DeleteLocalRef(env, filename);
     (*env)->DeleteLocalRef(env, class);
     (*env)->DeleteLocalRef(env, method);
@@ -190,8 +187,11 @@ void bugsnag_set_binary_arch(JNIEnv *env) {
     return;
   }
 
-  jstring arch = (*env)->NewStringUTF(env, bsg_binary_arch());
-  (*env)->CallStaticVoidMethod(env, interface_class, set_arch_method, arch);
+  // call NativeInterface.setBinaryArch()
+  jstring arch = bsg_safe_new_string_utf(env, bsg_binary_arch());
+  if (arch != NULL) {
+    (*env)->CallStaticVoidMethod(env, interface_class, set_arch_method, arch);
+  }
   (*env)->DeleteLocalRef(env, arch);
   (*env)->DeleteLocalRef(env, interface_class);
 }
