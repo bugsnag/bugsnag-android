@@ -8,6 +8,8 @@
 #include <unistd.h>
 
 #include "anr_google.h"
+#include "utils/string.h"
+#include "unwind_func.h"
 
 // Lock for changing the handler configuration
 static pthread_mutex_t bsg_anr_handler_config = PTHREAD_MUTEX_INITIALIZER;
@@ -24,6 +26,13 @@ static struct sigaction original_sigquit_handler;
 static JavaVM *bsg_jvm = NULL;
 static jmethodID mthd_notify_anr_detected = NULL;
 static jobject obj_plugin = NULL;
+static jclass frame_class = NULL;
+static jmethodID frame_init = NULL;
+
+static bugsnag_stackframe anr_stacktrace[BUGSNAG_FRAMES_MAX];
+static ssize_t anr_stacktrace_length = 0;
+
+unwind_func local_bsg_unwind_stack;
 
 static bool configure_anr_jni(JNIEnv *env) {
   // get a global reference to the AnrPlugin class
@@ -36,24 +45,78 @@ static bool configure_anr_jni(JNIEnv *env) {
 
   jclass clz = (*env)->FindClass(env, "com/bugsnag/android/AnrPlugin");
   mthd_notify_anr_detected =
-          (*env)->GetMethodID(env, clz, "notifyAnrDetected", "()V");
+          (*env)->GetMethodID(env, clz, "notifyAnrDetected", "(Ljava/util/List;)V");
+  frame_class = (*env)->FindClass(env, "com/bugsnag/android/NativeStackframe");
+  frame_class = (*env)->NewGlobalRef(env, frame_class);
+  frame_init = (*env)->GetMethodID(
+          env, frame_class, "<init>",
+          "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Number;Ljava/lang/"
+          "Long;Ljava/lang/Long;Ljava/lang/Long;)V");
   return true;
 }
 
 static void notify_anr_detected() {
-  if (enabled) {
-    JNIEnv *env;
-    int result = (*bsg_jvm)->GetEnv(bsg_jvm, (void **) &env, JNI_VERSION_1_4);
+  if (!enabled) {
+    return;
+  }
 
-    if (result == JNI_OK) { // already attached
-      (*env)->CallVoidMethod(env, obj_plugin, mthd_notify_anr_detected);
-    } else if (result == JNI_EDETACHED) { // attach before calling JNI
-      if ((*bsg_jvm)->AttachCurrentThread(bsg_jvm, &env, NULL) == 0) {
-        (*env)->CallVoidMethod(env, obj_plugin, mthd_notify_anr_detected);
-        (*bsg_jvm)->DetachCurrentThread(
-                bsg_jvm); // detach to restore initial condition
+  bool should_detach = false;
+  JNIEnv *env;
+  int result = (*bsg_jvm)->GetEnv(bsg_jvm, (void **) &env, JNI_VERSION_1_4);
+  switch (result) {
+    case JNI_OK:
+      break;
+    case JNI_EDETACHED:
+      result = (*bsg_jvm)->AttachCurrentThread(bsg_jvm, &env, NULL);
+      if (result != 0) {
+        BUGSNAG_LOG("Failed to call JNIEnv->AttachCurrentThread(): %d", result);
+        return;
       }
-    } // All other results are error codes
+      should_detach = true;
+      break;
+    default:
+      BUGSNAG_LOG("Failed to call JNIEnv->GetEnv(): %d", result);
+      return;
+  }
+
+  jclass list_class = (*env)->FindClass(env, "java/util/LinkedList");
+  jmethodID list_init = (*env)->GetMethodID(env, list_class, "<init>", "()V");
+  jmethodID list_add = (*env)->GetMethodID(env, list_class, "add", "(Ljava/lang/Object;)Z");
+  jclass int_class = (*env)->FindClass(env, "java/lang/Integer");
+  jmethodID int_init = (*env)->GetMethodID(env, int_class, "<init>", "(I)V");
+  jclass long_class = (*env)->FindClass(env, "java/lang/Long");
+  jmethodID long_init = (*env)->GetMethodID(env, long_class, "<init>", "(J)V");
+
+  jobject jlist = (*env)->NewObject(env, list_class, list_init);
+  for (ssize_t i = 0; i < anr_stacktrace_length; i++) {
+    bugsnag_stackframe *frame = anr_stacktrace + i;
+    jobject jmethod = (*env)->NewStringUTF(env, frame->method);
+    jobject jfilename = (*env)->NewStringUTF(env, frame->filename);
+    jobject jline_number =
+            (*env)->NewObject(env, int_class, int_init, (jint) frame->line_number);
+    jobject jframe_address = (*env)->NewObject(env, long_class, long_init,
+                                               (jlong) frame->frame_address);
+    jobject jsymbol_address = (*env)->NewObject(env, long_class, long_init,
+                                                (jlong) frame->symbol_address);
+    jobject jload_address = (*env)->NewObject(env, long_class, long_init,
+                                              (jlong) frame->load_address);
+    jobject jframe = (*env)->NewObject(env, frame_class, frame_init, jmethod,
+                                       jfilename, jline_number, jframe_address,
+                                       jsymbol_address, jload_address);
+    (*env)->CallBooleanMethod(env, jlist, list_add, jframe);
+    (*env)->DeleteLocalRef(env, jmethod);
+    (*env)->DeleteLocalRef(env, jfilename);
+    (*env)->DeleteLocalRef(env, jline_number);
+    (*env)->DeleteLocalRef(env, jframe_address);
+    (*env)->DeleteLocalRef(env, jsymbol_address);
+    (*env)->DeleteLocalRef(env, jload_address);
+    (*env)->DeleteLocalRef(env, jframe);
+  }
+
+  (*env)->CallVoidMethod(env, obj_plugin, mthd_notify_anr_detected, jlist);
+
+  if (should_detach) {
+    (*bsg_jvm)->DetachCurrentThread(bsg_jvm); // detach to restore initial condition
   }
 }
 
@@ -89,6 +152,11 @@ static void handle_sigquit(int signum, siginfo_t* info, void* user_context) {
   sigaddset(&sigmask, SIGQUIT);
   pthread_sigmask(SIG_BLOCK, &sigmask, NULL);
   sigaction(SIGQUIT, &original_sigquit_handler, NULL);
+
+  // The unwind function will be non-null if the NDK plugin is loaded.
+  if (local_bsg_unwind_stack != NULL) {
+    anr_stacktrace_length = local_bsg_unwind_stack(anr_stacktrace, info, user_context);
+  }
 
   // Instruct our watchdog thread to report the ANR and also call Google
   should_report_anr = true;

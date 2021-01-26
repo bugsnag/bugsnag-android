@@ -3,13 +3,12 @@ package com.bugsnag.android.mazerunner.scenarios
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 
 /**
  * Stops the app from responding for a time period
  */
-internal class JvmAnrMinimalFixtureScenario(
+internal class JvmAnrSleepScenario(
     config: Configuration,
     context: Context,
     eventMetadata: String?
@@ -17,16 +16,15 @@ internal class JvmAnrMinimalFixtureScenario(
 
     init {
         config.autoTrackSessions = false
-        config.enabledErrorTypes.anrs = false
+        config.enabledErrorTypes.anrs = true
     }
 
     override fun startScenario() {
         super.startScenario()
-        Bugsnag.notify(generateException())
         val main = Handler(Looper.getMainLooper())
         main.postDelayed(
             Runnable {
-                while (true) { }
+                Thread.sleep(100000)
             },
             1
         ) // A moment of delay so there is something to 'tap' onscreen

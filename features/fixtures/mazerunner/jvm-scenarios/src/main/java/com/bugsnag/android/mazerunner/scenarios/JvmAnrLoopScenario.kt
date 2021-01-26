@@ -8,7 +8,7 @@ import com.bugsnag.android.Configuration
 /**
  * Stops the app from responding for a time period
  */
-internal class JvmAnrScenario(
+internal class JvmAnrLoopScenario(
     config: Configuration,
     context: Context,
     eventMetadata: String?
