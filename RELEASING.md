@@ -45,6 +45,7 @@ If you are a project maintainer, you can build and release a new version of
 ### Pre-release Checklist
 
 - [ ] Has the full test suite been triggered on Buildkite and does it pass?
+- [ ] Have versions of Android not covered by CI been considered?
 - [ ] Does the build pass on the CI server?
 - [ ] Are all Docs PRs ready to go?
 - [ ] Do the installation instructions work when creating an example app from scratch?
