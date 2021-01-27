@@ -10,6 +10,7 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig.minSdkVersion rootProject.ext.minSdkVersion
     ndkVersion rootProject.ext.ndkVersion
+    defaultConfig.consumerProguardFiles = ["proguard-rules.pro"]
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7

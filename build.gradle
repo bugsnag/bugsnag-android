@@ -60,7 +60,6 @@ private void configureAndroidProject(Project proj) {
 
     def defaultConfig = proj.android.defaultConfig
     defaultConfig.testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    defaultConfig.consumerProguardFiles = ["proguard-rules.pro"]
 
     proj.android.testOptions.unitTests.all {
         testLogging {
