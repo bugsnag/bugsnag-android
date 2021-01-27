@@ -230,3 +230,7 @@ Scenario: ANR detection
     And the event "threads.0.stacktrace.0.method" is not null
     And the event "threads.0.stacktrace.0.file" is not null
     And the event "threads.0.stacktrace.0.lineNumber" is not null
+
+    # Metadata validation
+    And the event "metaData.custom.global" equals "present in global metadata"
+    And the event "metaData.custom.local" equals "present in local metadata"

@@ -5,6 +5,8 @@
 * Check internal JNI calls for pending exceptions and no-op
   [#1088](https://github.com/bugsnag/bugsnag-android/pull/1088)
   [#1091](https://github.com/bugsnag/bugsnag-android/pull/1091)
+* Add global metadata to ANR error reports
+  [#1095](https://github.com/bugsnag/bugsnag-android/pull/1095)  
 
 ## 5.5.2 (2021-01-27)
 
