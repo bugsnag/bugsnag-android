@@ -4,7 +4,6 @@ import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.mazerunner.createDeadlock
-import kotlin.concurrent.schedule
 
 /**
  * Stops the app from responding for a time period with ANR detection disabled
