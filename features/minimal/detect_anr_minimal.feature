@@ -1,6 +1,5 @@
 Feature: ANRs triggered in a fixture with only bugsnag-android-core are captured
 
-@skip_android_8_1
 Scenario: Triggering ANR does not crash the minimal app
     When I run "JvmAnrMinimalFixtureScenario"
     And I wait for 2 seconds

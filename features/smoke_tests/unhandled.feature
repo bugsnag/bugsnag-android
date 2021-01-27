@@ -153,7 +153,6 @@ Scenario: Signal exception with overwritten config
     # Breadcrumbs
     And the event has a "manual" breadcrumb named "CXXSignalSmokeScenario"
 
-@skip_android_8_1
 Scenario: ANR detection
     When I run "JvmAnrLoopScenario"
     And I wait for 2 seconds

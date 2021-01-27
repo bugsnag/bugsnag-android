@@ -1,9 +1,8 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import com.bugsnag.android.Configuration
+import com.bugsnag.android.mazerunner.createDeadlock
 
 /**
  * Stops the app from responding for a time period
@@ -21,12 +20,6 @@ internal class JvmAnrLoopScenario(
 
     override fun startScenario() {
         super.startScenario()
-        val main = Handler(Looper.getMainLooper())
-        main.postDelayed(
-            Runnable {
-                while (true) { }
-            },
-            1
-        ) // A moment of delay so there is something to 'tap' onscreen
+        createDeadlock()
     }
 }
