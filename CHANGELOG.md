@@ -5,6 +5,11 @@
 * Check internal JNI calls for pending exceptions and no-op
   [#1088](https://github.com/bugsnag/bugsnag-android/pull/1088)
 
+## 5.5.2 (2021-01-27)
+
+* Ensure proguard files are included in AAR
+  [#1096](https://github.com/bugsnag/bugsnag-android/pull/1096)
+
 ## 5.5.1 (2021-01-21)
 
 * Alter ANR SIGQUIT handler to stop interfering with Google's ANR reporting, and to avoid unsafe JNI calls from within a signal handler
