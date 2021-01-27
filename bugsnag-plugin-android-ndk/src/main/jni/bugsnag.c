@@ -4,6 +4,7 @@
 #include "bugsnag_ndk.h"
 #include "event.h"
 #include "metadata.h"
+#include "safejni.h"
 #include "utils/stack_unwinder.h"
 #include "utils/string.h"
 #include <jni.h>
@@ -86,20 +87,45 @@ void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
   ssize_t frame_count =
       bsg_unwind_stack(bsg_configured_unwind_style(), stacktrace, NULL, NULL);
 
+  // lookup com/bugsnag/android/NativeInterface
   jclass interface_class =
-      (*env)->FindClass(env, "com/bugsnag/android/NativeInterface");
-  jmethodID notify_method = (*env)->GetStaticMethodID(
+      bsg_safe_find_class(env, "com/bugsnag/android/NativeInterface");
+  if (interface_class == NULL) {
+    return;
+  }
+
+  // lookup NativeInterface.notify()
+  jmethodID notify_method = bsg_safe_get_static_method_id(
       env, interface_class, "notify",
       "([B[BLcom/bugsnag/android/Severity;[Ljava/lang/StackTraceElement;)V");
-  jclass trace_class = (*env)->FindClass(env, "java/lang/StackTraceElement");
+  if (notify_method == NULL) {
+    return;
+  }
+
+  // lookup java/lang/StackTraceElement
+  jclass trace_class = bsg_safe_find_class(env, "java/lang/StackTraceElement");
+  if (trace_class == NULL) {
+    return;
+  }
+
+  // lookup com/bugsnag/android/Severity
   jclass severity_class =
-      (*env)->FindClass(env, "com/bugsnag/android/Severity");
-  jmethodID trace_constructor = (*env)->GetMethodID(
+      bsg_safe_find_class(env, "com/bugsnag/android/Severity");
+  if (severity_class == NULL) {
+    return;
+  }
+
+  // lookup StackTraceElement constructor
+  jmethodID trace_constructor = bsg_safe_get_method_id(
       env, trace_class, "<init>",
       "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V");
+  if (trace_constructor == NULL) {
+    return;
+  }
+
   jobjectArray trace = (*env)->NewObjectArray(
       env, (jsize)frame_count,
-      (*env)->FindClass(env, "java/lang/StackTraceElement"), NULL);
+      bsg_safe_find_class(env, "java/lang/StackTraceElement"), NULL);
 
   for (int i = 0; i < frame_count; i++) {
     bugsnag_stackframe frame = stacktrace[i];
@@ -150,10 +176,19 @@ void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
 }
 
 void bugsnag_set_binary_arch(JNIEnv *env) {
+  // lookup com/bugsnag/android/NativeInterface
   jclass interface_class =
-      (*env)->FindClass(env, "com/bugsnag/android/NativeInterface");
-  jmethodID set_arch_method = (*env)->GetStaticMethodID(
+      bsg_safe_find_class(env, "com/bugsnag/android/NativeInterface");
+  if (interface_class == NULL) {
+    return;
+  }
+
+  // lookup NativeInterface.setBinaryArch()
+  jmethodID set_arch_method = bsg_safe_get_static_method_id(
       env, interface_class, "setBinaryArch", "(Ljava/lang/String;)V");
+  if (set_arch_method == NULL) {
+    return;
+  }
 
   jstring arch = (*env)->NewStringUTF(env, bsg_binary_arch());
   (*env)->CallStaticVoidMethod(env, interface_class, set_arch_method, arch);
@@ -162,10 +197,19 @@ void bugsnag_set_binary_arch(JNIEnv *env) {
 }
 
 void bugsnag_set_user_env(JNIEnv *env, char *id, char *email, char *name) {
+  // lookup com/bugsnag/android/NativeInterface
   jclass interface_class =
-      (*env)->FindClass(env, "com/bugsnag/android/NativeInterface");
-  jmethodID set_user_method =
-      (*env)->GetStaticMethodID(env, interface_class, "setUser", "([B[B[B)V");
+      bsg_safe_find_class(env, "com/bugsnag/android/NativeInterface");
+  if (interface_class == NULL) {
+    return;
+  }
+
+  // lookup NativeInterface.setUser()
+  jmethodID set_user_method = bsg_safe_get_static_method_id(
+      env, interface_class, "setUser", "([B[B[B)V");
+  if (set_user_method == NULL) {
+    return;
+  }
 
   jbyteArray jid = bsg_byte_ary_from_string(env, id);
   jbyteArray jemail = bsg_byte_ary_from_string(env, email);
@@ -208,13 +252,27 @@ jfieldID bsg_parse_jcrumb_type(JNIEnv *env, bugsnag_breadcrumb_type type,
 
 void bugsnag_leave_breadcrumb_env(JNIEnv *env, char *message,
                                   bugsnag_breadcrumb_type type) {
+  // lookup com/bugsnag/android/NativeInterface
   jclass interface_class =
-      (*env)->FindClass(env, "com/bugsnag/android/NativeInterface");
-  jmethodID leave_breadcrumb_method =
-      (*env)->GetStaticMethodID(env, interface_class, "leaveBreadcrumb",
-                                "([BLcom/bugsnag/android/BreadcrumbType;)V");
+      bsg_safe_find_class(env, "com/bugsnag/android/NativeInterface");
+  if (interface_class == NULL) {
+    return;
+  }
+
+  // lookup NativeInterface.leaveBreadcrumb()
+  jmethodID leave_breadcrumb_method = bsg_safe_get_static_method_id(
+      env, interface_class, "leaveBreadcrumb",
+      "([BLcom/bugsnag/android/BreadcrumbType;)V");
+  if (interface_class == NULL) {
+    return;
+  }
+
+  // lookup com/bugsnag/android/BreadcrumbType
   jclass type_class =
-      (*env)->FindClass(env, "com/bugsnag/android/BreadcrumbType");
+      bsg_safe_find_class(env, "com/bugsnag/android/BreadcrumbType");
+  if (interface_class == NULL) {
+    return;
+  }
 
   jobject jtype = (*env)->GetStaticObjectField(
       env, type_class, bsg_parse_jcrumb_type(env, type, type_class));

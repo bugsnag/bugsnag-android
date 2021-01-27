@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## TBD - The ANR stacktrace release
 
 ### Enhancements
 
@@ -12,6 +12,13 @@
 
 * Support native stack traces in the ANR plugin
    [#972](https://github.com/bugsnag/bugsnag-android/pull/972)
+
+## TBD - Other stuff that's happening on `next` in the meantime
+
+### Enhancements
+
+* Check internal JNI calls for pending exceptions and no-op
+  [#1088](https://github.com/bugsnag/bugsnag-android/pull/1088)
 
 ## 5.5.1 (2021-01-21)
 
