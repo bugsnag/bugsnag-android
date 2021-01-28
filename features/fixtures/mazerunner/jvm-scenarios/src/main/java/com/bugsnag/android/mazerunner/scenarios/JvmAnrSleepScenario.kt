@@ -1,8 +1,9 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import com.bugsnag.android.Configuration
-import com.bugsnag.android.mazerunner.createDeadlock
 
 /**
  * Stops the app from responding for a time period
@@ -20,6 +21,14 @@ internal class JvmAnrSleepScenario(
 
     override fun startScenario() {
         super.startScenario()
-        createDeadlock()
+        // Note: Whilst other ANR scenarios use a deadlock to generate the ANR, this scenario is specifically designed
+        // to test how we deal with stack traces of syscall-generating Java methods like Thread.sleep().
+        val main = Handler(Looper.getMainLooper())
+        main.postDelayed(
+            Runnable {
+                Thread.sleep(100000)
+            },
+            1
+        ) // A moment of delay so there is something to 'tap' onscreen
     }
 }
