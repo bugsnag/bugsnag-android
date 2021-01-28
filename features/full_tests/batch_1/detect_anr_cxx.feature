@@ -13,13 +13,9 @@ Scenario: ANR triggered in CXX code is captured
     And the exception "message" starts with " Input dispatching timed out"
     And the error "Bugsnag-Stacktrace-Types" header equals "android,c"
     And the error payload field "events.0.exceptions.0.type" equals "android"
-    And the error payload field "events.0.threads.0.type" equals "android"
     And the error payload field "events.0.exceptions.0.stacktrace.0.type" equals "c"
-    And the error payload field "events.0.exceptions.0.stacktrace.1.type" equals "c"
-    And the error payload field "events.0.exceptions.0.stacktrace.19.type" is null
+    And the error payload field "events.0.threads.0.type" equals "android"
     And the error payload field "events.0.threads.0.stacktrace.0.type" is null
-    And the error payload field "events.0.threads.0.stacktrace.1.type" is null
-    And the error payload field "events.0.threads.0.stacktrace.19.type" is null
 
 @skip_android_8_1
 Scenario: ANR triggered in CXX code is captured even when NDK detection is disabled
