@@ -6,7 +6,7 @@ import android.os.Looper
 internal class AnrPlugin : Plugin {
 
     internal companion object {
-        const val JNI_RESERVED_FUNC_PREFIX = "_Z"
+        const val JNI_USER_FUNC_PREFIX = "Java_"
 
         private const val LOAD_ERR_MSG = "Native library could not be linked. Bugsnag will " +
             "not report ANRs. See https://docs.bugsnag.com/platforms/android/anr-link-errors"
@@ -18,10 +18,13 @@ internal class AnrPlugin : Plugin {
             return stackTrace.first().isNativeMethod
         }
 
-        internal fun hasReservedNativeFrames(stackTrace: List<NativeStackframe>): Boolean {
+        internal fun hasUserNativeFunction(stackTrace: List<NativeStackframe>): Boolean {
+            if (stackTrace.isEmpty()) {
+                return false
+            }
             val index = stackTrace.indexOfFirst { frame ->
                 val method = frame.method
-                method != null && method.startsWith(JNI_RESERVED_FUNC_PREFIX)
+                method != null && method.startsWith(JNI_USER_FUNC_PREFIX)
             }
             return index >= 0
         }
@@ -31,25 +34,15 @@ internal class AnrPlugin : Plugin {
             nativeTrace: List<NativeStackframe>
         ): Boolean {
             // Native trace heuristics are tricky, because some Java methods actually make native
-            // calls.
-            //
-            // There are two known telltale signs in a native trace to indicate that only Java code
-            // is involved and the native trace is a red herring:
+            // calls. There are two strong signs that the native trace is a red herring:
             //
             // - If it's in 100% Java land, the first java frame will not be a native transition
             //   frame, meaning that isNativeFrame returns false on the first java frame.
             //
             // - If it's in a system-generated native bridge such as from Thread.sleep(), the
-            //   native trace will contain reserved methods starting with "_Z", for example
-            //   "_ZN3art17ConditionVariable9TimedWaitEPNS_6ThreadEli"
+            //   native trace won't contain user-generated methods (which all start with "Java_").
             //
-            if (nativeTrace.isEmpty() ||
-                !endsInNativeCall(javaTrace) ||
-                hasReservedNativeFrames(nativeTrace)
-            ) {
-                return false
-            }
-            return true
+            return endsInNativeCall(javaTrace) && hasUserNativeFunction(nativeTrace)
         }
     }
 
