@@ -28,6 +28,9 @@ final class BugsnagTestUtils {
         return convert(generateConfiguration());
     }
 
+    static MetadataState generateMetadataState() {
+        return new MetadataState();
+    }
 
     static ImmutableConfig convert(Configuration config) {
         return ImmutableConfigKt.convertToImmutableConfig(config, null);

@@ -934,4 +934,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     Notifier getNotifier() {
         return notifier;
     }
+
+    MetadataState getMetadataState() {
+        return metadataState;
+    }
 }

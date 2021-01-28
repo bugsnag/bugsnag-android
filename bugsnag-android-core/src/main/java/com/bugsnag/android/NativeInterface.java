@@ -389,7 +389,8 @@ public class NativeInterface {
     public static Event createEvent(@Nullable Throwable exc,
                                     @NonNull Client client,
                                     @NonNull SeverityReason severityReason) {
-        return new Event(exc, client.getConfig(), severityReason, client.logger);
+        Metadata metadata = client.getMetadataState().getMetadata();
+        return new Event(exc, client.getConfig(), severityReason, metadata, client.logger);
     }
 
     @NonNull
