@@ -10,10 +10,14 @@
 
 ## 5.5.2 (2021-01-27)
 
-* Ensure proguard files are included in AAR
+### Bug fixes
+
+* Fix regression in 5.5.1 where ANR and NDK detection was not functional for apps using ProGuard/R8 or DexGuard
   [#1096](https://github.com/bugsnag/bugsnag-android/pull/1096)
 
 ## 5.5.1 (2021-01-21)
+
+### Bug fixes
 
 * Alter ANR SIGQUIT handler to stop interfering with Google's ANR reporting, and to avoid unsafe JNI calls from within a signal handler
   [#1078](https://github.com/bugsnag/bugsnag-android/pull/1078)
@@ -25,6 +29,8 @@
   [#1083](https://github.com/bugsnag/bugsnag-android/pull/1083)
 
 ## 5.5.0 (2021-01-07)
+
+### Enhancements
 
 This release supports initializing Bugsnag in multi processes apps. If your app uses Bugsnag in multiple processes, you should initialize Bugsnag
 with a unique `persistenceDirectory` value for each process. Please see [the docs](https://docs.bugsnag.com/platforms/android/faq/#does-bugsnag-support-multi-process-apps) for further information.
@@ -48,6 +54,9 @@ with a unique `persistenceDirectory` value for each process. Please see [the doc
   [#1050](https://github.com/bugsnag/bugsnag-android/pull/1050)
 
 ## 5.4.0 (2020-12-14)
+
+### Enhancements
+
 
 * Make `event.unhandled` overridable for NDK errors
   [#1037](https://github.com/bugsnag/bugsnag-android/pull/1037)
