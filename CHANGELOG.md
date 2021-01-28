@@ -4,6 +4,7 @@
 
 * Check internal JNI calls for pending exceptions and no-op
   [#1088](https://github.com/bugsnag/bugsnag-android/pull/1088)
+  [#1091](https://github.com/bugsnag/bugsnag-android/pull/1091)
 
 ## 5.5.2 (2021-01-27)
 
