@@ -8,13 +8,6 @@ Scenario: Dereference a null pointer
         And the error payload contains a completed unhandled native report
         And the exception "errorClass" equals "SIGSEGV"
         And the exception "message" equals "Segmentation violation (invalid memory reference)"
-# TODO: Or it might be:
-#        And the exception "errorClass" equals one of:
-#          | SIGILL |
-#          | SIGTRAP |
-#        And the exception "message" equals one of:
-#            | Illegal instruction   |
-#            | Trace/breakpoint trap |
         And the exception "type" equals "c"
         And the event "severity" equals "error"
         And the event "unhandled" is true
