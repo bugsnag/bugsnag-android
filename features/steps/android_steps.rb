@@ -1,6 +1,24 @@
+# Waits 5s for an element to be present.  If it isn't assume a system error dialog is
+# blocking its view and dismiss it before trying once more.
+#
+# @step_input element_id [String] The element to wait for
+When('any dialog is cleared and the element {string} is present') do |element_id|
+  present = Maze.driver.wait_for_element(element_id, timeout = 5)
+  next if present
+
+  clicked = click_if_present('android:id/button1') ||
+            click_if_present('android:id/aerr_close') ||
+            click_if_present('android:id/aerr_restart')
+
+  $logger.info "System dialog cleared, reattempting wait_for_element" if clicked
+
+  present = Maze.driver.wait_for_element(element_id)
+  assert(present, "The element #{element_id} could not be found")
+end
+
 When("I run {string}") do |event_type|
   steps %Q{
-    Given the element "scenarioText" is present
+    Given any dialog is cleared and the element "scenarioText" is present
     When I send the keys "#{event_type}" to the element "scenarioText"
     And I click the element "startScenarioButton"
   }
@@ -9,13 +27,11 @@ end
 When("I run {string} and relaunch the app") do |event_type|
   steps %Q{
     When I run "#{event_type}"
-    And I clear any error dialogue
     And I relaunch the app after a crash
   }
 end
 
 When("I clear any error dialogue") do
-  sleep(3)
   click_if_present 'android:id/button1'
   click_if_present 'android:id/aerr_close'
   click_if_present 'android:id/aerr_restart'
@@ -23,7 +39,7 @@ end
 
 When("I configure Bugsnag for {string}") do |event_type|
   steps %Q{
-    Given the element "scenarioText" is present
+    Given any dialog is cleared and the element "scenarioText" is present
     When I send the keys "#{event_type}" to the element "scenarioText"
     And I click the element "startBugsnagButton"
   }
@@ -52,7 +68,7 @@ end
 
 When("I configure the app to run in the {string} state") do |event_metadata|
   steps %Q{
-    Given the element "scenarioMetaData" is present
+    Given any dialog is cleared and the element "scenarioMetaData" is present
     And I send the keys "#{event_metadata}" to the element "scenarioMetaData"
   }
 end
@@ -189,12 +205,13 @@ Then("the event has a {string} breadcrumb with the message {string}") do |type, 
 end
 
 def click_if_present(element)
-  return unless Maze.driver.wait_for_element(element, 1)
+  return false unless Maze.driver.wait_for_element(element, 1)
 
   Maze.driver.click_element(element)
+  true
 rescue Selenium::WebDriver::Error::NoSuchElementError
   # Ignore - we have seen clicks fail like this despite having just checked for the element's presence
-  $logger.warn 'NoSuchElementError'
+  false
 end
 
 # Temporary workaround until PLAT-4845 is implemented
