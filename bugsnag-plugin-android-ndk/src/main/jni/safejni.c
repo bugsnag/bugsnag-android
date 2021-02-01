@@ -11,6 +11,9 @@ bool bsg_check_and_clear_exc(JNIEnv *env) {
 }
 
 jclass bsg_safe_find_class(JNIEnv *env, const char *clz_name) {
+  if (clz_name == NULL) {
+    return NULL;
+  }
   jclass clz = (*env)->FindClass(env, clz_name);
   bsg_check_and_clear_exc(env);
   return clz;
@@ -18,6 +21,9 @@ jclass bsg_safe_find_class(JNIEnv *env, const char *clz_name) {
 
 jmethodID bsg_safe_get_method_id(JNIEnv *env, jclass clz, const char *name,
                                  const char *sig) {
+  if (clz == NULL || name == NULL || sig == NULL) {
+    return NULL;
+  }
   jmethodID methodId = (*env)->GetMethodID(env, clz, name, sig);
   bsg_check_and_clear_exc(env);
   return methodId;
@@ -25,12 +31,18 @@ jmethodID bsg_safe_get_method_id(JNIEnv *env, jclass clz, const char *name,
 
 jmethodID bsg_safe_get_static_method_id(JNIEnv *env, jclass clz,
                                         const char *name, const char *sig) {
+  if (clz == NULL || name == NULL || sig == NULL) {
+    return NULL;
+  }
   jmethodID methodId = (*env)->GetStaticMethodID(env, clz, name, sig);
   bsg_check_and_clear_exc(env);
   return methodId;
 }
 
 jstring bsg_safe_new_string_utf(JNIEnv *env, const char *str) {
+  if (str == NULL) {
+    return NULL;
+  }
   jstring jstr = (*env)->NewStringUTF(env, str);
   bsg_check_and_clear_exc(env);
   return jstr;
@@ -38,6 +50,9 @@ jstring bsg_safe_new_string_utf(JNIEnv *env, const char *str) {
 
 jboolean bsg_safe_call_boolean_method(JNIEnv *env, jobject _value,
                                       jmethodID method) {
+  if (_value == NULL) {
+    return false;
+  }
   jboolean value = (*env)->CallBooleanMethod(env, _value, method);
   if (bsg_check_and_clear_exc(env)) {
     return false; // default to false
@@ -46,6 +61,9 @@ jboolean bsg_safe_call_boolean_method(JNIEnv *env, jobject _value,
 }
 
 jint bsg_safe_call_int_method(JNIEnv *env, jobject _value, jmethodID method) {
+  if (_value == NULL) {
+    return -1;
+  }
   jint value = (*env)->CallIntMethod(env, _value, method);
   if (bsg_check_and_clear_exc(env)) {
     return -1; // default to -1
@@ -55,6 +73,9 @@ jint bsg_safe_call_int_method(JNIEnv *env, jobject _value, jmethodID method) {
 
 jfloat bsg_safe_call_float_method(JNIEnv *env, jobject _value,
                                   jmethodID method) {
+  if (_value == NULL) {
+    return -1;
+  }
   jfloat value = (*env)->CallFloatMethod(env, _value, method);
   if (bsg_check_and_clear_exc(env)) {
     return -1; // default to -1
@@ -64,6 +85,9 @@ jfloat bsg_safe_call_float_method(JNIEnv *env, jobject _value,
 
 jdouble bsg_safe_call_double_method(JNIEnv *env, jobject _value,
                                     jmethodID method) {
+  if (_value == NULL) {
+    return -1;
+  }
   jdouble value = (*env)->CallDoubleMethod(env, _value, method);
   if (bsg_check_and_clear_exc(env)) {
     return -1; // default to -1
@@ -72,6 +96,9 @@ jdouble bsg_safe_call_double_method(JNIEnv *env, jobject _value,
 }
 
 jobjectArray bsg_safe_new_object_array(JNIEnv *env, jsize size, jclass clz) {
+  if (clz == NULL) {
+    return NULL;
+  }
   jobjectArray trace = (*env)->NewObjectArray(env, size, clz, NULL);
   bsg_check_and_clear_exc(env);
   return trace;
@@ -79,6 +106,9 @@ jobjectArray bsg_safe_new_object_array(JNIEnv *env, jsize size, jclass clz) {
 
 jobject bsg_safe_get_object_array_element(JNIEnv *env, jobjectArray array,
                                           jsize size) {
+  if (array == NULL) {
+    return NULL;
+  }
   jobject obj = (*env)->GetObjectArrayElement(env, array, size);
   bsg_check_and_clear_exc(env);
   return obj;
@@ -86,8 +116,81 @@ jobject bsg_safe_get_object_array_element(JNIEnv *env, jobjectArray array,
 
 void bsg_safe_set_object_array_element(JNIEnv *env, jobjectArray array,
                                        jsize size, jobject object) {
+  if (array == NULL) {
+    return;
+  }
   (*env)->SetObjectArrayElement(env, array, size, object);
   bsg_check_and_clear_exc(env);
+}
+
+jfieldID bsg_safe_get_static_field_id(JNIEnv *env, jclass clz, const char *name,
+                                      const char *sig) {
+  if (clz == NULL || name == NULL || sig == NULL) {
+    return NULL;
+  }
+  jfieldID field_id = (*env)->GetStaticFieldID(env, clz, name, sig);
+  bsg_check_and_clear_exc(env);
+  return field_id;
+}
+
+jobject bsg_safe_get_static_object_field(JNIEnv *env, jclass clz,
+                                         jfieldID field) {
+  if (clz == NULL) {
+    return NULL;
+  }
+  jobject obj = (*env)->GetStaticObjectField(env, clz, field);
+  bsg_check_and_clear_exc(env);
+  return obj;
+}
+
+jobject bsg_safe_new_object(JNIEnv *env, jclass clz, jmethodID method, ...) {
+  if (clz == NULL) {
+    return NULL;
+  }
+  va_list args;
+  va_start(args, method);
+  jobject obj = (*env)->NewObjectV(env, clz, method, args);
+  va_end(args);
+  bsg_check_and_clear_exc(env);
+  return obj;
+}
+
+jobject bsg_safe_call_object_method(JNIEnv *env, jobject _value,
+                                    jmethodID method, ...) {
+  if (_value == NULL) {
+    return NULL;
+  }
+  va_list args;
+  va_start(args, method);
+  jobject value = (*env)->CallObjectMethodV(env, _value, method, args);
+  va_end(args);
+  bsg_check_and_clear_exc(env);
+  return value;
+}
+
+void bsg_safe_call_static_void_method(JNIEnv *env, jclass clz, jmethodID method,
+                                      ...) {
+  if (clz == NULL) {
+    return;
+  }
+  va_list args;
+  va_start(args, method);
+  (*env)->CallStaticVoidMethodV(env, clz, method, args);
+  va_end(args);
+  bsg_check_and_clear_exc(env);
+}
+
+jobject bsg_safe_call_static_object_method(JNIEnv *env, jclass clz,
+                                           jmethodID method, ...) {
+  if (clz == NULL) {
+    return NULL;
+  }
+  va_list args;
+  va_start(args, method);
+  jobject obj = (*env)->CallStaticObjectMethodV(env, clz, method, args);
+  va_end(args);
+  bsg_check_and_clear_exc(env);
+  return obj;
 }
 
 jbyteArray bsg_byte_ary_from_string(JNIEnv *env, const char *text) {
