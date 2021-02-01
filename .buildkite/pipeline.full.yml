@@ -101,6 +101,8 @@ steps:
           - "not @Flaky"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    soft_fail:
+      - exit_status: "*"
 
   - label: ':android: Android 5 NDK r16 end-to-end tests - batch 2'
     depends_on:
@@ -122,6 +124,8 @@ steps:
           - "not @Flaky"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    soft_fail:
+      - exit_status: "*"
 
   - label: ':android: Android 6 NDK r16 end-to-end tests - batch 1'
     depends_on:

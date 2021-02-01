@@ -16,7 +16,7 @@ void bsg_strcpy(char *dst, char *src) __asyncsafe;
 /**
  * Return the length of a string
  */
-size_t bsg_strlen(char *str) __asyncsafe;
+size_t bsg_strlen(const char *str) __asyncsafe;
 
 /**
  * Copy a maximum number of bytes from src to dst
