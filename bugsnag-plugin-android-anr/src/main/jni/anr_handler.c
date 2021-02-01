@@ -6,6 +6,7 @@
 #include <signal.h>
 #include <string.h>
 #include <unistd.h>
+#include <semaphore.h>
 
 #include "anr_google.h"
 #include "utils/string.h"
@@ -20,6 +21,8 @@ static bool enabled = false;
 static bool installed = false;
 
 static pthread_t watchdog_thread;
+static bool should_wait_for_semaphore = false;
+static sem_t reporter_thread_semaphore;
 static volatile bool should_report_anr = false;
 static struct sigaction original_sigquit_handler;
 
@@ -125,9 +128,12 @@ static void* sigquit_watchdog_thread_main(void* _) {
   static const useconds_t delay_100ms = 100000;
   static const useconds_t delay_10ms = 10000;
 
-  // Wait until our SIGQUIT handler is ready for us to start
-  while(!should_report_anr) {
-    usleep(delay_100ms);
+  // Wait until our SIGQUIT handler is ready for us to start.
+  // Use sem_wait if possible, falling back to polling.
+  if (!should_wait_for_semaphore || sem_wait(&reporter_thread_semaphore) != 0) {
+    while(!should_report_anr) {
+      usleep(delay_100ms);
+    }
   }
 
   // Force at least one task switch after being triggered, ensuring that the signal masks are
@@ -160,24 +166,42 @@ static void handle_sigquit(int signum, siginfo_t* info, void* user_context) {
 
   // Instruct our watchdog thread to report the ANR and also call Google
   should_report_anr = true;
+  // Although sem_post is not officially marked as async-safe, the Android implementation simply does
+  // an atomic compare-and-exchange when there is only one thread waiting (which is the case here).
+  // https://cs.android.com/android/platform/superproject/+/master:bionic/libc/bionic/semaphore.cpp;l=289?q=sem_post&ss=android
+  if (sem_post(&reporter_thread_semaphore) != 0) {
+    // The only possible failure from sem_post is EOVERFLOW, which won't happen in this code.
+    // But implementations can change...
+    BUGSNAG_LOG("Could not unlock semaphore");
+  }
 }
 
 static void install_signal_handler() {
   if(!bsg_google_anr_init()) {
     BUGSNAG_LOG("Failed to initialize Google ANR caller. ANRs won't be sent to Google.");
+    // We can still report to Bugsnag, so continue.
+  }
+
+  if (sem_init(&reporter_thread_semaphore, 0, 0) == 0) {
+    should_wait_for_semaphore = true;
+  } else {
+    BUGSNAG_LOG("Failed to init semaphore");
+    // We can still poll should_report_anr, so continue.
   }
 
   // Start the watchdog thread
-  pthread_create(&watchdog_thread, NULL, sigquit_watchdog_thread_main, NULL);
+  if (pthread_create(&watchdog_thread, NULL, sigquit_watchdog_thread_main, NULL) != 0) {
+    BUGSNAG_LOG("Could not create ANR watchdog thread. ANRs won't be sent to Bugsnag.");
+    return;
+  }
 
   // Install our signal handler
   struct sigaction handler;
   sigemptyset(&handler.sa_mask);
   handler.sa_sigaction = handle_sigquit;
   handler.sa_flags = SA_SIGINFO;
-  int success = sigaction(SIGQUIT, &handler, &original_sigquit_handler);
-  if (success != 0) {
-    BUGSNAG_LOG("Failed to install SIGQUIT handler: %s", strerror(errno));
+  if (sigaction(SIGQUIT, &handler, &original_sigquit_handler) != 0) {
+    BUGSNAG_LOG("Failed to install SIGQUIT handler: %s. ANRs won't be sent to Bugsnag.", strerror(errno));
     return;
   }
 
@@ -185,7 +209,9 @@ static void install_signal_handler() {
   sigset_t anr_sigmask;
   sigemptyset(&anr_sigmask);
   sigaddset(&anr_sigmask, SIGQUIT);
-  pthread_sigmask(SIG_UNBLOCK, &anr_sigmask, NULL);
+  if (pthread_sigmask(SIG_UNBLOCK, &anr_sigmask, NULL) != 0) {
+    BUGSNAG_LOG("Could not unblock SIGQUIT. ANRs won't be sent to Bugsnag.");
+  }
 }
 
 bool bsg_handler_install_anr(JNIEnv *env, jobject plugin) {
