@@ -6,43 +6,17 @@ import android.os.Looper
 internal class AnrPlugin : Plugin {
 
     internal companion object {
-        const val JNI_USER_FUNC_PREFIX = "Java_"
-
         private const val LOAD_ERR_MSG = "Native library could not be linked. Bugsnag will " +
             "not report ANRs. See https://docs.bugsnag.com/platforms/android/anr-link-errors"
 
-        internal fun endsInNativeCall(stackTrace: Array<StackTraceElement>): Boolean {
-            if (stackTrace.isEmpty()) {
-                return false
-            }
-            return stackTrace.first().isNativeMethod
-        }
-
-        internal fun hasUserNativeFunction(stackTrace: List<NativeStackframe>): Boolean {
-            if (stackTrace.isEmpty()) {
-                return false
-            }
-            val index = stackTrace.indexOfFirst { frame ->
-                val method = frame.method
-                method != null && method.startsWith(JNI_USER_FUNC_PREFIX)
-            }
-            return index >= 0
-        }
-
-        internal fun isRealNativeTrace(
-            javaTrace: Array<StackTraceElement>,
-            nativeTrace: List<NativeStackframe>
+        internal fun doesJavaTraceLeadToNativeTrace(
+            javaTrace: Array<StackTraceElement>
         ): Boolean {
-            // Native trace heuristics are tricky, because some Java methods actually make native
-            // calls. There are two strong signs that the native trace is a red herring:
-            //
-            // - If it's in 100% Java land, the first java frame will not be a native transition
-            //   frame, meaning that isNativeFrame returns false on the first java frame.
-            //
-            // - If it's in a system-generated native bridge such as from Thread.sleep(), the
-            //   native trace won't contain user-generated methods (which all start with "Java_").
-            //
-            return endsInNativeCall(javaTrace) && hasUserNativeFunction(nativeTrace)
+            if (javaTrace.isEmpty()) {
+                return false
+            }
+            // The only check that will work across all Android versions is the isNativeMethod call.
+            return javaTrace.first().isNativeMethod
         }
     }
 
@@ -107,7 +81,7 @@ internal class AnrPlugin : Plugin {
         try {
             // generate a full report as soon as possible, then wait for extra process error info
             val stackTrace = Looper.getMainLooper().thread.stackTrace
-            val hasNativeComponent = isRealNativeTrace(stackTrace, nativeTrace)
+            val hasNativeComponent = doesJavaTraceLeadToNativeTrace(stackTrace)
 
             val exc = RuntimeException()
             exc.stackTrace = stackTrace
