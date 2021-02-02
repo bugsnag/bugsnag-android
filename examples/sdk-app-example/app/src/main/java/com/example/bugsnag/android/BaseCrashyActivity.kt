@@ -23,6 +23,8 @@ open class BaseCrashyActivity : AppCompatActivity() {
 
     private external fun crashFromCXX()
 
+    private external fun anrFromCXX()
+
     private external fun notifyFromCXX()
 
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,6 +42,11 @@ open class BaseCrashyActivity : AppCompatActivity() {
 
         findViewById<View>(R.id.btn_anr).setOnClickListener {
             Thread.sleep(10000)
+            showSnackbar()
+        }
+
+        findViewById<View>(R.id.btn_cxx_anr).setOnClickListener {
+            anrFromCXX()
             showSnackbar()
         }
     }
