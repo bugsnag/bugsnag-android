@@ -116,7 +116,7 @@ steps:
           run: android-ci
     command: 'bash ./scripts/run-cpp-check.sh'
 
-  - label: ':android: Lint mazerunner scenarios'
+  - label: ':android: ClangFormat'
     depends_on: "android-ci"
     timeout_in_minutes: 10
     plugins:
@@ -124,7 +124,7 @@ steps:
           run: android-ci
     command: 'bash ./scripts/run-clang-format-ci-check.sh'
 
-  - label: ':android: ClangFormat'
+  - label: ':android: Lint mazerunner scenarios'
     depends_on: "android-ci"
     timeout_in_minutes: 10
     plugins:
