@@ -36,14 +36,14 @@ static bool configure_anr_jni(JNIEnv *env) {
 
   jclass clz = (*env)->FindClass(env, "com/bugsnag/android/AnrPlugin");
   mthd_notify_anr_detected =
-          (*env)->GetMethodID(env, clz, "notifyAnrDetected", "()V");
+      (*env)->GetMethodID(env, clz, "notifyAnrDetected", "()V");
   return true;
 }
 
 static void notify_anr_detected() {
   if (enabled) {
     JNIEnv *env;
-    int result = (*bsg_jvm)->GetEnv(bsg_jvm, (void **) &env, JNI_VERSION_1_4);
+    int result = (*bsg_jvm)->GetEnv(bsg_jvm, (void **)&env, JNI_VERSION_1_4);
 
     if (result == JNI_OK) { // already attached
       (*env)->CallVoidMethod(env, obj_plugin, mthd_notify_anr_detected);
@@ -51,24 +51,24 @@ static void notify_anr_detected() {
       if ((*bsg_jvm)->AttachCurrentThread(bsg_jvm, &env, NULL) == 0) {
         (*env)->CallVoidMethod(env, obj_plugin, mthd_notify_anr_detected);
         (*bsg_jvm)->DetachCurrentThread(
-                bsg_jvm); // detach to restore initial condition
+            bsg_jvm); // detach to restore initial condition
       }
     } // All other results are error codes
   }
 }
 
-static void* sigquit_watchdog_thread_main(void* _) {
+static void *sigquit_watchdog_thread_main(void *_) {
   static const useconds_t delay_2sec = 2000000;
   static const useconds_t delay_100ms = 100000;
   static const useconds_t delay_10ms = 10000;
 
   // Wait until our SIGQUIT handler is ready for us to start
-  while(!should_report_anr) {
+  while (!should_report_anr) {
     usleep(delay_100ms);
   }
 
-  // Force at least one task switch after being triggered, ensuring that the signal masks are
-  // properly settled before triggering the Google handler.
+  // Force at least one task switch after being triggered, ensuring that the
+  // signal masks are properly settled before triggering the Google handler.
   usleep(delay_10ms);
 
   // Do our ANR processing
@@ -77,12 +77,13 @@ static void* sigquit_watchdog_thread_main(void* _) {
   // Trigger Google ANR processing
   bsg_google_anr_call();
 
-  // Give a little time for the Google handler to dump state, then exit this thread.
+  // Give a little time for the Google handler to dump state, then exit this
+  // thread.
   usleep(delay_2sec);
   return NULL;
 }
 
-static void handle_sigquit(int signum, siginfo_t* info, void* user_context) {
+static void handle_sigquit(int signum, siginfo_t *info, void *user_context) {
   // Re-block SIGQUIT so that the Google handler can trigger
   sigset_t sigmask;
   sigemptyset(&sigmask);
@@ -95,8 +96,9 @@ static void handle_sigquit(int signum, siginfo_t* info, void* user_context) {
 }
 
 static void install_signal_handler() {
-  if(!bsg_google_anr_init()) {
-    BUGSNAG_LOG("Failed to initialize Google ANR caller. ANRs won't be sent to Google.");
+  if (!bsg_google_anr_init()) {
+    BUGSNAG_LOG("Failed to initialize Google ANR caller. ANRs won't be sent to "
+                "Google.");
   }
 
   // Start the watchdog thread
