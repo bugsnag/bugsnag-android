@@ -1,6 +1,7 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
+import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.mazerunner.createDeadlock
 
@@ -20,6 +21,11 @@ internal class JvmAnrLoopScenario(
 
     override fun startScenario() {
         super.startScenario()
+        Bugsnag.addMetadata("custom", "global", "present in global metadata")
+        Bugsnag.addOnError { event ->
+            event.addMetadata("custom", "local", "present in local metadata")
+            true
+        }
         createDeadlock()
     }
 }
