@@ -61,10 +61,9 @@ internal class StacktraceSerializationTest {
                 Stackframe("Foo", "Bar.kt", count, true).also { frame ->
                     // set different type for each frame
                     frame.type = when (count % 3) {
-                        0 -> ErrorType.C
-                        1 -> ErrorType.ANDROID
-                        2 -> ErrorType.REACTNATIVEJS
-                        3 -> null
+                        0 -> ErrorType.ANDROID
+                        1 -> ErrorType.REACTNATIVEJS
+                        2 -> null
                         else -> throw IllegalStateException()
                     }
                 }

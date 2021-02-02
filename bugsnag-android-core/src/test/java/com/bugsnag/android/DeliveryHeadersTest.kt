@@ -13,7 +13,7 @@ class DeliveryHeadersTest {
 
     @Test
     fun computeSha1Digest() {
-        val payload = BugsnagTestUtils.generateEventPayload(generateImmutableConfig())
+        val payload = generateEventPayload(generateImmutableConfig())
         val payload1 = serializeJsonPayload(payload)
         val firstSha = requireNotNull(computeSha1Digest(payload1))
         val payload2 = serializeJsonPayload(payload)
@@ -35,8 +35,8 @@ class DeliveryHeadersTest {
 
     @Test
     fun verifyErrorApiHeaders() {
-        val config = convertToImmutableConfig(BugsnagTestUtils.generateConfiguration())
-        val payload = BugsnagTestUtils.generateEventPayload(config)
+        val config = convertToImmutableConfig(generateConfiguration())
+        val payload = generateEventPayload(config)
         val headers = config.getErrorApiDeliveryParams(payload).headers
         assertEquals(config.apiKey, headers["Bugsnag-Api-Key"])
         assertEquals("application/json", headers["Content-Type"])
