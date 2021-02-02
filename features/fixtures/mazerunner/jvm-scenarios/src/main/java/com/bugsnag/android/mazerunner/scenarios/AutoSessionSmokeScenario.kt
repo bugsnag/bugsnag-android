@@ -6,6 +6,7 @@ import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.createDefaultDelivery
 import com.bugsnag.android.mazerunner.InterceptingDelivery
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Sends an automated session payload to Bugsnag.
@@ -18,10 +19,9 @@ internal class AutoSessionSmokeScenario(
 
     init {
         val baseDelivery = createDefaultDelivery()
-        var intercept = true
+        val intercept = AtomicBoolean(true)
         config.delivery = InterceptingDelivery(baseDelivery) {
-            if (intercept) {
-                intercept = false
+            if (intercept.getAndSet(false)) {
                 Bugsnag.notify(generateException())
             }
         }

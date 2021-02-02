@@ -5,6 +5,7 @@ import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.createDefaultDelivery
 import com.bugsnag.android.mazerunner.InterceptingDelivery
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * Sends an exception after pausing the session
@@ -20,9 +21,9 @@ internal class ManualSessionSmokeScenario(
 
         if (eventMetadata != "non-crashy") {
             val baseDelivery = createDefaultDelivery()
-            var state = 0
+            val state = AtomicInteger(0)
             config.delivery = InterceptingDelivery(baseDelivery) {
-                when (state) {
+                when (state.incrementAndGet()) {
                     0 -> Bugsnag.notify(generateException())
                     1 -> {
                         Bugsnag.pauseSession()
@@ -33,7 +34,6 @@ internal class ManualSessionSmokeScenario(
                         throw generateException()
                     }
                 }
-                state++
             }
         }
     }

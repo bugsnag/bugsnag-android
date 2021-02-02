@@ -8,6 +8,8 @@ import android.os.Handler;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class CXXDelayedNotifyScenario extends Scenario {
 
     static {
@@ -16,8 +18,8 @@ public class CXXDelayedNotifyScenario extends Scenario {
 
     public native void activate();
 
-    private boolean didActivate = false;
-    private Handler handler = new Handler();
+    private final AtomicBoolean didActivate = new AtomicBoolean(false);
+    private final Handler handler = new Handler();
 
     public CXXDelayedNotifyScenario(@NonNull Configuration config,
                                     @NonNull Context context,
@@ -28,10 +30,9 @@ public class CXXDelayedNotifyScenario extends Scenario {
     @Override
     public void startScenario() {
         super.startScenario();
-        if (didActivate) {
+        if (didActivate.getAndSet(true)) {
             return;
         }
-        didActivate = true;
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {

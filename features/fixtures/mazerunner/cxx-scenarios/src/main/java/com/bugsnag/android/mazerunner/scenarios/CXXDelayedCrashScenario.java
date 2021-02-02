@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.lang.Runnable;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CXXDelayedCrashScenario extends Scenario {
 
@@ -18,8 +19,8 @@ public class CXXDelayedCrashScenario extends Scenario {
 
     public native int activate(int value);
 
-    private boolean didActivate = false;
-    private Handler handler = new Handler();
+    private final AtomicBoolean didActivate = new AtomicBoolean(false);
+    private final Handler handler = new Handler();
 
     public CXXDelayedCrashScenario(@NonNull Configuration config,
                                    @NonNull Context context,
@@ -31,10 +32,9 @@ public class CXXDelayedCrashScenario extends Scenario {
     @Override
     public void startScenario() {
         super.startScenario();
-        if (didActivate) {
+        if (didActivate.getAndSet(true)) {
             return;
         }
-        didActivate = true;
         String metadata = getEventMetadata();
         if (metadata != null && metadata.equals("non-crashy")) {
             return;
