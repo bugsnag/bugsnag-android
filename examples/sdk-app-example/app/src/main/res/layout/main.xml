@@ -53,6 +53,13 @@
             android:layout_height="wrap_content"
             android:text="@string/trigger_anr" />
 
+        <Button
+            android:id="@+id/btn_cxx_anr"
+            style="@style/ButtonTheme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/trigger_cxx_anr" />
+
         <View style="@style/separator" />
 
         <!-- Trigger handled exceptions -->
