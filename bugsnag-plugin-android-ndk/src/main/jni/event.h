@@ -2,9 +2,9 @@
 #define BUGSNAG_EVENT_H
 
 #include "../assets/include/event.h"
+#include "bsg_unwind.h"
 #include <stdbool.h>
 #include <sys/types.h>
-#include "bsg_unwind.h"
 #ifndef BUGSNAG_METADATA_MAX
 /**
  * Maximum number of values stored in metadata. Configures a default if not
