@@ -3,16 +3,18 @@
 #
 # @step_input element_id [String] The element to wait for
 When('any dialog is cleared and the element {string} is present') do |element_id|
-  present = Maze.driver.wait_for_element(element_id, timeout = 5)
-  next if present
+  count = 0
+  present = false
+  until present || count > 15
+    present = Maze.driver.wait_for_element(element_id, timeout = 1)
+    break if present
+    count += 1
+    clicked = click_if_present('android:id/button1') ||
+              click_if_present('android:id/aerr_close') ||
+              click_if_present('android:id/aerr_restart')
+    $logger.info "System dialog cleared, reattempting wait_for_element" if clicked
+  end
 
-  clicked = click_if_present('android:id/button1') ||
-            click_if_present('android:id/aerr_close') ||
-            click_if_present('android:id/aerr_restart')
-
-  $logger.info "System dialog cleared, reattempting wait_for_element" if clicked
-
-  present = Maze.driver.wait_for_element(element_id)
   assert(present, "The element #{element_id} could not be found")
 end
 
