@@ -101,16 +101,6 @@ return 512345;
 }
 
 JNIEXPORT int JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_AutoDetectNdkEnabledScenario_crash(
-    JNIEnv *env,
-jobject instance) {
-int x = 47;
-if (x > 0)
-__builtin_trap();
-return 12633;
-}
-
-JNIEXPORT int JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXConfigurationMetadataNativeCrashScenario_activate(
     JNIEnv *env,
     jobject instance) {
