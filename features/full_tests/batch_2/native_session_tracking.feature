@@ -21,3 +21,16 @@ Scenario: Started session is in payload of unhandled NDK error
     And I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the error payload field "events.0.session.events.unhandled" equals 1
+
+Scenario: Starting a session, notifying, followed by a C crash
+    When I run "CXXSessionInfoCrashScenario" and relaunch the app
+    And I configure the app to run in the "non-crashy" state
+    And I configure Bugsnag for "CXXSessionInfoCrashScenario"
+    And I wait to receive a session
+    And I wait to receive 3 errors
+    And I discard the oldest error
+    And I discard the oldest error
+    Then the error payload contains a completed handled native report
+    And the event contains session info
+    And the error payload field "events.0.session.events.unhandled" equals 1
+    And the error payload field "events.0.session.events.handled" equals 2
