@@ -117,7 +117,7 @@ Change `VERSION_NAME` in `gradle.properties` to a version higher than the curren
 released bugsnag-android, then run:
 
 ```shell
-./gradlew assembleRelease publishToMavenLocal
+./gradlew clean assembleRelease publishToMavenLocal
 ```
 
 This installs bugsnag-android to a local maven repository. To use it in the example app, you'll need to modify its `build.gradle` to set the `com.bugsnag:bugsnag-android` dependency version to match (near the bottom of the file).
