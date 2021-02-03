@@ -25,7 +25,7 @@ endif
 TEST_FIXTURE_NDK_VERSION ?= 16.1.4479499
 test-fixtures:
 	# Build the notifier
-	@./gradlew -PVERSION_NAME=9.9.9 assembleRelease publishToMavenLocal
+	@./gradlew -PVERSION_NAME=9.9.9 clean assembleRelease publishToMavenLocal
 
 	# Build the full test fixture
 	@./gradlew -PTEST_FIXTURE_NDK_VERSION=$(TEST_FIXTURE_NDK_VERSION) -p=features/fixtures/mazerunner/ assembleRelease
@@ -61,5 +61,5 @@ endif
 	@git commit -m "Release v$(VERSION)"
 	@git tag v$(VERSION)
 	@git push origin master v$(VERSION)
-	@./gradlew assembleRelease publish bintrayUpload -PABI_FILTERS=arm64-v8a,armeabi,armeabi-v7a,x86,x86_64 \
-	 && ./gradlew assembleRelease publish bintrayUpload -PABI_FILTERS=arm64-v8a,armeabi,armeabi-v7a,x86,x86_64 -PreleaseNdkArtefact=true
+	@./gradlew clean assembleRelease publish bintrayUpload -PABI_FILTERS=arm64-v8a,armeabi,armeabi-v7a,x86,x86_64 \
+	 && ./gradlew clean assembleRelease publish bintrayUpload -PABI_FILTERS=arm64-v8a,armeabi,armeabi-v7a,x86,x86_64 -PreleaseNdkArtefact=true

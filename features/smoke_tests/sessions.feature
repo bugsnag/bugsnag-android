@@ -53,8 +53,8 @@ Scenario: Automated sessions send
 
 Scenario: Manual session control works
     When I run "ManualSessionSmokeScenario"
-    And I wait for 8 seconds
     And I relaunch the app after a crash
+    And I configure the app to run in the "non-crashy" state
     And I configure Bugsnag for "ManualSessionSmokeScenario"
     And I wait to receive a session
 
@@ -104,3 +104,4 @@ Scenario: Manual session control works
     And the event "user.id" equals "123"
     And the event "user.email" equals "ABC.CBA.CA"
     And the event "user.name" equals "ManualSessionSmokeScenario"
+
