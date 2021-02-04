@@ -17,27 +17,32 @@ internal class ManualSessionSmokeScenario(
 
     init {
         config.autoTrackSessions = false
-        val baseDelivery = createDefaultDelivery()
-        var state = 0
-        config.delivery = InterceptingDelivery(baseDelivery) {
-            when (state) {
-                0 -> Bugsnag.notify(generateException())
-                1 -> {
-                    Bugsnag.pauseSession()
-                    Bugsnag.notify(generateException())
+
+        if (eventMetadata != "non-crashy") {
+            val baseDelivery = createDefaultDelivery()
+            var state = 0
+            config.delivery = InterceptingDelivery(baseDelivery) {
+                when (state) {
+                    0 -> Bugsnag.notify(generateException())
+                    1 -> {
+                        Bugsnag.pauseSession()
+                        Bugsnag.notify(generateException())
+                    }
+                    2 -> {
+                        Bugsnag.resumeSession()
+                        throw generateException()
+                    }
                 }
-                2 -> {
-                    Bugsnag.resumeSession()
-                    throw generateException()
-                }
+                state++
             }
-            state++
         }
     }
 
     override fun startScenario() {
         super.startScenario()
-        Bugsnag.setUser("123", "ABC.CBA.CA", "ManualSessionSmokeScenario")
-        Bugsnag.startSession()
+        if (eventMetadata != "non-crashy") {
+            Bugsnag.setUser("123", "ABC.CBA.CA", "ManualSessionSmokeScenario")
+            Bugsnag.startSession()
+        }
     }
 }
