@@ -19,7 +19,8 @@ Scenario: Notify caught Java exception with default configuration
     And the error payload field "events.0.exceptions.0.stacktrace" is a non-empty array
     And the event "exceptions.0.stacktrace.0.method" ends with "HandledJavaSmokeScenario.startScenario"
     And the exception "stacktrace.0.file" equals "HandledJavaSmokeScenario.java"
-    And the event "exceptions.0.stacktrace.0.lineNumber" equals 51
+    # R8 minification alters the lineNumber, see the mapping file/source code for the original value
+    And the event "exceptions.0.stacktrace.0.lineNumber" equals 6
     And the event "exceptions.0.stacktrace.0.inProject" is true
 
     # App data
@@ -107,7 +108,8 @@ Scenario: Notify Kotlin exception with overwritten configuration
     And the error payload field "events.0.exceptions.0.stacktrace" is a non-empty array
     And the event "exceptions.0.stacktrace.0.method" ends with "generateException"
     And the exception "stacktrace.0.file" equals "Scenario.kt"
-    And the event "exceptions.0.stacktrace.0.lineNumber" equals 93
+    # R8 minification alters the lineNumber, see the mapping file/source code for the original value
+    And the event "exceptions.0.stacktrace.0.lineNumber" equals 1
     And the event "exceptions.0.stacktrace.0.inProject" is true
 
     # Overwritten App data
