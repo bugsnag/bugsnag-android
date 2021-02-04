@@ -32,7 +32,8 @@ class DeliveryDelegate extends BaseObservable {
     void deliver(@NonNull Event event) {
         logger.d("DeliveryDelegate#deliver() - event being stored/delivered by Client");
         // Build the eventPayload
-        EventPayload eventPayload = new EventPayload(event.getApiKey(), event, notifier);
+        String apiKey = event.getApiKey();
+        EventPayload eventPayload = new EventPayload(apiKey, event, notifier, immutableConfig);
         Session session = event.getSession();
 
         if (session != null) {
@@ -45,11 +46,11 @@ class DeliveryDelegate extends BaseObservable {
             }
         }
 
-        if (event.impl.getOriginalUnhandled()) {
+        if (event.getImpl().getOriginalUnhandled()) {
             // should only send unhandled errors if they don't terminate the process (i.e. ANRs)
-            String severityReasonType = event.impl.getSeverityReasonType();
+            String severityReasonType = event.getImpl().getSeverityReasonType();
             boolean promiseRejection = REASON_PROMISE_REJECTION.equals(severityReasonType);
-            boolean anr = event.impl.isAnr(event);
+            boolean anr = event.getImpl().isAnr(event);
             cacheEvent(event, anr || promiseRejection);
         } else {
             deliverPayloadAsync(event, eventPayload);

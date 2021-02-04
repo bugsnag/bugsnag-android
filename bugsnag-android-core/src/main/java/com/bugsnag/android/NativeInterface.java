@@ -371,13 +371,15 @@ public class NativeInterface {
             public boolean onError(@NonNull Event event) {
                 event.updateSeverityInternal(severity);
                 List<Error> errors = event.getErrors();
+                Error error = event.getErrors().get(0);
 
+                // update the error's type to C
                 if (!errors.isEmpty()) {
-                    errors.get(0).setErrorClass(name);
-                    errors.get(0).setErrorMessage(message);
+                    error.setErrorClass(name);
+                    error.setErrorMessage(message);
 
-                    for (Error error : errors) {
-                        error.setType(ErrorType.C);
+                    for (Error err : errors) {
+                        err.setType(ErrorType.C);
                     }
                 }
                 return true;
