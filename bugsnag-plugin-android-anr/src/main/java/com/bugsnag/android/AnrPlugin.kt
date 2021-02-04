@@ -18,6 +18,13 @@ internal class AnrPlugin : Plugin {
             // The only check that will work across all Android versions is the isNativeMethod call.
             return javaTrace.first().isNativeMethod
         }
+
+        private const val stackUnwindOverhead = 5
+
+        // Trim the stack trace generation components from the native trace
+        internal fun trimNativeTrace(nativeTrace: List<NativeStackframe>): List<NativeStackframe> {
+            return nativeTrace.subList(stackUnwindOverhead, nativeTrace.size)
+        }
     }
 
     private val loader = LibraryLoader()
@@ -97,7 +104,7 @@ internal class AnrPlugin : Plugin {
             // append native stackframes to error/thread stacktrace
             if (hasNativeComponent) {
                 // update error stacktrace
-                val nativeFrames = nativeTrace.map { Stackframe(it) }
+                val nativeFrames = trimNativeTrace(nativeTrace).map { Stackframe(it) }
                 err.stacktrace.addAll(0, nativeFrames)
 
                 // update thread stacktrace
