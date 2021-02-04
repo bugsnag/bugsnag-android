@@ -35,7 +35,7 @@ final class BugsnagTestUtils {
     }
 
     static EventPayload generateEventPayload(ImmutableConfig config) {
-        return new EventPayload(config.getApiKey(), generateEvent(), new Notifier(), config);
+        return new EventPayload(config.getApiKey(), generateEvent(), new Notifier());
     }
 
     static Session generateSession() {

@@ -164,22 +164,21 @@ public class EventTest {
     public void testIsAnr() {
         RuntimeException exc = new RuntimeException("Something went wrong");
         Event event = new Event(exc, config, severityReason, NoopLogger.INSTANCE);
-        assertFalse(event.getImpl().isAnr(event));
+        assertFalse(event.impl.isAnr(event));
 
         // simulate ANR
         event.getErrors().get(0).setErrorClass("ANR");
-        assertTrue(event.getImpl().isAnr(event));
+        assertTrue(event.impl.isAnr(event));
 
         // clear all errors
         event.getErrors().clear();
-        assertFalse(event.getImpl().isAnr(event));
+        assertFalse(event.impl.isAnr(event));
     }
 
     @Test
     public void testSeverityReasonType() {
         RuntimeException exc = new RuntimeException("Something went wrong");
         Event event = new Event(exc, config, severityReason, NoopLogger.INSTANCE);
-        String severityReasonType = event.getImpl().getSeverityReasonType();
-        assertEquals(SeverityReason.REASON_HANDLED_EXCEPTION, severityReasonType);
+        assertEquals(SeverityReason.REASON_HANDLED_EXCEPTION, event.impl.getSeverityReasonType());
     }
 }

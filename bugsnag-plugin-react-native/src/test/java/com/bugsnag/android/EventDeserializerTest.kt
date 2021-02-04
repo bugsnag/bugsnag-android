@@ -41,7 +41,6 @@ class EventDeserializerTest {
 
         `when`(client.config).thenReturn(TestData.generateConfig())
         `when`(client.getLogger()).thenReturn(object : Logger {})
-        `when`(client.getMetadataState()).thenReturn(TestHooks.generateMetadataState())
     }
 
     private fun breadcrumbMap() = hashMapOf(

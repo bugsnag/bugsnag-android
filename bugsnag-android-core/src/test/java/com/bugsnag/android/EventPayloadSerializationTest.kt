@@ -12,7 +12,6 @@ internal class EventPayloadSerializationTest {
 
     companion object {
         private val notifier = Notifier()
-        private val config = BugsnagTestUtils.generateImmutableConfig()
 
         @JvmStatic
         @Parameters
@@ -22,7 +21,7 @@ internal class EventPayloadSerializationTest {
             notifier.url = "https://bugsnag.com"
             return generateSerializationTestCases(
                 "report",
-                EventPayload("api-key", null, File(""), notifier, config)
+                EventPayload("api-key", null, File(""), notifier)
             )
         }
     }
