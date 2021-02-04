@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 5.6.0 (2021-02-04)
 
 * Encode react native promise rejections as a mixed stacktrace
    [#1006](https://github.com/bugsnag/bugsnag-android/pull/1006)
@@ -12,6 +12,7 @@
   [#1088](https://github.com/bugsnag/bugsnag-android/pull/1088)
   [#1091](https://github.com/bugsnag/bugsnag-android/pull/1091)
   [#1092](https://github.com/bugsnag/bugsnag-android/pull/1092)
+
 * Add global metadata to ANR error reports
   [#1095](https://github.com/bugsnag/bugsnag-android/pull/1095)  
 
