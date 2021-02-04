@@ -2,11 +2,13 @@
 
 ## 5.6.0 (2021-02-04)
 
-* Encode react native promise rejections as a mixed stacktrace
-   [#1006](https://github.com/bugsnag/bugsnag-android/pull/1006)
+### Enhancements
 
-* Support setting error type on individual stack frames
+* Enable React Native promise rejection handling
+   [#1006](https://github.com/bugsnag/bugsnag-android/pull/1006)
    [#1001](https://github.com/bugsnag/bugsnag-android/pull/1001)
+
+### Bug fixes
 
 * Check internal JNI calls for pending exceptions and no-op
   [#1088](https://github.com/bugsnag/bugsnag-android/pull/1088)
