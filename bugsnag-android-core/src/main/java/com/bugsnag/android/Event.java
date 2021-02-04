@@ -15,7 +15,7 @@ import java.util.Map;
 @SuppressWarnings("ConstantConditions")
 public class Event implements JsonStream.Streamable, MetadataAware, UserAware {
 
-    final EventInternal impl;
+    private final EventInternal impl;
     private final Logger logger;
 
     Event(@Nullable Throwable originalError,
@@ -337,5 +337,9 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware {
 
     void setSession(@Nullable Session session) {
         impl.session = session;
+    }
+
+    EventInternal getImpl() {
+        return impl;
     }
 }

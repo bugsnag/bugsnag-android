@@ -114,6 +114,14 @@ internal class EventInternal @JvmOverloads internal constructor(
         writer.endObject()
     }
 
+     internal fun getErrorTypesFromStackframes(): Set<ErrorType> {
+        val errorTypes = errors.mapNotNull(Error::getType).toSet()
+        val frameOverrideTypes = errors
+            .map { it.stacktrace }
+            .flatMap { it.mapNotNull(Stackframe::type) }
+        return errorTypes.plus(frameOverrideTypes)
+    }
+
     protected fun updateSeverityInternal(severity: Severity) {
         severityReason = SeverityReason.newInstance(severityReason.severityReasonType,
             severity, severityReason.attributeValue)
