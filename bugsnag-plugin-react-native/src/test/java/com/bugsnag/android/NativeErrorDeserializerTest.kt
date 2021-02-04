@@ -1,12 +1,13 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.TestData.generateError
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
-class NativeStackDeserializerTest {
+class NativeErrorDeserializerTest {
 
     private lateinit var map: Map<String, Any>
 
@@ -57,30 +58,30 @@ class NativeStackDeserializerTest {
 
     @Test
     fun deserialize() {
+        val logger = object : Logger {}
         val packages = listOf("com.reactnativetest")
-        val cfg = TestData.generateConfig()
-        val nativeStack = NativeStackDeserializer(packages, cfg).deserialize(map)
-        assertEquals(3, nativeStack.size)
+        val error = NativeErrorDeserializer(generateError(), packages, logger).deserialize(map)
+        assertEquals("BrowserException", error.errorClass)
+        assertEquals("whoops!", error.errorMessage)
+        assertEquals(ErrorType.ANDROID, error.type)
+        assertEquals(3, error.stacktrace.count())
 
-        val firstFrame = nativeStack[0]
+        val firstFrame = error.stacktrace[0]
         assertEquals("com.reactnativetest.BenCrash.asyncReject", firstFrame.method)
         assertEquals("BenCrash.java", firstFrame.file)
         assertEquals(42, firstFrame.lineNumber)
         assertTrue(firstFrame.inProject!!)
-        assertEquals(ErrorType.ANDROID, firstFrame.type)
 
-        val secondFrame = nativeStack[1]
+        val secondFrame = error.stacktrace[1]
         assertEquals("com.example.Foo.invokeFoo", secondFrame.method)
         assertEquals("Foo.kt", secondFrame.file)
         assertEquals(57, secondFrame.lineNumber)
         assertNull(secondFrame.inProject)
-        assertEquals(ErrorType.ANDROID, secondFrame.type)
 
-        val thirdFrame = nativeStack[2]
+        val thirdFrame = error.stacktrace[2]
         assertEquals("invokeWham", thirdFrame.method)
         assertEquals("Wham.kt", thirdFrame.file)
         assertEquals(159, thirdFrame.lineNumber)
         assertNull(secondFrame.inProject)
-        assertEquals(ErrorType.ANDROID, thirdFrame.type)
     }
 }

@@ -371,15 +371,13 @@ public class NativeInterface {
             public boolean onError(@NonNull Event event) {
                 event.updateSeverityInternal(severity);
                 List<Error> errors = event.getErrors();
-                Error error = event.getErrors().get(0);
 
-                // update the error's type to C
                 if (!errors.isEmpty()) {
-                    error.setErrorClass(name);
-                    error.setErrorMessage(message);
+                    errors.get(0).setErrorClass(name);
+                    errors.get(0).setErrorMessage(message);
 
-                    for (Error err : errors) {
-                        err.setType(ErrorType.C);
+                    for (Error error : errors) {
+                        error.setType(ErrorType.C);
                     }
                 }
                 return true;
@@ -391,8 +389,7 @@ public class NativeInterface {
     public static Event createEvent(@Nullable Throwable exc,
                                     @NonNull Client client,
                                     @NonNull SeverityReason severityReason) {
-        Metadata metadata = client.getMetadataState().getMetadata();
-        return new Event(exc, client.getConfig(), severityReason, metadata, client.logger);
+        return new Event(exc, client.getConfig(), severityReason, client.logger);
     }
 
     @NonNull

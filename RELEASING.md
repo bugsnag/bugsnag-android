@@ -45,7 +45,6 @@ If you are a project maintainer, you can build and release a new version of
 ### Pre-release Checklist
 
 - [ ] Has the full test suite been triggered on Buildkite and does it pass?
-- [ ] Have versions of Android not covered by CI been considered?
 - [ ] Does the build pass on the CI server?
 - [ ] Are all Docs PRs ready to go?
 - [ ] Do the installation instructions work when creating an example app from scratch?
@@ -74,11 +73,11 @@ If you are a project maintainer, you can build and release a new version of
   - [ ] Update the version number and dex count badge by running `make VERSION=[number] bump`
   - [ ] Inspect the updated CHANGELOG, README, and version files to ensure they are correct
 - Once merged:
-  - Pull the latest changes (checking out master if necessary) and build by running `./gradlew clean assembleRelease`
+  - Pull the latest changes (checking out master if necessary) and build by running `./gradlew assembleRelease`
   - Release to GitHub:
     - [ ] Run `git tag vX.X.X && git push origin --tags`
     - [ ] Create a release from your new tag on [GitHub Releases](https://github.com/bugsnag/bugsnag-android/releases)
-  - [ ] Release to Maven Central and Bintray by running `./gradlew clean assembleRelease publish bintrayUpload`
+  - [ ] Release to Maven Central and Bintray by running `./gradlew assembleRelease publish bintrayUpload`
   - [ ] "Promote" the release build on Maven Central:
     - Go to the [sonatype open source dashboard](https://oss.sonatype.org/index.html#stagingRepositories)
     - Click the search box at the top right, and type “com.bugsnag”

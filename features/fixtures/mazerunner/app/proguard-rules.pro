@@ -1,1 +1,2 @@
--keep class com.bugsnag.android.mazerunner.** {*;}
+-dontobfuscate
+-keep class com.bugsnag.android.mazerunner.scenarios.** {*;}

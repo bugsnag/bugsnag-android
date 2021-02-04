@@ -1,17 +1,35 @@
 package com.bugsnag.android
 
+import android.content.Context
 import com.bugsnag.android.EventStore.EVENT_COMPARATOR
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.`when`
+import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.Mockito.*
+import org.mockito.junit.MockitoJUnitRunner
 import java.io.File
 
-internal class EventFilenameTest {
+@RunWith(MockitoJUnitRunner::class)
+class EventFilenameTest {
 
+    @Mock
+    lateinit var context: Context
+
+    @Mock
     lateinit var event: Event
+
+    @Mock
+    lateinit var file: File
+
+    @Mock
+    lateinit var app: AppWithState
+
+    private lateinit var eventStore: EventStore
 
     private val config = BugsnagTestUtils.generateImmutableConfig()
 
@@ -22,9 +40,15 @@ internal class EventFilenameTest {
      */
     @Before
     fun setUp() {
-        event = BugsnagTestUtils.generateEvent()
-        event.apiKey = "0000111122223333aaaabbbbcccc9999"
-        event.app.duration
+        eventStore = EventStore(
+            config,
+            NoopLogger,
+            Notifier(),
+            null
+        )
+        `when`(event.app).thenReturn(app)
+        `when`(event.apiKey).thenReturn("0000111122223333aaaabbbbcccc9999")
+        `when`(app.duration).thenReturn(null)
     }
 
     @Test
@@ -41,12 +65,10 @@ internal class EventFilenameTest {
         )
 
         for (s in valid) {
-            val eventInfo = EventFilenameInfo.fromFile(File(s), config)
-            assertTrue(eventInfo.isLaunchCrashReport())
+            assertTrue(eventStore.isLaunchCrashReport(File(s)))
         }
         for (s in invalid) {
-            val eventInfo = EventFilenameInfo.fromFile(File(s), config)
-            assertFalse(eventInfo.isLaunchCrashReport())
+            assertFalse(eventStore.isLaunchCrashReport(File(s)))
         }
     }
 
@@ -76,17 +98,8 @@ internal class EventFilenameTest {
 
     @Test
     fun regularJvmEventName() {
-        val filename = EventFilenameInfo.fromEvent(
-            event,
-            "my-uuid-123",
-            null,
-            1504255147933,
-            config
-        ).encode()
-        assertEquals(
-            "1504255147933_0000111122223333aaaabbbbcccc9999_android_my-uuid-123_.json",
-            filename
-        )
+        val filename = eventStore.getFilename(event, "my-uuid-123", null, 1504255147933)
+        assertEquals("1504255147933_0000111122223333aaaabbbbcccc9999_my-uuid-123.json", filename)
     }
 
     /**
@@ -94,19 +107,9 @@ internal class EventFilenameTest {
      */
     @Test
     fun startupCrashJvmEventName() {
-        event.app.duration = 1000
-
-        val filename = EventFilenameInfo.fromEvent(
-            event,
-            "my-uuid-123",
-            null,
-            1504255147933,
-            config
-        ).encode()
-        assertEquals(
-            "1504255147933_0000111122223333aaaabbbbcccc9999_" +
-                    "android_my-uuid-123_startupcrash.json", filename
-        )
+        `when`(app.duration).thenReturn(1000)
+        val filename = eventStore.getFilename(event, "my-uuid-123", null, 1504255147933)
+        assertEquals("1504255147933_0000111122223333aaaabbbbcccc9999_my-uuid-123_startupcrash.json", filename)
     }
 
     /**
@@ -114,97 +117,56 @@ internal class EventFilenameTest {
      */
     @Test
     fun nonStartupCrashCrashJvmEventName() {
-        event.app.duration = 10000
-        val filename = EventFilenameInfo.fromEvent(
-            event,
-            "my-uuid-123",
-            null,
-            1504255147933,
-            config
-        ).encode()
-
-        assertEquals(
-            "1504255147933_0000111122223333aaaabbbbcccc9999_android_my-uuid-123_.json",
-            filename
-        )
+        `when`(app.duration).thenReturn(10000)
+        val filename = eventStore.getFilename(event, "my-uuid-123", null, 1504255147933)
+        assertEquals("1504255147933_0000111122223333aaaabbbbcccc9999_my-uuid-123.json", filename)
     }
 
     @Test
     fun ndkEventName() {
-        val filename = EventFilenameInfo.fromEvent(
-            "{}",
-            "my-uuid-123",
-            "0000111122223333aaaabbbbcccc9999",
-            1504255147933,
-            config
-        ).encode()
-        assertEquals(
-            "1504255147933_0000111122223333aaaabbbbcccc9999_c_my-uuid-123_not-jvm.json",
-            filename
-        )
+        val filename = eventStore.getFilename("{}", "my-uuid-123",
+            "0000111122223333aaaabbbbcccc9999", 1504255147933)
+        assertEquals("1504255147933_0000111122223333aaaabbbbcccc9999_my-uuid-123not-jvm.json", filename)
     }
 
     @Test
     fun ndkEventNameNoApiKey() {
-        val filename = EventFilenameInfo.fromEvent(
-            "{}",
-            "my-uuid-123",
-            "",
-            1504255147933,
-            config
-        ).encode()
-        assertEquals(
-            "1504255147933_5d1ec5bd39a74caa1267142706a7fb21_c_my-uuid-123_not-jvm.json",
-            filename
-        )
+        val filename = eventStore.getFilename("{}", "my-uuid-123", "", 1504255147933)
+        assertEquals("1504255147933_5d1ec5bd39a74caa1267142706a7fb21_my-uuid-123not-jvm.json", filename)
     }
 
     @Test
     fun apiKeyFromEmptyFilename() {
-        val file = File("")
-        val eventInfo = EventFilenameInfo.fromFile(file, config)
-        assertEquals(config.apiKey, eventInfo.apiKey)
-        assertEquals("", eventInfo.uuid)
-        assertEquals("", eventInfo.suffix)
-        assertEquals(-1, eventInfo.timestamp)
-        assertEquals(emptySet<ErrorType>(), eventInfo.errorTypes)
+        `when`(file.name).thenReturn("")
+        assertNull(eventStore.getApiKeyFromFilename(file))
     }
 
     /**
-     * Should default to config value as no api key is present
+     * Should return null as no api key is present
      */
     @Test
     fun apiKeyFromLegacyFilename() {
-        val file = File("1504500000000_683c6b92-b325-4987-80ad-77086509ca1e_startupcrash.json")
-        val eventInfo = EventFilenameInfo.fromFile(file, config)
-        assertEquals(config.apiKey, eventInfo.apiKey)
-        assertEquals("startupcrash", eventInfo.suffix)
+        `when`(file.name).thenReturn("1504500000000_683c6b92-b325-4987-80ad-77086509ca1e_startupcrash.json")
+        assertNull(eventStore.getApiKeyFromFilename(file))
     }
 
     @Test
     fun apiKeyFromNewFilename() {
-        val file = File(
-            "1504255147933_ffff111122948633aaaabbbbcccc9999" +
-                    "_683c6b92-b325-4987-80ad-77086509ca1e.json"
-        )
-        val eventInfo = EventFilenameInfo.fromFile(file, config)
-        assertEquals("ffff111122948633aaaabbbbcccc9999", eventInfo.apiKey)
+        `when`(file.name).thenReturn("1504255147933_0000111122223333aaaabbbbcccc9999" +
+                "_683c6b92-b325-4987-80ad-77086509ca1e.json")
+        assertEquals("0000111122223333aaaabbbbcccc9999", eventStore.getApiKeyFromFilename(file))
     }
 
     @Test
     fun apiKeyFromLegacyNdkFilename() {
-        val file = File("1603191800142_7e1041e0-7f37-4cfb-9d29-0aa6930bbb72not-jvm.json")
-        val eventInfo = EventFilenameInfo.fromFile(file, config)
-        assertEquals(config.apiKey, eventInfo.apiKey)
+        `when`(file.name).thenReturn("1603191800142_7e1041e0-7f37-4cfb-9d29-0aa6930bbb72not-jvm.json")
+        assertNull(eventStore.getApiKeyFromFilename(file))
     }
 
     @Test
     fun apiKeyFromNdkFilename() {
-        val file = File(
-            "1603191800142_5d1ec8bd39a74caa1267142706a7fb20_" +
-                    "7e1041e0-7f37-4cfb-9d29-0aa6930bbb72not-jvm.json"
-        )
-        val eventInfo = EventFilenameInfo.fromFile(file, config)
-        assertEquals("5d1ec8bd39a74caa1267142706a7fb20", eventInfo.apiKey)
+        `when`(file.name).thenReturn("1603191800142_5d1ec8bd39a74caa1267142706a7fb20_" +
+                "7e1041e0-7f37-4cfb-9d29-0aa6930bbb72not-jvm.json")
+        assertEquals("5d1ec8bd39a74caa1267142706a7fb20", eventStore.getApiKeyFromFilename(file))
     }
 }

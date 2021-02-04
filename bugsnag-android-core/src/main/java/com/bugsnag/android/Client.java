@@ -652,7 +652,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
     void notifyInternal(@NonNull Event event,
                         @Nullable OnErrorCallback onError) {
-        String type = event.getImpl().getSeverityReasonType();
+        String type = event.impl.getSeverityReasonType();
         logger.d("Client#notifyInternal() - event captured by Client, type=" + type);
         // Don't notify if this event class should be ignored
         if (event.shouldDiscardClass()) {
@@ -666,7 +666,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         // set the redacted keys on the event as this
         // will not have been set for RN/Unity events
         Set<String> redactedKeys = metadataState.getMetadata().getRedactedKeys();
-        Metadata eventMetadata = event.getImpl().getMetadata();
+        Metadata eventMetadata = event.impl.getMetadata();
         eventMetadata.setRedactedKeys(redactedKeys);
 
         // get session for event
@@ -919,13 +919,13 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     /**
      * Retrieves an instantiated plugin of the given type, or null if none has been created
      */
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings("unchecked")
     @Nullable
-    Plugin getPlugin(@NonNull Class clz) {
+    <T extends Plugin> T getPlugin(@NonNull Class<T> clz) {
         Set<Plugin> plugins = pluginClient.getPlugins();
         for (Plugin plugin : plugins) {
             if (plugin.getClass().equals(clz)) {
-                return plugin;
+                return (T) plugin;
             }
         }
         return null;
@@ -933,9 +933,5 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
     Notifier getNotifier() {
         return notifier;
-    }
-
-    MetadataState getMetadataState() {
-        return metadataState;
     }
 }

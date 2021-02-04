@@ -135,12 +135,7 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
-  #
-  # Flaky scenarios.  Theis should be skipped if there are no scenarios annotated with the @Flaky tag (as we should
-  # always be aiming for) to avoid unnecessary CI wait times and potential flakes from resource unavailability.
-  #
   - label: ':hankey: Flaky Android 9 NDK r21 end-to-end tests'
-    skip: There are no @Flaky scenarios at present
     depends_on:
       - "fixture-r21"
     timeout_in_minutes: 60

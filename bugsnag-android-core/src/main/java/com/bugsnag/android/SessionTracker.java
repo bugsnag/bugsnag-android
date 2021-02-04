@@ -180,8 +180,6 @@ class SessionTracker extends BaseObservable {
                                     logger.w("Dropping invalid session tracking payload");
                                     break;
                                 case DELIVERED:
-                                    logger.d("Sent 1 new session to Bugsnag");
-                                    break;
                                 default:
                                     break;
                             }
@@ -282,7 +280,6 @@ class SessionTracker extends BaseObservable {
         switch (deliveryStatus) {
             case DELIVERED:
                 sessionStore.deleteStoredFiles(Collections.singletonList(storedFile));
-                logger.d("Sent 1 new session to Bugsnag");
                 break;
             case UNDELIVERED:
                 sessionStore.cancelQueuedFiles(Collections.singletonList(storedFile));
