@@ -30,12 +30,14 @@ class MainActivity : Activity() {
         // load the scenario first, which initialises bugsnag without running any crashy code
         findViewById<Button>(R.id.startBugsnagButton).setOnClickListener {
             scenario = loadScenarioFromUi()
+            scenario?.startBugsnag()
         }
 
         // execute the pre-loaded scenario, or load it then execute it if needed
         findViewById<Button>(R.id.startScenarioButton).setOnClickListener {
             if (scenario == null) {
                 scenario = loadScenarioFromUi()
+                scenario?.startBugsnag()
             }
 
             /**
@@ -45,7 +47,7 @@ class MainActivity : Activity() {
             window.decorView.postDelayed(
                 {
                     log("Executing scenario")
-                    scenario!!.startScenario()
+                    scenario?.startScenario()
                 },
                 1
             )
@@ -75,9 +77,7 @@ class MainActivity : Activity() {
         val metadata = eventMetadata.text.toString()
 
         val config = loadConfigFromUi()
-        return Scenario.load(this, config, eventType, metadata).apply {
-            startBugsnag()
-        }
+        return Scenario.load(this, config, eventType, metadata)
     }
 
     private fun loadConfigFromUi(): Configuration {
@@ -97,7 +97,10 @@ class MainActivity : Activity() {
         }
         val notify = notifyEndpointField.text.toString()
         val sessions = sessionEndpointField.text.toString()
-        return prepareConfig(apiKey, notify, sessions)
+        return prepareConfig(apiKey, notify, sessions) {
+            val interceptedLogMessages = scenario?.getInterceptedLogMessages()
+            interceptedLogMessages?.contains(it) ?: false
+        }
     }
 
     private fun apiKeyStored() = prefs.contains(apiKeyKey)

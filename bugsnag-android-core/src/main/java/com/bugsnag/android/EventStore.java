@@ -25,9 +25,9 @@ class EventStore extends FileStore {
     volatile boolean flushOnLaunchCompleted = false;
     private final Semaphore semaphore = new Semaphore(1);
     private final ImmutableConfig config;
-    private final Logger logger;
     private final Delegate delegate;
     private final Notifier notifier;
+    final Logger logger;
 
     static final Comparator<File> EVENT_COMPARATOR = new Comparator<File>() {
         @Override
@@ -101,6 +101,8 @@ class EventStore extends FileStore {
                     }
                 }
                 logger.i("Continuing with Bugsnag initialisation");
+            } else {
+                logger.d("No startupcrash events to flush to Bugsnag.");
             }
         }
 
@@ -115,7 +117,11 @@ class EventStore extends FileStore {
             Async.run(new Runnable() {
                 @Override
                 public void run() {
-                    flushReports(findStoredFiles());
+                    List<File> storedFiles = findStoredFiles();
+                    if (storedFiles.isEmpty()) {
+                        logger.d("No regular events to flush to Bugsnag.");
+                    }
+                    flushReports(storedFiles);
                 }
             });
         } catch (RejectedExecutionException exception) {

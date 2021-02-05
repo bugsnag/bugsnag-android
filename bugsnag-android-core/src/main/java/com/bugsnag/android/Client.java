@@ -239,6 +239,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         // leave auto breadcrumb
         Map<String, Object> data = Collections.emptyMap();
         leaveAutoBreadcrumb("Bugsnag loaded", BreadcrumbType.STATE, data);
+        logger.d("Bugsnag loaded");
     }
 
     @VisibleForTesting
