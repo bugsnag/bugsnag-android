@@ -24,11 +24,13 @@ public class HandledJavaSmokeScenario extends Scenario {
                                     @Nullable String eventMetadata) {
         super(config, context, eventMetadata);
         config.setAutoTrackSessions(false);
+
     }
 
     @Override
     public void startScenario() {
         super.startScenario();
+        Bugsnag.setContext("FooContext");
         Bugsnag.addOnBreadcrumb(new OnBreadcrumbCallback() {
             @Override
             public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {

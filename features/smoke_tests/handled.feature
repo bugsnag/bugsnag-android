@@ -10,6 +10,7 @@ Scenario: Notify caught Java exception with default configuration
     And the exception "errorClass" equals "java.lang.IllegalStateException"
     And the exception "message" equals "HandledJavaSmokeScenario"
     And the exception "type" equals "android"
+    And the event "context" equals "FooContext"
     And the event "unhandled" is false
     And the event "severity" equals "warning"
     And the event "severityReason.type" equals "handledException"
@@ -20,7 +21,7 @@ Scenario: Notify caught Java exception with default configuration
     And the event "exceptions.0.stacktrace.0.method" ends with "HandledJavaSmokeScenario.startScenario"
     And the exception "stacktrace.0.file" equals "HandledJavaSmokeScenario.java"
     # R8 minification alters the lineNumber, see the mapping file/source code for the original value
-    And the event "exceptions.0.stacktrace.0.lineNumber" equals 6
+    And the event "exceptions.0.stacktrace.0.lineNumber" equals 7
     And the event "exceptions.0.stacktrace.0.inProject" is true
 
     # App data
