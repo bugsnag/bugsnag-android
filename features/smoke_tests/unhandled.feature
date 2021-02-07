@@ -24,6 +24,10 @@ Scenario: Unhandled Java Exception with loaded configuration
     And the event "exceptions.0.stacktrace.0.lineNumber" equals 5
     And the event "exceptions.0.stacktrace.0.inProject" is true
 
+    And the thread with name "main" contains the error reporting flag
+    And the "method" of stack frame 0 equals "com.bugsnag.android.mazerunner.scenarios.UnhandledJavaLoadedConfigScenario.startScenario"
+    And the error payload field "events.0.threads.0.stacktrace.0.method" equals "com.bugsnag.android.mazerunner.scenarios.UnhandledJavaLoadedConfigScenario.startScenario"
+
     # App data
     And the event "app.buildUUID" equals "test-7.5.3"
     And the event "app.id" equals "com.bugsnag.android.mazerunner"
