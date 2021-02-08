@@ -1,6 +1,6 @@
 # Changelog
 
-## 5.6.0 (2021-02-04)
+## 5.6.0 (2021-02-05)
 
 ### Enhancements
 
@@ -14,6 +14,7 @@
   [#1088](https://github.com/bugsnag/bugsnag-android/pull/1088)
   [#1091](https://github.com/bugsnag/bugsnag-android/pull/1091)
   [#1092](https://github.com/bugsnag/bugsnag-android/pull/1092)
+  [#1117](https://github.com/bugsnag/bugsnag-android/pull/1117)
 
 * Add global metadata to ANR error reports
   [#1095](https://github.com/bugsnag/bugsnag-android/pull/1095)  
