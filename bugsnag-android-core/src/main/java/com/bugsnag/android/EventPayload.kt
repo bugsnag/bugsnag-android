@@ -13,11 +13,20 @@ class EventPayload @JvmOverloads internal constructor(
     var apiKey: String?,
     val event: Event? = null,
     private val eventFile: File? = null,
-    notifier: Notifier
+    notifier: Notifier,
+    private val config: ImmutableConfig
 ) : JsonStream.Streamable {
 
     internal val notifier = Notifier(notifier.name, notifier.version, notifier.url).apply {
         dependencies = notifier.dependencies.toMutableList()
+    }
+
+    internal fun getErrorTypes(): Set<ErrorType> {
+        return when {
+            event != null -> event.impl.getErrorTypesFromStackframes()
+            eventFile != null -> EventFilenameInfo.fromFile(eventFile, config).errorTypes
+            else -> emptySet()
+        }
     }
 
     @Throws(IOException::class)

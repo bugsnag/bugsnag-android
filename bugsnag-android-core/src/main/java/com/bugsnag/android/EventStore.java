@@ -1,7 +1,6 @@
 package com.bugsnag.android;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import java.io.File;
 import java.lang.Thread;
@@ -11,7 +10,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.Semaphore;
 
@@ -21,7 +19,6 @@ import java.util.concurrent.Semaphore;
  */
 class EventStore extends FileStore {
 
-    private static final String STARTUP_CRASH = "_startupcrash";
     private static final long LAUNCH_CRASH_TIMEOUT_MS = 2000;
     private static final int LAUNCH_CRASH_POLL_MS = 50;
 
@@ -44,9 +41,7 @@ class EventStore extends FileStore {
             if (rhs == null) {
                 return -1;
             }
-            String lhsName = lhs.getName().replaceAll(STARTUP_CRASH, "");
-            String rhsName = rhs.getName().replaceAll(STARTUP_CRASH, "");
-            return lhsName.compareTo(rhsName);
+            return lhs.compareTo(rhs);
         }
     };
 
@@ -145,13 +140,9 @@ class EventStore extends FileStore {
 
     private void flushEventFile(File eventFile) {
         try {
-            String apiKey = getApiKeyFromFilename(eventFile);
-
-            if (apiKey == null) { // no info encoded, fallback to config value
-                apiKey = config.getApiKey();
-            }
-
-            EventPayload payload = new EventPayload(apiKey, null, eventFile, notifier);
+            EventFilenameInfo eventInfo = EventFilenameInfo.Companion.fromFile(eventFile, config);
+            String apiKey = eventInfo.getApiKey();
+            EventPayload payload = new EventPayload(apiKey, null, eventFile, notifier, config);
             DeliveryParams deliveryParams = config.getErrorApiDeliveryParams(payload);
             DeliveryStatus deliveryStatus = config.getDelivery().deliver(payload, deliveryParams);
 
@@ -184,77 +175,31 @@ class EventStore extends FileStore {
         deleteStoredFiles(Collections.singleton(eventFile));
     }
 
-    boolean isLaunchCrashReport(File file) {
-        return file.getName().endsWith("_startupcrash.json");
-    }
-
-    /**
-     * Retrieves the api key encoded in the filename or null if this information
-     * is not encoded for the given event
-     */
-    @Nullable
-    String getApiKeyFromFilename(File file) {
-        String name = file.getName().replaceAll("_startupcrash.json", "");
-        int start = name.indexOf("_") + 1;
-        int end = name.indexOf("_", start);
-
-        if (start == 0 || end == -1 || end <= start) {
-            return null;
-        }
-        return name.substring(start, end);
-    }
-
     private List<File> findLaunchCrashReports(Collection<File> storedFiles) {
         List<File> launchCrashes = new ArrayList<>();
 
         for (File file : storedFiles) {
-            if (isLaunchCrashReport(file)) {
+            EventFilenameInfo filenameInfo = EventFilenameInfo.Companion.fromFile(file, config);
+            if (filenameInfo.isLaunchCrashReport()) {
                 launchCrashes.add(file);
             }
         }
         return launchCrashes;
     }
 
-    /**
-     * Generates a filename for the Event in the format
-     * "[timestamp]_[apiKey]_[UUID][startupcrash|not-jvm].json"
-     */
     @NonNull
     @Override
     String getFilename(Object object) {
-        String uuid = UUID.randomUUID().toString();
-        long now = System.currentTimeMillis();
-        return getFilename(object, uuid, null, now);
-    }
-
-    String getFilename(Object object, String uuid, String apiKey,
-                       long timestamp) {
-        String suffix = "";
-
-        if (object instanceof Event) {
-            Event event = (Event) object;
-
-            Number duration = event.getApp().getDuration();
-            if (duration != null && isStartupCrash(duration.longValue())) {
-                suffix = STARTUP_CRASH;
-            }
-            apiKey = event.getApiKey();
-        } else { // generating a filename for an NDK event
-            suffix = "not-jvm";
-            if (apiKey.isEmpty()) {
-                apiKey = config.getApiKey();
-            }
-        }
-        return String.format(Locale.US, "%d_%s_%s%s.json", timestamp, apiKey, uuid, suffix);
+        EventFilenameInfo eventInfo
+                = EventFilenameInfo.Companion.fromEvent(object, null, config);
+        String encodedInfo = eventInfo.encode();
+        return String.format(Locale.US, "%s.json", encodedInfo);
     }
 
     String getNdkFilename(Object object, String apiKey) {
-        String uuid = UUID.randomUUID().toString();
-        long now = System.currentTimeMillis();
-        return getFilename(object, uuid, apiKey, now);
-    }
-
-    boolean isStartupCrash(long durationMs) {
-        return durationMs < config.getLaunchCrashThresholdMs();
+        EventFilenameInfo eventInfo
+                = EventFilenameInfo.Companion.fromEvent(object, apiKey, config);
+        String encodedInfo = eventInfo.encode();
+        return String.format(Locale.US, "%s.json", encodedInfo);
     }
 }

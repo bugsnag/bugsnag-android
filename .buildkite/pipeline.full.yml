@@ -58,7 +58,6 @@ steps:
   - label: ':android: Android 7 Instrumentation tests'
     depends_on:
       - "android-ci"
-      - "NDK-smoke-test"
     timeout_in_minutes: 30
     command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
     plugins:
@@ -72,7 +71,6 @@ steps:
   - label: ':android: Android 9 Instrumentation tests'
     depends_on:
       - "android-ci"
-      - "NDK-smoke-test"
     timeout_in_minutes: 30
     command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
     plugins:
@@ -340,9 +338,11 @@ steps:
     concurrency_group: 'browserstack-app'
 
   #
-  # Flaky features
+  # Flaky scenarios.  These should be skipped if there are no scenarios annotated with the @Flaky tag (as we should
+  # always be aiming for) to avoid unnecessary CI wait times and potential flakes from resource unavailability.
   #
   - label: ':hankey: Flaky Android 4.4 NDK r16 end-to-end tests'
+    skip: There are no @Flaky scenarios at present
     depends_on:
       - "fixture-r16"
     timeout_in_minutes: 90
@@ -364,6 +364,7 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':hankey: Flaky Android 5 NDK r16 end-to-end tests'
+    skip: There are no @Flaky scenarios at present
     depends_on:
       - "fixture-r16"
     timeout_in_minutes: 90
@@ -385,6 +386,7 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':hankey: Flaky Android 6 NDK r16 end-to-end tests'
+    skip: There are no @Flaky scenarios at present
     depends_on:
       - "fixture-r16"
     timeout_in_minutes: 90
@@ -406,6 +408,7 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':hankey: Flaky Android 7 NDK r19 end-to-end tests'
+    skip: There are no @Flaky scenarios at present
     depends_on:
       - "fixture-r19"
     timeout_in_minutes: 60
@@ -427,6 +430,7 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':hankey: Flaky Android 8.1 NDK r19 end-to-end tests'
+    skip: There are no @Flaky scenarios at present
     depends_on:
       - "fixture-r19"
     timeout_in_minutes: 60
@@ -448,6 +452,7 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':hankey: Flaky Android 10 NDK r21 end-to-end tests'
+    skip: There are no @Flaky scenarios at present
     depends_on:
       - "fixture-r21"
     timeout_in_minutes: 60
@@ -469,6 +474,7 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':hankey: Flaky Android 11 NDK r21 end-to-end tests'
+    skip: There are no @Flaky scenarios at present
     depends_on:
       - "fixture-r21"
     timeout_in_minutes: 60
