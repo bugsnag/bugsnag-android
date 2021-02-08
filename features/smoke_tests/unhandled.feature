@@ -20,7 +20,8 @@ Scenario: Unhandled Java Exception with loaded configuration
     And the error payload field "events.0.exceptions.0.stacktrace" is a non-empty array
     And the event "exceptions.0.stacktrace.0.method" ends with "UnhandledJavaLoadedConfigScenario.startScenario"
     And the exception "stacktrace.0.file" equals "UnhandledJavaLoadedConfigScenario.java"
-    And the event "exceptions.0.stacktrace.0.lineNumber" equals 28
+    # R8 minification alters the lineNumber, see the mapping file/source code for the original value
+    And the event "exceptions.0.stacktrace.0.lineNumber" equals 5
     And the event "exceptions.0.stacktrace.0.inProject" is true
 
     # App data
@@ -230,3 +231,7 @@ Scenario: ANR detection
     And the event "threads.0.stacktrace.0.method" is not null
     And the event "threads.0.stacktrace.0.file" is not null
     And the event "threads.0.stacktrace.0.lineNumber" is not null
+
+    # Metadata validation
+    And the event "metaData.custom.global" equals "present in global metadata"
+    And the event "metaData.custom.local" equals "present in local metadata"

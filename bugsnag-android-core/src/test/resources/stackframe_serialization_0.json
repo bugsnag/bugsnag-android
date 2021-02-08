@@ -2,5 +2,6 @@
   "method": "foo",
   "file": "Bar",
   "lineNumber": 55,
-  "inProject": true
+  "inProject": true,
+  "type": "android"
 }

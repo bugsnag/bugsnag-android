@@ -1,19 +1,5 @@
 Feature: Native User API
 
-    Scenario: Adding user information in C followed by notifying in C
-        When I run "CXXUserInfoScenario"
-        And I wait to receive an error
-        Then the error payload contains a completed handled native report
-        And the exception "errorClass" equals "Connection lost"
-        And the exception "message" equals "No antenna detected"
-        And the event "severity" equals "info"
-        And the event "user.name" equals "Jack Mill"
-        And the event "user.id" equals "324523"
-        And the event "user.email" is null
-        And the event "unhandled" is false
-        And the event "app.binaryArch" is not null
-        And the error payload field "events.0.device.cpuAbi" is a non-empty array
-
     Scenario: Adding user information in Java followed by a C crash
         And I run "CXXJavaUserInfoNativeCrashScenario" and relaunch the app
         And I configure the app to run in the "non-crashy" state
