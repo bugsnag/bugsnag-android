@@ -233,3 +233,16 @@ Then("the exception stacktrace matches the thread stacktrace") do
     assert_equal(exc_frame, thread_frame)
   end
 end
+
+# EventStore flushes multiple times on launch with access controlled via a semaphore,
+# which results in multiple similar log messages
+Then("Bugsnag confirms it has no errors to send") do
+  steps %Q{
+    And I wait to receive 3 logs
+    Then the "debug" level log message equals "No startupcrash events to flush to Bugsnag."
+    And I discard the oldest log
+    Then the "debug" level log message equals "No regular events to flush to Bugsnag."
+    And I discard the oldest log
+    Then the "debug" level log message equals "No regular events to flush to Bugsnag."
+  }
+end

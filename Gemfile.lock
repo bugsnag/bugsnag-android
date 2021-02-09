@@ -1,10 +1,10 @@
 GIT
   remote: https://github.com/bugsnag/maze-runner
-  revision: 312212a8e31a7c23a569524299b5ff6a56befd16
-  tag: v4.5.0
+  revision: c35845c10a7c35165c1468c4f098f41b3f3955f7
+  tag: v4.7.0
   specs:
-    bugsnag-maze-runner (4.5.0)
-      appium_lib (~> 10.2)
+    bugsnag-maze-runner (4.7.0)
+      appium_lib (~> 11.2.0)
       boring (~> 0.1.0)
       cucumber (~> 3.1.2)
       cucumber-expressions (~> 6.0.0)
@@ -20,11 +20,11 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
-    appium_lib (10.6.0)
-      appium_lib_core (~> 3.3)
+    appium_lib (11.2.0)
+      appium_lib_core (~> 4.1)
       nokogiri (~> 1.8, >= 1.8.1)
       tomlrb (~> 1.1)
-    appium_lib_core (3.11.1)
+    appium_lib_core (4.3.1)
       faye-websocket (~> 0.11.0)
       selenium-webdriver (~> 3.14, >= 3.14.1)
     backports (3.20.2)

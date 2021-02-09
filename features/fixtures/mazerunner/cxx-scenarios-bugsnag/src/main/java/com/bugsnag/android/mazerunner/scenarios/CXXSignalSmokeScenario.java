@@ -22,7 +22,7 @@ import java.util.Set;
 public class CXXSignalSmokeScenario extends Scenario {
 
     static {
-        System.loadLibrary("cxx-scenarios");
+        System.loadLibrary("cxx-scenarios-bugsnag");
     }
 
     public native int crash(int value);
