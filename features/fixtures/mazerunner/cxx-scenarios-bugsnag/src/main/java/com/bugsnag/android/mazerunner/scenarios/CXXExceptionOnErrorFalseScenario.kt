@@ -2,6 +2,7 @@ package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
 import com.bugsnag.android.Configuration
+import com.bugsnag.android.mazerunner.getZeroEventsLogMessages
 
 class CXXExceptionOnErrorFalseScenario(
     config: Configuration,
@@ -24,14 +25,5 @@ class CXXExceptionOnErrorFalseScenario(
         }
     }
 
-    override fun getInterceptedLogMessages(): List<String> {
-        return if ("non-crashy" == eventMetadata) {
-            listOf(
-                "No startupcrash events to flush to Bugsnag.",
-                "No regular events to flush to Bugsnag."
-            )
-        } else {
-            emptyList()
-        }
-    }
+    override fun getInterceptedLogMessages() = getZeroEventsLogMessages(eventMetadata)
 }

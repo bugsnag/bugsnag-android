@@ -6,9 +6,10 @@ import com.bugsnag.android.Configuration
 import com.bugsnag.android.createCustomHeaderDelivery
 
 /**
- * Sends a session using a custom API client which modifies the request.
+ * Sends a handled exception and sessions to Bugsnag using a custom
+ * HTTP client which modifies the request.
  */
-internal class CustomClientSessionScenario(
+internal class CustomHttpClientScenario(
     config: Configuration,
     context: Context,
     eventMetadata: String
@@ -22,5 +23,6 @@ internal class CustomClientSessionScenario(
     override fun startScenario() {
         super.startScenario()
         Bugsnag.startSession()
+        Bugsnag.notify(RuntimeException("Hello"))
     }
 }
