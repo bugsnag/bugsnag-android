@@ -7,12 +7,9 @@ Scenario: Notify caught Java exception with default configuration
 
     # Exception details
     And the error payload field "events" is an array with 1 elements
-    And the error payload field "events.0.device.runtimeVersions.androidApiLevel" is not null
-    And the error payload field "events.0.device.runtimeVersions.osBuild" is not null
     And the exception "errorClass" equals "java.lang.IllegalStateException"
     And the exception "message" equals "HandledJavaSmokeScenario"
     And the exception "type" equals "android"
-    And the event "context" equals "FooContext"
     And the event "unhandled" is false
     And the event "severity" equals "warning"
     And the event "severityReason.type" equals "handledException"
@@ -85,6 +82,13 @@ Scenario: Notify caught Java exception with default configuration
     # MetaData
     And the event "metaData.TestData.ClientMetadata" is true
     And the event "metaData.TestData.CallbackMetadata" is true
+
+    # Runtime versions
+    And the error payload field "events.0.device.runtimeVersions.androidApiLevel" is not null
+    And the error payload field "events.0.device.runtimeVersions.osBuild" is not null
+
+    # Context
+    And the event "context" equals "FooContext"
 
     # Threads validation
     And the error payload field "events.0.threads" is a non-empty array
