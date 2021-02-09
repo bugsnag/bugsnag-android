@@ -14,6 +14,4 @@ internal class JsonParser {
         streamable.toStream(jsonStream)
         return writer.toString()
     }
-
 }
-

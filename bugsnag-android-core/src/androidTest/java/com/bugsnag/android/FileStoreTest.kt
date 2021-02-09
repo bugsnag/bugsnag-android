@@ -3,10 +3,8 @@ package com.bugsnag.android
 import android.app.Application
 import androidx.test.core.app.ApplicationProvider
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
-import java.io.FileNotFoundException
 import java.util.Comparator
 
 class FileStoreTest {

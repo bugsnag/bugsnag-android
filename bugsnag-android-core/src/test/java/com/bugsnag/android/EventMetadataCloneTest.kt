@@ -12,7 +12,8 @@ class EventMetadataCloneTest {
         data.addMetadata("test_section", "foo", "bar")
 
         val handledState = SeverityReason.newInstance(
-            SeverityReason.REASON_HANDLED_EXCEPTION)
+            SeverityReason.REASON_HANDLED_EXCEPTION
+        )
         val config = BugsnagTestUtils.generateImmutableConfig()
         val event = Event(RuntimeException(), config, handledState, data, NoopLogger)
         event.addMetadata("test_section", "second", "another value")

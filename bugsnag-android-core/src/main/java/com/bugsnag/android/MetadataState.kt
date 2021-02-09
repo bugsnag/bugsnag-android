@@ -2,7 +2,8 @@ package com.bugsnag.android
 
 import com.bugsnag.android.StateEvent.AddMetadata
 
-internal data class MetadataState(val metadata: Metadata = Metadata()) : BaseObservable(),
+internal data class MetadataState(val metadata: Metadata = Metadata()) :
+    BaseObservable(),
     MetadataAware {
 
     override fun addMetadata(section: String, value: Map<String, Any?>) {
@@ -58,7 +59,7 @@ internal data class MetadataState(val metadata: Metadata = Metadata()) : BaseObs
         }
     }
 
-    private fun notifyMetadataAdded(section: String, value: Map<String,Any?>) {
+    private fun notifyMetadataAdded(section: String, value: Map<String, Any?>) {
         value.entries.forEach {
             notifyObservers(AddMetadata(section, it.key, metadata.getMetadata(it.key)))
         }

@@ -15,5 +15,4 @@ class DeliveryTest {
         assertEquals(DeliveryStatus.UNDELIVERED, delivery.getDeliveryStatus(429))
         assertEquals(DeliveryStatus.FAILURE, delivery.getDeliveryStatus(400))
     }
-
 }

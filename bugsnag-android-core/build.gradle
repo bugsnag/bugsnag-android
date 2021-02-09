@@ -11,8 +11,3 @@ dokka {
     outputFormat = "html"
     outputDirectory = "$buildDir/dokka"
 }
-
-// disable until PLAT-5951 resolved
-tasks.withType(org.jlleitschuh.gradle.ktlint.KtlintCheckTask) {
-    enabled = false
-}

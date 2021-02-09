@@ -3,7 +3,6 @@ package com.bugsnag.android
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNotSame
-import org.junit.Assert.assertSame
 import org.junit.Test
 import java.util.concurrent.Executors
 

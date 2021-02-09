@@ -3,7 +3,6 @@ package com.bugsnag.android
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
-
 import androidx.annotation.VisibleForTesting
 import java.lang.IllegalArgumentException
 
@@ -123,8 +122,11 @@ internal class ManifestConfigLoader {
         }
     }
 
-    private fun getStrArray(data: Bundle, key: String,
-                            default: Set<String>?): Set<String>? {
+    private fun getStrArray(
+        data: Bundle,
+        key: String,
+        default: Set<String>?
+    ): Set<String>? {
         val delimitedStr = data.getString(key)
 
         return when (val ary = delimitedStr?.split(",")) {
@@ -132,5 +134,4 @@ internal class ManifestConfigLoader {
             else -> ary.toSet()
         }
     }
-
 }
