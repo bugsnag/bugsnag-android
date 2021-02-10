@@ -157,6 +157,12 @@ Scenario: Signal raised with overwritten config
     # Native context override
     And the event "context" equals "Some custom context"
 
+    # Metadata
+    And the event "metaData.Riker Ipsum.examples" equals "I'll be sure to note that in my log. You enjoyed that. They wer"
+    And the event "metaData.fruit.apple" equals "gala"
+    And the event "metaData.fruit.ripe" is true
+    And the event "metaData.fruit.counters" equals 47
+
 Scenario: C++ exception thrown with overwritten config
     When I run "CXXExceptionSmokeScenario" and relaunch the app
     And I configure Bugsnag for "CXXExceptionSmokeScenario"
