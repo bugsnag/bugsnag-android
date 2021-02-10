@@ -1,14 +1,15 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
+import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.createCustomHeaderDelivery
 
 /**
- * Sends an unhandled exception which is cached on disk to Bugsnag, then sent on a separate launch,
- * using a custom API client which modifies the request.
+ * Sends an unhandled exception and sessions which is cached on disk to Bugsnag,
+ * then sent on a separate launch, using a custom HTTP client which modifies the request.
  */
-internal class CustomClientErrorFlushScenario(
+internal class CustomHttpClientFlushScenario(
     config: Configuration,
     context: Context,
     eventMetadata: String
@@ -16,7 +17,8 @@ internal class CustomClientErrorFlushScenario(
 
     init {
         config.autoTrackSessions = false
-        if ("online" == eventMetadata) {
+
+        if ("non-crashy" == eventMetadata) {
             config.delivery = createCustomHeaderDelivery()
         } else {
             disableAllDelivery(config)
@@ -26,7 +28,8 @@ internal class CustomClientErrorFlushScenario(
     override fun startScenario() {
         super.startScenario()
 
-        if ("online" != eventMetadata) {
+        if ("non-crashy" != eventMetadata) {
+            Bugsnag.startSession()
             throw RuntimeException("ReportCacheScenario")
         }
     }

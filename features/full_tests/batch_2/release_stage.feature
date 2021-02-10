@@ -2,15 +2,18 @@ Feature: Reporting exceptions with release stages
 
 Scenario: Exception not reported when outside release stage
     When I run "OutsideReleaseStageScenario"
-    Then I should receive no requests
+    And I wait to receive 1 logs
+    Then the "debug" level log message equals "Skipping notification - should not notify for this release stage"
 
 Scenario: Exception not reported when release stage null
     When I run "NullReleaseStageScenario"
-    Then I should receive no requests
+    And I wait to receive 1 logs
+    Then the "debug" level log message equals "Skipping notification - should not notify for this release stage"
 
 Scenario: Exception reported when release stages empty
     When I run "EmptyEnabledReleaseStageScenario"
-    Then I should receive no requests
+    And I wait to receive 1 logs
+    Then the "debug" level log message equals "Skipping notification - should not notify for this release stage"
 
 Scenario: Exception reported when inside Notify release stage array
     When I run "ArrayEnabledReleaseStageScenario"

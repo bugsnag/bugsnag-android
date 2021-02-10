@@ -23,4 +23,7 @@ internal class NullReleaseStageScenario(
         super.startScenario()
         Bugsnag.notify(generateException())
     }
+
+    override fun getInterceptedLogMessages() =
+        listOf("Skipping notification - should not notify for this release stage")
 }

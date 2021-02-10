@@ -657,10 +657,12 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         logger.d("Client#notifyInternal() - event captured by Client, type=" + type);
         // Don't notify if this event class should be ignored
         if (event.shouldDiscardClass()) {
+            logger.d("Skipping notification - should not notify for this class");
             return;
         }
 
         if (!immutableConfig.shouldNotifyForReleaseStage()) {
+            logger.d("Skipping notification - should not notify for this release stage");
             return;
         }
 
@@ -681,7 +683,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         // Run on error tasks, don't notify if any return false
         if (!callbackState.runOnErrorTasks(event, logger)
                 || (onError != null && !onError.onError(event))) {
-            logger.i("Skipping notification - onError task returned false");
+            logger.d("Skipping notification - onError task returned false");
             return;
         }
 

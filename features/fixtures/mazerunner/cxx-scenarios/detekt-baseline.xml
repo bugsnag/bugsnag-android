@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues></ManuallySuppressedIssues>
+  <CurrentIssues>
+    <ID>MagicNumber:CXXThrowSomethingOutsideReleaseStagesScenario.kt$CXXThrowSomethingOutsideReleaseStagesScenario$23</ID>
+    <ID>NewLineAtEndOfFile:CXXTrapOutsideReleaseStagesScenario.kt$com.bugsnag.android.mazerunner.scenarios.CXXTrapOutsideReleaseStagesScenario.kt</ID>
+  </CurrentIssues>
+</SmellBaseline>
