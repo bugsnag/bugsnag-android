@@ -12,6 +12,7 @@
 #include "report.h"
 #include "utils/serializer.h"
 #include "utils/string.h"
+#include "safejni.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -119,29 +120,43 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
   const char *report_path = (*env)->GetStringUTFChars(env, _report_path, 0);
   bugsnag_report *report =
       bsg_deserialize_report_from_file((char *)report_path);
+  jbyteArray jpayload = NULL;
+  jbyteArray jstage = NULL;
+  char *payload = NULL;
 
   if (report != NULL) {
-    char *payload = bsg_serialize_report_to_json_string(report);
+    payload = bsg_serialize_report_to_json_string(report);
     if (payload != NULL) {
+
+      // lookup com/bugsnag/android/NativeInterface
       jclass interface_class =
-          (*env)->FindClass(env, "com/bugsnag/android/NativeInterface");
-      jmethodID jdeliver_method =
-          (*env)->GetStaticMethodID(env, interface_class, "deliverReport",
-                                    "([B[B)V");
-      size_t payload_length = bsg_strlen(payload);
-      jbyteArray jpayload = (*env)->NewByteArray(env, payload_length);
-      (*env)->SetByteArrayRegion(env, jpayload, 0, payload_length, (jbyte *)payload);
+          bsg_safe_find_class(env, "com/bugsnag/android/NativeInterface");
+      if (interface_class == NULL) {
+        goto exit;
+      }
 
-      size_t stage_length = bsg_strlen(report->app.release_stage);
-      jbyteArray jstage = (*env)->NewByteArray(env, stage_length);
-      (*env)->SetByteArrayRegion(env, jstage, 0, stage_length, (jbyte *)report->app.release_stage);
+      // lookup NativeInterface.deliverReport()
+      jmethodID jdeliver_method = bsg_safe_get_static_method_id(
+          env, interface_class, "deliverReport", "([B[B)V");
+      if (jdeliver_method == NULL) {
+        goto exit;
+      }
 
-      (*env)->CallStaticVoidMethod(env, interface_class, jdeliver_method,
-                                   jstage, jpayload);
-      (*env)->ReleaseByteArrayElements(env, jpayload, (jbyte *)payload, 0); // <-- frees payload
-      (*env)->ReleaseByteArrayElements(env, jstage, (jbyte *)report->app.release_stage, JNI_COMMIT);
-      (*env)->DeleteLocalRef(env, jpayload);
-      (*env)->DeleteLocalRef(env, jstage);
+      // generate payload bytearray
+      jpayload = bsg_byte_ary_from_string(env, payload);
+      if (jpayload == NULL) {
+        goto exit;
+      }
+
+      // generate releaseStage bytearray
+      jstage = bsg_byte_ary_from_string(env, report->app.release_stage);
+      if (jstage == NULL) {
+        goto exit;
+      }
+
+      // call NativeInterface.deliverReport()
+      bsg_safe_call_static_void_method(env, interface_class, jdeliver_method,
+                                       jstage, jpayload);
     } else {
       BUGSNAG_LOG("Failed to serialize report as JSON: %s", report_path);
     }
@@ -151,7 +166,20 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
   }
   remove(report_path);
   (*env)->ReleaseStringUTFChars(env, _report_path, report_path);
+  goto exit;
+
+  exit:
   pthread_mutex_unlock(&bsg_native_delivery_mutex);
+  if (jpayload != NULL) {
+    (*env)->ReleaseByteArrayElements(env, jpayload, (jbyte *)payload,
+                                     0); // <-- frees payload
+  }
+  if (jstage != NULL) {
+    (*env)->ReleaseByteArrayElements(
+        env, jstage, (jbyte *)report->app.release_stage, JNI_COMMIT);
+  }
+  (*env)->DeleteLocalRef(env, jpayload);
+  (*env)->DeleteLocalRef(env, jstage);
 }
 
 JNIEXPORT void JNICALL
