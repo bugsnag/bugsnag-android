@@ -46,15 +46,6 @@ int __attribute__((noinline)) f_trigger_an_exception(bool value) {
     return 405;
 }
 
-
-JNIEXPORT void JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_CXXCustomMetadataNativeNotifyScenario_activate(
-    JNIEnv *env,
-    jobject instance) {
-  bugsnag_notify_env(env, (char *) "Twitter Overdose",
-                     (char *) "Turn off the internet and go outside", BSG_SEVERITY_INFO);
-}
-
 JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXAutoContextScenario_activate(JNIEnv *env,
                                                                               jobject instance) {

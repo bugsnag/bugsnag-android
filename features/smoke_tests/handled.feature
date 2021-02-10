@@ -198,6 +198,7 @@ Scenario: Handled C functionality
 
     # MetaData
     And the event "metaData.TestData.Source" equals "ClientCallback"
+    And the event "metaData.TestData.JVM" equals "pre notify()"
 
     # Threads validation
     And the error payload field "events.0.threads" is a non-empty array

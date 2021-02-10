@@ -29,6 +29,8 @@ public class CXXNotifySmokeScenario extends Scenario {
     @Override
     public void startScenario() {
         super.startScenario();
+
+        Bugsnag.addMetadata("TestData", "JVM", "pre notify()");
         Bugsnag.addOnError(new OnErrorCallback() {
             @Override
             public boolean onError(@NonNull Event event) {
