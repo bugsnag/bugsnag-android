@@ -93,8 +93,6 @@ Scenario: Signal raised with overwritten config
 
     # Exception details
     And the error payload field "events" is an array with 1 elements
-    And the error payload field "events.0.device.runtimeVersions.androidApiLevel" is not null
-    And the error payload field "events.0.device.runtimeVersions.osBuild" is not null
     And the exception "errorClass" equals "SIGSEGV"
     And the exception "message" equals "Segmentation violation (invalid memory reference)"
     And the exception "type" equals "c"
