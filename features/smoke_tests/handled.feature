@@ -79,6 +79,9 @@ Scenario: Notify caught Java exception with default configuration
     # [PLAT-5534] A potential source of flakes
     #And the event "breadcrumbs.2.metaData.source" equals "BreadcrumbCallback"
 
+    # Context
+    And the event "context" equals "FooContext"
+
     # MetaData
     And the event "metaData.TestData.ClientMetadata" is true
     And the event "metaData.TestData.CallbackMetadata" is true
@@ -86,9 +89,6 @@ Scenario: Notify caught Java exception with default configuration
     # Runtime versions
     And the error payload field "events.0.device.runtimeVersions.androidApiLevel" is not null
     And the error payload field "events.0.device.runtimeVersions.osBuild" is not null
-
-    # Context
-    And the event "context" equals "FooContext"
 
     # Threads validation
     And the error payload field "events.0.threads" is a non-empty array
@@ -206,6 +206,9 @@ Scenario: Handled C functionality
 
     # Breadcrumbs
     And the event has a "log" breadcrumb named "Cold beans detected"
+
+    # Context
+    And the event "context" equals "FooContext"
 
     # MetaData
     And the event "metaData.TestData.Source" equals "ClientCallback"
