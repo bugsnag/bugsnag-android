@@ -19,6 +19,9 @@ public class CXXNotifySmokeScenario extends Scenario {
 
     public native void activate();
 
+    /**
+     *
+     */
     public CXXNotifySmokeScenario(@NonNull Configuration config,
                                   @NonNull Context context,
                                   @Nullable String eventMetadata) {
