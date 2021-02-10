@@ -28,7 +28,7 @@ open class App internal constructor(
     var version: String?,
 
     /**
-    The revision ID from the manifest (React Native apps only)
+     The revision ID from the manifest (React Native apps only)
      */
     var codeBundleId: String?,
 

@@ -1,8 +1,8 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.BugsnagTestUtils.generateAppWithState
 import com.bugsnag.android.BugsnagTestUtils.generateDeviceWithState
 import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
-import com.bugsnag.android.BugsnagTestUtils.generateAppWithState
 import org.junit.Test
 import java.io.StringWriter
 import java.util.Date

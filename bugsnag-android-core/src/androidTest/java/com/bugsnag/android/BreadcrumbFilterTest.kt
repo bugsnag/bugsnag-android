@@ -1,12 +1,10 @@
 package com.bugsnag.android
 
-import com.bugsnag.android.BreadcrumbType.MANUAL
-import org.junit.Assert.assertEquals
-
 import androidx.test.filters.SmallTest
+import com.bugsnag.android.BreadcrumbType.MANUAL
 import com.bugsnag.android.BugsnagTestUtils.generateClient
-
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 @SmallTest
@@ -40,7 +38,4 @@ class BreadcrumbFilterTest {
 
         assertEquals(1, client.breadcrumbState.store.size)
     }
-
 }
-
-

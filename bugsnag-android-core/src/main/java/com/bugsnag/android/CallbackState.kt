@@ -6,7 +6,7 @@ internal data class CallbackState(
     val onErrorTasks: MutableCollection<OnErrorCallback> = ConcurrentLinkedQueue<OnErrorCallback>(),
     val onBreadcrumbTasks: MutableCollection<OnBreadcrumbCallback> = ConcurrentLinkedQueue<OnBreadcrumbCallback>(),
     val onSessionTasks: MutableCollection<OnSessionCallback> = ConcurrentLinkedQueue()
-): CallbackAware {
+) : CallbackAware {
 
     override fun addOnError(onError: OnErrorCallback) {
         onErrorTasks.add(onError)
@@ -31,7 +31,6 @@ internal data class CallbackState(
     override fun removeOnSession(onSession: OnSessionCallback) {
         onSessionTasks.remove(onSession)
     }
-
 
     fun runOnErrorTasks(event: Event, logger: Logger): Boolean {
         onErrorTasks.forEach {

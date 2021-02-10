@@ -5,11 +5,12 @@ import android.content.Intent
 import android.os.Bundle
 import com.bugsnag.android.SystemBroadcastReceiver.shortenActionNameIfNeeded
 import org.junit.Assert.assertEquals
-
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito.*
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
@@ -93,10 +94,9 @@ class SystemBroadcastReceiverTest {
         )
     }
 
-    private fun getConfig(breadcrumbTypes: Set<BreadcrumbType>) : ImmutableConfig {
+    private fun getConfig(breadcrumbTypes: Set<BreadcrumbType>): ImmutableConfig {
         var config = BugsnagTestUtils.generateConfiguration()
         config.enabledBreadcrumbTypes = breadcrumbTypes
         return BugsnagTestUtils.convert(config)
     }
-
 }

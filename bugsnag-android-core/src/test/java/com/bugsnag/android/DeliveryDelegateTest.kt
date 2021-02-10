@@ -23,7 +23,8 @@ internal class DeliveryDelegateTest {
     private val logger = InterceptingLogger()
     lateinit var deliveryDelegate: DeliveryDelegate
     val handledState = SeverityReason.newInstance(
-        SeverityReason.REASON_UNHANDLED_EXCEPTION)
+        SeverityReason.REASON_UNHANDLED_EXCEPTION
+    )
     val event = Event(RuntimeException("Whoops!"), config, handledState, NoopLogger)
 
     @Before
@@ -52,7 +53,8 @@ internal class DeliveryDelegateTest {
     @Test
     fun generateHandledReport() {
         val state = SeverityReason.newInstance(
-            SeverityReason.REASON_HANDLED_EXCEPTION)
+            SeverityReason.REASON_HANDLED_EXCEPTION
+        )
         val event = Event(RuntimeException("Whoops!"), config, state, NoopLogger)
         event.session = Session("123", Date(), User(null, null, null), false, notifier, NoopLogger)
 
@@ -73,7 +75,8 @@ internal class DeliveryDelegateTest {
     @Test
     fun generateEmptyReport() {
         val state = SeverityReason.newInstance(
-            SeverityReason.REASON_HANDLED_EXCEPTION)
+            SeverityReason.REASON_HANDLED_EXCEPTION
+        )
         val event = Event(RuntimeException("Whoops!"), config, state, NoopLogger)
         event.errors.clear()
 

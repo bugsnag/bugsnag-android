@@ -44,8 +44,14 @@ class Stackframe : JsonStream.Streamable {
     var type: ErrorType? = null
 
     @JvmOverloads
-    internal constructor(method: String?, file: String?, lineNumber: Number?, inProject: Boolean?,
-                         code: Map<String, String?>? = null, columnNumber: Number? = null) {
+    internal constructor(
+        method: String?,
+        file: String?,
+        lineNumber: Number?,
+        inProject: Boolean?,
+        code: Map<String, String?>? = null,
+        columnNumber: Number? = null
+    ) {
         this.method = method
         this.file = file
         this.lineNumber = lineNumber

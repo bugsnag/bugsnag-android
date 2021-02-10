@@ -2,12 +2,13 @@ package com.bugsnag.android
 
 import com.bugsnag.android.BreadcrumbType.MANUAL
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
-import org.junit.Assert.*
-
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import java.util.Date
-
 import java.util.HashMap
 import java.util.Locale
 
@@ -27,10 +28,12 @@ class BreadcrumbStateTest {
     fun testMessageTruncation() {
         breadcrumbState.add(Breadcrumb("Started app", NoopLogger))
         breadcrumbState.add(Breadcrumb("Clicked a button", NoopLogger))
-        val longStr = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit,"
-                + " sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad "
-                + "minim veniam, quis nostrud exercitation ullamco laboris nisi"
-                + " ut aliquip ex ea commodo consequat.")
+        val longStr = (
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit," +
+                " sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad " +
+                "minim veniam, quis nostrud exercitation ullamco laboris nisi" +
+                " ut aliquip ex ea commodo consequat."
+            )
         breadcrumbState.add(Breadcrumb(longStr, NoopLogger))
 
         val crumbs = breadcrumbState.store.toList()
@@ -121,9 +124,11 @@ class BreadcrumbStateTest {
     @Test
     fun testOnBreadcrumbCallback() {
         val breadcrumb = Breadcrumb("Whoops", NoopLogger)
-        breadcrumbState.callbackState.addOnBreadcrumb(OnBreadcrumbCallback {
-            true
-        })
+        breadcrumbState.callbackState.addOnBreadcrumb(
+            OnBreadcrumbCallback {
+                true
+            }
+        )
         breadcrumbState.add(breadcrumb)
         assertEquals(1, breadcrumbState.store.size)
         assertEquals(breadcrumb, breadcrumbState.store.peek())
@@ -132,27 +137,30 @@ class BreadcrumbStateTest {
     /**
      * Verifies that returning false in one callback will halt subsequent callbacks and not apply breadcrumb
      */
-     @Test
-     fun testOnBreadcrumbCallbackFalse() {
+    @Test
+    fun testOnBreadcrumbCallbackFalse() {
         val requiredBreadcrumb = Breadcrumb("Hello there", NoopLogger)
         breadcrumbState.add(requiredBreadcrumb)
 
         val breadcrumb = Breadcrumb("Whoops", NoopLogger)
-        breadcrumbState.callbackState.addOnBreadcrumb(OnBreadcrumbCallback { givenBreadcrumb ->
-            givenBreadcrumb.metadata?.put("callback", "first")
-            false
-        })
-        breadcrumbState.callbackState.addOnBreadcrumb(OnBreadcrumbCallback { givenBreadcrumb ->
-            givenBreadcrumb.metadata?.put("callback", "second")
-            true
-        })
+        breadcrumbState.callbackState.addOnBreadcrumb(
+            OnBreadcrumbCallback { givenBreadcrumb ->
+                givenBreadcrumb.metadata?.put("callback", "first")
+                false
+            }
+        )
+        breadcrumbState.callbackState.addOnBreadcrumb(
+            OnBreadcrumbCallback { givenBreadcrumb ->
+                givenBreadcrumb.metadata?.put("callback", "second")
+                true
+            }
+        )
         breadcrumbState.add(breadcrumb)
         assertEquals(1, breadcrumbState.store.size)
         assertEquals(requiredBreadcrumb, breadcrumbState.store.first())
         assertNotNull(breadcrumb.metadata)
         assertEquals("first", breadcrumb.metadata?.get("callback"))
-
-     }
+    }
 
     /**
      * Verifies that an exception within an OnBreadcrumbCallback allows subsequent callbacks to run
@@ -160,13 +168,17 @@ class BreadcrumbStateTest {
     @Test
     fun testOnBreadcrumbCallbackException() {
         val breadcrumb = Breadcrumb("Whoops", NoopLogger)
-        breadcrumbState.callbackState.addOnBreadcrumb(OnBreadcrumbCallback {
-            throw IllegalStateException("Oh no")
-        })
-        breadcrumbState.callbackState.addOnBreadcrumb(OnBreadcrumbCallback { givenBreadcrumb ->
-            givenBreadcrumb.metadata?.put("callback", "second")
-            true
-        })
+        breadcrumbState.callbackState.addOnBreadcrumb(
+            OnBreadcrumbCallback {
+                throw IllegalStateException("Oh no")
+            }
+        )
+        breadcrumbState.callbackState.addOnBreadcrumb(
+            OnBreadcrumbCallback { givenBreadcrumb ->
+                givenBreadcrumb.metadata?.put("callback", "second")
+                true
+            }
+        )
         breadcrumbState.add(breadcrumb)
         assertEquals(1, breadcrumbState.store.size)
         assertEquals(breadcrumb, breadcrumbState.store.peek())

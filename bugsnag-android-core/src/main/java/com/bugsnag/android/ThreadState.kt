@@ -24,13 +24,17 @@ internal class ThreadState @JvmOverloads constructor(
     val threads: MutableList<Thread>
 
     init {
-        val recordThreads = sendThreads == ThreadSendPolicy.ALWAYS
-                || (sendThreads == ThreadSendPolicy.UNHANDLED_ONLY && isUnhandled)
+        val recordThreads = sendThreads == ThreadSendPolicy.ALWAYS ||
+            (sendThreads == ThreadSendPolicy.UNHANDLED_ONLY && isUnhandled)
 
         threads = when {
             recordThreads -> captureThreadTrace(
-                stackTraces, currentThread, exc,
-                isUnhandled, projectPackages, logger
+                stackTraces,
+                currentThread,
+                exc,
+                isUnhandled,
+                projectPackages,
+                logger
             )
             else -> mutableListOf()
         }

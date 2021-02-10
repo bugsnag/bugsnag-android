@@ -104,12 +104,14 @@ internal class DeviceDataCollector(
      *
      * @return true if the current device is an emulator
      */
-    private// genymotion
+    private // genymotion
     fun isEmulator(): Boolean {
         val fingerprint = buildInfo.fingerprint
-        return fingerprint != null && (fingerprint.startsWith("unknown")
-                || fingerprint.contains("generic")
-                || fingerprint.contains("vbox"))
+        return fingerprint != null && (
+            fingerprint.startsWith("unknown") ||
+                fingerprint.contains("generic") ||
+                fingerprint.contains("vbox")
+            )
     }
 
     /**
@@ -253,11 +255,14 @@ internal class DeviceDataCollector(
     companion object {
         private val ROOT_INDICATORS = arrayOf(
             // Common binaries
-            "/system/xbin/su", "/system/bin/su",
+            "/system/xbin/su",
+            "/system/bin/su",
             // < Android 5.0
-            "/system/app/Superuser.apk", "/system/app/SuperSU.apk",
+            "/system/app/Superuser.apk",
+            "/system/app/SuperSU.apk",
             // >= Android 5.0
-            "/system/app/Superuser", "/system/app/SuperSU",
+            "/system/app/Superuser",
+            "/system/app/SuperSU",
             // Fallback
             "/system/xbin/daemonsu",
             // Systemless root

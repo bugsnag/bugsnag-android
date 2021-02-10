@@ -61,10 +61,13 @@ internal class MetadataStateTest {
 
     @Test
     fun initObservableMessagesWithMap() {
-        state.addMetadata("foo", hashMapOf(
-            "key1" to "1",
-            "key2" to "2",
-            "key3" to 3)
+        state.addMetadata(
+            "foo",
+            hashMapOf(
+                "key1" to "1",
+                "key2" to "2",
+                "key3" to 3
+            )
         )
 
         val sections = mutableSetOf<String>()

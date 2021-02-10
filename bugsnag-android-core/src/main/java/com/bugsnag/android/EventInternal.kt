@@ -67,7 +67,6 @@ internal class EventInternal @JvmOverloads internal constructor(
         return "ANR" == errorClass
     }
 
-
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) {
         // Write error basics
@@ -114,7 +113,7 @@ internal class EventInternal @JvmOverloads internal constructor(
         writer.endObject()
     }
 
-     internal fun getErrorTypesFromStackframes(): Set<ErrorType> {
+    internal fun getErrorTypesFromStackframes(): Set<ErrorType> {
         val errorTypes = errors.mapNotNull(Error::getType).toSet()
         val frameOverrideTypes = errors
             .map { it.stacktrace }
@@ -123,8 +122,11 @@ internal class EventInternal @JvmOverloads internal constructor(
     }
 
     protected fun updateSeverityInternal(severity: Severity) {
-        severityReason = SeverityReason.newInstance(severityReason.severityReasonType,
-            severity, severityReason.attributeValue)
+        severityReason = SeverityReason.newInstance(
+            severityReason.severityReasonType,
+            severity,
+            severityReason.attributeValue
+        )
         this.severity = severity
     }
 
@@ -138,19 +140,14 @@ internal class EventInternal @JvmOverloads internal constructor(
 
     override fun addMetadata(section: String, value: Map<String, Any?>) = metadata.addMetadata(section, value)
 
-
     override fun addMetadata(section: String, key: String, value: Any?) =
         metadata.addMetadata(section, key, value)
 
-
     override fun clearMetadata(section: String) = metadata.clearMetadata(section)
-
 
     override fun clearMetadata(section: String, key: String) = metadata.clearMetadata(section, key)
 
-
     override fun getMetadata(section: String) = metadata.getMetadata(section)
-
 
     override fun getMetadata(section: String, key: String) = metadata.getMetadata(section, key)
 }
