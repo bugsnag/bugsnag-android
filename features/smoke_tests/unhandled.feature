@@ -21,8 +21,12 @@ Scenario: Unhandled Java Exception with loaded configuration
     And the event "exceptions.0.stacktrace.0.method" ends with "UnhandledJavaLoadedConfigScenario.startScenario"
     And the exception "stacktrace.0.file" equals "UnhandledJavaLoadedConfigScenario.java"
     # R8 minification alters the lineNumber, see the mapping file/source code for the original value
-    And the event "exceptions.0.stacktrace.0.lineNumber" equals 5
+    And the event "exceptions.0.stacktrace.0.lineNumber" equals 6
     And the event "exceptions.0.stacktrace.0.inProject" is true
+
+    And the thread with name "main" contains the error reporting flag
+    And the "method" of stack frame 0 equals "com.bugsnag.android.mazerunner.scenarios.UnhandledJavaLoadedConfigScenario.startScenario"
+    And the error payload field "events.0.threads.0.stacktrace.0.method" equals "com.bugsnag.android.mazerunner.scenarios.UnhandledJavaLoadedConfigScenario.startScenario"
 
     # App data
     And the event "app.buildUUID" equals "test-7.5.3"
@@ -223,6 +227,9 @@ Scenario: C++ exception thrown with overwritten config
     And the event "metaData.device.dpi" is not null
     And the event "metaData.device.screenResolution" is not null
     And the event "metaData.device.brand" is not null
+
+    # Context
+    And the event "context" equals "Some custom context"
 
     # User
     And the event "user.id" equals "ABC"

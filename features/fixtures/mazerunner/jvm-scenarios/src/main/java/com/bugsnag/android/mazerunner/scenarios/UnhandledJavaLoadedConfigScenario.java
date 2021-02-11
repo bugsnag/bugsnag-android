@@ -24,6 +24,7 @@ public class UnhandledJavaLoadedConfigScenario extends Scenario {
         super.startScenario();
         Configuration testConfig = Configuration.load(this.getContext());
         testConfig.setAutoTrackSessions(false);
+        testConfig.setContext("FooContext");
         Bugsnag.start(this.getContext(), testConfig);
         throw new RuntimeException("UnhandledJavaLoadedConfigScenario");
     }
