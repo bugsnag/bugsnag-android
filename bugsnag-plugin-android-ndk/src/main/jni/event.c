@@ -31,8 +31,9 @@ int bsg_allocate_metadata_index(bugsnag_metadata *metadata, const char *section,
   return index;
 }
 
-void bsg_add_metadata_value_double(bugsnag_metadata *metadata, const char *section,
-                                   const char *name, double value) {
+void bsg_add_metadata_value_double(bugsnag_metadata *metadata,
+                                   const char *section, const char *name,
+                                   double value) {
   int index = bsg_allocate_metadata_index(metadata, section, name);
   if (index >= 0) {
     metadata->values[index].type = BSG_METADATA_NUMBER_VALUE;
@@ -50,8 +51,9 @@ void bsg_add_metadata_value_str(bugsnag_metadata *metadata, const char *section,
   }
 }
 
-void bsg_add_metadata_value_bool(bugsnag_metadata *metadata, const char *section,
-                                 const char *name, bool value) {
+void bsg_add_metadata_value_bool(bugsnag_metadata *metadata,
+                                 const char *section, const char *name,
+                                 bool value) {
   int index = bsg_allocate_metadata_index(metadata, section, name);
   if (index >= 0) {
     metadata->values[index].type = BSG_METADATA_BOOL_VALUE;

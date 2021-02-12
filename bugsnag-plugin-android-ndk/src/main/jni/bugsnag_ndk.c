@@ -209,7 +209,8 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
 
 exit:
   pthread_mutex_unlock(&bsg_native_delivery_mutex);
-  bsg_safe_release_byte_array_elements(env, jpayload, (jbyte *) payload, 0); // <-- frees payload
+  bsg_safe_release_byte_array_elements(env, jpayload, (jbyte *)payload,
+                                       0); // <-- frees payload
   bsg_safe_release_byte_array_elements(
       env, jstage, (jbyte *)event->app.release_stage, JNI_COMMIT);
   bsg_safe_delete_local_ref(env, jpayload);
@@ -330,7 +331,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateAppVersion(JNIEnv *env,
   if (bsg_global_env == NULL) {
     return;
   }
-  char *value = (char *) bsg_safe_get_string_utf_chars(env, new_value);
+  char *value = (char *)bsg_safe_get_string_utf_chars(env, new_value);
   if (value == NULL) {
     return;
   }
@@ -347,7 +348,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateBuildUUID(JNIEnv *env,
   if (bsg_global_env == NULL) {
     return;
   }
-  char *value = (char *) bsg_safe_get_string_utf_chars(env, new_value);
+  char *value = (char *)bsg_safe_get_string_utf_chars(env, new_value);
   if (value == NULL) {
     return;
   }
@@ -362,7 +363,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateContext(
   if (bsg_global_env == NULL) {
     return;
   }
-  char *value = (char *) bsg_safe_get_string_utf_chars(env, new_value);
+  char *value = (char *)bsg_safe_get_string_utf_chars(env, new_value);
   if (value == NULL) {
     return;
   }
@@ -380,7 +381,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateInForeground(
   if (bsg_global_env == NULL) {
     return;
   }
-  char *activity = (char *) bsg_safe_get_string_utf_chars(env, activity_);
+  char *activity = (char *)bsg_safe_get_string_utf_chars(env, activity_);
   if (activity == NULL) {
     return;
   }
@@ -424,7 +425,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateOrientation(JNIEnv *env,
     return;
   }
 
-  char *value = (char *) bsg_safe_get_string_utf_chars(env, new_value);
+  char *value = (char *)bsg_safe_get_string_utf_chars(env, new_value);
   if (value == NULL) {
     return;
   }
@@ -442,7 +443,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateReleaseStage(
   if (bsg_global_env == NULL) {
     return;
   }
-  char *value = (char *) bsg_safe_get_string_utf_chars(env, new_value);
+  char *value = (char *)bsg_safe_get_string_utf_chars(env, new_value);
   if (value == NULL) {
     return;
   }
@@ -459,7 +460,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateUserId(
   if (bsg_global_env == NULL) {
     return;
   }
-  char *value = (char *) bsg_safe_get_string_utf_chars(env, new_value);
+  char *value = (char *)bsg_safe_get_string_utf_chars(env, new_value);
   if (value == NULL) {
     return;
   }

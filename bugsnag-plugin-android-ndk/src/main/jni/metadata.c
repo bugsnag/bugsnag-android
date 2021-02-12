@@ -391,8 +391,8 @@ void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,
     } else {
       const char *key = bsg_safe_get_string_utf_chars(env, _key);
       if (key != NULL) {
-        bsg_populate_metadata_value(env, &crumb->metadata, jni_cache, "metaData",
-                                    key, _value);
+        bsg_populate_metadata_value(env, &crumb->metadata, jni_cache,
+                                    "metaData", key, _value);
         bsg_safe_release_string_utf_chars(env, _key, key);
       }
     }
@@ -611,7 +611,7 @@ void bsg_populate_metadata_value(JNIEnv *env, bugsnag_metadata *dst,
     const char *value = bsg_safe_get_string_utf_chars(env, _value);
     if (value != NULL) {
       bsg_add_metadata_value_str(dst, section, name, value);
-      free((char *) value);
+      free((char *)value);
     }
   }
 }
@@ -676,7 +676,8 @@ void bsg_populate_metadata_section(JNIEnv *env, bugsnag_metadata *dst,
     goto exit;
   }
   for (int j = 0; j < section_size; j++) {
-    bsg_populate_metadata_obj(env, dst, jni_cache, _section, section_keylist, j);
+    bsg_populate_metadata_obj(env, dst, jni_cache, _section, section_keylist,
+                              j);
   }
   goto exit;
 

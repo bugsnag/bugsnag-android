@@ -212,13 +212,15 @@ const char *bsg_safe_get_string_utf_chars(JNIEnv *env, jstring string) {
   return NULL;
 }
 
-void bsg_safe_release_string_utf_chars(JNIEnv *env, jstring string, const char *utf) {
+void bsg_safe_release_string_utf_chars(JNIEnv *env, jstring string,
+                                       const char *utf) {
   if (env != NULL && string != NULL && utf != NULL) {
     (*env)->ReleaseStringUTFChars(env, string, utf);
   }
 }
 
-void bsg_safe_release_byte_array_elements(JNIEnv *env, jbyteArray array, jbyte *elems, jint mode) {
+void bsg_safe_release_byte_array_elements(JNIEnv *env, jbyteArray array,
+                                          jbyte *elems, jint mode) {
   if (env != NULL && array != NULL) {
     (*env)->ReleaseByteArrayElements(env, array, elems, mode);
   }

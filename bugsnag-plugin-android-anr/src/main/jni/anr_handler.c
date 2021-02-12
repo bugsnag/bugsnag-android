@@ -40,8 +40,9 @@ bool bsg_check_and_clear_exc(JNIEnv *env) {
   return false;
 }
 
-bool configure_anr_jni_impl(JNIEnv *env) {// get a global reference to the AnrPlugin class
-// https://developer.android.com/training/articles/perf-jni#faq:-why-didnt-findclass-find-my-class
+bool configure_anr_jni_impl(
+    JNIEnv *env) { // get a global reference to the AnrPlugin class
+  // https://developer.android.com/training/articles/perf-jni#faq:-why-didnt-findclass-find-my-class
   if (env == NULL) {
     return false;
   }
@@ -87,7 +88,8 @@ static void notify_anr_detected() {
     } else if (result == JNI_EDETACHED) { // attach before calling JNI
       if ((*bsg_jvm)->AttachCurrentThread(bsg_jvm, &env, NULL) == 0) {
         notify_anr_detected_impl(env);
-        (*bsg_jvm)->DetachCurrentThread(bsg_jvm); // detach to restore initial condition
+        (*bsg_jvm)->DetachCurrentThread(
+            bsg_jvm); // detach to restore initial condition
       }
     } // All other results are error codes
   }

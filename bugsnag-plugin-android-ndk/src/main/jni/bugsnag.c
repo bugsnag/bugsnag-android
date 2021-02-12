@@ -66,7 +66,8 @@ jfieldID bsg_parse_jseverity(JNIEnv *env, bugsnag_severity severity,
 }
 
 void bsg_release_byte_ary(JNIEnv *env, jbyteArray array, char *original_text) {
-  bsg_safe_release_byte_array_elements(env, array, (jbyte *)original_text, JNI_COMMIT);
+  bsg_safe_release_byte_array_elements(env, array, (jbyte *)original_text,
+                                       JNI_COMMIT);
 }
 
 void bsg_populate_notify_stacktrace(JNIEnv *env, bugsnag_stackframe *stacktrace,
