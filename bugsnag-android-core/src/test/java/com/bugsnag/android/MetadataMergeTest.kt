@@ -47,13 +47,16 @@ class MetadataMergeTest {
         val betaMap = mapOf("betaKey" to "betaValue")
         val gammaMap = mapOf("gammaKey" to "gammaValue")
 
-        metadata.addMetadata("mytab",
+        metadata.addMetadata(
+            "mytab",
             mapOf("alpha" to alphaMap)
         )
-        metadata.addMetadata("mytab",
+        metadata.addMetadata(
+            "mytab",
             mapOf("beta" to betaMap)
         )
-        metadata.addMetadata("mytab",
+        metadata.addMetadata(
+            "mytab",
             mapOf("gamma" to gammaMap)
         )
         assertEquals(alphaMap, metadata.getMetadata("mytab", "alpha"))

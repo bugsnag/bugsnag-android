@@ -2,7 +2,7 @@ package com.bugsnag.android
 
 import android.util.Log
 
-internal object DebugLogger: Logger {
+internal object DebugLogger : Logger {
 
     private const val TAG = "Bugsnag"
 

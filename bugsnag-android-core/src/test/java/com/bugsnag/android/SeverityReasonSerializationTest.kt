@@ -14,7 +14,8 @@ internal class SeverityReasonSerializationTest {
         @Parameters
         fun testCases(): Collection<Pair<SeverityReason, String>> {
             val override = SeverityReason.newInstance(
-                SeverityReason.REASON_HANDLED_EXCEPTION)
+                SeverityReason.REASON_HANDLED_EXCEPTION
+            )
             override.unhandled = true
 
             return generateSerializationTestCases(

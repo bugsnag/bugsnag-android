@@ -63,7 +63,6 @@ internal class NativeInterfaceApiTest {
         `when`(client.getAppDataCollector()).thenReturn(appDataCollector)
         `when`(client.getDeviceDataCollector()).thenReturn(deviceDataCollector)
         `when`(client.getUser()).thenReturn(User("123", "tod@example.com", "Tod"))
-
     }
 
     @Test

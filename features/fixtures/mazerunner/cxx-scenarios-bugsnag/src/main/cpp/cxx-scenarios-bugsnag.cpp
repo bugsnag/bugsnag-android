@@ -46,15 +46,6 @@ int __attribute__((noinline)) f_trigger_an_exception(bool value) {
     return 405;
 }
 
-
-JNIEXPORT void JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_CXXCustomMetadataNativeNotifyScenario_activate(
-    JNIEnv *env,
-    jobject instance) {
-  bugsnag_notify_env(env, (char *) "Twitter Overdose",
-                     (char *) "Turn off the internet and go outside", BSG_SEVERITY_INFO);
-}
-
 JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXAutoContextScenario_activate(JNIEnv *env,
                                                                               jobject instance) {
@@ -147,14 +138,16 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXSignalOnErrorFalseScenario_cras
 }
 
 JNIEXPORT int JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_CXXSignalOnErrorTrueScenario_crash(
-    JNIEnv *env,
-    jobject instance) {
+Java_com_bugsnag_android_mazerunner_scenarios_CXXSignalSmokeScenario_crash(JNIEnv *env,
+                                                                           jobject instance,
+                                                                           jint value) {
   bugsnag_add_on_error(&on_err_true);
-  int x = 47;
-  if (x > 0)
-    __builtin_trap();
-  return 12633;
+  int x = 38;
+  if (value > 0) {
+    raise(SIGSEGV);
+  }
+  printf("That might've been one of the shortest assignments in the history of Starfleet.\n");
+  return value / x / 8;
 }
 
 JNIEXPORT int JNICALL
@@ -169,7 +162,7 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXExceptionOnErrorFalseScenario_c
 }
 
 JNIEXPORT int JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_CXXExceptionOnErrorTrueScenario_crash(
+Java_com_bugsnag_android_mazerunner_scenarios_CXXExceptionSmokeScenario_crash(
     JNIEnv *env,
     jobject instance) {
   bugsnag_add_on_error(&on_err_true);
@@ -178,7 +171,6 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXExceptionOnErrorTrueScenario_cr
   printf("This one here: %ld\n", (long) f_throw_an_object(x > 0, x));
   return 55;
 }
-
 
 JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXStartScenario_activate(

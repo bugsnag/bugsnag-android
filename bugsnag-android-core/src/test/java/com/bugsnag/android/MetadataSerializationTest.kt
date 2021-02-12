@@ -16,7 +16,11 @@ internal class MetadataSerializationTest {
         @Parameters
         fun testCases() = generateSerializationTestCases(
             "meta_data",
-            Metadata(), basic(), nestedMap(), nestedCollection(), clearedTab()
+            Metadata(),
+            basic(),
+            nestedMap(),
+            nestedCollection(),
+            clearedTab()
         )
 
         private fun basic(): Metadata {
@@ -68,7 +72,6 @@ internal class MetadataSerializationTest {
             return metadata
         }
     }
-
 
     @Parameter
     lateinit var testCase: Pair<Metadata, String>

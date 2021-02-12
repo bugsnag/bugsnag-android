@@ -61,5 +61,4 @@ class AppWithState(
         writer.name("durationInForeground").value(durationInForeground)
         writer.name("inForeground").value(inForeground)
     }
-
 }

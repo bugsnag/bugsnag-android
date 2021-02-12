@@ -1,25 +1,26 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
-import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 
-/**
- * Sends a handled exception to Bugsnag, which includes manual context.
- */
-internal class ManualContextScenario(
+class CXXExceptionOnErrorTrueScenario(
     config: Configuration,
     context: Context,
-    eventMetadata: String
+    eventMetadata: String?
 ) : Scenario(config, context, eventMetadata) {
 
     init {
+        System.loadLibrary("bugsnag-ndk")
+        System.loadLibrary("cxx-scenarios-bugsnag")
         config.autoTrackSessions = false
     }
 
+    external fun crash()
+
     override fun startScenario() {
         super.startScenario()
-        Bugsnag.setContext("FooContext")
-        Bugsnag.notify(generateException())
+        if (eventMetadata != "non-crashy") {
+            crash()
+        }
     }
 }

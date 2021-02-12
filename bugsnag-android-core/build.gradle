@@ -1,38 +1,13 @@
+import kotlin.reflect.jvm.internal.impl.types.checker.KotlinTypeChecker
+
 plugins {
-    id "com.github.hierynomus.license"
+    id("bugsnag-build-plugin")
 }
 
 apply plugin: "com.android.library"
-apply plugin: "kotlin-android"
-apply plugin: "io.gitlab.arturbosch.detekt"
-
-android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
-    defaultConfig.minSdkVersion rootProject.ext.minSdkVersion
-    ndkVersion rootProject.ext.ndkVersion
-    defaultConfig.consumerProguardFiles = ["proguard-rules.pro"]
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
-    }
-    kotlinOptions {
-        jvmTarget = "1.6"
-    }
-    packagingOptions {
-        pickFirst "**/*.so"
-    }
-}
-
-apply from: "../gradle/dependencies.gradle"
-apply from: "../gradle/release.gradle"
-apply from: "../gradle/detekt.gradle"
-apply from: "../gradle/checkstyle.gradle"
-apply from: "../gradle/license-check.gradle"
-
-apply plugin: 'org.jetbrains.dokka'
+apply plugin: "org.jetbrains.dokka"
 
 dokka {
-    outputFormat = 'html'
+    outputFormat = "html"
     outputDirectory = "$buildDir/dokka"
 }

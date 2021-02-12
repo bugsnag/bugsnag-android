@@ -38,11 +38,12 @@ internal fun errorApiHeaders(payload: EventPayload): Map<String, String?> {
 internal fun serializeErrorTypeHeader(errorTypes: Set<ErrorType>): String {
     return when {
         errorTypes.isEmpty() -> ""
-        else -> errorTypes
-            .map(ErrorType::desc)
-            .reduce { accumulator, str ->
-                "$accumulator,$str"
-            }
+        else ->
+            errorTypes
+                .map(ErrorType::desc)
+                .reduce { accumulator, str ->
+                    "$accumulator,$str"
+                }
     }
 }
 

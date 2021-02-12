@@ -31,7 +31,8 @@ internal class Stacktrace : JsonStream.Streamable {
         fun stacktraceFromJavaTrace(
             stacktrace: Array<StackTraceElement>,
             projectPackages: Collection<String>,
-            logger: Logger): Stacktrace {
+            logger: Logger
+        ): Stacktrace {
             val frames = stacktrace.mapNotNull { serializeStackframe(it, projectPackages, logger) }
             return Stacktrace(frames)
         }
@@ -58,7 +59,6 @@ internal class Stacktrace : JsonStream.Streamable {
                 return null
             }
         }
-
     }
 
     val trace: List<Stackframe>
@@ -80,5 +80,4 @@ internal class Stacktrace : JsonStream.Streamable {
         trace.forEach { writer.value(it) }
         writer.endArray()
     }
-
 }

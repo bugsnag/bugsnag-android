@@ -32,7 +32,7 @@ class User @JvmOverloads internal constructor(
         writer.endObject()
     }
 
-    internal companion object: JsonReadable<User> {
+    internal companion object : JsonReadable<User> {
         private const val KEY_ID = "id"
         private const val KEY_NAME = "name"
         private const val KEY_EMAIL = "email"
@@ -80,5 +80,4 @@ class User @JvmOverloads internal constructor(
         result = 31 * result + (name?.hashCode() ?: 0)
         return result
     }
-
 }

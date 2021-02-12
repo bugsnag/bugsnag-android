@@ -186,5 +186,4 @@ class ThreadStateTest {
         }
         assertEquals("Expected one error reporting thread", 1, currentThreadCount)
     }
-
 }

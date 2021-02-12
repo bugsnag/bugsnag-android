@@ -1,42 +1,13 @@
 plugins {
-    id "com.github.hierynomus.license"
+    id("bugsnag-build-plugin")
 }
+
+bugsnagBuildOptions {
+    usesNdk = true
+}
+
 apply plugin: "com.android.library"
-apply plugin: "kotlin-android"
-apply plugin: "io.gitlab.arturbosch.detekt"
-apply plugin: "org.jlleitschuh.gradle.ktlint"
-
-android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
-    ndkVersion rootProject.ext.ndkVersion
-    defaultConfig.consumerProguardFiles = ["proguard-rules.pro"]
-
-    defaultConfig {
-        minSdkVersion rootProject.ext.minSdkVersion
-        externalNativeBuild.cmake.arguments "-DANDROID_CPP_FEATURES=exceptions", "-DANDROID_STL=c++_static"
-        ndk.abiFilters = project.hasProperty("ABI_FILTERS") ? project.ABI_FILTERS.split(",") :
-            ["arm64-v8a", "armeabi-v7a", "x86", "x86_64"]
-    }
-    externalNativeBuild.cmake.path = "CMakeLists.txt"
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
-    }
-    kotlinOptions {
-        jvmTarget = "1.6"
-    }
-    packagingOptions {
-        pickFirst "**/*.so"
-    }
-}
 
 dependencies {
-    api project(':bugsnag-android-core')
+    api(project(":bugsnag-android-core"))
 }
-
-apply from: "../gradle/dependencies.gradle"
-apply from: "../gradle/release.gradle"
-apply from: "../gradle/detekt.gradle"
-apply from: "../gradle/checkstyle.gradle"
-apply from: "../gradle/license-check.gradle"

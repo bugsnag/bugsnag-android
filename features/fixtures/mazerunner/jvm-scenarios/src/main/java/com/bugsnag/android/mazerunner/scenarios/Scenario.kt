@@ -30,6 +30,14 @@ abstract class Scenario(
 ) : Application.ActivityLifecycleCallbacks {
 
     /**
+     * Determines what log messages should be intercepted from Bugsnag and sent to Mazerunner
+     * using a HTTP requests to the /logs endpoint. This is used to assert that Bugsnag is
+     * behaving correctly in situations where sending an error/session payload is not
+     * possible.
+     */
+    open fun getInterceptedLogMessages() = emptyList<String>()
+
+    /**
      * Initializes Bugsnag. It is possible to override this method if the scenario requires
      * it - e.g., if the config needs to be loaded from the manifest.
      */

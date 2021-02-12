@@ -20,8 +20,13 @@ Scenario: Unhandled Java Exception with loaded configuration
     And the error payload field "events.0.exceptions.0.stacktrace" is a non-empty array
     And the event "exceptions.0.stacktrace.0.method" ends with "UnhandledJavaLoadedConfigScenario.startScenario"
     And the exception "stacktrace.0.file" equals "UnhandledJavaLoadedConfigScenario.java"
-    And the event "exceptions.0.stacktrace.0.lineNumber" equals 28
+    # R8 minification alters the lineNumber, see the mapping file/source code for the original value
+    And the event "exceptions.0.stacktrace.0.lineNumber" equals 6
     And the event "exceptions.0.stacktrace.0.inProject" is true
+
+    And the thread with name "main" contains the error reporting flag
+    And the "method" of stack frame 0 equals "com.bugsnag.android.mazerunner.scenarios.UnhandledJavaLoadedConfigScenario.startScenario"
+    And the error payload field "events.0.threads.0.stacktrace.0.method" equals "com.bugsnag.android.mazerunner.scenarios.UnhandledJavaLoadedConfigScenario.startScenario"
 
     # App data
     And the event "app.buildUUID" equals "test-7.5.3"
@@ -80,7 +85,7 @@ Scenario: Unhandled Java Exception with loaded configuration
     And the event "threads.0.stacktrace.0.file" is not null
     And the event "threads.0.stacktrace.0.lineNumber" is not null
 
-Scenario: Signal exception with overwritten config
+Scenario: Signal raised with overwritten config
     When I run "CXXSignalSmokeScenario" and relaunch the app
     And I configure Bugsnag for "CXXSignalSmokeScenario"
     And I wait to receive an error
@@ -153,6 +158,91 @@ Scenario: Signal exception with overwritten config
     # Breadcrumbs
     And the event has a "manual" breadcrumb named "CXXSignalSmokeScenario"
 
+    # Native context override
+    And the event "context" equals "Some custom context"
+
+    # Metadata
+    And the event "metaData.Riker Ipsum.examples" equals "I'll be sure to note that in my log. You enjoyed that. They wer"
+    And the event "metaData.fruit.apple" equals "gala"
+    And the event "metaData.fruit.ripe" is true
+    And the event "metaData.fruit.counters" equals 47
+
+Scenario: C++ exception thrown with overwritten config
+    When I run "CXXExceptionSmokeScenario" and relaunch the app
+    And I configure Bugsnag for "CXXExceptionSmokeScenario"
+    And I wait to receive an error
+    Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+
+    # Exception details
+    And the error payload field "events" is an array with 1 elements
+    And the exception "message" equals "How about NO"
+    And the exception "type" equals "c"
+    And the event "unhandled" is true
+    And the event "severity" equals "error"
+    And the event "severityReason.type" equals "signal"
+    And the event "severityReason.unhandledOverridden" is false
+    And the event "session.events.handled" equals 0
+    And the event "session.events.unhandled" equals 1
+
+    # Stacktrace validation
+    And the error payload field "events.0.exceptions.0.stacktrace" is a non-empty array
+    And the event "exceptions.0.stacktrace.0.method" is not null
+    And the event "exceptions.0.stacktrace.0.file" is not null
+    And the error payload field "events.0.exceptions.0.stacktrace.0.frameAddress" is greater than 0
+    And the error payload field "events.0.exceptions.0.stacktrace.0.symbolAddress" is greater than 0
+    And the error payload field "events.0.exceptions.0.stacktrace.0.loadAddress" is greater than 0
+    And the error payload field "events.0.exceptions.0.stacktrace.0.lineNumber" is greater than 0
+
+    # App data
+    And the event "app.buildUUID" equals "test-7.5.3"
+    And the event "app.id" equals "com.bugsnag.android.mazerunner"
+    And the event "app.releaseStage" equals "CXXExceptionSmokeScenario"
+    And the event "app.type" equals "Overwritten"
+    And the event "app.version" equals "9.9.9"
+    And the event "app.versionCode" equals 999
+    And the error payload field "events.0.app.duration" is an integer
+    And the error payload field "events.0.app.durationInForeground" is an integer
+    And the event "app.inForeground" is true
+    And the event "metaData.app.name" equals "MazeRunner"
+
+    # Device data
+    And the error payload field "events.0.device.cpuAbi" is a non-empty array
+    And the event "device.jailbroken" is false
+    And the event "device.id" is not null
+    And the event "device.locale" is not null
+    And the event "device.manufacturer" is not null
+    And the event "device.model" is not null
+    And the event "device.osName" equals "android"
+    And the event "device.osVersion" is not null
+    And the event "device.runtimeVersions" is not null
+    And the event "device.runtimeVersions.androidApiLevel" is not null
+    And the event "device.runtimeVersions.osBuild" is not null
+    And the error payload field "events.0.device.totalMemory" is greater than 0
+    And the event "device.orientation" equals "portrait"
+    And the event "device.time" is a timestamp
+    And the event "metaData.device.locationStatus" is not null
+    And the event "metaData.device.emulator" is false
+    And the event "metaData.device.networkAccess" is not null
+    And the event "metaData.device.screenDensity" is not null
+    And the event "metaData.device.dpi" is not null
+    And the event "metaData.device.screenResolution" is not null
+    And the event "metaData.device.brand" is not null
+
+    # Context
+    And the event "context" equals "Some custom context"
+
+    # User
+    And the event "user.id" equals "ABC"
+    And the event "user.email" equals "ABC@CBA.CA"
+    And the event "user.name" equals "CXXExceptionSmokeScenario"
+
+    # Breadcrumbs
+    And the event has a "manual" breadcrumb named "CXXExceptionSmokeScenario"
+
+    # Native context override
+    And the event "context" equals "Some custom context"
+
+@skip_android_8_1
 Scenario: ANR detection
     When I run "JvmAnrLoopScenario"
     And I wait for 2 seconds

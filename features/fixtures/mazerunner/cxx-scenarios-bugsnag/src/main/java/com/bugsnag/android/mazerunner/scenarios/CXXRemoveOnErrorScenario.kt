@@ -1,25 +1,25 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
-import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 
-/**
- * Sends a handled exception to Bugsnag, which overrides the app version
- */
-internal class AppVersionScenario(
+class CXXRemoveOnErrorScenario(
     config: Configuration,
     context: Context,
-    eventMetadata: String
+    eventMetadata: String?
 ) : Scenario(config, context, eventMetadata) {
 
     init {
+        System.loadLibrary("bugsnag-ndk")
+        System.loadLibrary("cxx-scenarios-bugsnag")
         config.autoTrackSessions = false
-        config.appVersion = "1.2.3.abc"
+        config.context = "CXXRemoveOnErrorScenario"
     }
+
+    external fun activate()
 
     override fun startScenario() {
         super.startScenario()
-        Bugsnag.notify(generateException())
+        activate()
     }
 }

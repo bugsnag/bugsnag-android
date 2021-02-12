@@ -5,7 +5,7 @@ internal class ErrorInternal @JvmOverloads internal constructor(
     var errorMessage: String?,
     stacktrace: Stacktrace,
     var type: ErrorType = ErrorType.ANDROID
-): JsonStream.Streamable {
+) : JsonStream.Streamable {
 
     val stacktrace: List<Stackframe> = stacktrace.trace
 

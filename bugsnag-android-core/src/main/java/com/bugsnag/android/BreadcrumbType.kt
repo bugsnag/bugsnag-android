@@ -39,4 +39,3 @@ enum class BreadcrumbType(private val type: String) {
 
     override fun toString() = type
 }
-
