@@ -9,57 +9,67 @@
     android:layout_height="wrap_content"
     android:layout_weight="6" />
 
+  <EditText
+          android:id="@+id/scenario_name"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_weight="0"
+          android:ems="10"
+          android:hint="Scenario name"
+          android:inputType="text" />
+
+  <EditText
+          android:id="@+id/scenario_metadata"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_weight="0"
+          android:ems="10"
+          android:hint="Scenario metadata"
+          android:inputType="text" />
+
+  <Space
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_weight="6" />
+
+  <EditText
+          android:id="@+id/notify_endpoint"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_weight="0"
+          android:ems="10"
+          android:hint="Notify endpoint"
+          android:inputType="text"
+          android:text="http://bs-local.com:9339/notify" />
+
+  <EditText
+          android:id="@+id/session_endpoint"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_weight="0"
+          android:ems="10"
+          android:hint="Session endpoint"
+          android:inputType="text"
+          android:text="http://bs-local.com:9339/sessions" />
+
+  <Space
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_weight="6" />
+
   <Button
-    android:id="@+id/startBugsnagButton"
+    android:id="@+id/start_bugsnag"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_weight="0"
     android:text="Start Bugsnag" />
 
   <Button
-    android:id="@+id/startScenarioButton"
+    android:id="@+id/run_scenario"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_weight="0"
     android:text="Execute" />
-
-  <EditText
-    android:id="@+id/notifyEndpoint"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_weight="0"
-    android:ems="10"
-    android:hint="Notify endpoint"
-    android:inputType="text"
-    android:text="http://bs-local.com:9339/notify" />
-
-  <EditText
-    android:id="@+id/sessionEndpoint"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_weight="0"
-    android:ems="10"
-    android:hint="Session endpoint"
-    android:inputType="text"
-    android:text="http://bs-local.com:9339/sessions" />
-
-  <EditText
-    android:id="@+id/scenarioText"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_weight="0"
-    android:ems="10"
-    android:hint="Enter scenario name"
-    android:inputType="text" />
-
-  <EditText
-    android:id="@+id/scenarioMetaData"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_weight="0"
-    android:ems="10"
-    android:hint="Enter scenario metadata"
-    android:inputType="text" />
 
   <Space
     android:layout_width="match_parent"

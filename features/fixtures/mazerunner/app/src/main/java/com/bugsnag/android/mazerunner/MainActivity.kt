@@ -28,13 +28,13 @@ class MainActivity : Activity() {
         sendBroadcast(closeDialog)
 
         // load the scenario first, which initialises bugsnag without running any crashy code
-        findViewById<Button>(R.id.startBugsnagButton).setOnClickListener {
+        findViewById<Button>(R.id.start_bugsnag).setOnClickListener {
             scenario = loadScenarioFromUi()
             scenario?.startBugsnag()
         }
 
         // execute the pre-loaded scenario, or load it then execute it if needed
-        findViewById<Button>(R.id.startScenarioButton).setOnClickListener {
+        findViewById<Button>(R.id.run_scenario).setOnClickListener {
             if (scenario == null) {
                 scenario = loadScenarioFromUi()
                 scenario?.startBugsnag()
@@ -71,9 +71,9 @@ class MainActivity : Activity() {
     }
 
     private fun loadScenarioFromUi(): Scenario {
-        val scenarioPicker = findViewById<EditText>(R.id.scenarioText)
+        val scenarioPicker = findViewById<EditText>(R.id.scenario_name)
         val eventType = scenarioPicker.text.toString()
-        val eventMetadata = findViewById<EditText>(R.id.scenarioMetaData)
+        val eventMetadata = findViewById<EditText>(R.id.scenario_metadata)
         val metadata = eventMetadata.text.toString()
 
         val config = loadConfigFromUi()
@@ -82,8 +82,8 @@ class MainActivity : Activity() {
 
     private fun loadConfigFromUi(): Configuration {
         val apiKeyField = findViewById<EditText>(R.id.manualApiKey)
-        val notifyEndpointField = findViewById<EditText>(R.id.notifyEndpoint)
-        val sessionEndpointField = findViewById<EditText>(R.id.sessionEndpoint)
+        val notifyEndpointField = findViewById<EditText>(R.id.notify_endpoint)
+        val sessionEndpointField = findViewById<EditText>(R.id.session_endpoint)
 
         val manualMode = apiKeyField.text.isNotEmpty()
         val apiKey = when {
