@@ -8,11 +8,9 @@ steps:
           image-repository: 855461928731.dkr.ecr.us-west-1.amazonaws.com/android
           cache-from:
             - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
-            - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
       - docker-compose#v2.6.0:
           push:
             - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
-            - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
 
   - wait
 
@@ -24,13 +22,10 @@ steps:
             - android-jvm
           cache-from:
             - android-jvm:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
-            - android-jvm:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
             - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
-            - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
       - docker-compose#v2.6.0:
           push:
             - android-jvm:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
-            - android-jvm:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
 
   - label: ':docker: Build Android instrumentation image'
     timeout_in_minutes: 40
@@ -39,13 +34,10 @@ steps:
           build: android-instrumentation-tests
           cache-from:
             - android-instrumentation-tests:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
-            - android-instrumentation-tests:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
             - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
-            - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
       - docker-compose#v2.6.0:
           push:
             - android-instrumentation-tests:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
-            - android-instrumentation-tests:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
 
   - label: ':docker: Build Android apk builder image'
     timeout_in_minutes: 40
@@ -54,13 +46,10 @@ steps:
           build: android-builder
           cache-from:
             - android-builder:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
-            - android-builder:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
             - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
-            - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
       - docker-compose#v2.6.0:
           push:
             - android-builder:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
-            - android-builder:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
     env:
       MAVEN_VERSION: "3.6.1"
 
@@ -102,13 +91,10 @@ steps:
           build: android-sizer
           cache-from:
             - android-sizer:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-sizer-${BRANCH_NAME}
-            - android-sizer:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-sizer-latest
             - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
-            - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
       - docker-compose#v2.6.0:
           push:
             - android-sizer:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-sizer-${BRANCH_NAME}
-            - android-sizer:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-sizer-latest
     env:
       MAVEN_VERSION: "3.6.1"
 
