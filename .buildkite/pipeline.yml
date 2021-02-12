@@ -189,6 +189,23 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
+  - label: ':android: Android 6 end-to-end tests - 2'
+    depends_on: "build-fixture"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/fixture.apk"
+      docker-compose#v2.6.0:
+        run: android-maze-runner
+        command:
+          - "-e"
+          - "features/[a-m].*.feature"
+    env:
+      DEVICE_TYPE: "ANDROID_6"
+      APP_LOCATION: "/app/build/fixture.apk"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
   - label: ':android: Android 7 end-to-end tests - 1'
     depends_on: "build-fixture"
     timeout_in_minutes: 60
