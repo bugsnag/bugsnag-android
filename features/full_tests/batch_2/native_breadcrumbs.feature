@@ -1,18 +1,5 @@
 Feature: Native Breadcrumbs API
 
-    Scenario: Leaving a breadcrumb followed by a C crash
-        When I run "CXXNativeBreadcrumbNativeCrashScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
-        And I configure Bugsnag for "CXXNativeBreadcrumbNativeCrashScenario"
-        And I wait to receive an error
-        Then the error payload contains a completed handled native report
-        And the event has a "request" breadcrumb named "Substandard nacho error"
-        And the exception "errorClass" equals one of:
-            | SIGILL  |
-            | SIGTRAP |
-        And the event "severity" equals "error"
-        And the event "unhandled" is true
-
     Scenario: Leaving breadcrumbs in Java and C followed by a C crash
         When I run "CXXJavaBreadcrumbNativeBreadcrumbScenario" and relaunch the app
         And I configure the app to run in the "non-crashy" state

@@ -97,17 +97,6 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXNativeBreadcrumbJavaNotifyScena
   bugsnag_leave_breadcrumb_env(env, (char *) "Rerun field analysis", BSG_CRUMB_PROCESS);
 }
 
-JNIEXPORT int JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_CXXNativeBreadcrumbNativeCrashScenario_activate(
-    JNIEnv *env,
-    jobject instance) {
-  bugsnag_leave_breadcrumb_env(env, (char *) "Substandard nacho error", BSG_CRUMB_REQUEST);
-  int x = 47;
-  if (x > 0)
-    __builtin_trap();
-  return 308;
-}
-
 JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXNativeBreadcrumbJavaCrashScenario_activate(
     JNIEnv *env,
@@ -141,6 +130,7 @@ JNIEXPORT int JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXSignalSmokeScenario_crash(JNIEnv *env,
                                                                            jobject instance,
                                                                            jint value) {
+  bugsnag_leave_breadcrumb_env(env, (char *) "Substandard nacho error", BSG_CRUMB_REQUEST);
   bugsnag_add_on_error(&on_err_true);
   int x = 38;
   if (value > 0) {
