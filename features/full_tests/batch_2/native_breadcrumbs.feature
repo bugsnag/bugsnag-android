@@ -1,32 +1,5 @@
 Feature: Native Breadcrumbs API
 
-    Scenario: Leaving breadcrumbs in Java and C followed by a C crash
-        When I run "CXXJavaBreadcrumbNativeBreadcrumbScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
-        And I configure Bugsnag for "CXXJavaBreadcrumbNativeBreadcrumbScenario"
-        And I wait to receive an error
-        And the error payload contains a completed handled native report
-        And the exception "errorClass" equals one of:
-            | SIGILL  |
-            | SIGTRAP |
-        And the event "severity" equals "error"
-        And the event has a "log" breadcrumb named "Warm beer detected"
-        And the event has a "manual" breadcrumb with the message "Reverse thrusters"
-        And the event "unhandled" is true
-
-    Scenario: Leaving breadcrumbs in Java followed by a C crash
-        When I run "CXXJavaBreadcrumbNativeCrashScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
-        And I configure Bugsnag for "CXXJavaBreadcrumbNativeCrashScenario"
-        And I wait to receive an error
-        And the error payload contains a completed handled native report
-        And the exception "errorClass" equals one of:
-            | SIGILL  |
-            | SIGTRAP |
-        And the event "severity" equals "error"
-        And the event has a "manual" breadcrumb with the message "Bridge connector activated"
-        And the event "unhandled" is true
-
     Scenario: Leaving breadcrumbs in C followed by a Java crash
         When I run "CXXNativeBreadcrumbJavaCrashScenario" and relaunch the app
         And I configure the app to run in the "non-crashy" state
