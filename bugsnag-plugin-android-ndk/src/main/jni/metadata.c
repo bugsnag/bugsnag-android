@@ -263,7 +263,7 @@ void bsg_copy_map_value_string(JNIEnv *env, bsg_jni_cache *jni_cache,
   if (_value != NULL) {
     char *value = (char *)(*env)->GetStringUTFChars(env, (jstring)_value, 0);
     bsg_strncpy_safe(dest, value, len);
-    (*env)->ReleaseStringUTFChars(env, _value, value);
+    bsg_safe_release_string_utf_chars(env, _value, value);
   }
 }
 
@@ -335,7 +335,7 @@ int bsg_populate_cpu_abi_from_map(JNIEnv *env, bsg_jni_cache *jni_cache,
       char *abi = (char *)(*env)->GetStringUTFChars(env, jabi, 0);
       bsg_strncpy_safe(device->cpu_abi[i].value, abi,
                        sizeof(device->cpu_abi[i].value));
-      (*env)->ReleaseStringUTFChars(env, jabi, abi);
+      bsg_safe_release_string_utf_chars(env, jabi, abi);
       device->cpu_abi_count++;
     }
     bsg_safe_delete_local_ref(env, _value);
@@ -388,7 +388,7 @@ void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,
       char *key = (char *)(*env)->GetStringUTFChars(env, _key, 0);
       bsg_populate_metadata_value(env, &crumb->metadata, jni_cache, "metaData",
                                   key, _value);
-      (*env)->ReleaseStringUTFChars(env, _key, key);
+      bsg_safe_release_string_utf_chars(env, _key, key);
     }
   }
   goto exit;
@@ -568,7 +568,7 @@ void bsg_populate_context(JNIEnv *env, bsg_jni_cache *jni_cache,
   if (_context != NULL) {
     const char *value = (*env)->GetStringUTFChars(env, (jstring)_context, 0);
     strncpy(event->context, value, sizeof(event->context) - 1);
-    (*env)->ReleaseStringUTFChars(env, _context, value);
+    bsg_safe_release_string_utf_chars(env, _context, value);
   } else {
     memset(&event->context, 0, strlen(event->context));
   }
@@ -618,7 +618,7 @@ void bsg_populate_metadata_obj(JNIEnv *env, bugsnag_metadata *dst,
   jobject _value = bsg_safe_call_object_method(env, section, jni_cache->map_get,
                                                section_key);
   bsg_populate_metadata_value(env, dst, jni_cache, section, name, _value);
-  (*env)->ReleaseStringUTFChars(env, section_key, name);
+  bsg_safe_release_string_utf_chars(env, section_key, name);
   bsg_safe_delete_local_ref(env, _value);
 }
 
@@ -665,7 +665,7 @@ void bsg_populate_metadata_section(JNIEnv *env, bugsnag_metadata *dst,
   goto exit;
 
 exit:
-  (*env)->ReleaseStringUTFChars(env, _key, section);
+  bsg_safe_release_string_utf_chars(env, _key, section);
   bsg_safe_delete_local_ref(env, section_keyset);
   bsg_safe_delete_local_ref(env, section_keylist);
   bsg_safe_delete_local_ref(env, _section);
