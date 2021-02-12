@@ -23,9 +23,7 @@ class CXXThrowSomethingOutsideReleaseStagesScenario(
 
     override fun startScenario() {
         super.startScenario()
-        if ("non-crashy" != eventMetadata) {
-            crash(23)
-        }
+        crash(23)
     }
 
     override fun getInterceptedLogMessages() = getZeroEventsLogMessages(eventMetadata)
