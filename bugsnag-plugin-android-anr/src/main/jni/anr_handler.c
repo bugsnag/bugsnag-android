@@ -25,19 +25,57 @@ static JavaVM *bsg_jvm = NULL;
 static jmethodID mthd_notify_anr_detected = NULL;
 static jobject obj_plugin = NULL;
 
-static bool configure_anr_jni(JNIEnv *env) {
-  // get a global reference to the AnrPlugin class
+// duplication required for this method that originally came from
+// bugsnag-plugin-android-ndk. Until a shared C module is available
+// for sharing common code when PLAT-5794 is addressed, this
+// duplication is a necessary evil.
+bool bsg_check_and_clear_exc(JNIEnv *env) {
+  if (env == NULL) {
+    return false;
+  }
+  if ((*env)->ExceptionCheck(env)) {
+    (*env)->ExceptionClear(env);
+    return true;
+  }
+  return false;
+}
+
+bool configure_anr_jni_impl(
+    JNIEnv *env) { // get a global reference to the AnrPlugin class
   // https://developer.android.com/training/articles/perf-jni#faq:-why-didnt-findclass-find-my-class
+  if (env == NULL) {
+    return false;
+  }
   int result = (*env)->GetJavaVM(env, &bsg_jvm);
   if (result != 0) {
-    BUGSNAG_LOG("Failed to fetch Java VM. ANR handler not installed.");
     return false;
   }
 
   jclass clz = (*env)->FindClass(env, "com/bugsnag/android/AnrPlugin");
+  if (bsg_check_and_clear_exc(env) || clz == NULL) {
+    return false;
+  }
   mthd_notify_anr_detected =
       (*env)->GetMethodID(env, clz, "notifyAnrDetected", "()V");
+  if (bsg_check_and_clear_exc(env) || mthd_notify_anr_detected == NULL) {
+    return false;
+  }
   return true;
+}
+
+static bool configure_anr_jni(JNIEnv *env) {
+  bool success = configure_anr_jni_impl(env);
+  if (!success) {
+    BUGSNAG_LOG("Failed to fetch Java VM. ANR handler not installed.");
+  }
+  return success;
+}
+
+void notify_anr_detected_impl(JNIEnv *env) {
+  if (env != NULL && obj_plugin != NULL && mthd_notify_anr_detected != NULL) {
+    (*env)->CallVoidMethod(env, obj_plugin, mthd_notify_anr_detected);
+    bsg_check_and_clear_exc(env);
+  }
 }
 
 static void notify_anr_detected() {
@@ -46,10 +84,10 @@ static void notify_anr_detected() {
     int result = (*bsg_jvm)->GetEnv(bsg_jvm, (void **)&env, JNI_VERSION_1_4);
 
     if (result == JNI_OK) { // already attached
-      (*env)->CallVoidMethod(env, obj_plugin, mthd_notify_anr_detected);
+      notify_anr_detected_impl(env);
     } else if (result == JNI_EDETACHED) { // attach before calling JNI
       if ((*bsg_jvm)->AttachCurrentThread(bsg_jvm, &env, NULL) == 0) {
-        (*env)->CallVoidMethod(env, obj_plugin, mthd_notify_anr_detected);
+        notify_anr_detected_impl(env);
         (*bsg_jvm)->DetachCurrentThread(
             bsg_jvm); // detach to restore initial condition
       }
@@ -126,7 +164,7 @@ bool bsg_handler_install_anr(JNIEnv *env, jobject plugin,
                              jboolean callPreviousSigquitHandler) {
   pthread_mutex_lock(&bsg_anr_handler_config);
 
-  if (!installed && configure_anr_jni(env)) {
+  if (!installed && configure_anr_jni(env) && plugin != NULL) {
     obj_plugin = (*env)->NewGlobalRef(env, plugin);
     install_signal_handler();
     installed = true;
