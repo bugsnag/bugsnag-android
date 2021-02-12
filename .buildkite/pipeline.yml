@@ -1,6 +1,7 @@
 steps:
   - label: ':docker: Build Android base image'
     timeout_in_minutes: 30
+    key: "build-android-base"
     plugins:
       - docker-compose#v2.6.0:
           build:
@@ -12,10 +13,10 @@ steps:
           push:
             - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
 
-  - wait
-
   - label: ':docker: Build Android jvm test image'
     timeout_in_minutes: 40
+    key: "build-android-jvm"
+    depends_on: "build-android-base"
     plugins:
       - docker-compose#v2.6.0:
           build:
@@ -29,6 +30,8 @@ steps:
 
   - label: ':docker: Build Android instrumentation image'
     timeout_in_minutes: 40
+    key: "build-android-instrumentation-tests"
+    depends_on: "build-android-base"
     plugins:
       - docker-compose#v2.6.0:
           build: android-instrumentation-tests
@@ -41,6 +44,8 @@ steps:
 
   - label: ':docker: Build Android apk builder image'
     timeout_in_minutes: 40
+    key: "build-android-builder"
+    depends_on: "build-android-base"
     plugins:
       - docker-compose#v2.6.0:
           build: android-builder
@@ -53,15 +58,8 @@ steps:
     env:
       MAVEN_VERSION: "3.6.1"
 
-  - label: ':docker: Build Android maze runner image'
-    timeout_in_minutes: 20
-    plugins:
-      - docker-compose#v2.6.0:
-          build: android-maze-runner
-
-  - wait
-
   - label: ':android: Linter'
+    depends_on: "build-android-jvm"
     timeout_in_minutes: 30
     plugins:
       - docker-compose#v2.6.0:
@@ -69,6 +67,7 @@ steps:
     command: 'bash ./scripts/run-linter.sh'
 
   - label: ':android: JVM tests'
+    depends_on: "build-android-jvm"
     timeout_in_minutes: 30
     plugins:
       - docker-compose#v2.6.0:
@@ -76,6 +75,8 @@ steps:
     command: './gradlew test'
 
   - label: ':android: Build fixture APK'
+    key: "build-fixture"
+    depends_on: "build-android-builder"
     timeout_in_minutes: 30
     artifact_paths: build/fixture.apk
     plugins:
@@ -85,6 +86,8 @@ steps:
       MAVEN_VERSION: "3.6.1"
 
   - label: ':docker: Build Android sizer image'
+    key: "build-android-sizer"
+    depends_on: "build-android-base"
     timeout_in_minutes: 40
     plugins:
       - docker-compose#v2.6.0:
@@ -98,15 +101,15 @@ steps:
     env:
       MAVEN_VERSION: "3.6.1"
 
-  - wait
-
   - label: ':android: Android size reporting'
+    depends_on: "build-android-sizer"
     timeout_in_minutes: 30
     plugins:
       - docker-compose#v2.6.0:
           run: android-sizer
 
   - label: ':android: Android 9 end-to-end tests'
+    depends_on: "build-fixture"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -120,6 +123,7 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 16b SDK 9.0 Instrumentation tests'
+    depends_on: "build-android-instrumentation-tests"
     timeout_in_minutes: 60
     plugins:
       - docker-compose#v2.6.0:
@@ -135,6 +139,7 @@ steps:
 
   - label: ':android: Android 5 end-to-end tests'
     skip: Temporarily disabled due to flakiness with BrowserStack tunneling
+    depends_on: "build-fixture"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -148,6 +153,7 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 6 end-to-end tests'
+    depends_on: "build-fixture"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -161,6 +167,7 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 7 end-to-end tests'
+    depends_on: "build-fixture"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -174,6 +181,7 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 8 end-to-end tests'
+    depends_on: "build-fixture"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -187,6 +195,7 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 16b SDK 4.4 Instrumentation tests'
+    depends_on: "build-android-instrumentation-tests"
     timeout_in_minutes: 60
     plugins:
       - docker-compose#v2.6.0:
@@ -199,6 +208,7 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 16b SDK 7.1 Instrumentation tests'
+    depends_on: "build-android-instrumentation-tests"
     timeout_in_minutes: 60
     plugins:
       - docker-compose#v2.6.0:
@@ -211,6 +221,7 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 12b SDK 4.4 Instrumentation tests'
+    depends_on: "build-android-instrumentation-tests"
     timeout_in_minutes: 60
     plugins:
       - docker-compose#v2.6.0:
@@ -223,6 +234,7 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 12b SDK 7.1 Instrumentation tests'
+    depends_on: "build-android-instrumentation-tests"
     timeout_in_minutes: 60
     plugins:
       - docker-compose#v2.6.0:
@@ -235,6 +247,7 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 12b SDK 9.0 Instrumentation tests'
+    depends_on: "build-android-instrumentation-tests"
     timeout_in_minutes: 60
     plugins:
       - docker-compose#v2.6.0:
@@ -247,6 +260,7 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 19 SDK 4.4 Instrumentation tests'
+    depends_on: "build-android-instrumentation-tests"
     timeout_in_minutes: 60
     plugins:
       - docker-compose#v2.6.0:
@@ -259,6 +273,7 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 19 SDK 7.1 Instrumentation tests'
+    depends_on: "build-android-instrumentation-tests"
     timeout_in_minutes: 60
     plugins:
       - docker-compose#v2.6.0:
@@ -271,6 +286,7 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 19 SDK 9.0 Instrumentation tests'
+    depends_on: "build-android-instrumentation-tests"
     timeout_in_minutes: 60
     plugins:
       - docker-compose#v2.6.0:
