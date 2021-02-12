@@ -323,7 +323,7 @@ int bsg_populate_cpu_abi_from_map(JNIEnv *env, bsg_jni_cache *jni_cache,
   jobjectArray _value =
       bsg_safe_call_object_method(env, map, jni_cache->hash_map_get, key);
   if (_value != NULL) {
-    int count = (*env)->GetArrayLength(env, _value);
+    int count = bsg_safe_get_array_length(env, _value);
 
     // get the ABI as a Java string and copy it to bsg_device_info
     for (int i = 0; i < count && i < sizeof(device->cpu_abi); i++) {
@@ -589,17 +589,17 @@ void bsg_populate_event(JNIEnv *env, bugsnag_event *event) {
 void bsg_populate_metadata_value(JNIEnv *env, bugsnag_metadata *dst,
                                  bsg_jni_cache *jni_cache, char *section,
                                  char *name, jobject _value) {
-  if ((*env)->IsInstanceOf(env, _value, jni_cache->number)) {
+  if (bsg_safe_is_instance_of(env, _value, jni_cache->number)) {
     // add a double metadata value
     double value = bsg_safe_call_double_method(env, _value,
                                                jni_cache->number_double_value);
     bsg_add_metadata_value_double(dst, section, name, value);
-  } else if ((*env)->IsInstanceOf(env, _value, jni_cache->boolean)) {
+  } else if (bsg_safe_is_instance_of(env, _value, jni_cache->boolean)) {
     // add a boolean metadata value
     bool value = bsg_safe_call_boolean_method(env, _value,
                                               jni_cache->boolean_bool_value);
     bsg_add_metadata_value_bool(dst, section, name, value);
-  } else if ((*env)->IsInstanceOf(env, _value, jni_cache->string)) {
+  } else if (bsg_safe_is_instance_of(env, _value, jni_cache->string)) {
     char *value = (char *)(*env)->GetStringUTFChars(env, _value, 0);
     bsg_add_metadata_value_str(dst, section, name, value);
     free(value);
