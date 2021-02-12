@@ -188,7 +188,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
         bsg_safe_call_static_void_method(env, interface_class, jdeliver_method,
                                          jstage, jpayload, japi_key);
       }
-      (*env)->DeleteLocalRef(env, japi_key);
+      bsg_safe_delete_local_ref(env, japi_key);
     } else {
       BUGSNAG_LOG("Failed to serialize event as JSON: %s", event_path);
     }
@@ -210,8 +210,8 @@ exit:
     (*env)->ReleaseByteArrayElements(
         env, jstage, (jbyte *)event->app.release_stage, JNI_COMMIT);
   }
-  (*env)->DeleteLocalRef(env, jpayload);
-  (*env)->DeleteLocalRef(env, jstage);
+  bsg_safe_delete_local_ref(env, jpayload);
+  bsg_safe_delete_local_ref(env, jstage);
 }
 
 JNIEXPORT void JNICALL
