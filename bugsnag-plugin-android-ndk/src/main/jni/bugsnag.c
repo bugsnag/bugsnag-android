@@ -65,11 +65,6 @@ jfieldID bsg_parse_jseverity(JNIEnv *env, bugsnag_severity severity,
   }
 }
 
-void bsg_release_byte_ary(JNIEnv *env, jbyteArray array, char *original_text) {
-  bsg_safe_release_byte_array_elements(env, array, (jbyte *)original_text,
-                                       JNI_COMMIT);
-}
-
 void bsg_populate_notify_stacktrace(JNIEnv *env, bugsnag_stackframe *stacktrace,
                                     ssize_t frame_count, jclass trace_class,
                                     jmethodID trace_constructor,
@@ -198,10 +193,11 @@ void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
 
 exit:
   if (jname != NULL) {
-    bsg_release_byte_ary(env, jname, name);
+    bsg_safe_release_byte_array_elements(env, jname, (jbyte *)name, JNI_COMMIT);
   }
   if (jmessage != NULL) {
-    bsg_release_byte_ary(env, jmessage, message);
+    bsg_safe_release_byte_array_elements(env, jmessage, (jbyte *)message,
+                                         JNI_COMMIT);
   }
   bsg_safe_delete_local_ref(env, jname);
   bsg_safe_delete_local_ref(env, jmessage);
@@ -271,9 +267,9 @@ void bugsnag_set_user_env(JNIEnv *env, char *id, char *email, char *name) {
   bsg_safe_call_static_void_method(env, interface_class, set_user_method, jid,
                                    jemail, jname);
 
-  bsg_release_byte_ary(env, jid, id);
-  bsg_release_byte_ary(env, jemail, email);
-  bsg_release_byte_ary(env, jname, name);
+  bsg_safe_release_byte_array_elements(env, jid, (jbyte *)id, JNI_COMMIT);
+  bsg_safe_release_byte_array_elements(env, jemail, (jbyte *)email, JNI_COMMIT);
+  bsg_safe_release_byte_array_elements(env, jname, (jbyte *)name, JNI_COMMIT);
 
   bsg_safe_delete_local_ref(env, jid);
   bsg_safe_delete_local_ref(env, jemail);
@@ -355,8 +351,10 @@ void bugsnag_leave_breadcrumb_env(JNIEnv *env, char *message,
 
   goto exit;
 
-exit:
-  bsg_release_byte_ary(env, jmessage, message);
+exit : {
+  bsg_safe_release_byte_array_elements(env, jmessage, (jbyte *)message,
+                                       JNI_COMMIT);
+}
   bsg_safe_delete_local_ref(env, interface_class);
   bsg_safe_delete_local_ref(env, type_class);
   bsg_safe_delete_local_ref(env, jtype);

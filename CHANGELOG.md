@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* Check additional JNI calls for pending exceptions and no-op
+  [#1133](https://github.com/bugsnag/bugsnag-android/pull/1133)
+
 ## 5.6.0 (2021-02-08)
 
 ### Enhancements

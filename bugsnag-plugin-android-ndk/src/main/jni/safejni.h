@@ -175,7 +175,7 @@ void bsg_safe_release_byte_array_elements(JNIEnv *env, jbyteArray array,
                                           jbyte *elems, jint mode);
 
 /**
- * A safe wrapper for the JNI's ReleaseStringUTFChars. This method checks if the
+ * A safe wrapper for the JNI's GetArrayLength. This method checks if the
  * parameters are NULL and no-ops if so. The caller is responsible for handling
  * the invalid return value of -1.
  */
