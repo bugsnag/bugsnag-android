@@ -3,13 +3,13 @@ steps:
     timeout_in_minutes: 30
     key: "build-android-base"
     plugins:
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.7.0:
           build:
             - android-base
           image-repository: 855461928731.dkr.ecr.us-west-1.amazonaws.com/android
           cache-from:
             - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.7.0:
           push:
             - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
 
@@ -18,13 +18,13 @@ steps:
     key: "build-android-jvm"
     depends_on: "build-android-base"
     plugins:
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.7.0:
           build:
             - android-jvm
           cache-from:
             - android-jvm:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
             - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.7.0:
           push:
             - android-jvm:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
 
@@ -33,12 +33,12 @@ steps:
     key: "build-android-instrumentation-tests"
     depends_on: "build-android-base"
     plugins:
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.7.0:
           build: android-instrumentation-tests
           cache-from:
             - android-instrumentation-tests:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
             - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.7.0:
           push:
             - android-instrumentation-tests:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
 
@@ -47,12 +47,12 @@ steps:
     key: "build-android-builder"
     depends_on: "build-android-base"
     plugins:
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.7.0:
           build: android-builder
           cache-from:
             - android-builder:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
             - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.7.0:
           push:
             - android-builder:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
     env:
@@ -62,7 +62,7 @@ steps:
     depends_on: "build-android-jvm"
     timeout_in_minutes: 30
     plugins:
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.7.0:
           run: android-jvm
     command: 'bash ./scripts/run-linter.sh'
 
@@ -70,7 +70,7 @@ steps:
     depends_on: "build-android-jvm"
     timeout_in_minutes: 30
     plugins:
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.7.0:
           run: android-jvm
     command: './gradlew test'
 
@@ -80,7 +80,7 @@ steps:
     timeout_in_minutes: 30
     artifact_paths: build/fixture.apk
     plugins:
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.7.0:
           run: android-builder
     env:
       MAVEN_VERSION: "3.6.1"
@@ -90,12 +90,12 @@ steps:
     depends_on: "build-android-base"
     timeout_in_minutes: 40
     plugins:
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.7.0:
           build: android-sizer
           cache-from:
             - android-sizer:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-sizer-${BRANCH_NAME}
             - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.7.0:
           push:
             - android-sizer:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-sizer-${BRANCH_NAME}
     env:
@@ -105,7 +105,7 @@ steps:
     depends_on: "build-android-sizer"
     timeout_in_minutes: 30
     plugins:
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.7.0:
           run: android-sizer
 
   - label: ':android: Android 9 end-to-end tests - 1'
@@ -114,7 +114,7 @@ steps:
     plugins:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
-      docker-compose#v2.6.0:
+      docker-compose#v3.7.0:
         run: android-maze-runner
         command:
           - "-e"
@@ -131,7 +131,7 @@ steps:
     plugins:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
-      docker-compose#v2.6.0:
+      docker-compose#v3.7.0:
         run: android-maze-runner
         command:
           - "-e"
@@ -146,7 +146,7 @@ steps:
     depends_on: "build-android-instrumentation-tests"
     timeout_in_minutes: 60
     plugins:
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.7.0:
           run: android-instrumentation-tests
     env:
       APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
@@ -164,7 +164,7 @@ steps:
     plugins:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
-      docker-compose#v2.6.0:
+      docker-compose#v3.7.0:
         run: android-maze-runner
     env:
       DEVICE_TYPE: "ANDROID_5"
@@ -178,7 +178,7 @@ steps:
     plugins:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
-      docker-compose#v2.6.0:
+      docker-compose#v3.7.0:
         run: android-maze-runner
         command:
           - "-e"
@@ -195,7 +195,7 @@ steps:
     plugins:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
-      docker-compose#v2.6.0:
+      docker-compose#v3.7.0:
         run: android-maze-runner
         command:
           - "-e"
@@ -212,7 +212,7 @@ steps:
     plugins:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
-      docker-compose#v2.6.0:
+      docker-compose#v3.7.0:
         run: android-maze-runner
         command:
           - "-e"
@@ -229,7 +229,7 @@ steps:
     plugins:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
-      docker-compose#v2.6.0:
+      docker-compose#v3.7.0:
         run: android-maze-runner
         command:
           - "-e"
@@ -246,7 +246,7 @@ steps:
     plugins:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
-      docker-compose#v2.6.0:
+      docker-compose#v3.7.0:
         run: android-maze-runner
         command:
           - "-e"
@@ -263,7 +263,7 @@ steps:
     plugins:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
-      docker-compose#v2.6.0:
+      docker-compose#v3.7.0:
         run: android-maze-runner
         command:
           - "-e"
@@ -278,7 +278,7 @@ steps:
     depends_on: "build-android-instrumentation-tests"
     timeout_in_minutes: 60
     plugins:
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.7.0:
           run: android-instrumentation-tests
     env:
       APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
@@ -291,7 +291,7 @@ steps:
     depends_on: "build-android-instrumentation-tests"
     timeout_in_minutes: 60
     plugins:
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.7.0:
           run: android-instrumentation-tests
     env:
       APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
@@ -304,7 +304,7 @@ steps:
     depends_on: "build-android-instrumentation-tests"
     timeout_in_minutes: 60
     plugins:
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.7.0:
           run: android-instrumentation-tests
     env:
       APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
@@ -317,7 +317,7 @@ steps:
     depends_on: "build-android-instrumentation-tests"
     timeout_in_minutes: 60
     plugins:
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.7.0:
           run: android-instrumentation-tests
     env:
       APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
@@ -330,7 +330,7 @@ steps:
     depends_on: "build-android-instrumentation-tests"
     timeout_in_minutes: 60
     plugins:
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.7.0:
           run: android-instrumentation-tests
     env:
       APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
@@ -343,7 +343,7 @@ steps:
     depends_on: "build-android-instrumentation-tests"
     timeout_in_minutes: 60
     plugins:
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.7.0:
           run: android-instrumentation-tests
     env:
       APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
@@ -356,7 +356,7 @@ steps:
     depends_on: "build-android-instrumentation-tests"
     timeout_in_minutes: 60
     plugins:
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.7.0:
           run: android-instrumentation-tests
     env:
       APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
@@ -369,7 +369,7 @@ steps:
     depends_on: "build-android-instrumentation-tests"
     timeout_in_minutes: 60
     plugins:
-      - docker-compose#v2.6.0:
+      - docker-compose#v3.7.0:
           run: android-instrumentation-tests
     env:
       APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
