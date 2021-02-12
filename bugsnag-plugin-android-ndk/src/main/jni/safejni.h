@@ -148,6 +148,44 @@ jobject bsg_safe_call_static_object_method(JNIEnv *env, jclass clz,
                                            jmethodID method, ...);
 
 /**
+ * A safe wrapper for the JNI's DeleteLocalRef. This method checks if the env
+ * is NULL and no-ops if so.
+ */
+void bsg_safe_delete_local_ref(JNIEnv *env, jobject obj);
+
+/**
+ * A safe wrapper for the JNI's GetStringUTFChars. This method checks if the parameters
+ * are NULL and returns NULL if so. The caller is responsible for checking for NULL
+ * return values.
+ */
+const char *bsg_safe_get_string_utf_chars(JNIEnv *env, jstring string);
+
+/**
+ * A safe wrapper for the JNI's ReleaseStringUTFChars. This method checks if the parameters
+ * are NULL and no-ops if so.
+ */
+void bsg_safe_release_string_utf_chars(JNIEnv *env, jstring string, const char *utf);
+
+/**
+ * A safe wrapper for the JNI's ReleaseByteArrayElements. This method checks if an
+ * exception is pending and if so clears it so that execution can continue.
+ */
+void bsg_safe_release_byte_array_elements(JNIEnv *env, jbyteArray array, jbyte *elems, jint mode);
+
+/**
+ * A safe wrapper for the JNI's ReleaseStringUTFChars. This method checks if the parameters
+ * are NULL and no-ops if so. The caller is responsible for handling the invalid return value
+ * of -1.
+ */
+jsize bsg_safe_get_array_length(JNIEnv *env, jarray array);
+
+/**
+ * A safe wrapper for the JNI's IsInstanceOf. This method checks if the parameters
+ * are NULL and returns false if so.
+ */
+jboolean bsg_safe_is_instance_of(JNIEnv *env, jobject object, jclass clz);
+
+/**
  * Constructs a byte array from a string.
  */
 jbyteArray bsg_byte_ary_from_string(JNIEnv *env, const char *text);
