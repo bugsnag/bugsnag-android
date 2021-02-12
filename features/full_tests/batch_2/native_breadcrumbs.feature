@@ -14,17 +14,6 @@ Feature: Native Breadcrumbs API
         And the event has a "manual" breadcrumb with the message "Reverse thrusters"
         And the event "unhandled" is true
 
-    Scenario: Leaving breadcrumbs in Java and followed by notifying in C
-        When I run "CXXJavaBreadcrumbNativeNotifyScenario"
-        And I wait to receive an error
-        And the error payload contains a completed handled native report
-        And the exception "errorClass" equals "Failed instantiation"
-        And the exception "message" equals "Could not allocate"
-        And the event "severity" equals "error"
-        And the event has a "manual" breadcrumb with the message "Initiate lift"
-        And the event has a "manual" breadcrumb with the message "Disable lift"
-        And the event "unhandled" is false
-
     Scenario: Leaving breadcrumbs in Java followed by a C crash
         When I run "CXXJavaBreadcrumbNativeCrashScenario" and relaunch the app
         And I configure the app to run in the "non-crashy" state

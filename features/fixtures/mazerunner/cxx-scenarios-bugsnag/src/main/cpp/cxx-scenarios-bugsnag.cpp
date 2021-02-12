@@ -83,14 +83,6 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXUserInfoScenario_activate(JNIEn
 }
 
 JNIEXPORT void JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_CXXJavaBreadcrumbNativeNotifyScenario_activate(
-    JNIEnv *env,
-    jobject instance) {
-  bugsnag_notify_env(env, (char *) "Failed instantiation",
-                     (char *) "Could not allocate", BSG_SEVERITY_ERR);
-}
-
-JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXNativeBreadcrumbJavaNotifyScenario_activate(
     JNIEnv *env,
     jobject instance) {
