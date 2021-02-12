@@ -110,7 +110,6 @@ void bsg_populate_notify_stacktrace(JNIEnv *env, bugsnag_stackframe *stacktrace,
   exit:
     (*env)->DeleteLocalRef(env, filename);
     (*env)->DeleteLocalRef(env, class);
-    (*env)->DeleteLocalRef(env, method);
   }
 }
 
@@ -210,12 +209,9 @@ exit:
   (*env)->DeleteLocalRef(env, jmessage);
 
   (*env)->DeleteLocalRef(env, interface_class);
-  (*env)->DeleteLocalRef(env, notify_method);
   (*env)->DeleteLocalRef(env, trace_class);
   (*env)->DeleteLocalRef(env, severity_class);
-  (*env)->DeleteLocalRef(env, trace_constructor);
   (*env)->DeleteLocalRef(env, trace);
-  (*env)->DeleteLocalRef(env, severity_field);
   (*env)->DeleteLocalRef(env, jseverity);
 }
 
@@ -249,7 +245,6 @@ void bugsnag_set_binary_arch(JNIEnv *env) {
 
 exit:
   (*env)->DeleteLocalRef(env, arch);
-  (*env)->DeleteLocalRef(env, set_arch_method);
   (*env)->DeleteLocalRef(env, interface_class);
 }
 
@@ -290,7 +285,6 @@ void bugsnag_set_user_env(JNIEnv *env, char *id, char *email, char *name) {
 
 exit:
   (*env)->DeleteLocalRef(env, interface_class);
-  (*env)->DeleteLocalRef(env, set_user_method);
 }
 
 jfieldID bsg_parse_jcrumb_type(JNIEnv *env, bugsnag_breadcrumb_type type,
@@ -366,9 +360,7 @@ void bugsnag_leave_breadcrumb_env(JNIEnv *env, char *message,
 exit:
   bsg_release_byte_ary(env, jmessage, message);
   (*env)->DeleteLocalRef(env, interface_class);
-  (*env)->DeleteLocalRef(env, leave_breadcrumb_method);
   (*env)->DeleteLocalRef(env, type_class);
-  (*env)->DeleteLocalRef(env, crumb_type);
   (*env)->DeleteLocalRef(env, jtype);
   (*env)->DeleteLocalRef(env, jmessage);
 }

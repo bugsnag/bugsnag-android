@@ -64,5 +64,4 @@ internal class ObjectJsonStreamer {
 
     // Should this key be redacted
     private fun isRedactedKey(key: String) = redactedKeys.any { key.contains(it) }
-
 }

@@ -99,7 +99,7 @@ class InternalReportDelegate implements EventStore.Delegate {
         event.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "notifierVersion", notifier.getVersion());
         event.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "apiKey", config.getApiKey());
 
-        final EventPayload eventPayload = new EventPayload(null, event, notifier, config);
+        final EventPayload payload = new EventPayload(null, event, notifier, config);
         try {
             Async.run(new Runnable() {
                 @Override
@@ -107,7 +107,7 @@ class InternalReportDelegate implements EventStore.Delegate {
                     try {
                         logger.d("InternalReportDelegate - sending internal event");
                         Delivery delivery = config.getDelivery();
-                        DeliveryParams params = config.getErrorApiDeliveryParams(eventPayload);
+                        DeliveryParams params = config.getErrorApiDeliveryParams(payload);
 
                         // can only modify headers if DefaultDelivery is in use
                         if (delivery instanceof DefaultDelivery) {
@@ -115,7 +115,7 @@ class InternalReportDelegate implements EventStore.Delegate {
                             headers.put(HEADER_INTERNAL_ERROR, "true");
                             headers.remove(DeliveryHeadersKt.HEADER_API_KEY);
                             DefaultDelivery defaultDelivery = (DefaultDelivery) delivery;
-                            defaultDelivery.deliver(params.getEndpoint(), eventPayload, headers);
+                            defaultDelivery.deliver(params.getEndpoint(), payload, headers);
                         }
 
                     } catch (Exception exception) {

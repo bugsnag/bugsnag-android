@@ -7,6 +7,7 @@ steps:
       artifacts#v1.2.0:
         download: "build/release/fixture-r16.apk"
       docker-compose#v3.7.0:
+        pull: android-maze-runner
         run: android-maze-runner
         command:
           - "features/smoke_tests"
@@ -25,6 +26,7 @@ steps:
       artifacts#v1.2.0:
         download: "build/release/fixture-r16.apk"
       docker-compose#v3.7.0:
+        pull: android-maze-runner
         run: android-maze-runner
         command:
         - "features/smoke_tests"
@@ -43,6 +45,7 @@ steps:
       artifacts#v1.2.0:
         download: "build/release/fixture-r19.apk"
       docker-compose#v3.7.0:
+        pull: android-maze-runner
         run: android-maze-runner
         command:
           - "features/smoke_tests"
@@ -61,6 +64,7 @@ steps:
       artifacts#v1.2.0:
         download: "build/release/fixture-r19.apk"
       docker-compose#v3.7.0:
+        pull: android-maze-runner
         run: android-maze-runner
         command:
           - "features/smoke_tests"
@@ -79,6 +83,7 @@ steps:
       artifacts#v1.2.0:
         download: "build/release/fixture-r21.apk"
       docker-compose#v3.7.0:
+        pull: android-maze-runner
         run: android-maze-runner
         command:
           - "features/smoke_tests"
@@ -98,6 +103,7 @@ steps:
       artifacts#v1.2.0:
         download: "build/release/fixture-r21.apk"
       docker-compose#v3.7.0:
+        pull: android-maze-runner
         run: android-maze-runner
         command:
           - "features/full_tests/batch_1"
@@ -121,6 +127,7 @@ steps:
       artifacts#v1.2.0:
         download: "build/release/fixture-r21.apk"
       docker-compose#v3.7.0:
+        pull: android-maze-runner
         run: android-maze-runner
         command:
           - "features/full_tests/batch_2"
@@ -148,6 +155,7 @@ steps:
       artifacts#v1.2.0:
         download: "build/release/fixture-r21.apk"
       docker-compose#v3.7.0:
+        pull: android-maze-runner
         run: android-maze-runner
         command:
           - "features/full_tests"
@@ -169,6 +177,7 @@ steps:
       artifacts#v1.2.0:
         download: "build/release/fixture-r21.apk"
       docker-compose#v3.7.0:
+        pull: android-maze-runner
         run: android-maze-runner
         command:
           - "features/smoke_tests"

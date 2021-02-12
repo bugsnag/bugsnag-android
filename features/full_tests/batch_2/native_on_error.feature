@@ -1,34 +1,22 @@
 Feature: Native on error callbacks are invoked
 
-  Scenario: on_error returning false prevents C signal being reported
-    When I run "CXXSignalOnErrorFalseScenario" and relaunch the app
-    And I configure Bugsnag for "CXXSignalOnErrorFalseScenario"
-    Then I should receive no requests
+    Scenario: on_error returning false prevents C signal being reported
+        When I run "CXXSignalOnErrorFalseScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
+        And I configure Bugsnag for "CXXSignalOnErrorFalseScenario"
+        Then Bugsnag confirms it has no errors to send
 
-  Scenario: on_error returning false prevents C++ exception being reported
-    When I run "CXXExceptionOnErrorFalseScenario" and relaunch the app
-    And I configure Bugsnag for "CXXExceptionOnErrorFalseScenario"
-    Then I should receive no requests
+    Scenario: on_error returning false prevents C++ exception being reported
+        When I run "CXXExceptionOnErrorFalseScenario" and relaunch the app
+        And I configure the app to run in the "non-crashy" state
+        And I configure Bugsnag for "CXXExceptionOnErrorFalseScenario"
+        Then Bugsnag confirms it has no errors to send
 
-  Scenario: C signal with on_error that modifies data
-    When I run "CXXSignalOnErrorTrueScenario" and relaunch the app
-    And I configure Bugsnag for "CXXSignalOnErrorTrueScenario"
-    And I wait to receive an error
-    And the error payload contains a completed unhandled native report
-    And the event "context" equals "Some custom context"
-
-  Scenario: Cxx exception with on_error that modifies data
-    When I run "CXXExceptionOnErrorTrueScenario" and relaunch the app
-    And I configure Bugsnag for "CXXExceptionOnErrorTrueScenario"
-    And I wait to receive an error
-    And the error payload contains a completed unhandled native report
-    And the event "context" equals "Some custom context"
-
-  Scenario: Removing on_error callback
-    When I run "CXXRemoveOnErrorScenario" and relaunch the app
-    And I configure Bugsnag for "CXXRemoveOnErrorScenario"
-    And I wait to receive an error
-    Then the error payload contains a completed handled native report
-    And the event "user.id" equals "default"
-    And the event "user.email" equals "default@default.df"
-    And the event "user.name" equals "default"
+    Scenario: Removing on_error callback
+        When I run "CXXRemoveOnErrorScenario" and relaunch the app
+        And I configure Bugsnag for "CXXRemoveOnErrorScenario"
+        And I wait to receive an error
+        Then the error payload contains a completed handled native report
+        And the event "user.id" equals "default"
+        And the event "user.email" equals "default@default.df"
+        And the event "user.name" equals "default"

@@ -4,23 +4,25 @@
 
 ### Enhancements
 
-* Encode react native promise rejections as a mixed stacktrace
-   [#1006](https://github.com/bugsnag/bugsnag-android/pull/1006)
-
-* Support setting error type on individual stack frames
-   [#1001](https://github.com/bugsnag/bugsnag-android/pull/1001)
-
 * Support native stack traces in the ANR plugin
    [#972](https://github.com/bugsnag/bugsnag-android/pull/972)
 
-## TBD - Other stuff that's happening on `next` in the meantime
+## 5.6.0 (2021-02-08)
 
 ### Enhancements
+
+* Enable React Native promise rejection handling
+   [#1006](https://github.com/bugsnag/bugsnag-android/pull/1006)
+   [#1001](https://github.com/bugsnag/bugsnag-android/pull/1001)
+
+### Bug fixes
 
 * Check internal JNI calls for pending exceptions and no-op
   [#1088](https://github.com/bugsnag/bugsnag-android/pull/1088)
   [#1091](https://github.com/bugsnag/bugsnag-android/pull/1091)
   [#1092](https://github.com/bugsnag/bugsnag-android/pull/1092)
+  [#1117](https://github.com/bugsnag/bugsnag-android/pull/1117)
+
 * Add global metadata to ANR error reports
   [#1095](https://github.com/bugsnag/bugsnag-android/pull/1095)  
 

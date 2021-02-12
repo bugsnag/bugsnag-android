@@ -25,7 +25,8 @@ class CallbackStateTest {
     lateinit var session: Session
 
     private val handledState = SeverityReason.newInstance(
-        SeverityReason.REASON_HANDLED_EXCEPTION)
+        SeverityReason.REASON_HANDLED_EXCEPTION
+    )
     private val event = Event(RuntimeException(), generateImmutableConfig(), handledState, NoopLogger)
     private val breadcrumb = Breadcrumb("", NoopLogger)
 
@@ -59,10 +60,12 @@ class CallbackStateTest {
         val state = CallbackState()
         var count = 0
         state.addOnError(OnErrorCallback { false })
-        state.addOnError(OnErrorCallback {
-            count = 1
-            true
-        })
+        state.addOnError(
+            OnErrorCallback {
+                count = 1
+                true
+            }
+        )
         assertFalse(state.runOnErrorTasks(event, NoopLogger))
         assertEquals(0, count)
     }
@@ -84,10 +87,12 @@ class CallbackStateTest {
         val state = CallbackState()
         var count = 0
         state.addOnSession(OnSessionCallback { false })
-        state.addOnSession(OnSessionCallback {
-            count = 1
-            true
-        })
+        state.addOnSession(
+            OnSessionCallback {
+                count = 1
+                true
+            }
+        )
         assertFalse(state.runOnSessionTasks(session, NoopLogger))
         assertEquals(0, count)
     }
@@ -109,12 +114,13 @@ class CallbackStateTest {
         val state = CallbackState()
         var count = 0
         state.addOnBreadcrumb(OnBreadcrumbCallback { false })
-        state.addOnBreadcrumb(OnBreadcrumbCallback {
-            count = 1
-            true
-        })
+        state.addOnBreadcrumb(
+            OnBreadcrumbCallback {
+                count = 1
+                true
+            }
+        )
         assertFalse(state.runOnBreadcrumbTasks(breadcrumb, NoopLogger))
         assertEquals(0, count)
     }
-
 }

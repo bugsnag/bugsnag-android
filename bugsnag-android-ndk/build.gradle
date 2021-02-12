@@ -1,28 +1,15 @@
 plugins {
-    id "com.github.hierynomus.license"
+    id("bugsnag-build-plugin")
 }
+
+bugsnagBuildOptions {
+    compilesCode = false
+}
+
 apply plugin: "com.android.library"
 
-android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
-    defaultConfig.minSdkVersion rootProject.ext.minSdkVersion
-    ndkVersion rootProject.ext.ndkVersion
-    defaultConfig.consumerProguardFiles = ["proguard-rules.pro"]
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
-    }
-    packagingOptions {
-        pickFirst "**/*.so"
-    }
-}
-
 dependencies {
-    api project(':bugsnag-android-core')
-    api project(':bugsnag-plugin-android-anr')
-    api project(':bugsnag-plugin-android-ndk')
+    api(project(":bugsnag-android-core"))
+    api(project(":bugsnag-plugin-android-anr"))
+    api(project(":bugsnag-plugin-android-ndk"))
 }
-
-apply from: "../gradle/release.gradle"
-apply from: "../gradle/license-check.gradle"

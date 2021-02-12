@@ -105,8 +105,8 @@ internal class DefaultDelivery(
     private fun logRequestInfo(code: Int, conn: HttpURLConnection, status: DeliveryStatus) {
         logger.i(
             "Request completed with code $code, " +
-                    "message: ${conn.responseMessage}, " +
-                    "headers: ${conn.headerFields}"
+                "message: ${conn.responseMessage}, " +
+                "headers: ${conn.headerFields}"
         )
 
         conn.inputStream.bufferedReader().use {
@@ -131,5 +131,4 @@ internal class DefaultDelivery(
             else -> DeliveryStatus.UNDELIVERED
         }
     }
-
 }

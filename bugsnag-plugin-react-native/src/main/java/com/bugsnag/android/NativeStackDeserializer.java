@@ -11,9 +11,11 @@ import java.util.Map;
 class NativeStackDeserializer implements MapDeserializer<List<Stackframe>> {
 
     private final Collection<String> projectPackages;
+    private final ImmutableConfig config;
 
-    NativeStackDeserializer(Collection<String> projectPackages) {
+    NativeStackDeserializer(Collection<String> projectPackages, ImmutableConfig config) {
         this.projectPackages = projectPackages;
+        this.config = config;
     }
 
     /**

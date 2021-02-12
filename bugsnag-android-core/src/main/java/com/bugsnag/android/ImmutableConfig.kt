@@ -90,14 +90,15 @@ internal fun convertToImmutableConfig(
 }
 
 internal fun sanitiseConfiguration(
-    appContext: Context, configuration: Configuration,
+    appContext: Context,
+    configuration: Configuration,
     connectivity: Connectivity
 ): ImmutableConfig {
     val packageName = appContext.packageName
     val packageManager = appContext.packageManager
     val packageInfo = runCatching { packageManager.getPackageInfo(packageName, 0) }.getOrNull()
     val appInfo = runCatching {
-        packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA )
+        packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
     }.getOrNull()
 
     // populate releaseStage
@@ -146,4 +147,3 @@ internal fun sanitiseConfiguration(
 
 internal const val RELEASE_STAGE_DEVELOPMENT = "development"
 internal const val RELEASE_STAGE_PRODUCTION = "production"
-

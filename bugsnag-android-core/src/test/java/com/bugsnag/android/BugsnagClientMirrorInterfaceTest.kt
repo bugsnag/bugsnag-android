@@ -4,7 +4,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.lang.reflect.Method
 
-
 /**
  * Uses reflection to check that the [Bugsnag] and [Client] classes share the same method
  * signatures, and fails if the two are out of sync.

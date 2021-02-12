@@ -41,7 +41,7 @@ class NativeStackframe internal constructor(
     /**
      * The type of the error
      */
-    var type : ErrorType? = ErrorType.C
+    var type: ErrorType? = ErrorType.C
 
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) {

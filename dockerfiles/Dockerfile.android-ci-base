@@ -11,6 +11,7 @@ RUN ./gradlew
 
 # Copy remaining Gradle files
 COPY build.gradle settings.gradle /app/
+COPY buildSrc/ buildSrc/
 
 # Build the example app - needed for Espresso tests
 COPY examples/ examples/

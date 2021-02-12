@@ -1,6 +1,7 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
+import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 
 /**
@@ -20,6 +21,9 @@ internal class IgnoredExceptionScenario(
 
     override fun startScenario() {
         super.startScenario()
-        throw RuntimeException("Should never appear")
+        Bugsnag.notify(RuntimeException("Should never appear"))
     }
+
+    override fun getInterceptedLogMessages() =
+        listOf("Skipping notification - should not notify for this class")
 }

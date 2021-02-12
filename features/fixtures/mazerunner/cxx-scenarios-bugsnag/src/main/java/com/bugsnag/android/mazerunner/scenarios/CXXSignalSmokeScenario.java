@@ -22,7 +22,7 @@ import java.util.Set;
 public class CXXSignalSmokeScenario extends Scenario {
 
     static {
-        System.loadLibrary("cxx-scenarios");
+        System.loadLibrary("cxx-scenarios-bugsnag");
     }
 
     public native int crash(int value);
@@ -68,11 +68,22 @@ public class CXXSignalSmokeScenario extends Scenario {
             }
         });
         disableSessionDelivery(config);
+
+        config.addMetadata("fruit", "counters", 47);
+        config.addMetadata("fruit", "ripe", true);
     }
 
     @Override
     public void startScenario() {
         super.startScenario();
+
+        Bugsnag.addMetadata("Riker Ipsum", "examples", "I'll be sure to note that "
+                + "in my log. You enjoyed that. They were just sucked into space. How long can two"
+                + " people talk about nothing? I've had twelve years to think about it. And if I "
+                + "had it to do over again, I would have grabbed the phaser and pointed "
+                + "it at you instead of them.");
+        Bugsnag.addMetadata("fruit", "apple", "gala");
+
         Bugsnag.startSession();
         Bugsnag.leaveBreadcrumb("CXXSignalSmokeScenario");
         Handler main = new Handler(Looper.getMainLooper());

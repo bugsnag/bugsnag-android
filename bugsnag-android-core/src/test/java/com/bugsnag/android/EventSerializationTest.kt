@@ -17,7 +17,8 @@ internal class EventSerializationTest {
         @JvmStatic
         @Parameters
         fun testCases(): Collection<Pair<Event, String>> {
-            return generateSerializationTestCases("event",
+            return generateSerializationTestCases(
+                "event",
                 createEvent(),
 
                 // custom context

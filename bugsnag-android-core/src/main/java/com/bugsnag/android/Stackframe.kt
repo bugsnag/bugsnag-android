@@ -10,10 +10,10 @@ class Stackframe : JsonStream.Streamable {
      * The name of the method that was being executed
      */
     var method: String?
-    set(value) {
-        nativeFrame?.method = value
-        field = value
-    }
+        set(value) {
+            nativeFrame?.method = value
+            field = value
+        }
 
     /**
      * The location of the source file
@@ -60,20 +60,31 @@ class Stackframe : JsonStream.Streamable {
         }
 
     @JvmOverloads
-    internal constructor(method: String?, file: String?, lineNumber: Number?, inProject: Boolean?,
-        code: Map<String, String?>? = null, columnNumber: Number? = null) {
-            this.method = method
-            this.file = file
-            this.lineNumber = lineNumber
-            this.inProject = inProject
-            this.code = code
-            this.columnNumber = columnNumber
+    internal constructor(
+        method: String?,
+        file: String?,
+        lineNumber: Number?,
+        inProject: Boolean?,
+        code: Map<String, String?>? = null,
+        columnNumber: Number? = null
+    ) {
+        this.method = method
+        this.file = file
+        this.lineNumber = lineNumber
+        this.inProject = inProject
+        this.code = code
+        this.columnNumber = columnNumber
     }
 
     private var nativeFrame: NativeStackframe? = null
 
-    constructor(nativeFrame: NativeStackframe): this(
-        nativeFrame.method, nativeFrame.file, nativeFrame.lineNumber, false, null) {
+    constructor(nativeFrame: NativeStackframe) : this(
+        nativeFrame.method,
+        nativeFrame.file,
+        nativeFrame.lineNumber,
+        false,
+        null
+    ) {
         this.nativeFrame = nativeFrame
         this.type = nativeFrame.type
     }

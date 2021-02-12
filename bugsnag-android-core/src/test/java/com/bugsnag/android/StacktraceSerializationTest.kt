@@ -37,7 +37,7 @@ internal class StacktraceSerializationTest {
         }
 
         private fun basic() =
-                Stacktrace.stacktraceFromJavaTrace(
+            Stacktrace.stacktraceFromJavaTrace(
                 RuntimeException("Whoops").stackTrace.sliceArray(IntRange(0, 1)),
                 emptySet(),
                 NoopLogger

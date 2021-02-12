@@ -29,6 +29,7 @@ public class HandledJavaSmokeScenario extends Scenario {
     @Override
     public void startScenario() {
         super.startScenario();
+        Bugsnag.setContext("FooContext");
         Bugsnag.addOnBreadcrumb(new OnBreadcrumbCallback() {
             @Override
             public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {

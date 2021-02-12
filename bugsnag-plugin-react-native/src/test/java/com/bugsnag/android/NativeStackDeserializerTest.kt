@@ -58,7 +58,8 @@ class NativeStackDeserializerTest {
     @Test
     fun deserialize() {
         val packages = listOf("com.reactnativetest")
-        val nativeStack = NativeStackDeserializer(packages).deserialize(map)
+        val cfg = TestData.generateConfig()
+        val nativeStack = NativeStackDeserializer(packages, cfg).deserialize(map)
         assertEquals(3, nativeStack.size)
 
         val firstFrame = nativeStack[0]

@@ -232,3 +232,27 @@ Then("I sort the errors by {string}") do |comparator|
     Maze::Helper.read_key_path(request[:body], comparator)
   }
 end
+
+Then("the exception stacktrace matches the thread stacktrace") do
+  exc_trace = read_key_path(Server.current_request[:body], "events.0.exceptions.0.stacktrace")
+  thread_trace = read_key_path(Server.current_request[:body], "events.0.threads.0.stacktrace")
+  assert_equal(exc_trace.length(), thread_trace.length(), "Exception and thread stacktraces are different lengths.")
+
+  thread_trace.each_with_index do |thread_frame, index|
+    exc_frame = exc_trace[index]
+    assert_equal(exc_frame, thread_frame)
+  end
+end
+
+# EventStore flushes multiple times on launch with access controlled via a semaphore,
+# which results in multiple similar log messages
+Then("Bugsnag confirms it has no errors to send") do
+  steps %Q{
+    And I wait to receive 3 logs
+    Then the "debug" level log message equals "No startupcrash events to flush to Bugsnag."
+    And I discard the oldest log
+    Then the "debug" level log message equals "No regular events to flush to Bugsnag."
+    And I discard the oldest log
+    Then the "debug" level log message equals "No regular events to flush to Bugsnag."
+  }
+end
