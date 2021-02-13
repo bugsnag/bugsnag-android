@@ -12,7 +12,6 @@ Feature: Native Context API
 
     Scenario: Update context in Java followed by crashing in C
         When I run "CXXUpdateContextCrashScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXUpdateContextCrashScenario"
         And I wait to receive an error
         Then the error payload contains a completed handled native report

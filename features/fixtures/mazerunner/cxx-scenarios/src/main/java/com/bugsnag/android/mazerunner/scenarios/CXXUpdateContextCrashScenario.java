@@ -28,9 +28,6 @@ public class CXXUpdateContextCrashScenario extends Scenario {
     public void startScenario() {
         super.startScenario();
         String metadata = getEventMetadata();
-        if (metadata != null && metadata.equals("non-crashy")) {
-            return;
-        }
         Context context = getContext();
         Bugsnag.setContext("Everest");
 
