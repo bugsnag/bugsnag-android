@@ -2,7 +2,6 @@ package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
 import com.bugsnag.android.Configuration
-import com.bugsnag.android.mazerunner.getZeroEventsLogMessages
 
 class CXXThrowSomethingOutsideReleaseStagesScenario(
     config: Configuration,
@@ -25,6 +24,4 @@ class CXXThrowSomethingOutsideReleaseStagesScenario(
         super.startScenario()
         crash(23)
     }
-
-    override fun getInterceptedLogMessages() = getZeroEventsLogMessages(eventMetadata)
 }

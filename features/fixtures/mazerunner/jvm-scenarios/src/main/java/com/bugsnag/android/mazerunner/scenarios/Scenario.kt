@@ -19,6 +19,7 @@ import com.bugsnag.android.EventPayload
 import com.bugsnag.android.Session
 import com.bugsnag.android.createDefaultDelivery
 import com.bugsnag.android.mazerunner.BugsnagIntentParams
+import com.bugsnag.android.mazerunner.getZeroEventsLogMessages
 import com.bugsnag.android.mazerunner.log
 import com.bugsnag.android.mazerunner.multiprocess.MultiProcessService
 import com.bugsnag.android.mazerunner.multiprocess.findCurrentProcessName
@@ -30,18 +31,25 @@ abstract class Scenario(
 ) : Application.ActivityLifecycleCallbacks {
 
     /**
+     * Tracks whether the scenario is starting Bugsnag only, or running the scenario.
+     */
+    protected var startBugsnagOnly: Boolean = false
+
+    /**
      * Determines what log messages should be intercepted from Bugsnag and sent to Mazerunner
      * using a HTTP requests to the /logs endpoint. This is used to assert that Bugsnag is
      * behaving correctly in situations where sending an error/session payload is not
      * possible.
      */
-    open fun getInterceptedLogMessages() = emptyList<String>()
+    open fun getInterceptedLogMessages() = getZeroEventsLogMessages(startBugsnagOnly)
 
     /**
      * Initializes Bugsnag. It is possible to override this method if the scenario requires
      * it - e.g., if the config needs to be loaded from the manifest.
      */
-    open fun startBugsnag() {
+    open fun startBugsnag(startBugsnagOnly: Boolean) {
+        log("startBugsnag called with: " + startBugsnagOnly)
+        this.startBugsnagOnly = startBugsnagOnly
         Bugsnag.start(context, config)
     }
 
@@ -49,6 +57,8 @@ abstract class Scenario(
      * Runs code which should result in Bugsnag capturing an error or session.
      */
     open fun startScenario() {
+        log("startScenario startBugsnagOnly now false")
+        startBugsnagOnly = false
     }
 
     /**
