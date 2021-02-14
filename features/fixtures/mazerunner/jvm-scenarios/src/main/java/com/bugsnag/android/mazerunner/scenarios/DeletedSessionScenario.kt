@@ -29,8 +29,8 @@ internal class DeletedSessionScenario(
 
             config.delivery = object : Delivery {
                 override fun deliver(
-                        payload: Session,
-                        deliveryParams: DeliveryParams
+                    payload: Session,
+                    deliveryParams: DeliveryParams
                 ): DeliveryStatus {
                     // delete files before they can be delivered
                     val files = errDir.listFiles()

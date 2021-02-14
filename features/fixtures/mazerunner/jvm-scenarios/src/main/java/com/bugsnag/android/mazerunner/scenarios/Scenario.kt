@@ -48,7 +48,6 @@ abstract class Scenario(
      * it - e.g., if the config needs to be loaded from the manifest.
      */
     open fun startBugsnag(startBugsnagOnly: Boolean) {
-        log("startBugsnag called with: " + startBugsnagOnly)
         this.startBugsnagOnly = startBugsnagOnly
         Bugsnag.start(context, config)
     }
@@ -57,7 +56,6 @@ abstract class Scenario(
      * Runs code which should result in Bugsnag capturing an error or session.
      */
     open fun startScenario() {
-        log("startScenario startBugsnagOnly now false")
         startBugsnagOnly = false
     }
 

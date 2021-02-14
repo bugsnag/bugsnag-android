@@ -31,7 +31,6 @@ class MainActivity : Activity() {
         findViewById<Button>(R.id.start_bugsnag).setOnClickListener {
             scenario = loadScenarioFromUi()
             scenario?.startBugsnag(true)
-
         }
 
         // execute the pre-loaded scenario, or load it then execute it if needed
