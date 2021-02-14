@@ -20,19 +20,17 @@ internal class DeletedSessionScenario(
     eventMetadata: String
 ) : Scenario(config, context, eventMetadata) {
 
-    init {
+    override fun startBugsnag(startBugsnagOnly: Boolean) {
         config.autoTrackSessions = false
 
-        if (eventMetadata != "non-crashy") {
-            disableAllDelivery(config)
-        } else {
+        if (startBugsnagOnly) {
             val baseDelivery = createDefaultDelivery()
             val errDir = File(context.cacheDir, "bugsnag-sessions")
 
             config.delivery = object : Delivery {
                 override fun deliver(
-                    payload: Session,
-                    deliveryParams: DeliveryParams
+                        payload: Session,
+                        deliveryParams: DeliveryParams
                 ): DeliveryStatus {
                     // delete files before they can be delivered
                     val files = errDir.listFiles()
@@ -46,15 +44,16 @@ internal class DeletedSessionScenario(
                     return baseDelivery.deliver(payload, deliveryParams)
                 }
             }
+        } else {
+            disableAllDelivery(config)
         }
+        super.startBugsnag(startBugsnagOnly)
     }
 
     override fun startScenario() {
         super.startScenario()
 
-        if (eventMetadata != "non-crashy") {
-            Bugsnag.startSession()
-        }
+        Bugsnag.startSession()
 
         val thread = HandlerThread("HandlerThread")
         thread.start()
