@@ -17,12 +17,10 @@ internal class DeletedReportScenario(
     eventMetadata: String
 ) : Scenario(config, context, eventMetadata) {
 
-    init {
+    override fun startBugsnag(startBugsnagOnly: Boolean) {
         config.autoTrackSessions = false
 
-        if (eventMetadata != "non-crashy") {
-            disableAllDelivery(config)
-        } else {
+        if (startBugsnagOnly) {
             val baseDelivery = createDefaultDelivery()
             val errDir = File(context.cacheDir, "bugsnag-errors")
 
@@ -40,7 +38,11 @@ internal class DeletedReportScenario(
                     return baseDelivery.deliver(payload, deliveryParams)
                 }
             }
+        } else {
+            disableAllDelivery(config)
         }
+
+        super.startBugsnag(startBugsnagOnly)
     }
 
     override fun startScenario() {

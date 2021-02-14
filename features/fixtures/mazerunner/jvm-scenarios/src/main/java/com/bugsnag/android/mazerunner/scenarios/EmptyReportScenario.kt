@@ -11,23 +11,15 @@ internal class EmptyReportScenario(
     eventMetadata: String
 ) : Scenario(config, context, eventMetadata) {
 
-    init {
-        config.autoTrackSessions = false
-        val errDir = File(context.cacheDir, "bugsnag-errors")
-
-        if (eventMetadata != "non-crashy") {
+    override fun startBugsnag(startBugsnagOnly: Boolean) {
+        if (startBugsnagOnly) {
             disableAllDelivery(config)
-        } else {
-            val files = errDir.listFiles()
-            files.forEach { it.writeText("") }
         }
     }
 
     override fun startScenario() {
         super.startScenario()
 
-        if (eventMetadata != "non-crashy") {
-            Bugsnag.notify(java.lang.RuntimeException("Whoops"))
-        }
+        Bugsnag.notify(java.lang.RuntimeException("Whoops"))
     }
 }

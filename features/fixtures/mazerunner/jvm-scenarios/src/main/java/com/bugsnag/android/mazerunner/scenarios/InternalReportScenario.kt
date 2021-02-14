@@ -27,20 +27,12 @@ internal class InternalReportScenario(
             storageManager.setCacheBehaviorGroup(errDir, true)
             storageManager.setCacheBehaviorTombstone(errDir, true)
         }
-
-        if (eventMetadata != "non-crashy") {
-            disableAllDelivery(config)
-        } else {
-            val files = errDir.listFiles()
-            files.forEach { it.writeText("{[]}") }
-        }
     }
 
     override fun startScenario() {
         super.startScenario()
 
-        if (eventMetadata != "non-crashy") {
-            Bugsnag.notify(java.lang.RuntimeException("Whoops"))
-        }
+        disableAllDelivery(config)
+        Bugsnag.notify(java.lang.RuntimeException("Whoops"))
     }
 }
