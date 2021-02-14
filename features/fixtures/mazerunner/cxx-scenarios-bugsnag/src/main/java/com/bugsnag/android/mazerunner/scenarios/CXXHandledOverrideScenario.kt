@@ -21,9 +21,7 @@ internal class CXXHandledOverrideScenario(
     override fun startScenario() {
         super.startScenario()
 
-        if (eventMetadata != "non-crashy") {
-            Bugsnag.startSession()
-            activate()
-        }
+        Bugsnag.startSession()
+        activate()
     }
 }

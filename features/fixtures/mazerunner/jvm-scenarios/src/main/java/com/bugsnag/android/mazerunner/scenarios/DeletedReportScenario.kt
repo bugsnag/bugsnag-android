@@ -45,9 +45,6 @@ internal class DeletedReportScenario(
 
     override fun startScenario() {
         super.startScenario()
-
-        if (eventMetadata != "non-crashy") {
-            Bugsnag.notify(java.lang.RuntimeException("Whoops"))
-        }
+        Bugsnag.notify(java.lang.RuntimeException("Whoops"))
     }
 }

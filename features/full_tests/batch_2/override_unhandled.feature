@@ -15,7 +15,6 @@ Scenario: Non-fatal exception overridden to unhandled
 
 Scenario: Fatal exception overridden to handled
     When I run "OverrideToHandledExceptionScenario" and relaunch the app
-    And I configure the app to run in the "non-crashy" state
     And I configure Bugsnag for "OverrideToHandledExceptionScenario"
     And I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
@@ -30,7 +29,6 @@ Scenario: Fatal exception overridden to handled
 
 Scenario: CXX error overridden to handled
     When I run "CXXHandledOverrideScenario" and relaunch the app
-    And I configure the app to run in the "non-crashy" state
     And I configure Bugsnag for "CXXHandledOverrideScenario"
     And I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier

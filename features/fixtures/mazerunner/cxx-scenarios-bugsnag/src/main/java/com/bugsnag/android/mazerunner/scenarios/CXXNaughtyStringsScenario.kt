@@ -22,8 +22,6 @@ internal class CXXNaughtyStringsScenario(
         addNaughtyStringMetadata(javaClass)
         Thread.sleep(200) // allow metadata to sync across JNI layer
 
-        if (eventMetadata != "non-crashy") {
-            crash()
-        }
+        crash()
     }
 }
