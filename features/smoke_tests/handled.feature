@@ -205,6 +205,8 @@ Scenario: Handled C functionality
     And the event "user.name" equals "Jack Mill"
 
     # Breadcrumbs
+    And the event has a "manual" breadcrumb with the message "Initiate lift"
+    And the event has a "manual" breadcrumb with the message "Disable lift"
     And the event has a "log" breadcrumb named "Cold beans detected"
 
     # Context
