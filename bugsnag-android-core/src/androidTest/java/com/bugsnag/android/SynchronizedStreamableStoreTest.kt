@@ -136,7 +136,7 @@ internal class ThreadTestStreamable(
 internal class CrashyStreamable : JsonStream.Streamable {
     override fun toStream(stream: JsonStream) = throw IllegalStateException()
 
-    companion object: JsonReadable<CrashyStreamable> {
+    companion object : JsonReadable<CrashyStreamable> {
         override fun fromReader(reader: JsonReader) = throw IllegalStateException()
     }
 }

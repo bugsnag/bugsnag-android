@@ -81,16 +81,6 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXJavaUserInfoNativeCrashScenario
 }
 
 JNIEXPORT int JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_CXXCustomMetadataNativeCrashScenario_activate(
-    JNIEnv *env,
-    jobject instance) {
-  int x = 47;
-  if (x > 0)
-    __builtin_trap();
-  return 12167;
-}
-
-JNIEXPORT int JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_AutoDetectNdkDisabledScenario_crash(
     JNIEnv *env,
 jobject instance) {

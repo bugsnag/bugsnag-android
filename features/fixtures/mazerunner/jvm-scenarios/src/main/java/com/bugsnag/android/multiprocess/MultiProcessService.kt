@@ -14,6 +14,8 @@ import java.io.File
 
 class MultiProcessService : Service() {
 
+    var scenario: Scenario? = null
+
     override fun onBind(intent: Intent) = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -46,7 +48,7 @@ class MultiProcessService : Service() {
     private fun runScenario(params: BugsnagIntentParams) {
         val config = prepareServiceConfig(params)
 
-        Scenario.load(this, config, params.eventType!!, params.eventMetadata).apply {
+        scenario = Scenario.load(this, config, params.eventType!!, params.eventMetadata).apply {
             startBugsnag()
             log("Executing scenario")
             startScenario()
@@ -54,7 +56,9 @@ class MultiProcessService : Service() {
     }
 
     private fun prepareServiceConfig(params: BugsnagIntentParams): Configuration {
-        val config = prepareConfig(params.apiKey, params.notify, params.sessions)
+        val config = prepareConfig(params.apiKey, params.notify, params.sessions) {
+            scenario?.getInterceptedLogMessages()?.contains(it) ?: false
+        }
         config.persistenceDirectory = File(filesDir, "background-service-dir")
         return config
     }

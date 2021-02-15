@@ -4,25 +4,24 @@ import android.content.Context
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.mazerunner.getZeroEventsLogMessages
 
-/**
- * Attempts to send a handled exception to Bugsnag, when the exception handler is disabled,
- * which should result in no operation.
- */
-internal class DisableAutoDetectErrorsScenario(
+class CXXExceptionOnErrorFalseScenario(
     config: Configuration,
     context: Context,
-    eventMetadata: String
+    eventMetadata: String?
 ) : Scenario(config, context, eventMetadata) {
 
     init {
         config.autoTrackSessions = false
-        config.enabledErrorTypes.unhandledExceptions = false
+        System.loadLibrary("bugsnag-ndk")
+        System.loadLibrary("cxx-scenarios-bugsnag")
     }
+
+    external fun crash()
 
     override fun startScenario() {
         super.startScenario()
         if ("non-crashy" != eventMetadata) {
-            throw RuntimeException("Should never appear")
+            crash()
         }
     }
 

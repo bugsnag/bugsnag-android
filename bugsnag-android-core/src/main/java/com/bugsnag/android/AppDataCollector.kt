@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.os.SystemClock
-
 import java.util.HashMap
 
 /**
@@ -108,5 +107,4 @@ internal class AppDataCollector(
          */
         fun getDurationMs(): Long = SystemClock.elapsedRealtime() - startTimeMs
     }
-
 }

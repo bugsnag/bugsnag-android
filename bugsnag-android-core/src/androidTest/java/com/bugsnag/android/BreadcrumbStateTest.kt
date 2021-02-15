@@ -1,13 +1,10 @@
 package com.bugsnag.android
 
-import com.bugsnag.android.BreadcrumbType.MANUAL
-import org.junit.Assert.assertEquals
-
 import androidx.test.filters.SmallTest
+import com.bugsnag.android.BreadcrumbType.MANUAL
 import com.bugsnag.android.BugsnagTestUtils.generateClient
-import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
-
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
@@ -44,5 +41,4 @@ class BreadcrumbStateTest {
         }
         assertEquals(1, count)
     }
-
 }

@@ -1,6 +1,5 @@
 package com.bugsnag.android
 
-import junit.framework.TestCase.assertNull
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.io.File

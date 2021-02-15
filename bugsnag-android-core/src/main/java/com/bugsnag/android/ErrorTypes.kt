@@ -23,7 +23,6 @@ class ErrorTypes(
      */
     var unhandledExceptions: Boolean = true,
 
-
     /**
      * Sets whether Bugsnag should automatically capture and report unhandled promise rejections.
      * This only applies to React Native apps.

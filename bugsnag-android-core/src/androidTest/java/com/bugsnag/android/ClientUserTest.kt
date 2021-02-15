@@ -54,10 +54,12 @@ class ClientUserTest {
         client = Client(context, config)
 
         lateinit var user: User
-        client.addOnError(OnErrorCallback { event -> // Pull out the user information
-            user = event.getUser()
-            true
-        })
+        client.addOnError(
+            OnErrorCallback { event -> // Pull out the user information
+                user = event.getUser()
+                true
+            }
+        )
         client.notify(RuntimeException("Testing"))
 
         // Check the user details have been set

@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotSame
 import org.junit.Test
 
 class EventPayloadTest {

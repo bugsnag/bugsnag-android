@@ -30,13 +30,6 @@ steps:
           push:
             - android-ci:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:ci-${BRANCH_NAME}
 
-  - label: ':docker: Build Android maze runner image'
-    key: "maze-runner"
-    timeout_in_minutes: 20
-    plugins:
-      - docker-compose#v3.7.0:
-          build: android-maze-runner
-
   - label: ':android: Build fixture APK r16'
     key: "fixture-r16"
     depends_on: "android-ci"
@@ -161,6 +154,7 @@ steps:
       artifacts#v1.2.0:
         download: "build/release/fixture-r16.apk"
       docker-compose#v3.7.0:
+        pull: android-maze-runner
         run: android-maze-runner
         command:
           - "features/smoke_tests"
@@ -179,6 +173,7 @@ steps:
       artifacts#v1.2.0:
         download: "build/release/fixture-r21.apk"
       docker-compose#v3.7.0:
+        pull: android-maze-runner
         run: android-maze-runner
         args:
             - TESTS_DIR=features/smoke_tests

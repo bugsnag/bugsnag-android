@@ -6,7 +6,6 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.`when`
 import java.io.File
 
 internal class EventFilenameTest {
@@ -105,7 +104,8 @@ internal class EventFilenameTest {
         ).encode()
         assertEquals(
             "1504255147933_0000111122223333aaaabbbbcccc9999_" +
-                    "android_my-uuid-123_startupcrash.json", filename
+                "android_my-uuid-123_startupcrash.json",
+            filename
         )
     }
 
@@ -185,7 +185,7 @@ internal class EventFilenameTest {
     fun apiKeyFromNewFilename() {
         val file = File(
             "1504255147933_ffff111122948633aaaabbbbcccc9999" +
-                    "_683c6b92-b325-4987-80ad-77086509ca1e.json"
+                "_683c6b92-b325-4987-80ad-77086509ca1e.json"
         )
         val eventInfo = EventFilenameInfo.fromFile(file, config)
         assertEquals("ffff111122948633aaaabbbbcccc9999", eventInfo.apiKey)
@@ -202,7 +202,7 @@ internal class EventFilenameTest {
     fun apiKeyFromNdkFilename() {
         val file = File(
             "1603191800142_5d1ec8bd39a74caa1267142706a7fb20_" +
-                    "7e1041e0-7f37-4cfb-9d29-0aa6930bbb72not-jvm.json"
+                "7e1041e0-7f37-4cfb-9d29-0aa6930bbb72not-jvm.json"
         )
         val eventInfo = EventFilenameInfo.fromFile(file, config)
         assertEquals("5d1ec8bd39a74caa1267142706a7fb20", eventInfo.apiKey)

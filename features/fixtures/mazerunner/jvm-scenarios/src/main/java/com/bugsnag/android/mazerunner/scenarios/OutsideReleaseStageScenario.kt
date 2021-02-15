@@ -24,4 +24,7 @@ internal class OutsideReleaseStageScenario(
         super.startScenario()
         Bugsnag.notify(RuntimeException("OutsideReleaseStageScenario"))
     }
+
+    override fun getInterceptedLogMessages() =
+        listOf("Skipping notification - should not notify for this release stage")
 }

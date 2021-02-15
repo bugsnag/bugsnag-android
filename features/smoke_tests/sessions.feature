@@ -60,6 +60,8 @@ Scenario: Manual session control works
 
     # Session payload
     Then the session is valid for the session reporting API version "1.0" for the "Android Bugsnag Notifier" notifier
+    And the session payload field "device.runtimeVersions.androidApiLevel" is not null
+    And the session payload field "device.runtimeVersions.osBuild" is not null
     And the session payload field "sessions.0.id" is stored as the value "manual_session_id"
     And the session "user.id" equals "123"
     And the session "user.email" equals "ABC.CBA.CA"

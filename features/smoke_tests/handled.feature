@@ -20,8 +20,12 @@ Scenario: Notify caught Java exception with default configuration
     And the event "exceptions.0.stacktrace.0.method" ends with "HandledJavaSmokeScenario.startScenario"
     And the exception "stacktrace.0.file" equals "HandledJavaSmokeScenario.java"
     # R8 minification alters the lineNumber, see the mapping file/source code for the original value
-    And the event "exceptions.0.stacktrace.0.lineNumber" equals 6
+    And the event "exceptions.0.stacktrace.0.lineNumber" equals 7
     And the event "exceptions.0.stacktrace.0.inProject" is true
+
+    And the thread with name "main" contains the error reporting flag
+    And the "method" of stack frame 0 equals "com.bugsnag.android.mazerunner.scenarios.HandledJavaSmokeScenario.startScenario"
+    And the error payload field "events.0.threads.0.stacktrace.0.method" ends with "getThreadStackTrace"
 
     # App data
     And the event "app.buildUUID" equals "test-7.5.3"
@@ -75,9 +79,16 @@ Scenario: Notify caught Java exception with default configuration
     # [PLAT-5534] A potential source of flakes
     #And the event "breadcrumbs.2.metaData.source" equals "BreadcrumbCallback"
 
+    # Context
+    And the event "context" equals "FooContext"
+
     # MetaData
     And the event "metaData.TestData.ClientMetadata" is true
     And the event "metaData.TestData.CallbackMetadata" is true
+
+    # Runtime versions
+    And the error payload field "events.0.device.runtimeVersions.androidApiLevel" is not null
+    And the error payload field "events.0.device.runtimeVersions.osBuild" is not null
 
     # Threads validation
     And the error payload field "events.0.threads" is a non-empty array
@@ -196,8 +207,12 @@ Scenario: Handled C functionality
     # Breadcrumbs
     And the event has a "log" breadcrumb named "Cold beans detected"
 
+    # Context
+    And the event "context" equals "FooContext"
+
     # MetaData
     And the event "metaData.TestData.Source" equals "ClientCallback"
+    And the event "metaData.TestData.JVM" equals "pre notify()"
 
     # Threads validation
     And the error payload field "events.0.threads" is a non-empty array
