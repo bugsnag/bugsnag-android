@@ -1,11 +1,18 @@
 # Changelog
 
-## TBD
+## 5.6.2 (2021-02-15)
 
 ### Bug fixes
 
 * Check additional JNI calls for pending exceptions and no-op
   [#1133](https://github.com/bugsnag/bugsnag-android/pull/1133)
+
+* Fix rare crash when loading device ID
+  [#1137](https://github.com/bugsnag/bugsnag-android/pull/1137)
+
+## 5.6.1 (2021-02-15)
+
+The packaging for this version was incorrect so it should not be used.
 
 ## 5.6.0 (2021-02-08)
 
