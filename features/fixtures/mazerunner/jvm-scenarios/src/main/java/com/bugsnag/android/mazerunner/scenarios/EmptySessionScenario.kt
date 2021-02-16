@@ -27,6 +27,7 @@ internal class EmptySessionScenario(
         } else {
             disableAllDelivery(config)
         }
+        super.startBugsnag(startBugsnagOnly)
     }
 
     override fun startScenario() {
