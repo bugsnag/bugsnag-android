@@ -209,10 +209,12 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
 
 exit:
   pthread_mutex_unlock(&bsg_native_delivery_mutex);
-  bsg_safe_release_byte_array_elements(env, jpayload, (jbyte *)payload,
-                                       0); // <-- frees payload
-  bsg_safe_release_byte_array_elements(
-      env, jstage, (jbyte *)event->app.release_stage, JNI_COMMIT);
+  bsg_safe_release_byte_array_elements(env, jpayload, (jbyte *)payload);
+  if (payload != NULL) {
+    free(payload);
+  }
+  bsg_safe_release_byte_array_elements(env, jstage,
+                                       (jbyte *)event->app.release_stage);
   bsg_safe_delete_local_ref(env, jpayload);
   bsg_safe_delete_local_ref(env, jstage);
   bsg_safe_release_string_utf_chars(env, _report_path, event_path);

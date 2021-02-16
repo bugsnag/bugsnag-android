@@ -170,9 +170,12 @@ void bsg_safe_release_string_utf_chars(JNIEnv *env, jstring string,
 /**
  * A safe wrapper for the JNI's ReleaseByteArrayElements. This method checks if
  * an exception is pending and if so clears it so that execution can continue.
+ *
+ * The caller is responsible for freeing the elems parameter after invoking this
+ * method, if elems was allocated using malloc or new.
  */
 void bsg_safe_release_byte_array_elements(JNIEnv *env, jbyteArray array,
-                                          jbyte *elems, jint mode);
+                                          jbyte *elems);
 
 /**
  * A safe wrapper for the JNI's GetArrayLength. This method checks if the
