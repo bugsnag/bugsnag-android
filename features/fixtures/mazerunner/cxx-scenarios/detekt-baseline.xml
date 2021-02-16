@@ -2,7 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues></ManuallySuppressedIssues>
   <CurrentIssues>
+    <ID>MagicNumber:CXXSessionInfoCrashScenario.kt$CXXSessionInfoCrashScenario$3837</ID>
     <ID>MagicNumber:CXXThrowSomethingOutsideReleaseStagesScenario.kt$CXXThrowSomethingOutsideReleaseStagesScenario$23</ID>
-    <ID>NewLineAtEndOfFile:CXXTrapOutsideReleaseStagesScenario.kt$com.bugsnag.android.mazerunner.scenarios.CXXTrapOutsideReleaseStagesScenario.kt</ID>
   </CurrentIssues>
 </SmellBaseline>
