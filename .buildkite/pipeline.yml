@@ -19,7 +19,7 @@ steps:
       BUILDKITE_PLUGIN_S3_SECRETS_BUCKET_PREFIX: "bugsnag-android-publish"
     plugins:
       docker-compose#v3.7.0:
-        pull: android-common:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:latest
+        pull: android-common
         run: android-publisher
         command:
           - "ls /app/publish"
