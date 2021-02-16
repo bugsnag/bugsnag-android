@@ -62,12 +62,6 @@ jfieldID bsg_parse_jseverity(JNIEnv *env, bsg_severity_t severity,
   }
 }
 
-void bsg_release_byte_ary(JNIEnv *env, jbyteArray array, char *original_text) {
-  if (array != NULL) {
-    (*env)->ReleaseByteArrayElements(env, array, (jbyte *)original_text, JNI_COMMIT);
-  }
-}
-
 void bsg_populate_notify_stacktrace(JNIEnv *env, bsg_stackframe *stacktrace,
                                    ssize_t frame_count, jclass trace_class,
                                    jmethodID trace_constructor,
@@ -104,8 +98,8 @@ void bsg_populate_notify_stacktrace(JNIEnv *env, bsg_stackframe *stacktrace,
     goto exit;
 
     exit:
-    (*env)->DeleteLocalRef(env, filename);
-    (*env)->DeleteLocalRef(env, class);
+    bsg_safe_delete_local_ref(env, filename);
+    bsg_safe_delete_local_ref(env, class);
   }
 }
 
@@ -196,19 +190,19 @@ void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
 
   exit:
   if (jname != NULL) {
-    bsg_release_byte_ary(env, jname, name);
+    bsg_safe_release_byte_array_elements(env, jname, (jbyte *)name);
   }
   if (jmessage != NULL) {
-    bsg_release_byte_ary(env, jmessage, message);
+    bsg_safe_release_byte_array_elements(env, jmessage, (jbyte *)message);
   }
-  (*env)->DeleteLocalRef(env, jname);
-  (*env)->DeleteLocalRef(env, jmessage);
+  bsg_safe_delete_local_ref(env, jname);
+  bsg_safe_delete_local_ref(env, jmessage);
 
-  (*env)->DeleteLocalRef(env, interface_class);
-  (*env)->DeleteLocalRef(env, trace_class);
-  (*env)->DeleteLocalRef(env, severity_class);
-  (*env)->DeleteLocalRef(env, trace);
-  (*env)->DeleteLocalRef(env, jseverity);
+  bsg_safe_delete_local_ref(env, interface_class);
+  bsg_safe_delete_local_ref(env, trace_class);
+  bsg_safe_delete_local_ref(env, severity_class);
+  bsg_safe_delete_local_ref(env, trace);
+  bsg_safe_delete_local_ref(env, jseverity);
 }
 
 void bugsnag_set_binary_arch(JNIEnv *env) {
@@ -240,8 +234,8 @@ void bugsnag_set_binary_arch(JNIEnv *env) {
   goto exit;
 
   exit:
-  (*env)->DeleteLocalRef(env, arch);
-  (*env)->DeleteLocalRef(env, interface_class);
+  bsg_safe_delete_local_ref(env, arch);
+  bsg_safe_delete_local_ref(env, interface_class);
 }
 
 void bugsnag_set_user_env(JNIEnv *env, char *id, char *email, char *name) {
@@ -269,18 +263,18 @@ void bugsnag_set_user_env(JNIEnv *env, char *id, char *email, char *name) {
   bsg_safe_call_static_void_method(env, interface_class, set_user_method, jid,
                                    jemail, jname);
 
-  bsg_release_byte_ary(env, jid, id);
-  bsg_release_byte_ary(env, jemail, email);
-  bsg_release_byte_ary(env, jname, name);
+  bsg_safe_release_byte_array_elements(env, jid, (jbyte *)id);
+  bsg_safe_release_byte_array_elements(env, jemail, (jbyte *)email);
+  bsg_safe_release_byte_array_elements(env, jname, (jbyte *)name);
 
-  (*env)->DeleteLocalRef(env, jid);
-  (*env)->DeleteLocalRef(env, jemail);
-  (*env)->DeleteLocalRef(env, jname);
+  bsg_safe_delete_local_ref(env, jid);
+  bsg_safe_delete_local_ref(env, jemail);
+  bsg_safe_delete_local_ref(env, jname);
 
   goto exit;
 
   exit:
-  (*env)->DeleteLocalRef(env, interface_class);
+  bsg_safe_delete_local_ref(env, interface_class);
 }
 
 jfieldID bsg_parse_jcrumb_type(JNIEnv *env, bsg_breadcrumb_t type,
@@ -354,9 +348,9 @@ void bugsnag_leave_breadcrumb_env(JNIEnv *env, char *message,
   goto exit;
 
   exit:
-  bsg_release_byte_ary(env, jmessage, message);
-  (*env)->DeleteLocalRef(env, interface_class);
-  (*env)->DeleteLocalRef(env, type_class);
-  (*env)->DeleteLocalRef(env, jtype);
-  (*env)->DeleteLocalRef(env, jmessage);
+  bsg_safe_release_byte_array_elements(env, jmessage, (jbyte *)message);
+  bsg_safe_delete_local_ref(env, interface_class);
+  bsg_safe_delete_local_ref(env, type_class);
+  bsg_safe_delete_local_ref(env, jtype);
+  bsg_safe_delete_local_ref(env, jmessage);
 }
