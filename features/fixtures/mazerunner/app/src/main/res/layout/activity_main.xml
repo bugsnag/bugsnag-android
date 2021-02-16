@@ -4,11 +4,6 @@
   android:layout_height="match_parent"
   android:orientation="vertical">
 
-  <Space
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_weight="6" />
-
   <EditText
           android:id="@+id/scenario_name"
           android:layout_width="match_parent"
@@ -27,10 +22,19 @@
           android:hint="Scenario metadata"
           android:inputType="text" />
 
-  <Space
+  <Button
+          android:id="@+id/start_bugsnag"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:layout_weight="6" />
+          android:layout_weight="0"
+          android:text="Start Bugsnag" />
+
+  <Button
+          android:id="@+id/run_scenario"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_weight="0"
+          android:text="Execute" />
 
   <EditText
           android:id="@+id/notify_endpoint"
@@ -51,25 +55,6 @@
           android:hint="Session endpoint"
           android:inputType="text"
           android:text="http://bs-local.com:9339/sessions" />
-
-  <Space
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_weight="6" />
-
-  <Button
-    android:id="@+id/start_bugsnag"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_weight="0"
-    android:text="Start Bugsnag" />
-
-  <Button
-    android:id="@+id/run_scenario"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_weight="0"
-    android:text="Execute" />
 
   <Space
     android:layout_width="match_parent"
