@@ -14,177 +14,187 @@ steps:
           push:
             - android-common:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:latest
 
-  # assembles the bugsnag-android SDK
-  - label: ':docker: Build Android base CI image'
-    key: "android-ci"
-    depends_on: "android-common"
-    timeout_in_minutes: 30
-    plugins:
-      - docker-compose#v3.7.0:
-          build:
-            - android-ci
-          image-repository: 855461928731.dkr.ecr.us-west-1.amazonaws.com/android
-          cache-from:
-            - android-ci:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:ci-${BRANCH_NAME}
-      - docker-compose#v3.7.0:
-          push:
-            - android-ci:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:ci-${BRANCH_NAME}
-
-  - label: ':android: Build fixture APK r16'
-    key: "fixture-r16"
-    depends_on: "android-ci"
-    timeout_in_minutes: 30
-    artifact_paths: build/release/fixture-r16.apk
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-builder
+  - label: 'Publish :rocket:'
     env:
-      MAVEN_VERSION: "3.6.1"
-      TEST_FIXTURE_NDK_VERSION: "16.1.4479499"
-      TEST_FIXTURE_NAME: "fixture-r16.apk"
-
-  - label: ':android: Build fixture APK r19'
-    key: "fixture-r19"
-    depends_on: "android-ci"
-    timeout_in_minutes: 30
-    artifact_paths: build/release/fixture-r19.apk
+      BUILDKITE_PLUGIN_S3_SECRETS_BUCKET_PREFIX: "bugsnag-android-publish"
     plugins:
-      - docker-compose#v3.7.0:
-          run: android-builder
-    env:
-      MAVEN_VERSION: "3.6.1"
-      TEST_FIXTURE_NDK_VERSION: "19.2.5345600"
-      TEST_FIXTURE_NAME: "fixture-r19.apk"
-
-  - label: ':android: Build fixture APK r21'
-    key: "fixture-r21"
-    depends_on: "android-ci"
-    timeout_in_minutes: 30
-    artifact_paths: build/release/fixture-r21.apk
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-builder
-    env:
-      MAVEN_VERSION: "3.6.1"
-      TEST_FIXTURE_NDK_VERSION: "21.3.6528147"
-      TEST_FIXTURE_NAME: "fixture-r21.apk"
-
-  - label: ':android: Lint'
-    depends_on: "android-ci"
-    timeout_in_minutes: 10
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    command: './gradlew lint'
-
-  - label: ':android: Checkstyle'
-    depends_on: "android-ci"
-    timeout_in_minutes: 10
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    command: './gradlew checkstyle'
-
-  - label: ':android: Detekt'
-    depends_on: "android-ci"
-    timeout_in_minutes: 10
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    command: './gradlew detekt'
-
-  - label: ':android: Ktlint'
-    depends_on: "android-ci"
-    timeout_in_minutes: 10
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    command: './gradlew ktlintCheck'
-
-  - label: ':android: CppCheck'
-    depends_on: "android-ci"
-    timeout_in_minutes: 10
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    command: 'bash ./scripts/run-cpp-check.sh'
-
-  - label: ':android: ClangFormat'
-    depends_on: "android-ci"
-    timeout_in_minutes: 10
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    command: 'bash ./scripts/run-clang-format-ci-check.sh'
-
-  - label: ':android: Lint mazerunner scenarios'
-    depends_on: "android-ci"
-    timeout_in_minutes: 10
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-builder
-    command: 'cd features/fixtures/mazerunner && ./gradlew ktlintCheck detekt checkstyle'
-
-  - label: ':android: JVM tests'
-    depends_on: "android-ci"
-    timeout_in_minutes: 10
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    command: './gradlew test'
-
-  - label: ':android: Android 4.4 Instrumentation tests'
-    key: 'NDK-smoke-test'
-    depends_on: "android-ci"
-    timeout_in_minutes: 30
-    command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    env:
-      INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4"]'
-    concurrency: 9
-    concurrency_group: 'browserstack-app'
-
-  - label: ':android: Android 4.4 NDK r16 smoke tests'
-    key: 'android-4-4-smoke'
-    depends_on: "fixture-r16"
-    timeout_in_minutes: 60
-    plugins:
-      artifacts#v1.2.0:
-        download: "build/release/fixture-r16.apk"
       docker-compose#v3.7.0:
-        pull: android-maze-runner
-        run: android-maze-runner
+        pull: android-common:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:latest
+        run: android-publisher
         command:
-          - "features/smoke_tests"
-          - "--app=/app/build/release/fixture-r16.apk"
-          - "--farm=bs"
-          - "--device=ANDROID_4_4"
-          - "--fail-fast"
-    concurrency: 9
-    concurrency_group: 'browserstack-app'
+          - "ls /app/publish"
 
-  - label: ':android: Android 11 NDK r21 smoke tests'
-    key: 'android-11-smoke'
-    depends_on: "fixture-r21"
-    timeout_in_minutes: 60
-    plugins:
-      artifacts#v1.2.0:
-        download: "build/release/fixture-r21.apk"
-      docker-compose#v3.7.0:
-        pull: android-maze-runner
-        run: android-maze-runner
-        args:
-            - TESTS_DIR=features/smoke_tests
-        command:
-          - "features/smoke_tests"
-          - "--app=/app/build/release/fixture-r21.apk"
-          - "--farm=bs"
-          - "--device=ANDROID_11_0"
-          - "--fail-fast"
-    concurrency: 9
-    concurrency_group: 'browserstack-app'
+  # # assembles the bugsnag-android SDK
+  # - label: ':docker: Build Android base CI image'
+  #   key: "android-ci"
+  #   depends_on: "android-common"
+  #   timeout_in_minutes: 30
+  #   plugins:
+  #     - docker-compose#v3.7.0:
+  #         build:
+  #           - android-ci
+  #         image-repository: 855461928731.dkr.ecr.us-west-1.amazonaws.com/android
+  #         cache-from:
+  #           - android-ci:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:ci-${BRANCH_NAME}
+  #     - docker-compose#v3.7.0:
+  #         push:
+  #           - android-ci:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:ci-${BRANCH_NAME}
 
-  - label: 'Conditionally trigger full set of tests'
-    command: sh -c .buildkite/pipeline_trigger.sh
+  # - label: ':android: Build fixture APK r16'
+  #   key: "fixture-r16"
+  #   depends_on: "android-ci"
+  #   timeout_in_minutes: 30
+  #   artifact_paths: build/release/fixture-r16.apk
+  #   plugins:
+  #     - docker-compose#v3.7.0:
+  #         run: android-builder
+  #   env:
+  #     MAVEN_VERSION: "3.6.1"
+  #     TEST_FIXTURE_NDK_VERSION: "16.1.4479499"
+  #     TEST_FIXTURE_NAME: "fixture-r16.apk"
+
+  # - label: ':android: Build fixture APK r19'
+  #   key: "fixture-r19"
+  #   depends_on: "android-ci"
+  #   timeout_in_minutes: 30
+  #   artifact_paths: build/release/fixture-r19.apk
+  #   plugins:
+  #     - docker-compose#v3.7.0:
+  #         run: android-builder
+  #   env:
+  #     MAVEN_VERSION: "3.6.1"
+  #     TEST_FIXTURE_NDK_VERSION: "19.2.5345600"
+  #     TEST_FIXTURE_NAME: "fixture-r19.apk"
+
+  # - label: ':android: Build fixture APK r21'
+  #   key: "fixture-r21"
+  #   depends_on: "android-ci"
+  #   timeout_in_minutes: 30
+  #   artifact_paths: build/release/fixture-r21.apk
+  #   plugins:
+  #     - docker-compose#v3.7.0:
+  #         run: android-builder
+  #   env:
+  #     MAVEN_VERSION: "3.6.1"
+  #     TEST_FIXTURE_NDK_VERSION: "21.3.6528147"
+  #     TEST_FIXTURE_NAME: "fixture-r21.apk"
+
+  # - label: ':android: Lint'
+  #   depends_on: "android-ci"
+  #   timeout_in_minutes: 10
+  #   plugins:
+  #     - docker-compose#v3.7.0:
+  #         run: android-ci
+  #   command: './gradlew lint'
+
+  # - label: ':android: Checkstyle'
+  #   depends_on: "android-ci"
+  #   timeout_in_minutes: 10
+  #   plugins:
+  #     - docker-compose#v3.7.0:
+  #         run: android-ci
+  #   command: './gradlew checkstyle'
+
+  # - label: ':android: Detekt'
+  #   depends_on: "android-ci"
+  #   timeout_in_minutes: 10
+  #   plugins:
+  #     - docker-compose#v3.7.0:
+  #         run: android-ci
+  #   command: './gradlew detekt'
+
+  # - label: ':android: Ktlint'
+  #   depends_on: "android-ci"
+  #   timeout_in_minutes: 10
+  #   plugins:
+  #     - docker-compose#v3.7.0:
+  #         run: android-ci
+  #   command: './gradlew ktlintCheck'
+
+  # - label: ':android: CppCheck'
+  #   depends_on: "android-ci"
+  #   timeout_in_minutes: 10
+  #   plugins:
+  #     - docker-compose#v3.7.0:
+  #         run: android-ci
+  #   command: 'bash ./scripts/run-cpp-check.sh'
+
+  # - label: ':android: ClangFormat'
+  #   depends_on: "android-ci"
+  #   timeout_in_minutes: 10
+  #   plugins:
+  #     - docker-compose#v3.7.0:
+  #         run: android-ci
+  #   command: 'bash ./scripts/run-clang-format-ci-check.sh'
+
+  # - label: ':android: Lint mazerunner scenarios'
+  #   depends_on: "android-ci"
+  #   timeout_in_minutes: 10
+  #   plugins:
+  #     - docker-compose#v3.7.0:
+  #         run: android-builder
+  #   command: 'cd features/fixtures/mazerunner && ./gradlew ktlintCheck detekt checkstyle'
+
+  # - label: ':android: JVM tests'
+  #   depends_on: "android-ci"
+  #   timeout_in_minutes: 10
+  #   plugins:
+  #     - docker-compose#v3.7.0:
+  #         run: android-ci
+  #   command: './gradlew test'
+
+  # - label: ':android: Android 4.4 Instrumentation tests'
+  #   key: 'NDK-smoke-test'
+  #   depends_on: "android-ci"
+  #   timeout_in_minutes: 30
+  #   command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
+  #   plugins:
+  #     - docker-compose#v3.7.0:
+  #         run: android-ci
+  #   env:
+  #     INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4"]'
+  #   concurrency: 9
+  #   concurrency_group: 'browserstack-app'
+
+  # - label: ':android: Android 4.4 NDK r16 smoke tests'
+  #   key: 'android-4-4-smoke'
+  #   depends_on: "fixture-r16"
+  #   timeout_in_minutes: 60
+  #   plugins:
+  #     artifacts#v1.2.0:
+  #       download: "build/release/fixture-r16.apk"
+  #     docker-compose#v3.7.0:
+  #       pull: android-maze-runner
+  #       run: android-maze-runner
+  #       command:
+  #         - "features/smoke_tests"
+  #         - "--app=/app/build/release/fixture-r16.apk"
+  #         - "--farm=bs"
+  #         - "--device=ANDROID_4_4"
+  #         - "--fail-fast"
+  #   concurrency: 9
+  #   concurrency_group: 'browserstack-app'
+
+  # - label: ':android: Android 11 NDK r21 smoke tests'
+  #   key: 'android-11-smoke'
+  #   depends_on: "fixture-r21"
+  #   timeout_in_minutes: 60
+  #   plugins:
+  #     artifacts#v1.2.0:
+  #       download: "build/release/fixture-r21.apk"
+  #     docker-compose#v3.7.0:
+  #       pull: android-maze-runner
+  #       run: android-maze-runner
+  #       args:
+  #           - TESTS_DIR=features/smoke_tests
+  #       command:
+  #         - "features/smoke_tests"
+  #         - "--app=/app/build/release/fixture-r21.apk"
+  #         - "--farm=bs"
+  #         - "--device=ANDROID_11_0"
+  #         - "--fail-fast"
+  #   concurrency: 9
+  #   concurrency_group: 'browserstack-app'
+
+  # - label: 'Conditionally trigger full set of tests'
+  #   command: sh -c .buildkite/pipeline_trigger.sh

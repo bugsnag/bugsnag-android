@@ -28,6 +28,13 @@ services:
     volumes:
       - ./build:/app/build
 
+  android-publisher:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.android-common
+    volumes:
+      - ./publish:/app/publish
+
   android-sizer:
     build:
       context: .
