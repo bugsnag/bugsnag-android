@@ -200,7 +200,6 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
     } else {
       BUGSNAG_LOG("Failed to serialize event as JSON: %s", event_path);
     }
-    free(event);
   } else {
     BUGSNAG_LOG("Failed to read event at file: %s", event_path);
   }
@@ -209,6 +208,9 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
 
 exit:
   pthread_mutex_unlock(&bsg_native_delivery_mutex);
+  if (event != NULL) {
+    free(event);
+  }
   bsg_safe_release_byte_array_elements(env, jpayload, (jbyte *)payload);
   if (payload != NULL) {
     free(payload);
