@@ -248,7 +248,7 @@ jobject bsg_get_map_value_obj(JNIEnv *env, bsg_jni_cache *jni_cache,
 
   jobject obj =
       bsg_safe_call_object_method(env, map, jni_cache->hash_map_get, key);
-  (*env)->DeleteLocalRef(env, key);
+  bsg_safe_delete_local_ref(env, key);
   return obj;
 }
 
@@ -258,9 +258,11 @@ void bsg_copy_map_value_string(JNIEnv *env, bsg_jni_cache *jni_cache,
   jobject _value = bsg_get_map_value_obj(env, jni_cache, map, _key);
 
   if (_value != NULL) {
-    char *value = (char *)(*env)->GetStringUTFChars(env, (jstring)_value, 0);
-    bsg_strncpy_safe(dest, value, len);
-    (*env)->ReleaseStringUTFChars(env, _value, value);
+    const char *value = bsg_safe_get_string_utf_chars(env, (jstring)_value);
+    if (value != NULL) {
+      bsg_strncpy_safe(dest, value, len);
+      bsg_safe_release_string_utf_chars(env, _value, value);
+    }
   }
 }
 
@@ -271,7 +273,7 @@ long bsg_get_map_value_long(JNIEnv *env, bsg_jni_cache *jni_cache, jobject map,
   if (_value != NULL) {
     long value = bsg_safe_call_double_method(env, _value,
                                              jni_cache->number_double_value);
-    (*env)->DeleteLocalRef(env, _value);
+    bsg_safe_delete_local_ref(env, _value);
     return value;
   }
   return 0;
@@ -284,7 +286,7 @@ float bsg_get_map_value_float(JNIEnv *env, bsg_jni_cache *jni_cache,
   if (_value != NULL) {
     float value =
         bsg_safe_call_float_method(env, _value, jni_cache->float_float_value);
-    (*env)->DeleteLocalRef(env, _value);
+    bsg_safe_delete_local_ref(env, _value);
     return value;
   }
   return 0;
@@ -297,7 +299,7 @@ int bsg_get_map_value_int(JNIEnv *env, bsg_jni_cache *jni_cache, jobject map,
   if (_value != NULL) {
     jint value =
         bsg_safe_call_int_method(env, _value, jni_cache->integer_int_value);
-    (*env)->DeleteLocalRef(env, _value);
+    bsg_safe_delete_local_ref(env, _value);
     return value;
   }
   return 0;
@@ -320,7 +322,7 @@ int bsg_populate_cpu_abi_from_map(JNIEnv *env, bsg_jni_cache *jni_cache,
   jobjectArray _value =
       bsg_safe_call_object_method(env, map, jni_cache->hash_map_get, key);
   if (_value != NULL) {
-    int count = (*env)->GetArrayLength(env, _value);
+    int count = bsg_safe_get_array_length(env, _value);
 
     // get the ABI as a Java string and copy it to bsg_device_info
     for (int i = 0; i < count && i < sizeof(device->cpu_abi); i++) {
@@ -329,13 +331,15 @@ int bsg_populate_cpu_abi_from_map(JNIEnv *env, bsg_jni_cache *jni_cache,
         break;
       }
 
-      char *abi = (char *)(*env)->GetStringUTFChars(env, jabi, 0);
-      bsg_strncpy_safe(device->cpu_abi[i].value, abi,
-                       sizeof(device->cpu_abi[i].value));
-      (*env)->ReleaseStringUTFChars(env, jabi, abi);
-      device->cpu_abi_count++;
+      const char *abi = bsg_safe_get_string_utf_chars(env, jabi);
+      if (abi != NULL) {
+        bsg_strncpy_safe(device->cpu_abi[i].value, abi,
+                         sizeof(device->cpu_abi[i].value));
+        bsg_safe_release_string_utf_chars(env, jabi, abi);
+        device->cpu_abi_count++;
+      }
     }
-    (*env)->DeleteLocalRef(env, _value);
+    bsg_safe_delete_local_ref(env, _value);
     return count;
   }
   return 0;
@@ -379,24 +383,31 @@ void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,
         bsg_safe_call_object_method(env, metadata, jni_cache->map_get, _key);
 
     if (_key == NULL || _value == NULL) {
-      (*env)->DeleteLocalRef(env, _key);
-      (*env)->DeleteLocalRef(env, _value);
+      bsg_safe_delete_local_ref(env, _key);
+      bsg_safe_delete_local_ref(env, _value);
     } else {
-      char *key = (char *)(*env)->GetStringUTFChars(env, _key, 0);
-      char *value = (char *)(*env)->GetStringUTFChars(env, _value, 0);
-      bsg_strncpy_safe(crumb->metadata[i].key, key,
-                       sizeof(crumb->metadata[i].key));
-      bsg_strncpy_safe(crumb->metadata[i].value, value,
-                       sizeof(crumb->metadata[i].value));
-      (*env)->ReleaseStringUTFChars(env, _key, key);
+      const char *key = bsg_safe_get_string_utf_chars(env, _key);
+
+      if (key != NULL) {
+        const char *value = bsg_safe_get_string_utf_chars(env, _value);
+
+        if (value != NULL) {
+          bsg_strncpy_safe(crumb->metadata[i].key, key,
+                           sizeof(crumb->metadata[i].key));
+          bsg_strncpy_safe(crumb->metadata[i].value, value,
+                           sizeof(crumb->metadata[i].value));
+          bsg_safe_release_string_utf_chars(env, _value, value);
+        }
+        bsg_safe_release_string_utf_chars(env, _key, key);
+      }
     }
   }
   goto exit;
 
   exit:
   free(jni_cache);
-  (*env)->DeleteLocalRef(env, keyset);
-  (*env)->DeleteLocalRef(env, keylist);
+  bsg_safe_delete_local_ref(env, keyset);
+  bsg_safe_delete_local_ref(env, keylist);
 }
 
 char *bsg_binary_arch() {
@@ -453,7 +464,7 @@ void bsg_populate_app_data(JNIEnv *env, bsg_jni_cache *jni_cache,
   bsg_strncpy_safe(report->app.binaryArch,
                      bsg_binary_arch(),
                      sizeof(report->app.binaryArch));
-  (*env)->DeleteLocalRef(env, data);
+  bsg_safe_delete_local_ref(env, data);
 }
 
 void bsg_populate_device_data(JNIEnv *env, bsg_jni_cache *jni_cache,
@@ -510,10 +521,10 @@ void bsg_populate_device_data(JNIEnv *env, bsg_jni_cache *jni_cache,
                               sizeof(report->device.os_build));
 
     report->device.api_level = bsg_get_map_value_int(env, jni_cache, _runtime_versions, "androidApiLevel");
-    (*env)->DeleteLocalRef(env, _runtime_versions);
+    bsg_safe_delete_local_ref(env, _runtime_versions);
   }
 
-  (*env)->DeleteLocalRef(env, data);
+  bsg_safe_delete_local_ref(env, data);
 }
 
 void bsg_populate_user_data(JNIEnv *env, bsg_jni_cache *jni_cache,
@@ -530,7 +541,7 @@ void bsg_populate_user_data(JNIEnv *env, bsg_jni_cache *jni_cache,
                             sizeof(report->user.name));
   bsg_copy_map_value_string(env, jni_cache, data, "email", report->user.email,
                             sizeof(report->user.email));
-  (*env)->DeleteLocalRef(env, data);
+  bsg_safe_delete_local_ref(env, data);
 }
 
 void bsg_populate_context(JNIEnv *env, bsg_jni_cache *jni_cache,
@@ -538,9 +549,11 @@ void bsg_populate_context(JNIEnv *env, bsg_jni_cache *jni_cache,
   jstring _context = bsg_safe_call_static_object_method(
       env, jni_cache->native_interface, jni_cache->get_context);
   if (_context != NULL) {
-    const char *value = (*env)->GetStringUTFChars(env, (jstring)_context, 0);
-    strncpy(report->context, value, sizeof(report->context) - 1);
-    (*env)->ReleaseStringUTFChars(env, _context, value);
+    const char *value = bsg_safe_get_string_utf_chars(env, (jstring)_context);
+    if (value != NULL) {
+      strncpy(report->context, value, sizeof(report->context) - 1);
+      bsg_safe_release_string_utf_chars(env, _context, value);
+    }
   } else {
     memset(&report->context, 0, strlen(report->context));
   }
@@ -561,44 +574,49 @@ void bsg_populate_report(JNIEnv *env, bugsnag_report *report) {
 void bsg_populate_metadata_value(JNIEnv *env, bugsnag_report *dst,
                                  bsg_jni_cache *jni_cache, char *section,
                                  char *name, jobject _value) {
-  if ((*env)->IsInstanceOf(env, _value, jni_cache->number)) {
+  if (bsg_safe_is_instance_of(env, _value, jni_cache->number)) {
     // add a double metadata value
     double value = bsg_safe_call_double_method(env, _value,
                                                jni_cache->number_double_value);
     bugsnag_report_add_metadata_double(dst, section, name, value);
-  } else if ((*env)->IsInstanceOf(env, _value, jni_cache->boolean)) {
+  } else if (bsg_safe_is_instance_of(env, _value, jni_cache->boolean)) {
     // add a boolean metadata value
     bool value = bsg_safe_call_boolean_method(env, _value,
                                               jni_cache->boolean_bool_value);
     bugsnag_report_add_metadata_bool(dst, section, name, value);
-  } else if ((*env)->IsInstanceOf(env, _value, jni_cache->string)) {
-    char *value = (char *)(*env)->GetStringUTFChars(env, _value, 0);
-    bugsnag_report_add_metadata_string(dst, section, name, value);
-    free(value);
+  } else if (bsg_safe_is_instance_of(env, _value, jni_cache->string)) {
+    char *value = (char *) bsg_safe_get_string_utf_chars(env, _value);
+    if (value != NULL) {
+      bugsnag_report_add_metadata_string(dst, section, name, value);
+      free(value);
+    }
   }
 }
 
 void bsg_populate_metadata_obj(JNIEnv *env, bugsnag_report *dst,
-                               bsg_jni_cache *jni_cache, char *section,
+                               bsg_jni_cache *jni_cache, jobject section,
                                void *section_keylist, int index) {
   jstring section_key = bsg_safe_call_object_method(
       env, section_keylist, jni_cache->arraylist_get, (jint)index);
   if (section_key == NULL) {
     return;
   }
-  char *name = (char *)(*env)->GetStringUTFChars(env, section_key, 0);
+
   jobject _value = bsg_safe_call_object_method(env, section, jni_cache->map_get,
                                                section_key);
-  bsg_populate_metadata_value(env, dst, jni_cache, section, name, _value);
-  (*env)->ReleaseStringUTFChars(env, section_key, name);
-  (*env)->DeleteLocalRef(env, _value);
+  char *name = (char *) bsg_safe_get_string_utf_chars(env, section_key);
+  if (name != NULL) {
+    bsg_populate_metadata_value(env, dst, jni_cache, section, name, _value);
+    bsg_safe_release_string_utf_chars(env, section_key, name);
+  }
+  bsg_safe_delete_local_ref(env, _value);
 }
 
 void bsg_populate_metadata_section(JNIEnv *env, bugsnag_report *report,
                                    jobject metadata, bsg_jni_cache *jni_cache,
                                    jobject keylist, int i) {
   jstring _key = NULL;
-  char *section = NULL;
+  const char *section = NULL;
   jobject _section = NULL;
   jobject section_keyset = NULL;
   jobject section_keylist = NULL;
@@ -608,7 +626,10 @@ void bsg_populate_metadata_section(JNIEnv *env, bugsnag_report *report,
   if (_key == NULL) {
     goto exit;
   }
-  section = (char *)(*env)->GetStringUTFChars(env, _key, 0);
+  section = bsg_safe_get_string_utf_chars(env, _key);
+  if (section == NULL) {
+    goto exit;
+  }
   _section =
       bsg_safe_call_object_method(env, metadata, jni_cache->map_get, _key);
   if (_section == NULL) {
@@ -632,15 +653,15 @@ void bsg_populate_metadata_section(JNIEnv *env, bugsnag_report *report,
     goto exit;
   }
   for (int j = 0; j < section_size; j++) {
-    bsg_populate_metadata_obj(env, report, jni_cache, section, section_keylist, j);
+    bsg_populate_metadata_obj(env, report, jni_cache, (char *)section, section_keylist, j);
   }
   goto exit;
 
   exit:
-  (*env)->ReleaseStringUTFChars(env, _key, section);
-  (*env)->DeleteLocalRef(env, section_keyset);
-  (*env)->DeleteLocalRef(env, section_keylist);
-  (*env)->DeleteLocalRef(env, _section);
+    bsg_safe_release_string_utf_chars(env, _key, section);
+    bsg_safe_delete_local_ref(env, section_keyset);
+    bsg_safe_delete_local_ref(env, section_keylist);
+    bsg_safe_delete_local_ref(env, _section);
 }
 
 void bsg_populate_metadata(JNIEnv *env, bugsnag_report *report,
@@ -687,6 +708,6 @@ void bsg_populate_metadata(JNIEnv *env, bugsnag_report *report,
   if (jni_cache != NULL) {
     free(jni_cache);
   }
-  (*env)->DeleteLocalRef(env, keyset);
-  (*env)->DeleteLocalRef(env, keylist);
+  bsg_safe_delete_local_ref(env, keyset);
+  bsg_safe_delete_local_ref(env, keylist);
 }
