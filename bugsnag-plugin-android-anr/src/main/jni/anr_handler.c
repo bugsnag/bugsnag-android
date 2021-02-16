@@ -23,17 +23,38 @@ static JavaVM *bsg_jvm = NULL;
 static jmethodID mthd_notify_anr_detected = NULL;
 static jobject obj_plugin = NULL;
 
+// duplication required for this method that originally came from
+// bugsnag-plugin-android-ndk. Until a shared C module is available
+// for sharing common code when PLAT-5794 is addressed, this
+// duplication is a necessary evil.
+bool bsg_check_and_clear_exc(JNIEnv *env) {
+  if (env == NULL) {
+    return false;
+  }
+  if ((*env)->ExceptionCheck(env)) {
+    (*env)->ExceptionClear(env);
+    return true;
+  }
+  return false;
+}
+
 /* The previous SIGQUIT handler */
 struct sigaction bsg_sigquit_sigaction_previous;
 
 
 void bsg_notify_anr_detected(JNIEnv *env) {
-  (*env)->CallVoidMethod(env, obj_plugin, mthd_notify_anr_detected);
+  if (env != NULL && obj_plugin != NULL && mthd_notify_anr_detected != NULL) {
+    (*env)->CallVoidMethod(env, obj_plugin, mthd_notify_anr_detected);
+    bsg_check_and_clear_exc(env);
+  }
 }
 
-bool bsg_configure_anr_jni(JNIEnv *env) {
+bool bsg_configure_anr_jni_impl(JNIEnv *env) {
   // get a global reference to the AnrPlugin class
   // https://developer.android.com/training/articles/perf-jni#faq:-why-didnt-findclass-find-my-class
+  if (env == NULL) {
+    return false;
+  }
   int result = (*env)->GetJavaVM(env, &bsg_jvm);
   if (result != 0) {
     // Failed to fetch VM, cannot continue
@@ -41,8 +62,22 @@ bool bsg_configure_anr_jni(JNIEnv *env) {
   }
 
   jclass clz = (*env)->FindClass(env, "com/bugsnag/android/AnrPlugin");
+  if (bsg_check_and_clear_exc(env) || clz == NULL) {
+    return false;
+  }
   mthd_notify_anr_detected = (*env)->GetMethodID(env, clz, "notifyAnrDetected", "()V");
+  if (bsg_check_and_clear_exc(env) || mthd_notify_anr_detected == NULL) {
+    return false;
+  }
   return true;
+}
+
+static bool bsg_configure_anr_jni(JNIEnv *env) {
+  bool success = bsg_configure_anr_jni_impl(env);
+  if (!success) {
+    BUGSNAG_LOG("Failed to fetch Java VM. ANR handler not installed.");
+  }
+  return success;
 }
 
 void bsg_handle_sigquit(int signum, siginfo_t *info, void *user_context) {
