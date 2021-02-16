@@ -29,10 +29,19 @@ internal class InternalReportScenario(
         }
     }
 
+    override fun startBugsnag(startBugsnagOnly: Boolean) {
+        if (startBugsnagOnly) {
+            val errDir = File(context.cacheDir, "bugsnag-errors")
+            val files = errDir.listFiles()
+            files.forEach { it.writeText("{[]}") }
+        } else {
+            disableAllDelivery(config)
+        }
+    }
+
     override fun startScenario() {
         super.startScenario()
 
-        disableAllDelivery(config)
         Bugsnag.notify(java.lang.RuntimeException("Whoops"))
     }
 }
