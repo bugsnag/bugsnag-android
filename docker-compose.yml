@@ -32,6 +32,7 @@ services:
     build:
       context: .
       dockerfile: dockerfiles/Dockerfile.android-common
+    entrypoint: /bin/bash -c
     volumes:
       - ./publish:/app/publish
 
