@@ -1,18 +1,18 @@
 steps:
   # downloads the Android toolchain
-  - label: ':docker: Build Android base image'
-    key: "android-common"
-    timeout_in_minutes: 30
-    plugins:
-      - docker-compose#v3.7.0:
-          build:
-            - android-common
-          image-repository: 855461928731.dkr.ecr.us-west-1.amazonaws.com/android
-          cache-from:
-            - android-common:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:latest
-      - docker-compose#v3.7.0:
-          push:
-            - android-common:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:latest
+  # - label: ':docker: Build Android base image'
+  #   key: "android-common"
+  #   timeout_in_minutes: 30
+  #   plugins:
+  #     - docker-compose#v3.7.0:
+  #         build:
+  #           - android-common
+  #         image-repository: 855461928731.dkr.ecr.us-west-1.amazonaws.com/android
+  #         cache-from:
+  #           - android-common:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:latest
+  #     - docker-compose#v3.7.0:
+  #         push:
+  #           - android-common:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:latest
 
   - label: 'Publish :rocket:'
     env:
@@ -22,7 +22,7 @@ steps:
         pull: android-common
         run: android-publisher
         command:
-          - "ls /"
+          - "ls /app/publish"
 
   # # assembles the bugsnag-android SDK
   # - label: ':docker: Build Android base CI image'
