@@ -15,25 +15,28 @@ internal class ManualSessionSmokeScenario(
     eventMetadata: String
 ) : Scenario(config, context, eventMetadata) {
 
-    init {
+    override fun startBugsnag(startBugsnagOnly: Boolean) {
         config.autoTrackSessions = false
 
-        val baseDelivery = createDefaultDelivery()
-        var state = 0
-        config.delivery = InterceptingDelivery(baseDelivery) {
-            when (state) {
-                0 -> Bugsnag.notify(generateException())
-                1 -> {
-                    Bugsnag.pauseSession()
-                    Bugsnag.notify(generateException())
+        if (!startBugsnagOnly) {
+            val baseDelivery = createDefaultDelivery()
+            var state = 0
+            config.delivery = InterceptingDelivery(baseDelivery) {
+                when (state) {
+                    0 -> Bugsnag.notify(generateException())
+                    1 -> {
+                        Bugsnag.pauseSession()
+                        Bugsnag.notify(generateException())
+                    }
+                    2 -> {
+                        Bugsnag.resumeSession()
+                        throw generateException()
+                    }
                 }
-                2 -> {
-                    Bugsnag.resumeSession()
-                    throw generateException()
-                }
+                state++
             }
-            state++
         }
+        super.startBugsnag(startBugsnagOnly)
     }
 
     override fun startScenario() {
