@@ -22,7 +22,7 @@ steps:
         pull: android-common
         run: android-publisher
         command:
-          - "ls /app/publish"
+          - "ls /"
 
   # # assembles the bugsnag-android SDK
   # - label: ':docker: Build Android base CI image'
