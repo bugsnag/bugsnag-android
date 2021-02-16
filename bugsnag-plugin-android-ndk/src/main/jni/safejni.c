@@ -220,9 +220,15 @@ void bsg_safe_release_string_utf_chars(JNIEnv *env, jstring string,
 }
 
 void bsg_safe_release_byte_array_elements(JNIEnv *env, jbyteArray array,
-                                          jbyte *elems, jint mode) {
+                                          jbyte *elems) {
+  // If mode is anything other than JNI_COMMIT, the JNI method will try and call
+  // delete[] on the elems parameter, which leads to bad things happening (e.g.
+  // aborting will cause it to free, blowing up any custom allocators).
+  // Therefore JNI_COMMIT will always be called and the caller should free the
+  // elems parameter themselves if necessary.
+  // https://android.googlesource.com/platform/art/+/refs/heads/master/runtime/jni/jni_internal.cc#2689
   if (env != NULL && array != NULL) {
-    (*env)->ReleaseByteArrayElements(env, array, elems, mode);
+    (*env)->ReleaseByteArrayElements(env, array, elems, JNI_COMMIT);
   }
 }
 
