@@ -27,4 +27,3 @@ class CXXExceptionOnErrorFalseScenario(
         return getZeroEventsLogMessages(startBugsnagOnly)
     }
 }
-
