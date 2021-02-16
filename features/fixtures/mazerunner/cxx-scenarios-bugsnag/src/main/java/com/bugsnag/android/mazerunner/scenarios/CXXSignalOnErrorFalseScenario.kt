@@ -2,6 +2,7 @@ package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
 import com.bugsnag.android.Configuration
+import com.bugsnag.android.mazerunner.getZeroEventsLogMessages
 
 class CXXSignalOnErrorFalseScenario(
     config: Configuration,
@@ -20,5 +21,9 @@ class CXXSignalOnErrorFalseScenario(
     override fun startScenario() {
         super.startScenario()
         crash()
+    }
+
+    override fun getInterceptedLogMessages(): List<String> {
+        return getZeroEventsLogMessages(startBugsnagOnly)
     }
 }

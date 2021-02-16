@@ -19,7 +19,6 @@ import com.bugsnag.android.EventPayload
 import com.bugsnag.android.Session
 import com.bugsnag.android.createDefaultDelivery
 import com.bugsnag.android.mazerunner.BugsnagIntentParams
-import com.bugsnag.android.mazerunner.getZeroEventsLogMessages
 import com.bugsnag.android.mazerunner.log
 import com.bugsnag.android.mazerunner.multiprocess.MultiProcessService
 import com.bugsnag.android.mazerunner.multiprocess.findCurrentProcessName
@@ -41,7 +40,9 @@ abstract class Scenario(
      * behaving correctly in situations where sending an error/session payload is not
      * possible.
      */
-    open fun getInterceptedLogMessages() = getZeroEventsLogMessages(startBugsnagOnly)
+    open fun getInterceptedLogMessages(): List<String> {
+        return emptyList<String>()
+    }
 
     /**
      * Initializes Bugsnag. It is possible to override this method if the scenario requires
