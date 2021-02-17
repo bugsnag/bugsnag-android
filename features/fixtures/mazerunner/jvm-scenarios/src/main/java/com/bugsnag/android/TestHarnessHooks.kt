@@ -4,6 +4,12 @@ import com.bugsnag.android.JavaHooks.generateAppWithState
 import com.bugsnag.android.JavaHooks.generateDeviceWithState
 import java.lang.Thread
 
+internal fun triggerInternalBugsnagForError(client: Client) {
+    client.eventStore.write {
+        throw IllegalStateException("Mazerunner threw exception serializing error")
+    }
+}
+
 internal fun flushErrorStoreAsync(client: Client) {
     client.eventStore.flushAsync()
 }
