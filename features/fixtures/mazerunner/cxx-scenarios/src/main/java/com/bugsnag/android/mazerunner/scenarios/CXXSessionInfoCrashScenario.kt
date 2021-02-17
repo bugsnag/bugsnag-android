@@ -19,11 +19,9 @@ class CXXSessionInfoCrashScenario(
 
     override fun startScenario() {
         super.startScenario()
-        if (eventMetadata!! != "non-crashy") {
-            Bugsnag.startSession()
-            Bugsnag.notify(Exception("For the first"))
-            Bugsnag.notify(Exception("For the second"))
-            crash(3837)
-        }
+        Bugsnag.startSession()
+        Bugsnag.notify(Exception("For the first"))
+        Bugsnag.notify(Exception("For the second"))
+        crash(3837)
     }
 }

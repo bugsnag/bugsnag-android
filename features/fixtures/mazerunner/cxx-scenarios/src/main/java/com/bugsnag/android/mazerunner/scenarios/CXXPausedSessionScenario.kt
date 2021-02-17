@@ -19,10 +19,8 @@ class CXXPausedSessionScenario(
 
     override fun startScenario() {
         super.startScenario()
-        if ("non-crashy" != eventMetadata) {
-            Bugsnag.startSession()
-            Bugsnag.pauseSession()
-            crash(0)
-        }
+        Bugsnag.startSession()
+        Bugsnag.pauseSession()
+        crash(0)
     }
 }
