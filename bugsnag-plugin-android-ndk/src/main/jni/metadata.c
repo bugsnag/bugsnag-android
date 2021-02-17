@@ -574,7 +574,7 @@ void bsg_populate_context(JNIEnv *env, bsg_jni_cache *jni_cache,
   if (_context != NULL) {
     const char *value = bsg_safe_get_string_utf_chars(env, (jstring)_context);
     if (value != NULL) {
-      strncpy(event->context, value, sizeof(event->context) - 1);
+      bsg_strncpy_safe(event->context, value, sizeof(event->context) - 1);
       bsg_safe_release_string_utf_chars(env, _context, value);
     }
   } else {

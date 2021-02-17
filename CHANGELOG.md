@@ -13,6 +13,8 @@
   [#1142](https://github.com/bugsnag/bugsnag-android/pull/1142)
 * Move free() call to exit block
   [#1140](https://github.com/bugsnag/bugsnag-android/pull/1140)
+* Replace strncpy() usage with safe function call
+  [#1149](https://github.com/bugsnag/bugsnag-android/pull/1149)
 
 ## 5.6.2 (2021-02-15)
 
