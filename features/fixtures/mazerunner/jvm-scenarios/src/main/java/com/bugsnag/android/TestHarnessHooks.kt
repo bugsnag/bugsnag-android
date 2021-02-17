@@ -4,6 +4,12 @@ import com.bugsnag.android.JavaHooks.generateAppWithState
 import com.bugsnag.android.JavaHooks.generateDeviceWithState
 import java.lang.Thread
 
+internal fun triggerInternalBugsnagForError(client: Client) {
+    client.eventStore.write {
+        throw IllegalStateException("Mazerunner threw exception serializing error")
+    }
+}
+
 internal fun flushErrorStoreAsync(client: Client) {
     client.eventStore.flushAsync()
 }
@@ -51,7 +57,7 @@ internal fun createCustomHeaderDelivery(): Delivery {
     }
 }
 
-internal fun createDefaultDelivery(): Delivery { // use reflection as DefaultDelivery is internal
+fun createDefaultDelivery(): Delivery { // use reflection as DefaultDelivery is internal
     val clz = Class.forName("com.bugsnag.android.DefaultDelivery")
     return clz.constructors[0].newInstance(
         null,

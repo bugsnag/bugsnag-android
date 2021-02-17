@@ -3,6 +3,9 @@ package com.bugsnag.android.mazerunner.scenarios
 import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
+import com.bugsnag.android.createDefaultDelivery
+import com.bugsnag.android.mazerunner.InterceptingDelivery
+import java.util.concurrent.atomic.AtomicInteger
 
 class CXXSessionInfoCrashScenario(
     config: Configuration,
@@ -10,9 +13,19 @@ class CXXSessionInfoCrashScenario(
     eventMetadata: String?
 ) : Scenario(config, context, eventMetadata) {
 
+    private val deliveryCount = AtomicInteger(0)
+
     init {
         System.loadLibrary("cxx-scenarios")
         config.autoTrackSessions = false
+
+        config.delivery = InterceptingDelivery(createDefaultDelivery()) {
+            when (deliveryCount.incrementAndGet()) {
+                1 -> Bugsnag.notify(Exception("For the first"))
+                2 -> Bugsnag.notify(Exception("For the second"))
+                3 -> crash(3837)
+            }
+        }
     }
 
     external fun crash(value: Int): Int
@@ -20,8 +33,5 @@ class CXXSessionInfoCrashScenario(
     override fun startScenario() {
         super.startScenario()
         Bugsnag.startSession()
-        Bugsnag.notify(Exception("For the first"))
-        Bugsnag.notify(Exception("For the second"))
-        crash(3837)
     }
 }

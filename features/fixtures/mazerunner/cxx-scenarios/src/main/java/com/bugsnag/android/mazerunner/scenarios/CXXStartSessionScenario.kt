@@ -3,6 +3,8 @@ package com.bugsnag.android.mazerunner.scenarios
 import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
+import com.bugsnag.android.createDefaultDelivery
+import com.bugsnag.android.mazerunner.InterceptingDelivery
 
 class CXXStartSessionScenario(
     config: Configuration,
@@ -13,6 +15,10 @@ class CXXStartSessionScenario(
     init {
         System.loadLibrary("cxx-scenarios")
         config.autoTrackSessions = false
+
+        config.delivery = InterceptingDelivery(createDefaultDelivery()) {
+            crash(0)
+        }
     }
 
     external fun crash(counter: Int): Int
@@ -20,6 +26,5 @@ class CXXStartSessionScenario(
     override fun startScenario() {
         super.startScenario()
         Bugsnag.startSession()
-        crash(0)
     }
 }
