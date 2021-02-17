@@ -1,22 +1,72 @@
-# Testing the Bugsnag Android notifier
 
-Commands can be run on the entire project, or on an individual module:
+# Unit tests
+
+Unit tests are implemented using [Junit](https://developer.android.com/training/testing/unit-testing/local-unit-tests) and can be run with the following:
+
+`./gradlew test`
+
+Unit tests run on the local JVM and cannot access Android OS classes.
+
+# Instrumentation tests
+
+Instrumentation tests are implemented using [Junit](https://developer.android.com/training/testing/unit-testing/instrumented-unit-tests) and can be run with the following:
+
+`./gradlew connectedCheck`
+
+Instrumentation tests require an Android emulator or device to run, and they can access Android OS classes.
+
+# Static analysis
+
+Several static analysis checks are run against bugsnag-android to maintain the quality of the codebase. `./gradlew check` runs them all at once.
+
+## Android Lint
+
+[Android Lint](https://developer.android.com/studio/write/lint) Runs Android-specific static analysis checks. Warnings can be suppressed by following [this guide](https://developer.android.com/studio/write/lint#config).
 
 ```shell
-./gradlew build // builds whole project
-./gradlew bugsnag-plugin-android-anr:build // builds bugsnag-plugin-android-anr module only
+./gradlew lint
 ```
 
-## Running Tests Locally
+## Ktlint
 
-Running the full test suite requires a connected android device or emulator. JVM tests can be run
-in isolation by only running the `check` task. The `check` task also runs all static analysis checks:
+[Ktlint](https://github.com/pinterest/ktlint) runs style checks on Kotlin code.
 
 ```shell
-./gradlew check connectedCheck
+./gradlew ktlintCheck
 ```
 
-## Running remote end-to-end tests
+Some violations (but not all) can be automatically addressed by running the following task:
+
+```shell
+./gradlew ktlintFormat
+```
+
+## Detekt
+
+[Detekt](https://github.com/detekt/detekt) runs static analysis checks on Kotlin code.
+
+```shell
+./gradlew detekt
+```
+
+Warnings can be suppressed by running the following task:
+
+```shell
+./gradlew detektBaseline
+```
+
+This permanently disables all outstanding violations by writing to `detekt-baseline.xml`.
+
+## Checkstyle
+
+[Checkstyle](https://github.com/checkstyle/checkstyle) runs style checks on Java code.
+
+```shell
+./gradlew checkstyle
+```
+
+
+# Running remote end-to-end tests
 
 These tests are implemented with our notifier testing tool [Maze runner](https://github.com/bugsnag/maze-runner).
 
@@ -64,11 +114,11 @@ Ensure that the following environment variables are set:
 * `MAZE_DEVICE_FARM_ACCESS_KEY`: You BrowserStack App Automate Access Key
 * `MAZE_BS_LOCAL`: Location of the BrowserStack local testing binary (see https://www.browserstack.com/local-testing/app-automate).
 
-1. Build the test fixture `make test-fixture`
+1. Build the test fixtures `make test-fixtures` (separate fixtures are built with and without the NDK/ANR plugins)
 1. Check the contents of `Gemfile` to select the version of `maze-runner` to use
 1. To run a single feature:
     ```shell script
-    make test-fixture && \
+    make test-fixtures && \
     bundle exec maze-runner --app=build/fixture.apk                 \
                             --farm=bs                               \
                             --device=ANDROID_9_0                    \

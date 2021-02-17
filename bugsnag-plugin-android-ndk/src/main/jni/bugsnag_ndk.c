@@ -620,6 +620,16 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateMetadata(
   bsg_release_env_write_lock();
 }
 
+ssize_t
+bsg_unwind_stack_default(bugsnag_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
+                         siginfo_t *info, void *user_context) __asyncsafe;
+
+JNIEXPORT jlong JNICALL
+Java_com_bugsnag_android_ndk_NativeBridge_getUnwindStackFunction(JNIEnv *env,
+                                                                 jobject thiz) {
+  return (jlong)bsg_unwind_stack_default;
+}
+
 #ifdef __cplusplus
 }
 #endif

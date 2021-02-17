@@ -27,23 +27,44 @@ internal class Stacktrace : JsonStream.Streamable {
             }
             return null
         }
+
+        fun stacktraceFromJavaTrace(
+            stacktrace: Array<StackTraceElement>,
+            projectPackages: Collection<String>,
+            logger: Logger
+        ): Stacktrace {
+            val frames = stacktrace.mapNotNull { serializeStackframe(it, projectPackages, logger) }
+            return Stacktrace(frames)
+        }
+
+        private fun serializeStackframe(
+            el: StackTraceElement,
+            projectPackages: Collection<String>,
+            logger: Logger
+        ): Stackframe? {
+            try {
+                val methodName = when {
+                    el.className.isNotEmpty() -> el.className + "." + el.methodName
+                    else -> el.methodName
+                }
+
+                return Stackframe(
+                    methodName,
+                    if (el.fileName == null) "Unknown" else el.fileName,
+                    el.lineNumber,
+                    inProject(el.className, projectPackages)
+                )
+            } catch (lineEx: Exception) {
+                logger.w("Failed to serialize stacktrace", lineEx)
+                return null
+            }
+        }
     }
 
     val trace: List<Stackframe>
-    val logger: Logger
 
-    constructor(
-        stacktrace: Array<StackTraceElement>,
-        projectPackages: Collection<String>,
-        logger: Logger
-    ) {
-        trace = limitTraceLength(stacktrace.mapNotNull { serializeStackframe(it, projectPackages) })
-        this.logger = logger
-    }
-
-    constructor(frames: List<Stackframe>, logger: Logger) {
+    constructor(frames: List<Stackframe>) {
         trace = limitTraceLength(frames)
-        this.logger = logger
     }
 
     private fun <T> limitTraceLength(frames: List<T>): List<T> {
@@ -58,27 +79,5 @@ internal class Stacktrace : JsonStream.Streamable {
         writer.beginArray()
         trace.forEach { writer.value(it) }
         writer.endArray()
-    }
-
-    private fun serializeStackframe(
-        el: StackTraceElement,
-        projectPackages: Collection<String>
-    ): Stackframe? {
-        try {
-            val methodName = when {
-                el.className.isNotEmpty() -> el.className + "." + el.methodName
-                else -> el.methodName
-            }
-
-            return Stackframe(
-                methodName,
-                if (el.fileName == null) "Unknown" else el.fileName,
-                el.lineNumber,
-                inProject(el.className, projectPackages)
-            )
-        } catch (lineEx: Exception) {
-            logger.w("Failed to serialize stacktrace", lineEx)
-            return null
-        }
     }
 }

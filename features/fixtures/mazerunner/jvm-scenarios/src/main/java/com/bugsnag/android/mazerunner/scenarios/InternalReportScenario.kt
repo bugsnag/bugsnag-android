@@ -13,7 +13,7 @@ import java.io.File
 internal class InternalReportScenario(
     config: Configuration,
     context: Context,
-    eventMetadata: String
+    eventMetadata: String?
 ) : Scenario(config, context, eventMetadata) {
 
     init {

@@ -19,10 +19,10 @@ internal class StacktraceSerializationTest {
                 "stacktrace",
 
                 // empty stacktrace element ctor
-                Stacktrace(arrayOf(), emptySet(), NoopLogger),
+                Stacktrace.stacktraceFromJavaTrace(arrayOf(), emptySet(), NoopLogger),
 
                 // empty custom frames ctor
-                Stacktrace(listOf(frame), NoopLogger),
+                Stacktrace(listOf(frame)),
 
                 // basic
                 basic(),
@@ -37,13 +37,13 @@ internal class StacktraceSerializationTest {
         }
 
         private fun basic() =
-            Stacktrace(
+            Stacktrace.stacktraceFromJavaTrace(
                 RuntimeException("Whoops").stackTrace.sliceArray(IntRange(0, 1)),
                 emptySet(),
                 NoopLogger
             )
 
-        private fun inProject() = Stacktrace(
+        private fun inProject() = Stacktrace.stacktraceFromJavaTrace(
             RuntimeException("Whoops").stackTrace.sliceArray(IntRange(0, 1)),
             setOf("com.bugsnag.android"),
             NoopLogger
@@ -53,7 +53,7 @@ internal class StacktraceSerializationTest {
             val elements = (0..999).map {
                 StackTraceElement("SomeClass", "someMethod", "someFile", it)
             }
-            return Stacktrace(elements.toTypedArray(), emptyList(), NoopLogger)
+            return Stacktrace.stacktraceFromJavaTrace(elements.toTypedArray(), emptyList(), NoopLogger)
         }
 
         private fun trimStacktraceListCtor(): Stacktrace {
@@ -61,14 +61,15 @@ internal class StacktraceSerializationTest {
                 Stackframe("Foo", "Bar.kt", count, true).also { frame ->
                     // set different type for each frame
                     frame.type = when (count % 3) {
-                        0 -> ErrorType.ANDROID
-                        1 -> ErrorType.REACTNATIVEJS
-                        2 -> null
+                        0 -> ErrorType.C
+                        1 -> ErrorType.ANDROID
+                        2 -> ErrorType.REACTNATIVEJS
+                        3 -> null
                         else -> throw IllegalStateException()
                     }
                 }
             }
-            return Stacktrace(elements, NoopLogger)
+            return Stacktrace(elements)
         }
     }
 

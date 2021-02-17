@@ -14,7 +14,7 @@ import java.io.File
 internal class DeletedReportScenario(
     config: Configuration,
     context: Context,
-    eventMetadata: String
+    eventMetadata: String?
 ) : Scenario(config, context, eventMetadata) {
 
     override fun startBugsnag(startBugsnagOnly: Boolean) {

@@ -45,10 +45,11 @@ public class NullMetadataTest {
                 = SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION);
         Event event = new Event(new RuntimeException(), config, reason, NoopLogger.INSTANCE);
         List<String> projectPackages = Collections.emptyList();
-        Stacktrace stacktrace = new Stacktrace(new StackTraceElement[]{}, projectPackages,
+        Stacktrace trace = Stacktrace.Companion.stacktraceFromJavaTrace(new StackTraceElement[]{},
+                projectPackages,
                 NoopLogger.INSTANCE);
         Error err = new Error(new ErrorInternal("RuntimeException", "Something broke",
-                stacktrace), NoopLogger.INSTANCE);
+                trace), NoopLogger.INSTANCE);
         event.getErrors().clear();
         event.getErrors().add(err);
         validateDefaultMetadata(event);

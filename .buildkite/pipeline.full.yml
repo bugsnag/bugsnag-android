@@ -39,7 +39,7 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
-          - "features/full_tests/batch_1/handled_exception.feature"
+          - "features/minimal"
           - "--app=/app/build/release/fixture-minimal.apk"
           - "--farm=bs"
           - "--device=ANDROID_9_0"

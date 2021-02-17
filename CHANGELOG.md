@@ -2,6 +2,11 @@
 
 ## TBD
 
+### Enhancements
+
+* Support native stack traces in the ANR plugin
+   [#972](https://github.com/bugsnag/bugsnag-android/pull/972)
+
 ### Bug fixes
 
 * Check additional JNI calls for pending exceptions and no-op

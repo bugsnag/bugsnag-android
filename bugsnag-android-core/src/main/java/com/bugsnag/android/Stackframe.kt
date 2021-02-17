@@ -10,16 +10,28 @@ class Stackframe : JsonStream.Streamable {
      * The name of the method that was being executed
      */
     var method: String?
+        set(value) {
+            nativeFrame?.method = value
+            field = value
+        }
 
     /**
      * The location of the source file
      */
     var file: String?
+        set(value) {
+            nativeFrame?.file = value
+            field = value
+        }
 
     /**
      * The line number within the source file this stackframe refers to
      */
     var lineNumber: Number?
+        set(value) {
+            nativeFrame?.lineNumber = value
+            field = value
+        }
 
     /**
      * Whether the package is considered to be in your project for the purposes of grouping and
@@ -42,6 +54,10 @@ class Stackframe : JsonStream.Streamable {
      * The type of the error
      */
     var type: ErrorType? = null
+        set(value) {
+            nativeFrame?.type = value
+            field = value
+        }
 
     @JvmOverloads
     internal constructor(
@@ -60,8 +76,27 @@ class Stackframe : JsonStream.Streamable {
         this.columnNumber = columnNumber
     }
 
+    private var nativeFrame: NativeStackframe? = null
+
+    constructor(nativeFrame: NativeStackframe) : this(
+        nativeFrame.method,
+        nativeFrame.file,
+        nativeFrame.lineNumber,
+        false,
+        null
+    ) {
+        this.nativeFrame = nativeFrame
+        this.type = nativeFrame.type
+    }
+
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) {
+        val ndkFrame = nativeFrame
+        if (ndkFrame != null) {
+            ndkFrame.toStream(writer)
+            return
+        }
+
         writer.beginObject()
         writer.name("method").value(method)
         writer.name("file").value(file)

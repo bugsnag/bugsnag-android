@@ -12,7 +12,7 @@ import com.bugsnag.android.createCustomHeaderDelivery
 internal class CustomHttpClientFlushScenario(
     config: Configuration,
     context: Context,
-    eventMetadata: String
+    eventMetadata: String?
 ) : Scenario(config, context, eventMetadata) {
 
     override fun startBugsnag(startBugsnagOnly: Boolean) {

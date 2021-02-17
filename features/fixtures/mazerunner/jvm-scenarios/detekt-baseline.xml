@@ -2,11 +2,15 @@
 <SmellBaseline>
   <ManuallySuppressedIssues></ManuallySuppressedIssues>
   <CurrentIssues>
-    <ID>MagicNumber:AppNotRespondingDisabledNdkScenario.kt$AppNotRespondingDisabledNdkScenario$50000</ID>
-    <ID>MagicNumber:AppNotRespondingDisabledScenario.kt$AppNotRespondingDisabledScenario$50000</ID>
-    <ID>MagicNumber:AppNotRespondingScenario.kt$AppNotRespondingScenario$50000</ID>
+    <ID>EmptyWhileBlock:JvmAnrDisabledScenario.kt$JvmAnrDisabledScenario${ }</ID>
+    <ID>EmptyWhileBlock:JvmAnrLoopScenario.kt$JvmAnrLoopScenario${ }</ID>
+    <ID>EmptyWhileBlock:JvmAnrMinimalFixtureScenario.kt$JvmAnrMinimalFixtureScenario${ }</ID>
+    <ID>MagicNumber:AnrHelper.kt$&lt;no name provided&gt;$60000</ID>
+    <ID>MagicNumber:AnrHelper.kt$1000</ID>
     <ID>MagicNumber:BugsnagInitScenario.kt$BugsnagInitScenario$25</ID>
     <ID>MagicNumber:HandledKotlinSmokeScenario.kt$HandledKotlinSmokeScenario$999</ID>
+    <ID>MagicNumber:JvmAnrDisabledScenario.kt$JvmAnrDisabledScenario$2000</ID>
+    <ID>MagicNumber:JvmAnrSleepScenario.kt$JvmAnrSleepScenario$100000</ID>
     <ID>MagicNumber:LoadConfigurationKotlinScenario.kt$LoadConfigurationKotlinScenario$10000</ID>
     <ID>MagicNumber:LoadConfigurationKotlinScenario.kt$LoadConfigurationKotlinScenario$98</ID>
     <ID>MagicNumber:StartupCrashFlushScenario.kt$StartupCrashFlushScenario$6000</ID>

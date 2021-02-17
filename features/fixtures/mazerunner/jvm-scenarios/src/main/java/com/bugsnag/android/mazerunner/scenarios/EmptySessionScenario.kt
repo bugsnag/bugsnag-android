@@ -12,7 +12,7 @@ import java.io.File
 internal class EmptySessionScenario(
     config: Configuration,
     context: Context,
-    eventMetadata: String
+    eventMetadata: String?
 ) : Scenario(config, context, eventMetadata) {
 
     override fun startBugsnag(startBugsnagOnly: Boolean) {
