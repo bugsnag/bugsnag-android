@@ -37,11 +37,11 @@ static ssize_t anr_stacktrace_length = 0;
 
 unwind_func local_bsg_unwind_stack;
 
-// duplication required for this method that originally came from
+// duplication required for JNI methods that originally came from
 // bugsnag-plugin-android-ndk. Until a shared C module is available
 // for sharing common code when PLAT-5794 is addressed, this
 // duplication is a necessary evil.
-bool bsg_check_and_clear_exc(JNIEnv *env) {
+bool anr_bsg_check_and_clear_exc(JNIEnv *env) {
   if (env == NULL) {
     return false;
   }
@@ -50,6 +50,28 @@ bool bsg_check_and_clear_exc(JNIEnv *env) {
     return true;
   }
   return false;
+}
+
+jclass anr_bsg_safe_find_class(JNIEnv *env, const char *clz_name) {
+  if (env == NULL) {
+    return NULL;
+  }
+  if (clz_name == NULL) {
+    return NULL;
+  }
+  jclass clz = (*env)->FindClass(env, clz_name);
+  anr_bsg_check_and_clear_exc(env);
+  return clz;
+}
+
+jmethodID anr_bsg_safe_get_method_id(JNIEnv *env, jclass clz, const char *name,
+                                     const char *sig) {
+  if (env == NULL || clz == NULL || name == NULL || sig == NULL) {
+    return NULL;
+  }
+  jmethodID methodId = (*env)->GetMethodID(env, clz, name, sig);
+  anr_bsg_check_and_clear_exc(env);
+  return methodId;
 }
 
 bool configure_anr_jni_impl(
@@ -63,19 +85,48 @@ bool configure_anr_jni_impl(
     return false;
   }
 
-  jclass clz = (*env)->FindClass(env, "com/bugsnag/android/AnrPlugin");
-  if (bsg_check_and_clear_exc(env) || clz == NULL) {
+  jclass clz = anr_bsg_safe_find_class(env, "com/bugsnag/android/AnrPlugin");
+  if (anr_bsg_check_and_clear_exc(env) || clz == NULL) {
     return false;
   }
-  mthd_notify_anr_detected =
-      (*env)->GetMethodID(env, clz, "notifyAnrDetected", "(Ljava/util/List;)V");
-  frame_class = (*env)->FindClass(env, "com/bugsnag/android/NativeStackframe");
+  mthd_notify_anr_detected = anr_bsg_safe_get_method_id(
+      env, clz, "notifyAnrDetected", "(Ljava/util/List;)V");
+  frame_class =
+      anr_bsg_safe_find_class(env, "com/bugsnag/android/NativeStackframe");
   frame_class = (*env)->NewGlobalRef(env, frame_class);
-  frame_init = (*env)->GetMethodID(
+  frame_init = anr_bsg_safe_get_method_id(
       env, frame_class, "<init>",
       "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Number;Ljava/lang/"
       "Long;Ljava/lang/Long;Ljava/lang/Long;)V");
   return true;
+}
+
+void anr_bsg_safe_delete_local_ref(JNIEnv *env, jobject obj) {
+  if (env != NULL) {
+    (*env)->DeleteLocalRef(env, obj);
+  }
+}
+
+jobject anr_bsg_safe_new_object(JNIEnv *env, jclass clz, jmethodID method,
+                                ...) {
+  if (env == NULL || clz == NULL) {
+    return NULL;
+  }
+  va_list args;
+  va_start(args, method);
+  jobject obj = (*env)->NewObjectV(env, clz, method, args);
+  va_end(args);
+  anr_bsg_check_and_clear_exc(env);
+  return obj;
+}
+
+jstring anr_bsg_safe_new_string_utf(JNIEnv *env, const char *str) {
+  if (env == NULL || str == NULL) {
+    return NULL;
+  }
+  jstring jstr = (*env)->NewStringUTF(env, str);
+  anr_bsg_check_and_clear_exc(env);
+  return jstr;
 }
 
 static bool configure_anr_jni(JNIEnv *env) {
@@ -110,42 +161,51 @@ static void notify_anr_detected() {
     return;
   }
 
-  jclass list_class = (*env)->FindClass(env, "java/util/LinkedList");
-  jmethodID list_init = (*env)->GetMethodID(env, list_class, "<init>", "()V");
-  jmethodID list_add =
-      (*env)->GetMethodID(env, list_class, "add", "(Ljava/lang/Object;)Z");
-  jclass int_class = (*env)->FindClass(env, "java/lang/Integer");
-  jmethodID int_init = (*env)->GetMethodID(env, int_class, "<init>", "(I)V");
-  jclass long_class = (*env)->FindClass(env, "java/lang/Long");
-  jmethodID long_init = (*env)->GetMethodID(env, long_class, "<init>", "(J)V");
+  jclass list_class = anr_bsg_safe_find_class(env, "java/util/LinkedList");
+  jmethodID list_init =
+      anr_bsg_safe_get_method_id(env, list_class, "<init>", "()V");
+  jmethodID list_add = anr_bsg_safe_get_method_id(env, list_class, "add",
+                                                  "(Ljava/lang/Object;)Z");
+  jclass int_class = anr_bsg_safe_find_class(env, "java/lang/Integer");
+  jmethodID int_init =
+      anr_bsg_safe_get_method_id(env, int_class, "<init>", "(I)V");
+  jclass long_class = anr_bsg_safe_find_class(env, "java/lang/Long");
+  jmethodID long_init =
+      anr_bsg_safe_get_method_id(env, long_class, "<init>", "(J)V");
 
-  jobject jlist = (*env)->NewObject(env, list_class, list_init);
+  jobject jlist = anr_bsg_safe_new_object(env, list_class, list_init);
   for (ssize_t i = 0; i < anr_stacktrace_length; i++) {
     bugsnag_stackframe *frame = anr_stacktrace + i;
-    jobject jmethod = (*env)->NewStringUTF(env, frame->method);
-    jobject jfilename = (*env)->NewStringUTF(env, frame->filename);
-    jobject jline_number =
-        (*env)->NewObject(env, int_class, int_init, (jint)frame->line_number);
-    jobject jframe_address = (*env)->NewObject(env, long_class, long_init,
-                                               (jlong)frame->frame_address);
-    jobject jsymbol_address = (*env)->NewObject(env, long_class, long_init,
-                                                (jlong)frame->symbol_address);
-    jobject jload_address = (*env)->NewObject(env, long_class, long_init,
-                                              (jlong)frame->load_address);
-    jobject jframe = (*env)->NewObject(env, frame_class, frame_init, jmethod,
-                                       jfilename, jline_number, jframe_address,
-                                       jsymbol_address, jload_address);
-    (*env)->CallBooleanMethod(env, jlist, list_add, jframe);
-    (*env)->DeleteLocalRef(env, jmethod);
-    (*env)->DeleteLocalRef(env, jfilename);
-    (*env)->DeleteLocalRef(env, jline_number);
-    (*env)->DeleteLocalRef(env, jframe_address);
-    (*env)->DeleteLocalRef(env, jsymbol_address);
-    (*env)->DeleteLocalRef(env, jload_address);
-    (*env)->DeleteLocalRef(env, jframe);
+    jobject jmethod = anr_bsg_safe_new_string_utf(env, frame->method);
+    jobject jfilename = anr_bsg_safe_new_string_utf(env, frame->filename);
+    jobject jline_number = anr_bsg_safe_new_object(env, int_class, int_init,
+                                                   (jint)frame->line_number);
+    jobject jframe_address = anr_bsg_safe_new_object(
+        env, long_class, long_init, (jlong)frame->frame_address);
+    jobject jsymbol_address = anr_bsg_safe_new_object(
+        env, long_class, long_init, (jlong)frame->symbol_address);
+    jobject jload_address = anr_bsg_safe_new_object(env, long_class, long_init,
+                                                    (jlong)frame->load_address);
+    jobject jframe = anr_bsg_safe_new_object(
+        env, frame_class, frame_init, jmethod, jfilename, jline_number,
+        jframe_address, jsymbol_address, jload_address);
+    if (jlist != NULL && list_add != NULL && jframe != NULL) {
+      (*env)->CallBooleanMethod(env, jlist, list_add, jframe);
+      anr_bsg_check_and_clear_exc(env);
+    }
+    anr_bsg_safe_delete_local_ref(env, jmethod);
+    anr_bsg_safe_delete_local_ref(env, jfilename);
+    anr_bsg_safe_delete_local_ref(env, jline_number);
+    anr_bsg_safe_delete_local_ref(env, jframe_address);
+    anr_bsg_safe_delete_local_ref(env, jsymbol_address);
+    anr_bsg_safe_delete_local_ref(env, jload_address);
+    anr_bsg_safe_delete_local_ref(env, jframe);
   }
 
-  (*env)->CallVoidMethod(env, obj_plugin, mthd_notify_anr_detected, jlist);
+  if (obj_plugin != NULL && mthd_notify_anr_detected != NULL && jlist != NULL) {
+    (*env)->CallVoidMethod(env, obj_plugin, mthd_notify_anr_detected, jlist);
+    anr_bsg_check_and_clear_exc(env);
+  }
 
   if (should_detach) {
     (*bsg_jvm)->DetachCurrentThread(
