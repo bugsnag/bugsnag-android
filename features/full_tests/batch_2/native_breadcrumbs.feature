@@ -2,7 +2,6 @@ Feature: Native Breadcrumbs API
 
     Scenario: Leaving breadcrumbs in C followed by a Java crash
         When I run "CXXNativeBreadcrumbJavaCrashScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXNativeBreadcrumbJavaCrashScenario"
         And I wait to receive an error
         And the error payload contains a completed handled native report

@@ -2,7 +2,6 @@ Feature: Raising native signals
 
     Scenario: Raise SIGILL
         When I run "CXXSigillScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXSigillScenario"
         And I wait to receive an error
         And the error payload contains a completed unhandled native report
@@ -16,7 +15,6 @@ Feature: Raising native signals
 
     Scenario: Raise SIGSEGV
         When I run "CXXSigsegvScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXSigsegvScenario"
         And I wait to receive an error
         And the error payload contains a completed unhandled native report
@@ -28,7 +26,6 @@ Feature: Raising native signals
 
     Scenario: Raise SIGABRT
         When I run "CXXSigabrtScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXSigabrtScenario"
         And I wait to receive an error
         And the error payload contains a completed unhandled native report
@@ -40,7 +37,6 @@ Feature: Raising native signals
 
     Scenario: Raise SIGBUS
         When I run "CXXSigbusScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXSigbusScenario"
         And I wait to receive an error
         And the error payload contains a completed unhandled native report
@@ -52,7 +48,6 @@ Feature: Raising native signals
 
     Scenario: Raise SIGFPE
         When I run "CXXSigfpeScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXSigfpeScenario"
         And I wait to receive an error
         And the error payload contains a completed unhandled native report
@@ -64,7 +59,6 @@ Feature: Raising native signals
 
     Scenario: Raise SIGTRAP
         When I run "CXXSigtrapScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXSigtrapScenario"
         And I wait to receive an error
         And the error payload contains a completed unhandled native report

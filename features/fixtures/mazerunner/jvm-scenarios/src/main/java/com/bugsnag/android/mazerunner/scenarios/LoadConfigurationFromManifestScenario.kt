@@ -12,7 +12,8 @@ internal class LoadConfigurationFromManifestScenario(
     eventMetadata: String
 ) : Scenario(config, context, eventMetadata) {
 
-    override fun startBugsnag() {
+    override fun startBugsnag(startBugsnagOnly: Boolean) {
+        this.startBugsnagOnly = startBugsnagOnly
         val testConfig = Configuration.load(this.context)
         testConfig.addOnError(
             OnErrorCallback { event ->

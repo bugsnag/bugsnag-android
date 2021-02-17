@@ -34,7 +34,6 @@ Scenario: Unhandled JVM error
     When I run "MultiProcessUnhandledExceptionScenario" and relaunch the app
     And I configure the app to run in the "multi-process-service" state
     And I run "MultiProcessUnhandledExceptionScenario" and relaunch the app
-    And I configure the app to run in the "non-crashy" state
     And I run "MultiProcessUnhandledExceptionScenario"
     Then I wait to receive 2 errors
     And I sort the errors by "events.0.metaData.process.name"
@@ -55,7 +54,7 @@ Scenario: Unhandled JVM error
 
 Scenario: Handled NDK error
     When I run "MultiProcessHandledCXXErrorScenario"
-        Then I wait to receive 2 errors
+    Then I wait to receive 2 errors
     And I sort the errors by "events.0.metaData.process.name"
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the error payload contains a completed handled native report
@@ -85,7 +84,6 @@ Scenario: Unhandled NDK error
     When I run "MultiProcessUnhandledCXXErrorScenario" and relaunch the app
     And I configure the app to run in the "multi-process-service" state
     And I run "MultiProcessUnhandledCXXErrorScenario" and relaunch the app
-    And I configure the app to run in the "non-crashy" state
     And I run "MultiProcessUnhandledCXXErrorScenario"
     Then I wait to receive 2 errors
     And I sort the errors by "events.0.metaData.process.name"

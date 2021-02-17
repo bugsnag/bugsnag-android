@@ -20,9 +20,9 @@ internal class SharedPrefMigrationScenario(
         config.persistUser = true
     }
 
-    override fun startBugsnag() {
+    override fun startBugsnag(startBugsnagOnly: Boolean) {
         persistLegacyPrefs()
-        super.startBugsnag()
+        super.startBugsnag(startBugsnagOnly)
     }
 
     override fun startScenario() {

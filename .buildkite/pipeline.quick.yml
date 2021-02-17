@@ -110,9 +110,6 @@ steps:
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_9_0"
-          - "--retry=1"
-          - "--strict-undefined"
-          - "--strict-pending"
           - "--tags"
           - "not @Flaky"
     concurrency: 9
@@ -134,9 +131,6 @@ steps:
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_9_0"
-          - "--retry=1"
-          - "--strict-undefined"
-          - "--strict-pending"
           - "--tags"
           - "not @Flaky"
     concurrency: 9

@@ -2,13 +2,11 @@ Feature: Native on error callbacks are invoked
 
     Scenario: on_error returning false prevents C signal being reported
         When I run "CXXSignalOnErrorFalseScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXSignalOnErrorFalseScenario"
         Then Bugsnag confirms it has no errors to send
 
     Scenario: on_error returning false prevents C++ exception being reported
         When I run "CXXExceptionOnErrorFalseScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXExceptionOnErrorFalseScenario"
         Then Bugsnag confirms it has no errors to send
 

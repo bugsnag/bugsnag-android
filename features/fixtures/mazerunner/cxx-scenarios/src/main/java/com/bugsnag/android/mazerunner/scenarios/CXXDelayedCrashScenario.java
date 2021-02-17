@@ -35,10 +35,6 @@ public class CXXDelayedCrashScenario extends Scenario {
             return;
         }
         didActivate = true;
-        String metadata = getEventMetadata();
-        if (metadata != null && metadata.equals("non-crashy")) {
-            return;
-        }
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {

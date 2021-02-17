@@ -7,18 +7,15 @@ Scenario: Exception classname ignored
 
 Scenario: Disabled Exception Handler
     When I run "DisableAutoDetectErrorsScenario" and relaunch the app
-    And I configure the app to run in the "non-crashy" state
     And I configure Bugsnag for "DisableAutoDetectErrorsScenario"
     Then Bugsnag confirms it has no errors to send
 
 Scenario: Changing release stage to exclude the current stage settings before a POSIX signal
     When I run "CXXTrapOutsideReleaseStagesScenario" and relaunch the app
-    And I configure the app to run in the "non-crashy" state
     And I configure Bugsnag for "CXXTrapOutsideReleaseStagesScenario"
     Then Bugsnag confirms it has no errors to send
 
 Scenario: Changing release stage settings to exclude the current stage before a native C++ crash
     When I run "CXXThrowSomethingOutsideReleaseStagesScenario" and relaunch the app
-    And I configure the app to run in the "non-crashy" state
     And I configure Bugsnag for "CXXThrowSomethingOutsideReleaseStagesScenario"
     Then Bugsnag confirms it has no errors to send
