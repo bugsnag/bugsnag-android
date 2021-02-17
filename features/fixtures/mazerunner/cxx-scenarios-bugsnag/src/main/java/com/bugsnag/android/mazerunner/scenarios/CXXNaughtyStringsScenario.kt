@@ -20,7 +20,6 @@ internal class CXXNaughtyStringsScenario(
     override fun startScenario() {
         super.startScenario()
         addNaughtyStringMetadata(javaClass)
-        Thread.sleep(200) // allow metadata to sync across JNI layer
 
         crash()
     }

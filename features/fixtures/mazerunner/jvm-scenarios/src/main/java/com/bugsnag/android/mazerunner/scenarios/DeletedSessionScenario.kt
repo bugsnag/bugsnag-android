@@ -1,8 +1,6 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
-import android.os.Handler
-import android.os.HandlerThread
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.Delivery
@@ -11,7 +9,6 @@ import com.bugsnag.android.DeliveryStatus
 import com.bugsnag.android.EventPayload
 import com.bugsnag.android.Session
 import com.bugsnag.android.createDefaultDelivery
-import com.bugsnag.android.flushAllSessions
 import java.io.File
 
 internal class DeletedSessionScenario(
@@ -52,16 +49,6 @@ internal class DeletedSessionScenario(
 
     override fun startScenario() {
         super.startScenario()
-
         Bugsnag.startSession()
-
-        val thread = HandlerThread("HandlerThread")
-        thread.start()
-
-        Handler(thread.looper).post(
-            Runnable {
-                flushAllSessions()
-            }
-        )
     }
 }

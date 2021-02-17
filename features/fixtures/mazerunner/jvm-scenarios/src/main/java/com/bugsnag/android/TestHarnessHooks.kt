@@ -4,13 +4,6 @@ import com.bugsnag.android.JavaHooks.generateAppWithState
 import com.bugsnag.android.JavaHooks.generateDeviceWithState
 import java.lang.Thread
 
-/**
- * Accesses the session tracker and flushes all stored sessions
- */
-internal fun flushAllSessions() {
-    Bugsnag.getClient().sessionTracker.flushStoredSessions()
-}
-
 internal fun flushErrorStoreAsync(client: Client) {
     client.eventStore.flushAsync()
 }
