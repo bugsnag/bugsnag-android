@@ -5,8 +5,8 @@
 When('any dialog is cleared and the element {string} is present') do |element_id|
   count = 0
   present = false
-  until present || count > 15
-    present = Maze.driver.wait_for_element(element_id, timeout = 1)
+  until present || count > 5
+    present = Maze.driver.wait_for_element(element_id, timeout = 3)
     break if present
     count += 1
     clicked = click_if_present('android:id/button1') ||
