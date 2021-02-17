@@ -15,6 +15,8 @@
   [#1140](https://github.com/bugsnag/bugsnag-android/pull/1140)
 * Replace strncpy() usage with safe function call
   [#1149](https://github.com/bugsnag/bugsnag-android/pull/1149)
+* Prevent NPE when delivering internal error reports
+  [#1150](https://github.com/bugsnag/bugsnag-android/pull/1150)
 
 ## 5.6.2 (2021-02-15)
 
