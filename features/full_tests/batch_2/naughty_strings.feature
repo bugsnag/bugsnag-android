@@ -27,7 +27,6 @@ Scenario: Test handled JVM error
 @skip_below_android_6
 Scenario: Test unhandled NDK error
     When I run "CXXNaughtyStringsScenario" and relaunch the app
-    And I configure the app to run in the "non-crashy" state
     And I configure Bugsnag for "CXXNaughtyStringsScenario"
     Then I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier

@@ -20,9 +20,9 @@ end
 
 When("I run {string}") do |event_type|
   steps %Q{
-    Given any dialog is cleared and the element "scenarioText" is present
-    When I send the keys "#{event_type}" to the element "scenarioText"
-    And I click the element "startScenarioButton"
+    Given any dialog is cleared and the element "scenario_name" is present
+    When I send the keys "#{event_type}" to the element "scenario_name"
+    And I click the element "run_scenario"
   }
 end
 
@@ -41,9 +41,9 @@ end
 
 When("I configure Bugsnag for {string}") do |event_type|
   steps %Q{
-    Given any dialog is cleared and the element "scenarioText" is present
-    When I send the keys "#{event_type}" to the element "scenarioText"
-    And I click the element "startBugsnagButton"
+    Given any dialog is cleared and the element "scenario_name" is present
+    When I send the keys "#{event_type}" to the element "scenario_name"
+    And I click the element "start_bugsnag"
   }
 end
 
@@ -68,10 +68,11 @@ When("I tap the screen {int} times") do |count|
   }
 end
 
+
 When("I configure the app to run in the {string} state") do |event_metadata|
   steps %Q{
-    Given any dialog is cleared and the element "scenarioMetaData" is present
-    And I send the keys "#{event_metadata}" to the element "scenarioMetaData"
+    Given any dialog is cleared and the element "scenario_metadata" is present
+    And I send the keys "#{event_metadata}" to the element "scenario_metadata"
   }
 end
 

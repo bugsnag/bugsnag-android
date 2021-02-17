@@ -28,8 +28,6 @@ internal class OverrideToHandledExceptionScenario(
     override fun startScenario() {
         super.startScenario()
         Bugsnag.startSession()
-        if (eventMetadata != "non-crashy") {
-            throw generateException()
-        }
+        throw generateException()
     }
 }

@@ -37,16 +37,36 @@ static ssize_t anr_stacktrace_length = 0;
 
 unwind_func local_bsg_unwind_stack;
 
-static bool configure_anr_jni(JNIEnv *env) {
-  // get a global reference to the AnrPlugin class
+// duplication required for this method that originally came from
+// bugsnag-plugin-android-ndk. Until a shared C module is available
+// for sharing common code when PLAT-5794 is addressed, this
+// duplication is a necessary evil.
+bool bsg_check_and_clear_exc(JNIEnv *env) {
+  if (env == NULL) {
+    return false;
+  }
+  if ((*env)->ExceptionCheck(env)) {
+    (*env)->ExceptionClear(env);
+    return true;
+  }
+  return false;
+}
+
+bool configure_anr_jni_impl(
+    JNIEnv *env) { // get a global reference to the AnrPlugin class
   // https://developer.android.com/training/articles/perf-jni#faq:-why-didnt-findclass-find-my-class
+  if (env == NULL) {
+    return false;
+  }
   int result = (*env)->GetJavaVM(env, &bsg_jvm);
   if (result != 0) {
-    BUGSNAG_LOG("Failed to fetch Java VM. ANR handler not installed.");
     return false;
   }
 
   jclass clz = (*env)->FindClass(env, "com/bugsnag/android/AnrPlugin");
+  if (bsg_check_and_clear_exc(env) || clz == NULL) {
+    return false;
+  }
   mthd_notify_anr_detected =
       (*env)->GetMethodID(env, clz, "notifyAnrDetected", "(Ljava/util/List;)V");
   frame_class = (*env)->FindClass(env, "com/bugsnag/android/NativeStackframe");
@@ -56,6 +76,14 @@ static bool configure_anr_jni(JNIEnv *env) {
       "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Number;Ljava/lang/"
       "Long;Ljava/lang/Long;Ljava/lang/Long;)V");
   return true;
+}
+
+static bool configure_anr_jni(JNIEnv *env) {
+  bool success = configure_anr_jni_impl(env);
+  if (!success) {
+    BUGSNAG_LOG("Failed to fetch Java VM. ANR handler not installed.");
+  }
+  return success;
 }
 
 static void notify_anr_detected() {
@@ -227,7 +255,7 @@ static void install_signal_handler() {
 bool bsg_handler_install_anr(JNIEnv *env, jobject plugin) {
   pthread_mutex_lock(&bsg_anr_handler_config);
 
-  if (!installed && configure_anr_jni(env)) {
+  if (!installed && configure_anr_jni(env) && plugin != NULL) {
     obj_plugin = (*env)->NewGlobalRef(env, plugin);
     install_signal_handler();
     installed = true;

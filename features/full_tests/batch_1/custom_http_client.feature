@@ -3,8 +3,7 @@ Feature: Using custom API clients for reporting errors
 Scenario: Set a custom HTTP client and flush a stored error + session
     When I configure the app to run in the "offline" state
     And I run "CustomHttpClientFlushScenario" and relaunch the app
-    And I configure the app to run in the "non-crashy" state
-    And I run "CustomHttpClientFlushScenario"
+    And I configure Bugsnag for "CustomHttpClientFlushScenario"
 
     # error received
     And I wait to receive an error

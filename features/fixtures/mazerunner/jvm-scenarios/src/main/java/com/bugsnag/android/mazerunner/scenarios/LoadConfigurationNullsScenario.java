@@ -28,7 +28,8 @@ public class LoadConfigurationNullsScenario extends Scenario {
     }
 
     @Override
-    public void startBugsnag() {
+    public void startBugsnag(boolean startBugsnagOnly) {
+        setStartBugsnagOnly(startBugsnagOnly);
         Configuration testConfig = new Configuration("12312312312312312312312312312312");
         // Setup
         testConfig.setAutoDetectErrors(true);

@@ -157,6 +157,7 @@ Scenario: Signal raised with overwritten config
 
     # Breadcrumbs
     And the event has a "manual" breadcrumb named "CXXSignalSmokeScenario"
+    And the event has a "request" breadcrumb named "Substandard nacho error"
 
     # Native context override
     And the event "context" equals "Some custom context"
