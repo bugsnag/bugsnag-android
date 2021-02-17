@@ -270,8 +270,8 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_addBreadcrumb(
 
   if (name != NULL && type != NULL && timestamp != NULL) {
     bugsnag_breadcrumb *crumb = calloc(1, sizeof(bugsnag_breadcrumb));
-    strncpy(crumb->name, name, sizeof(crumb->name));
-    strncpy(crumb->timestamp, timestamp, sizeof(crumb->timestamp));
+    bsg_strncpy_safe(crumb->name, name, sizeof(crumb->name));
+    bsg_strncpy_safe(crumb->timestamp, timestamp, sizeof(crumb->timestamp));
     if (strcmp(type, "user") == 0) {
       crumb->type = BSG_CRUMB_USER;
     } else if (strcmp(type, "error") == 0) {
