@@ -386,9 +386,6 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateInForeground(
     return;
   }
   char *activity = (char *)bsg_safe_get_string_utf_chars(env, activity_);
-  if (activity == NULL) {
-    return;
-  }
   bsg_request_env_write_lock();
   bool was_in_foreground = bsg_global_env->next_event.app.in_foreground;
   bsg_global_env->next_event.app.in_foreground = (bool)new_value;
