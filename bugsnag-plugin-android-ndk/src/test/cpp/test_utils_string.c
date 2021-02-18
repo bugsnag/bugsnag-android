@@ -3,18 +3,21 @@
 #include <stdlib.h>
 
 TEST test_copy_empty_string(void) {
+    int length = 10;
     char *src = "";
-    char *dst = calloc(sizeof(char), 10);
-    bsg_strcpy(dst, src);
+    char *dst = calloc(sizeof(char), length);
+    dst[0] = 'a';
+    bsg_strncpy_safe(dst, src, length);
     ASSERT(dst[0] == '\0');
     free(dst);
     PASS();
 }
 
 TEST test_copy_literal_string(void) {
+    int length = 10;
     char *src = "C h a n g e";
-    char *dst = calloc(sizeof(char), 10);
-    bsg_strcpy(dst, src);
+    char *dst = calloc(sizeof(char), length);
+    bsg_strncpy_safe(dst, src, length);
     ASSERT(dst[0] == 'C');
     ASSERT(dst[1] == ' ');
     ASSERT(dst[2] == 'h');
@@ -31,20 +34,9 @@ TEST test_copy_literal_string(void) {
     PASS();
 }
 
-TEST length_literal_string(void) {
-    ASSERT_EQ(11, bsg_strlen("C h a n g e"));
-    PASS();
-}
-TEST length_empty_string(void) {
-    ASSERT_EQ(0, bsg_strlen(""));
-    PASS();
-}
-
 
 SUITE(string_utils) {
     RUN_TEST(test_copy_empty_string);
     RUN_TEST(test_copy_literal_string);
-    RUN_TEST(length_empty_string);
-    RUN_TEST(length_literal_string);
 }
 

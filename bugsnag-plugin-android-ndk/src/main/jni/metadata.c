@@ -526,7 +526,8 @@ void bsg_populate_device_data(JNIEnv *env, bsg_jni_cache *jni_cache,
   bsg_copy_map_value_string(env, jni_cache, data, "orientation",
                             event->device.orientation,
                             sizeof(event->device.orientation));
-  bsg_strcpy(event->device.os_name, bsg_os_name());
+  bsg_strncpy_safe(event->device.os_name, bsg_os_name(),
+                   sizeof(event->device.os_name));
   bsg_copy_map_value_string(env, jni_cache, data, "osVersion",
                             event->device.os_version,
                             sizeof(event->device.os_version));
