@@ -34,6 +34,8 @@ public class CXXNotifySmokeScenario extends Scenario {
     public void startScenario() {
         super.startScenario();
 
+        Bugsnag.leaveBreadcrumb("Initiate lift");
+        Bugsnag.leaveBreadcrumb("Disable lift");
         Bugsnag.addMetadata("TestData", "JVM", "pre notify()");
         Bugsnag.addOnError(new OnErrorCallback() {
             @Override

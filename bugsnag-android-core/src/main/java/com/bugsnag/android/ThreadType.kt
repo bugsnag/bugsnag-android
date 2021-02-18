@@ -11,6 +11,11 @@ enum class ThreadType(internal val desc: String) {
     ANDROID("android"),
 
     /**
+     * A thread captured from Android's NDK layer
+     */
+    C("c"),
+
+    /**
      * A thread captured from JavaScript
      */
     REACTNATIVEJS("reactnativejs")

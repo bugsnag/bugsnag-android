@@ -25,10 +25,6 @@ public class CXXSigfpeScenario extends Scenario {
     @Override
     public void startScenario() {
         super.startScenario();
-        String metadata = getEventMetadata();
-        if (metadata != null && metadata.equals("non-crashy")) {
-            return;
-        }
         crash(2726);
     }
 }

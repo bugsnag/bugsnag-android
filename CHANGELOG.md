@@ -1,5 +1,23 @@
 # Changelog
 
+## 5.7.0 (2021-02-18)
+
+### Enhancements
+
+* Support native stack traces in the ANR plugin
+   [#972](https://github.com/bugsnag/bugsnag-android/pull/972)
+
+### Bug fixes
+
+* Check additional JNI calls for pending exceptions and no-op
+  [#1142](https://github.com/bugsnag/bugsnag-android/pull/1142)
+* Move free() call to exit block
+  [#1140](https://github.com/bugsnag/bugsnag-android/pull/1140)
+* Replace strncpy() usage with safe function call
+  [#1149](https://github.com/bugsnag/bugsnag-android/pull/1149)
+* Prevent NPE when delivering internal error reports
+  [#1150](https://github.com/bugsnag/bugsnag-android/pull/1150)
+
 ## 5.6.2 (2021-02-15)
 
 ### Bug fixes

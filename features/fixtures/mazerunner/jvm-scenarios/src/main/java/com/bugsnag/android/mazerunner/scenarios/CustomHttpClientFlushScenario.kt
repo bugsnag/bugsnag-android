@@ -12,25 +12,24 @@ import com.bugsnag.android.createCustomHeaderDelivery
 internal class CustomHttpClientFlushScenario(
     config: Configuration,
     context: Context,
-    eventMetadata: String
+    eventMetadata: String?
 ) : Scenario(config, context, eventMetadata) {
 
-    init {
+    override fun startBugsnag(startBugsnagOnly: Boolean) {
         config.autoTrackSessions = false
 
-        if ("non-crashy" == eventMetadata) {
+        if (startBugsnagOnly) {
             config.delivery = createCustomHeaderDelivery()
         } else {
             disableAllDelivery(config)
         }
+        super.startBugsnag(startBugsnagOnly)
     }
 
     override fun startScenario() {
         super.startScenario()
 
-        if ("non-crashy" != eventMetadata) {
-            Bugsnag.startSession()
-            throw RuntimeException("ReportCacheScenario")
-        }
+        Bugsnag.startSession()
+        throw RuntimeException("ReportCacheScenario")
     }
 }

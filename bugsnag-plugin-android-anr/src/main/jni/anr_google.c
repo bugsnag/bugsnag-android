@@ -9,25 +9,22 @@
 // mechanism, which complicates things:
 //
 // - sigwait() only triggers when a signal becomes PENDING, which can only
-// happen if the signal is
-//   blocked on all threads. As soon as a signal handler gets called, the signal
-//   is no longer pending. Also, an unblocked signal never becomes pending.
+//   happen if the signal is blocked on all threads. As soon as a signal
+//   handler gets called, the signal is no longer pending. Also, an unblocked
+//   signal never becomes pending.
 //
 // - Blocked signals will never reach a signal handler registered via
-// sigaction(), which is why the
-//   old BSG implementation had to unblock SIGQUIT to work (while at the same
-//   time breaking the Google handler).
+//   sigaction(), which is why the old BSG implementation had to unblock
+//   SIGQUIT to work (while at the same time breaking the Google handler).
 //
 // - Registering multiple handlers via sigwait() doesn't work because only the
-// first registered
-//   handler gets called. Once the first handler runs, the signal is no longer
-//   pending. And since the first handler in this case is registered by the
-//   runtime library before our code even has a chance to run, we'd never get
-//   called.
+//   first registered handler gets called. Once the first handler runs, the
+//   signal is no longer pending. And since the first handler in this case is
+//   registered by the runtime library before our code even has a chance to
+//   run, we'd never get called.
 //
 // - Even though the runtime library has callback hooks for ANRs
-// (art/runtime/runtime.cc), it's
-//   not a public API, so we can't use it.
+//   (art/runtime/runtime.cc), it's not a public API, so we can't use it.
 //
 // So we need a workaround. Calling raise() and signal() won't work, because the
 // signal ends up getting routed incorrectly. The only way to successfully
@@ -42,33 +39,28 @@
 // - Register a SIGQUIT handler via sigaction()
 //
 // - Our handler callback blocks SIGQUIT (allowing the Google handler to work
-// again) and sets a
-//   flag like "should_report_anr"
+//   again) and sets a flag like "should_report_anr"
 //
 // - We have another thread waiting on the "should_report_anr" flag, which then
-// calls
-//   bsg_google_anr_call() after a short delay to raise a SIGQUIT on Google's
-//   handler thread. Re-raising the signal on the signal handler thread won't
-//   work because the signaling system in the OS won't finish updating the new
-//   blocking state until the current signal handler returns.
+//   calls bsg_google_anr_call() after a short delay to raise a SIGQUIT on
+//   Google's handler thread. Re-raising the signal on the signal handler
+//   thread won't work because the signaling system in the OS won't finish
+//   updating the new blocking state until the current signal handler returns.
 //
 // - Do our handler stuff, delay a short while (like 2 seconds) for Google's
-// handlers to finish,
-//   then exit our watchdog thread. It's important that our watchdog thread
-//   stops before the runtime's timeout (currently 20 seconds), or else we'll be
-//   force-killed, which breaks Google reporting and the ANR popup in some
-//   cases.
+//   handlers to finish, then exit our watchdog thread. It's important that
+//   our watchdog thread stops before the runtime's timeout (currently 20
+//   seconds), or else we'll be force-killed, which breaks Google reporting
+//   and the ANR popup in some cases.
 //
 //
 // Functionality in this file:
 //
 // - bsg_google_anr_init (NOT async-safe): Find and save the Google ANR handler
-// thread ID and the
-//   process ID, which are needed to make the syscall.
+//   thread ID and the process ID, which are needed to make the syscall.
 //
 // - bsg_google_anr_call (async-safe): Make the syscall to send a SIGQUIT
-// directly to the runtime
-//   library's ANR handler thread.
+//   directly to the runtime library's ANR handler thread.
 
 #include "anr_google.h"
 

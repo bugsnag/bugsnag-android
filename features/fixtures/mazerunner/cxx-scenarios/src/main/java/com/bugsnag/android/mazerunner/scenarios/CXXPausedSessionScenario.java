@@ -30,18 +30,14 @@ public class CXXPausedSessionScenario extends Scenario {
     @Override
     public void startScenario() {
         super.startScenario();
-        String metadata = getEventMetadata();
-
-        if (metadata == null || !metadata.equals("non-crashy")) {
-            Bugsnag.getClient().startSession();
-            Bugsnag.getClient().pauseSession();
-            TestHarnessHooksKt.flushAllSessions();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    crash(0);
-                }
-            }, 500);
-        }
+        Bugsnag.getClient().startSession();
+        Bugsnag.getClient().pauseSession();
+        TestHarnessHooksKt.flushAllSessions();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                crash(0);
+            }
+        }, 500);
     }
 }

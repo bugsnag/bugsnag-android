@@ -157,6 +157,7 @@ Scenario: Signal raised with overwritten config
 
     # Breadcrumbs
     And the event has a "manual" breadcrumb named "CXXSignalSmokeScenario"
+    And the event has a "request" breadcrumb named "Substandard nacho error"
 
     # Native context override
     And the event "context" equals "Some custom context"
@@ -244,7 +245,7 @@ Scenario: C++ exception thrown with overwritten config
 
 @skip_android_8_1
 Scenario: ANR detection
-    When I run "AppNotRespondingScenario"
+    When I run "JvmAnrLoopScenario"
     And I wait for 2 seconds
     And I tap the screen 3 times
     And I wait for 4 seconds

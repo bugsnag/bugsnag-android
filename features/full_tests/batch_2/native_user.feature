@@ -2,7 +2,6 @@ Feature: Native User API
 
     Scenario: Adding user information in Java followed by a C crash
         And I run "CXXJavaUserInfoNativeCrashScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXJavaUserInfoNativeCrashScenario"
         And I wait to receive an error
         Then the error payload contains a completed handled native report

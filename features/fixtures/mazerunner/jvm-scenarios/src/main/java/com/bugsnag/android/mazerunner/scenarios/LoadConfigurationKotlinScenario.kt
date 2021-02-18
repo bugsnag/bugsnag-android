@@ -14,7 +14,8 @@ internal class LoadConfigurationKotlinScenario(
     eventMetadata: String
 ) : Scenario(config, context, eventMetadata) {
 
-    override fun startBugsnag() {
+    override fun startBugsnag(startBugsnagOnly: Boolean) {
+        this.startBugsnagOnly = startBugsnagOnly
         val testConfig = Configuration("78978978978978978978978978978978")
         testConfig.apiKey = "45645645645645645645645645645645"
         testConfig.appVersion = "0.9.8"

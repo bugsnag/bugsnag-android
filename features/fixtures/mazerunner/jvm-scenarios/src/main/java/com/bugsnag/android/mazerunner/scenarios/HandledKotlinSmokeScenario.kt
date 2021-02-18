@@ -13,9 +13,8 @@ import com.bugsnag.android.Severity
 internal class HandledKotlinSmokeScenario(
     config: Configuration,
     context: Context,
-    eventMetadata: String
+    eventMetadata: String?
 ) : Scenario(config, context, eventMetadata) {
-
     init {
         config.autoTrackSessions = false
         config.appType = "Overwritten"

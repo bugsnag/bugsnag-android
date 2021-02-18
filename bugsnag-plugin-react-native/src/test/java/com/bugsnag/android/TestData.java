@@ -46,7 +46,7 @@ class TestData {
         ErrorInternal impl = new ErrorInternal(
                 "BrowserException",
                 "whoops!",
-                new Stacktrace(frames, NoopLogger.INSTANCE),
+                new Stacktrace(frames),
                 ErrorType.REACTNATIVEJS
         );
         return new Error(impl, NoopLogger.INSTANCE);

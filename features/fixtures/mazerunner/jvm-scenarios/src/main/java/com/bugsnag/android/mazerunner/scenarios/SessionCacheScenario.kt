@@ -10,7 +10,7 @@ import com.bugsnag.android.Configuration
 internal class SessionCacheScenario(
     config: Configuration,
     context: Context,
-    eventMetadata: String
+    eventMetadata: String?
 ) : Scenario(config, context, eventMetadata) {
 
     init {

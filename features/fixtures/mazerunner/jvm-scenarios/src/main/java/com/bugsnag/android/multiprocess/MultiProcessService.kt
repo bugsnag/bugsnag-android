@@ -49,7 +49,7 @@ class MultiProcessService : Service() {
         val config = prepareServiceConfig(params)
 
         scenario = Scenario.load(this, config, params.eventType!!, params.eventMetadata).apply {
-            startBugsnag()
+            startBugsnag(false)
             log("Executing scenario")
             startScenario()
         }

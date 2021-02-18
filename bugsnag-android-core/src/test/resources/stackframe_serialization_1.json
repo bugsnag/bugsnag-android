@@ -1,0 +1,9 @@
+{
+  "method": "aMethod",
+  "file": "aFile",
+  "lineNumber": 1,
+  "frameAddress": 2,
+  "symbolAddress": 3,
+  "loadAddress": 4,
+  "type": "c"
+}

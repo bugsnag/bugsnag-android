@@ -12,29 +12,28 @@ import java.io.File
 internal class EmptySessionScenario(
     config: Configuration,
     context: Context,
-    eventMetadata: String
+    eventMetadata: String?
 ) : Scenario(config, context, eventMetadata) {
 
-    init {
+    override fun startBugsnag(startBugsnagOnly: Boolean) {
         config.autoTrackSessions = false
 
         val dir = File(context.cacheDir, "bugsnag-sessions")
 
-        if (eventMetadata != "non-crashy") {
-            disableAllDelivery(config)
-        } else {
+        if (startBugsnagOnly) {
             val files = dir.listFiles()
             Log.d("Bugsnag", "Empty sessions: $files")
             files.forEach { it.writeText("") }
+        } else {
+            disableAllDelivery(config)
         }
+        super.startBugsnag(startBugsnagOnly)
     }
 
     override fun startScenario() {
         super.startScenario()
 
-        if (eventMetadata != "non-crashy") {
-            Bugsnag.startSession()
-        }
+        Bugsnag.startSession()
 
         val thread = HandlerThread("HandlerThread")
         thread.start()

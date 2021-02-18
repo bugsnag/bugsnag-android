@@ -2,7 +2,6 @@ Feature: Native API
 
     Scenario: Set extraordinarily long app information
         When I run "CXXExtraordinaryLongStringScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXExtraordinaryLongStringScenario"
         And I wait to receive an error
         And the error payload contains a completed handled native report

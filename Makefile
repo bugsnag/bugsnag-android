@@ -23,10 +23,17 @@ endif
 	 docker-compose up --build android-instrumentation-tests
 
 TEST_FIXTURE_NDK_VERSION ?= 16.1.4479499
-test-fixture:
+test-fixtures:
+	# Build the notifier
 	@./gradlew -PVERSION_NAME=9.9.9 clean assembleRelease publishToMavenLocal
+
+	# Build the full test fixture
 	@./gradlew -PTEST_FIXTURE_NDK_VERSION=$(TEST_FIXTURE_NDK_VERSION) -p=features/fixtures/mazerunner/ assembleRelease
 	@cp features/fixtures/mazerunner/app/build/outputs/apk/release/fixture.apk build/fixture.apk
+
+	# And the minimal (no NDK or ANR plugin) test fixture
+	@./gradlew -PMINIMAL_FIXTURE=true -PTEST_FIXTURE_NAME=fixture-minimal.apk  -p=features/fixtures/mazerunner/ assembleRelease
+	@cp features/fixtures/mazerunner/app/build/outputs/apk/release/fixture-minimal.apk build/fixture-minimal.apk
 
 bump:
 ifneq ($(shell git diff --staged),)

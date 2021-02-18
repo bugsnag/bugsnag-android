@@ -17,15 +17,13 @@ import java.io.File
 internal class DeletedSessionScenario(
     config: Configuration,
     context: Context,
-    eventMetadata: String
+    eventMetadata: String?
 ) : Scenario(config, context, eventMetadata) {
 
-    init {
+    override fun startBugsnag(startBugsnagOnly: Boolean) {
         config.autoTrackSessions = false
 
-        if (eventMetadata != "non-crashy") {
-            disableAllDelivery(config)
-        } else {
+        if (startBugsnagOnly) {
             val baseDelivery = createDefaultDelivery()
             val errDir = File(context.cacheDir, "bugsnag-sessions")
 
@@ -46,15 +44,16 @@ internal class DeletedSessionScenario(
                     return baseDelivery.deliver(payload, deliveryParams)
                 }
             }
+        } else {
+            disableAllDelivery(config)
         }
+        super.startBugsnag(startBugsnagOnly)
     }
 
     override fun startScenario() {
         super.startScenario()
 
-        if (eventMetadata != "non-crashy") {
-            Bugsnag.startSession()
-        }
+        Bugsnag.startSession()
 
         val thread = HandlerThread("HandlerThread")
         thread.start()

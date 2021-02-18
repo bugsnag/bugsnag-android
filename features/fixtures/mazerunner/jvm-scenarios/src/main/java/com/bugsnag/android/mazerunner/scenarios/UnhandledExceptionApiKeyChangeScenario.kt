@@ -10,7 +10,7 @@ import com.bugsnag.android.OnErrorCallback
 internal class UnhandledExceptionApiKeyChangeScenario(
     config: Configuration,
     context: Context,
-    eventMetadata: String
+    eventMetadata: String?
 ) : Scenario(config, context, eventMetadata) {
 
     init {

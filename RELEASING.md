@@ -69,29 +69,26 @@ If you are a project maintainer, you can build and release a new version of
 
 ### Making the release
 
-- Make a PR to release the following changes to master, creating a release
-  branch from the "next" branch if this is a feature release:
-  - [ ] Update the version number and dex count badge by running `make VERSION=[number] bump`
+- Make a PR from `next` to `master` (or from a bug fix branch for urgent hot fixes):
+  - [ ] Update the version number with `make VERSION=[number] bump`
   - [ ] Inspect the updated CHANGELOG, README, and version files to ensure they are correct
 - Once merged:
-  - Pull the latest changes (checking out master if necessary) and build by running `./gradlew clean assembleRelease`
-  - Release to GitHub:
-    - [ ] Run `git tag vX.X.X && git push origin --tags`
-    - [ ] Create a release from your new tag on [GitHub Releases](https://github.com/bugsnag/bugsnag-android/releases)
-  - [ ] Release to Maven Central and Bintray by running `./gradlew clean assembleRelease publish bintrayUpload`
+  - Checkout `master` and pull the latest changes
+  - [ ] Upload artefacts to Maven Central and Bintray with `./gradlew clean assembleRelease publish bintrayUpload`
   - [ ] "Promote" the release build on Maven Central:
     - Go to the [sonatype open source dashboard](https://oss.sonatype.org/index.html#stagingRepositories)
     - Click the search box at the top right, and type “com.bugsnag”
     - Select the com.bugsnag staging repository
+    - Ensure that AARs and POMs are present for each module, and that ProGuard rules are present for AARs which define ProGuard rules
     - Click the “close” button in the toolbar, no message
     - Click the “refresh” button
     - Select the com.bugsnag closed repository
     - Click the “release” button in the toolbar
-  - Open the Bintray repositories and publish the new artifacts:
-    - [ ] [SDK repo](https://bintray.com/bugsnag/maven/bugsnag-android/_latestVersion)
-    - [ ] [NDK repo](https://bintray.com/bugsnag/maven/bugsnag-android-ndk/_latestVersion)
+  - Open the Bintray [maven repository](https://bintray.com/bugsnag/maven/) and publish the new artifacts
+  - Release to GitHub:
+      - [ ] Run `git tag vX.X.X && git push origin --tags`
+      - [ ] Create a release from your new tag on [GitHub Releases](https://github.com/bugsnag/bugsnag-android/releases)
 - Merge outstanding docs PRs related to this release
-
 
 ### Post-release Checklist
 

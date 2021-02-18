@@ -20,10 +20,10 @@ class CXXTrapOutsideReleaseStagesScenario(
 
     override fun startScenario() {
         super.startScenario()
-        if (eventMetadata != "non-crashy") {
-            crash()
-        }
+        crash()
     }
 
-    override fun getInterceptedLogMessages() = getZeroEventsLogMessages(eventMetadata)
+    override fun getInterceptedLogMessages(): List<String> {
+        return getZeroEventsLogMessages(startBugsnagOnly)
+    }
 }

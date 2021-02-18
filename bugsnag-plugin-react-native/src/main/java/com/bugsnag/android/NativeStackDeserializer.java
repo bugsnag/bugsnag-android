@@ -33,7 +33,7 @@ class NativeStackDeserializer implements MapDeserializer<List<Stackframe>> {
         for (Map<String, Object> frame : nativeStack) {
             frames.add(deserializeStackframe(frame, projectPackages));
         }
-        return new Stacktrace(frames, config.getLogger()).getTrace();
+        return new Stacktrace(frames).getTrace();
     }
 
     private Stackframe deserializeStackframe(Map<String, Object> map,

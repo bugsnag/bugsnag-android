@@ -200,7 +200,6 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
     } else {
       BUGSNAG_LOG("Failed to serialize event as JSON: %s", event_path);
     }
-    free(event);
   } else {
     BUGSNAG_LOG("Failed to read event at file: %s", event_path);
   }
@@ -209,10 +208,15 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
 
 exit:
   pthread_mutex_unlock(&bsg_native_delivery_mutex);
-  bsg_safe_release_byte_array_elements(env, jpayload, (jbyte *)payload,
-                                       0); // <-- frees payload
-  bsg_safe_release_byte_array_elements(
-      env, jstage, (jbyte *)event->app.release_stage, JNI_COMMIT);
+  if (event != NULL) {
+    free(event);
+  }
+  bsg_safe_release_byte_array_elements(env, jpayload, (jbyte *)payload);
+  if (payload != NULL) {
+    free(payload);
+  }
+  bsg_safe_release_byte_array_elements(env, jstage,
+                                       (jbyte *)event->app.release_stage);
   bsg_safe_delete_local_ref(env, jpayload);
   bsg_safe_delete_local_ref(env, jstage);
   bsg_safe_release_string_utf_chars(env, _report_path, event_path);
@@ -292,8 +296,8 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_addBreadcrumb(
 
   if (name != NULL && type != NULL && timestamp != NULL) {
     bugsnag_breadcrumb *crumb = calloc(1, sizeof(bugsnag_breadcrumb));
-    strncpy(crumb->name, name, sizeof(crumb->name));
-    strncpy(crumb->timestamp, timestamp, sizeof(crumb->timestamp));
+    bsg_strncpy_safe(crumb->name, name, sizeof(crumb->name));
+    bsg_strncpy_safe(crumb->timestamp, timestamp, sizeof(crumb->timestamp));
     if (strcmp(type, "user") == 0) {
       crumb->type = BSG_CRUMB_USER;
     } else if (strcmp(type, "error") == 0) {
@@ -382,9 +386,6 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateInForeground(
     return;
   }
   char *activity = (char *)bsg_safe_get_string_utf_chars(env, activity_);
-  if (activity == NULL) {
-    return;
-  }
   bsg_request_env_write_lock();
   bool was_in_foreground = bsg_global_env->next_event.app.in_foreground;
   bsg_global_env->next_event.app.in_foreground = (bool)new_value;
@@ -614,6 +615,16 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateMetadata(
   bsg_request_env_write_lock();
   bsg_populate_metadata(env, &bsg_global_env->next_event.metadata, metadata);
   bsg_release_env_write_lock();
+}
+
+ssize_t
+bsg_unwind_stack_default(bugsnag_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
+                         siginfo_t *info, void *user_context) __asyncsafe;
+
+JNIEXPORT jlong JNICALL
+Java_com_bugsnag_android_ndk_NativeBridge_getUnwindStackFunction(JNIEnv *env,
+                                                                 jobject thiz) {
+  return (jlong)bsg_unwind_stack_default;
 }
 
 #ifdef __cplusplus

@@ -20,10 +20,10 @@ class CXXExceptionOnErrorFalseScenario(
 
     override fun startScenario() {
         super.startScenario()
-        if ("non-crashy" != eventMetadata) {
-            crash()
-        }
+        crash()
     }
 
-    override fun getInterceptedLogMessages() = getZeroEventsLogMessages(eventMetadata)
+    override fun getInterceptedLogMessages(): List<String> {
+        return getZeroEventsLogMessages(startBugsnagOnly)
+    }
 }

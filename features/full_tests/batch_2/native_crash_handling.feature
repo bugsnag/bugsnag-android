@@ -2,16 +2,11 @@ Feature: Native crash reporting
 
 Scenario: Dereference a null pointer
         When I run "CXXNullPointerScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXNullPointerScenario"
         And I wait to receive an error
         And the error payload contains a completed unhandled native report
-        And the exception "errorClass" equals one of:
-          | SIGILL |
-          | SIGTRAP |
-        And the exception "message" equals one of:
-            | Illegal instruction   |
-            | Trace/breakpoint trap |
+        And the exception "errorClass" equals "SIGSEGV"
+        And the exception "message" equals "Segmentation violation (invalid memory reference)"
         And the exception "type" equals "c"
         And the event "severity" equals "error"
         And the event "unhandled" is true
@@ -29,7 +24,6 @@ Scenario: Dereference a null pointer
     @skip_below_api18
     Scenario: Stack buffer overflow
         When I run "CXXStackoverflowScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXStackoverflowScenario"
         And I wait to receive an error
         And the error payload contains a completed unhandled native report
@@ -40,7 +34,6 @@ Scenario: Dereference a null pointer
 
     Scenario: Program trap()
         When I run "CXXTrapScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXTrapScenario"
         And I wait to receive an error
         And the error payload contains a completed unhandled native report
@@ -56,7 +49,6 @@ Scenario: Dereference a null pointer
 
     Scenario: Write to read-only memory
         When I run "CXXWriteReadOnlyMemoryScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXWriteReadOnlyMemoryScenario"
         And I wait to receive an error
         And the exception "errorClass" equals "SIGSEGV"
@@ -69,7 +61,6 @@ Scenario: Dereference a null pointer
     @skip_android_10 @skip_android_11
     Scenario: Double free() allocated memory
         When I run "CXXDoubleFreeScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXDoubleFreeScenario"
         And I wait to receive an error
         And the exception "type" equals "c"
@@ -81,7 +72,6 @@ Scenario: Dereference a null pointer
 
     Scenario: Improper object type cast
         When I run "CXXImproperTypecastScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXImproperTypecastScenario"
         And I wait to receive an error
         And the exception "errorClass" equals "SIGSEGV"
@@ -92,7 +82,6 @@ Scenario: Dereference a null pointer
 
     Scenario: Program abort()
         When I run "CXXAbortScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXAbortScenario"
         And I wait to receive an error
         And the error payload contains a completed unhandled native report
@@ -108,7 +97,6 @@ Scenario: Dereference a null pointer
 
     Scenario: Undefined JNI method
         When I run "UnsatisfiedLinkErrorScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "UnsatisfiedLinkErrorScenario"
         And I wait to receive an error
         And the report contains the required fields
@@ -119,7 +107,6 @@ Scenario: Dereference a null pointer
 
     Scenario: Causing a crash in a separate library
         When I run "CXXExternalStackElementScenario" and relaunch the app
-        And I configure the app to run in the "non-crashy" state
         And I configure Bugsnag for "CXXExternalStackElementScenario"
         And I wait to receive an error
         And the error payload contains a completed unhandled native report

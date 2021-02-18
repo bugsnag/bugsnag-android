@@ -193,11 +193,10 @@ void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
 
 exit:
   if (jname != NULL) {
-    bsg_safe_release_byte_array_elements(env, jname, (jbyte *)name, JNI_COMMIT);
+    bsg_safe_release_byte_array_elements(env, jname, (jbyte *)name);
   }
   if (jmessage != NULL) {
-    bsg_safe_release_byte_array_elements(env, jmessage, (jbyte *)message,
-                                         JNI_COMMIT);
+    bsg_safe_release_byte_array_elements(env, jmessage, (jbyte *)message);
   }
   bsg_safe_delete_local_ref(env, jname);
   bsg_safe_delete_local_ref(env, jmessage);
@@ -267,9 +266,9 @@ void bugsnag_set_user_env(JNIEnv *env, char *id, char *email, char *name) {
   bsg_safe_call_static_void_method(env, interface_class, set_user_method, jid,
                                    jemail, jname);
 
-  bsg_safe_release_byte_array_elements(env, jid, (jbyte *)id, JNI_COMMIT);
-  bsg_safe_release_byte_array_elements(env, jemail, (jbyte *)email, JNI_COMMIT);
-  bsg_safe_release_byte_array_elements(env, jname, (jbyte *)name, JNI_COMMIT);
+  bsg_safe_release_byte_array_elements(env, jid, (jbyte *)id);
+  bsg_safe_release_byte_array_elements(env, jemail, (jbyte *)email);
+  bsg_safe_release_byte_array_elements(env, jname, (jbyte *)name);
 
   bsg_safe_delete_local_ref(env, jid);
   bsg_safe_delete_local_ref(env, jemail);
@@ -352,11 +351,20 @@ void bugsnag_leave_breadcrumb_env(JNIEnv *env, char *message,
   goto exit;
 
 exit : {
-  bsg_safe_release_byte_array_elements(env, jmessage, (jbyte *)message,
-                                       JNI_COMMIT);
+  bsg_safe_release_byte_array_elements(env, jmessage, (jbyte *)message);
 }
   bsg_safe_delete_local_ref(env, interface_class);
   bsg_safe_delete_local_ref(env, type_class);
   bsg_safe_delete_local_ref(env, jtype);
   bsg_safe_delete_local_ref(env, jmessage);
+}
+
+// Unwind the stack using the default unwind style.
+// This function gets exposed via
+// Java_com_bugsnag_android_ndk_NativeBridge_getUnwindStackFunction()
+ssize_t
+bsg_unwind_stack_default(bugsnag_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
+                         siginfo_t *info, void *user_context) __asyncsafe {
+  return bsg_unwind_stack(bsg_configured_unwind_style(), stacktrace, info,
+                          user_context);
 }
