@@ -75,6 +75,7 @@ If you are a project maintainer, you can build and release a new version of
 - Once merged:
   - Checkout `master` and pull the latest changes
   - [ ] Upload artefacts to Maven Central and Bintray with `./gradlew clean assembleRelease publish bintrayUpload`
+  - [ ] Test the Sonatype artefacts in the example app by adding the newly created 'combugsnag-XXXX' repository to the build.gradle:  `maven {url "https://oss.sonatype.org/service/local/repositories/combugsnag-XXXX/content/"}`
   - [ ] "Promote" the release build on Maven Central:
     - Go to the [sonatype open source dashboard](https://oss.sonatype.org/index.html#stagingRepositories)
     - Click the search box at the top right, and type “com.bugsnag”
