@@ -9,24 +9,14 @@ extern "C" {
 #endif
 
 /**
- * Copy the contents of src to dst where src is null-terminated
+ * Copy a string from src to dst to a maximum of dst_size bytes, returning dst.
+ *
+ * This function behaves the same as strncpy, except:
+ * - If src is longer than dst_size, it will copy as much as can fit and then
+ *   set dst[dst_size-1] to 0.
+ * - If src is NULL, dst[0] will be set to 0.
  */
-void bsg_strcpy(char *dst, char *src) __asyncsafe;
-
-/**
- * Return the length of a string
- */
-size_t bsg_strlen(const char *str) __asyncsafe;
-
-/**
- * Copy a maximum number of bytes from src to dst
- */
-void bsg_strncpy(char *dst, char *src, size_t len) __asyncsafe;
-
-/**
- * Copy a string from src to dst, null padding the rest
- */
-void bsg_strncpy_safe(char *dst, const char *src, int dst_size);
+char *bsg_strncpy_safe(char *dst, const char *src, size_t dst_size);
 #ifdef __cplusplus
 }
 #endif

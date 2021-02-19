@@ -2,6 +2,7 @@
 #define BUGSNAG_SAFEJNI_H
 
 #include <jni.h>
+#include <stdbool.h>
 
 /**
  * This provides safe JNI calls by wrapping functions and calling
@@ -98,8 +99,9 @@ jobject bsg_safe_get_object_array_element(JNIEnv *env, jobjectArray array,
 /**
  * A safe wrapper for the JNI's SetObjectArrayElement. This method checks if an
  * exception is pending and if so clears it so that execution can continue.
+ * Returns true if the operation was succesful.
  */
-void bsg_safe_set_object_array_element(JNIEnv *env, jobjectArray array,
+bool bsg_safe_set_object_array_element(JNIEnv *env, jobjectArray array,
                                        jsize size, jobject object);
 
 /**
@@ -135,8 +137,9 @@ jobject bsg_safe_call_object_method(JNIEnv *env, jobject _value,
 /**
  * A safe wrapper for the JNI's CallStaticVoidMethod. This method checks if an
  * exception is pending and if so clears it so that execution can continue.
+ * Returns true if the method was successfully called.
  */
-void bsg_safe_call_static_void_method(JNIEnv *env, jclass clz, jmethodID method,
+bool bsg_safe_call_static_void_method(JNIEnv *env, jclass clz, jmethodID method,
                                       ...);
 
 /**
