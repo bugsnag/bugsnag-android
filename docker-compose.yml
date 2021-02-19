@@ -31,10 +31,9 @@ services:
   android-publisher:
     build:
       context: .
-      dockerfile: dockerfiles/Dockerfile.android-common
-    entrypoint: /bin/bash -c
+      dockerfile: dockerfiles/Dockerfile.android-publisher
     volumes:
-      - ./publish:/app/publish
+      - ${PUBLISH_DIR_PATH}:/app/publish
 
   android-sizer:
     build:
