@@ -120,6 +120,8 @@ steps:
           - "-e"
           - "features/[n-z].*.feature"
           - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
     env:
       DEVICE_TYPE: "ANDROID_9"
       APP_LOCATION: "/app/build/fixture.apk"
@@ -138,6 +140,8 @@ steps:
           - "-e"
           - "features/[a-m].*.feature"
           - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
     env:
       DEVICE_TYPE: "ANDROID_9"
       APP_LOCATION: "/app/build/fixture.apk"
@@ -186,6 +190,8 @@ steps:
           - "-e"
           - "features/[n-z].*.feature"
           - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
     env:
       DEVICE_TYPE: "ANDROID_6"
       APP_LOCATION: "/app/build/fixture.apk"
@@ -204,6 +210,8 @@ steps:
           - "-e"
           - "features/[a-m].*.feature"
           - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
     env:
       DEVICE_TYPE: "ANDROID_6"
       APP_LOCATION: "/app/build/fixture.apk"
@@ -222,6 +230,8 @@ steps:
           - "-e"
           - "features/[n-z].*.feature"
           - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
     env:
       DEVICE_TYPE: "ANDROID_7"
       APP_LOCATION: "/app/build/fixture.apk"
@@ -240,6 +250,8 @@ steps:
           - "-e"
           - "features/[a-m].*.feature"
           - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
     env:
       DEVICE_TYPE: "ANDROID_7"
       APP_LOCATION: "/app/build/fixture.apk"
@@ -258,6 +270,8 @@ steps:
           - "-e"
           - "features/[n-z].*.feature"
           - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
     env:
       DEVICE_TYPE: "ANDROID_8"
       APP_LOCATION: "/app/build/fixture.apk"
@@ -276,6 +290,8 @@ steps:
           - "-e"
           - "features/[a-m].*.feature"
           - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
     env:
       DEVICE_TYPE: "ANDROID_8"
       APP_LOCATION: "/app/build/fixture.apk"
