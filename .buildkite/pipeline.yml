@@ -115,6 +115,7 @@ steps:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
       docker-compose#v3.7.0:
+        pull: android-maze-runner
         run: android-maze-runner
         command:
           - "-e"
@@ -135,6 +136,7 @@ steps:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
       docker-compose#v3.7.0:
+        pull: android-maze-runner
         run: android-maze-runner
         command:
           - "-e"
@@ -171,6 +173,7 @@ steps:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
       docker-compose#v3.7.0:
+        pull: android-maze-runner
         run: android-maze-runner
     env:
       DEVICE_TYPE: "ANDROID_5"
@@ -185,6 +188,7 @@ steps:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
       docker-compose#v3.7.0:
+        pull: android-maze-runner
         run: android-maze-runner
         command:
           - "-e"
@@ -205,6 +209,7 @@ steps:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
       docker-compose#v3.7.0:
+        pull: android-maze-runner
         run: android-maze-runner
         command:
           - "-e"
@@ -225,6 +230,7 @@ steps:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
       docker-compose#v3.7.0:
+        pull: android-maze-runner
         run: android-maze-runner
         command:
           - "-e"
@@ -245,6 +251,7 @@ steps:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
       docker-compose#v3.7.0:
+        pull: android-maze-runner
         run: android-maze-runner
         command:
           - "-e"
@@ -265,6 +272,7 @@ steps:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
       docker-compose#v3.7.0:
+        pull: android-maze-runner
         run: android-maze-runner
         command:
           - "-e"
@@ -285,6 +293,7 @@ steps:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
       docker-compose#v3.7.0:
+        pull: android-maze-runner
         run: android-maze-runner
         command:
           - "-e"
