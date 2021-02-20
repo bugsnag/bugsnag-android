@@ -1,6 +1,7 @@
 package com.bugsnag.android.mazerunner
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -18,8 +19,11 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val bugsnagStarter = findViewById<Button>(R.id.startBugsnagButton)
+        // Attempt to dismiss any system dialogs (such as "MazeRunner crashed")
+        val closeDialog = Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
+        sendBroadcast(closeDialog)
 
+        val bugsnagStarter = findViewById<Button>(R.id.startBugsnagButton)
         bugsnagStarter.setOnClickListener {
             val scenarioPicker = findViewById<EditText>(R.id.scenarioText)
             val scenario = scenarioPicker.text.toString()
