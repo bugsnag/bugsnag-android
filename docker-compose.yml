@@ -45,10 +45,11 @@ services:
       dockerfile: dockerfiles/Dockerfile.emulator
 
   android-maze-runner:
-    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner-releases:v2.8.1-cli
+    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner-releases:latest-v2-cli
     environment:
       VERBOSE:
       DEBUG:
+      BUILDKITE:
       BROWSER_STACK_USERNAME:
       BROWSER_STACK_ACCESS_KEY:
       BROWSER_STACK_LOCAL_IDENTIFIER: ${BUILDKITE_JOB_ID:-maze-runner}

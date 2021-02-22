@@ -29,6 +29,7 @@ Before('@skip_above_android_7') do |scenario|
 end
 
 AfterConfiguration do |config|
+  MazeRunner.configuration.receive_requests_wait = 60
   AppAutomateDriver.new(bs_username, bs_access_key, bs_local_id, bs_device, app_location)
   $driver.start_driver
 end

@@ -115,10 +115,14 @@ steps:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
       docker-compose#v3.7.0:
+        pull: android-maze-runner
         run: android-maze-runner
         command:
           - "-e"
           - "features/[n-z].*.feature"
+          - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
     env:
       DEVICE_TYPE: "ANDROID_9"
       APP_LOCATION: "/app/build/fixture.apk"
@@ -132,10 +136,14 @@ steps:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
       docker-compose#v3.7.0:
+        pull: android-maze-runner
         run: android-maze-runner
         command:
           - "-e"
           - "features/[a-m].*.feature"
+          - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
     env:
       DEVICE_TYPE: "ANDROID_9"
       APP_LOCATION: "/app/build/fixture.apk"
@@ -165,6 +173,7 @@ steps:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
       docker-compose#v3.7.0:
+        pull: android-maze-runner
         run: android-maze-runner
     env:
       DEVICE_TYPE: "ANDROID_5"
@@ -179,10 +188,14 @@ steps:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
       docker-compose#v3.7.0:
+        pull: android-maze-runner
         run: android-maze-runner
         command:
           - "-e"
           - "features/[n-z].*.feature"
+          - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
     env:
       DEVICE_TYPE: "ANDROID_6"
       APP_LOCATION: "/app/build/fixture.apk"
@@ -196,10 +209,14 @@ steps:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
       docker-compose#v3.7.0:
+        pull: android-maze-runner
         run: android-maze-runner
         command:
           - "-e"
           - "features/[a-m].*.feature"
+          - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
     env:
       DEVICE_TYPE: "ANDROID_6"
       APP_LOCATION: "/app/build/fixture.apk"
@@ -213,10 +230,14 @@ steps:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
       docker-compose#v3.7.0:
+        pull: android-maze-runner
         run: android-maze-runner
         command:
           - "-e"
           - "features/[n-z].*.feature"
+          - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
     env:
       DEVICE_TYPE: "ANDROID_7"
       APP_LOCATION: "/app/build/fixture.apk"
@@ -230,10 +251,14 @@ steps:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
       docker-compose#v3.7.0:
+        pull: android-maze-runner
         run: android-maze-runner
         command:
           - "-e"
           - "features/[a-m].*.feature"
+          - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
     env:
       DEVICE_TYPE: "ANDROID_7"
       APP_LOCATION: "/app/build/fixture.apk"
@@ -247,10 +272,14 @@ steps:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
       docker-compose#v3.7.0:
+        pull: android-maze-runner
         run: android-maze-runner
         command:
           - "-e"
           - "features/[n-z].*.feature"
+          - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
     env:
       DEVICE_TYPE: "ANDROID_8"
       APP_LOCATION: "/app/build/fixture.apk"
@@ -264,10 +293,14 @@ steps:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
       docker-compose#v3.7.0:
+        pull: android-maze-runner
         run: android-maze-runner
         command:
           - "-e"
           - "features/[a-m].*.feature"
+          - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
     env:
       DEVICE_TYPE: "ANDROID_8"
       APP_LOCATION: "/app/build/fixture.apk"
