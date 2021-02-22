@@ -1,5 +1,6 @@
 #include "safejni.h"
 #include <stdbool.h>
+#include <bugsnag_ndk.h>
 #include <utils/string.h>
 
 bool bsg_check_and_clear_exc(JNIEnv *env) {
