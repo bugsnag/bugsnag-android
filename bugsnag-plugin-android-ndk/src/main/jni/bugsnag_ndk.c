@@ -9,6 +9,7 @@
 #include "event.h"
 #include "handlers/cpp_handler.h"
 #include "handlers/signal_handler.h"
+#include "jnicache.h"
 #include "metadata.h"
 #include "safejni.h"
 #include "utils/serializer.h"
@@ -102,6 +103,9 @@ Java_com_bugsnag_android_ndk_NativeBridge_disableCrashReporting(JNIEnv *env,
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
     JNIEnv *env, jobject _this, jstring _api_key, jstring _event_path,
     jboolean auto_detect_ndk_crashes, jint _api_level, jboolean is32bit) {
+  if (!bsg_init_jni_cache(env)) {
+    BUGSNAG_LOG("Could not initialize JNI cache! Some functions will be no-op");
+  }
   bsg_environment *bugsnag_env = calloc(1, sizeof(bsg_environment));
   bsg_set_unwind_types((int)_api_level, (bool)is32bit,
                        &bugsnag_env->signal_unwind_style,

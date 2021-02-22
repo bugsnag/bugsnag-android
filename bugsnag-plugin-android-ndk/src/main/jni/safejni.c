@@ -1,4 +1,5 @@
 #include "safejni.h"
+#include <bugsnag_ndk.h>
 #include <stdbool.h>
 #include <string.h>
 #include <utils/string.h>
@@ -32,7 +33,8 @@ jclass bsg_safe_find_class(JNIEnv *env, const char *clz_name) {
     return NULL;
   }
   jclass clz = (*env)->FindClass(env, clz_name);
-  if (bsg_check_and_clear_exc(env) == exception_thrown) {
+  if (bsg_check_and_clear_exc(env) == exception_thrown || clz == NULL) {
+    BUGSNAG_LOG("Could not find class \"%s\"", clz_name);
     return NULL;
   }
   return clz;
@@ -44,7 +46,9 @@ jmethodID bsg_safe_get_method_id(JNIEnv *env, jclass clz, const char *name,
     return NULL;
   }
   jmethodID methodId = (*env)->GetMethodID(env, clz, name, sig);
-  if (bsg_check_and_clear_exc(env) == exception_thrown) {
+  if (bsg_check_and_clear_exc(env) == exception_thrown || methodId == NULL) {
+    BUGSNAG_LOG("Could not find method \"%s\" with signature \"%s\"", name,
+                sig);
     return NULL;
   }
   return methodId;
@@ -56,7 +60,9 @@ jmethodID bsg_safe_get_static_method_id(JNIEnv *env, jclass clz,
     return NULL;
   }
   jmethodID methodId = (*env)->GetStaticMethodID(env, clz, name, sig);
-  if (bsg_check_and_clear_exc(env) == exception_thrown) {
+  if (bsg_check_and_clear_exc(env) == exception_thrown || methodId == NULL) {
+    BUGSNAG_LOG("Could not find static method \"%s\" with signature \"%s\"",
+                name, sig);
     return NULL;
   }
   return methodId;
@@ -158,7 +164,9 @@ jfieldID bsg_safe_get_static_field_id(JNIEnv *env, jclass clz, const char *name,
     return NULL;
   }
   jfieldID field_id = (*env)->GetStaticFieldID(env, clz, name, sig);
-  if (bsg_check_and_clear_exc(env) == exception_thrown) {
+  if (bsg_check_and_clear_exc(env) == exception_thrown || field_id == NULL) {
+    BUGSNAG_LOG("Could not find static field ID \"%s\" with signature \"%s\"",
+                name, sig);
     return NULL;
   }
   return field_id;
