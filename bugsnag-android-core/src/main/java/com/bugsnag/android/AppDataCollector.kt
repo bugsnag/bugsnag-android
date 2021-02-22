@@ -33,7 +33,8 @@ internal class AppDataCollector(
 
     fun generateAppWithState(): AppWithState = AppWithState(
         config, binaryArch, packageName, releaseStage, versionName, codeBundleId,
-        getDurationMs(), calculateDurationInForeground(), sessionTracker.isInForeground
+        getDurationMs(), calculateDurationInForeground(), sessionTracker.isInForeground,
+        false
     )
 
     fun getAppDataMetadata(): MutableMap<String, Any?> {

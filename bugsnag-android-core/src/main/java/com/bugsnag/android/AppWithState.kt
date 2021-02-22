@@ -28,7 +28,12 @@ class AppWithState(
     /**
      * Whether the application was in the foreground when the event occurred
      */
-    var inForeground: Boolean?
+    var inForeground: Boolean?,
+
+    /**
+     * Whether the application was launching when the event occurred
+     */
+    var isLaunching: Boolean?
 ) : App(binaryArch, id, releaseStage, version, codeBundleId, buildUuid, type, versionCode) {
 
     internal constructor(
@@ -40,7 +45,8 @@ class AppWithState(
         codeBundleId: String?,
         duration: Number?,
         durationInForeground: Number?,
-        inForeground: Boolean?
+        inForeground: Boolean?,
+        isLaunching: Boolean?
     ) : this(
         binaryArch,
         id,
@@ -52,7 +58,8 @@ class AppWithState(
         config.versionCode,
         duration,
         durationInForeground,
-        inForeground
+        inForeground,
+        isLaunching
     )
 
     override fun serialiseFields(writer: JsonStream) {
@@ -60,5 +67,6 @@ class AppWithState(
         writer.name("duration").value(duration)
         writer.name("durationInForeground").value(durationInForeground)
         writer.name("inForeground").value(inForeground)
+        writer.name("isLaunching").value(inForeground)
     }
 }

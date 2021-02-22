@@ -17,7 +17,8 @@ class AppDeserializer implements MapDeserializer<AppWithState> {
                 MapUtils.<Number>getOrNull(map, "versionCode"),
                 MapUtils.<Number>getOrNull(map, "duration"),
                 MapUtils.<Number>getOrNull(map, "durationInForeground"),
-                MapUtils.<Boolean>getOrNull(map, "inForeground")
+                MapUtils.<Boolean>getOrNull(map, "inForeground"),
+                MapUtils.<Boolean>getOrNull(map, "isLaunching")
         );
     }
 }

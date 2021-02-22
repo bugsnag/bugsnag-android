@@ -90,6 +90,7 @@ public class NativeInterface {
         data.put("durationInForeground", app.getDurationInForeground());
         data.put("versionCode", app.getVersionCode());
         data.put("inForeground", app.getInForeground());
+        data.put("isLaunching", app.isLaunching());
         data.put("binaryArch", app.getBinaryArch());
         data.putAll(source.getAppDataMetadata());
         return data;

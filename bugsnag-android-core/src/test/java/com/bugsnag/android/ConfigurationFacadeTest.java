@@ -111,6 +111,12 @@ public class ConfigurationFacadeTest {
     }
 
     @Test
+    public void sendLaunchCrashesSynchronouslyValid() {
+        config.setSendLaunchCrashesSynchronously(true);
+        assertTrue(config.impl.getSendLaunchCrashesSynchronously());
+    }
+
+    @Test
     public void errorTypesValid() {
         ErrorTypes errorTypes = new ErrorTypes();
         errorTypes.setNdkCrashes(true);

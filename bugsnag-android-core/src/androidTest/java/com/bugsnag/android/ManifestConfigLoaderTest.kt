@@ -48,6 +48,7 @@ class ManifestConfigLoaderTest {
             assertEquals(maxBreadcrumbs, 25)
             assertEquals(maxPersistedEvents, 32)
             assertEquals(maxPersistedSessions, 128)
+            assertTrue(sendLaunchCrashesSynchronously)
             @Suppress("DEPRECATION")
             assertEquals(launchCrashThresholdMs, 5000)
             assertEquals(launchDurationMillis, 5000)
@@ -86,6 +87,7 @@ class ManifestConfigLoaderTest {
             putInt("com.bugsnag.android.MAX_PERSISTED_EVENTS", 52)
             putInt("com.bugsnag.android.MAX_PERSISTED_SESSIONS", 64)
             putInt("com.bugsnag.android.LAUNCH_DURATION_MILLIS", 7000)
+            putBoolean("com.bugsnag.android.SEND_LAUNCH_CRASHES_SYNCHRONOUSLY", false)
             putString("com.bugsnag.android.APP_TYPE", "react-native")
             putString("com.bugsnag.android.CODE_BUNDLE_ID", "123")
         }
@@ -121,6 +123,7 @@ class ManifestConfigLoaderTest {
             @Suppress("DEPRECATION")
             assertEquals(launchCrashThresholdMs, 7000)
             assertEquals(launchDurationMillis, 7000)
+            assertFalse(sendLaunchCrashesSynchronously)
             assertEquals("react-native", appType)
         }
     }

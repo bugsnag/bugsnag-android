@@ -74,6 +74,7 @@ internal class ImmutableConfigTest {
             @Suppress("DEPRECATION") // tests deprecated option is set via launchDurationMillis
             assertEquals(seed.launchCrashThresholdMs, launchDurationMillis)
             assertEquals(seed.launchDurationMillis, launchDurationMillis)
+            assertTrue(sendLaunchCrashesSynchronously)
             assertEquals(NoopLogger, seed.logger)
             assertEquals(seed.maxBreadcrumbs, maxBreadcrumbs)
             assertEquals(seed.maxPersistedEvents, maxPersistedEvents)
@@ -108,6 +109,7 @@ internal class ImmutableConfigTest {
         seed.maxPersistedSessions = 103
         seed.persistUser = true
         seed.enabledBreadcrumbTypes = emptySet()
+        seed.sendLaunchCrashesSynchronously = false
 
         // verify overrides are copied across
         with(convertToImmutableConfig(seed, "f7ab")) {
@@ -141,6 +143,7 @@ internal class ImmutableConfigTest {
             assertEquals(7000, seed.launchDurationMillis)
             @Suppress("DEPRECATION") // should be same as launchDurationMillis
             assertEquals(7000, seed.launchCrashThresholdMs)
+            assertFalse(sendLaunchCrashesSynchronously)
             assertEquals(NoopLogger, seed.logger)
             assertEquals(37, seed.maxBreadcrumbs)
             assertEquals(55, seed.maxPersistedEvents)

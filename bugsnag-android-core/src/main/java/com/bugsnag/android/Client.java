@@ -847,6 +847,31 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         }
     }
 
+    /**
+     * Retrieves information about the last launch of the application, if it has been run before.
+     *
+     * For example, this allows checking whether the app crashed on its last launch, which could
+     * be used to perform conditional behaviour to recover from crashes, such as clearing the
+     * app data cache.
+     */
+    @Nullable
+    public LastRunInfo getLastRunInfo() {
+        return null;
+    }
+
+    /**
+     * Informs Bugsnag that the application has finished launching. Once this has been called
+     * {@link AppWithState#isLaunching()} will always be false in any new error reports,
+     * and synchronous delivery will not be attempted on the next launch for any fatal crashes.
+     *
+     * By default this method will be called after Bugsnag is initialized when
+     * {@link Configuration#getLaunchDurationMillis()} has elapsed. Invoking this method manually
+     * has precedence over the value supplied via the launchDurationMillis configuration option.
+     */
+    public void markLaunchCompleted() {
+
+    }
+
     SessionTracker getSessionTracker() {
         return sessionTracker;
     }
