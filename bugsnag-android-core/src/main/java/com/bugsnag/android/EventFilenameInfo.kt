@@ -157,7 +157,7 @@ internal data class EventFilenameInfo(
         }
 
         private fun isStartupCrash(durationMs: Long, config: ImmutableConfig): Boolean {
-            return durationMs < config.launchCrashThresholdMs
+            return durationMs < config.launchDurationMillis
         }
     }
 }

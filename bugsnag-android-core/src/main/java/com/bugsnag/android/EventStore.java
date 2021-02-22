@@ -61,7 +61,7 @@ class EventStore extends FileStore {
     }
 
     void flushOnLaunch() {
-        if (config.getLaunchCrashThresholdMs() != 0) {
+        if (config.getLaunchDurationMillis() != 0) {
             List<File> storedFiles = findStoredFiles();
             final List<File> crashReports = findLaunchCrashReports(storedFiles);
 
