@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Deprecations
+
+* `Configuration#launchCrashThresholdMs` is deprecated in favour of `Configuration#launchDurationMillis`
+  [#1157](https://github.com/bugsnag/bugsnag-android/pull/1157)
+
 ## 5.7.0 (2021-02-18)
 
 ### Enhancements

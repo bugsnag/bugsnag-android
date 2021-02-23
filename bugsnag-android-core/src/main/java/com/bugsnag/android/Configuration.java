@@ -229,30 +229,54 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
     }
 
     /**
-     * Sets the threshold in milliseconds for an uncaught error to be considered as a crash on
-     * launch. If a crash is detected on launch, Bugsnag will attempt to send the event
-     * synchronously.
-     *
-     * By default, this value is set at 5,000ms. Setting the value to 0 will disable this behaviour.
+     * Deprecated. Use {@link #getLaunchDurationMillis()} instead.
      */
+    @Deprecated
     public long getLaunchCrashThresholdMs() {
-        return impl.getLaunchCrashThresholdMs();
+        getLogger().w("The launchCrashThresholdMs configuration option is deprecated "
+                + "and will be removed in a future release. Please use "
+                + "launchDurationMillis instead.");
+        return getLaunchDurationMillis();
+    }
+
+    /**
+     * Deprecated. Use {@link #setLaunchDurationMillis(long)} ()} instead.
+     */
+    @Deprecated
+    public void setLaunchCrashThresholdMs(long launchCrashThresholdMs) {
+        getLogger().w("The launchCrashThresholdMs configuration option is deprecated "
+                + "and will be removed in a future release. Please use "
+                + "launchDurationMillis instead.");
+        setLaunchDurationMillis(launchCrashThresholdMs);
     }
 
     /**
      * Sets the threshold in milliseconds for an uncaught error to be considered as a crash on
-     * launch. If a crash is detected on launch, Bugsnag will attempt to send the event
-     * synchronously.
+     * launch. If a crash is detected on launch, Bugsnag will attempt to send the most recent
+     * event synchronously.
      *
-     * By default, this value is set at 5,000ms. Setting the value to 0 will disable this behaviour.
+     * By default, this value is set at 5,000ms. Setting the value to 0 will count all crashes
+     * as launch crashes until markLaunchCompleted() is called.
      */
-    public void setLaunchCrashThresholdMs(long launchCrashThresholdMs) {
-        if (launchCrashThresholdMs > MIN_LAUNCH_CRASH_THRESHOLD_MS) {
-            impl.setLaunchCrashThresholdMs(launchCrashThresholdMs);
+    public long getLaunchDurationMillis() {
+        return impl.getLaunchDurationMillis();
+    }
+
+    /**
+     * Sets the threshold in milliseconds for an uncaught error to be considered as a crash on
+     * launch. If a crash is detected on launch, Bugsnag will attempt to send the most recent
+     * event synchronously.
+     *
+     * By default, this value is set at 5,000ms. Setting the value to 0 will count all crashes
+     * as launch crashes until markLaunchCompleted() is called.
+     */
+    public void setLaunchDurationMillis(long launchDurationMillis) {
+        if (launchDurationMillis >= MIN_LAUNCH_CRASH_THRESHOLD_MS) {
+            impl.setLaunchDurationMillis(launchDurationMillis);
         } else {
             getLogger().e(String.format(Locale.US, "Invalid configuration value detected. "
-                    + "Option launchCrashThresholdMs should be a positive long value."
-                    + "Supplied value is %d", launchCrashThresholdMs));
+                    + "Option launchDurationMillis should be a positive long value."
+                    + "Supplied value is %d", launchDurationMillis));
         }
     }
 

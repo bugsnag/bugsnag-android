@@ -71,7 +71,9 @@ internal class ImmutableConfigTest {
             assertEquals(seed.endpoints, endpoints)
 
             // behaviour
-            assertEquals(seed.launchCrashThresholdMs, launchCrashThresholdMs)
+            @Suppress("DEPRECATION") // tests deprecated option is set via launchDurationMillis
+            assertEquals(seed.launchCrashThresholdMs, launchDurationMillis)
+            assertEquals(seed.launchDurationMillis, launchDurationMillis)
             assertEquals(NoopLogger, seed.logger)
             assertEquals(seed.maxBreadcrumbs, maxBreadcrumbs)
             assertEquals(seed.maxPersistedEvents, maxPersistedEvents)
@@ -100,7 +102,7 @@ internal class ImmutableConfigTest {
 
         val endpoints = EndpointConfiguration("http://example.com:1234", "http://example.com:1235")
         seed.endpoints = endpoints
-        seed.launchCrashThresholdMs = 7000
+        seed.launchDurationMillis = 7000
         seed.maxBreadcrumbs = 37
         seed.maxPersistedEvents = 55
         seed.maxPersistedSessions = 103
@@ -136,6 +138,8 @@ internal class ImmutableConfigTest {
             assertEquals(endpoints1.sessions, endpoints.sessions)
 
             // behaviour
+            assertEquals(7000, seed.launchDurationMillis)
+            @Suppress("DEPRECATION") // should be same as launchDurationMillis
             assertEquals(7000, seed.launchCrashThresholdMs)
             assertEquals(NoopLogger, seed.logger)
             assertEquals(37, seed.maxBreadcrumbs)
