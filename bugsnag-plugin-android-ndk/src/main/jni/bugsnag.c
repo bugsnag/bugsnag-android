@@ -15,7 +15,9 @@ static JNIEnv *bsg_global_jni_env = NULL;
 
 void bugsnag_set_binary_arch(JNIEnv *env);
 
-void bugsnag_init(JNIEnv *env) { bsg_global_jni_env = env; }
+void bugsnag_init(JNIEnv *env) {
+  bsg_global_jni_env = env;
+}
 
 void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
                         bsg_severity_t severity);

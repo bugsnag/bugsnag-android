@@ -13,6 +13,7 @@
 #include "utils/serializer.h"
 #include "utils/string.h"
 #include "safejni.h"
+#include "jnicache.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -78,6 +79,9 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_disableCrashRep
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
     JNIEnv *env, jobject _this, jstring _report_path, jboolean auto_notify,
     jint _api_level, jboolean is32bit) {
+  if(!bsg_init_jni_cache(env)) {
+    BUGSNAG_LOG("Could not initialize JNI cache! Some functions will be no-op");
+  }
   bsg_environment *bugsnag_env = calloc(1, sizeof(bsg_environment));
   bsg_set_unwind_types((int)_api_level, (bool)is32bit,
                        &bugsnag_env->signal_unwind_style,

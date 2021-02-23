@@ -1,315 +1,11 @@
 #include "metadata.h"
 #include "safejni.h"
+#include "jnicache.h"
 #include "report.h"
+#include "utils/jni_utils.h"
 #include "utils/string.h"
 #include <malloc.h>
 #include <string.h>
-
-typedef struct {
-  jclass hash_map;
-  jclass map;
-  jclass arraylist;
-  jclass integer;
-  jclass boolean;
-  jclass metadata;
-  jclass native_interface;
-  jclass long_class;
-  jclass float_class;
-  jclass number;
-  jclass string;
-  jmethodID integer_int_value;
-  jmethodID long_long_value;
-  jmethodID float_float_value;
-  jmethodID boolean_bool_value;
-  jmethodID number_double_value;
-  jmethodID hash_map_get;
-  jmethodID hash_map_size;
-  jmethodID hash_map_key_set;
-  jmethodID map_get;
-  jmethodID map_size;
-  jmethodID map_key_set;
-  jmethodID arraylist_init_with_obj;
-  jmethodID arraylist_get;
-  jmethodID get_app_data;
-  jmethodID get_device_data;
-  jmethodID get_user_data;
-  jmethodID get_breadcrumbs;
-  jmethodID get_metadata;
-  jmethodID get_context;
-} bsg_jni_cache;
-
-/**
- * Creates a cache of JNI methods/classes that are commonly used.
- *
- * Class and method objects can be kept safely since they aren't moved or
- * removed from the JVM - care should be taken not to load objects as local
- * references here.
- */
-bsg_jni_cache *bsg_populate_jni_cache(JNIEnv *env) {
-  bsg_jni_cache *jni_cache = malloc(sizeof(bsg_jni_cache));
-
-  // lookup java/lang/Integer
-  jni_cache->integer = bsg_safe_find_class(env, "java/lang/Integer");
-  if (jni_cache->integer == NULL) {
-    return NULL;
-  }
-
-  // lookup java/lang/Boolean
-  jni_cache->boolean = bsg_safe_find_class(env, "java/lang/Boolean");
-  if (jni_cache->boolean == NULL) {
-    return NULL;
-  }
-
-  // lookup java/lang/Long
-  jni_cache->long_class = bsg_safe_find_class(env, "java/lang/Long");
-  if (jni_cache->long_class == NULL) {
-    return NULL;
-  }
-
-  // lookup java/lang/Float
-  jni_cache->float_class = bsg_safe_find_class(env, "java/lang/Float");
-  if (jni_cache->float_class == NULL) {
-    return NULL;
-  }
-
-  // lookup java/lang/Number
-  jni_cache->number = bsg_safe_find_class(env, "java/lang/Number");
-  if (jni_cache->number == NULL) {
-    return NULL;
-  }
-
-  // lookup java/lang/String
-  jni_cache->string = bsg_safe_find_class(env, "java/lang/String");
-  if (jni_cache->string == NULL) {
-    return NULL;
-  }
-
-  // lookup Integer.intValue()
-  jni_cache->integer_int_value =
-      bsg_safe_get_method_id(env, jni_cache->integer, "intValue", "()I");
-  if (jni_cache->integer_int_value == NULL) {
-    return NULL;
-  }
-
-  // lookup Integer.floatValue()
-  jni_cache->float_float_value =
-      bsg_safe_get_method_id(env, jni_cache->float_class, "floatValue", "()F");
-  if (jni_cache->float_float_value == NULL) {
-    return NULL;
-  }
-
-  // lookup Double.doubleValue()
-  jni_cache->number_double_value =
-      bsg_safe_get_method_id(env, jni_cache->number, "doubleValue", "()D");
-  if (jni_cache->number_double_value == NULL) {
-    return NULL;
-  }
-
-  // lookup Long.longValue()
-  jni_cache->long_long_value =
-      bsg_safe_get_method_id(env, jni_cache->integer, "longValue", "()J");
-  if (jni_cache->long_long_value == NULL) {
-    return NULL;
-  }
-
-  // lookup Boolean.booleanValue()
-  jni_cache->boolean_bool_value =
-      bsg_safe_get_method_id(env, jni_cache->boolean, "booleanValue", "()Z");
-  if (jni_cache->boolean_bool_value == NULL) {
-    return NULL;
-  }
-
-  // lookup java/util/ArrayList
-  jni_cache->arraylist = bsg_safe_find_class(env, "java/util/ArrayList");
-  if (jni_cache->arraylist == NULL) {
-    return NULL;
-  }
-
-  // lookup ArrayList constructor
-  jni_cache->arraylist_init_with_obj = bsg_safe_get_method_id(
-      env, jni_cache->arraylist, "<init>", "(Ljava/util/Collection;)V");
-  if (jni_cache->arraylist_init_with_obj == NULL) {
-    return NULL;
-  }
-
-  // lookup ArrayList.get()
-  jni_cache->arraylist_get = bsg_safe_get_method_id(
-      env, jni_cache->arraylist, "get", "(I)Ljava/lang/Object;");
-  if (jni_cache->arraylist_get == NULL) {
-    return NULL;
-  }
-
-  // lookup java/util/HashMap
-  jni_cache->hash_map = bsg_safe_find_class(env, "java/util/HashMap");
-  if (jni_cache->hash_map == NULL) {
-    return NULL;
-  }
-
-  // lookup java/util/Map
-  jni_cache->map = bsg_safe_find_class(env, "java/util/Map");
-  if (jni_cache->map == NULL) {
-    return NULL;
-  }
-
-  // lookup java/util/Set
-  jni_cache->hash_map_key_set = bsg_safe_get_method_id(
-      env, jni_cache->hash_map, "keySet", "()Ljava/util/Set;");
-  if (jni_cache->hash_map_key_set == NULL) {
-    return NULL;
-  }
-
-  // lookup HashMap.size()
-  jni_cache->hash_map_size =
-      bsg_safe_get_method_id(env, jni_cache->hash_map, "size", "()I");
-  if (jni_cache->hash_map_size == NULL) {
-    return NULL;
-  }
-
-  // lookup HashMap.get()
-  jni_cache->hash_map_get =
-      bsg_safe_get_method_id(env, jni_cache->hash_map, "get",
-                             "(Ljava/lang/Object;)Ljava/lang/Object;");
-  if (jni_cache->hash_map_get == NULL) {
-    return NULL;
-  }
-
-  // lookup Map.keySet()
-  jni_cache->map_key_set = bsg_safe_get_method_id(env, jni_cache->map, "keySet",
-                                                  "()Ljava/util/Set;");
-  if (jni_cache->map_key_set == NULL) {
-    return NULL;
-  }
-
-  // lookup Map.size()
-  jni_cache->map_size =
-      bsg_safe_get_method_id(env, jni_cache->map, "size", "()I");
-  if (jni_cache->map_size == NULL) {
-    return NULL;
-  }
-
-  // lookup Map.get()
-  jni_cache->map_get = bsg_safe_get_method_id(
-      env, jni_cache->map, "get", "(Ljava/lang/Object;)Ljava/lang/Object;");
-  if (jni_cache->map_get == NULL) {
-    return NULL;
-  }
-
-  // lookup com/bugsnag/android/NativeInterface
-  jni_cache->native_interface =
-      bsg_safe_find_class(env, "com/bugsnag/android/NativeInterface");
-  if (jni_cache->native_interface == NULL) {
-    return NULL;
-  }
-
-  // lookup NativeInterface.getApp()
-  jni_cache->get_app_data = bsg_safe_get_static_method_id(
-      env, jni_cache->native_interface, "getAppData", "()Ljava/util/Map;");
-  if (jni_cache->get_app_data == NULL) {
-    return NULL;
-  }
-
-  // lookup NativeInterface.getDevice()
-  jni_cache->get_device_data = bsg_safe_get_static_method_id(
-      env, jni_cache->native_interface, "getDeviceData", "()Ljava/util/Map;");
-  if (jni_cache->get_device_data == NULL) {
-    return NULL;
-  }
-
-  // lookup NativeInterface.getUser()
-  jni_cache->get_user_data = bsg_safe_get_static_method_id(
-      env, jni_cache->native_interface, "getUserData", "()Ljava/util/Map;");
-  if (jni_cache->get_user_data == NULL) {
-    return NULL;
-  }
-
-  // lookup NativeInterface.getMetadata()
-  jni_cache->get_metadata = bsg_safe_get_static_method_id(
-      env, jni_cache->native_interface, "getMetaData", "()Ljava/util/Map;");
-  if (jni_cache->get_metadata == NULL) {
-    return NULL;
-  }
-
-  // lookup NativeInterface.getContext()
-  jni_cache->get_context = bsg_safe_get_static_method_id(
-      env, jni_cache->native_interface, "getContext", "()Ljava/lang/String;");
-  if (jni_cache->get_context == NULL) {
-    return NULL;
-  }
-  return jni_cache;
-}
-
-jobject bsg_get_map_value_obj(JNIEnv *env, bsg_jni_cache *jni_cache,
-                              jobject map, const char *_key) {
-  // create Java string object for map key
-  jstring key = bsg_safe_new_string_utf(env, _key);
-  if (key == NULL) {
-    return NULL;
-  }
-
-  jobject obj =
-      bsg_safe_call_object_method(env, map, jni_cache->hash_map_get, key);
-  bsg_safe_delete_local_ref(env, key);
-  return obj;
-}
-
-void bsg_copy_map_value_string(JNIEnv *env, bsg_jni_cache *jni_cache,
-                               jobject map, const char *_key, char *dest,
-                               int len) {
-  jobject _value = bsg_get_map_value_obj(env, jni_cache, map, _key);
-
-  if (_value != NULL) {
-    const char *value = bsg_safe_get_string_utf_chars(env, (jstring)_value);
-    if (value != NULL) {
-      bsg_strncpy_safe(dest, value, len);
-      bsg_safe_release_string_utf_chars(env, _value, value);
-    }
-  }
-}
-
-long bsg_get_map_value_long(JNIEnv *env, bsg_jni_cache *jni_cache, jobject map,
-                            const char *_key) {
-  jobject _value = bsg_get_map_value_obj(env, jni_cache, map, _key);
-
-  if (_value != NULL) {
-    long value = bsg_safe_call_double_method(env, _value,
-                                             jni_cache->number_double_value);
-    bsg_safe_delete_local_ref(env, _value);
-    return value;
-  }
-  return 0;
-}
-
-float bsg_get_map_value_float(JNIEnv *env, bsg_jni_cache *jni_cache,
-                              jobject map, const char *_key) {
-  jobject _value = bsg_get_map_value_obj(env, jni_cache, map, _key);
-
-  if (_value != NULL) {
-    float value =
-        bsg_safe_call_float_method(env, _value, jni_cache->float_float_value);
-    bsg_safe_delete_local_ref(env, _value);
-    return value;
-  }
-  return 0;
-}
-
-int bsg_get_map_value_int(JNIEnv *env, bsg_jni_cache *jni_cache, jobject map,
-                          const char *_key) {
-  jobject _value = bsg_get_map_value_obj(env, jni_cache, map, _key);
-
-  if (_value != NULL) {
-    jint value =
-        bsg_safe_call_int_method(env, _value, jni_cache->integer_int_value);
-    bsg_safe_delete_local_ref(env, _value);
-    return value;
-  }
-  return 0;
-}
-
-bool bsg_get_map_value_bool(JNIEnv *env, bsg_jni_cache *jni_cache, jobject map,
-                            const char *_key) {
-  jobject obj = bsg_get_map_value_obj(env, jni_cache, map, _key);
-  return bsg_safe_call_boolean_method(env, obj, jni_cache->boolean_bool_value);
-}
 
 int bsg_populate_cpu_abi_from_map(JNIEnv *env, bsg_jni_cache *jni_cache,
                                   jobject map, bsg_device_info *device) {
@@ -320,7 +16,7 @@ int bsg_populate_cpu_abi_from_map(JNIEnv *env, bsg_jni_cache *jni_cache,
   }
 
   jobjectArray _value =
-      bsg_safe_call_object_method(env, map, jni_cache->hash_map_get, key);
+          bsg_safe_call_object_method(env, map, jni_cache->hash_map_get, key);
   if (_value != NULL) {
     int count = bsg_safe_get_array_length(env, _value);
 
@@ -347,15 +43,15 @@ int bsg_populate_cpu_abi_from_map(JNIEnv *env, bsg_jni_cache *jni_cache,
 
 void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,
                                  jobject metadata) {
-  bsg_jni_cache *jni_cache = NULL;
+  if (!bsg_is_jni_cache_valid()) {
+    return;
+  }
+
+  bsg_jni_cache *jni_cache = bsg_get_jni_cache();
   jobject keyset = NULL;
   jobject keylist = NULL;
 
   if (metadata == NULL) {
-    goto exit;
-  }
-  jni_cache = bsg_populate_jni_cache(env);
-  if (jni_cache == NULL) {
     goto exit;
   }
 
@@ -378,9 +74,9 @@ void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,
 
   for (int i = 0; i < map_size; i++) {
     jstring _key = bsg_safe_call_object_method(
-        env, keylist, jni_cache->arraylist_get, (jint)i);
+            env, keylist, jni_cache->arraylist_get, (jint)i);
     jstring _value =
-        bsg_safe_call_object_method(env, metadata, jni_cache->map_get, _key);
+            bsg_safe_call_object_method(env, metadata, jni_cache->map_get, _key);
 
     if (_key == NULL || _value == NULL) {
       bsg_safe_delete_local_ref(env, _key);
@@ -405,16 +101,15 @@ void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,
   goto exit;
 
   exit:
-  free(jni_cache);
   bsg_safe_delete_local_ref(env, keyset);
   bsg_safe_delete_local_ref(env, keylist);
 }
 
 char *bsg_binary_arch() {
 #if defined(__i386__)
-    return "x86";
+  return "x86";
 #elif defined(__x86_64__)
-    return "x86_64";
+  return "x86_64";
 #elif defined(__arm__)
     return "arm32";
 #elif defined(__aarch64__)
@@ -427,7 +122,7 @@ char *bsg_binary_arch() {
 void bsg_populate_app_data(JNIEnv *env, bsg_jni_cache *jni_cache,
                            bugsnag_report *report) {
   jobject data = bsg_safe_call_static_object_method(
-      env, jni_cache->native_interface, jni_cache->get_app_data);
+          env, jni_cache->native_interface, jni_cache->get_app_data);
   if (data == NULL) {
     return;
   }
@@ -453,24 +148,24 @@ void bsg_populate_app_data(JNIEnv *env, bsg_jni_cache *jni_cache,
                             report->app.build_uuid,
                             sizeof(report->app.build_uuid));
   report->app.duration_ms_offset =
-      bsg_get_map_value_long(env, jni_cache, data, "duration");
+          bsg_get_map_value_long(env, jni_cache, data, "duration");
   report->app.duration_in_foreground_ms_offset =
-      bsg_get_map_value_long(env, jni_cache, data, "durationInForeground");
+          bsg_get_map_value_long(env, jni_cache, data, "durationInForeground");
   report->app.version_code =
-      bsg_get_map_value_int(env, jni_cache, data, "versionCode");
+          bsg_get_map_value_int(env, jni_cache, data, "versionCode");
   report->app.in_foreground =
-      bsg_get_map_value_bool(env, jni_cache, data, "inForeground");
+          bsg_get_map_value_bool(env, jni_cache, data, "inForeground");
 
   bsg_strncpy_safe(report->app.binaryArch,
-                     bsg_binary_arch(),
-                     sizeof(report->app.binaryArch));
+                   bsg_binary_arch(),
+                   sizeof(report->app.binaryArch));
   bsg_safe_delete_local_ref(env, data);
 }
 
 void bsg_populate_device_data(JNIEnv *env, bsg_jni_cache *jni_cache,
                               bugsnag_report *report) {
   jobject data = bsg_safe_call_static_object_method(
-      env, jni_cache->native_interface, jni_cache->get_device_data);
+          env, jni_cache->native_interface, jni_cache->get_device_data);
   if (data == NULL) {
     return;
   }
@@ -503,14 +198,14 @@ void bsg_populate_device_data(JNIEnv *env, bsg_jni_cache *jni_cache,
                             report->device.screen_resolution,
                             sizeof(report->device.screen_resolution));
   report->device.emulator =
-      bsg_get_map_value_bool(env, jni_cache, data, "emulator");
+          bsg_get_map_value_bool(env, jni_cache, data, "emulator");
   report->device.jailbroken =
-      bsg_get_map_value_bool(env, jni_cache, data, "jailbroken");
+          bsg_get_map_value_bool(env, jni_cache, data, "jailbroken");
   report->device.total_memory =
-      bsg_get_map_value_long(env, jni_cache, data, "totalMemory");
+          bsg_get_map_value_long(env, jni_cache, data, "totalMemory");
   report->device.dpi = bsg_get_map_value_int(env, jni_cache, data, "dpi");
   report->device.screen_density =
-      bsg_get_map_value_float(env, jni_cache, data, "screenDensity");
+          bsg_get_map_value_float(env, jni_cache, data, "screenDensity");
   bsg_populate_cpu_abi_from_map(env, jni_cache, data, &report->device);
 
   jobject _runtime_versions = bsg_get_map_value_obj(env, jni_cache, data, "runtimeVersions");
@@ -530,7 +225,7 @@ void bsg_populate_device_data(JNIEnv *env, bsg_jni_cache *jni_cache,
 void bsg_populate_user_data(JNIEnv *env, bsg_jni_cache *jni_cache,
                             bugsnag_report *report) {
   jobject data = bsg_safe_call_static_object_method(
-      env, jni_cache->native_interface, jni_cache->get_user_data);
+          env, jni_cache->native_interface, jni_cache->get_user_data);
   if (data == NULL) {
     return;
   }
@@ -547,7 +242,7 @@ void bsg_populate_user_data(JNIEnv *env, bsg_jni_cache *jni_cache,
 void bsg_populate_context(JNIEnv *env, bsg_jni_cache *jni_cache,
                           bugsnag_report *report) {
   jstring _context = bsg_safe_call_static_object_method(
-      env, jni_cache->native_interface, jni_cache->get_context);
+          env, jni_cache->native_interface, jni_cache->get_context);
   if (_context != NULL) {
     const char *value = bsg_safe_get_string_utf_chars(env, (jstring)_context);
     if (value != NULL) {
@@ -560,15 +255,15 @@ void bsg_populate_context(JNIEnv *env, bsg_jni_cache *jni_cache,
 }
 
 void bsg_populate_report(JNIEnv *env, bugsnag_report *report) {
-  bsg_jni_cache *jni_cache = bsg_populate_jni_cache(env);
-  if (jni_cache == NULL) {
+  if (!bsg_is_jni_cache_valid()) {
     return;
   }
+
+  bsg_jni_cache *jni_cache = bsg_get_jni_cache();
   bsg_populate_context(env, jni_cache, report);
   bsg_populate_app_data(env, jni_cache, report);
   bsg_populate_device_data(env, jni_cache, report);
   bsg_populate_user_data(env, jni_cache, report);
-  free(jni_cache);
 }
 
 void bsg_populate_metadata_value(JNIEnv *env, bugsnag_report *dst,
@@ -588,7 +283,7 @@ void bsg_populate_metadata_value(JNIEnv *env, bugsnag_report *dst,
     char *value = (char *) bsg_safe_get_string_utf_chars(env, _value);
     if (value != NULL) {
       bugsnag_report_add_metadata_string(dst, section, name, value);
-      free(value);
+      bsg_safe_release_string_utf_chars(env, _value, name);
     }
   }
 }
@@ -597,7 +292,7 @@ void bsg_populate_metadata_obj(JNIEnv *env, bugsnag_report *dst,
                                bsg_jni_cache *jni_cache, jobject section,
                                void *section_keylist, int index) {
   jstring section_key = bsg_safe_call_object_method(
-      env, section_keylist, jni_cache->arraylist_get, (jint)index);
+          env, section_keylist, jni_cache->arraylist_get, (jint)index);
   if (section_key == NULL) {
     return;
   }
@@ -631,24 +326,24 @@ void bsg_populate_metadata_section(JNIEnv *env, bugsnag_report *report,
     goto exit;
   }
   _section =
-      bsg_safe_call_object_method(env, metadata, jni_cache->map_get, _key);
+          bsg_safe_call_object_method(env, metadata, jni_cache->map_get, _key);
   if (_section == NULL) {
     goto exit;
   }
   jint section_size =
-      bsg_safe_call_int_method(env, _section, jni_cache->map_size);
+          bsg_safe_call_int_method(env, _section, jni_cache->map_size);
   if (section_size == -1) {
     goto exit;
   }
   section_keyset =
-      bsg_safe_call_object_method(env, _section, jni_cache->map_key_set);
+          bsg_safe_call_object_method(env, _section, jni_cache->map_key_set);
   if (section_keyset == NULL) {
     goto exit;
   }
 
   section_keylist =
-      bsg_safe_new_object(env, jni_cache->arraylist,
-                          jni_cache->arraylist_init_with_obj, section_keyset);
+          bsg_safe_new_object(env, jni_cache->arraylist,
+                              jni_cache->arraylist_init_with_obj, section_keyset);
   if (section_keylist == NULL) {
     goto exit;
   }
@@ -658,24 +353,25 @@ void bsg_populate_metadata_section(JNIEnv *env, bugsnag_report *report,
   goto exit;
 
   exit:
-    bsg_safe_release_string_utf_chars(env, _key, section);
-    bsg_safe_delete_local_ref(env, section_keyset);
-    bsg_safe_delete_local_ref(env, section_keylist);
-    bsg_safe_delete_local_ref(env, _section);
+  bsg_safe_release_string_utf_chars(env, _key, section);
+  bsg_safe_delete_local_ref(env, section_keyset);
+  bsg_safe_delete_local_ref(env, section_keylist);
+  bsg_safe_delete_local_ref(env, _section);
 }
 
 void bsg_populate_metadata(JNIEnv *env, bugsnag_report *report,
                            jobject metadata) {
+  if (!bsg_is_jni_cache_valid()) {
+    return;
+  }
+
+  bsg_jni_cache *jni_cache = bsg_get_jni_cache();
   jobject keyset = NULL;
   jobject keylist = NULL;
-  bsg_jni_cache *jni_cache = bsg_populate_jni_cache(env);
 
-  if (jni_cache == NULL) {
-    goto exit;
-  }
   if (metadata == NULL) {
     metadata = bsg_safe_call_static_object_method(
-        env, jni_cache->native_interface, jni_cache->get_metadata);
+            env, jni_cache->native_interface, jni_cache->get_metadata);
   }
   if (metadata != NULL) {
     int size = bsg_safe_call_int_method(env, metadata, jni_cache->map_size);
@@ -705,9 +401,6 @@ void bsg_populate_metadata(JNIEnv *env, bugsnag_report *report,
 
 // cleanup
   exit:
-  if (jni_cache != NULL) {
-    free(jni_cache);
-  }
   bsg_safe_delete_local_ref(env, keyset);
   bsg_safe_delete_local_ref(env, keylist);
 }
