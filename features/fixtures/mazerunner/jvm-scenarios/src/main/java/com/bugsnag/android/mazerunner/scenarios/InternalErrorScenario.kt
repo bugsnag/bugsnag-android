@@ -1,26 +1,22 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
+import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
-import com.bugsnag.android.mazerunner.addNaughtyStringMetadata
+import com.bugsnag.android.triggerInternalBugsnagForError
 
-internal class CXXNaughtyStringsScenario(
+internal class InternalErrorScenario(
     config: Configuration,
     context: Context,
-    eventMetadata: String?
+    eventMetadata: String
 ) : Scenario(config, context, eventMetadata) {
 
     init {
-        System.loadLibrary("cxx-scenarios")
         config.autoTrackSessions = false
     }
 
-    external fun crash()
-
     override fun startScenario() {
         super.startScenario()
-        addNaughtyStringMetadata(javaClass)
-
-        crash()
+        triggerInternalBugsnagForError(Bugsnag.getClient())
     }
 }
