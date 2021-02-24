@@ -240,7 +240,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
     }
 
     /**
-     * Deprecated. Use {@link #setLaunchDurationMillis(long)} ()} instead.
+     * Deprecated. Use {@link #setLaunchDurationMillis(long)} instead.
      */
     @Deprecated
     public void setLaunchCrashThresholdMs(long launchCrashThresholdMs) {
@@ -248,6 +248,26 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
                 + "and will be removed in a future release. Please use "
                 + "launchDurationMillis instead.");
         setLaunchDurationMillis(launchCrashThresholdMs);
+    }
+
+    /**
+     * Sets whether or not Bugsnag should send crashes synchronously that occurred during
+     * the application's launch period. By default this behavior is enabled.
+     *
+     * See {@link #setLaunchDurationMillis(long)}
+     */
+    public boolean getSendLaunchCrashesSynchronously() {
+        return impl.getSendLaunchCrashesSynchronously();
+    }
+
+    /**
+     * Sets whether or not Bugsnag should send crashes synchronously that occurred during
+     * the application's launch period. By default this behavior is enabled.
+     *
+     * See {@link #setLaunchDurationMillis(long)}
+     */
+    public void setSendLaunchCrashesSynchronously(boolean sendLaunchCrashesSynchronously) {
+        impl.setSendLaunchCrashesSynchronously(sendLaunchCrashesSynchronously);
     }
 
     /**

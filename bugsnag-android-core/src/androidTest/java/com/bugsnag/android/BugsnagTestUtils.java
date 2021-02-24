@@ -110,7 +110,7 @@ final class BugsnagTestUtils {
 
     public static AppWithState generateAppWithState() {
         return new AppWithState(generateImmutableConfig(), null, null, null,
-                null, null, null, null, null);
+                null, null, null, null, null, null);
     }
 
     public static App generateApp() {
