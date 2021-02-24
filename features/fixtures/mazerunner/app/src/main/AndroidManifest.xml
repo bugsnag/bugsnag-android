@@ -2,9 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.bugsnag.android.mazerunner">
 
+    <!-- always enable GWP ASAN tool to detect native memory bugs. see
+        https://developer.android.com/ndk/guides/gwp-asan-->
     <application
         android:label="MazeRunner"
         android:networkSecurityConfig="@xml/network_security_config"
+        android:gwpAsanMode="always"
         >
         <activity android:name=".MainActivity">
             <intent-filter>
