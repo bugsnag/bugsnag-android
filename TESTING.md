@@ -87,14 +87,18 @@ Run `make remote-test`
 ### End-to-end tests
 
 Ensure that the following environment variables are set:
+* `MAZE_DEVICE_FARM_USERNAME`: Your BrowserStack App Automate Username
+* `MAZE_DEVICE_FARM_ACCESS_KEY`: You BrowserStack App Automate Access Key
+* `MAZE_BS_LOCAL`: Location of the BrowserStack local testing binary (see https://www.browserstack.com/local-testing/app-automate).
 
-* `BROWSER_STACK_USERNAME`: The BrowserStack App Automate Username
-* `BROWSER_STACK_ACCESS_KEY`: The BrowserStack App Automate Access Key
-* `DEVICE_TYPE`: The android version to run the tests against, one of: ANDROID_5, ANDROID_6, ANDROID_7, ANDROID_8, ANDROID_9
-
-Run `make remote-integration-tests`
-
-If you wish to test a single feature, set the `TEST_FEATURE` environment variable to the name of the feature file.
-For example, to test the `breadcrumb` feature, use the following command:
-
-`TEST_FEATURE=breadcrumb.feature make remote-integration-tests`
+1. Build the test fixture `make test-fixture`
+1. Check the contents of `Gemfile` to select the version of `maze-runner` to use
+1. To run a single feature:
+    ```shell script
+    bundle exec maze-runner --app=build/fixture.apk                 \
+                            --farm=bs                               \
+                            --device=ANDROID_9_0                    \
+                            features/app_version.feature
+    ```
+1. To run all features, omit the final argument.
+1. Maze Runner also supports all options that Cucumber does.  Run `bundle exec maze-runner --help` for full details.
