@@ -125,17 +125,45 @@ steps:
       - docker-compose#v2.6.0:
           run: android-sizer
 
-  - label: ':android: Android 9 end-to-end tests'
+  - label: ':android: Android 9 end-to-end tests - 1'
+    depends_on: "build-fixture"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/fixture.apk"
+      docker-compose#v3.7.0:
+        pull: android-maze-runner
+        run: android-maze-runner
+        command:
+          - "-e"
+          - "features/[n-z].*.feature"
+          - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_9_0"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: Android 9 end-to-end tests - 2'
+    depends_on: "build-fixture"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
         download: "build/fixture.apk"
       docker-compose#v2.6.0:
         run: android-maze-runner
-    env:
-      DEVICE_TYPE: "ANDROID_9"
-      APP_LOCATION: "/app/build/fixture.apk"
-    concurrency: 5
+        command:
+          - "-e"
+          - "features/[a-m].*.feature"
+          - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_9_0"
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 16b SDK 9.0 Instrumentation tests'
@@ -158,10 +186,32 @@ steps:
         download: "build/fixture.apk"
       docker-compose#v2.6.0:
         run: android-maze-runner
-    env:
-      DEVICE_TYPE: "ANDROID_5"
-      APP_LOCATION: "/app/build/fixture.apk"
-    concurrency: 5
+        command:
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_5_0"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: Android 6 end-to-end tests - 1'
+    depends_on: "build-fixture"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/fixture.apk"
+      docker-compose#v3.7.0:
+        pull: android-maze-runner
+        run: android-maze-runner
+        command:
+          - "-e"
+          - "features/[n-z].*.feature"
+          - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_6_0"
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 6 end-to-end tests'
@@ -171,10 +221,37 @@ steps:
         download: "build/fixture.apk"
       docker-compose#v2.6.0:
         run: android-maze-runner
-    env:
-      DEVICE_TYPE: "ANDROID_6"
-      APP_LOCATION: "/app/build/fixture.apk"
-    concurrency: 5
+        command:
+          - "-e"
+          - "features/[a-m].*.feature"
+          - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_6_0"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: Android 7 end-to-end tests - 1'
+    depends_on: "build-fixture"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/fixture.apk"
+      docker-compose#v3.7.0:
+        pull: android-maze-runner
+        run: android-maze-runner
+        command:
+          - "-e"
+          - "features/[n-z].*.feature"
+          - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_7_1"
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 7 end-to-end tests'
@@ -184,10 +261,37 @@ steps:
         download: "build/fixture.apk"
       docker-compose#v2.6.0:
         run: android-maze-runner
-    env:
-      DEVICE_TYPE: "ANDROID_7"
-      APP_LOCATION: "/app/build/fixture.apk"
-    concurrency: 5
+        command:
+          - "-e"
+          - "features/[a-m].*.feature"
+          - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_7_1"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: Android 8 end-to-end tests - 1'
+    depends_on: "build-fixture"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/fixture.apk"
+      docker-compose#v3.7.0:
+        pull: android-maze-runner
+        run: android-maze-runner
+        command:
+          - "-e"
+          - "features/[n-z].*.feature"
+          - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_8_1"
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 8 end-to-end tests'
@@ -197,10 +301,16 @@ steps:
         download: "build/fixture.apk"
       docker-compose#v2.6.0:
         run: android-maze-runner
-    env:
-      DEVICE_TYPE: "ANDROID_8"
-      APP_LOCATION: "/app/build/fixture.apk"
-    concurrency: 5
+        command:
+          - "-e"
+          - "features/[a-m].*.feature"
+          - "--retry=2"
+          - "--strict-undefined"
+          - "--strict-pending"
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_8_1"
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 16b SDK 4.4 Instrumentation tests'

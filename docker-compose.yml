@@ -47,14 +47,11 @@ services:
   android-maze-runner:
     image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner-releases:latest-v3-cli
     environment:
-      VERBOSE:
       DEBUG:
-      BROWSER_STACK_USERNAME:
-      BROWSER_STACK_ACCESS_KEY:
-      BROWSER_STACK_LOCAL_IDENTIFIER: ${BUILDKITE_JOB_ID:-maze-runner}
-      DEVICE_TYPE:
-      APP_LOCATION:
-    command: --tags ~@ignore
+      BUILDKITE:
+      BUILDKITE_PIPELINE_NAME:
+      MAZE_DEVICE_FARM_USERNAME:
+      MAZE_DEVICE_FARM_ACCESS_KEY:
     volumes:
       - ./build:/app/build
       - ./maze-output:/app/maze-output
