@@ -350,18 +350,10 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         appContext.registerReceiver(receiver, configFilter);
     }
 
-    void sendNativeSetupNotification() {
+    void setupNdkPlugin() {
         clientObservable.postNdkInstall(immutableConfig);
-        try {
-            Async.run(new Runnable() {
-                @Override
-                public void run() {
-                    clientObservable.postNdkDeliverPending();
-                }
-            });
-        } catch (RejectedExecutionException ex) {
-            logger.w("Failed to enqueue native reports, will retry next launch: ", ex);
-        }
+        syncInitialState();
+        clientObservable.postNdkDeliverPending();
     }
 
     void registerObserver(Observer observer) {
