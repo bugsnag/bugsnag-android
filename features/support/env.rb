@@ -1,6 +1,10 @@
 # Set this explicitly
 $api_key = "ABCDEFGHIJKLMNOPQRSTUVWXYZ012345"
 
+Before('@skip') do |scenario|
+  skip_this_scenario("Skipping scenario")
+end
+
 Before('@skip_android_9') do |scenario|
   skip_this_scenario("Skipping scenario") if MazeRunner.config.os_version == 9
 end
