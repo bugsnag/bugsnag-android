@@ -125,9 +125,9 @@ steps:
           - "--retry=2"
           - "--strict-undefined"
           - "--strict-pending"
-    env:
-      DEVICE_TYPE: "ANDROID_9"
-      APP_LOCATION: "/app/build/fixture.apk"
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_9_0"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -146,9 +146,9 @@ steps:
           - "--retry=2"
           - "--strict-undefined"
           - "--strict-pending"
-    env:
-      DEVICE_TYPE: "ANDROID_9"
-      APP_LOCATION: "/app/build/fixture.apk"
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_9_0"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -175,9 +175,10 @@ steps:
       docker-compose#v3.7.0:
         pull: android-maze-runner
         run: android-maze-runner
-    env:
-      DEVICE_TYPE: "ANDROID_5"
-      APP_LOCATION: "/app/build/fixture.apk"
+        command:
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_5_0"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -196,9 +197,9 @@ steps:
           - "--retry=2"
           - "--strict-undefined"
           - "--strict-pending"
-    env:
-      DEVICE_TYPE: "ANDROID_6"
-      APP_LOCATION: "/app/build/fixture.apk"
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_6_0"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -217,9 +218,9 @@ steps:
           - "--retry=2"
           - "--strict-undefined"
           - "--strict-pending"
-    env:
-      DEVICE_TYPE: "ANDROID_6"
-      APP_LOCATION: "/app/build/fixture.apk"
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_6_0"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -238,9 +239,9 @@ steps:
           - "--retry=2"
           - "--strict-undefined"
           - "--strict-pending"
-    env:
-      DEVICE_TYPE: "ANDROID_7"
-      APP_LOCATION: "/app/build/fixture.apk"
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_7_1"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -259,9 +260,9 @@ steps:
           - "--retry=2"
           - "--strict-undefined"
           - "--strict-pending"
-    env:
-      DEVICE_TYPE: "ANDROID_7"
-      APP_LOCATION: "/app/build/fixture.apk"
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_7_1"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -280,9 +281,9 @@ steps:
           - "--retry=2"
           - "--strict-undefined"
           - "--strict-pending"
-    env:
-      DEVICE_TYPE: "ANDROID_8"
-      APP_LOCATION: "/app/build/fixture.apk"
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_8_1"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -301,9 +302,9 @@ steps:
           - "--retry=2"
           - "--strict-undefined"
           - "--strict-pending"
-    env:
-      DEVICE_TYPE: "ANDROID_8"
-      APP_LOCATION: "/app/build/fixture.apk"
+          - "--app=/app/build/fixture.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_8_1"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
