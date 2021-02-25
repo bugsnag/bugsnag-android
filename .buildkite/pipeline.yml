@@ -283,7 +283,7 @@ steps:
           - "--strict-pending"
           - "--app=/app/build/fixture.apk"
           - "--farm=bs"
-          - "--device=ANDROID_8_1"
+          - "--device=ANDROID_8_0"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -304,7 +304,7 @@ steps:
           - "--strict-pending"
           - "--app=/app/build/fixture.apk"
           - "--farm=bs"
-          - "--device=ANDROID_8_1"
+          - "--device=ANDROID_8_0"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
