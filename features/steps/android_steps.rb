@@ -16,9 +16,9 @@ end
 
 When("I clear any error dialogue") do
   sleep(3)
-  $driver.click_element("android:id/button1") if $driver.wait_for_element("android:id/button1", 1)
-  $driver.click_element("android:id/aerr_close") if $driver.wait_for_element("android:id/aerr_close", 1)
-  $driver.click_element("android:id/aerr_restart") if $driver.wait_for_element("android:id/aerr_restart", 1)
+  MazeRunner.driver.click_element("android:id/button1") if MazeRunner.driver.wait_for_element("android:id/button1", 1)
+  MazeRunner.driver.click_element("android:id/aerr_close") if MazeRunner.driver.wait_for_element("android:id/aerr_close", 1)
+  MazeRunner.driver.click_element("android:id/aerr_restart") if MazeRunner.driver.wait_for_element("android:id/aerr_restart", 1)
 end
 
 When("I configure Bugsnag for {string}") do |event_type|
@@ -30,8 +30,8 @@ When("I configure Bugsnag for {string}") do |event_type|
 end
 
 When("I relaunch the app") do
-  $driver.close_app
-  $driver.launch_app
+  MazeRunner.driver.close_app
+  MazeRunner.driver.launch_app
 end
 
 When("I tap the screen {int} times") do |count|
