@@ -37,6 +37,14 @@ else
 	@APP_LOCATION=/app/build/fixture.apk docker-compose run android-maze-runner
 endif
 
+test-fixture:
+	# Build the notifier
+	@./gradlew -PVERSION_NAME=9.9.9 clean assembleRelease publishToMavenLocal
+
+	# Build the test fixture
+	@./gradlew -p=features/fixtures/mazerunner/ assembleRelease
+	@cp features/fixtures/mazerunner/app/build/outputs/apk/release/fixture.apk build/fixture.apk
+
 bump:
 ifneq ($(shell git diff --staged),)
 	@git diff --staged
