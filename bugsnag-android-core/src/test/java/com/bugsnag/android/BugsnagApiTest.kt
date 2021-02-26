@@ -188,7 +188,7 @@ class BugsnagApiTest {
     @Test
     fun lastRunInfo() {
         Bugsnag.getLastRunInfo()
-        verify(client, times(1)).lastRunInfo
+        verify(client, times(1)).getLastRunInfo()
     }
 
     @Test

@@ -66,8 +66,10 @@ internal class LastRunInfoStore(config: ImmutableConfig) {
             val crashed = lines[1].asBooleanValue(KEY_CRASHED)
             val crashedDuringLaunch = lines[2].asBooleanValue(KEY_CRASHED_DURING_LAUNCH)
             LastRunInfo(consecutiveLaunchCrashes, crashed, crashedDuringLaunch)
-        } catch (ignored: NumberFormatException) {
-            null // unlikely case where information was serialized incorrectly
+        } catch (exc: NumberFormatException) {
+            // unlikely case where information was serialized incorrectly
+            logger.w("Failed to read consecutiveLaunchCrashes from saved lastRunInfo", exc)
+            null
         }
     }
 

@@ -16,6 +16,7 @@ internal class AppDataCollector(
     private val config: ImmutableConfig,
     private val sessionTracker: SessionTracker,
     private val activityManager: ActivityManager?,
+    private val launchCrashTracker: LaunchCrashTracker,
     private val logger: Logger
 ) {
     var codeBundleId: String? = null
@@ -34,7 +35,7 @@ internal class AppDataCollector(
     fun generateAppWithState(): AppWithState = AppWithState(
         config, binaryArch, packageName, releaseStage, versionName, codeBundleId,
         getDurationMs(), calculateDurationInForeground(), sessionTracker.isInForeground,
-        false
+        launchCrashTracker.isLaunching()
     )
 
     fun getAppDataMetadata(): MutableMap<String, Any?> {

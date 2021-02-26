@@ -37,6 +37,7 @@ Scenario: Notify caught Java exception with default configuration
     And the error payload field "events.0.app.duration" is an integer
     And the error payload field "events.0.app.durationInForeground" is an integer
     And the event "app.inForeground" is true
+    And the event "app.isLaunching" is true
     And the error payload field "events.0.metaData.app.memoryUsage" is greater than 0
     And the event "metaData.app.name" equals "MazeRunner"
     And the event "metaData.app.lowMemory" is false
@@ -180,6 +181,7 @@ Scenario: Handled C functionality
     And the error payload field "events.0.app.duration" is an integer
     And the error payload field "events.0.app.durationInForeground" is an integer
     And the event "app.inForeground" is true
+    And the event "app.isLaunching" is true
 
     # Device data
     And the error payload field "events.0.device.cpuAbi" is a non-empty array
