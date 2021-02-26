@@ -12,10 +12,12 @@ import com.bugsnag.android.mazerunner.SecondActivity
  */
 internal class AutoSessionScenario(config: Configuration,
                                    context: Context) : Scenario(config, context) {
-
     override fun run() {
         super.run()
+        config.setAutoCaptureSessions(true)
         Bugsnag.init(context, config)
+        Bugsnag.setUser("123", "user@example.com", "Joe Bloggs")
+        context.startActivity(Intent(context, SecondActivity::class.java))
     }
 
 }

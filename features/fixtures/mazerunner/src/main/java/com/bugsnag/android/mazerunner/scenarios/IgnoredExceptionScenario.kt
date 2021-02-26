@@ -10,10 +10,6 @@ import com.bugsnag.android.Configuration
  */
 internal class IgnoredExceptionScenario(config: Configuration,
                                         context: Context) : Scenario(config, context) {
-    init {
-        config.setAutoCaptureSessions(false)
-    }
-
     override fun run() {
         super.run()
         Bugsnag.setIgnoreClasses("java.lang.RuntimeException")

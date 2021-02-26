@@ -18,16 +18,11 @@ public class CXXSigfpeScenario extends Scenario {
 
     public CXXSigfpeScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
-        config.setAutoCaptureSessions(false);
     }
 
     @Override
     public void run() {
         super.run();
-        String metadata = getEventMetaData();
-        if (metadata != null && metadata.equals("non-crashy")) {
-            return;
-        }
         crash(2726);
     }
 }

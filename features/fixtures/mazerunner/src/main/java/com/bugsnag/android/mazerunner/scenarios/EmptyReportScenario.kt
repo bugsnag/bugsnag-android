@@ -18,7 +18,7 @@ internal class EmptyReportScenario(config: Configuration,
         config.beforeSend { true }
 
         if (context is Activity) {
-            eventMetaData = context.intent.getStringExtra("EVENT_METADATA")
+            eventMetaData = context.intent.getStringExtra("eventMetaData")
             val errDir = File(context.cacheDir, "bugsnag-errors")
 
             if (eventMetaData != "non-crashy") {

@@ -16,10 +16,6 @@ import android.os.HandlerThread
  */
 internal class InForegroundScenario(config: Configuration,
                                     context: Context) : Scenario(config, context) {
-    init {
-        config.setAutoCaptureSessions(false)
-    }
-
     override fun run() {
         super.run()
         registerActivityLifecycleCallbacks()

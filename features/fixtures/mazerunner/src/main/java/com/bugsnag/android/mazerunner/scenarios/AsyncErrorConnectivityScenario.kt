@@ -9,11 +9,9 @@ import com.bugsnag.android.*
  */
 internal class AsyncErrorConnectivityScenario(config: Configuration,
                                               context: Context) : Scenario(config, context) {
-
     init {
         val delivery = createSlowDelivery(context)
         config.delivery = delivery
-        config.setAutoCaptureSessions(false)
     }
 
     override fun run() {
