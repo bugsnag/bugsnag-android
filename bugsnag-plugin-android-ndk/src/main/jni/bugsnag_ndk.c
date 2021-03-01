@@ -151,63 +151,66 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
     JNIEnv *env, jobject _this, jstring _report_path) {
   static pthread_mutex_t bsg_native_delivery_mutex = PTHREAD_MUTEX_INITIALIZER;
   pthread_mutex_lock(&bsg_native_delivery_mutex);
-  const char *event_path = bsg_safe_get_string_utf_chars(env, _report_path);
-  if (event_path == NULL) {
-    return;
-  }
-  bugsnag_event *event = bsg_deserialize_event_from_file((char *)event_path);
+
+  bugsnag_event *event = NULL;
   jbyteArray jpayload = NULL;
+  jclass interface_class = NULL;
   jbyteArray jstage = NULL;
+  jstring japi_key = NULL;
   char *payload = NULL;
+  const char *event_path = NULL;
 
-  if (event != NULL) {
-    payload = bsg_serialize_event_to_json_string(event);
-    if (payload != NULL) {
-
-      // lookup com/bugsnag/android/NativeInterface
-      jclass interface_class =
-          bsg_safe_find_class(env, "com/bugsnag/android/NativeInterface");
-      if (interface_class == NULL) {
-        goto exit;
-      }
-
-      // lookup NativeInterface.deliverReport()
-      jmethodID jdeliver_method = bsg_safe_get_static_method_id(
-          env, interface_class, "deliverReport", "([B[BLjava/lang/String;)V");
-      if (jdeliver_method == NULL) {
-        goto exit;
-      }
-
-      // generate payload bytearray
-      jpayload = bsg_byte_ary_from_string(env, payload);
-      if (jpayload == NULL) {
-        goto exit;
-      }
-
-      // generate releaseStage bytearray
-      jstage = bsg_byte_ary_from_string(env, event->app.release_stage);
-      if (jstage == NULL) {
-        goto exit;
-      }
-
-      // call NativeInterface.deliverReport()
-      jstring japi_key = bsg_safe_new_string_utf(env, event->api_key);
-      if (japi_key != NULL) {
-        bsg_safe_call_static_void_method(env, interface_class, jdeliver_method,
-                                         jstage, jpayload, japi_key);
-      }
-      bsg_safe_delete_local_ref(env, japi_key);
-    } else {
-      BUGSNAG_LOG("Failed to serialize event as JSON: %s", event_path);
-    }
-  } else {
-    BUGSNAG_LOG("Failed to read event at file: %s", event_path);
+  event_path = bsg_safe_get_string_utf_chars(env, _report_path);
+  if (event_path == NULL) {
+    BUGSNAG_LOG("Report path was null");
+    goto exit;
   }
+  event = bsg_deserialize_event_from_file((char *)event_path);
+  if (event == NULL) {
+    BUGSNAG_LOG("Failed to read event at file: %s", event_path);
+    goto exit;
+  }
+  payload = bsg_serialize_event_to_json_string(event);
+  if (payload == NULL) {
+    BUGSNAG_LOG("Failed to serialize event as JSON: %s", event_path);
+    goto exit;
+  }
+
+  interface_class =
+      bsg_safe_find_class(env, "com/bugsnag/android/NativeInterface");
+  if (interface_class == NULL) {
+    goto exit;
+  }
+
+  jmethodID jdeliver_method = bsg_safe_get_static_method_id(
+      env, interface_class, "deliverReport", "([B[BLjava/lang/String;)V");
+  if (jdeliver_method == NULL) {
+    goto exit;
+  }
+
+  // generate payload bytearray
+  jpayload = bsg_byte_ary_from_string(env, payload);
+  if (jpayload == NULL) {
+    goto exit;
+  }
+
+  // generate releaseStage bytearray
+  jstage = bsg_byte_ary_from_string(env, event->app.release_stage);
+  if (jstage == NULL) {
+    goto exit;
+  }
+
+  japi_key = bsg_safe_new_string_utf(env, event->api_key);
+  if (japi_key == NULL) {
+    goto exit;
+  }
+
+  // call NativeInterface.deliverReport()
+  bsg_safe_call_static_void_method(env, interface_class, jdeliver_method,
+                                   jstage, jpayload, japi_key);
   remove(event_path);
-  goto exit;
 
 exit:
-  pthread_mutex_unlock(&bsg_native_delivery_mutex);
   if (event != NULL) {
     free(event);
   }
@@ -215,11 +218,14 @@ exit:
   if (payload != NULL) {
     free(payload);
   }
+  bsg_safe_delete_local_ref(env, japi_key);
   bsg_safe_release_byte_array_elements(env, jstage,
                                        (jbyte *)event->app.release_stage);
+  bsg_safe_delete_local_ref(env, interface_class);
   bsg_safe_delete_local_ref(env, jpayload);
   bsg_safe_delete_local_ref(env, jstage);
   bsg_safe_release_string_utf_chars(env, _report_path, event_path);
+  pthread_mutex_unlock(&bsg_native_delivery_mutex);
 }
 
 JNIEXPORT void JNICALL
