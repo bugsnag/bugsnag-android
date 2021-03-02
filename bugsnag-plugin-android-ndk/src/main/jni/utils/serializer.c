@@ -142,15 +142,18 @@ bugsnag_event *bsg_map_v3_to_report(bugsnag_report_v3 *report_v3) {
     memcpy(event->breadcrumbs, report_v3->breadcrumbs,
            sizeof(event->breadcrumbs));
     event->severity = report_v3->severity;
-    strcpy(event->session_id, report_v3->session_id);
-    strcpy(event->session_start, report_v3->session_start);
+    bsg_strncpy_safe(event->session_id, report_v3->session_id,
+                     sizeof(event->session_id));
+    bsg_strncpy_safe(event->session_start, report_v3->session_start,
+                     sizeof(event->session_start));
     event->handled_events = report_v3->handled_events;
     event->unhandled_events = report_v3->unhandled_events;
-    strcpy(event->grouping_hash, report_v3->grouping_hash);
+    bsg_strncpy_safe(event->grouping_hash, report_v3->grouping_hash,
+                     sizeof(event->grouping_hash));
     event->unhandled = report_v3->unhandled;
 
     // set a default value for the api key
-    strcpy(event->api_key, "");
+    bsg_strncpy_safe(event->api_key, "", sizeof(event->api_key));
     free(report_v3);
   }
   return event;
@@ -170,22 +173,31 @@ bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2) {
     event->user = report_v2->user;
     migrate_breadcrumb_v1(report_v2, event);
 
-    strcpy(event->context, report_v2->context);
+    bsg_strncpy_safe(event->context, report_v2->context,
+                     sizeof(event->context));
     event->severity = report_v2->severity;
-    strcpy(event->session_id, report_v2->session_id);
-    strcpy(event->session_start, report_v2->session_start);
+    bsg_strncpy_safe(event->session_id, report_v2->session_id,
+                     sizeof(event->session_id));
+    bsg_strncpy_safe(event->session_start, report_v2->session_start,
+                     sizeof(event->session_start));
     event->handled_events = report_v2->handled_events;
     event->unhandled_events = report_v2->unhandled_events;
 
     // migrate changed notifier fields
-    strcpy(event->notifier.version, report_v2->notifier.version);
-    strcpy(event->notifier.name, report_v2->notifier.name);
-    strcpy(event->notifier.url, report_v2->notifier.url);
+    bsg_strncpy_safe(event->notifier.version, report_v2->notifier.version,
+                     sizeof(event->notifier.version));
+    bsg_strncpy_safe(event->notifier.name, report_v2->notifier.name,
+                     sizeof(event->notifier.name));
+    bsg_strncpy_safe(event->notifier.url, report_v2->notifier.url,
+                     sizeof(event->notifier.url));
 
     // migrate changed error fields
-    strcpy(event->error.errorClass, report_v2->exception.name);
-    strcpy(event->error.errorMessage, report_v2->exception.message);
-    strcpy(event->error.type, report_v2->exception.type);
+    bsg_strncpy_safe(event->error.errorClass, report_v2->exception.name,
+                     sizeof(event->error.errorClass));
+    bsg_strncpy_safe(event->error.errorMessage, report_v2->exception.message,
+                     sizeof(event->error.errorMessage));
+    bsg_strncpy_safe(event->error.type, report_v2->exception.type,
+                     sizeof(event->error.type));
     event->error.frame_count = report_v2->exception.frame_count;
     size_t error_size = sizeof(bugsnag_stackframe) * BUGSNAG_FRAMES_MAX;
     memcpy(&event->error.stacktrace, report_v2->exception.stacktrace,
@@ -368,10 +380,13 @@ bugsnag_event *bsg_map_v1_to_report(bugsnag_report_v1 *report_v1) {
         sizeof(bugsnag_breadcrumb_v1) * V1_BUGSNAG_CRUMBS_MAX;
     memcpy(&event_v2->breadcrumbs, report_v1->breadcrumbs, breadcrumb_size);
 
-    strcpy(event_v2->context, report_v1->context);
+    bsg_strncpy_safe(event_v2->context, report_v1->context,
+                     sizeof(event_v2->context));
     event_v2->severity = report_v1->severity;
-    strcpy(event_v2->session_id, report_v1->session_id);
-    strcpy(event_v2->session_start, report_v1->session_start);
+    bsg_strncpy_safe(event_v2->session_id, report_v1->session_id,
+                     sizeof(event_v2->session_id));
+    bsg_strncpy_safe(event_v2->session_start, report_v1->session_start,
+                     sizeof(event_v2->session_start));
     event_v2->handled_events = report_v1->handled_events;
     event_v2->unhandled_events = 1;
 
