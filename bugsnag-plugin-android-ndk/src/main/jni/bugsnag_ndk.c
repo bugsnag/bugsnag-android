@@ -113,7 +113,8 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   if (event_path == NULL) {
     return;
   }
-  sprintf(bugsnag_env->next_event_path, "%s", event_path);
+  bsg_strncpy_safe(bugsnag_env->next_event_path, event_path,
+                   sizeof(bugsnag_env->next_event_path));
   bsg_safe_release_string_utf_chars(env, _event_path, event_path);
 
   if ((bool)auto_detect_ndk_crashes) {
