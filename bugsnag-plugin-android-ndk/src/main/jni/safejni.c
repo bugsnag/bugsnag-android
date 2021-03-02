@@ -25,10 +25,7 @@ static exception_result bsg_check_and_clear_exc(JNIEnv *env) {
 }
 
 jclass bsg_safe_find_class(JNIEnv *env, const char *clz_name) {
-  if (env == NULL) {
-    return NULL;
-  }
-  if (clz_name == NULL) {
+  if (env == NULL || clz_name == NULL) {
     return NULL;
   }
   jclass clz = (*env)->FindClass(env, clz_name);
@@ -75,7 +72,7 @@ jstring bsg_safe_new_string_utf(JNIEnv *env, const char *str) {
 
 jboolean bsg_safe_call_boolean_method(JNIEnv *env, jobject _value,
                                       jmethodID method) {
-  if (env == NULL || _value == NULL) {
+  if (env == NULL || _value == NULL || method == NULL) {
     return false;
   }
   jboolean value = (*env)->CallBooleanMethod(env, _value, method);
@@ -86,7 +83,7 @@ jboolean bsg_safe_call_boolean_method(JNIEnv *env, jobject _value,
 }
 
 jint bsg_safe_call_int_method(JNIEnv *env, jobject _value, jmethodID method) {
-  if (env == NULL || _value == NULL) {
+  if (env == NULL || _value == NULL || method == NULL) {
     return -1;
   }
   jint value = (*env)->CallIntMethod(env, _value, method);
@@ -98,7 +95,7 @@ jint bsg_safe_call_int_method(JNIEnv *env, jobject _value, jmethodID method) {
 
 jfloat bsg_safe_call_float_method(JNIEnv *env, jobject _value,
                                   jmethodID method) {
-  if (env == NULL || _value == NULL) {
+  if (env == NULL || _value == NULL || method == NULL) {
     return -1;
   }
   jfloat value = (*env)->CallFloatMethod(env, _value, method);
@@ -110,7 +107,7 @@ jfloat bsg_safe_call_float_method(JNIEnv *env, jobject _value,
 
 jdouble bsg_safe_call_double_method(JNIEnv *env, jobject _value,
                                     jmethodID method) {
-  if (env == NULL || _value == NULL) {
+  if (env == NULL || _value == NULL || method == NULL) {
     return -1;
   }
   jdouble value = (*env)->CallDoubleMethod(env, _value, method);
@@ -166,7 +163,7 @@ jfieldID bsg_safe_get_static_field_id(JNIEnv *env, jclass clz, const char *name,
 
 jobject bsg_safe_get_static_object_field(JNIEnv *env, jclass clz,
                                          jfieldID field) {
-  if (env == NULL || clz == NULL) {
+  if (env == NULL || clz == NULL || field == NULL) {
     return NULL;
   }
   jobject obj = (*env)->GetStaticObjectField(env, clz, field);
@@ -177,7 +174,7 @@ jobject bsg_safe_get_static_object_field(JNIEnv *env, jclass clz,
 }
 
 jobject bsg_safe_new_object(JNIEnv *env, jclass clz, jmethodID method, ...) {
-  if (env == NULL || clz == NULL) {
+  if (env == NULL || clz == NULL || method == NULL) {
     return NULL;
   }
   va_list args;
@@ -192,7 +189,7 @@ jobject bsg_safe_new_object(JNIEnv *env, jclass clz, jmethodID method, ...) {
 
 jobject bsg_safe_call_object_method(JNIEnv *env, jobject _value,
                                     jmethodID method, ...) {
-  if (env == NULL || _value == NULL) {
+  if (env == NULL || _value == NULL || method == NULL) {
     return NULL;
   }
   va_list args;
@@ -207,7 +204,7 @@ jobject bsg_safe_call_object_method(JNIEnv *env, jobject _value,
 
 bool bsg_safe_call_static_void_method(JNIEnv *env, jclass clz, jmethodID method,
                                       ...) {
-  if (env == NULL || clz == NULL) {
+  if (env == NULL || clz == NULL || method == NULL) {
     return false;
   }
   va_list args;
@@ -219,7 +216,7 @@ bool bsg_safe_call_static_void_method(JNIEnv *env, jclass clz, jmethodID method,
 
 jobject bsg_safe_call_static_object_method(JNIEnv *env, jclass clz,
                                            jmethodID method, ...) {
-  if (env == NULL || clz == NULL) {
+  if (env == NULL || clz == NULL || method == NULL) {
     return NULL;
   }
   va_list args;
@@ -262,7 +259,7 @@ void bsg_safe_release_string_utf_chars(JNIEnv *env, jstring string,
 
 void bsg_safe_release_byte_array_elements(JNIEnv *env, jbyteArray array,
                                           jbyte *elems) {
-  if (env == NULL || array == NULL) {
+  if (env == NULL || array == NULL || elems == NULL) {
     return;
   }
 
@@ -311,8 +308,7 @@ jbyteArray bsg_byte_ary_from_string(JNIEnv *env, const char *text) {
 
   (*env)->SetByteArrayRegion(env, jtext, 0, text_length, (jbyte *)text);
   if (bsg_check_and_clear_exc(env) == exception_thrown) {
-    (*env)->DeleteLocalRef(env, jtext);
-    bsg_check_and_clear_exc(env);
+    bsg_safe_delete_local_ref(env, jtext);
     return NULL;
   }
 
