@@ -265,13 +265,19 @@ void migrate_breadcrumb_v1(bugsnag_report_v2 *report_v2,
 }
 
 void migrate_app_v1(bugsnag_report_v2 *report_v2, bugsnag_report_v3 *event) {
-  bsg_strcpy(event->app.id, report_v2->app.id);
-  bsg_strcpy(event->app.release_stage, report_v2->app.release_stage);
-  bsg_strcpy(event->app.type, report_v2->app.type);
-  bsg_strcpy(event->app.version, report_v2->app.version);
-  bsg_strcpy(event->app.active_screen, report_v2->app.active_screen);
-  bsg_strcpy(event->app.build_uuid, report_v2->app.build_uuid);
-  bsg_strcpy(event->app.binary_arch, report_v2->app.binaryArch);
+  bsg_strncpy_safe(event->app.id, report_v2->app.id, sizeof(event->app.id));
+  bsg_strncpy_safe(event->app.release_stage, report_v2->app.release_stage,
+                   sizeof(event->app.release_stage));
+  bsg_strncpy_safe(event->app.type, report_v2->app.type,
+                   sizeof(event->app.type));
+  bsg_strncpy_safe(event->app.version, report_v2->app.version,
+                   sizeof(event->app.version));
+  bsg_strncpy_safe(event->app.active_screen, report_v2->app.active_screen,
+                   sizeof(event->app.active_screen));
+  bsg_strncpy_safe(event->app.build_uuid, report_v2->app.build_uuid,
+                   sizeof(event->app.build_uuid));
+  bsg_strncpy_safe(event->app.binary_arch, report_v2->app.binaryArch,
+                   sizeof(event->app.binary_arch));
   event->app.version_code = report_v2->app.version_code;
   event->app.duration = report_v2->app.duration;
   event->app.duration_in_foreground = report_v2->app.duration_in_foreground;
@@ -289,8 +295,9 @@ void migrate_app_v1(bugsnag_report_v2 *report_v2, bugsnag_report_v3 *event) {
 }
 
 void migrate_device_v1(bugsnag_report_v2 *report_v2, bugsnag_report_v3 *event) {
-  bsg_strcpy(event->device.os_name,
-             bsg_os_name()); // os_name was not a field in v2
+  bsg_strncpy_safe(
+      event->device.os_name, bsg_os_name(),
+      sizeof(event->device.os_name)); // os_name was not a field in v2
   event->device.api_level = report_v2->device.api_level;
   event->device.cpu_abi_count = report_v2->device.cpu_abi_count;
   event->device.time = report_v2->device.time;
@@ -300,18 +307,26 @@ void migrate_device_v1(bugsnag_report_v2 *report_v2, bugsnag_report_v3 *event) {
   for (int k = 0; k < report_v2->device.cpu_abi_count &&
                   k < sizeof(report_v2->device.cpu_abi);
        k++) {
-    bsg_strcpy(event->device.cpu_abi[k].value,
-               report_v2->device.cpu_abi[k].value);
+    bsg_strncpy_safe(event->device.cpu_abi[k].value,
+                     report_v2->device.cpu_abi[k].value,
+                     sizeof(event->device.cpu_abi[k].value));
     event->device.cpu_abi_count++;
   }
 
-  bsg_strcpy(event->device.orientation, report_v2->device.orientation);
-  bsg_strcpy(event->device.id, report_v2->device.id);
-  bsg_strcpy(event->device.locale, report_v2->device.locale);
-  bsg_strcpy(event->device.manufacturer, report_v2->device.manufacturer);
-  bsg_strcpy(event->device.model, report_v2->device.model);
-  bsg_strcpy(event->device.os_build, report_v2->device.os_build);
-  bsg_strcpy(event->device.os_version, report_v2->device.os_version);
+  bsg_strncpy_safe(event->device.orientation, report_v2->device.orientation,
+                   sizeof(event->device.orientation));
+  bsg_strncpy_safe(event->device.id, report_v2->device.id,
+                   sizeof(event->device.id));
+  bsg_strncpy_safe(event->device.locale, report_v2->device.locale,
+                   sizeof(event->device.locale));
+  bsg_strncpy_safe(event->device.manufacturer, report_v2->device.manufacturer,
+                   sizeof(event->device.manufacturer));
+  bsg_strncpy_safe(event->device.model, report_v2->device.model,
+                   sizeof(event->device.model));
+  bsg_strncpy_safe(event->device.os_build, report_v2->device.os_build,
+                   sizeof(event->device.os_build));
+  bsg_strncpy_safe(event->device.os_version, report_v2->device.os_version,
+                   sizeof(event->device.os_version));
 
   // migrate legacy fields to metadata
   bugsnag_event_add_metadata_bool(event, "device", "emulator",

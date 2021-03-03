@@ -24,6 +24,8 @@
   [#1149](https://github.com/bugsnag/bugsnag-android/pull/1149)
 * Prevent NPE when delivering internal error reports
   [#1150](https://github.com/bugsnag/bugsnag-android/pull/1150)
+* Further robustify string copying and JNI exception checks
+  [#1153](https://github.com/bugsnag/bugsnag-android/pull/1153)
 
 ## 5.6.2 (2021-02-15)
 

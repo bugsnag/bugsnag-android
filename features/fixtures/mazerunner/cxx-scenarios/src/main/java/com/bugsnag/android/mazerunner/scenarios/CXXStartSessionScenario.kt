@@ -1,10 +1,12 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
+import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
-import com.bugsnag.android.mazerunner.addNaughtyStringMetadata
+import com.bugsnag.android.createDefaultDelivery
+import com.bugsnag.android.mazerunner.InterceptingDelivery
 
-internal class CXXNaughtyStringsScenario(
+class CXXStartSessionScenario(
     config: Configuration,
     context: Context,
     eventMetadata: String?
@@ -13,14 +15,16 @@ internal class CXXNaughtyStringsScenario(
     init {
         System.loadLibrary("cxx-scenarios")
         config.autoTrackSessions = false
+
+        config.delivery = InterceptingDelivery(createDefaultDelivery()) {
+            crash(0)
+        }
     }
 
-    external fun crash()
+    external fun crash(counter: Int): Int
 
     override fun startScenario() {
         super.startScenario()
-        addNaughtyStringMetadata(javaClass)
-
-        crash()
+        Bugsnag.startSession()
     }
 }

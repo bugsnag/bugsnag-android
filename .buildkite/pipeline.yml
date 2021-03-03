@@ -165,6 +165,10 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
+  # Android 11+ devices have the GWP-ASAN tool enabled which randomly samples native memory to
+  # to detect misuse (such as use-after-free, buffer overflow). If a failure is detected then
+  # the device will raise a SIGABRT mentioning GWP-ASAN - this can be investigated further
+  # by inspecting the devices logs.
   - label: ':android: Android 11 NDK r21 smoke tests'
     key: 'android-11-smoke'
     depends_on: "fixture-r21"
