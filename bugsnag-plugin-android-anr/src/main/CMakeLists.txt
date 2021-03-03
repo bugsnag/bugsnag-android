@@ -7,6 +7,7 @@ add_library( # Specifies the name of the library.
     jni/anr_google.c
     jni/anr_handler.c
     jni/bugsnag_anr.c
+    jni/utils/string.c
     )
 
 include_directories(jni)
