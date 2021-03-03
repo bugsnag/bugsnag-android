@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 5.7.1 (2021-03-03)
 
 ### Bug fixes
 
