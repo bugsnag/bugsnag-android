@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* Fix for bad pointer access crash in JNI deliverReportAtPath
+  [#1169](https://github.com/bugsnag/bugsnag-android/pull/1169)
+
 ## 5.7.0 (2021-02-18)
 
 ### Enhancements
