@@ -111,9 +111,7 @@ bsg_unwind_stack_libcorkscrew(bugsnag_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
       continue; // already seen this
     }
     if (backtrace_symbol.symbol_name != NULL) {
-      bsg_strncpy_safe(stacktrace[frame_count].method,
-                       backtrace_symbol.symbol_name,
-                       sizeof(stacktrace[frame_count].method));
+      bsg_strcpy(stacktrace[frame_count].method, backtrace_symbol.symbol_name);
     }
 
     stacktrace[frame_count].frame_address = backtrace_frame.absolute_pc;
