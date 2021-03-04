@@ -82,6 +82,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     private PluginClient pluginClient;
 
     final Notifier notifier = new Notifier();
+    LastRunInfo lastRunInfo;
+    final LastRunInfoStore lastRunInfoStore;
+    final LaunchCrashTracker launchCrashTracker;
 
     /**
      * Initialize a Bugsnag client
@@ -150,8 +153,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         ActivityManager am =
                 (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
 
+        launchCrashTracker = new LaunchCrashTracker(immutableConfig);
         appDataCollector = new AppDataCollector(appContext, appContext.getPackageManager(),
-                immutableConfig, sessionTracker, am, logger);
+                immutableConfig, sessionTracker, am, launchCrashTracker, logger);
 
         // load the device + user information
         SharedPrefMigrator sharedPrefMigrator = new SharedPrefMigrator(appContext);
@@ -236,6 +240,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         eventStore.flushOnLaunch();
         sessionTracker.flushAsync();
 
+        lastRunInfoStore = new LastRunInfoStore(immutableConfig);
+        loadLastRunInfo();
+
         // leave auto breadcrumb
         Map<String, Object> data = Collections.emptyMap();
         leaveAutoBreadcrumb("Bugsnag loaded", BreadcrumbType.STATE, data);
@@ -262,7 +269,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             Connectivity connectivity,
             StorageManager storageManager,
             Logger logger,
-            DeliveryDelegate deliveryDelegate
+            DeliveryDelegate deliveryDelegate,
+            LastRunInfoStore lastRunInfoStore,
+            LaunchCrashTracker launchCrashTracker
     ) {
         this.immutableConfig = immutableConfig;
         this.metadataState = metadataState;
@@ -283,6 +292,25 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         this.storageManager = storageManager;
         this.logger = logger;
         this.deliveryDelegate = deliveryDelegate;
+        this.lastRunInfoStore = lastRunInfoStore;
+        this.launchCrashTracker = launchCrashTracker;
+    }
+
+    /**
+     * Load information about the last run, and reset the persisted information to the defaults.
+     */
+    private void loadLastRunInfo() {
+        try {
+            Async.run(new Runnable() {
+                @Override
+                public void run() {
+                    lastRunInfo = lastRunInfoStore.load();
+                    lastRunInfoStore.persist(new LastRunInfo(0, false, false));
+                }
+            });
+        } catch (RejectedExecutionException exc) {
+            logger.w("Failed to load last run info", exc);
+        }
     }
 
     private void loadPlugins(@NonNull Configuration configuration) {
@@ -322,18 +350,10 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         appContext.registerReceiver(receiver, configFilter);
     }
 
-    void sendNativeSetupNotification() {
+    void setupNdkPlugin() {
         clientObservable.postNdkInstall(immutableConfig);
-        try {
-            Async.run(new Runnable() {
-                @Override
-                public void run() {
-                    clientObservable.postNdkDeliverPending();
-                }
-            });
-        } catch (RejectedExecutionException ex) {
-            logger.w("Failed to enqueue native reports, will retry next launch: ", ex);
-        }
+        syncInitialState();
+        clientObservable.postNdkDeliverPending();
     }
 
     void registerObserver(Observer observer) {
@@ -623,6 +643,13 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         Metadata data = Metadata.Companion.merge(metadataState.getMetadata(), metadata);
         Event event = new Event(exc, immutableConfig, handledState, data, logger);
         populateAndNotifyAndroidEvent(event, null);
+
+        // persist LastRunInfo so that on relaunch users can check the app crashed
+        int consecutiveLaunchCrashes = lastRunInfo == null ? 0
+                : lastRunInfo.getConsecutiveLaunchCrashes();
+        boolean launching = launchCrashTracker.isLaunching();
+        LastRunInfo runInfo = new LastRunInfo(consecutiveLaunchCrashes, true, launching);
+        lastRunInfoStore.persist(runInfo);
     }
 
     void populateAndNotifyAndroidEvent(@NonNull Event event,
@@ -856,7 +883,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      */
     @Nullable
     public LastRunInfo getLastRunInfo() {
-        return null;
+        return lastRunInfo;
     }
 
     /**
@@ -869,7 +896,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      * has precedence over the value supplied via the launchDurationMillis configuration option.
      */
     public void markLaunchCompleted() {
-
+        launchCrashTracker.markLaunchCompleted();
     }
 
     SessionTracker getSessionTracker() {

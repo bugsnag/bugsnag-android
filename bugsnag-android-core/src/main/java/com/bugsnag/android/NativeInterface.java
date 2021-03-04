@@ -328,7 +328,6 @@ public class NativeInterface {
 
             String filename = eventStore.getNdkFilename(payload, apiKey);
             eventStore.enqueueContentForDelivery(payload, filename);
-            eventStore.flushAsync();
         }
     }
 
