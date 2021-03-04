@@ -34,4 +34,4 @@ WORKDIR /app
 
 COPY . .
 
-CMD "publish/publish.sh"
+CMD "scripts/docker-publish.sh"

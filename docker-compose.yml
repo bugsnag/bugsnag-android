@@ -32,8 +32,12 @@ services:
     build:
       context: .
       dockerfile: dockerfiles/Dockerfile.android-publisher
-    volumes:
-      - ${PUBLISH_DIR_PATH}:/app/publish
+    environment:
+      KEY:
+      KEY_ID:
+      KEY_PASS:
+      PUBLISH_USER:
+      PUBLISH_PASS:
 
   android-sizer:
     build:
