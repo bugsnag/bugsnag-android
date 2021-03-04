@@ -48,3 +48,4 @@ Feature: Native Metadata API
         And the event "metaData.data.userId" equals "passUserId"
         And the event "metaData.data.metadata" equals "passMetaData"
         And the event "metaData.data.device" is not null
+        And the event "metaData.data.password" equals "[REDACTED]"

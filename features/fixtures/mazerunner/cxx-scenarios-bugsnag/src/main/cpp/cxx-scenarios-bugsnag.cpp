@@ -233,6 +233,11 @@ bool add_java_data(void *event_ptr) {
                                     (char *) "device",
                                     bugsnag_device_get_model(event_ptr)
   );
+  bugsnag_event_add_metadata_string(event_ptr,
+                                    (char *) "data",
+                                    (char *) "password",
+                                    (char *) "Not telling you"
+  );
   return true;
 }
 
