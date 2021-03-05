@@ -9,6 +9,8 @@ import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.bugsnag.android.Bugsnag;
+
 public class CXXAutoContextScenario extends Scenario {
 
     static {
@@ -35,5 +37,6 @@ public class CXXAutoContextScenario extends Scenario {
     @Override
     public void onActivityStarted(@NonNull Activity activity) {
         activate();
+        Bugsnag.notify(generateException());
     }
 }
