@@ -13,7 +13,7 @@ internal class CrashHandlerScenario(
     eventMetadata: String
 ) : Scenario(config, context, eventMetadata) {
 
-    protected var loggedMessages: MutableList<String> = mutableListOf()
+    private var loggedMessages: MutableList<String> = mutableListOf()
 
     init {
         config.autoTrackSessions = false
