@@ -13,6 +13,8 @@ internal class CrashHandlerScenario(
     eventMetadata: String
 ) : Scenario(config, context, eventMetadata) {
 
+    protected var loggedMessages: MutableList<String> = mutableListOf()
+
     init {
         config.autoTrackSessions = false
     }
@@ -22,9 +24,13 @@ internal class CrashHandlerScenario(
         val previousHandler = Thread.getDefaultUncaughtExceptionHandler()
 
         Thread.setDefaultUncaughtExceptionHandler({ t, e ->
-            Log.d("Bugsnag", "Intercepted uncaught exception")
+            Log.d("Bugsnag", "CrashHandlerScenario: Intercepted uncaught exception")
+            loggedMessages.add("CrashHandlerScenario: Intercepted uncaught exception")
             previousHandler.uncaughtException(t, e)
         })
         throw RuntimeException("CrashHandlerScenario")
     }
+
+    override fun getInterceptedLogMessages() =
+        loggedMessages
 }
