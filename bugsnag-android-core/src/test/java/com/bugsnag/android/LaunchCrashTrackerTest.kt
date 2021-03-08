@@ -45,7 +45,7 @@ class LaunchCrashTrackerTest {
         )
         assertTrue(tracker.isLaunching())
 
-        java.lang.Thread.sleep(10)
+        java.lang.Thread.sleep(20)
         assertFalse(tracker.isLaunching())
     }
 }

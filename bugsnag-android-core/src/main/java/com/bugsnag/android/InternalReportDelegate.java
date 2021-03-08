@@ -12,10 +12,8 @@ import androidx.annotation.NonNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
 
 class InternalReportDelegate implements EventStore.Delegate {
@@ -31,6 +29,7 @@ class InternalReportDelegate implements EventStore.Delegate {
     final Context appContext;
     final SessionTracker sessionTracker;
     final Notifier notifier;
+    final BackgroundTaskService backgroundTaskService;
 
     InternalReportDelegate(Context context,
                            Logger logger,
@@ -39,7 +38,8 @@ class InternalReportDelegate implements EventStore.Delegate {
                            AppDataCollector appDataCollector,
                            DeviceDataCollector deviceDataCollector,
                            SessionTracker sessionTracker,
-                           Notifier notifier) {
+                           Notifier notifier,
+                           BackgroundTaskService backgroundTaskService) {
         this.logger = logger;
         this.config = immutableConfig;
         this.storageManager = storageManager;
@@ -48,6 +48,7 @@ class InternalReportDelegate implements EventStore.Delegate {
         this.appContext = context;
         this.sessionTracker = sessionTracker;
         this.notifier = notifier;
+        this.backgroundTaskService = backgroundTaskService;
     }
 
     @Override
@@ -101,7 +102,7 @@ class InternalReportDelegate implements EventStore.Delegate {
 
         final EventPayload payload = new EventPayload(null, event, notifier, config);
         try {
-            Async.run(new Runnable() {
+            backgroundTaskService.submitTask(TaskType.INTERNAL_REPORT, new Runnable() {
                 @Override
                 public void run() {
                     try {

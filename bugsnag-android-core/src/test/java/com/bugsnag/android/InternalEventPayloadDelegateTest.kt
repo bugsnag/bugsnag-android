@@ -54,7 +54,8 @@ internal class InternalEventPayloadDelegateTest {
             appDataCollector,
             deviceDataCollector,
             sessionTracker,
-            Notifier()
+            Notifier(),
+            BackgroundTaskService()
         )
 
         val handledState = SeverityReason.newInstance(
