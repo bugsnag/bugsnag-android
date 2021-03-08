@@ -1,5 +1,6 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
+import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.Configuration;
 
 import android.app.Activity;
@@ -8,8 +9,6 @@ import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import com.bugsnag.android.Bugsnag;
 
 public class CXXAutoContextScenario extends Scenario {
 
