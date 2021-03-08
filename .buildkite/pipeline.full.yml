@@ -191,7 +191,7 @@ steps:
           - "features/full_tests/batch_1"
           - "--app=/app/build/release/fixture-r19.apk"
           - "--farm=bs"
-          - "--device=ANDROID_7_1"
+          - "--device=ANDROID_7_0_SAMSUNG_GALAXY_TAB_S3"
           - "--fail-fast"
           - "--tags"
           - "not @Flaky"
@@ -213,7 +213,7 @@ steps:
           - "features/full_tests/batch_2"
           - "--app=/app/build/release/fixture-r19.apk"
           - "--farm=bs"
-          - "--device=ANDROID_7_1"
+          - "--device=ANDROID_7_0_SAMSUNG_GALAXY_TAB_S3"
           - "--fail-fast"
           - "--tags"
           - "not @Flaky"
@@ -448,7 +448,7 @@ steps:
           - "--strict-pending"
           - "--app=/app/build/release/fixture-r19.apk"
           - "--farm=bs"
-          - "--device=ANDROID_7_1"
+          - "--device=ANDROID_7_0_SAMSUNG_GALAXY_TAB_S3"
           - "--tags=@Flaky"
     concurrency: 9
     concurrency_group: 'browserstack-app'
