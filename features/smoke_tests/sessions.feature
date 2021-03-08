@@ -52,9 +52,7 @@ Scenario: Automated sessions send
     And the event "severityReason.unhandledOverridden" is false
 
 Scenario: Manual session control works
-    When I run "ManualSessionSmokeScenario"
-    And I relaunch the app after a crash
-    And I configure the app to run in the "non-crashy" state
+    When I run "ManualSessionSmokeScenario" and relaunch the app
     And I configure Bugsnag for "ManualSessionSmokeScenario"
     And I wait to receive a session
 

@@ -8,18 +8,18 @@ import com.bugsnag.android.Session
 
 class InterceptingDelivery(
     private val baseDelivery: Delivery,
-    private val callback: () -> Unit
+    private val callback: (response: DeliveryStatus) -> Unit
 ) : Delivery {
 
     override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
         val response = baseDelivery.deliver(payload, deliveryParams)
-        callback()
+        callback(response)
         return response
     }
 
     override fun deliver(payload: Session, deliveryParams: DeliveryParams): DeliveryStatus {
         val response = baseDelivery.deliver(payload, deliveryParams)
-        callback()
+        callback(response)
         return response
     }
 }

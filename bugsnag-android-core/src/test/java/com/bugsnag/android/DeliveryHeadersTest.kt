@@ -57,6 +57,7 @@ class DeliveryHeadersTest {
         assertEquals("application/json", headers["Content-Type"])
         assertNotNull(headers["Bugsnag-Sent-At"])
         assertNotNull(headers["Bugsnag-Payload-Version"])
+        assertNull(headers["Bugsnag-Stacktrace-Types"])
     }
 
     @Test

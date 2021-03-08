@@ -5,8 +5,10 @@
 When('any dialog is cleared and the element {string} is present') do |element_id|
   count = 0
   present = false
-  until present || count > 15
-    present = Maze.driver.wait_for_element(element_id, timeout = 1)
+  # Give Android 5 more time to find elements in an attempt to combat flakes
+  timeout = (Maze.config.os_version == 5 ? 15 : 3)
+  until present || count > 5
+    present = Maze.driver.wait_for_element(element_id, timeout = timeout)
     break if present
     count += 1
     clicked = click_if_present('android:id/button1') ||
@@ -20,9 +22,9 @@ end
 
 When("I run {string}") do |event_type|
   steps %Q{
-    Given any dialog is cleared and the element "scenarioText" is present
-    When I send the keys "#{event_type}" to the element "scenarioText"
-    And I click the element "startScenarioButton"
+    Given any dialog is cleared and the element "scenario_name" is present
+    When I send the keys "#{event_type}" to the element "scenario_name"
+    And I click the element "run_scenario"
   }
 end
 
@@ -41,9 +43,9 @@ end
 
 When("I configure Bugsnag for {string}") do |event_type|
   steps %Q{
-    Given any dialog is cleared and the element "scenarioText" is present
-    When I send the keys "#{event_type}" to the element "scenarioText"
-    And I click the element "startBugsnagButton"
+    Given any dialog is cleared and the element "scenario_name" is present
+    When I send the keys "#{event_type}" to the element "scenario_name"
+    And I click the element "start_bugsnag"
   }
 end
 
@@ -68,10 +70,11 @@ When("I tap the screen {int} times") do |count|
   }
 end
 
+
 When("I configure the app to run in the {string} state") do |event_metadata|
   steps %Q{
-    Given any dialog is cleared and the element "scenarioMetaData" is present
-    And I send the keys "#{event_metadata}" to the element "scenarioMetaData"
+    Given any dialog is cleared and the element "scenario_metadata" is present
+    And I send the keys "#{event_metadata}" to the element "scenario_metadata"
   }
 end
 
@@ -206,17 +209,23 @@ Then("the event has a {string} breadcrumb with the message {string}") do |type, 
   fail("No breadcrumb matched: #{value}") unless found
 end
 
+Then("the exception stacktrace matches the thread stacktrace") do
+  exc_trace = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.exceptions.0.stacktrace")
+  thread_trace = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.threads.0.stacktrace")
+  assert_equal(exc_trace.length(), thread_trace.length(), "Exception and thread stacktraces are different lengths.")
+
+  thread_trace.each_with_index do |thread_frame, index|
+    exc_frame = exc_trace[index]
+    assert_equal(exc_frame, thread_frame)
+  end
+end
+
 def click_if_present(element)
   return false unless Maze.driver.wait_for_element(element, 1)
 
-  Maze.driver.click_element(element)
-  true
-rescue Selenium::WebDriver::Error::NoSuchElementError
-  # Ignore - we have seen clicks fail like this despite having just checked for the element's presence
-  false
+  Maze.driver.click_element_if_present(element)
 end
 
-# Temporary workaround until PLAT-4845 is implemented
 Then("I sort the errors by {string}") do |comparator|
   Maze::Server.errors.remaining.sort_by { |request|
     Maze::Helper.read_key_path(request[:body], comparator)

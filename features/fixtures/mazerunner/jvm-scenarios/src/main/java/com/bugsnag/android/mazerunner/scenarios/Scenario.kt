@@ -30,18 +30,26 @@ abstract class Scenario(
 ) : Application.ActivityLifecycleCallbacks {
 
     /**
+     * Tracks whether the scenario is starting Bugsnag only, or running the scenario.
+     */
+    protected var startBugsnagOnly: Boolean = false
+
+    /**
      * Determines what log messages should be intercepted from Bugsnag and sent to Mazerunner
      * using a HTTP requests to the /logs endpoint. This is used to assert that Bugsnag is
      * behaving correctly in situations where sending an error/session payload is not
      * possible.
      */
-    open fun getInterceptedLogMessages() = emptyList<String>()
+    open fun getInterceptedLogMessages(): List<String> {
+        return emptyList<String>()
+    }
 
     /**
      * Initializes Bugsnag. It is possible to override this method if the scenario requires
      * it - e.g., if the config needs to be loaded from the manifest.
      */
-    open fun startBugsnag() {
+    open fun startBugsnag(startBugsnagOnly: Boolean) {
+        this.startBugsnagOnly = startBugsnagOnly
         Bugsnag.start(context, config)
     }
 
@@ -49,6 +57,7 @@ abstract class Scenario(
      * Runs code which should result in Bugsnag capturing an error or session.
      */
     open fun startScenario() {
+        startBugsnagOnly = false
     }
 
     /**

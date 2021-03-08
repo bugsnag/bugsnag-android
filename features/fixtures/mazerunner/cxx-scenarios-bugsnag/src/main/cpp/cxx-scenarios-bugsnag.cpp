@@ -83,29 +83,10 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXUserInfoScenario_activate(JNIEn
 }
 
 JNIEXPORT void JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_CXXJavaBreadcrumbNativeNotifyScenario_activate(
-    JNIEnv *env,
-    jobject instance) {
-  bugsnag_notify_env(env, (char *) "Failed instantiation",
-                     (char *) "Could not allocate", BSG_SEVERITY_ERR);
-}
-
-JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXNativeBreadcrumbJavaNotifyScenario_activate(
     JNIEnv *env,
     jobject instance) {
   bugsnag_leave_breadcrumb_env(env, (char *) "Rerun field analysis", BSG_CRUMB_PROCESS);
-}
-
-JNIEXPORT int JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_CXXNativeBreadcrumbNativeCrashScenario_activate(
-    JNIEnv *env,
-    jobject instance) {
-  bugsnag_leave_breadcrumb_env(env, (char *) "Substandard nacho error", BSG_CRUMB_REQUEST);
-  int x = 47;
-  if (x > 0)
-    __builtin_trap();
-  return 308;
 }
 
 JNIEXPORT void JNICALL
@@ -141,6 +122,7 @@ JNIEXPORT int JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXSignalSmokeScenario_crash(JNIEnv *env,
                                                                            jobject instance,
                                                                            jint value) {
+  bugsnag_leave_breadcrumb_env(env, (char *) "Substandard nacho error", BSG_CRUMB_REQUEST);
   bugsnag_add_on_error(&on_err_true);
   int x = 38;
   if (value > 0) {
@@ -250,6 +232,11 @@ bool add_java_data(void *event_ptr) {
                                     (char *) "data",
                                     (char *) "device",
                                     bugsnag_device_get_model(event_ptr)
+  );
+  bugsnag_event_add_metadata_string(event_ptr,
+                                    (char *) "data",
+                                    (char *) "password",
+                                    (char *) "Not telling you"
   );
   return true;
 }

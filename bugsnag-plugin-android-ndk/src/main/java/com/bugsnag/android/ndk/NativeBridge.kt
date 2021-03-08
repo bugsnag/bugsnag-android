@@ -75,6 +75,7 @@ class NativeBridge : Observer {
     external fun updateUserId(newValue: String)
     external fun updateUserEmail(newValue: String)
     external fun updateUserName(newValue: String)
+    external fun getUnwindStackFunction(): Long
 
     /**
      * Creates a new native bridge for interacting with native components.

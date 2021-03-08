@@ -17,7 +17,10 @@ internal class StackframeSerializationTest {
             frame.type = ErrorType.ANDROID
             return generateSerializationTestCases(
                 "stackframe",
-                frame
+                frame,
+                Stackframe(NativeStackframe("aMethod", "aFile", 1, 2, 3, 4)),
+                Stackframe(NativeStackframe("aMethod", "aFile", 1, null, null, null)),
+                Stackframe(NativeStackframe(null, null, null, null, null, null))
             )
         }
     }

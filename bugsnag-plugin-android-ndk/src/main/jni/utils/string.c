@@ -30,7 +30,7 @@ size_t bsg_strlen(const char *str) {
   }
 }
 
-void bsg_strncpy_safe(char *dst, char *src, int dst_size) {
+void bsg_strncpy_safe(char *dst, const char *src, int dst_size) {
   if (dst_size == 0)
     return;
   dst[0] = '\0';

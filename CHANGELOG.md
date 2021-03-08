@@ -1,5 +1,46 @@
 # Changelog
 
+## 5.7.1 (2021-03-03)
+
+### Bug fixes
+
+* Fix for bad pointer access crash in JNI deliverReportAtPath
+  [#1169](https://github.com/bugsnag/bugsnag-android/pull/1169)
+
+## 5.7.0 (2021-02-18)
+
+### Enhancements
+
+* Support native stack traces in the ANR plugin
+   [#972](https://github.com/bugsnag/bugsnag-android/pull/972)
+
+### Bug fixes
+
+* Check additional JNI calls for pending exceptions and no-op
+  [#1142](https://github.com/bugsnag/bugsnag-android/pull/1142)
+* Move free() call to exit block
+  [#1140](https://github.com/bugsnag/bugsnag-android/pull/1140)
+* Replace strncpy() usage with safe function call
+  [#1149](https://github.com/bugsnag/bugsnag-android/pull/1149)
+* Prevent NPE when delivering internal error reports
+  [#1150](https://github.com/bugsnag/bugsnag-android/pull/1150)
+* Further robustify string copying and JNI exception checks
+  [#1153](https://github.com/bugsnag/bugsnag-android/pull/1153)
+
+## 5.6.2 (2021-02-15)
+
+### Bug fixes
+
+* Check additional JNI calls for pending exceptions and no-op
+  [#1133](https://github.com/bugsnag/bugsnag-android/pull/1133)
+
+* Fix rare crash when loading device ID
+  [#1137](https://github.com/bugsnag/bugsnag-android/pull/1137)
+
+## 5.6.1 (2021-02-15)
+
+The packaging for this version was incorrect so it should not be used.
+
 ## 5.6.0 (2021-02-08)
 
 ### Enhancements

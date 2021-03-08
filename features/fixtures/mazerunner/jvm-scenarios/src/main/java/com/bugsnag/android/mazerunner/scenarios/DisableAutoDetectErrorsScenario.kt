@@ -21,10 +21,10 @@ internal class DisableAutoDetectErrorsScenario(
 
     override fun startScenario() {
         super.startScenario()
-        if ("non-crashy" != eventMetadata) {
-            throw RuntimeException("Should never appear")
-        }
+        throw RuntimeException("Should never appear")
     }
 
-    override fun getInterceptedLogMessages() = getZeroEventsLogMessages(eventMetadata)
+    override fun getInterceptedLogMessages(): List<String> {
+        return getZeroEventsLogMessages(startBugsnagOnly)
+    }
 }

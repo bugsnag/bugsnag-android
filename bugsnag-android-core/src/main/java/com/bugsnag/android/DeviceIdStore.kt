@@ -31,7 +31,7 @@ internal class DeviceIdStore @JvmOverloads constructor(
             if (!file.exists()) {
                 file.createNewFile()
             }
-        } catch (exc: IOException) {
+        } catch (exc: Throwable) {
             logger.w("Failed to created device ID file", exc)
         }
         this.synchronizedStreamableStore = SynchronizedStreamableStore(file)
@@ -64,7 +64,7 @@ internal class DeviceIdStore @JvmOverloads constructor(
             } else {
                 return persistNewDeviceUuid(uuidProvider)
             }
-        } catch (exc: Exception) {
+        } catch (exc: Throwable) {
             logger.w("Failed to load device ID", exc)
             null
         }
@@ -79,7 +79,8 @@ internal class DeviceIdStore @JvmOverloads constructor(
         if (file.length() > 0) {
             try {
                 return synchronizedStreamableStore.load(DeviceId.Companion::fromReader)
-            } catch (exc: IOException) {
+            } catch (exc: Throwable) { // catch AssertionError which can be thrown by JsonReader
+                // on Android 8.0/8.1. see https://issuetracker.google.com/issues/79920590
                 logger.w("Failed to load device ID", exc)
             }
         }

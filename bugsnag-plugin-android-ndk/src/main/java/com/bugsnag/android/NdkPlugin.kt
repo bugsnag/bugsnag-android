@@ -16,6 +16,14 @@ internal class NdkPlugin : Plugin {
 
     private var nativeBridge: NativeBridge? = null
 
+    private fun initNativeBridge(client: Client): NativeBridge {
+        val nativeBridge = NativeBridge()
+        client.registerObserver(nativeBridge)
+        client.sendNativeSetupNotification()
+        client.syncInitialState()
+        return nativeBridge
+    }
+
     override fun load(client: Client) {
         val loaded = loader.loadLibrary("bugsnag-ndk", client) {
             val error = it.errors[0]
@@ -25,12 +33,7 @@ internal class NdkPlugin : Plugin {
         }
 
         if (loaded) {
-            if (nativeBridge == null) {
-                nativeBridge = NativeBridge()
-                client.registerObserver(nativeBridge)
-                client.sendNativeSetupNotification()
-                client.syncInitialState()
-            }
+            nativeBridge = initNativeBridge(client)
             enableCrashReporting()
             client.logger.i("Initialised NDK Plugin")
         } else {
@@ -39,4 +42,12 @@ internal class NdkPlugin : Plugin {
     }
 
     override fun unload() = disableCrashReporting()
+
+    fun getUnwindStackFunction(): Long {
+        val bridge = nativeBridge
+        if (bridge != null) {
+            return bridge.getUnwindStackFunction()
+        }
+        return 0
+    }
 }

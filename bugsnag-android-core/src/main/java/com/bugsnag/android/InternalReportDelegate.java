@@ -12,8 +12,10 @@ import androidx.annotation.NonNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
 
 class InternalReportDelegate implements EventStore.Delegate {

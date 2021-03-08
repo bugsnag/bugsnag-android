@@ -7,10 +7,10 @@ fun log(msg: String) {
 }
 
 /**
- * Gets the log messages expected when zero events should be sent to Bugsna.
+ * Gets the log messages expected when zero events should be sent to Bugsnag.
  */
-fun getZeroEventsLogMessages(eventMetadata: String?): List<String> {
-    return if ("non-crashy" == eventMetadata) {
+fun getZeroEventsLogMessages(startBugsnagOnly: Boolean): List<String> {
+    return if (startBugsnagOnly) {
         listOf(
             "No startupcrash events to flush to Bugsnag.",
             "No regular events to flush to Bugsnag."

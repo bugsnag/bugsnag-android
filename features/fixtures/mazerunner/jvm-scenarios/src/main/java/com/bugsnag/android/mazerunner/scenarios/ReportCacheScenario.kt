@@ -9,7 +9,7 @@ import com.bugsnag.android.Configuration
 internal class ReportCacheScenario(
     config: Configuration,
     context: Context,
-    eventMetadata: String
+    eventMetadata: String?
 ) : Scenario(config, context, eventMetadata) {
 
     init {

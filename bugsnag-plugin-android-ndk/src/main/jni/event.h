@@ -2,6 +2,7 @@
 #define BUGSNAG_EVENT_H
 
 #include "../assets/include/event.h"
+#include "bsg_unwind.h"
 #include <stdbool.h>
 #include <sys/types.h>
 #ifndef BUGSNAG_METADATA_MAX
@@ -10,12 +11,6 @@
  * defined.
  */
 #define BUGSNAG_METADATA_MAX 128
-#endif
-#ifndef BUGSNAG_FRAMES_MAX
-/**
- *  Number of frames in a stacktrace. Configures a default if not defined.
- */
-#define BUGSNAG_FRAMES_MAX 192
 #endif
 #ifndef BUGSNAG_CRUMBS_MAX
 /**
@@ -216,12 +211,14 @@ void bugsnag_event_start_session(bugsnag_event *event, char *session_id,
                                  int unhandled_count);
 bool bugsnag_event_has_session(bugsnag_event *event);
 
-void bsg_add_metadata_value_double(bugsnag_metadata *metadata, char *section,
-                                   char *name, double value);
-void bsg_add_metadata_value_str(bugsnag_metadata *metadata, char *section,
-                                char *name, char *value);
-void bsg_add_metadata_value_bool(bugsnag_metadata *metadata, char *section,
-                                 char *name, bool value);
+void bsg_add_metadata_value_double(bugsnag_metadata *metadata,
+                                   const char *section, const char *name,
+                                   double value);
+void bsg_add_metadata_value_str(bugsnag_metadata *metadata, const char *section,
+                                const char *name, const char *value);
+void bsg_add_metadata_value_bool(bugsnag_metadata *metadata,
+                                 const char *section, const char *name,
+                                 bool value);
 
 /*********************************
  * (end) NDK-SPECIFIC BITS
