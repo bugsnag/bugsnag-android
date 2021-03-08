@@ -15,15 +15,3 @@ Feature: Native Context API
         And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
         And the exception "message" equals "CXXAutoContextScenario"
         And the event "context" equals "SecondActivity"
-
-    Scenario: Update context in Java followed by crashing in C
-        When I run "CXXUpdateContextCrashScenario" and relaunch the app
-        And I configure Bugsnag for "CXXUpdateContextCrashScenario"
-        And I wait to receive an error
-        Then the error payload contains a completed handled native report
-        And the event "severity" equals "error"
-        And the event "context" equals "Everest"
-        And the exception "errorClass" equals one of:
-            | SIGILL |
-            | SIGTRAP |
-        And the event "unhandled" is true
