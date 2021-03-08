@@ -75,6 +75,7 @@ If you are a project maintainer, you can build and release a new version of
     - Verify the `Publish` step runs correctly and the artefacts are upload to sonatype.
   - Release to GitHub:
     - [ ] Create a release from your new tag on [GitHub Releases](https://github.com/bugsnag/bugsnag-android/releases)`
+  - [ ] Release to Bintray by running `./gradlew clean assembleRelease bintrayUpload`
   - [ ] "Promote" the release build on Maven Central:
     - Go to the [sonatype open source dashboard](https://oss.sonatype.org/index.html#stagingRepositories)
     - Click the search box at the top right, and type “com.bugsnag”
@@ -83,6 +84,10 @@ If you are a project maintainer, you can build and release a new version of
     - Click the “refresh” button
     - Select the com.bugsnag closed repository
     - Click the “release” button in the toolbar
+  - Open the Bintray repositories and publish the new artifacts:
+    - [ ] [SDK repo](https://bintray.com/bugsnag/maven/bugsnag-android/_latestVersion)
+    - [ ] [NDK repo](https://bintray.com/bugsnag/maven/bugsnag-android-ndk/_latestVersion)
+
 - Merge outstanding docs PRs related to this release
 
 ### Post-release Checklist
