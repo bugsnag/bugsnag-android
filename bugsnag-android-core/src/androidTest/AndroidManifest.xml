@@ -12,9 +12,6 @@
   <instrumentation
     android:name="androidx.test.runner.AndroidJUnitRunner"
     android:targetPackage="com.bugsnag.android">
-    <meta-data
-      android:name="listener"
-      android:value="com.bugsnag.android.TestRunListener" />
   </instrumentation>
 
 </manifest>

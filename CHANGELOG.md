@@ -17,6 +17,9 @@
   [#1184](https://github.com/bugsnag/bugsnag-android/pull/1184)
   [#1185](https://github.com/bugsnag/bugsnag-android/pull/1185)
 
+* Refactor strategy for background task execution
+  [#1172](https://github.com/bugsnag/bugsnag-android/pull/1172)
+
 ## 5.7.0 (2021-02-18)
 
 ### Enhancements
