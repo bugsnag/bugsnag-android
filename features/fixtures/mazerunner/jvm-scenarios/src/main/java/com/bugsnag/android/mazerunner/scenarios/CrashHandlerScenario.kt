@@ -22,7 +22,7 @@ internal class CrashHandlerScenario(
         val previousHandler = Thread.getDefaultUncaughtExceptionHandler()
 
         Thread.setDefaultUncaughtExceptionHandler { t, e ->
-            config.logger.d("Bugsnag", "CrashHandlerScenario: Intercepted uncaught exception")
+            config.logger?.d("CrashHandlerScenario: Intercepted uncaught exception")
             previousHandler.uncaughtException(t, e)
         }
         throw RuntimeException("CrashHandlerScenario")
