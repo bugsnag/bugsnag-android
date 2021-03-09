@@ -1,0 +1,22 @@
+FROM 855461928731.dkr.ecr.us-west-1.amazonaws.com/android:latest as android
+
+WORKDIR /app
+
+# Copy gradle files
+COPY gradlew gradle.properties /app/
+COPY gradle/ /app/gradle/
+COPY build.gradle settings.gradle /app/
+COPY buildSrc/ buildSrc/
+
+# Copy sdk source files
+COPY bugsnag-android/ bugsnag-android/
+COPY bugsnag-android-ndk/ bugsnag-android-ndk/
+COPY bugsnag-plugin-android-anr/ bugsnag-plugin-android-anr/
+COPY bugsnag-android-core/ bugsnag-android-core/
+COPY bugsnag-plugin-android-ndk/ bugsnag-plugin-android-ndk/
+COPY bugsnag-plugin-react-native/ bugsnag-plugin-react-native/
+COPY scripts/ scripts/
+COPY config/ config/
+COPY LICENSE LICENSE
+
+CMD "scripts/docker-publish.sh"

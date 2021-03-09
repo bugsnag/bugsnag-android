@@ -521,3 +521,21 @@ steps:
           - "--tags=@Flaky"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+
+  # If there is a tag present activate a manual publishing step
+
+  - block: 'Trigger package publish'
+    key: trigger_publish
+    if: build.tag != null
+    blocked_state: passed
+
+  - label: 'Publish :rocket:'
+    if: build.tag != null
+    depends_on:
+      - 'trigger_publish'
+    env:
+      BUILDKITE_PLUGIN_S3_SECRETS_BUCKET_PREFIX: bugsnag-android-publish
+    plugins:
+      docker-compose#v3.7.0:
+        no-cache: true
+        run: android-publisher

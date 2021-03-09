@@ -28,6 +28,17 @@ services:
     volumes:
       - ./build:/app/build
 
+  android-publisher:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.android-publisher
+    environment:
+      KEY:
+      KEY_ID:
+      KEY_PASS:
+      PUBLISH_USER:
+      PUBLISH_PASS:
+
   android-sizer:
     build:
       context: .
