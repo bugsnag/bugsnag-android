@@ -44,6 +44,7 @@ bsg_app_info * loadAppTestCase(jint num) {
     app->duration_ms_offset = 0;
     app->duration_in_foreground_ms_offset = 0;
     app->in_foreground = true;
+    app->is_launching = true;
     strcpy(app->binary_arch, "x86");
     return app;
 }

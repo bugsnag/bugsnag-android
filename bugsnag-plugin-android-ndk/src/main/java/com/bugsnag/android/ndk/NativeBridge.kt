@@ -71,6 +71,7 @@ class NativeBridge : Observer {
     external fun pausedSession()
     external fun updateContext(context: String)
     external fun updateInForeground(inForeground: Boolean, activityName: String)
+    external fun updateIsLaunching(isLaunching: Boolean)
     external fun updateOrientation(orientation: String)
     external fun updateUserId(newValue: String)
     external fun updateUserEmail(newValue: String)
@@ -122,6 +123,7 @@ class NativeBridge : Observer {
                 msg.inForeground,
                 makeSafe(msg.contextActivity ?: "")
             )
+            is StateEvent.UpdateIsLaunching -> updateIsLaunching(msg.isLaunching)
             is UpdateOrientation -> updateOrientation(msg.orientation ?: "")
             is UpdateUser -> {
                 updateUserId(makeSafe(msg.user.id ?: ""))

@@ -409,6 +409,17 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateInForeground(
 }
 
 JNIEXPORT void JNICALL
+Java_com_bugsnag_android_ndk_NativeBridge_updateIsLaunching(
+    JNIEnv *env, jobject _this, jboolean new_value) {
+  if (bsg_global_env == NULL) {
+    return;
+  }
+  bsg_request_env_write_lock();
+  bugsnag_app_set_is_launching(&bsg_global_env->next_event, new_value);
+  bsg_release_env_write_lock();
+}
+
+JNIEXPORT void JNICALL
 Java_com_bugsnag_android_ndk_NativeBridge_updateLowMemory(JNIEnv *env,
                                                           jobject _this,
                                                           jboolean new_value) {
