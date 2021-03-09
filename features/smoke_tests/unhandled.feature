@@ -235,7 +235,7 @@ Scenario: C++ exception thrown with overwritten config
     And the event "metaData.device.brand" is not null
 
     # Context
-    And the event "context" equals "Some custom context"
+    And the event "context" equals "Everest"
 
     # User
     And the event "user.id" equals "ABC"
@@ -244,9 +244,6 @@ Scenario: C++ exception thrown with overwritten config
 
     # Breadcrumbs
     And the event has a "manual" breadcrumb named "CXXExceptionSmokeScenario"
-
-    # Native context override
-    And the event "context" equals "Some custom context"
 
 @skip_android_8_1
 Scenario: ANR detection
