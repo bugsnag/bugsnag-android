@@ -1,7 +1,6 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
-import android.util.Log
 import com.bugsnag.android.Configuration
 
 /**
