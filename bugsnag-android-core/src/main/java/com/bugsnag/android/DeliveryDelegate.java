@@ -7,7 +7,6 @@ import androidx.annotation.VisibleForTesting;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
@@ -19,15 +18,20 @@ class DeliveryDelegate extends BaseObservable {
     private final ImmutableConfig immutableConfig;
     final BreadcrumbState breadcrumbState;
     private final Notifier notifier;
+    final BackgroundTaskService backgroundTaskService;
 
-    DeliveryDelegate(Logger logger, EventStore eventStore,
-                     ImmutableConfig immutableConfig, BreadcrumbState breadcrumbState,
-                     Notifier notifier) {
+    DeliveryDelegate(Logger logger,
+                     EventStore eventStore,
+                     ImmutableConfig immutableConfig,
+                     BreadcrumbState breadcrumbState,
+                     Notifier notifier,
+                     BackgroundTaskService backgroundTaskService) {
         this.logger = logger;
         this.eventStore = eventStore;
         this.immutableConfig = immutableConfig;
         this.breadcrumbState = breadcrumbState;
         this.notifier = notifier;
+        this.backgroundTaskService = backgroundTaskService;
     }
 
     void deliver(@NonNull Event event) {
@@ -64,7 +68,7 @@ class DeliveryDelegate extends BaseObservable {
 
         // Attempt to send the eventPayload in the background
         try {
-            Async.run(new Runnable() {
+            backgroundTaskService.submitTask(TaskType.ERROR_REQUEST, new Runnable() {
                 @Override
                 public void run() {
                     deliverPayloadInternal(finalEventPayload, finalEvent);
