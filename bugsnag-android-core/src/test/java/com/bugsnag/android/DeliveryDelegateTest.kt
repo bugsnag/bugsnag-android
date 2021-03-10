@@ -30,7 +30,14 @@ internal class DeliveryDelegateTest {
     @Before
     fun setUp() {
         deliveryDelegate =
-            DeliveryDelegate(logger, eventStore, config, breadcrumbState, notifier)
+            DeliveryDelegate(
+                logger,
+                eventStore,
+                config,
+                breadcrumbState,
+                notifier,
+                BackgroundTaskService()
+            )
         event.session = Session("123", Date(), User(null, null, null), false, notifier, NoopLogger)
     }
 

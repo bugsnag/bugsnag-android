@@ -200,10 +200,10 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         InternalReportDelegate delegate = new InternalReportDelegate(appContext, logger,
                 immutableConfig, storageManager, appDataCollector, deviceDataCollector,
                 sessionTracker, notifier);
-        eventStore = new EventStore(immutableConfig, logger, notifier, delegate);
+        eventStore = new EventStore(immutableConfig, logger, notifier, bgTaskService, delegate);
 
         deliveryDelegate = new DeliveryDelegate(logger, eventStore,
-                immutableConfig, breadcrumbState, notifier);
+                immutableConfig, breadcrumbState, notifier, bgTaskService);
 
         // Install a default exception handler with this client
         if (immutableConfig.getEnabledErrorTypes().getUnhandledExceptions()) {
