@@ -85,6 +85,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     LastRunInfo lastRunInfo;
     final LastRunInfoStore lastRunInfoStore;
     final LaunchCrashTracker launchCrashTracker;
+    final BackgroundTaskService bgTaskService = new BackgroundTaskService();
 
     /**
      * Initialize a Bugsnag client
@@ -147,7 +148,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
         sessionStore = new SessionStore(immutableConfig, logger, null);
         sessionTracker = new SessionTracker(immutableConfig, callbackState, this,
-                sessionStore, logger);
+                sessionStore, logger, bgTaskService);
         metadataState = copyMetadataState(configuration);
 
         ActivityManager am =
@@ -963,8 +964,10 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         deviceDataCollector.addRuntimeVersionInfo(key, value);
     }
 
+    @VisibleForTesting
     void close() {
         connectivity.unregisterForNetworkChanges();
+        bgTaskService.shutdown();
     }
 
     Logger getLogger() {
