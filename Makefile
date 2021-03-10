@@ -48,18 +48,3 @@ endif
 	@sed -i '' "s/var version: String = .*/var version: String = \"$(VERSION)\",/"\
 	 bugsnag-android-core/src/main/java/com/bugsnag/android/Notifier.kt
 	@sed -i '' "s/## TBD/## $(VERSION) ($(shell date '+%Y-%m-%d'))/" CHANGELOG.md
-
-# Makes a release
-release:
-ifneq ($(shell git diff origin/master..master),)
-	@$(error You have unpushed commits on the master branch)
-endif
-ifeq ($(VERSION),)
-	@$(error VERSION is not defined. Run with `make VERSION=number release`)
-endif
-	@git add -p CHANGELOG.md README.md gradle.properties bugsnag-android-core/src/main/java/com/bugsnag/android/Notifier.java
-	@git commit -m "Release v$(VERSION)"
-	@git tag v$(VERSION)
-	@git push origin master v$(VERSION)
-	@./gradlew clean assembleRelease publish bintrayUpload -PABI_FILTERS=arm64-v8a,armeabi,armeabi-v7a,x86,x86_64 \
-	 && ./gradlew clean assembleRelease publish bintrayUpload -PABI_FILTERS=arm64-v8a,armeabi,armeabi-v7a,x86,x86_64 -PreleaseNdkArtefact=true

@@ -1,5 +1,6 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
+import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.Configuration;
 
 import android.app.Activity;
@@ -35,5 +36,6 @@ public class CXXAutoContextScenario extends Scenario {
     @Override
     public void onActivityStarted(@NonNull Activity activity) {
         activate();
+        Bugsnag.notify(generateException());
     }
 }

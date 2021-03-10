@@ -39,6 +39,7 @@ public class HandledJavaSmokeScenario extends Scenario {
                 return true;
             }
         });
+        Bugsnag.addMetadata("TestData", "password", "NotTellingYou");
         Bugsnag.addMetadata("TestData", "ClientMetadata", true);
         Bugsnag.addOnError(new OnErrorCallback() {
             @Override

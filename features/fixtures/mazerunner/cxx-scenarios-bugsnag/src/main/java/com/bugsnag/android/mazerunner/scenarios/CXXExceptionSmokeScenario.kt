@@ -21,6 +21,7 @@ class CXXExceptionSmokeScenario(
         super.startScenario()
         Bugsnag.startSession()
         Bugsnag.leaveBreadcrumb("CXXExceptionSmokeScenario")
+        Bugsnag.setContext("Everest")
         val main = Handler(Looper.getMainLooper())
         main.postDelayed({ crash() }, 500)
     }
