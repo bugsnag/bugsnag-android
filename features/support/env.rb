@@ -1,50 +1,27 @@
-require 'open3'
+# Set this explicitly
+$api_key = "ABCDEFGHIJKLMNOPQRSTUVWXYZ012345"
 
-# Configure app environment
-RUNNING_CI = ENV['TRAVIS'] == 'true'
-
-# Install latest versions of bugsnag-android
-  run_required_commands([
-    [
-      "./gradlew", "assembleRelease", "publishToMavenLocal", "-x", "lintVitalRelease"
-    ],
-  ])
-
-# Build the harness app
-Dir.chdir('features/fixtures/mazerunner') do
-  run_required_commands([
-    [
-     "../../../gradlew", "assembleRelease", "-x", "lintVitalRelease"
-    ],
-  ])
+Before('@skip') do |scenario|
+  skip_this_scenario("Skipping scenario")
 end
 
-# Close any lingering ANR dialogs
-Before('@anr') do
-  run_required_commands([['features/scripts/close-anr-dialog.sh']])
-end
-After('@anr') do
-  sleep(5)
-  run_required_commands([['features/scripts/close-anr-dialog.sh']])
+Before('@skip_android_9') do |scenario|
+  skip_this_scenario("Skipping scenario") if MazeRunner.config.os_version == 9
 end
 
-# Reset orientation after each scenario
-at_exit do
-  ENV['DEVICE_ORIENTATION'] = 'portrait'
-  run_required_commands([["features/scripts/rotate-device.sh"]])
+Before('@skip_below_android_9') do |scenario|
+  skip_this_scenario("Skipping scenario") if MazeRunner.config.os_version < 9
 end
 
 Before('@skip_below_android_8') do |scenario|
-  skip_this_scenario("Skipping scenario") if get_api_level() < 26
+  skip_this_scenario("Skipping scenario") if MazeRunner.config.os_version < 8
 end
 
 Before('@skip_above_android_7') do |scenario|
-  skip_this_scenario("Skipping scenario") if get_api_level() >= 26
+  skip_this_scenario("Skipping scenario") if MazeRunner.config.os_version >= 8
 end
 
-def get_api_level
-  stdout, stderr, status = Open3.capture3("adb shell getprop ro.build.version.sdk")
-  assert_true(status.success?)
-  return stdout.to_i
+AfterConfiguration do |config|
+  MazeRunner.config.receive_requests_wait = 60
+  MazeRunner.config.enforce_bugsnag_integrity = false
 end
-

@@ -5,6 +5,7 @@ import android.os.Handler;
 
 import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.Configuration;
+import com.bugsnag.android.TestHarnessHooksKt;
 
 import androidx.annotation.NonNull;
 
@@ -21,23 +22,18 @@ public class CXXStartSessionScenario extends Scenario {
 
     public CXXStartSessionScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
-        config.setAutoCaptureSessions(false);
     }
 
     @Override
     public void run() {
         super.run();
-        String metadata = getEventMetaData();
-
-        if (metadata == null || !metadata.equals("non-crashy")) {
-            Bugsnag.getClient().startSession();
-
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    crash(0);
-                }
-            }, 8000);
-        }
+        Bugsnag.getClient().startSession();
+        TestHarnessHooksKt.flushAllSessions();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                crash(0);
+            }
+        }, 500);
     }
 }

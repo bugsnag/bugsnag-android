@@ -38,7 +38,7 @@ RUN apt-get install maven
 
 # Setup signing
 RUN apt-get install -y gnupg1
-COPY tests/features/scripts/generate_gpg_key generate_gpg_key
+COPY features/scripts/generate_gpg_key generate_gpg_key
 RUN gpg1 --gen-key --batch generate_gpg_key
 RUN gpg1 --list-keys | awk -F '[/\ ]' 'FNR==3{printf "signing.keyId=%s\n", $5}' >> ~/.gradle/gradle.properties
 RUN echo "signing.password=password" >> ~/.gradle/gradle.properties
@@ -48,12 +48,12 @@ RUN echo "signing.secretKeyRingFile=/root/.gnupg/secring.gpg" >> ~/.gradle/gradl
 RUN sed -i -e 's/VERSION_NAME=.*/VERSION_NAME=9.9.9/g' gradle.properties
 RUN ./gradlew assembleRelease publishToMavenLocal
 
-COPY tests/features/ tests/features
+COPY features/ tests/features
 
 # Download the bundle tool
 RUN apt-get install -y ruby-full
 
-WORKDIR /app/tests/features/fixtures/minimalapp
+WORKDIR /app/features/fixtures/minimalapp
 RUN curl -LJO https://github.com/google/bundletool/releases/download/0.10.3/bundletool-all-0.10.3.jar
 RUN mv bundletool-all-0.10.3.jar bundletool.jar
 

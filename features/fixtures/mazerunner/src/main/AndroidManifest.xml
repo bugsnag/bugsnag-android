@@ -12,9 +12,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".SecondActivity"/>
-        <meta-data
-            android:name="com.bugsnag.android.API_KEY"
-            android:value="YOUR-API-KEY-HERE" />
+        <meta-data android:name="com.bugsnag.android.API_KEY" android:value="ABCDEFGHIJKLMNOPQRSTUVWXYZ012345"/>
     </application>
 
 </manifest>

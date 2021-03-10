@@ -14,7 +14,6 @@ public class NotifyBeforeSendScenario extends Scenario {
 
     public NotifyBeforeSendScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
-        config.setAutoCaptureSessions(false);
         config.beforeSend(new BeforeSend() {
             @Override
             public boolean run(Report report) {

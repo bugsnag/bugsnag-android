@@ -21,7 +21,7 @@ internal class InternalReportScenario(config: Configuration,
         config.beforeSend { true }
 
         if (context is Activity) {
-            eventMetaData = context.intent.getStringExtra("EVENT_METADATA")
+            eventMetaData = context.intent.getStringExtra("eventMetaData")
             val errDir = File(context.cacheDir, "bugsnag-errors")
 
             if (eventMetaData == "tombstone" && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

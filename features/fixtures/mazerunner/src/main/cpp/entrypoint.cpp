@@ -37,10 +37,13 @@ int crash_abort(bool route) {
 }
 
 int crash_floating_point(int counter) {
-    time_t now;
-    now = time(&now);
-    int j = 34 * (int)now;
-    return j / counter;
+    time_t now; now = time(&now); int j = 34 * (int)now;
+    for (int i = 0; i < 10; i++) { printf("Dividing by 0"); }
+    if (counter < 4) {
+        return j / counter;
+    } else {
+        return j;
+    }
 }
 
 int crash_null_pointer(bool route) {
@@ -218,6 +221,7 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXThrowSomethingScenario_crash(JN
   printf("This one here: %ld\n", (long) trigger_an_exception(num > 0));
 }
 
+
 JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXThrowSomethingReenabledScenario_crash(JNIEnv *env,
                                                                                        jobject instance,
@@ -283,13 +287,6 @@ JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXImproperTypecastScenario_crash(JNIEnv *env,
                                                                                 jobject instance) {
     printf("This one here: %s\n", crash_improper_cast(39));
-}
-
-JNIEXPORT void JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_CXXDivideByZeroScenario_crash(JNIEnv *env,
-                                                                            jobject instance,
-                                                                            jint counter) {
-    printf("This one here: %ld\n", (long) crash_floating_point(counter));
 }
 
 // defined in libs/[ABI]/libmonochrome.so

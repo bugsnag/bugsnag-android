@@ -14,7 +14,6 @@ public class NotifyBeforeSendUnsetContextScenario extends Scenario {
 
     public NotifyBeforeSendUnsetContextScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
-        config.setAutoCaptureSessions(false);
         config.beforeSend(new BeforeSend() {
             @Override
             public boolean run(Report report) {

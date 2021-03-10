@@ -20,7 +20,7 @@ public class CachedHandledInternalNotifyScenario extends Scenario {
         super(config, context);
         config.setAutoCaptureSessions(false);
         Activity activity = (Activity)context;
-        String state = activity.getIntent().getStringExtra("EVENT_METADATA");
+        String state = activity.getIntent().getStringExtra("eventMetaData");
         shouldTestOfflineCaching = state != null && state.equals("offline");
         if (shouldTestOfflineCaching) {
             disableAllDelivery(config);
