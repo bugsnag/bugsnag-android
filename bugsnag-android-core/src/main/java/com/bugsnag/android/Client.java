@@ -200,10 +200,10 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         InternalReportDelegate delegate = new InternalReportDelegate(appContext, logger,
                 immutableConfig, storageManager, appDataCollector, deviceDataCollector,
                 sessionTracker, notifier);
-        eventStore = new EventStore(immutableConfig, logger, notifier, delegate);
+        eventStore = new EventStore(immutableConfig, logger, notifier, bgTaskService, delegate);
 
         deliveryDelegate = new DeliveryDelegate(logger, eventStore,
-                immutableConfig, breadcrumbState, notifier);
+                immutableConfig, breadcrumbState, notifier, bgTaskService);
 
         // Install a default exception handler with this client
         if (immutableConfig.getEnabledErrorTypes().getUnhandledExceptions()) {
@@ -651,6 +651,10 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         boolean launching = launchCrashTracker.isLaunching();
         LastRunInfo runInfo = new LastRunInfo(consecutiveLaunchCrashes + 1, true, launching);
         lastRunInfoStore.persist(runInfo);
+
+        // suspend execution of any further background tasks, waiting for previously
+        // submitted ones to complete.
+        bgTaskService.shutdown();
     }
 
     void populateAndNotifyAndroidEvent(@NonNull Event event,

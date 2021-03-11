@@ -11,7 +11,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.Semaphore;
 
 /**
  * Store and flush Event reports which couldn't be sent immediately due to
@@ -23,10 +22,10 @@ class EventStore extends FileStore {
     private static final int LAUNCH_CRASH_POLL_MS = 50;
 
     volatile boolean flushOnLaunchCompleted = false;
-    private final Semaphore semaphore = new Semaphore(1);
     private final ImmutableConfig config;
     private final Delegate delegate;
     private final Notifier notifier;
+    private final BackgroundTaskService backgroundTaskService;
     final Logger logger;
 
     static final Comparator<File> EVENT_COMPARATOR = new Comparator<File>() {
@@ -48,6 +47,7 @@ class EventStore extends FileStore {
     EventStore(@NonNull ImmutableConfig config,
                @NonNull Logger logger,
                Notifier notifier,
+               BackgroundTaskService backgroundTaskService,
                Delegate delegate) {
         super(new File(config.getPersistenceDirectory(), "bugsnag-errors"),
                 config.getMaxPersistedEvents(),
@@ -58,6 +58,7 @@ class EventStore extends FileStore {
         this.logger = logger;
         this.delegate = delegate;
         this.notifier = notifier;
+        this.backgroundTaskService = backgroundTaskService;
     }
 
     void flushOnLaunch() {
@@ -78,7 +79,7 @@ class EventStore extends FileStore {
                 logger.i("Attempting to send launch crash reports");
 
                 try {
-                    Async.run(new Runnable() {
+                    backgroundTaskService.submitTask(TaskType.ERROR_REQUEST, new Runnable() {
                         @Override
                         public void run() {
                             flushReports(crashReports);
@@ -114,7 +115,7 @@ class EventStore extends FileStore {
      */
     void flushAsync() {
         try {
-            Async.run(new Runnable() {
+            backgroundTaskService.submitTask(TaskType.ERROR_REQUEST, new Runnable() {
                 @Override
                 public void run() {
                     List<File> storedFiles = findStoredFiles();
@@ -130,16 +131,12 @@ class EventStore extends FileStore {
     }
 
     void flushReports(Collection<File> storedReports) {
-        if (!storedReports.isEmpty() && semaphore.tryAcquire(1)) {
-            try {
-                logger.i(String.format(Locale.US,
-                    "Sending %d saved error(s) to Bugsnag", storedReports.size()));
+        if (!storedReports.isEmpty()) {
+            logger.i(String.format(Locale.US,
+                "Sending %d saved error(s) to Bugsnag", storedReports.size()));
 
-                for (File eventFile : storedReports) {
-                    flushEventFile(eventFile);
-                }
-            } finally {
-                semaphore.release(1);
+            for (File eventFile : storedReports) {
+                flushEventFile(eventFile);
             }
         }
     }
