@@ -62,7 +62,7 @@ internal data class EventFilenameInfo(
                 sanitizedApiKey,
                 uuid,
                 timestamp,
-                findSuffixForEvent(obj, config),
+                findSuffixForEvent(obj),
                 findErrorTypesForEvent(obj)
             )
         }
@@ -140,24 +140,18 @@ internal data class EventFilenameInfo(
         /**
          * Calculates the suffix for the given event
          */
-        private fun findSuffixForEvent(obj: Any, config: ImmutableConfig): String {
+        private fun findSuffixForEvent(obj: Any): String {
             return when (obj) {
                 is Event -> {
-                    val duration = obj.app.duration
-                    if (duration != null && isStartupCrash(duration.toLong(), config)) {
-                        STARTUP_CRASH
-                    } else {
-                        ""
+                    when (obj.app.isLaunching) {
+                        true -> STARTUP_CRASH
+                        else -> ""
                     }
                 }
                 else -> {
                     NON_JVM_CRASH
                 }
             }
-        }
-
-        private fun isStartupCrash(durationMs: Long, config: ImmutableConfig): Boolean {
-            return durationMs < config.launchDurationMillis
         }
     }
 }
