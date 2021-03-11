@@ -14,6 +14,7 @@
   [#1165](https://github.com/bugsnag/bugsnag-android/pull/1165)
   [#1164](https://github.com/bugsnag/bugsnag-android/pull/1164)
   [#1182](https://github.com/bugsnag/bugsnag-android/pull/1182)
+  [#1184](https://github.com/bugsnag/bugsnag-android/pull/1184)
 
 ## 5.7.0 (2021-02-18)
 

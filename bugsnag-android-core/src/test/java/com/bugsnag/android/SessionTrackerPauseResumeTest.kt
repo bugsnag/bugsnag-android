@@ -60,7 +60,8 @@ internal class SessionTrackerPauseResumeTest {
             configuration.impl.callbackState,
             client,
             sessionStore,
-            NoopLogger
+            NoopLogger,
+            BackgroundTaskService()
         )
     }
 
