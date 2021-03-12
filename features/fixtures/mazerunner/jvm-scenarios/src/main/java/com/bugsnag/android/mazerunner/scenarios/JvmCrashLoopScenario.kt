@@ -8,7 +8,7 @@ import com.bugsnag.android.OnErrorCallback
 /**
  * Triggers a crash loop which Bugsnag allows recovery from.
  */
-internal class CXXCrashLoopScenario(
+internal class JvmCrashLoopScenario(
     config: Configuration,
     context: Context,
     eventMetadata: String?
@@ -16,8 +16,6 @@ internal class CXXCrashLoopScenario(
 
     init {
         config.autoTrackSessions = false
-        System.loadLibrary("bugsnag-ndk")
-        System.loadLibrary("cxx-scenarios-bugsnag")
         config.addOnError(
             OnErrorCallback { event ->
                 Bugsnag.getLastRunInfo()?.let {
@@ -34,8 +32,6 @@ internal class CXXCrashLoopScenario(
         )
     }
 
-    external fun crash()
-
     override fun startScenario() {
         super.startScenario()
         val lastRunInfo = Bugsnag.getLastRunInfo()
@@ -45,7 +41,7 @@ internal class CXXCrashLoopScenario(
         if (lastRunInfo?.crashedDuringLaunch == true) {
             Bugsnag.notify(IllegalArgumentException("Safe mode enabled"))
         } else {
-            crash()
+            throw IllegalStateException("First crash")
         }
     }
 }
