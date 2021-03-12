@@ -99,8 +99,22 @@ Java_com_bugsnag_android_ndk_NativeBridge_disableCrashReporting(JNIEnv *env,
   bsg_handler_uninstall_cpp();
 }
 
+/**
+ * Updates information to be serialized to LastRunInfo if this session
+ * terminates abnormally.
+ */
+void bsg_update_next_run_info(bsg_environment *env) {
+  bool launching = env->next_event.app.is_launching;
+  char *crashed_value = launching ? "true" : "false";
+  int launch_crashes = env->next_consecutive_launch_crashes;
+  sprintf(env->next_last_run_info,
+          "consecutiveLaunchCrashes=%d\ncrashed=true\ncrashedDuringLaunch=%s",
+          launch_crashes, crashed_value);
+}
+
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
     JNIEnv *env, jobject _this, jstring _api_key, jstring _event_path,
+    jstring _last_run_info_path, jint consecutive_launch_crashes,
     jboolean auto_detect_ndk_crashes, jint _api_level, jboolean is32bit) {
   bsg_environment *bugsnag_env = calloc(1, sizeof(bsg_environment));
   bsg_set_unwind_types((int)_api_level, (bool)is32bit,
@@ -109,12 +123,26 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   bugsnag_env->report_header.big_endian =
       htonl(47) == 47; // potentially too clever, see man 3 htonl
   bugsnag_env->report_header.version = BUGSNAG_EVENT_VERSION;
+  bugsnag_env->next_consecutive_launch_crashes = consecutive_launch_crashes + 1;
+
+  // copy event path to env struct
   const char *event_path = bsg_safe_get_string_utf_chars(env, _event_path);
   if (event_path == NULL) {
     return;
   }
   sprintf(bugsnag_env->next_event_path, "%s", event_path);
   bsg_safe_release_string_utf_chars(env, _event_path, event_path);
+
+  // copy last run info path to env struct
+  const char *last_run_info_path =
+      bsg_safe_get_string_utf_chars(env, _last_run_info_path);
+  if (last_run_info_path == NULL) {
+    return;
+  }
+  bsg_strncpy_safe(bugsnag_env->last_run_info_path, last_run_info_path,
+                   sizeof(bugsnag_env->last_run_info_path));
+  bsg_safe_release_string_utf_chars(env, _last_run_info_path,
+                                    last_run_info_path);
 
   if ((bool)auto_detect_ndk_crashes) {
     bsg_handler_install_signal(bugsnag_env);
@@ -143,6 +171,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   }
 
   bsg_global_env = bugsnag_env;
+  bsg_update_next_run_info(bsg_global_env);
   BUGSNAG_LOG("Initialization complete!");
 }
 
@@ -176,7 +205,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
 
       // lookup NativeInterface.deliverReport()
       jmethodID jdeliver_method = bsg_safe_get_static_method_id(
-          env, interface_class, "deliverReport", "([B[BLjava/lang/String;)V");
+          env, interface_class, "deliverReport", "([B[BLjava/lang/String;Z)V");
       if (jdeliver_method == NULL) {
         goto exit;
       }
@@ -196,8 +225,10 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
       // call NativeInterface.deliverReport()
       jstring japi_key = bsg_safe_new_string_utf(env, event->api_key);
       if (japi_key != NULL) {
+        bool is_launching = event->app.is_launching; // FIXME wrong!!!
         bsg_safe_call_static_void_method(env, interface_class, jdeliver_method,
-                                         jstage, jpayload, japi_key);
+                                         jstage, jpayload, japi_key,
+                                         is_launching);
       }
       bsg_safe_delete_local_ref(env, japi_key);
     } else {
@@ -416,6 +447,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateIsLaunching(
   }
   bsg_request_env_write_lock();
   bugsnag_app_set_is_launching(&bsg_global_env->next_event, new_value);
+  bsg_update_next_run_info(bsg_global_env);
   bsg_release_env_write_lock();
 }
 

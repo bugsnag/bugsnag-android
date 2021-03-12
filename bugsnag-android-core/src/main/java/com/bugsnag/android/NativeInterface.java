@@ -307,11 +307,13 @@ public class NativeInterface {
      *                          stages
      * @param payloadBytes The raw JSON payload of the event
      * @param apiKey The apiKey for the event
+     * @param isLaunching whether the crash occurred when the app was launching
      */
     @SuppressWarnings("unused")
     public static void deliverReport(@Nullable byte[] releaseStageBytes,
                                      @NonNull byte[] payloadBytes,
-                                     @NonNull String apiKey) {
+                                     @NonNull String apiKey,
+                                     boolean isLaunching) {
         if (payloadBytes == null) {
             return;
         }
@@ -327,6 +329,9 @@ public class NativeInterface {
             EventStore eventStore = client.getEventStore();
 
             String filename = eventStore.getNdkFilename(payload, apiKey);
+            if (isLaunching) {
+                filename = filename.replace(".json", "startupcrash.json");
+            }
             eventStore.enqueueContentForDelivery(payload, filename);
         }
     }

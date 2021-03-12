@@ -199,7 +199,7 @@ internal class EventFilenameTest {
             config
         ).encode()
         assertEquals(
-            "1504255147933_0000111122223333aaaabbbbcccc9999_c_my-uuid-123_not-jvm.json",
+            "1504255147933_0000111122223333aaaabbbbcccc9999_c_my-uuid-123_.json",
             filename
         )
     }
@@ -214,7 +214,7 @@ internal class EventFilenameTest {
             config
         ).encode()
         assertEquals(
-            "1504255147933_5d1ec5bd39a74caa1267142706a7fb21_c_my-uuid-123_not-jvm.json",
+            "1504255147933_5d1ec5bd39a74caa1267142706a7fb21_c_my-uuid-123_.json",
             filename
         )
     }

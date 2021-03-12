@@ -50,7 +50,8 @@ internal data class EventFilenameInfo(
             uuid: String = UUID.randomUUID().toString(),
             apiKey: String?,
             timestamp: Long = System.currentTimeMillis(),
-            config: ImmutableConfig
+            config: ImmutableConfig,
+            isLaunching: Boolean? = null
         ): EventFilenameInfo {
             val sanitizedApiKey = when {
                 obj is Event -> obj.apiKey
@@ -62,7 +63,7 @@ internal data class EventFilenameInfo(
                 sanitizedApiKey,
                 uuid,
                 timestamp,
-                findSuffixForEvent(obj),
+                findSuffixForEvent(obj, isLaunching),
                 findErrorTypesForEvent(obj)
             )
         }
@@ -140,17 +141,11 @@ internal data class EventFilenameInfo(
         /**
          * Calculates the suffix for the given event
          */
-        private fun findSuffixForEvent(obj: Any): String {
-            return when (obj) {
-                is Event -> {
-                    when (obj.app.isLaunching) {
-                        true -> STARTUP_CRASH
-                        else -> ""
-                    }
-                }
-                else -> {
-                    NON_JVM_CRASH
-                }
+        private fun findSuffixForEvent(obj: Any, launching: Boolean?): String {
+            return when {
+                obj is Event && obj.app.isLaunching == true -> STARTUP_CRASH
+                launching == true -> STARTUP_CRASH
+                else -> ""
             }
         }
     }
