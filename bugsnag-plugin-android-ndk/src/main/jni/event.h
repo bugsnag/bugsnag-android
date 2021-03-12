@@ -27,7 +27,7 @@
 /**
  * Version of the bugsnag_event struct. Serialized to report header.
  */
-#define BUGSNAG_EVENT_VERSION 4
+#define BUGSNAG_EVENT_VERSION 5
 
 #ifdef __cplusplus
 extern "C" {
@@ -60,6 +60,7 @@ typedef struct {
    */
   time_t duration_in_foreground_ms_offset;
   bool in_foreground;
+  bool is_launching;
   char binary_arch[32];
 } bsg_app_info;
 

@@ -324,6 +324,16 @@ void bugsnag_app_set_in_foreground(void *event_ptr, bool value) {
   event->app.in_foreground = value;
 }
 
+bool bugsnag_app_get_is_launching(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *)event_ptr;
+  return event->app.is_launching;
+}
+
+void bugsnag_app_set_is_launching(void *event_ptr, bool value) {
+  bugsnag_event *event = (bugsnag_event *)event_ptr;
+  event->app.is_launching = value;
+}
+
 /* Accessors for event.device */
 
 bool bugsnag_device_get_jailbroken(void *event_ptr) {

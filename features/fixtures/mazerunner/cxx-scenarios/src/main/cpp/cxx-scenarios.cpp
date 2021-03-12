@@ -341,4 +341,16 @@ JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXNaughtyStringsScenario_crash(JNIEnv *env, jobject instance) {
   abort();
 }
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXDelayedErrorScenario_crash(JNIEnv *env,
+                                                                            jobject thiz) {
+  abort();
+}
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXMarkLaunchCompletedScenario_crash(JNIEnv *env,
+                                                                                   jobject thiz) {
+  abort();
+}
 }

@@ -365,6 +365,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         userState.addObserver(observer);
         contextState.addObserver(observer);
         deliveryDelegate.addObserver(observer);
+        launchCrashTracker.addObserver(observer);
     }
 
     /**

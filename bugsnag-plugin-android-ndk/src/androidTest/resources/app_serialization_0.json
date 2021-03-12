@@ -1,1 +1,1 @@
-{"app":{"version":"22","id":"com.bugsnag.example","type":"android","releaseStage":"prod","versionCode":55,"buildUUID":"1234-uuid","binaryArch":"x86","duration":6502,"durationInForeground":6502,"inForeground":true}}
+{"app":{"version":"22","id":"com.bugsnag.example","type":"android","releaseStage":"prod","versionCode":55,"buildUUID":"1234-uuid","binaryArch":"x86","duration":6502,"durationInForeground":6502,"inForeground":true,"isLaunching":true}}

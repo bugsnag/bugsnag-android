@@ -67,6 +67,6 @@ class AppWithState(
         writer.name("duration").value(duration)
         writer.name("durationInForeground").value(durationInForeground)
         writer.name("inForeground").value(inForeground)
-        writer.name("isLaunching").value(inForeground)
+        writer.name("isLaunching").value(isLaunching)
     }
 }
