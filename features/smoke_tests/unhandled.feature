@@ -21,7 +21,7 @@ Scenario: Unhandled Java Exception with loaded configuration
     And the event "exceptions.0.stacktrace.0.method" ends with "UnhandledJavaLoadedConfigScenario.startScenario"
     And the exception "stacktrace.0.file" equals "UnhandledJavaLoadedConfigScenario.java"
     # R8 minification alters the lineNumber, see the mapping file/source code for the original value
-    And the event "exceptions.0.stacktrace.0.lineNumber" equals 6
+    And the event "exceptions.0.stacktrace.0.lineNumber" equals 7
     And the event "exceptions.0.stacktrace.0.inProject" is true
 
     And the thread with name "main" contains the error reporting flag
@@ -40,8 +40,11 @@ Scenario: Unhandled Java Exception with loaded configuration
     And the event "app.inForeground" is true
     And the event "app.isLaunching" is true
     And the error payload field "events.0.metaData.app.memoryUsage" is greater than 0
+
+    # Metadata
     And the event "metaData.app.name" equals "MazeRunner"
     And the event "metaData.app.lowMemory" is false
+    And the event "metaData.TestData.password" equals "[REDACTED]"
 
     # Device data
     And the error payload field "events.0.device.cpuAbi" is a non-empty array
@@ -222,6 +225,8 @@ Scenario: C++ exception thrown with overwritten config
     And the error payload field "events.0.device.totalMemory" is greater than 0
     And the event "device.orientation" equals "portrait"
     And the event "device.time" is a timestamp
+
+    # Metadata
     And the event "metaData.device.locationStatus" is not null
     And the event "metaData.device.emulator" is false
     And the event "metaData.device.networkAccess" is not null
@@ -231,7 +236,7 @@ Scenario: C++ exception thrown with overwritten config
     And the event "metaData.device.brand" is not null
 
     # Context
-    And the event "context" equals "Some custom context"
+    And the event "context" equals "Everest"
 
     # User
     And the event "user.id" equals "ABC"
@@ -240,9 +245,6 @@ Scenario: C++ exception thrown with overwritten config
 
     # Breadcrumbs
     And the event has a "manual" breadcrumb named "CXXExceptionSmokeScenario"
-
-    # Native context override
-    And the event "context" equals "Some custom context"
 
 @skip_android_8_1
 Scenario: ANR detection

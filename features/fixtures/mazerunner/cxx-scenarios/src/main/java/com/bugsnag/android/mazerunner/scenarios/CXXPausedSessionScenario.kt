@@ -3,25 +3,29 @@ package com.bugsnag.android.mazerunner.scenarios
 import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
-import com.bugsnag.android.flushAllSessions
+import com.bugsnag.android.createDefaultDelivery
+import com.bugsnag.android.mazerunner.InterceptingDelivery
 
-/**
- * Sends a manual session payload to Bugsnag.
- */
-internal class ManualSessionScenario(
+class CXXPausedSessionScenario(
     config: Configuration,
     context: Context,
-    eventMetadata: String
+    eventMetadata: String?
 ) : Scenario(config, context, eventMetadata) {
 
     init {
+        System.loadLibrary("cxx-scenarios")
         config.autoTrackSessions = false
+
+        config.delivery = InterceptingDelivery(createDefaultDelivery()) {
+            crash(0)
+        }
     }
+
+    external fun crash(counter: Int): Int
 
     override fun startScenario() {
         super.startScenario()
-        Bugsnag.setUser("123", "user@example.com", "Joe Bloggs")
         Bugsnag.startSession()
-        flushAllSessions()
+        Bugsnag.pauseSession()
     }
 }

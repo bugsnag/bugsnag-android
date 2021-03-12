@@ -10,6 +10,7 @@
 
 #include "anr_google.h"
 #include "unwind_func.h"
+#include "utils/string.h"
 
 // Lock for changing the handler configuration
 static pthread_mutex_t bsg_anr_handler_config = PTHREAD_MUTEX_INITIALIZER;

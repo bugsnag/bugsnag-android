@@ -79,7 +79,8 @@ internal class DeviceIdStore @JvmOverloads constructor(
         if (file.length() > 0) {
             try {
                 return synchronizedStreamableStore.load(DeviceId.Companion::fromReader)
-            } catch (exc: Throwable) {
+            } catch (exc: Throwable) { // catch AssertionError which can be thrown by JsonReader
+                // on Android 8.0/8.1. see https://issuetracker.google.com/issues/79920590
                 logger.w("Failed to load device ID", exc)
             }
         }

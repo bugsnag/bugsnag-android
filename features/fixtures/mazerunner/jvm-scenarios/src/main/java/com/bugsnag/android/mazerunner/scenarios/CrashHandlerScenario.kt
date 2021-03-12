@@ -1,7 +1,6 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
-import android.util.Log
 import com.bugsnag.android.Configuration
 
 /**
@@ -21,10 +20,13 @@ internal class CrashHandlerScenario(
         super.startScenario()
         val previousHandler = Thread.getDefaultUncaughtExceptionHandler()
 
-        Thread.setDefaultUncaughtExceptionHandler({ t, e ->
-            Log.d("Bugsnag", "Intercepted uncaught exception")
+        Thread.setDefaultUncaughtExceptionHandler { t, e ->
+            config.logger?.d("CrashHandlerScenario: Intercepted uncaught exception")
             previousHandler.uncaughtException(t, e)
-        })
+        }
         throw RuntimeException("CrashHandlerScenario")
     }
+
+    override fun getInterceptedLogMessages() =
+        listOf("CrashHandlerScenario: Intercepted uncaught exception")
 }

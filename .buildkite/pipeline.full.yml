@@ -101,6 +101,7 @@ steps:
           - "--fail-fast"
           - "--tags"
           - "not @Flaky"
+          - "--appium-version=1.8.0"
     concurrency: 9
     concurrency_group: 'browserstack-app'
     soft_fail:
@@ -125,6 +126,7 @@ steps:
           - "--fail-fast"
           - "--tags"
           - "not @Flaky"
+          - "--appium-version=1.8.0"
     concurrency: 9
     concurrency_group: 'browserstack-app'
     soft_fail:
@@ -306,6 +308,10 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
+  # Android 11+ devices have the GWP-ASAN tool enabled which randomly samples native memory to
+  # to detect misuse (such as use-after-free, buffer overflow). If a failure is detected then
+  # the device will raise a SIGABRT mentioning GWP-ASAN - this can be investigated further
+  # by inspecting the devices logs.
   - label: ':android: Android 11 NDK r21 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r21"
@@ -397,6 +403,7 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_5_0"
           - "--tags=@Flaky"
+          - "--appium-version=1.8.0"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -514,3 +521,21 @@ steps:
           - "--tags=@Flaky"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+
+  # If there is a tag present activate a manual publishing step
+
+  - block: 'Trigger package publish'
+    key: trigger_publish
+    if: build.tag != null
+    blocked_state: passed
+
+  - label: 'Publish :rocket:'
+    if: build.tag != null
+    depends_on:
+      - 'trigger_publish'
+    env:
+      BUILDKITE_PLUGIN_S3_SECRETS_BUCKET_PREFIX: bugsnag-android-publish
+    plugins:
+      docker-compose#v3.7.0:
+        no-cache: true
+        run: android-publisher
