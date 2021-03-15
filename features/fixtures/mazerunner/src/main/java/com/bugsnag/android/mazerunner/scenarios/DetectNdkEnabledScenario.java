@@ -16,17 +16,12 @@ public class DetectNdkEnabledScenario extends Scenario {
 
     public DetectNdkEnabledScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
-        config.setAutoCaptureSessions(false);
         config.setDetectNdkCrashes(true);
     }
 
     @Override
     public void run() {
         super.run();
-        String metadata = getEventMetaData();
-        if (metadata != null && metadata.equals("non-crashy")) {
-            return;
-        }
         crash();
     }
 }

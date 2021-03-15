@@ -7,9 +7,8 @@ Feature: Communicating events between notifiers
 
     Scenario: Report a handled event through internalNotify()
         When I run "HandledInternalNotifyScenario"
-        Then I should receive a request
-        And the request is valid for the error reporting API
-        And the "Bugsnag-API-Key" header equals "a35a2a72bd230ac0aa0f52715bbdc6aa"
+        Then I wait to receive a request
+        And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
         And the event "unhandled" is false
         And the exception "errorClass" equals "Handled Error!"
         And the exception "message" equals "all work and no play"
@@ -30,12 +29,11 @@ Feature: Communicating events between notifiers
 
     Scenario: Report a handled event through internalNotify() while offline
         When I configure the app to run in the "offline" state
-        And I run "CachedHandledInternalNotifyScenario"
+        And I run "CachedHandledInternalNotifyScenario" and relaunch the app
         And I configure the app to run in the "online" state
-        And I relaunch the app
-        Then I should receive a request
-        And the request is valid for the error reporting API
-        And the "Bugsnag-API-Key" header equals "a35a2a72bd230ac0aa0f52715bbdc6aa"
+        And I run "CachedHandledInternalNotifyScenario"
+        And I wait to receive a request
+        And the request is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
         And the event "unhandled" is false
         And the exception "errorClass" equals "Handled Error!"
         And the exception "message" equals "all work and no play"

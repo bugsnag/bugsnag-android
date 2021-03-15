@@ -13,9 +13,8 @@ import com.bugsnag.android.createCustomHeaderDelivery
 internal class CustomClientErrorFlushScenario(config: Configuration,
                                               context: Context) : Scenario(config, context) {
     init {
-        config.setAutoCaptureSessions(false)
         if (context is Activity) {
-            eventMetaData = context.intent.getStringExtra("EVENT_METADATA")
+            eventMetaData = context.intent.getStringExtra("eventMetaData")
             if ("online" == eventMetaData) {
                 config.delivery = createCustomHeaderDelivery(context)
             } else {

@@ -9,10 +9,6 @@ import com.bugsnag.android.Configuration
  */
 internal class UserEnabledScenario(config: Configuration,
                                    context: Context) : Scenario(config, context) {
-    init {
-        config.setAutoCaptureSessions(false)
-    }
-
     override fun run() {
         super.run()
         Bugsnag.setUser("123", "user@example.com", "Joe Bloggs")

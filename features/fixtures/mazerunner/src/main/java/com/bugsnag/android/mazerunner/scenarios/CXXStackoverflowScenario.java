@@ -18,16 +18,11 @@ public class CXXStackoverflowScenario extends Scenario {
 
     public CXXStackoverflowScenario(@NonNull Configuration config, @NonNull Context context) {
         super(config, context);
-        config.setAutoCaptureSessions(false);
     }
 
     @Override
     public void run() {
         super.run();
-        String metadata = getEventMetaData();
-        if (metadata != null && metadata.equals("non-crashy")) {
-            return;
-        }
         crash(1209, "some moderately long text, longer than 7 characters at least.");
     }
 }
