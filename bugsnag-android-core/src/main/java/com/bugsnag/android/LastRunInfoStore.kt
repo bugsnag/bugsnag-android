@@ -15,7 +15,7 @@ private const val KEY_CRASHED_DURING_LAUNCH = "crashedDuringLaunch"
  */
 internal class LastRunInfoStore(config: ImmutableConfig) {
 
-    private val file: File = File(config.persistenceDirectory, "last-run-info")
+    val file: File = File(config.persistenceDirectory, "last-run-info")
     private val logger: Logger = config.logger
     private val lock = ReentrantReadWriteLock()
 
@@ -36,6 +36,7 @@ internal class LastRunInfoStore(config: ImmutableConfig) {
             add(KEY_CRASHED_DURING_LAUNCH, lastRunInfo.crashedDuringLaunch)
         }.toString()
         file.writeText(text)
+        logger.d("Persisted: $text")
     }
 
     fun load(): LastRunInfo? {
@@ -54,9 +55,9 @@ internal class LastRunInfoStore(config: ImmutableConfig) {
             return null
         }
 
-        val lines = file.readText().split("\n")
+        val lines = file.readText().split("\n").filter { it.isNotBlank() }
 
-        if (lines.size != 4) {
+        if (lines.size != 3) {
             logger.w("Unexpected number of lines when loading LastRunInfo. Skipping load. $lines")
             return null
         }
@@ -65,7 +66,9 @@ internal class LastRunInfoStore(config: ImmutableConfig) {
             val consecutiveLaunchCrashes = lines[0].asIntValue(KEY_CONSECUTIVE_LAUNCH_CRASHES)
             val crashed = lines[1].asBooleanValue(KEY_CRASHED)
             val crashedDuringLaunch = lines[2].asBooleanValue(KEY_CRASHED_DURING_LAUNCH)
-            LastRunInfo(consecutiveLaunchCrashes, crashed, crashedDuringLaunch)
+            val runInfo = LastRunInfo(consecutiveLaunchCrashes, crashed, crashedDuringLaunch)
+            logger.d("Loaded: $runInfo")
+            runInfo
         } catch (exc: NumberFormatException) {
             // unlikely case where information was serialized incorrectly
             logger.w("Failed to read consecutiveLaunchCrashes from saved lastRunInfo", exc)

@@ -27,12 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observer;
 import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /**
  * A Bugsnag Client instance allows you to use Bugsnag in your Android app.
@@ -47,11 +42,6 @@ import java.util.concurrent.TimeoutException;
  */
 @SuppressWarnings({"checkstyle:JavadocTagContinuationIndentation", "ConstantConditions"})
 public class Client implements MetadataAware, CallbackAware, UserAware {
-
-    /**
-     * Default wait for Bugsnag to block when calling Future#get()
-     */
-    private static final int FUTURE_BLOCK_SECS = 2;
 
     final ImmutableConfig immutableConfig;
 
@@ -94,7 +84,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     final Notifier notifier = new Notifier();
 
     @Nullable
-    final Future<LastRunInfo> lastRunInfoFuture;
+    final LastRunInfo lastRunInfo;
     final LastRunInfoStore lastRunInfoStore;
     final LaunchCrashTracker launchCrashTracker;
     final BackgroundTaskService bgTaskService = new BackgroundTaskService();
@@ -227,6 +217,10 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
         registerOrientationChangeListener();
 
+        // load last run info
+        lastRunInfoStore = new LastRunInfoStore(immutableConfig);
+        lastRunInfo = loadLastRunInfo();
+
         // initialise plugins before attempting to flush any errors
         loadPlugins(configuration);
 
@@ -236,9 +230,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         eventStore.flushOnLaunch();
         eventStore.flushAsync();
         sessionTracker.flushAsync();
-
-        lastRunInfoStore = new LastRunInfoStore(immutableConfig);
-        lastRunInfoFuture = loadLastRunInfo();
 
         // leave auto breadcrumb
         Map<String, Object> data = Collections.emptyMap();
@@ -291,27 +282,29 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         this.deliveryDelegate = deliveryDelegate;
         this.lastRunInfoStore = lastRunInfoStore;
         this.launchCrashTracker = launchCrashTracker;
-        this.lastRunInfoFuture = null;
+        this.lastRunInfo = null;
+    }
+
+    private LastRunInfo loadLastRunInfo() {
+        LastRunInfo lastRunInfo = lastRunInfoStore.load();
+        LastRunInfo currentRunInfo = new LastRunInfo(0, false, false);
+        persistRunInfo(currentRunInfo);
+        return lastRunInfo;
     }
 
     /**
      * Load information about the last run, and reset the persisted information to the defaults.
      */
-    @Nullable
-    private Future<LastRunInfo> loadLastRunInfo() {
+    private void persistRunInfo(final LastRunInfo runInfo) {
         try {
-            return bgTaskService.submitTask(TaskType.IO, new Callable<LastRunInfo>() {
+            bgTaskService.submitTask(TaskType.IO, new Runnable() {
                 @Override
-                public LastRunInfo call() throws Exception {
-                    LastRunInfo lastRunInfo = lastRunInfoStore.load();
-                    LastRunInfo currentRunInfo = new LastRunInfo(0, false, false);
-                    lastRunInfoStore.persist(currentRunInfo);
-                    return lastRunInfo;
+                public void run() {
+                    lastRunInfoStore.persist(runInfo);
                 }
             });
         } catch (RejectedExecutionException exc) {
-            logger.w("Failed to load last run info", exc);
-            return null;
+            logger.w("Failed to persist last run info", exc);
         }
     }
 
@@ -353,7 +346,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     }
 
     void setupNdkPlugin() {
-        clientObservable.postNdkInstall(immutableConfig);
+        String lastRunInfoPath = lastRunInfoStore.getFile().getAbsolutePath();
+        int crashes = (lastRunInfo != null) ? lastRunInfo.getConsecutiveLaunchCrashes() : 0;
+        clientObservable.postNdkInstall(immutableConfig, lastRunInfoPath, crashes);
         syncInitialState();
         clientObservable.postNdkDeliverPending();
     }
@@ -648,30 +643,18 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         populateAndNotifyAndroidEvent(event, null);
 
         // persist LastRunInfo so that on relaunch users can check the app crashed
-        LastRunInfo lastRunInfo = getPrevLastRunInfo();
         int consecutiveLaunchCrashes = lastRunInfo == null ? 0
                 : lastRunInfo.getConsecutiveLaunchCrashes();
         boolean launching = launchCrashTracker.isLaunching();
-        LastRunInfo runInfo = new LastRunInfo(consecutiveLaunchCrashes + 1, true, launching);
-        lastRunInfoStore.persist(runInfo);
+        if (launching) {
+            consecutiveLaunchCrashes += 1;
+        }
+        LastRunInfo runInfo = new LastRunInfo(consecutiveLaunchCrashes, true, launching);
+        persistRunInfo(runInfo);
 
         // suspend execution of any further background tasks, waiting for previously
         // submitted ones to complete.
         bgTaskService.shutdown();
-    }
-
-    @Nullable
-    private LastRunInfo getPrevLastRunInfo() {
-        try {
-            // LastRunInfo is retrieved on a bg thread to improve startup perf - block
-            // here if the information hasn't been fetched yet.
-            if (lastRunInfoFuture != null) {
-                return lastRunInfoFuture.get(FUTURE_BLOCK_SECS, TimeUnit.SECONDS);
-            }
-        } catch (ExecutionException | InterruptedException | TimeoutException exc) {
-            logger.w("Failed to retrieve lastRunInfo within timeout", exc);
-        }
-        return null;
     }
 
     void populateAndNotifyAndroidEvent(@NonNull Event event,
@@ -905,7 +888,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      */
     @Nullable
     public LastRunInfo getLastRunInfo() {
-        return getPrevLastRunInfo();
+        return lastRunInfo;
     }
 
     /**

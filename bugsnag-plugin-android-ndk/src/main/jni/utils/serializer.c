@@ -34,6 +34,22 @@ void migrate_breadcrumb_v1(bugsnag_report_v2 *report_v2,
 }
 #endif
 
+/**
+ * Serializes the LastRunInfo to the file. This persists information about
+ * why the current launch crashed, for use on future launch.
+ */
+bool bsg_serialize_last_run_info_to_file(bsg_environment *env) {
+  char *path = env->last_run_info_path;
+  int fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+  if (fd == -1) {
+    return false;
+  }
+
+  int size = bsg_strlen(env->next_last_run_info);
+  ssize_t len = write(fd, env->next_last_run_info, size);
+  return len == size;
+}
+
 bool bsg_serialize_event_to_file(bsg_environment *env) {
   int fd = open(env->next_event_path, O_WRONLY | O_CREAT, 0644);
   if (fd == -1) {

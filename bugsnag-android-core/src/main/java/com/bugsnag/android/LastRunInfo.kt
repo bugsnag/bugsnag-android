@@ -19,4 +19,8 @@ class LastRunInfo(
      * True if the previous app run ended with a crash during its launch period.
      */
     val crashedDuringLaunch: Boolean
-)
+) {
+    override fun toString(): String {
+        return "LastRunInfo(consecutiveLaunchCrashes=$consecutiveLaunchCrashes, crashed=$crashed, crashedDuringLaunch=$crashedDuringLaunch)"
+    }
+}

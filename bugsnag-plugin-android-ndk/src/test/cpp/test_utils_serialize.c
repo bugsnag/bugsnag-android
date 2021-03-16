@@ -186,6 +186,37 @@ bugsnag_event *bsg_generate_event(void) {
   return report;
 }
 
+
+void bsg_update_next_run_info(bsg_environment *env);
+
+char *test_read_last_run_info(const bsg_environment *env) {
+  int fd = open(SERIALIZE_TEST_FILE, O_RDONLY);
+  size_t size = sizeof(env->next_last_run_info);
+  char *buf = malloc(size);
+  read(fd, buf, size);
+  return buf;
+}
+
+test_last_run_info_serialization(void) {
+  bsg_environment *env = malloc(sizeof(bsg_environment));
+  strcpy(env->last_run_info_path, SERIALIZE_TEST_FILE);
+  
+  // update LastRunInfo with defaults
+  env->next_event.app.is_launching = false;
+  env->consecutive_launch_crashes = 1;
+  bsg_update_next_run_info(env);
+  ASSERT_STR_EQ("consecutiveLaunchCrashes=1\ncrashed=true\ncrashedDuringLaunch=false\0", env->next_last_run_info);
+
+  // update LastRunInfo with consecutive crashes
+  env->next_event.app.is_launching = true;
+  env->consecutive_launch_crashes = 7;
+  bsg_update_next_run_info(env);
+  ASSERT_STR_EQ("consecutiveLaunchCrashes=7\ncrashed=true\ncrashedDuringLaunch=true\0", env->next_last_run_info);
+
+  free(env);
+  PASS();
+}
+
 TEST test_report_to_file(void) {
   bsg_environment *env = malloc(sizeof(bsg_environment));
   env->report_header.version = 7;
@@ -486,6 +517,7 @@ TEST test_breadcrumbs_to_json(void) {
 
 SUITE(serialize_utils) {
   RUN_TEST(test_report_to_file);
+  RUN_TEST(test_last_run_info_serialization);
   RUN_TEST(test_file_to_report);
   RUN_TEST(test_report_v1_migration);
   RUN_TEST(test_report_v2_migration);
