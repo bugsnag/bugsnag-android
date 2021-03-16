@@ -46,9 +46,9 @@ typedef struct {
    */
   char next_last_run_info[256];
   /**
-   * The next value of consecutiveLaunchCrashes if a crash occurs
+   * The value of consecutiveLaunchCrashes, used when a crash occurs
    */
-  int next_consecutive_launch_crashes;
+  int consecutive_launch_crashes;
   /**
    * Cache of static metadata and event info. Exception/time information is
    * populated at crash time.

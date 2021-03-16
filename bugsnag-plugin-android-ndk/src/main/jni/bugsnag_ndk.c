@@ -106,7 +106,10 @@ Java_com_bugsnag_android_ndk_NativeBridge_disableCrashReporting(JNIEnv *env,
 void bsg_update_next_run_info(bsg_environment *env) {
   bool launching = env->next_event.app.is_launching;
   char *crashed_value = launching ? "true" : "false";
-  int launch_crashes = env->next_consecutive_launch_crashes;
+  int launch_crashes = env->consecutive_launch_crashes;
+  if (launching) {
+    launch_crashes += 1;
+  }
   sprintf(env->next_last_run_info,
           "consecutiveLaunchCrashes=%d\ncrashed=true\ncrashedDuringLaunch=%s",
           launch_crashes, crashed_value);
@@ -123,7 +126,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   bugsnag_env->report_header.big_endian =
       htonl(47) == 47; // potentially too clever, see man 3 htonl
   bugsnag_env->report_header.version = BUGSNAG_EVENT_VERSION;
-  bugsnag_env->next_consecutive_launch_crashes = consecutive_launch_crashes + 1;
+  bugsnag_env->consecutive_launch_crashes = consecutive_launch_crashes;
 
   // copy event path to env struct
   const char *event_path = bsg_safe_get_string_utf_chars(env, _event_path);
@@ -225,7 +228,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
       // call NativeInterface.deliverReport()
       jstring japi_key = bsg_safe_new_string_utf(env, event->api_key);
       if (japi_key != NULL) {
-        bool is_launching = event->app.is_launching; // FIXME wrong!!!
+        bool is_launching = event->app.is_launching;
         bsg_safe_call_static_void_method(env, interface_class, jdeliver_method,
                                          jstage, jpayload, japi_key,
                                          is_launching);

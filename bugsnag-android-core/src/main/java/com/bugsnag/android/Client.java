@@ -646,7 +646,10 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         int consecutiveLaunchCrashes = lastRunInfo == null ? 0
                 : lastRunInfo.getConsecutiveLaunchCrashes();
         boolean launching = launchCrashTracker.isLaunching();
-        LastRunInfo runInfo = new LastRunInfo(consecutiveLaunchCrashes + 1, true, launching);
+        if (launching) {
+            consecutiveLaunchCrashes += 1;
+        }
+        LastRunInfo runInfo = new LastRunInfo(consecutiveLaunchCrashes, true, launching);
         persistRunInfo(runInfo);
 
         // suspend execution of any further background tasks, waiting for previously

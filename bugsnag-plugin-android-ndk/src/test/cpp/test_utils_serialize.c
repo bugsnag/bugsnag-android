@@ -203,13 +203,13 @@ test_last_run_info_serialization(void) {
   
   // update LastRunInfo with defaults
   env->next_event.app.is_launching = false;
-  env->next_consecutive_launch_crashes = 1;
+  env->consecutive_launch_crashes = 1;
   bsg_update_next_run_info(env);
   ASSERT_STR_EQ("consecutiveLaunchCrashes=1\ncrashed=true\ncrashedDuringLaunch=false\0", env->next_last_run_info);
 
   // update LastRunInfo with consecutive crashes
   env->next_event.app.is_launching = true;
-  env->next_consecutive_launch_crashes = 7;
+  env->consecutive_launch_crashes = 7;
   bsg_update_next_run_info(env);
   ASSERT_STR_EQ("consecutiveLaunchCrashes=7\ncrashed=true\ncrashedDuringLaunch=true\0", env->next_last_run_info);
 
