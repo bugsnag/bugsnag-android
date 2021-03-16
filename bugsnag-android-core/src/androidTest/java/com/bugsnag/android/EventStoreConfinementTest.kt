@@ -22,7 +22,7 @@ internal class EventStoreConfinementTest {
     @Before
     fun setUp() {
         // setup delivery for interception
-        retainingDelivery = RetainingDelivery()
+        retainingDelivery = RetainingDelivery(EVENT_CONFINEMENT_ATTEMPTS)
         val cfg = BugsnagTestUtils.generateConfiguration().apply {
             autoTrackSessions = false
             delivery = retainingDelivery
@@ -39,7 +39,7 @@ internal class EventStoreConfinementTest {
         repeat(EVENT_CONFINEMENT_ATTEMPTS) { count ->
             client.notify(RuntimeException("$count"))
         }
-        retainingDelivery.latch.await(1, TimeUnit.SECONDS)
+        retainingDelivery.latch.await(10, TimeUnit.SECONDS)
 
         // confirm that no dupe requests are sent and that the request order is deterministic
         val payloads = retainingDelivery.payloads
@@ -81,40 +81,12 @@ internal class EventStoreConfinementTest {
     }
 
     /**
-     * Calling flushOnLaunch() is confined to a single thread
-     */
-    @Test
-    fun flushOnLaunchIsThreadConfined() {
-        val eventStore = client.eventStore
-
-        // send 20 errors
-        repeat(EVENT_CONFINEMENT_ATTEMPTS) { count ->
-            val event = BugsnagTestUtils.generateEvent().apply {
-                apiKey = "$count"
-            }
-            eventStore.write(event)
-            eventStore.flushOnLaunch()
-        }
-        retainingDelivery.latch.await(5, TimeUnit.SECONDS)
-
-        // confirm that no dupe requests are sent
-        val filenames = retainingDelivery.files
-        assertEquals(EVENT_CONFINEMENT_ATTEMPTS, filenames.size)
-        assertEquals(EVENT_CONFINEMENT_ATTEMPTS, filenames.toSet().size)
-
-        retainingDelivery.files.forEachIndexed { index, file ->
-            val eventInfo = EventFilenameInfo.fromFile(file, client.immutableConfig)
-            assertEquals("$index", eventInfo.apiKey)
-        }
-    }
-
-    /**
      * Retains all the sent error payloads
      */
-    private class RetainingDelivery : Delivery {
+    private class RetainingDelivery(attempts: Int) : Delivery {
         val files = mutableListOf<File>()
         val payloads = mutableListOf<Event>()
-        val latch = CountDownLatch(EVENT_CONFINEMENT_ATTEMPTS)
+        val latch = CountDownLatch(attempts)
 
         override fun deliver(payload: Session, deliveryParams: DeliveryParams) =
             DeliveryStatus.DELIVERED

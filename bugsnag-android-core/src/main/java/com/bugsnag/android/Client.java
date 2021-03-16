@@ -234,6 +234,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
         // Flush any on-disk errors and sessions
         eventStore.flushOnLaunch();
+        eventStore.flushAsync();
         sessionTracker.flushAsync();
 
         lastRunInfoStore = new LastRunInfoStore(immutableConfig);

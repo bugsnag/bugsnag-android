@@ -3,6 +3,7 @@ package com.bugsnag.android
 import com.bugsnag.android.EventStore.EVENT_COMPARATOR
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -23,7 +24,6 @@ internal class EventFilenameTest {
     fun setUp() {
         event = BugsnagTestUtils.generateEvent()
         event.apiKey = "0000111122223333aaaabbbbcccc9999"
-        event.app.duration
     }
 
     @Test
@@ -47,6 +47,66 @@ internal class EventFilenameTest {
             val eventInfo = EventFilenameInfo.fromFile(File(s), config)
             assertFalse(eventInfo.isLaunchCrashReport())
         }
+    }
+
+    @Test
+    fun testFindLaunchCrashReportInvalid() {
+        val eventStore = EventStore(
+            BugsnagTestUtils.generateImmutableConfig(),
+            NoopLogger,
+            Notifier(),
+            BackgroundTaskService(),
+            FileStore.Delegate { _, _, _ -> }
+        )
+
+        // no files
+        assertNull(eventStore.findLaunchCrashReport(emptyList()))
+
+        // regular crash reports
+        val jvmCrashReport = File("1504255147933_683c6b92-b325-4987-80ad-77086509ca1e.json")
+        assertNull(eventStore.findLaunchCrashReport(listOf(jvmCrashReport)))
+        val ndkCrashReport =
+            File("1504255147933_0000111122223333aaaabbbbcccc9999_c_my-uuid-123_not-jvm.json")
+        assertNull(eventStore.findLaunchCrashReport(listOf(ndkCrashReport)))
+    }
+
+    @Test
+    fun testFindSingleLaunchCrashReport() {
+        val eventStore = EventStore(
+            BugsnagTestUtils.generateImmutableConfig(),
+            NoopLogger,
+            Notifier(),
+            BackgroundTaskService(),
+            FileStore.Delegate { _, _, _ -> }
+        )
+
+        // startup crashes
+        val expected = File("1504255147933_30b7e350-dcd1-4032-969e-98d30be62bbc_startupcrash.json")
+        assertEquals(expected, eventStore.findLaunchCrashReport(listOf(expected)))
+    }
+
+    @Test
+    fun testFindMultipleLaunchCrashReport() {
+        val eventStore = EventStore(
+            BugsnagTestUtils.generateImmutableConfig(),
+            NoopLogger,
+            Notifier(),
+            BackgroundTaskService(),
+            FileStore.Delegate { _, _, _ -> }
+        )
+
+        // if multiple crashes exist, pick the most recent one
+        val expected = File("1664219155431_042c6195-a32c-2f84-11ae-77086509ca1e_startupcrash.json")
+        assertEquals(
+            expected,
+            eventStore.findLaunchCrashReport(
+                listOf(
+                    File("1504255147933_30b7e350-dcd1-4032-969e-98d30be62bbc_startupcrash.json"),
+                    expected,
+                    File("1404205127135_683c6b92-b325-4987-80ad-77086509ca1e_startupcrash.json")
+                )
+            )
+        )
     }
 
     @Test
@@ -93,7 +153,7 @@ internal class EventFilenameTest {
      */
     @Test
     fun startupCrashJvmEventName() {
-        event.app.duration = 1000
+        event.app.isLaunching = true
 
         val filename = EventFilenameInfo.fromEvent(
             event,
@@ -114,7 +174,7 @@ internal class EventFilenameTest {
      */
     @Test
     fun nonStartupCrashCrashJvmEventName() {
-        event.app.duration = 10000
+        event.app.isLaunching = false
         val filename = EventFilenameInfo.fromEvent(
             event,
             "my-uuid-123",
