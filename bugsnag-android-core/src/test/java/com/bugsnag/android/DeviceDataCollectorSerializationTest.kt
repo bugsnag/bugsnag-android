@@ -27,6 +27,7 @@ internal class DeviceDataCollectorSerializationTest {
             val res = mock(Resources::class.java)
             val conf = mock(Configuration::class.java)
             val connectivity = mock(Connectivity::class.java)
+            val rootDetector = mock(RootDetector::class.java)
 
             val prefs = mock(SharedPreferences::class.java)
             val editor = mock(SharedPreferences.Editor::class.java)
@@ -46,6 +47,7 @@ internal class DeviceDataCollectorSerializationTest {
             metrics.densityDpi = 120
             `when`(res.displayMetrics).thenReturn(metrics)
             `when`(connectivity.retrieveNetworkAccessState()).thenReturn("unknown")
+            `when`(rootDetector.isRooted()).thenReturn(false)
 
             // construct devicedata object
             val deviceData = DeviceDataCollector(
@@ -55,6 +57,7 @@ internal class DeviceDataCollectorSerializationTest {
                 "123",
                 buildInfo,
                 File(""),
+                rootDetector,
                 NoopLogger
             )
 

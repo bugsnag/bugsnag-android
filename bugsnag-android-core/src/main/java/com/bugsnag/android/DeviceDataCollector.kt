@@ -23,6 +23,7 @@ internal class DeviceDataCollector(
     private val deviceId: String?,
     private val buildInfo: DeviceBuildInfo,
     private val dataDirectory: File,
+    private val rootDetector: RootDetector,
     private val logger: Logger
 ) {
 
@@ -84,6 +85,9 @@ internal class DeviceDataCollector(
      * Check if the current Android device is rooted
      */
     private fun isRooted(): Boolean {
+        if (rootDetector.isRooted()) {
+            return true
+        }
         val tags = buildInfo.tags
         if (tags != null && tags.contains("test-keys")) {
             return true

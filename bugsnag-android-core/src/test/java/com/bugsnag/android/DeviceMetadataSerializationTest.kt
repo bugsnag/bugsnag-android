@@ -55,6 +55,7 @@ internal class DeviceMetadataSerializationTest {
                 "123",
                 buildInfo,
                 File(""),
+                RootDetector(),
                 NoopLogger
             )
 
