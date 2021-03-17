@@ -23,13 +23,13 @@ internal class DeviceDataCollector(
     private val deviceId: String?,
     private val buildInfo: DeviceBuildInfo,
     private val dataDirectory: File,
-    private val rootDetector: RootDetector,
+    rootDetector: RootDetector,
     private val logger: Logger
 ) {
 
     private val displayMetrics = resources?.displayMetrics
     private val emulator = isEmulator()
-    private val rooted = isRooted()
+    private val rooted = rootDetector.isRooted()
     private val screenDensity = getScreenDensity()
     private val dpi = getScreenDensityDpi()
     private val screenResolution = getScreenResolution()
@@ -79,28 +79,6 @@ internal class DeviceDataCollector(
         map["emulator"] = emulator
         map["screenResolution"] = screenResolution
         return map
-    }
-
-    /**
-     * Check if the current Android device is rooted
-     */
-    private fun isRooted(): Boolean {
-        if (rootDetector.isRooted()) {
-            return true
-        }
-        val tags = buildInfo.tags
-        if (tags != null && tags.contains("test-keys")) {
-            return true
-        }
-
-        runCatching {
-            for (candidate in ROOT_INDICATORS) {
-                if (File(candidate).exists()) {
-                    return true
-                }
-            }
-        }
-        return false
     }
 
     /**
@@ -254,23 +232,5 @@ internal class DeviceDataCollector(
 
     fun addRuntimeVersionInfo(key: String, value: String) {
         runtimeVersions[key] = value
-    }
-
-    companion object {
-        private val ROOT_INDICATORS = arrayOf(
-            // Common binaries
-            "/system/xbin/su",
-            "/system/bin/su",
-            // < Android 5.0
-            "/system/app/Superuser.apk",
-            "/system/app/SuperSU.apk",
-            // >= Android 5.0
-            "/system/app/Superuser",
-            "/system/app/SuperSU",
-            // Fallback
-            "/system/xbin/daemonsu",
-            // Systemless root
-            "/su/bin"
-        )
     }
 }

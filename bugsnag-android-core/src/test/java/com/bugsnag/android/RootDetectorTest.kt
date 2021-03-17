@@ -12,6 +12,7 @@ import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
 import java.io.ByteArrayInputStream
 import java.io.IOException
+import java.nio.file.Files
 
 @RunWith(MockitoJUnitRunner::class)
 class RootDetectorTest {
@@ -58,5 +59,41 @@ class RootDetectorTest {
         val resultStream = ByteArrayInputStream("/system/bin/su".toByteArray())
         `when`(process.inputStream).thenReturn(resultStream)
         assertTrue(rootDetector.checkSuExists(processBuilder))
+    }
+
+    /**
+     * Verifies that 'test-keys' triggers root detection.
+     */
+    @Test
+    fun checkBuildTagsRooted() {
+        val info = DeviceBuildInfo(null, null, null, null, null, null, "test-keys", null, null)
+        assertTrue(RootDetector(info).checkBuildTags())
+    }
+
+    /**
+     * Verifies that 'release-keys' does not trigger root detection
+     */
+    @Test
+    fun checkBuildTagsNotRooted() {
+        val info = DeviceBuildInfo(null, null, null, null, null, null, "release-keys", null, null)
+        assertFalse(RootDetector(info).checkBuildTags())
+    }
+
+    /**
+     * Verifies that a non-existent file does not trigger root detection
+     */
+    @Test
+    fun checkRootBinaryRooted() {
+        assertFalse(RootDetector(rootBinaryLocations = listOf("/foo")).checkRootBinaries())
+    }
+
+    /**
+     * Verifies that an existing root binary triggers root detection
+     */
+    @Test
+    fun checkRootBinaryNotRooted() {
+        val tmpFile = Files.createTempFile("evilrootbinary", ".apk")
+        val path = tmpFile.toFile().absolutePath
+        assertTrue(RootDetector(rootBinaryLocations = listOf(path)).checkRootBinaries())
     }
 }

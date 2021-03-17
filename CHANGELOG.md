@@ -6,6 +6,7 @@
 
 * Improve detection of rooted devices
   [#1194](https://github.com/bugsnag/bugsnag-android/pull/1194)
+  [#1195](https://github.com/bugsnag/bugsnag-android/pull/1195)
 
 ## 5.7.1 (2021-03-03)
 
