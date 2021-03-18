@@ -18,13 +18,14 @@ extern "C" {
 bool bsg_event_write(bsg_report_header *header, bugsnag_event *event, int fd);
 
 bugsnag_event *bsg_event_read(int fd);
-bugsnag_event *bsg_report_v4_read(int fd);
 bsg_report_header *bsg_report_header_read(int fd);
+bugsnag_event *bsg_map_v4_to_report(bugsnag_report_v4 *report_v4);
 bugsnag_event *bsg_map_v3_to_report(bugsnag_report_v3 *report_v3);
 bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2);
 bugsnag_event *bsg_map_v1_to_report(bugsnag_report_v1 *report_v1);
 
 void migrate_app_v1(bugsnag_report_v2 *report_v2, bugsnag_report_v3 *event);
+void migrate_app_v2(bugsnag_report_v4 *report_v4, bugsnag_event *event);
 void migrate_device_v1(bugsnag_report_v2 *report_v2, bugsnag_report_v3 *event);
 void migrate_breadcrumb_v1(bugsnag_report_v2 *report_v2,
                            bugsnag_report_v3 *event);
@@ -32,6 +33,22 @@ void migrate_breadcrumb_v1(bugsnag_report_v2 *report_v2,
 #ifdef __cplusplus
 }
 #endif
+
+/**
+ * Serializes the LastRunInfo to the file. This persists information about
+ * why the current launch crashed, for use on future launch.
+ */
+bool bsg_serialize_last_run_info_to_file(bsg_environment *env) {
+  char *path = env->last_run_info_path;
+  int fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+  if (fd == -1) {
+    return false;
+  }
+
+  int size = bsg_strlen(env->next_last_run_info);
+  ssize_t len = write(fd, env->next_last_run_info, size);
+  return len == size;
+}
 
 bool bsg_serialize_event_to_file(bsg_environment *env) {
   int fd = open(env->next_event_path, O_WRONLY | O_CREAT, 0644);
@@ -87,7 +104,19 @@ bugsnag_report_v3 *bsg_report_v3_read(int fd) {
   return event;
 }
 
-bugsnag_event *bsg_report_v4_read(int fd) {
+bugsnag_report_v4 *bsg_report_v4_read(int fd) {
+  size_t event_size = sizeof(bugsnag_report_v4);
+  bugsnag_report_v4 *event = malloc(event_size);
+
+  ssize_t len = read(fd, event, event_size);
+  if (len != event_size) {
+    free(event);
+    return NULL;
+  }
+  return event;
+}
+
+bugsnag_event *bsg_report_v5_read(int fd) {
   size_t event_size = sizeof(bugsnag_event);
   bugsnag_event *event = malloc(event_size);
 
@@ -99,6 +128,16 @@ bugsnag_event *bsg_report_v4_read(int fd) {
   return event;
 }
 
+/**
+ * Reads persisted structs into memory from disk. The report version is
+ * serialized in the file header, and old structs are maintained in migrate.h
+ * for backwards compatibility. These are then migrated to the current
+ * bugsnag_event struct.
+ *
+ * Note that calling the individual bsg_map_v functions will free the parameter
+ * - this is to conserve memory when migrating particularly old payload
+ * versions.
+ */
 bugsnag_event *bsg_event_read(int fd) {
   bsg_report_header *header = bsg_report_header_read(fd);
   if (header == NULL) {
@@ -118,8 +157,45 @@ bugsnag_event *bsg_event_read(int fd) {
   } else if (event_version == 3) {
     bugsnag_report_v3 *report_v3 = bsg_report_v3_read(fd);
     event = bsg_map_v3_to_report(report_v3);
-  } else {
-    event = bsg_report_v4_read(fd);
+  } else if (event_version == 4) {
+    bugsnag_report_v4 *report_v4 = bsg_report_v4_read(fd);
+    event = bsg_map_v4_to_report(report_v4);
+  } else if (event_version == 5) {
+    event = bsg_report_v5_read(fd);
+  }
+  return event;
+}
+
+bugsnag_event *bsg_map_v4_to_report(bugsnag_report_v4 *report_v4) {
+  if (report_v4 == NULL) {
+    return NULL;
+  }
+  bugsnag_event *event = malloc(sizeof(bugsnag_event));
+
+  if (event != NULL) {
+    event->notifier = report_v4->notifier;
+    event->device = report_v4->device;
+    event->user = report_v4->user;
+    event->error = report_v4->error;
+    event->metadata = report_v4->metadata;
+    event->crumb_count = report_v4->crumb_count;
+    event->crumb_first_index = report_v4->crumb_first_index;
+    memcpy(event->breadcrumbs, report_v4->breadcrumbs,
+           sizeof(event->breadcrumbs));
+    event->severity = report_v4->severity;
+    bsg_strncpy_safe(event->session_id, report_v4->session_id,
+                     sizeof(event->session_id));
+    bsg_strncpy_safe(event->session_start, report_v4->session_start,
+                     sizeof(event->session_id));
+    event->handled_events = report_v4->handled_events;
+    event->unhandled_events = report_v4->unhandled_events;
+    bsg_strncpy_safe(event->grouping_hash, report_v4->grouping_hash,
+                     sizeof(event->session_id));
+    event->unhandled = report_v4->unhandled;
+    bsg_strncpy_safe(event->api_key, report_v4->api_key,
+                     sizeof(event->api_key));
+    migrate_app_v2(report_v4, event);
+    free(report_v4);
   }
   return event;
 }
@@ -128,7 +204,7 @@ bugsnag_event *bsg_map_v3_to_report(bugsnag_report_v3 *report_v3) {
   if (report_v3 == NULL) {
     return NULL;
   }
-  bugsnag_event *event = malloc(sizeof(bugsnag_event));
+  bugsnag_report_v4 *event = malloc(sizeof(bugsnag_event));
 
   if (event != NULL) {
     event->notifier = report_v3->notifier;
@@ -153,7 +229,7 @@ bugsnag_event *bsg_map_v3_to_report(bugsnag_report_v3 *report_v3) {
     strcpy(event->api_key, "");
     free(report_v3);
   }
-  return event;
+  return bsg_map_v4_to_report(event);
 }
 
 bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2) {
@@ -286,6 +362,32 @@ void migrate_app_v1(bugsnag_report_v2 *report_v2, bugsnag_report_v3 *event) {
   bugsnag_event_add_metadata_string(event, "app", "versionName",
                                     report_v2->app.version_name);
   bugsnag_event_add_metadata_string(event, "app", "name", report_v2->app.name);
+}
+
+void migrate_app_v2(bugsnag_report_v4 *report_v4, bugsnag_event *event) {
+  bsg_strncpy_safe(event->app.id, report_v4->app.id, sizeof(event->app.id));
+  bsg_strncpy_safe(event->app.release_stage, report_v4->app.release_stage,
+                   sizeof(event->app.release_stage));
+  bsg_strncpy_safe(event->app.type, report_v4->app.type,
+                   sizeof(event->app.type));
+  bsg_strncpy_safe(event->app.version, report_v4->app.version,
+                   sizeof(event->app.version));
+  bsg_strncpy_safe(event->app.active_screen, report_v4->app.active_screen,
+                   sizeof(event->app.active_screen));
+  bsg_strncpy_safe(event->app.build_uuid, report_v4->app.build_uuid,
+                   sizeof(event->app.build_uuid));
+  bsg_strncpy_safe(event->app.binary_arch, report_v4->app.binary_arch,
+                   sizeof(event->app.binary_arch));
+  event->app.version_code = report_v4->app.version_code;
+  event->app.duration = report_v4->app.duration;
+  event->app.duration_in_foreground = report_v4->app.duration_in_foreground;
+  event->app.duration_ms_offset = report_v4->app.duration_ms_offset;
+  event->app.duration_in_foreground_ms_offset =
+      report_v4->app.duration_in_foreground_ms_offset;
+  event->app.in_foreground = report_v4->app.in_foreground;
+
+  // no info available, set to sensible default
+  event->app.is_launching = false;
 }
 
 void migrate_device_v1(bugsnag_report_v2 *report_v2, bugsnag_report_v3 *event) {
@@ -472,6 +574,7 @@ void bsg_serialize_app(const bsg_app_info app, JSON_Object *event_obj) {
   json_object_dotset_number(event_obj, "app.durationInForeground",
                             app.duration_in_foreground);
   json_object_dotset_boolean(event_obj, "app.inForeground", app.in_foreground);
+  json_object_dotset_boolean(event_obj, "app.isLaunching", app.is_launching);
 }
 
 void bsg_serialize_app_metadata(const bsg_app_info app,

@@ -8,5 +8,6 @@
   "versionCode": 55,
   "duration": 0,
   "durationInForeground": 0,
-  "inForeground": false
+  "inForeground": false,
+  "isLaunching": false
 }

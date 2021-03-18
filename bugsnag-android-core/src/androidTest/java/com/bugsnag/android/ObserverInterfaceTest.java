@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import static com.bugsnag.android.BugsnagTestUtils.generateConfiguration;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -149,6 +150,13 @@ public class ObserverInterfaceTest {
         client.setContext("Pod Bay");
         StateEvent.UpdateContext msg = findMessageInQueue(StateEvent.UpdateContext.class);
         assertEquals("Pod Bay", msg.getContext());
+    }
+
+    @Test
+    public void testClientMarkLaunchCompletedSendsMessage() {
+        client.markLaunchCompleted();
+        StateEvent.UpdateIsLaunching msg = findMessageInQueue(StateEvent.UpdateIsLaunching.class);
+        assertFalse(msg.isLaunching());
     }
 
     @Test

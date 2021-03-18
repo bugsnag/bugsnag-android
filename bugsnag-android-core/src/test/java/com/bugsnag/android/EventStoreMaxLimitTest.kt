@@ -79,6 +79,7 @@ class EventStoreMaxLimitTest {
             config,
             NoopLogger,
             Notifier(),
+            BackgroundTaskService(),
             FileStore.Delegate { _, _, _ -> }
         )
     }

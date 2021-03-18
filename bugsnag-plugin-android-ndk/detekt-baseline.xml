@@ -3,7 +3,7 @@
   <ManuallySuppressedIssues></ManuallySuppressedIssues>
   <CurrentIssues>
     <ID>ComplexMethod:NativeBridge.kt$NativeBridge$override fun update(observable: Observable, arg: Any?)</ID>
-    <ID>LongParameterList:NativeBridge.kt$NativeBridge$( apiKey: String, reportingDirectory: String, autoDetectNdkCrashes: Boolean, apiLevel: Int, is32bit: Boolean, appVersion: String, buildUuid: String, releaseStage: String )</ID>
+    <ID>LongParameterList:NativeBridge.kt$NativeBridge$( apiKey: String, reportingDirectory: String, lastRunInfoPath: String, consecutiveLaunchCrashes: Int, autoDetectNdkCrashes: Boolean, apiLevel: Int, is32bit: Boolean, appVersion: String, buildUuid: String, releaseStage: String )</ID>
     <ID>NestedBlockDepth:NativeBridge.kt$NativeBridge$private fun deliverPendingReports()</ID>
     <ID>TooManyFunctions:NativeBridge.kt$NativeBridge : Observer</ID>
   </CurrentIssues>

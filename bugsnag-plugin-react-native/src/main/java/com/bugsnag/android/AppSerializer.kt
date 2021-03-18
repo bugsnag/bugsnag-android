@@ -10,6 +10,7 @@ internal class AppSerializer : MapSerializer<AppWithState> {
         map["durationInForeground"] = app.durationInForeground
         map["id"] = app.id
         map["inForeground"] = app.inForeground
+        map["isLaunching"] = app.isLaunching
         map["releaseStage"] = app.releaseStage
         map["version"] = app.version
         map["versionCode"] = app.versionCode
