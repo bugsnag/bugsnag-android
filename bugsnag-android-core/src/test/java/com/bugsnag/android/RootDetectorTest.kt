@@ -18,7 +18,7 @@ import java.nio.file.Files
 @RunWith(MockitoJUnitRunner::class)
 class RootDetectorTest {
 
-    private val rootDetector = RootDetector()
+    private val rootDetector = RootDetector(logger = NoopLogger)
 
     @Mock
     lateinit var processBuilder: ProcessBuilder
@@ -68,7 +68,7 @@ class RootDetectorTest {
     @Test
     fun checkBuildTagsRooted() {
         val info = DeviceBuildInfo(null, null, null, null, null, null, "test-keys", null, null)
-        assertTrue(RootDetector(info).checkBuildTags())
+        assertTrue(RootDetector(info, logger = NoopLogger).checkBuildTags())
     }
 
     /**
@@ -77,7 +77,7 @@ class RootDetectorTest {
     @Test
     fun checkBuildTagsNotRooted() {
         val info = DeviceBuildInfo(null, null, null, null, null, null, "release-keys", null, null)
-        assertFalse(RootDetector(info).checkBuildTags())
+        assertFalse(RootDetector(info, logger = NoopLogger).checkBuildTags())
     }
 
     /**
@@ -85,7 +85,12 @@ class RootDetectorTest {
      */
     @Test
     fun checkRootBinaryRooted() {
-        assertFalse(RootDetector(rootBinaryLocations = listOf("/foo")).checkRootBinaries())
+        assertFalse(
+            RootDetector(
+                rootBinaryLocations = listOf("/foo"),
+                logger = NoopLogger
+            ).checkRootBinaries()
+        )
     }
 
     /**
@@ -95,7 +100,12 @@ class RootDetectorTest {
     fun checkRootBinaryNotRooted() {
         val tmpFile = Files.createTempFile("evilrootbinary", ".apk")
         val path = tmpFile.toFile().absolutePath
-        assertTrue(RootDetector(rootBinaryLocations = listOf(path)).checkRootBinaries())
+        assertTrue(
+            RootDetector(
+                rootBinaryLocations = listOf(path),
+                logger = NoopLogger
+            ).checkRootBinaries()
+        )
     }
 
     /**
@@ -104,7 +114,7 @@ class RootDetectorTest {
     @Test
     fun checkBuildPropsIOException() {
         val tmpFile = File("/foo")
-        assertFalse(RootDetector(buildProps = tmpFile).checkBuildProps())
+        assertFalse(RootDetector(buildProps = tmpFile, logger = NoopLogger).checkBuildProps())
     }
 
     /**
@@ -113,7 +123,7 @@ class RootDetectorTest {
     @Test
     fun checkBuildPropsEmptyFile() {
         val tmpFile = Files.createTempFile("empty", ".prop").toFile()
-        assertFalse(RootDetector(buildProps = tmpFile).checkBuildProps())
+        assertFalse(RootDetector(buildProps = tmpFile, logger = NoopLogger).checkBuildProps())
     }
 
     /**
@@ -123,7 +133,7 @@ class RootDetectorTest {
     fun checkBuildPropsNonRooted() {
         val tmpFile = Files.createTempFile("regular", ".prop").toFile()
         tmpFile.writeText(SAMPLE_BUILD_PROPS)
-        assertFalse(RootDetector(buildProps = tmpFile).checkBuildProps())
+        assertFalse(RootDetector(buildProps = tmpFile, logger = NoopLogger).checkBuildProps())
     }
 
     /**
@@ -135,7 +145,7 @@ class RootDetectorTest {
         tmpFile.writeText(SAMPLE_BUILD_PROPS)
         tmpFile.appendText("ro.secure=[1]")
         tmpFile.appendText("ro.debuggable=[0]")
-        assertFalse(RootDetector(buildProps = tmpFile).checkBuildProps())
+        assertFalse(RootDetector(buildProps = tmpFile, logger = NoopLogger).checkBuildProps())
     }
 
     /**
@@ -147,7 +157,7 @@ class RootDetectorTest {
         tmpFile.writeText(SAMPLE_BUILD_PROPS)
         tmpFile.appendText("#ro.secure=[1]")
         tmpFile.appendText("#  ro.debuggable=[0]")
-        assertFalse(RootDetector(buildProps = tmpFile).checkBuildProps())
+        assertFalse(RootDetector(buildProps = tmpFile, logger = NoopLogger).checkBuildProps())
     }
 
     /**
@@ -158,7 +168,7 @@ class RootDetectorTest {
         val tmpFile = Files.createTempFile("rooted", ".prop").toFile()
         tmpFile.writeText(SAMPLE_BUILD_PROPS)
         tmpFile.appendText("\nro.debuggable=[1]\n")
-        assertTrue(RootDetector(buildProps = tmpFile).checkBuildProps())
+        assertTrue(RootDetector(buildProps = tmpFile, logger = NoopLogger).checkBuildProps())
     }
 
     /**
@@ -169,7 +179,7 @@ class RootDetectorTest {
         val tmpFile = Files.createTempFile("rooted", ".prop").toFile()
         tmpFile.writeText(SAMPLE_BUILD_PROPS)
         tmpFile.appendText("\nro.secure=[0]\n")
-        assertTrue(RootDetector(buildProps = tmpFile).checkBuildProps())
+        assertTrue(RootDetector(buildProps = tmpFile, logger = NoopLogger).checkBuildProps())
     }
 
     companion object {
