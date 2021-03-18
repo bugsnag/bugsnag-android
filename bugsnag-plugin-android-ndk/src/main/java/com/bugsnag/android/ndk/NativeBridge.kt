@@ -44,6 +44,8 @@ class NativeBridge : Observer {
     external fun install(
         apiKey: String,
         reportingDirectory: String,
+        lastRunInfoPath: String,
+        consecutiveLaunchCrashes: Int,
         autoDetectNdkCrashes: Boolean,
         apiLevel: Int,
         is32bit: Boolean,
@@ -71,6 +73,8 @@ class NativeBridge : Observer {
     external fun pausedSession()
     external fun updateContext(context: String)
     external fun updateInForeground(inForeground: Boolean, activityName: String)
+    external fun updateIsLaunching(isLaunching: Boolean)
+    external fun updateLastRunInfo(consecutiveLaunchCrashes: Int)
     external fun updateOrientation(orientation: String)
     external fun updateUserId(newValue: String)
     external fun updateUserEmail(newValue: String)
@@ -122,6 +126,8 @@ class NativeBridge : Observer {
                 msg.inForeground,
                 makeSafe(msg.contextActivity ?: "")
             )
+            is StateEvent.UpdateLastRunInfo -> updateLastRunInfo(msg.consecutiveLaunchCrashes)
+            is StateEvent.UpdateIsLaunching -> updateIsLaunching(msg.isLaunching)
             is UpdateOrientation -> updateOrientation(msg.orientation ?: "")
             is UpdateUser -> {
                 updateUserId(makeSafe(msg.user.id ?: ""))
@@ -175,6 +181,8 @@ class NativeBridge : Observer {
                 install(
                     makeSafe(arg.apiKey),
                     reportPath,
+                    makeSafe(arg.lastRunInfoPath),
+                    arg.consecutiveLaunchCrashes,
                     arg.autoDetectNdkCrashes,
                     Build.VERSION.SDK_INT,
                     is32bit,

@@ -47,7 +47,6 @@ internal class DeviceDataCollectorSerializationTest {
             metrics.densityDpi = 120
             `when`(res.displayMetrics).thenReturn(metrics)
             `when`(connectivity.retrieveNetworkAccessState()).thenReturn("unknown")
-            `when`(rootDetector.isRooted()).thenReturn(false)
 
             // construct devicedata object
             val deviceData = DeviceDataCollector(

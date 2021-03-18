@@ -38,6 +38,7 @@ Scenario: Unhandled Java Exception with loaded configuration
     And the error payload field "events.0.app.duration" is an integer
     And the error payload field "events.0.app.durationInForeground" is an integer
     And the event "app.inForeground" is true
+    And the event "app.isLaunching" is true
     And the error payload field "events.0.metaData.app.memoryUsage" is greater than 0
 
     # Metadata
@@ -128,6 +129,7 @@ Scenario: Signal raised with overwritten config
     And the error payload field "events.0.app.duration" is an integer
     And the error payload field "events.0.app.durationInForeground" is an integer
     And the event "app.inForeground" is true
+    And the event "app.isLaunching" is true
     And the event "metaData.app.name" equals "MazeRunner"
 
     # Device data
@@ -207,6 +209,7 @@ Scenario: C++ exception thrown with overwritten config
     And the error payload field "events.0.app.duration" is an integer
     And the error payload field "events.0.app.durationInForeground" is an integer
     And the event "app.inForeground" is true
+    And the event "app.isLaunching" is true
     And the event "metaData.app.name" equals "MazeRunner"
 
     # Device data
@@ -281,6 +284,7 @@ Scenario: ANR detection
     And the error payload field "events.0.app.duration" is an integer
     And the error payload field "events.0.app.durationInForeground" is an integer
     And the event "app.inForeground" is true
+    And the event "app.isLaunching" is false
     And the event "metaData.app.name" equals "MazeRunner"
 
     # Device data

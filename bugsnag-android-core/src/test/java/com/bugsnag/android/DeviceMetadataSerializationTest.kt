@@ -27,6 +27,7 @@ internal class DeviceMetadataSerializationTest {
             val res = mock(Resources::class.java)
             val conf = mock(Configuration::class.java)
             val connectivity = mock(Connectivity::class.java)
+            val rootDetector = mock(RootDetector::class.java)
 
             val prefs = mock(SharedPreferences::class.java)
             val editor = mock(SharedPreferences.Editor::class.java)
@@ -55,7 +56,7 @@ internal class DeviceMetadataSerializationTest {
                 "123",
                 buildInfo,
                 File(""),
-                RootDetector(),
+                rootDetector,
                 NoopLogger
             )
 

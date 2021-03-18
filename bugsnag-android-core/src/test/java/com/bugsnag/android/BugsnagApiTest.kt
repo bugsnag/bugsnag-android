@@ -184,4 +184,16 @@ class BugsnagApiTest {
         Bugsnag.client = null
         Bugsnag.getClient()
     }
+
+    @Test
+    fun lastRunInfo() {
+        Bugsnag.getLastRunInfo()
+        verify(client, times(1)).getLastRunInfo()
+    }
+
+    @Test
+    fun markLaunchCompleted() {
+        Bugsnag.markLaunchCompleted()
+        verify(client, times(1)).markLaunchCompleted()
+    }
 }

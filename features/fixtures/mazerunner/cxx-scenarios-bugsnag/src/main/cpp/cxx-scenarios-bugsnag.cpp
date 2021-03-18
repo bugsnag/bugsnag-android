@@ -303,4 +303,10 @@ Java_com_bugsnag_android_mazerunner_scenarios_MultiProcessUnhandledCXXErrorScena
   abort();
 }
 
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXCrashLoopScenario_crash(JNIEnv *env,
+                                                                         jobject instance) {
+  abort();
+}
+
 }

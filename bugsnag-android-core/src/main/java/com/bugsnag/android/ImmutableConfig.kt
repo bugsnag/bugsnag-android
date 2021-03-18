@@ -23,12 +23,13 @@ internal data class ImmutableConfig(
     val delivery: Delivery,
     val endpoints: EndpointConfiguration,
     val persistUser: Boolean,
-    val launchCrashThresholdMs: Long,
+    val launchDurationMillis: Long,
     val logger: Logger,
     val maxBreadcrumbs: Int,
     val maxPersistedEvents: Int,
     val maxPersistedSessions: Int,
-    val persistenceDirectory: File
+    val persistenceDirectory: File,
+    val sendLaunchCrashesSynchronously: Boolean
 ) {
 
     /**
@@ -79,13 +80,14 @@ internal fun convertToImmutableConfig(
         delivery = config.delivery,
         endpoints = config.endpoints,
         persistUser = config.persistUser,
-        launchCrashThresholdMs = config.launchCrashThresholdMs,
+        launchDurationMillis = config.launchDurationMillis,
         logger = config.logger!!,
         maxBreadcrumbs = config.maxBreadcrumbs,
         maxPersistedEvents = config.maxPersistedEvents,
         maxPersistedSessions = config.maxPersistedSessions,
         enabledBreadcrumbTypes = config.enabledBreadcrumbTypes?.toSet(),
-        persistenceDirectory = config.persistenceDirectory!!
+        persistenceDirectory = config.persistenceDirectory!!,
+        sendLaunchCrashesSynchronously = config.sendLaunchCrashesSynchronously
     )
 }
 

@@ -26,6 +26,7 @@ internal class AppDataCollectorSerializationTest {
             val pm = mock(PackageManager::class.java)
             val am = mock(ActivityManager::class.java)
             val sessionTracker = mock(SessionTracker::class.java)
+            val launchCrashTracker = mock(LaunchCrashTracker::class.java)
             val config = BugsnagTestUtils.generateConfiguration()
 
             // populate summary fields
@@ -49,6 +50,7 @@ internal class AppDataCollectorSerializationTest {
                 convert(config),
                 sessionTracker,
                 am,
+                launchCrashTracker,
                 NoopLogger
             )
             appData.codeBundleId = "foo-99"

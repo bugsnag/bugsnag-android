@@ -25,7 +25,7 @@ class ConfigSerializer implements MapSerializer<ImmutableConfig> {
         map.put("versionCode", config.getVersionCode());
         map.put("type", config.getAppType());
         map.put("persistUser", config.getPersistUser());
-        map.put("launchCrashThresholdMs", (int) config.getLaunchCrashThresholdMs());
+        map.put("launchCrashThresholdMs", (int) config.getLaunchDurationMillis());
         map.put("maxBreadcrumbs", config.getMaxBreadcrumbs());
         map.put("enabledBreadcrumbTypes", serializeBreadrumbTypes(config));
         map.put("enabledErrorTypes", serializeErrorTypes(config));

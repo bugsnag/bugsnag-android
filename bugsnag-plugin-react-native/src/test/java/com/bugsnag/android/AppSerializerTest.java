@@ -25,7 +25,7 @@ public class AppSerializerTest {
     public void setup() throws IOException {
         app = new AppWithState(TestData.generateConfig(),
                 "x86", "com.example.foo", "prod",
-                "1.5.3", "code-id-123", 509, 23, true
+                "1.5.3", "code-id-123", 509, 23, true, true
         );
     }
 
@@ -37,6 +37,7 @@ public class AppSerializerTest {
         assertEquals(509, map.get("duration"));
         assertEquals(23, map.get("durationInForeground"));
         assertEquals(true, map.get("inForeground"));
+        assertEquals(true, map.get("isLaunching"));
         assertEquals("x86", map.get("binaryArch"));
         assertEquals("builduuid-123", map.get("buildUuid"));
         assertEquals("code-id-123", map.get("codeBundleId"));

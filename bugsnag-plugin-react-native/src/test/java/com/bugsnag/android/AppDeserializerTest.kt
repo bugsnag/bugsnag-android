@@ -26,6 +26,7 @@ class AppDeserializerTest {
         map["duration"] = 2094
         map["durationInForeground"] = 1095
         map["inForeground"] = true
+        map["isLaunching"] = true
     }
 
     @Test
@@ -42,5 +43,6 @@ class AppDeserializerTest {
         assertEquals(2094, app.duration)
         assertEquals(1095, app.durationInForeground)
         assertTrue(app.inForeground!!)
+        assertTrue(app.isLaunching!!)
     }
 }

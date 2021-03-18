@@ -31,7 +31,8 @@ class TestData {
                 22,
                 32,
                 32,
-                Files.createTempDirectory("foo").toFile()
+                Files.createTempDirectory("foo").toFile(),
+                true
         );
     }
 

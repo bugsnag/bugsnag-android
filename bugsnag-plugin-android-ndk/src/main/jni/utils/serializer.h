@@ -15,6 +15,8 @@ char *bsg_serialize_event_to_json_string(bugsnag_event *event);
 
 bool bsg_serialize_event_to_file(bsg_environment *env) __asyncsafe;
 
+bool bsg_serialize_last_run_info_to_file(bsg_environment *env) __asyncsafe;
+
 bugsnag_event *bsg_deserialize_event_from_file(char *filepath);
 
 void bsg_serialize_context(const bugsnag_event *event, JSON_Object *event_obj);

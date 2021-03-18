@@ -19,8 +19,7 @@ internal class NdkPlugin : Plugin {
     private fun initNativeBridge(client: Client): NativeBridge {
         val nativeBridge = NativeBridge()
         client.registerObserver(nativeBridge)
-        client.sendNativeSetupNotification()
-        client.syncInitialState()
+        client.setupNdkPlugin()
         return nativeBridge
     }
 

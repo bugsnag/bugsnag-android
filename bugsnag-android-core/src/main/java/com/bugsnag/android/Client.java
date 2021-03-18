@@ -83,6 +83,12 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
     final Notifier notifier = new Notifier();
 
+    @Nullable
+    final LastRunInfo lastRunInfo;
+    final LastRunInfoStore lastRunInfoStore;
+    final LaunchCrashTracker launchCrashTracker;
+    final BackgroundTaskService bgTaskService = new BackgroundTaskService();
+
     /**
      * Initialize a Bugsnag client
      *
@@ -144,14 +150,15 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
         sessionStore = new SessionStore(immutableConfig, logger, null);
         sessionTracker = new SessionTracker(immutableConfig, callbackState, this,
-                sessionStore, logger);
+                sessionStore, logger, bgTaskService);
         metadataState = copyMetadataState(configuration);
 
         ActivityManager am =
                 (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
 
+        launchCrashTracker = new LaunchCrashTracker(immutableConfig);
         appDataCollector = new AppDataCollector(appContext, appContext.getPackageManager(),
-                immutableConfig, sessionTracker, am, logger);
+                immutableConfig, sessionTracker, am, launchCrashTracker, logger);
 
         // load the device + user information
         SharedPrefMigrator sharedPrefMigrator = new SharedPrefMigrator(appContext);
@@ -163,8 +170,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
         DeviceBuildInfo info = DeviceBuildInfo.Companion.defaultInfo();
         Resources resources = appContext.getResources();
-        deviceDataCollector = new DeviceDataCollector(connectivity, appContext, resources,
-                deviceId, info, Environment.getDataDirectory(), new RootDetector(), logger);
+        deviceDataCollector = new DeviceDataCollector(connectivity, appContext,
+                resources, deviceId, info, Environment.getDataDirectory(),
+                new RootDetector(), logger);
 
         if (appContext instanceof Application) {
             Application application = (Application) appContext;
@@ -194,11 +202,11 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
         InternalReportDelegate delegate = new InternalReportDelegate(appContext, logger,
                 immutableConfig, storageManager, appDataCollector, deviceDataCollector,
-                sessionTracker, notifier);
-        eventStore = new EventStore(immutableConfig, logger, notifier, delegate);
+                sessionTracker, notifier, bgTaskService);
+        eventStore = new EventStore(immutableConfig, logger, notifier, bgTaskService, delegate);
 
         deliveryDelegate = new DeliveryDelegate(logger, eventStore,
-                immutableConfig, breadcrumbState, notifier);
+                immutableConfig, breadcrumbState, notifier, bgTaskService);
 
         // Install a default exception handler with this client
         if (immutableConfig.getEnabledErrorTypes().getUnhandledExceptions()) {
@@ -206,26 +214,13 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         }
 
         // register a receiver for automatic breadcrumbs
-        final SystemBroadcastReceiver systemBroadcastReceiver =
-            new SystemBroadcastReceiver(this, logger);
-        if (systemBroadcastReceiver.getActions().size() > 0) {
-            try {
-                Async.run(new Runnable() {
-                    @Override
-                    public void run() {
-                        appContext.registerReceiver(systemBroadcastReceiver,
-                            systemBroadcastReceiver.getIntentFilter());
-                    }
-                });
-            } catch (RejectedExecutionException ex) {
-                logger.w("Failed to register for automatic breadcrumb broadcasts", ex);
-            }
-            this.systemBroadcastReceiver = systemBroadcastReceiver;
-        } else {
-            this.systemBroadcastReceiver = null;
-        }
+        systemBroadcastReceiver = SystemBroadcastReceiver.register(this, logger, bgTaskService);
 
         registerOrientationChangeListener();
+
+        // load last run info
+        lastRunInfoStore = new LastRunInfoStore(immutableConfig);
+        lastRunInfo = loadLastRunInfo();
 
         // initialise plugins before attempting to flush any errors
         loadPlugins(configuration);
@@ -234,6 +229,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
         // Flush any on-disk errors and sessions
         eventStore.flushOnLaunch();
+        eventStore.flushAsync();
         sessionTracker.flushAsync();
 
         // leave auto breadcrumb
@@ -262,7 +258,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             Connectivity connectivity,
             StorageManager storageManager,
             Logger logger,
-            DeliveryDelegate deliveryDelegate
+            DeliveryDelegate deliveryDelegate,
+            LastRunInfoStore lastRunInfoStore,
+            LaunchCrashTracker launchCrashTracker
     ) {
         this.immutableConfig = immutableConfig;
         this.metadataState = metadataState;
@@ -283,6 +281,32 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         this.storageManager = storageManager;
         this.logger = logger;
         this.deliveryDelegate = deliveryDelegate;
+        this.lastRunInfoStore = lastRunInfoStore;
+        this.launchCrashTracker = launchCrashTracker;
+        this.lastRunInfo = null;
+    }
+
+    private LastRunInfo loadLastRunInfo() {
+        LastRunInfo lastRunInfo = lastRunInfoStore.load();
+        LastRunInfo currentRunInfo = new LastRunInfo(0, false, false);
+        persistRunInfo(currentRunInfo);
+        return lastRunInfo;
+    }
+
+    /**
+     * Load information about the last run, and reset the persisted information to the defaults.
+     */
+    private void persistRunInfo(final LastRunInfo runInfo) {
+        try {
+            bgTaskService.submitTask(TaskType.IO, new Runnable() {
+                @Override
+                public void run() {
+                    lastRunInfoStore.persist(runInfo);
+                }
+            });
+        } catch (RejectedExecutionException exc) {
+            logger.w("Failed to persist last run info", exc);
+        }
     }
 
     private void loadPlugins(@NonNull Configuration configuration) {
@@ -322,18 +346,12 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         appContext.registerReceiver(receiver, configFilter);
     }
 
-    void sendNativeSetupNotification() {
-        clientObservable.postNdkInstall(immutableConfig);
-        try {
-            Async.run(new Runnable() {
-                @Override
-                public void run() {
-                    clientObservable.postNdkDeliverPending();
-                }
-            });
-        } catch (RejectedExecutionException ex) {
-            logger.w("Failed to enqueue native reports, will retry next launch: ", ex);
-        }
+    void setupNdkPlugin() {
+        String lastRunInfoPath = lastRunInfoStore.getFile().getAbsolutePath();
+        int crashes = (lastRunInfo != null) ? lastRunInfo.getConsecutiveLaunchCrashes() : 0;
+        clientObservable.postNdkInstall(immutableConfig, lastRunInfoPath, crashes);
+        syncInitialState();
+        clientObservable.postNdkDeliverPending();
     }
 
     void registerObserver(Observer observer) {
@@ -344,6 +362,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         userState.addObserver(observer);
         contextState.addObserver(observer);
         deliveryDelegate.addObserver(observer);
+        launchCrashTracker.addObserver(observer);
     }
 
     /**
@@ -623,6 +642,20 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         Metadata data = Metadata.Companion.merge(metadataState.getMetadata(), metadata);
         Event event = new Event(exc, immutableConfig, handledState, data, logger);
         populateAndNotifyAndroidEvent(event, null);
+
+        // persist LastRunInfo so that on relaunch users can check the app crashed
+        int consecutiveLaunchCrashes = lastRunInfo == null ? 0
+                : lastRunInfo.getConsecutiveLaunchCrashes();
+        boolean launching = launchCrashTracker.isLaunching();
+        if (launching) {
+            consecutiveLaunchCrashes += 1;
+        }
+        LastRunInfo runInfo = new LastRunInfo(consecutiveLaunchCrashes, true, launching);
+        persistRunInfo(runInfo);
+
+        // suspend execution of any further background tasks, waiting for previously
+        // submitted ones to complete.
+        bgTaskService.shutdown();
     }
 
     void populateAndNotifyAndroidEvent(@NonNull Event event,
@@ -847,6 +880,31 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         }
     }
 
+    /**
+     * Retrieves information about the last launch of the application, if it has been run before.
+     *
+     * For example, this allows checking whether the app crashed on its last launch, which could
+     * be used to perform conditional behaviour to recover from crashes, such as clearing the
+     * app data cache.
+     */
+    @Nullable
+    public LastRunInfo getLastRunInfo() {
+        return lastRunInfo;
+    }
+
+    /**
+     * Informs Bugsnag that the application has finished launching. Once this has been called
+     * {@link AppWithState#isLaunching()} will always be false in any new error reports,
+     * and synchronous delivery will not be attempted on the next launch for any fatal crashes.
+     *
+     * By default this method will be called after Bugsnag is initialized when
+     * {@link Configuration#getLaunchDurationMillis()} has elapsed. Invoking this method manually
+     * has precedence over the value supplied via the launchDurationMillis configuration option.
+     */
+    public void markLaunchCompleted() {
+        launchCrashTracker.markLaunchCompleted();
+    }
+
     SessionTracker getSessionTracker() {
         return sessionTracker;
     }
@@ -911,8 +969,10 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         deviceDataCollector.addRuntimeVersionInfo(key, value);
     }
 
+    @VisibleForTesting
     void close() {
         connectivity.unregisterForNetworkChanges();
+        bgTaskService.shutdown();
     }
 
     Logger getLogger() {

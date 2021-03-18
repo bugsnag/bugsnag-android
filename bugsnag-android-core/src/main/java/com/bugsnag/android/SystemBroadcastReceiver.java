@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * Used to automatically create breadcrumbs for system events
@@ -28,6 +29,28 @@ class SystemBroadcastReceiver extends BroadcastReceiver {
         this.client = client;
         this.logger = logger;
         this.actions = buildActions();
+    }
+
+    static SystemBroadcastReceiver register(final Client client,
+                                            Logger logger,
+                                            BackgroundTaskService bgTaskService) {
+        final SystemBroadcastReceiver receiver = new SystemBroadcastReceiver(client, logger);
+        if (receiver.getActions().size() > 0) {
+            try {
+                bgTaskService.submitTask(TaskType.DEFAULT, new Runnable() {
+                    @Override
+                    public void run() {
+                        IntentFilter intentFilter = receiver.getIntentFilter();
+                        client.appContext.registerReceiver(receiver, intentFilter);
+                    }
+                });
+            } catch (RejectedExecutionException ex) {
+                logger.w("Failed to register for automatic breadcrumb broadcasts", ex);
+            }
+            return receiver;
+        } else {
+            return null;
+        }
     }
 
     @Override

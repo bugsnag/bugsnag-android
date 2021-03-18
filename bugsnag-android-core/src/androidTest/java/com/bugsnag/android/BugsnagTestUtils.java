@@ -57,6 +57,19 @@ final class BugsnagTestUtils {
                 new Notifier(), NoopLogger.INSTANCE);
     }
 
+    static Event generateEvent() {
+        Throwable exc = new RuntimeException();
+        Event event = new Event(
+                exc,
+                BugsnagTestUtils.generateImmutableConfig(),
+                SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION),
+                NoopLogger.INSTANCE
+        );
+        event.setApp(generateAppWithState());
+        event.setDevice(generateDeviceWithState());
+        return event;
+    }
+
     static Configuration generateConfiguration() {
         Configuration configuration = new Configuration("5d1ec5bd39a74caa1267142706a7fb21");
         configuration.setDelivery(generateDelivery());
@@ -110,7 +123,7 @@ final class BugsnagTestUtils {
 
     public static AppWithState generateAppWithState() {
         return new AppWithState(generateImmutableConfig(), null, null, null,
-                null, null, null, null, null);
+                null, null, null, null, null, null);
     }
 
     public static App generateApp() {
