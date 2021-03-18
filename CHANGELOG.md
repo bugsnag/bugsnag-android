@@ -1,12 +1,5 @@
 # Changelog
 
-## TBD
-
-### Enhancements
-
-* Improve detection of rooted devices
-  [#1194](https://github.com/bugsnag/bugsnag-android/pull/1194)
-
 ## 5.7.1 (2021-03-03)
 
 ### Bug fixes
