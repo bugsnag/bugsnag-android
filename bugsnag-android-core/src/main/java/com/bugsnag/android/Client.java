@@ -163,8 +163,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
         DeviceBuildInfo info = DeviceBuildInfo.Companion.defaultInfo();
         Resources resources = appContext.getResources();
-        deviceDataCollector = new DeviceDataCollector(connectivity, appContext, resources,
-                deviceId, info, Environment.getDataDirectory(), new RootDetector(), logger);
+        deviceDataCollector = new DeviceDataCollector(connectivity, appContext,
+                resources, deviceId, info, Environment.getDataDirectory(), logger);
 
         if (appContext instanceof Application) {
             Application application = (Application) appContext;
