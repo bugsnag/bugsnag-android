@@ -4,6 +4,7 @@ import androidx.annotation.VisibleForTesting
 import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Attempts to detect whether the device is rooted. Root detection errs on the side of false
@@ -13,10 +14,11 @@ import java.io.IOException
  * possible to manipulate Java return values & native library loading, it will always be possible
  * for a determined application to defeat these root checks.
  */
-internal class RootDetector(
+internal class RootDetector @JvmOverloads constructor(
     private val deviceBuildInfo: DeviceBuildInfo = DeviceBuildInfo.defaultInfo(),
     private val rootBinaryLocations: List<String> = ROOT_INDICATORS,
-    private val buildProps: File = BUILD_PROP_FILE
+    private val buildProps: File = BUILD_PROP_FILE,
+    private val logger: Logger
 ) {
 
     companion object {
@@ -39,13 +41,27 @@ internal class RootDetector(
         )
     }
 
+    private val libraryLoaded = AtomicBoolean(false)
+
+    init {
+        try {
+            System.loadLibrary("bugsnag-root-detection")
+            libraryLoaded.set(true)
+        } catch (ignored: UnsatisfiedLinkError) {
+            // library couldn't load. This could be due to root detection countermeasures,
+            // or down to genuine OS level bugs with library loading - in either case
+            // Bugsnag will default to skipping the checks.
+        }
+    }
+
     /**
      * Determines whether the device is rooted or not.
      */
     fun isRooted(): Boolean {
         return try {
-            checkBuildTags() || checkSuExists() || checkBuildProps() || checkRootBinaries()
+            checkBuildTags() || checkSuExists() || checkBuildProps() || checkRootBinaries() || nativeCheckRoot()
         } catch (exc: Throwable) {
+            logger.w("Root detection failed", exc)
             false
         }
     }
@@ -55,19 +71,19 @@ internal class RootDetector(
      * indicates that the binary is present, which is a good indicator that the device
      * may have been rooted.
      */
-    fun checkSuExists(): Boolean = checkSuExists(ProcessBuilder())
+    private fun checkSuExists(): Boolean = checkSuExists(ProcessBuilder())
 
     /**
      * Checks whether the build tags contain 'test-keys', which indicates that the OS was signed
      * with non-standard keys.
      */
-    fun checkBuildTags(): Boolean = deviceBuildInfo.tags?.contains("test-keys") == true
+    internal fun checkBuildTags(): Boolean = deviceBuildInfo.tags?.contains("test-keys") == true
 
     /**
      * Checks whether common root binaries exist on disk, which are a good indicator of whether
      * the device is rooted.
      */
-    fun checkRootBinaries(): Boolean {
+    internal fun checkRootBinaries(): Boolean {
         runCatching {
             for (candidate in rootBinaryLocations) {
                 if (File(candidate).exists()) {
@@ -83,7 +99,7 @@ internal class RootDetector(
      * These properties give a good indication that a phone might be using a custom
      * ROM and is therefore rooted.
      */
-    fun checkBuildProps(): Boolean {
+    internal fun checkBuildProps(): Boolean {
         runCatching {
             return buildProps.bufferedReader().useLines { lines ->
                 lines
@@ -111,5 +127,15 @@ internal class RootDetector(
         } finally {
             process?.destroy()
         }
+    }
+
+    private external fun performNativeRootChecks(): Boolean
+
+    /**
+     * Performs root checks which require native code.
+     */
+    private fun nativeCheckRoot(): Boolean = when {
+        libraryLoaded.get() -> performNativeRootChecks()
+        else -> false
     }
 }

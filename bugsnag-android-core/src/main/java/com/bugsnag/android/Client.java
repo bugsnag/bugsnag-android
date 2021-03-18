@@ -172,7 +172,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         Resources resources = appContext.getResources();
         deviceDataCollector = new DeviceDataCollector(connectivity, appContext,
                 resources, deviceId, info, Environment.getDataDirectory(),
-                new RootDetector(), bgTaskService, logger);
+                new RootDetector(logger), bgTaskService, logger);
 
         if (appContext instanceof Application) {
             Application application = (Application) appContext;
