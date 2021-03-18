@@ -15,10 +15,13 @@ import java.io.IOException
  */
 internal class RootDetector(
     private val deviceBuildInfo: DeviceBuildInfo = DeviceBuildInfo.defaultInfo(),
-    private val rootBinaryLocations: List<String> = ROOT_INDICATORS
+    private val rootBinaryLocations: List<String> = ROOT_INDICATORS,
+    private val buildProps: File = BUILD_PROP_FILE
 ) {
 
     companion object {
+        private val BUILD_PROP_FILE = File("/system/build.prop")
+
         private val ROOT_INDICATORS = listOf(
             // Common binaries
             "/system/xbin/su",
@@ -39,7 +42,13 @@ internal class RootDetector(
     /**
      * Determines whether the device is rooted or not.
      */
-    fun isRooted() = checkBuildTags() || checkSuExists() || checkRootBinaries()
+    fun isRooted(): Boolean {
+        return try {
+            checkBuildTags() || checkSuExists() || checkBuildProps() || checkRootBinaries()
+        } catch (exc: Throwable) {
+            false
+        }
+    }
 
     /**
      * Checks whether the su binary exists by running `which su`. A non-empty result
@@ -64,6 +73,25 @@ internal class RootDetector(
                 if (File(candidate).exists()) {
                     return true
                 }
+            }
+        }
+        return false
+    }
+
+    /**
+     * Checks the contents of /system/build.prop to see whether it contains dangerous properties.
+     * These properties give a good indication that a phone might be using a custom
+     * ROM and is therefore rooted.
+     */
+    fun checkBuildProps(): Boolean {
+        runCatching {
+            return buildProps.bufferedReader().useLines { lines ->
+                lines
+                    .map { line ->
+                        line.replace("\\s".toRegex(), "")
+                    }.filter { line ->
+                        line.startsWith("ro.debuggable=[1]") || line.startsWith("ro.secure=[0]")
+                    }.count() > 0
             }
         }
         return false
