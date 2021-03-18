@@ -12,6 +12,7 @@
   [#1194](https://github.com/bugsnag/bugsnag-android/pull/1194)
   [#1195](https://github.com/bugsnag/bugsnag-android/pull/1195)
   [#1198](https://github.com/bugsnag/bugsnag-android/pull/1198)
+  [#1200](https://github.com/bugsnag/bugsnag-android/pull/1200)
 
 * Add public API for crash-on-launch detection
   [#1157](https://github.com/bugsnag/bugsnag-android/pull/1157)

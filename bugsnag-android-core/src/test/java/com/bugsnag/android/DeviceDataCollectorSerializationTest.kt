@@ -57,6 +57,7 @@ internal class DeviceDataCollectorSerializationTest {
                 buildInfo,
                 File(""),
                 rootDetector,
+                BackgroundTaskService(),
                 NoopLogger
             )
 

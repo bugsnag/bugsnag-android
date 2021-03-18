@@ -13,6 +13,9 @@ import java.io.File
 import java.util.Date
 import java.util.HashMap
 import java.util.Locale
+import java.util.concurrent.Callable
+import java.util.concurrent.Future
+import java.util.concurrent.RejectedExecutionException
 import kotlin.math.max
 import kotlin.math.min
 
@@ -24,30 +27,43 @@ internal class DeviceDataCollector(
     private val buildInfo: DeviceBuildInfo,
     private val dataDirectory: File,
     rootDetector: RootDetector,
+    bgTaskService: BackgroundTaskService,
     private val logger: Logger
 ) {
 
     private val displayMetrics = resources?.displayMetrics
     private val emulator = isEmulator()
-    private val rooted = rootDetector.isRooted()
     private val screenDensity = getScreenDensity()
     private val dpi = getScreenDensityDpi()
     private val screenResolution = getScreenResolution()
     private val locale = Locale.getDefault().toString()
     private val cpuAbi = getCpuAbi()
     private val runtimeVersions: MutableMap<String, Any>
+    private val rootedFuture: Future<Boolean>?
 
     init {
         val map = mutableMapOf<String, Any>()
         buildInfo.apiLevel?.let { map["androidApiLevel"] = it }
         buildInfo.osBuild?.let { map["osBuild"] = it }
         runtimeVersions = map
+
+        rootedFuture = try {
+            bgTaskService.submitTask(
+                TaskType.IO,
+                Callable {
+                    rootDetector.isRooted()
+                }
+            )
+        } catch (exc: RejectedExecutionException) {
+            logger.w("Failed to perform root detection checks", exc)
+            null
+        }
     }
 
     fun generateDevice() = Device(
         buildInfo,
         cpuAbi,
-        rooted,
+        checkIsRooted(),
         deviceId,
         locale,
         calculateTotalMemory(),
@@ -56,7 +72,7 @@ internal class DeviceDataCollector(
 
     fun generateDeviceWithState(now: Long) = DeviceWithState(
         buildInfo,
-        rooted,
+        checkIsRooted(),
         deviceId,
         locale,
         calculateTotalMemory(),
@@ -79,6 +95,17 @@ internal class DeviceDataCollector(
         map["emulator"] = emulator
         map["screenResolution"] = screenResolution
         return map
+    }
+
+    private fun checkIsRooted(): Boolean {
+        if (rootedFuture != null) {
+            return try {
+                rootedFuture.get()
+            } catch (exc: Exception) {
+                false
+            }
+        }
+        return false
     }
 
     /**
