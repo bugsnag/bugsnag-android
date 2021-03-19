@@ -98,14 +98,11 @@ internal class DeviceDataCollector(
     }
 
     private fun checkIsRooted(): Boolean {
-        if (rootedFuture != null) {
-            return try {
-                rootedFuture.get()
-            } catch (exc: Exception) {
-                false
-            }
+        return try {
+            rootedFuture != null && rootedFuture.get()
+        } catch (exc: Exception) {
+            false
         }
-        return false
     }
 
     /**
