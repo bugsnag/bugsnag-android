@@ -27,7 +27,6 @@ RUN rm $CMDLINE_TOOLS_NAME
 
 # Install Android tools using sdkmanager
 RUN yes | sdkmanager "platform-tools" > /dev/null
-RUN yes | sdkmanager "platforms;android-28" > /dev/null
 RUN yes | sdkmanager "platforms;android-30" > /dev/null
 RUN yes | sdkmanager "ndk;16.1.4479499" > /dev/null
 RUN yes | sdkmanager "cmake;3.6.4111459" > /dev/null

@@ -104,7 +104,7 @@ internal class DeliveryDelegateTest {
         assertEquals(DeliveryStatus.DELIVERED, status)
         assertEquals("Sent 1 new event to Bugsnag", logger.msg)
 
-        val breadcrumb = breadcrumbState.store.peek()
+        val breadcrumb = requireNotNull(breadcrumbState.store.peek())
         assertEquals(BreadcrumbType.ERROR, breadcrumb.type)
         assertEquals("java.lang.RuntimeException", breadcrumb.message)
         assertEquals("java.lang.RuntimeException", breadcrumb.metadata!!["errorClass"])

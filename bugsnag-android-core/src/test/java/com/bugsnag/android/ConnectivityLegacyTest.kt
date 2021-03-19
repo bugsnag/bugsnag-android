@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.bugsnag.android
 
 import android.content.Context
@@ -14,7 +16,6 @@ import org.mockito.Mockito
 import org.mockito.Mockito.times
 import org.mockito.junit.MockitoJUnitRunner
 
-@Suppress("DEPRECATION")
 @RunWith(MockitoJUnitRunner::class)
 class ConnectivityLegacyTest {
 
