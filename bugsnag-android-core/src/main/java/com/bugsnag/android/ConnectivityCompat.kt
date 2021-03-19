@@ -119,7 +119,7 @@ internal class ConnectivityApi24(
             cb?.invoke(false, retrieveNetworkAccessState())
         }
 
-        override fun onAvailable(network: Network?) {
+        override fun onAvailable(network: Network) {
             super.onAvailable(network)
             cb?.invoke(true, retrieveNetworkAccessState())
         }

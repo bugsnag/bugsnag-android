@@ -93,9 +93,11 @@ internal class AppDataCollector(
      * AndroidManifest.xml
      */
     private fun getAppName(): String? {
-        val hasInfo = packageManager != null && appInfo != null
+        val copy = appInfo
         return when {
-            hasInfo -> packageManager?.getApplicationLabel(appInfo).toString()
+            packageManager != null && copy != null -> {
+                packageManager.getApplicationLabel(copy).toString()
+            }
             else -> null
         }
     }

@@ -8,6 +8,9 @@
 
 ### Enhancements
 
+* Bump compileSdkVersion to apiLevel 30
+  [#1202](https://github.com/bugsnag/bugsnag-android/pull/1202)
+
 * Add public API for crash-on-launch detection
   [#1157](https://github.com/bugsnag/bugsnag-android/pull/1157)
   [#1159](https://github.com/bugsnag/bugsnag-android/pull/1159)

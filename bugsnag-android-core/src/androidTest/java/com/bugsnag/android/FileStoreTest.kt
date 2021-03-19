@@ -20,7 +20,8 @@ class FileStoreTest {
         assertEquals("Crash report serialization", delegate.context)
         assertEquals(File(dir, "foo.json"), delegate.errorFile)
         assertEquals(exc, delegate.exception)
-        assertEquals(0, dir.listFiles().size)
+        val files = requireNotNull(dir.listFiles())
+        assertEquals(0, files.size)
     }
 }
 
