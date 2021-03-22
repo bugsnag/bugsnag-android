@@ -36,6 +36,15 @@ bool bsg_report_v3_write(bsg_report_header *header, bugsnag_report_v3 *report,
     return len == sizeof(bugsnag_report_v3);
 }
 
+bool bsg_report_v4_write(bsg_report_header *header, bugsnag_report_v4 *report,
+                         int fd) {
+  if (!bsg_report_header_write(header, fd)) {
+    return false;
+  }
+  ssize_t len = write(fd, report, sizeof(bugsnag_report_v4));
+  return len == sizeof(bugsnag_report_v4);
+}
+
 bool bsg_serialize_report_v1_to_file(bsg_environment *env, bugsnag_report_v1 *report) {
   int fd = open(env->next_event_path, O_WRONLY | O_CREAT, 0644);
   if (fd == -1) {
@@ -58,6 +67,14 @@ bool bsg_serialize_report_v3_to_file(bsg_environment *env, bugsnag_report_v3 *re
         return false;
     }
     return bsg_report_v3_write(&env->report_header, report, fd);
+}
+
+bool bsg_serialize_report_v4_to_file(bsg_environment *env, bugsnag_report_v4 *report) {
+  int fd = open(env->next_event_path, O_WRONLY | O_CREAT, 0644);
+  if (fd == -1) {
+    return false;
+  }
+  return bsg_report_v4_write(&env->report_header, report, fd);
 }
 
 
@@ -85,7 +102,6 @@ void generate_basic_report(bugsnag_event *event) {
   strcpy(event->user.id, "fex");
   event->device.total_memory = 234678100;
   event->app.duration = 6502;
-  event->app.in_foreground = true;
   bugsnag_event_add_metadata_bool(event, "metrics", "experimentX", false);
   bugsnag_event_add_metadata_string(event, "metrics", "subject", "percy");
   bugsnag_event_add_metadata_string(event, "app", "weather", "rain");
@@ -109,12 +125,17 @@ void generate_basic_report(bugsnag_event *event) {
   strcpy(event->notifier.name, "Test Notifier");
 }
 
+bugsnag_report_v4 *bsg_generate_report_v4(void) {
+  bugsnag_report_v4 *report = calloc(1, sizeof(bugsnag_report_v4));
+  generate_basic_report((bugsnag_event *) report);
+  return report;
+}
+
 bugsnag_report_v3 *bsg_generate_report_v3(void) {
     bugsnag_report_v3 *report = calloc(1, sizeof(bugsnag_report_v3));
     generate_basic_report((bugsnag_event *) report);
     return report;
 }
-
 
 bugsnag_report_v2 *bsg_generate_report_v2(void) {
   bugsnag_report_v2 *report = calloc(1, sizeof(bugsnag_report_v2));
@@ -165,6 +186,37 @@ bugsnag_event *bsg_generate_event(void) {
   return report;
 }
 
+
+void bsg_update_next_run_info(bsg_environment *env);
+
+char *test_read_last_run_info(const bsg_environment *env) {
+  int fd = open(SERIALIZE_TEST_FILE, O_RDONLY);
+  size_t size = sizeof(env->next_last_run_info);
+  char *buf = malloc(size);
+  read(fd, buf, size);
+  return buf;
+}
+
+test_last_run_info_serialization(void) {
+  bsg_environment *env = malloc(sizeof(bsg_environment));
+  strcpy(env->last_run_info_path, SERIALIZE_TEST_FILE);
+  
+  // update LastRunInfo with defaults
+  env->next_event.app.is_launching = false;
+  env->consecutive_launch_crashes = 1;
+  bsg_update_next_run_info(env);
+  ASSERT_STR_EQ("consecutiveLaunchCrashes=1\ncrashed=true\ncrashedDuringLaunch=false\0", env->next_last_run_info);
+
+  // update LastRunInfo with consecutive crashes
+  env->next_event.app.is_launching = true;
+  env->consecutive_launch_crashes = 7;
+  bsg_update_next_run_info(env);
+  ASSERT_STR_EQ("consecutiveLaunchCrashes=7\ncrashed=true\ncrashedDuringLaunch=true\0", env->next_last_run_info);
+
+  free(env);
+  PASS();
+}
+
 TEST test_report_to_file(void) {
   bsg_environment *env = malloc(sizeof(bsg_environment));
   env->report_header.version = 7;
@@ -181,7 +233,7 @@ TEST test_report_to_file(void) {
 
 TEST test_file_to_report(void) {
   bsg_environment *env = malloc(sizeof(bsg_environment));
-  env->report_header.version = 7;
+  env->report_header.version = 5;
   env->report_header.big_endian = 1;
   strcpy(env->report_header.os_build, "macOS Sierra");
   bugsnag_event *generated_report = bsg_generate_event();
@@ -215,6 +267,7 @@ TEST test_report_v1_migration(void) {
   ASSERT(strcmp("2019-03-19T12:58:19+00:00", event->session_start) == 0);
   ASSERT_EQ(1, event->handled_events);
   ASSERT_EQ(1, event->unhandled_events);
+  ASSERT_FALSE(event->app.is_launching);
 
   free(generated_report);
   free(env);
@@ -224,13 +277,14 @@ TEST test_report_v1_migration(void) {
 
 TEST test_report_v2_migration(void) {
   bsg_environment *env = malloc(sizeof(bsg_environment));
-  env->report_header.version = 2;
-  env->report_header.big_endian = 1;
-  strcpy(env->report_header.os_build, "macOS Sierra");
 
   bugsnag_report_v2 *generated_report = bsg_generate_report_v2();
   memcpy(&env->next_event, generated_report, sizeof(bugsnag_report_v2));
   strcpy(env->next_event_path, SERIALIZE_TEST_FILE);
+
+  env->report_header.version = 2;
+  env->report_header.big_endian = 1;
+  strcpy(env->report_header.os_build, "macOS Sierra");
   bsg_serialize_report_v2_to_file(env, generated_report);
 
   bugsnag_event *event = bsg_deserialize_event_from_file(SERIALIZE_TEST_FILE);
@@ -267,6 +321,7 @@ TEST test_report_v2_migration(void) {
   ASSERT_EQ(BSG_CRUMB_STATE, crumb->type);
   ASSERT_STR_EQ("message", val->key);
   ASSERT_STR_EQ("Moving laterally 26º", val->value);
+  ASSERT_FALSE(event->app.is_launching);
 
   free(generated_report);
   free(env);
@@ -298,6 +353,36 @@ TEST test_report_v3_migration(void) {
   ASSERT_STR_EQ("SIGBUS", event->error.errorClass);
   ASSERT_STR_EQ("POSIX is serious about oncoming traffic", event->error.errorMessage);
   ASSERT_STR_EQ("C", event->error.type);
+  ASSERT_FALSE(event->app.is_launching);
+
+  free(generated_report);
+  free(env);
+  free(event);
+  PASS();
+}
+
+TEST test_report_v4_migration(void) {
+  bsg_environment *env = malloc(sizeof(bsg_environment));
+  env->report_header.version = 4;
+  env->report_header.big_endian = 1;
+  strcpy(env->report_header.os_build, "macOS Sierra");
+
+  bugsnag_report_v4 *generated_report = bsg_generate_report_v4();
+  memcpy(&env->next_event, generated_report, sizeof(bugsnag_report_v4));
+  strcpy(env->next_event_path, SERIALIZE_TEST_FILE);
+  bsg_serialize_report_v4_to_file(env, generated_report);
+
+  bugsnag_event *event = bsg_deserialize_event_from_file(SERIALIZE_TEST_FILE);
+  ASSERT(event != NULL);
+
+  // values are migrated correctly
+  ASSERT_STR_EQ("com.example.PhotoSnapPlus", event->app.id);
+  ASSERT_STR_EQ("リリース", event->app.release_stage);
+  ASSERT_STR_EQ("2.0.52", event->app.version);
+  ASSERT_EQ(57, event->app.version_code);
+  ASSERT_STR_EQ("1234-9876-adfe", event->app.build_uuid);
+  ASSERT_FALSE(event->app.in_foreground);
+  ASSERT_FALSE(event->app.is_launching);
 
   free(generated_report);
   free(env);
@@ -432,10 +517,12 @@ TEST test_breadcrumbs_to_json(void) {
 
 SUITE(serialize_utils) {
   RUN_TEST(test_report_to_file);
+  RUN_TEST(test_last_run_info_serialization);
   RUN_TEST(test_file_to_report);
   RUN_TEST(test_report_v1_migration);
   RUN_TEST(test_report_v2_migration);
   RUN_TEST(test_report_v3_migration);
+  RUN_TEST(test_report_v4_migration);
   RUN_TEST(test_session_handled_counts);
   RUN_TEST(test_context_to_json);
   RUN_TEST(test_grouping_hash_to_json);

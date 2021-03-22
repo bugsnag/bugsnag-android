@@ -19,7 +19,7 @@ class ClientObservableTest {
 
     @Test
     fun postNdkInstall() {
-        clientObservable.postNdkInstall(BugsnagTestUtils.generateImmutableConfig())
+        clientObservable.postNdkInstall(BugsnagTestUtils.generateImmutableConfig(), "/foo", 0)
         clientObservable.addObserver { _, arg ->
             assertTrue(arg is StateEvent.Install)
         }

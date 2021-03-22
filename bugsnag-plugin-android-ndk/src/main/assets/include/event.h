@@ -152,6 +152,9 @@ void bugsnag_app_set_id(void *event_ptr, char *value);
 bool bugsnag_app_get_in_foreground(void *event_ptr);
 void bugsnag_app_set_in_foreground(void *event_ptr, bool value);
 
+bool bugsnag_app_get_is_launching(void *event_ptr);
+void bugsnag_app_set_is_launching(void *event_ptr, bool value);
+
 char *bugsnag_app_get_release_stage(void *event_ptr);
 void bugsnag_app_set_release_stage(void *event_ptr, char *value);
 

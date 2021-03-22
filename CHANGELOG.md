@@ -1,5 +1,26 @@
 # Changelog
 
+## 5.8.0 (2021-03-22)
+
+### Deprecations
+
+* `Configuration#launchCrashThresholdMs` is deprecated in favour of `Configuration#launchDurationMillis`
+
+### Enhancements
+
+* Add public API for crash-on-launch detection
+  [#1157](https://github.com/bugsnag/bugsnag-android/pull/1157)
+  [#1159](https://github.com/bugsnag/bugsnag-android/pull/1159)
+  [#1165](https://github.com/bugsnag/bugsnag-android/pull/1165)
+  [#1164](https://github.com/bugsnag/bugsnag-android/pull/1164)
+  [#1182](https://github.com/bugsnag/bugsnag-android/pull/1182)
+  [#1184](https://github.com/bugsnag/bugsnag-android/pull/1184)
+  [#1185](https://github.com/bugsnag/bugsnag-android/pull/1185)
+  [#1186](https://github.com/bugsnag/bugsnag-android/pull/1186)
+  [#1180](https://github.com/bugsnag/bugsnag-android/pull/1180)
+  [#1188](https://github.com/bugsnag/bugsnag-android/pull/1188)
+  [#1191](https://github.com/bugsnag/bugsnag-android/pull/1191)
+
 ## 5.7.1 (2021-03-03)
 
 ### Bug fixes

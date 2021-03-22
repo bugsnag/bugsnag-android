@@ -6,14 +6,16 @@ internal class ClientObservable : BaseObservable() {
         notifyObservers(StateEvent.UpdateOrientation(orientation))
     }
 
-    fun postNdkInstall(conf: ImmutableConfig) {
+    fun postNdkInstall(conf: ImmutableConfig, lastRunInfoPath: String, consecutiveLaunchCrashes: Int) {
         notifyObservers(
             StateEvent.Install(
                 conf.apiKey,
                 conf.enabledErrorTypes.ndkCrashes,
                 conf.appVersion,
                 conf.buildUuid,
-                conf.releaseStage
+                conf.releaseStage,
+                lastRunInfoPath,
+                consecutiveLaunchCrashes
             )
         )
     }

@@ -24,7 +24,7 @@ public class JavaHooks {
     @NonNull
     public static AppWithState generateAppWithState(ImmutableConfig config) {
         return new AppWithState(config, null, null, null,
-                null, null, null, null, null);
+                null, null, null, null, null, null);
     }
 
     /**

@@ -18,6 +18,8 @@ steps:
           - "--appium-version=1.8.0"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    soft_fail:
+      - exit_status: "*"
 
   - label: ':android: Android 6 NDK r16 smoke tests'
     key: 'android-6-smoke'

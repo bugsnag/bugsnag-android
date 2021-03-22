@@ -38,6 +38,7 @@ internal class InternalEventPayloadDelegateTest {
         `when`(this.appDataCollector.generateAppWithState()).thenReturn(app)
         app.durationInForeground = 500L
         app.inForeground = true
+        app.isLaunching = true
         `when`(
             deviceDataCollector
                 .generateDeviceWithState(ArgumentMatchers.anyLong())
@@ -53,7 +54,8 @@ internal class InternalEventPayloadDelegateTest {
             appDataCollector,
             deviceDataCollector,
             sessionTracker,
-            Notifier()
+            Notifier(),
+            BackgroundTaskService()
         )
 
         val handledState = SeverityReason.newInstance(
@@ -65,6 +67,7 @@ internal class InternalEventPayloadDelegateTest {
         // app
         assertEquals(500L, event.app.durationInForeground)
         assertEquals(true, event.app.inForeground)
+        assertEquals(true, event.app.isLaunching)
         assertNotNull(event.app)
 
         // device

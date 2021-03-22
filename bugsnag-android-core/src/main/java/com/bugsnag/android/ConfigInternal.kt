@@ -19,9 +19,10 @@ internal class ConfigInternal(var apiKey: String) : CallbackAware, MetadataAware
     var sendThreads: ThreadSendPolicy = ThreadSendPolicy.ALWAYS
     var persistUser: Boolean = false
 
-    var launchCrashThresholdMs: Long = DEFAULT_LAUNCH_CRASH_THRESHOLD_MS
+    var launchDurationMillis: Long = DEFAULT_LAUNCH_CRASH_THRESHOLD_MS
 
     var autoTrackSessions: Boolean = true
+    var sendLaunchCrashesSynchronously: Boolean = true
     var enabledErrorTypes: ErrorTypes = ErrorTypes()
     var autoDetectErrors: Boolean = true
     var appType: String? = "android"

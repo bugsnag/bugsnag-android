@@ -91,6 +91,12 @@ public class ClientFacadeTest {
     @Mock
     DeviceWithState device;
 
+    @Mock
+    LastRunInfoStore lastRunInfoStore;
+
+    @Mock
+    LaunchCrashTracker launchCrashTracker;
+
     private Client client;
     private InterceptingLogger logger;
 
@@ -119,7 +125,9 @@ public class ClientFacadeTest {
                 connectivity,
                 storageManager,
                 logger,
-                deliveryDelegate
+                deliveryDelegate,
+                lastRunInfoStore,
+                launchCrashTracker
         );
 
         // required fields for generating an event
@@ -467,5 +475,11 @@ public class ClientFacadeTest {
     public void addRuntimeVersionInfo() {
         client.addRuntimeVersionInfo("foo", "bar");
         verify(deviceDataCollector, times(1)).addRuntimeVersionInfo("foo", "bar");
+    }
+
+    @Test
+    public void markLaunchCompleted() {
+        client.markLaunchCompleted();
+        verify(launchCrashTracker, times(1)).markLaunchCompleted();
     }
 }

@@ -38,6 +38,18 @@ typedef struct {
    */
   char next_event_path[384];
   /**
+   * File path on disk where the last run info will be written if needed.
+   */
+  char last_run_info_path[384];
+  /**
+   * The next value to be written to last run info if a crash occurs
+   */
+  char next_last_run_info[256];
+  /**
+   * The value of consecutiveLaunchCrashes, used when a crash occurs
+   */
+  int consecutive_launch_crashes;
+  /**
    * Cache of static metadata and event info. Exception/time information is
    * populated at crash time.
    */

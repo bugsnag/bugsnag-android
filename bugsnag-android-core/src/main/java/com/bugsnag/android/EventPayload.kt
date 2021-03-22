@@ -12,7 +12,7 @@ import java.io.IOException
 class EventPayload @JvmOverloads internal constructor(
     var apiKey: String?,
     val event: Event? = null,
-    private val eventFile: File? = null,
+    internal val eventFile: File? = null,
     notifier: Notifier,
     private val config: ImmutableConfig
 ) : JsonStream.Streamable {

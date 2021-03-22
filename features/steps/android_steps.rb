@@ -223,11 +223,7 @@ end
 def click_if_present(element)
   return false unless Maze.driver.wait_for_element(element, 1)
 
-  Maze.driver.click_element(element)
-  true
-rescue Selenium::WebDriver::Error::NoSuchElementError
-  # Ignore - we have seen clicks fail like this despite having just checked for the element's presence
-  false
+  Maze.driver.click_element_if_present(element)
 end
 
 Then("I sort the errors by {string}") do |comparator|

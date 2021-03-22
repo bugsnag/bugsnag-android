@@ -27,6 +27,7 @@ bugsnag_event *init_event() {
     event->app.duration = 9019;
     event->app.duration_in_foreground = 7017;
     event->app.in_foreground = true;
+    event->app.is_launching = true;
     bsg_strncpy_safe(event->grouping_hash, "Bar", sizeof(event->grouping_hash));
 
     event->device.jailbroken = true;
@@ -188,6 +189,14 @@ TEST test_app_in_foreground(void) {
     PASS();
 }
 
+TEST test_app_is_launching(void) {
+    bugsnag_event *event = init_event();
+    ASSERT(bugsnag_app_get_is_launching(event));
+    bugsnag_app_set_is_launching(event, false);
+    ASSERT_FALSE(bugsnag_app_get_is_launching(event));
+    free(event);
+    PASS();
+}
 
 TEST test_device_jailbroken(void) {
     bugsnag_event *event = init_event();
@@ -394,6 +403,7 @@ SUITE(event_mutators) {
     RUN_TEST(test_app_duration);
     RUN_TEST(test_app_duration_in_foreground);
     RUN_TEST(test_app_in_foreground);
+    RUN_TEST(test_app_is_launching);
     RUN_TEST(test_device_jailbroken);
     RUN_TEST(test_device_id);
     RUN_TEST(test_device_locale);

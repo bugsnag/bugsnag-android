@@ -20,7 +20,7 @@ Scenario: Notify caught Java exception with default configuration
     And the event "exceptions.0.stacktrace.0.method" ends with "HandledJavaSmokeScenario.startScenario"
     And the exception "stacktrace.0.file" equals "HandledJavaSmokeScenario.java"
     # R8 minification alters the lineNumber, see the mapping file/source code for the original value
-    And the event "exceptions.0.stacktrace.0.lineNumber" equals 7
+    And the event "exceptions.0.stacktrace.0.lineNumber" equals 8
     And the event "exceptions.0.stacktrace.0.inProject" is true
 
     And the thread with name "main" contains the error reporting flag
@@ -37,6 +37,7 @@ Scenario: Notify caught Java exception with default configuration
     And the error payload field "events.0.app.duration" is an integer
     And the error payload field "events.0.app.durationInForeground" is an integer
     And the event "app.inForeground" is true
+    And the event "app.isLaunching" is true
     And the error payload field "events.0.metaData.app.memoryUsage" is greater than 0
     And the event "metaData.app.name" equals "MazeRunner"
     And the event "metaData.app.lowMemory" is false
@@ -85,6 +86,7 @@ Scenario: Notify caught Java exception with default configuration
     # MetaData
     And the event "metaData.TestData.ClientMetadata" is true
     And the event "metaData.TestData.CallbackMetadata" is true
+    And the event "metaData.TestData.password" equals "[REDACTED]"
 
     # Runtime versions
     And the error payload field "events.0.device.runtimeVersions.androidApiLevel" is not null
@@ -180,6 +182,7 @@ Scenario: Handled C functionality
     And the error payload field "events.0.app.duration" is an integer
     And the error payload field "events.0.app.durationInForeground" is an integer
     And the event "app.inForeground" is true
+    And the event "app.isLaunching" is true
 
     # Device data
     And the error payload field "events.0.device.cpuAbi" is a non-empty array
@@ -215,6 +218,7 @@ Scenario: Handled C functionality
     # MetaData
     And the event "metaData.TestData.Source" equals "ClientCallback"
     And the event "metaData.TestData.JVM" equals "pre notify()"
+    And the event "metaData.TestData.password" equals "[REDACTED]"
 
     # Threads validation
     And the error payload field "events.0.threads" is a non-empty array

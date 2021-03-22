@@ -6,7 +6,9 @@ sealed class StateEvent {
         val autoDetectNdkCrashes: Boolean,
         val appVersion: String?,
         val buildUuid: String?,
-        val releaseStage: String?
+        val releaseStage: String?,
+        val lastRunInfoPath: String,
+        val consecutiveLaunchCrashes: Int
     ) : StateEvent()
 
     object DeliverPending : StateEvent()
@@ -35,6 +37,8 @@ sealed class StateEvent {
 
     class UpdateContext(val context: String?) : StateEvent()
     class UpdateInForeground(val inForeground: Boolean, val contextActivity: String?) : StateEvent()
+    class UpdateLastRunInfo(val consecutiveLaunchCrashes: Int) : StateEvent()
+    class UpdateIsLaunching(val isLaunching: Boolean) : StateEvent()
     class UpdateOrientation(val orientation: String?) : StateEvent()
 
     class UpdateUser(val user: User) : StateEvent()
