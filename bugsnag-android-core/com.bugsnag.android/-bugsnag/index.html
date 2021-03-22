@@ -86,6 +86,14 @@
 </tr>
 <tr>
 <td>
+<h4><a href="get-last-run-info.html">getLastRunInfo</a></h4>
+</td>
+<td>
+<p>Retrieves information about the last launch of the application, if it has been run before. For example, this allows checking whether the app crashed on its last launch, which could be used to perform conditional behaviour to recover from crashes, such as clearing the app data cache.</p>
+<code><span class="keyword">static</span> <span class="keyword">fun </span><span class="identifier">getLastRunInfo</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-last-run-info/index.html"><span class="identifier">LastRunInfo</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
 <h4><a href="get-metadata.html">getMetadata</a></h4>
 </td>
 <td>
@@ -111,6 +119,14 @@
 <code><span class="keyword">static</span> <span class="keyword">fun </span><span class="identifier">leaveBreadcrumb</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Bugsnag$leaveBreadcrumb(kotlin.String)/message">message</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
 <p>Leave a "breadcrumb" log message representing an action or event which occurred in your app, to aid with debugging</p>
 <code><span class="keyword">static</span> <span class="keyword">fun </span><span class="identifier">leaveBreadcrumb</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Bugsnag$leaveBreadcrumb(kotlin.String, kotlin.collections.MutableMap((kotlin.String, kotlin.Any)), com.bugsnag.android.BreadcrumbType)/message">message</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.bugsnag.android.Bugsnag$leaveBreadcrumb(kotlin.String, kotlin.collections.MutableMap((kotlin.String, kotlin.Any)), com.bugsnag.android.BreadcrumbType)/metadata">metadata</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/index.html"><span class="identifier">MutableMap</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">!</span><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">!</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.bugsnag.android.Bugsnag$leaveBreadcrumb(kotlin.String, kotlin.collections.MutableMap((kotlin.String, kotlin.Any)), com.bugsnag.android.BreadcrumbType)/type">type</span><span class="symbol">:</span>&nbsp;<a href="../-breadcrumb-type/index.html"><span class="identifier">BreadcrumbType</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="mark-launch-completed.html">markLaunchCompleted</a></h4>
+</td>
+<td>
+<p>Informs Bugsnag that the application has finished launching. Once this has been called <code><a href="../-app-with-state/-init-.html#com.bugsnag.android.AppWithState$<init>(kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.Number, kotlin.Number, kotlin.Number, kotlin.Boolean, kotlin.Boolean)/isLaunching">AppWithState#isLaunching()</a></code> will always be false in any new error reports, and synchronous delivery will not be attempted on the next launch for any fatal crashes. By default this method will be called after Bugsnag is initialized when <code><a href="../-configuration/get-launch-duration-millis.html">Configuration#getLaunchDurationMillis()</a></code> has elapsed. Invoking this method manually has precedence over the value supplied via the launchDurationMillis configuration option.</p>
+<code><span class="keyword">static</span> <span class="keyword">fun </span><span class="identifier">markLaunchCompleted</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
 </tr>
 <tr>
 <td>

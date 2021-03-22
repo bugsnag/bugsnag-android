@@ -168,6 +168,14 @@ override this if you are using Bugsnag Enterprise to point to your own Bugsnag e
 </tr>
 <tr>
 <td>
+<h4><a href="-last-run-info/index.html">LastRunInfo</a></h4>
+</td>
+<td>
+<p>Provides information about the last launch of the application, if there was one.</p>
+<code><span class="keyword">class </span><span class="identifier">LastRunInfo</span></code></td>
+</tr>
+<tr>
+<td>
 <h4><a href="-logger/index.html">Logger</a></h4>
 </td>
 <td>
@@ -181,6 +189,14 @@ override this if you are using Bugsnag Enterprise to point to your own Bugsnag e
 <td>
 <p>Used as the entry point for native code to allow proguard to obfuscate other areas if needed</p>
 <code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">NativeInterface</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-native-stackframe/index.html">NativeStackframe</a></h4>
+</td>
+<td>
+<p>Represents a single native stackframe</p>
+<code><span class="keyword">class </span><span class="identifier">NativeStackframe</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Streamable</span></code></td>
 </tr>
 <tr>
 <td>

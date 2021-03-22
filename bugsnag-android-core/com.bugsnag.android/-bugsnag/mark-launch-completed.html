@@ -1,0 +1,15 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Bugsnag.markLaunchCompleted - bugsnag-android-core</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">bugsnag-android-core</a>&nbsp;/&nbsp;<a href="../index.html">com.bugsnag.android</a>&nbsp;/&nbsp;<a href="index.html">Bugsnag</a>&nbsp;/&nbsp;<a href="./mark-launch-completed.html">markLaunchCompleted</a><br/>
+<br/>
+<h1>markLaunchCompleted</h1>
+<a name="com.bugsnag.android.Bugsnag$markLaunchCompleted()"></a>
+<code><span class="keyword">static</span> <span class="keyword">fun </span><span class="identifier">markLaunchCompleted</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Informs Bugsnag that the application has finished launching. Once this has been called <code><a href="../-app-with-state/-init-.html#com.bugsnag.android.AppWithState$<init>(kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.Number, kotlin.Number, kotlin.Number, kotlin.Boolean, kotlin.Boolean)/isLaunching">AppWithState#isLaunching()</a></code> will always be false in any new error reports, and synchronous delivery will not be attempted on the next launch for any fatal crashes. By default this method will be called after Bugsnag is initialized when <code><a href="../-configuration/get-launch-duration-millis.html">Configuration#getLaunchDurationMillis()</a></code> has elapsed. Invoking this method manually has precedence over the value supplied via the launchDurationMillis configuration option.</p>
+</BODY>
+</HTML>

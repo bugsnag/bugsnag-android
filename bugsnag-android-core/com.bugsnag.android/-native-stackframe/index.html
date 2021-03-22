@@ -1,0 +1,87 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>NativeStackframe - bugsnag-android-core</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">bugsnag-android-core</a>&nbsp;/&nbsp;<a href="../index.html">com.bugsnag.android</a>&nbsp;/&nbsp;<a href="./index.html">NativeStackframe</a><br/>
+<br/>
+<h1>NativeStackframe</h1>
+<code><span class="keyword">class </span><span class="identifier">NativeStackframe</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Streamable</span></code>
+<p>Represents a single native stackframe</p>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="file.html">file</a></h4>
+</td>
+<td>
+<p>The location of the source file</p>
+<code><span class="keyword">var </span><span class="identifier">file</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="frame-address.html">frameAddress</a></h4>
+</td>
+<td>
+<p>The address of the instruction where the event occurred.</p>
+<code><span class="keyword">var </span><span class="identifier">frameAddress</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="line-number.html">lineNumber</a></h4>
+</td>
+<td>
+<p>The line number within the source file this stackframe refers to</p>
+<code><span class="keyword">var </span><span class="identifier">lineNumber</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-number/index.html"><span class="identifier">Number</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="load-address.html">loadAddress</a></h4>
+</td>
+<td>
+<p>The address of the library where the event occurred.</p>
+<code><span class="keyword">var </span><span class="identifier">loadAddress</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="method.html">method</a></h4>
+</td>
+<td>
+<p>The name of the method that was being executed</p>
+<code><span class="keyword">var </span><span class="identifier">method</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="symbol-address.html">symbolAddress</a></h4>
+</td>
+<td>
+<p>The address of the function where the event occurred.</p>
+<code><span class="keyword">var </span><span class="identifier">symbolAddress</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="type.html">type</a></h4>
+</td>
+<td>
+<p>The type of the error</p>
+<code><span class="keyword">var </span><span class="identifier">type</span><span class="symbol">: </span><a href="../-error-type/index.html"><span class="identifier">ErrorType</span></a><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="to-stream.html">toStream</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">toStream</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.NativeStackframe$toStream(com.bugsnag.android.JsonStream)/writer">writer</span><span class="symbol">:</span>&nbsp;<a href="../-json-stream/index.html"><span class="identifier">JsonStream</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>
