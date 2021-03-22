@@ -179,8 +179,16 @@
 <h4><a href="get-launch-crash-threshold-ms.html">getLaunchCrashThresholdMs</a></h4>
 </td>
 <td>
-<p>Sets the threshold in milliseconds for an uncaught error to be considered as a crash on launch. If a crash is detected on launch, Bugsnag will attempt to send the event synchronously. By default, this value is set at 5,000ms. Setting the value to 0 will disable this behaviour.</p>
-<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getLaunchCrashThresholdMs</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code></td>
+<p>Deprecated. Use <code><a href="get-launch-duration-millis.html">#getLaunchDurationMillis()</a></code> instead.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><s><span class="identifier">getLaunchCrashThresholdMs</span></s><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-launch-duration-millis.html">getLaunchDurationMillis</a></h4>
+</td>
+<td>
+<p>Sets the threshold in milliseconds for an uncaught error to be considered as a crash on launch. If a crash is detected on launch, Bugsnag will attempt to send the most recent event synchronously. By default, this value is set at 5,000ms. Setting the value to 0 will count all crashes as launch crashes until markLaunchCompleted() is called.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getLaunchDurationMillis</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -200,6 +208,22 @@
 </tr>
 <tr>
 <td>
+<h4><a href="get-max-persisted-events.html">getMaxPersistedEvents</a></h4>
+</td>
+<td>
+<p>Sets the maximum number of persisted events which will be stored. Once the threshold is reached, the oldest event will be deleted. By default, 32 events are persisted.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getMaxPersistedEvents</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-max-persisted-sessions.html">getMaxPersistedSessions</a></h4>
+</td>
+<td>
+<p>Sets the maximum number of persisted sessions which will be stored. Once the threshold is reached, the oldest session will be deleted. By default, 128 sessions are persisted.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getMaxPersistedSessions</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
 <h4><a href="get-metadata.html">getMetadata</a></h4>
 </td>
 <td>
@@ -207,6 +231,14 @@
 <code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getMetadata</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$getMetadata(kotlin.String)/section">section</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html"><span class="identifier">Map</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span><span class="symbol">?</span></code>
 <p>Returns the value of the specified key in the specified section.</p>
 <code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getMetadata</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$getMetadata(kotlin.String, kotlin.String)/section">section</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.bugsnag.android.Configuration$getMetadata(kotlin.String, kotlin.String)/key">key</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-persistence-directory.html">getPersistenceDirectory</a></h4>
+</td>
+<td>
+<p>Sets the directory where event and session JSON payloads should be persisted if a network request is not successful. If you use Bugsnag in multiple processes, then a unique persistenceDirectory <strong>must</strong> be configured for each process to prevent duplicate requests being made by each instantiation of Bugsnag. </p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getPersistenceDirectory</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://docs.oracle.com/javase/6/docs/api/java/io/File.html"><span class="identifier">File</span></a><span class="symbol">?</span></code></td>
 </tr>
 <tr>
 <td>
@@ -239,6 +271,14 @@
 <td>
 <p>If you would like to distinguish between errors that happen in different stages of the application release process (development, production, etc) you can set the releaseStage that is reported to Bugsnag. If you are running a debug build, we'll automatically set this to "development", otherwise it is set to "production". You can control whether events are sent for specific release stages using the enabledReleaseStages option.</p>
 <code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getReleaseStage</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-send-launch-crashes-synchronously.html">getSendLaunchCrashesSynchronously</a></h4>
+</td>
+<td>
+<p>Sets whether or not Bugsnag should send crashes synchronously that occurred during the application's launch period. By default this behavior is enabled. See <code><a href="set-launch-duration-millis.html">#setLaunchDurationMillis(long)</a></code></p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getSendLaunchCrashesSynchronously</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -397,8 +437,16 @@
 <h4><a href="set-launch-crash-threshold-ms.html">setLaunchCrashThresholdMs</a></h4>
 </td>
 <td>
-<p>Sets the threshold in milliseconds for an uncaught error to be considered as a crash on launch. If a crash is detected on launch, Bugsnag will attempt to send the event synchronously. By default, this value is set at 5,000ms. Setting the value to 0 will disable this behaviour.</p>
-<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setLaunchCrashThresholdMs</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$setLaunchCrashThresholdMs(kotlin.Long)/launchCrashThresholdMs">launchCrashThresholdMs</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+<p>Deprecated. Use <code><a href="set-launch-duration-millis.html">#setLaunchDurationMillis(long)</a></code> instead.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><s><span class="identifier">setLaunchCrashThresholdMs</span></s><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$setLaunchCrashThresholdMs(kotlin.Long)/launchCrashThresholdMs">launchCrashThresholdMs</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-launch-duration-millis.html">setLaunchDurationMillis</a></h4>
+</td>
+<td>
+<p>Sets the threshold in milliseconds for an uncaught error to be considered as a crash on launch. If a crash is detected on launch, Bugsnag will attempt to send the most recent event synchronously. By default, this value is set at 5,000ms. Setting the value to 0 will count all crashes as launch crashes until markLaunchCompleted() is called.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setLaunchDurationMillis</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$setLaunchDurationMillis(kotlin.Long)/launchDurationMillis">launchDurationMillis</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -415,6 +463,30 @@
 <td>
 <p>Sets the maximum number of breadcrumbs which will be stored. Once the threshold is reached, the oldest breadcrumbs will be deleted. By default, 25 breadcrumbs are stored: this can be amended up to a maximum of 100.</p>
 <code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setMaxBreadcrumbs</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$setMaxBreadcrumbs(kotlin.Int)/maxBreadcrumbs">maxBreadcrumbs</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-max-persisted-events.html">setMaxPersistedEvents</a></h4>
+</td>
+<td>
+<p>Sets the maximum number of persisted events which will be stored. Once the threshold is reached, the oldest event will be deleted. By default, 32 events are persisted.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setMaxPersistedEvents</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$setMaxPersistedEvents(kotlin.Int)/maxPersistedEvents">maxPersistedEvents</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-max-persisted-sessions.html">setMaxPersistedSessions</a></h4>
+</td>
+<td>
+<p>Sets the maximum number of persisted sessions which will be stored. Once the threshold is reached, the oldest session will be deleted. By default, 128 sessions are persisted.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setMaxPersistedSessions</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$setMaxPersistedSessions(kotlin.Int)/maxPersistedSessions">maxPersistedSessions</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-persistence-directory.html">setPersistenceDirectory</a></h4>
+</td>
+<td>
+<p>Sets the directory where event and session JSON payloads should be persisted if a network request is not successful. If you use Bugsnag in multiple processes, then a unique persistenceDirectory <strong>must</strong> be configured for each process to prevent duplicate requests being made by each instantiation of Bugsnag. </p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setPersistenceDirectory</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$setPersistenceDirectory(java.io.File)/directory">directory</span><span class="symbol">:</span>&nbsp;<a href="https://docs.oracle.com/javase/6/docs/api/java/io/File.html"><span class="identifier">File</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -447,6 +519,14 @@
 <td>
 <p>If you would like to distinguish between errors that happen in different stages of the application release process (development, production, etc) you can set the releaseStage that is reported to Bugsnag. If you are running a debug build, we'll automatically set this to "development", otherwise it is set to "production". You can control whether events are sent for specific release stages using the enabledReleaseStages option.</p>
 <code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setReleaseStage</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$setReleaseStage(kotlin.String)/releaseStage">releaseStage</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-send-launch-crashes-synchronously.html">setSendLaunchCrashesSynchronously</a></h4>
+</td>
+<td>
+<p>Sets whether or not Bugsnag should send crashes synchronously that occurred during the application's launch period. By default this behavior is enabled. See <code><a href="set-launch-duration-millis.html">#setLaunchDurationMillis(long)</a></code></p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setSendLaunchCrashesSynchronously</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Configuration$setSendLaunchCrashesSynchronously(kotlin.Boolean)/sendLaunchCrashesSynchronously">sendLaunchCrashesSynchronously</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
 </tr>
 <tr>
 <td>

@@ -1,0 +1,16 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Configuration.setPersistenceDirectory - bugsnag-android-core</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">bugsnag-android-core</a>&nbsp;/&nbsp;<a href="../index.html">com.bugsnag.android</a>&nbsp;/&nbsp;<a href="index.html">Configuration</a>&nbsp;/&nbsp;<a href="./set-persistence-directory.html">setPersistenceDirectory</a><br/>
+<br/>
+<h1>setPersistenceDirectory</h1>
+<a name="com.bugsnag.android.Configuration$setPersistenceDirectory(java.io.File)"></a>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setPersistenceDirectory</span><span class="symbol">(</span><span class="identifier">@Nullable</span> <span class="identifier" id="com.bugsnag.android.Configuration$setPersistenceDirectory(java.io.File)/directory">directory</span><span class="symbol">:</span>&nbsp;<a href="https://docs.oracle.com/javase/6/docs/api/java/io/File.html"><span class="identifier">File</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Sets the directory where event and session JSON payloads should be persisted if a network request is not successful. If you use Bugsnag in multiple processes, then a unique persistenceDirectory <strong>must</strong> be configured for each process to prevent duplicate requests being made by each instantiation of Bugsnag. </p>
+ The persistenceDirectory also stores user information if <code><a href="get-persist-user.html">#getPersistUser()</a></code> has been set to true.  By default, bugsnag sets the persistenceDirectory to <code><a href="https://developer.android.com/reference/android/content/Context.html#getCacheDir()">Context#getCacheDir()</a></code>.  If the persistenceDirectory is changed between application launches, no attempt will be made to deliver events or sessions cached in the previous location.
+</BODY>
+</HTML>

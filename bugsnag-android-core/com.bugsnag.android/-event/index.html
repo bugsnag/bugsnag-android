@@ -136,7 +136,7 @@
 <h4><a href="is-unhandled.html">isUnhandled</a></h4>
 </td>
 <td>
-<p>Whether the event was a crash (i.e. unhandled) or handled error in which the system continued running.</p>
+<p>Whether the event was a crash (i.e. unhandled) or handled error in which the system continued running. Unhandled errors count towards your stability score. If you don't want certain errors to count towards your stability score, you can alter this property through an <code><a href="../-on-error-callback/index.html">OnErrorCallback</a></code>.</p>
 <code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">isUnhandled</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
 </tr>
 <tr>
@@ -170,6 +170,14 @@
 <td>
 <p>The severity of the event. By default, unhandled exceptions will be <code><a href="../-severity/-e-r-r-o-r.html">Severity#ERROR</a></code> and handled exceptions sent with Bugsnag#notify <code><a href="../-severity/-w-a-r-n-i-n-g.html">Severity#WARNING</a></code>.</p>
 <code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setSeverity</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Event$setSeverity(com.bugsnag.android.Severity)/severity">severity</span><span class="symbol">:</span>&nbsp;<a href="../-severity/index.html"><span class="identifier">Severity</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-unhandled.html">setUnhandled</a></h4>
+</td>
+<td>
+<p>Whether the event was a crash (i.e. unhandled) or handled error in which the system continued running. Unhandled errors count towards your stability score. If you don't want certain errors to count towards your stability score, you can alter this property through an <code><a href="../-on-error-callback/index.html">OnErrorCallback</a></code>.</p>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setUnhandled</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Event$setUnhandled(kotlin.Boolean)/unhandled">unhandled</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
 </tr>
 <tr>
 <td>
