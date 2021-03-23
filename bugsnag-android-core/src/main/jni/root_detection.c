@@ -6,8 +6,8 @@ extern "C" {
 #endif
 
 #include <fcntl.h>
-#include <unistd.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 static const char *su_paths[] = {
         // Common binaries
@@ -31,6 +31,11 @@ static const char *should_not_be_writable[] = {
 };
 static const int should_not_be_writable_count = sizeof(should_not_be_writable) / sizeof(*should_not_be_writable);
 
+static const char *should_not_be_creatable[] = {
+        "/system/bugsnag_test_file.txt",
+};
+static const int should_not_be_creatable_count = sizeof(should_not_be_creatable) / sizeof(*should_not_be_creatable);
+
 static inline int get_mode(const char* path) {
   struct stat st;
   if (lstat(path, &st) < 0) {
@@ -51,6 +56,19 @@ static inline bool is_path_writable(const char* path) {
   return (mode & 2) != 0;
 }
 
+static inline bool can_create_file(const char* path) {
+  unlink(path);
+
+  const int fd = open(path, O_CREAT);
+  if (fd < 0) {
+    return false;
+  }
+
+  close(fd);
+  unlink(path);
+  return true;
+}
+
 static bool assert_no_su_paths() {
   for (int i = 0; i < su_paths_count; i++) {
     if (does_path_exist(su_paths[i])) {
@@ -69,11 +87,23 @@ static bool assert_no_writable_paths() {
   return true;
 }
 
+static bool assert_no_creatable_files() {
+  for (int i = 0; i < should_not_be_creatable_count; i++) {
+    if (can_create_file(should_not_be_creatable[i])) {
+      return false;
+    }
+  }
+  return true;
+}
+
 static bool is_rooted() {
   if (!assert_no_su_paths()) {
     return true;
   }
   if (!assert_no_writable_paths()) {
+    return true;
+  }
+  if (!assert_no_creatable_files()) {
     return true;
   }
   return false;
