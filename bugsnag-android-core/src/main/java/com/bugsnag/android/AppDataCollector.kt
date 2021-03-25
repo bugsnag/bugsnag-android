@@ -4,6 +4,7 @@ import android.app.ActivityManager
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.SystemClock
 import java.util.HashMap
 
@@ -44,6 +45,10 @@ internal class AppDataCollector(
         map["activeScreen"] = getActiveScreenClass()
         map["memoryUsage"] = getMemoryUsage()
         map["lowMemory"] = isLowMemory()
+
+        isBackgroundWorkRestricted()?.let {
+            map["backgroundWorkRestricted"] = it
+        }
         return map
     }
 
@@ -56,6 +61,20 @@ internal class AppDataCollector(
     private fun getMemoryUsage(): Long {
         val runtime = Runtime.getRuntime()
         return runtime.totalMemory() - runtime.freeMemory()
+    }
+
+    /**
+     * Checks whether the user has restricted the amount of work this app can do in the background.
+     * https://developer.android.com/reference/android/app/ActivityManager#isBackgroundRestricted()
+     */
+    private fun isBackgroundWorkRestricted(): Boolean? {
+        return if (activityManager == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+            null
+        } else if (activityManager.isBackgroundRestricted) {
+            true // only return non-null value if true to avoid noise in error reports
+        } else {
+            null
+        }
     }
 
     /**
