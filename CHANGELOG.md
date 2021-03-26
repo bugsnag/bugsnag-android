@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 5.8.0 (2021-03-22)
 
 ### Deprecations
 
