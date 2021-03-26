@@ -458,6 +458,14 @@ void bsg_populate_app_data(JNIEnv *env, bsg_jni_cache *jni_cache,
   event->app.version_code =
       bsg_get_map_value_int(env, jni_cache, data, "versionCode");
 
+  bool restricted =
+      bsg_get_map_value_bool(env, jni_cache, data, "backgroundWorkRestricted");
+
+  if (restricted) {
+    bugsnag_event_add_metadata_bool(event, "app", "backgroundWorkRestricted",
+                                    restricted);
+  }
+
   bsg_safe_delete_local_ref(env, data);
 }
 
