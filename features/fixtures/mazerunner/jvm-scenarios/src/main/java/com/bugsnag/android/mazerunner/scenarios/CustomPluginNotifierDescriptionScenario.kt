@@ -11,7 +11,6 @@ internal class CustomPluginNotifierDescriptionScenario(
 ) : Scenario(config, context, eventMetadata) {
 
     init {
-        config.autoTrackSessions = false
         config.addPlugin(CustomPluginExample())
     }
 

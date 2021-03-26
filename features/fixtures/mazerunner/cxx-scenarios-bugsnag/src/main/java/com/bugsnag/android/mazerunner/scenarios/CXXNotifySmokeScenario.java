@@ -26,7 +26,6 @@ public class CXXNotifySmokeScenario extends Scenario {
                                   @NonNull Context context,
                                   @Nullable String eventMetadata) {
         super(config, context, eventMetadata);
-        config.setAutoTrackSessions(false);
         config.setContext("FooContext");
     }
 

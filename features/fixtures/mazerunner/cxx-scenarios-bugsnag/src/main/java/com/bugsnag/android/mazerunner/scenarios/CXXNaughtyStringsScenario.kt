@@ -12,7 +12,6 @@ internal class CXXNaughtyStringsScenario(
 
     init {
         System.loadLibrary("cxx-scenarios")
-        config.autoTrackSessions = false
     }
 
     external fun crash()

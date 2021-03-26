@@ -15,7 +15,6 @@ internal class JvmCrashLoopScenario(
 ) : Scenario(config, context, eventMetadata) {
 
     init {
-        config.autoTrackSessions = false
         config.addOnError(
             OnErrorCallback { event ->
                 Bugsnag.getLastRunInfo()?.let {

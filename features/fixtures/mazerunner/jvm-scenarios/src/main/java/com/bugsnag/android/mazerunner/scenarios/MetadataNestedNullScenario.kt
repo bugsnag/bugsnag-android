@@ -14,10 +14,6 @@ internal class MetadataNestedNullScenario(
     eventMetadata: String
 ) : Scenario(config, context, eventMetadata) {
 
-    init {
-        config.autoTrackSessions = false
-    }
-
     override fun startScenario() {
         super.startScenario()
 

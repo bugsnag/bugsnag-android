@@ -14,7 +14,6 @@ internal class ManualSessionSmokeScenario(
 ) : Scenario(config, context, eventMetadata) {
 
     override fun startBugsnag(startBugsnagOnly: Boolean) {
-        config.autoTrackSessions = false
         super.startBugsnag(startBugsnagOnly)
     }
 

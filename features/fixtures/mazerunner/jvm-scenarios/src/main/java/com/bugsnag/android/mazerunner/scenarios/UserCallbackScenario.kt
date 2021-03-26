@@ -13,10 +13,6 @@ internal class UserCallbackScenario(
     eventMetadata: String
 ) : Scenario(config, context, eventMetadata) {
 
-    init {
-        config.autoTrackSessions = false
-    }
-
     override fun startScenario() {
         super.startScenario()
         Bugsnag.setUser("abc", "user@example.com", "Jake")

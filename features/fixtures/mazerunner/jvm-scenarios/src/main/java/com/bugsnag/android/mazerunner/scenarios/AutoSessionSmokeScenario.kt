@@ -19,6 +19,7 @@ internal class AutoSessionSmokeScenario(
     init {
         val baseDelivery = createDefaultDelivery()
         var intercept = true
+        config.autoTrackSessions = true
         config.delivery = InterceptingDelivery(baseDelivery) {
             if (intercept) {
                 intercept = false

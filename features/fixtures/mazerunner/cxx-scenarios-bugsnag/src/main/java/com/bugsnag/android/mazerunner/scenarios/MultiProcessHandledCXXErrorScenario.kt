@@ -14,7 +14,6 @@ internal class MultiProcessHandledCXXErrorScenario(
 ) : Scenario(config, context, eventMetadata) {
 
     init {
-        config.autoTrackSessions = false
         config.persistUser = true
         System.loadLibrary("bugsnag-ndk")
         System.loadLibrary("cxx-scenarios-bugsnag")

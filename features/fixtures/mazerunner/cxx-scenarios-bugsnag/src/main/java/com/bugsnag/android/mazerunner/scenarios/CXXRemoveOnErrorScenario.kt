@@ -12,7 +12,6 @@ class CXXRemoveOnErrorScenario(
     init {
         System.loadLibrary("bugsnag-ndk")
         System.loadLibrary("cxx-scenarios-bugsnag")
-        config.autoTrackSessions = false
         config.context = "CXXRemoveOnErrorScenario"
     }
 

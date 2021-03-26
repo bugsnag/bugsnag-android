@@ -20,7 +20,6 @@ internal class SessionStoppingScenario(
     private var stateMachine: ScenarioState = ScenarioState.FIRST_SESSION
 
     init {
-        config.autoTrackSessions = false
         config.delivery = InterceptingDelivery(createDefaultDelivery()) { status ->
             check(status == DeliveryStatus.DELIVERED) {
                 "Request failed, aborting scenario. status=$status"

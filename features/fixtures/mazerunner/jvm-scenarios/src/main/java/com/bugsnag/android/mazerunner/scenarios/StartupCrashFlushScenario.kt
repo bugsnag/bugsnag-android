@@ -25,7 +25,6 @@ internal class StartupCrashFlushScenario(
 ) : Scenario(config, context, eventMetadata) {
 
     init {
-        config.autoTrackSessions = false
         if ("CrashOfflineWithDelay" == eventMetadata || "CrashOfflineAtStartup" == eventMetadata) {
             // Part 2 - Persist a startup crash to disk
             disableAllDelivery(config)

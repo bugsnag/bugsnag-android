@@ -13,10 +13,6 @@ internal class UserDisabledScenario(
     eventMetadata: String
 ) : Scenario(config, context, eventMetadata) {
 
-    init {
-        config.autoTrackSessions = false
-    }
-
     override fun startScenario() {
         super.startScenario()
         Bugsnag.setUser(null, null, null)

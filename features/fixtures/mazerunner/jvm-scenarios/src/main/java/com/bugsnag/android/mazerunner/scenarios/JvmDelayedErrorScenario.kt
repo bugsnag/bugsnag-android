@@ -20,7 +20,6 @@ internal class JvmDelayedErrorScenario(
     }
 
     init {
-        config.autoTrackSessions = false
         config.launchDurationMillis = CRASH_DELAY_MS
     }
 

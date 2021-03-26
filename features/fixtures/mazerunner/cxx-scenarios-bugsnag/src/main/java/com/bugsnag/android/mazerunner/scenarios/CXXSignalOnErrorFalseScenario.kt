@@ -11,7 +11,6 @@ class CXXSignalOnErrorFalseScenario(
 ) : Scenario(config, context, eventMetadata) {
 
     init {
-        config.autoTrackSessions = false
         System.loadLibrary("bugsnag-ndk")
         System.loadLibrary("cxx-scenarios-bugsnag")
     }

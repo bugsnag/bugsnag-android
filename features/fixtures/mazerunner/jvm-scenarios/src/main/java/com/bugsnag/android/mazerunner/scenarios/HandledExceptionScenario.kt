@@ -13,10 +13,6 @@ internal class HandledExceptionScenario(
     eventMetadata: String
 ) : Scenario(config, context, eventMetadata) {
 
-    init {
-        config.autoTrackSessions = false
-    }
-
     override fun startScenario() {
         super.startScenario()
         Bugsnag.notify(generateException())

@@ -14,7 +14,6 @@ internal class EmptyEnabledReleaseStageScenario(
 ) : Scenario(config, context, eventMetadata) {
 
     init {
-        config.autoTrackSessions = false
         config.releaseStage = "prod"
         config.enabledReleaseStages = emptySet()
     }

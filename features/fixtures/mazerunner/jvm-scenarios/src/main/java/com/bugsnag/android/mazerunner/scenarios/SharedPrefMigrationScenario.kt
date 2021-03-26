@@ -16,7 +16,6 @@ internal class SharedPrefMigrationScenario(
 ) : Scenario(config, context, eventMetadata) {
 
     init {
-        config.autoTrackSessions = false
         config.persistUser = true
     }
 

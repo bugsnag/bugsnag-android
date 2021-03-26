@@ -11,7 +11,6 @@ class CXXTrapOutsideReleaseStagesScenario(
 ) : Scenario(config, context, eventMetadata) {
 
     init {
-        config.autoTrackSessions = false
         config.enabledReleaseStages = setOf("fee-fi-fo-fum")
         System.loadLibrary("cxx-scenarios")
     }
