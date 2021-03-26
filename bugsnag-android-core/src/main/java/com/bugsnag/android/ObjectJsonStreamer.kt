@@ -50,7 +50,7 @@ internal class ObjectJsonStreamer {
         writer.endArray()
     }
 
-    private fun arrayToStream(writer: JsonStream, obj: Any?) {
+    private fun arrayToStream(writer: JsonStream, obj: Any) {
         // Primitive array objects
         writer.beginArray()
         val length = Array.getLength(obj)
