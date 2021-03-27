@@ -54,6 +54,10 @@ When("I close and relaunch the app") do
   Maze.driver.launch_app
 end
 
+When('I set the screen orientation to portrait') do
+  Maze.driver.set_rotation(:portrait)
+end
+
 When("I relaunch the app after a crash") do
   # This step should only be used when the app has crashed, but the notifier needs a little
   # time to write the crash report before being forced to reopen.  From trials, 2s was not enough.
