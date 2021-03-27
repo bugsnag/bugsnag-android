@@ -63,9 +63,13 @@ end
 
 When("I tap the screen {int} times") do |count|
   (1..count).each { |i|
-    touch_action = Appium::TouchAction.new
-    touch_action.tap({:x => 500, :y => 300})
-    touch_action.perform
+    begin
+      touch_action = Appium::TouchAction.new
+      touch_action.tap({:x => 500, :y => 300})
+      touch_action.perform
+    rescue Selenium::WebDriver::Error::ElementNotInteractableError
+      # Ignore it§
+    end
     sleep(1)
   }
 end
