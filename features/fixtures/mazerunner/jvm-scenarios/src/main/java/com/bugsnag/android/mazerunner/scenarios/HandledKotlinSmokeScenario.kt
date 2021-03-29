@@ -15,8 +15,8 @@ internal class HandledKotlinSmokeScenario(
     context: Context,
     eventMetadata: String?
 ) : Scenario(config, context, eventMetadata) {
+
     init {
-        config.autoTrackSessions = false
         config.appType = "Overwritten"
         config.appVersion = "9.9.9"
         config.versionCode = 999

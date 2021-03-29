@@ -23,7 +23,6 @@ public class CXXGetJavaDataScenario extends Scenario {
                                   @NonNull Context context,
                                   @Nullable String eventMetadata) {
         super(config, context, eventMetadata);
-        config.setAutoTrackSessions(false);
         config.addMetadata("notData", "vals", "passMetaData");
         config.setAppVersion("passAppVersion");
         config.setContext("passContext");

@@ -22,7 +22,6 @@ internal class CXXDelayedErrorScenario(
     external fun crash()
 
     init {
-        config.autoTrackSessions = false
         config.launchDurationMillis = CRASH_DELAY_MS
         System.loadLibrary("cxx-scenarios")
     }

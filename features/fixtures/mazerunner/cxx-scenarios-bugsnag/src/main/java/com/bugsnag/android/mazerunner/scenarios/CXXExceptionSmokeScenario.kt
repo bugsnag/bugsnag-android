@@ -28,7 +28,6 @@ class CXXExceptionSmokeScenario(
 
     init {
         System.loadLibrary("cxx-scenarios-bugsnag")
-        config.autoTrackSessions = false
         config.appType = "Overwritten"
         config.appVersion = "9.9.9"
         config.versionCode = 999

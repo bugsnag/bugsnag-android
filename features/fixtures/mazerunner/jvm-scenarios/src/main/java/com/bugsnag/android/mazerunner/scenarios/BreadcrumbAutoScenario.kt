@@ -15,7 +15,6 @@ internal class BreadcrumbAutoScenario(
 ) : Scenario(config, context, eventMetadata) {
 
     init {
-        config.autoTrackSessions = false
         config.enabledBreadcrumbTypes = setOf(BreadcrumbType.STATE)
     }
 

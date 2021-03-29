@@ -21,7 +21,6 @@ public class CXXConfigurationMetadataNativeCrashScenario extends Scenario {
                                                        @NonNull Context context,
                                                        @Nullable String eventMetadata) {
         super(config, context, eventMetadata);
-        config.setAutoTrackSessions(false);
         String metadata = getEventMetadata();
         if (metadata == null || !metadata.equals("no-metadata")) {
             config.addMetadata("fruit", "apple", "gala");

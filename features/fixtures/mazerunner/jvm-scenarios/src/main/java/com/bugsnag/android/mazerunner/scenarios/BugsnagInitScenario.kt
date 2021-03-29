@@ -18,10 +18,6 @@ internal class BugsnagInitScenario(
         private const val POOL_SIZE = 8
     }
 
-    init {
-        config.autoTrackSessions = false
-    }
-
     override fun startScenario() {
         val threadPool = Executors.newFixedThreadPool(POOL_SIZE)
         val callables = mutableListOf<Callable<Client?>>()

@@ -14,7 +14,6 @@ internal class ManualRedactKeysScenario(
 ) : Scenario(config, context, eventMetadata) {
 
     init {
-        config.autoTrackSessions = false
         config.redactedKeys = setOf("foo")
     }
 

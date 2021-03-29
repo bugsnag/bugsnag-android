@@ -13,7 +13,6 @@ internal class ReportCacheScenario(
 ) : Scenario(config, context, eventMetadata) {
 
     init {
-        config.autoTrackSessions = false
         if (eventMetadata != "online") {
             disableAllDelivery(config)
         }

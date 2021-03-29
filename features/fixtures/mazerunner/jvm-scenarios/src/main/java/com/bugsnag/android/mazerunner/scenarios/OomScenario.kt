@@ -13,10 +13,6 @@ internal class OomScenario(
     eventMetadata: String
 ) : Scenario(config, context, eventMetadata) {
 
-    init {
-        config.autoTrackSessions = false
-    }
-
     private val queue = LinkedList<Array<String>>()
 
     override fun startScenario() {

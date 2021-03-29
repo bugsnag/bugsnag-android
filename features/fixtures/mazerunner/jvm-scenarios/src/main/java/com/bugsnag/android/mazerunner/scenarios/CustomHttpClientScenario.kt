@@ -17,7 +17,6 @@ internal class CustomHttpClientScenario(
 
     init {
         config.delivery = createCustomHeaderDelivery()
-        config.autoTrackSessions = false
     }
 
     override fun startScenario() {

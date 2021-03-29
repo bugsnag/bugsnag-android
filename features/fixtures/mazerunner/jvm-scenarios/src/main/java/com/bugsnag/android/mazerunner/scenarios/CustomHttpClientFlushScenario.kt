@@ -16,8 +16,6 @@ internal class CustomHttpClientFlushScenario(
 ) : Scenario(config, context, eventMetadata) {
 
     override fun startBugsnag(startBugsnagOnly: Boolean) {
-        config.autoTrackSessions = false
-
         if (startBugsnagOnly) {
             config.delivery = createCustomHeaderDelivery()
         } else {

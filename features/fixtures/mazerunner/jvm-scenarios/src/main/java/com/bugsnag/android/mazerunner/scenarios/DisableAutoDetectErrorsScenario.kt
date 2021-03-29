@@ -15,7 +15,6 @@ internal class DisableAutoDetectErrorsScenario(
 ) : Scenario(config, context, eventMetadata) {
 
     init {
-        config.autoTrackSessions = false
         config.enabledErrorTypes.unhandledExceptions = false
     }
 

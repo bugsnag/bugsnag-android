@@ -19,7 +19,6 @@ internal class CXXAnrNdkDisabledScenario(
     }
 
     init {
-        config.autoTrackSessions = false
         config.enabledErrorTypes.anrs = true
         config.enabledErrorTypes.ndkCrashes = false
     }

@@ -14,8 +14,8 @@ internal class OverrideToHandledExceptionScenario(
     context: Context,
     eventMetadata: String?
 ) : Scenario(config, context, eventMetadata) {
+
     init {
-        config.autoTrackSessions = true
         config.addOnError(
             OnErrorCallback {
                 it.isUnhandled = false

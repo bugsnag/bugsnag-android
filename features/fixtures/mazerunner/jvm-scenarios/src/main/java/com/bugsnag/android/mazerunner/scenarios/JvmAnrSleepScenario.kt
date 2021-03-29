@@ -16,7 +16,6 @@ internal class JvmAnrSleepScenario(
 ) : Scenario(config, context, eventMetadata) {
 
     init {
-        config.autoTrackSessions = false
         config.enabledErrorTypes.anrs = true
     }
 

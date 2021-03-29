@@ -14,7 +14,6 @@ class CXXPausedSessionScenario(
 
     init {
         System.loadLibrary("cxx-scenarios")
-        config.autoTrackSessions = false
 
         config.delivery = InterceptingDelivery(createDefaultDelivery()) {
             crash(0)
