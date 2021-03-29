@@ -14,7 +14,6 @@ internal class JvmMarkLaunchCompletedScenario(
 ) : Scenario(config, context, eventMetadata) {
 
     init {
-        config.autoTrackSessions = false
         config.launchDurationMillis = 0
     }
 

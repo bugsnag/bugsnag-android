@@ -13,10 +13,6 @@ internal class AutoRedactKeysScenario(
     eventMetadata: String
 ) : Scenario(config, context, eventMetadata) {
 
-    init {
-        config.autoTrackSessions = false
-    }
-
     override fun startScenario() {
         super.startScenario()
         Bugsnag.addMetadata("user", "password", "hunter2")

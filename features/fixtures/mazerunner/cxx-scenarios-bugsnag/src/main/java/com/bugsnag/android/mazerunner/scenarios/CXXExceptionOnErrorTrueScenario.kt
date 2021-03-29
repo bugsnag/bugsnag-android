@@ -12,7 +12,6 @@ class CXXExceptionOnErrorTrueScenario(
     init {
         System.loadLibrary("bugsnag-ndk")
         System.loadLibrary("cxx-scenarios-bugsnag")
-        config.autoTrackSessions = false
     }
 
     external fun crash()

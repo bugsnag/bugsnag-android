@@ -15,7 +15,6 @@ internal class CXXCrashLoopScenario(
 
     init {
         System.loadLibrary("cxx-scenarios-bugsnag")
-        config.autoTrackSessions = false
     }
 
     external fun crash()

@@ -12,7 +12,6 @@ internal class CXXHandledOverrideScenario(
 
     init {
         System.loadLibrary("cxx-scenarios-bugsnag")
-        config.autoTrackSessions = false
         disableSessionDelivery(config)
     }
 

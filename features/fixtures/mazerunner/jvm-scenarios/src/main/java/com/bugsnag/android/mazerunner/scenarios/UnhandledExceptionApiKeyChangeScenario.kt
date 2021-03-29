@@ -14,7 +14,6 @@ internal class UnhandledExceptionApiKeyChangeScenario(
 ) : Scenario(config, context, eventMetadata) {
 
     init {
-        config.autoTrackSessions = false
         config.addOnError(
             OnErrorCallback { event ->
                 event.apiKey = "0000111122223333aaaabbbbcccc9999"

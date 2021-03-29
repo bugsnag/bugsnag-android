@@ -20,7 +20,6 @@ public class JvmAnrOutsideReleaseStagesScenario extends Scenario {
                                               @NonNull Context context,
                                               @Nullable String eventMetadata) {
         super(config, context, eventMetadata);
-        config.setAutoTrackSessions(false);
         config.setEnabledReleaseStages(Collections.singleton("fee-fi-fo-fum"));
     }
 

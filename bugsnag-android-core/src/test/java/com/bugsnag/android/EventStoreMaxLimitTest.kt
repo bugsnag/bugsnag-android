@@ -40,7 +40,7 @@ class EventStoreMaxLimitTest {
         repeat(40) {
             eventStore.write(event)
         }
-        val files = errorDir.list()
+        val files = requireNotNull(errorDir.list())
         assertEquals(32, files.size)
     }
 
@@ -56,7 +56,7 @@ class EventStoreMaxLimitTest {
         repeat(7) {
             eventStore.write(event)
         }
-        val files = errorDir.list()
+        val files = requireNotNull(errorDir.list())
         assertEquals(5, files.size)
     }
 
@@ -70,7 +70,7 @@ class EventStoreMaxLimitTest {
 
         val event = generateEvent()
         eventStore.write(event)
-        val files = errorDir.list()
+        val files = requireNotNull(errorDir.list())
         assertEquals(0, files.size)
     }
 

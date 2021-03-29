@@ -34,7 +34,6 @@ public class CXXSignalSmokeScenario extends Scenario {
                                   @NonNull Context context,
                                   @Nullable String eventMetadata) {
         super(config, context, eventMetadata);
-        config.setAutoTrackSessions(false);
         config.setAppType("Overwritten");
         config.setAppVersion("9.9.9");
         config.setVersionCode(999);

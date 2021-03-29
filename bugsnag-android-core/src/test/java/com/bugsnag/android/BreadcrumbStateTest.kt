@@ -84,7 +84,8 @@ class BreadcrumbStateTest {
     @Test
     fun testDefaultBreadcrumbType() {
         breadcrumbState.add(Breadcrumb("1", NoopLogger))
-        assertEquals(MANUAL, breadcrumbState.store.peek().type)
+        val crumb = requireNotNull(breadcrumbState.store.peek())
+        assertEquals(MANUAL, crumb.type)
     }
 
     /**

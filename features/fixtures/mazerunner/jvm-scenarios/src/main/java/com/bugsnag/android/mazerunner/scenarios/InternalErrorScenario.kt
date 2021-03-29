@@ -11,10 +11,6 @@ internal class InternalErrorScenario(
     eventMetadata: String
 ) : Scenario(config, context, eventMetadata) {
 
-    init {
-        config.autoTrackSessions = false
-    }
-
     override fun startScenario() {
         super.startScenario()
         triggerInternalBugsnagForError(Bugsnag.getClient())

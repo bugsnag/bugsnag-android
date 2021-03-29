@@ -14,7 +14,6 @@ internal class SessionPersistUserDisabledScenario(
 ) : Scenario(config, context, eventMetadata) {
 
     init {
-        config.autoTrackSessions = false
         config.persistUser = false
     }
 

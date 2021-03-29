@@ -21,13 +21,11 @@ public class CXXUpdateContextCrashScenario extends Scenario {
                                          @NonNull Context context,
                                          @Nullable String eventMetadata) {
         super(config, context, eventMetadata);
-        config.setAutoTrackSessions(false);
     }
 
     @Override
     public void startScenario() {
         super.startScenario();
-        String metadata = getEventMetadata();
         Context context = getContext();
         Bugsnag.setContext("Everest");
 

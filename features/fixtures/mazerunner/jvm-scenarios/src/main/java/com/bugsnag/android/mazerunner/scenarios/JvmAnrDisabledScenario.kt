@@ -13,8 +13,8 @@ internal class JvmAnrDisabledScenario(
     context: Context,
     eventMetadata: String?
 ) : Scenario(config, context, eventMetadata) {
+
     init {
-        config.autoTrackSessions = false
         config.enabledErrorTypes.anrs = false
     }
 

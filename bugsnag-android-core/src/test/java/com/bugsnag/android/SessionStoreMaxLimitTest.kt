@@ -40,7 +40,7 @@ class SessionStoreMaxLimitTest {
         repeat(140) {
             sessionStore.write(session)
         }
-        val files = sessionDir.list()
+        val files = requireNotNull(sessionDir.list())
         assertEquals(128, files.size)
     }
 
@@ -56,7 +56,7 @@ class SessionStoreMaxLimitTest {
         repeat(7) {
             sessionStore.write(session)
         }
-        val files = sessionDir.list()
+        val files = requireNotNull(sessionDir.list())
         assertEquals(5, files.size)
     }
 
@@ -70,7 +70,7 @@ class SessionStoreMaxLimitTest {
 
         val session = generateSession()
         sessionStore.write(session)
-        val files = sessionDir.list()
+        val files = requireNotNull(sessionDir.list())
         assertEquals(0, files.size)
     }
 

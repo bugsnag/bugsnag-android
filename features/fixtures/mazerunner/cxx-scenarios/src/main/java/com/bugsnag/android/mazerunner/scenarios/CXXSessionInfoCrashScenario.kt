@@ -17,7 +17,6 @@ class CXXSessionInfoCrashScenario(
 
     init {
         System.loadLibrary("cxx-scenarios")
-        config.autoTrackSessions = false
 
         config.delivery = InterceptingDelivery(createDefaultDelivery()) {
             when (deliveryCount.incrementAndGet()) {

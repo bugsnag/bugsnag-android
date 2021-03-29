@@ -12,10 +12,6 @@ internal class CrashHandlerScenario(
     eventMetadata: String
 ) : Scenario(config, context, eventMetadata) {
 
-    init {
-        config.autoTrackSessions = false
-    }
-
     override fun startScenario() {
         super.startScenario()
         val previousHandler = Thread.getDefaultUncaughtExceptionHandler()

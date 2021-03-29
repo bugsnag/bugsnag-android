@@ -7,7 +7,7 @@ import org.gradle.api.model.ObjectFactory
  * allows for unwanted behaviour to be switched off - e.g., modules which don't use the NDK
  * can disable it.
  */
-open class BugsnagBuildPluginExtension(objects: ObjectFactory) {
+open class BugsnagBuildPluginExtension(@Suppress("UNUSED_PARAMETER") objects: ObjectFactory) {
 
     /**
      * Whether this project compiles code or not. If this is set to false then unnecessary

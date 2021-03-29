@@ -20,7 +20,6 @@ public class CXXJavaBreadcrumbNativeCrashScenario extends Scenario {
                                                 @NonNull Context context,
                                                 @Nullable String eventMetadata) {
         super(config, context, eventMetadata);
-        config.setAutoTrackSessions(false);
     }
 
     @Override

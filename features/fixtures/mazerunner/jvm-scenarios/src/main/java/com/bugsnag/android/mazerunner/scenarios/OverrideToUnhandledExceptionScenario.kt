@@ -15,7 +15,6 @@ internal class OverrideToUnhandledExceptionScenario(
 ) : Scenario(config, context, eventMetadata) {
 
     init {
-        config.autoTrackSessions = false
         config.addOnSession(OnSessionCallback { false })
     }
 

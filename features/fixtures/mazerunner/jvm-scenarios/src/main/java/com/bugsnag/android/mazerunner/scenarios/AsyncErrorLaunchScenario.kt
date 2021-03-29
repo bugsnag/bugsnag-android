@@ -21,7 +21,6 @@ internal class AsyncErrorLaunchScenario(
 
     init {
         config.delivery = createSlowDelivery()
-        config.autoTrackSessions = false
     }
 
     override fun startScenario() {

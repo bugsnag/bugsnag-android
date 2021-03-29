@@ -19,6 +19,9 @@ fun prepareConfig(
         config.endpoints = EndpointConfiguration(notify, sessions)
     }
 
+    // disable auto session tracking by default to avoid unnecessary requests in scenarios
+    config.autoTrackSessions = false
+
     with(config.enabledErrorTypes) {
         ndkCrashes = true
         anrs = true

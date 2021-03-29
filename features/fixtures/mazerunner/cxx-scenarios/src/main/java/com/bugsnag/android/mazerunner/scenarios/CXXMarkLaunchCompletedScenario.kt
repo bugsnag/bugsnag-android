@@ -21,7 +21,6 @@ internal class CXXMarkLaunchCompletedScenario(
     external fun crash()
 
     init {
-        config.autoTrackSessions = false
         config.launchDurationMillis = 0
         System.loadLibrary("cxx-scenarios")
 

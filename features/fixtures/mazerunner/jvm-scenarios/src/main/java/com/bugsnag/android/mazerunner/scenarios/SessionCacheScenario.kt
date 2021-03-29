@@ -14,7 +14,6 @@ internal class SessionCacheScenario(
 ) : Scenario(config, context, eventMetadata) {
 
     init {
-        config.autoTrackSessions = false
         if (eventMetadata == "offline") {
             disableAllDelivery(config)
         }
