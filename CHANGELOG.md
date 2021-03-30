@@ -1,5 +1,22 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+* Improve detection of rooted devices
+  [#1194](https://github.com/bugsnag/bugsnag-android/pull/1194)
+  [#1195](https://github.com/bugsnag/bugsnag-android/pull/1195)
+  [#1198](https://github.com/bugsnag/bugsnag-android/pull/1198)
+  [#1200](https://github.com/bugsnag/bugsnag-android/pull/1200)
+  [#1201](https://github.com/bugsnag/bugsnag-android/pull/1201)
+
+* Bump compileSdkVersion to apiLevel 30
+  [#1202](https://github.com/bugsnag/bugsnag-android/pull/1202)
+
+* Collect whether the system has restricted background work for the app
+  [#1211](https://github.com/bugsnag/bugsnag-android/pull/1211)
+
 ## 5.8.0 (2021-03-22)
 
 ### Deprecations
@@ -7,12 +24,6 @@
 * `Configuration#launchCrashThresholdMs` is deprecated in favour of `Configuration#launchDurationMillis`
 
 ### Enhancements
-
-* Bump compileSdkVersion to apiLevel 30
-  [#1202](https://github.com/bugsnag/bugsnag-android/pull/1202)
-
-* Collect whether the system has restricted background work for the app
-  [#1211](https://github.com/bugsnag/bugsnag-android/pull/1211)
 
 * Add public API for crash-on-launch detection
   [#1157](https://github.com/bugsnag/bugsnag-android/pull/1157)

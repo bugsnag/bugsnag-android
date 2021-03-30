@@ -13,6 +13,9 @@ import java.io.File
 import java.util.Date
 import java.util.HashMap
 import java.util.Locale
+import java.util.concurrent.Callable
+import java.util.concurrent.Future
+import java.util.concurrent.RejectedExecutionException
 import kotlin.math.max
 import kotlin.math.min
 
@@ -23,30 +26,44 @@ internal class DeviceDataCollector(
     private val deviceId: String?,
     private val buildInfo: DeviceBuildInfo,
     private val dataDirectory: File,
+    rootDetector: RootDetector,
+    bgTaskService: BackgroundTaskService,
     private val logger: Logger
 ) {
 
     private val displayMetrics = resources?.displayMetrics
     private val emulator = isEmulator()
-    private val rooted = isRooted()
     private val screenDensity = getScreenDensity()
     private val dpi = getScreenDensityDpi()
     private val screenResolution = getScreenResolution()
     private val locale = Locale.getDefault().toString()
     private val cpuAbi = getCpuAbi()
     private val runtimeVersions: MutableMap<String, Any>
+    private val rootedFuture: Future<Boolean>?
 
     init {
         val map = mutableMapOf<String, Any>()
         buildInfo.apiLevel?.let { map["androidApiLevel"] = it }
         buildInfo.osBuild?.let { map["osBuild"] = it }
         runtimeVersions = map
+
+        rootedFuture = try {
+            bgTaskService.submitTask(
+                TaskType.IO,
+                Callable {
+                    rootDetector.isRooted()
+                }
+            )
+        } catch (exc: RejectedExecutionException) {
+            logger.w("Failed to perform root detection checks", exc)
+            null
+        }
     }
 
     fun generateDevice() = Device(
         buildInfo,
         cpuAbi,
-        rooted,
+        checkIsRooted(),
         deviceId,
         locale,
         calculateTotalMemory(),
@@ -55,7 +72,7 @@ internal class DeviceDataCollector(
 
     fun generateDeviceWithState(now: Long) = DeviceWithState(
         buildInfo,
-        rooted,
+        checkIsRooted(),
         deviceId,
         locale,
         calculateTotalMemory(),
@@ -80,23 +97,12 @@ internal class DeviceDataCollector(
         return map
     }
 
-    /**
-     * Check if the current Android device is rooted
-     */
-    private fun isRooted(): Boolean {
-        val tags = buildInfo.tags
-        if (tags != null && tags.contains("test-keys")) {
-            return true
+    private fun checkIsRooted(): Boolean {
+        return try {
+            rootedFuture != null && rootedFuture.get()
+        } catch (exc: Exception) {
+            false
         }
-
-        runCatching {
-            for (candidate in ROOT_INDICATORS) {
-                if (File(candidate).exists()) {
-                    return true
-                }
-            }
-        }
-        return false
     }
 
     /**
@@ -250,23 +256,5 @@ internal class DeviceDataCollector(
 
     fun addRuntimeVersionInfo(key: String, value: String) {
         runtimeVersions[key] = value
-    }
-
-    companion object {
-        private val ROOT_INDICATORS = arrayOf(
-            // Common binaries
-            "/system/xbin/su",
-            "/system/bin/su",
-            // < Android 5.0
-            "/system/app/Superuser.apk",
-            "/system/app/SuperSU.apk",
-            // >= Android 5.0
-            "/system/app/Superuser",
-            "/system/app/SuperSU",
-            // Fallback
-            "/system/xbin/daemonsu",
-            // Systemless root
-            "/su/bin"
-        )
     }
 }
