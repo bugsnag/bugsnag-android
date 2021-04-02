@@ -31,7 +31,7 @@ Scenario: Unhandled Java Exception with loaded configuration
     # App data
     And the event "app.buildUUID" equals "test-7.5.3"
     And the event "app.id" equals "com.bugsnag.android.mazerunner"
-    And the event "app.releaseStage" equals "production"
+    And the event "app.releaseStage" matches "(production|development)"
     And the event "app.type" equals "android"
     And the event "app.version" equals "1.1.14"
     And the event "app.versionCode" equals 34
@@ -277,7 +277,7 @@ Scenario: ANR detection
     # App data
     And the event "app.buildUUID" equals "test-7.5.3"
     And the event "app.id" equals "com.bugsnag.android.mazerunner"
-    And the event "app.releaseStage" equals "production"
+    And the event "app.releaseStage" matches "(production|development)"
     And the event "app.type" equals "android"
     And the event "app.version" equals "1.1.14"
     And the event "app.versionCode" equals 34
