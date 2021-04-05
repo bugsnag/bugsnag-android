@@ -11,8 +11,10 @@ services:
       context: .
       dockerfile: dockerfiles/Dockerfile.android-ci-base
     environment:
-      MAZE_DEVICE_FARM_USERNAME:
-      MAZE_DEVICE_FARM_ACCESS_KEY:
+      BROWSER_STACK_USERNAME:
+      BROWSER_STACK_ACCESS_KEY:
+      SAUCE_LABS_USERNAME:
+      SAUCE_LABS_ACCESS_KEY:
       INSTRUMENTATION_DEVICES:
 
   android-builder:
@@ -58,8 +60,10 @@ services:
       DEBUG:
       BUILDKITE:
       BUILDKITE_PIPELINE_NAME:
-      MAZE_DEVICE_FARM_USERNAME:
-      MAZE_DEVICE_FARM_ACCESS_KEY:
+      BROWSER_STACK_USERNAME:
+      BROWSER_STACK_ACCESS_KEY:
+      SAUCE_LABS_USERNAME:
+      SAUCE_LABS_ACCESS_KEY:
     volumes:
       - ./build:/app/build
       - ./maze-output:/app/maze-output
