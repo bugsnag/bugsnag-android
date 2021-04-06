@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import android.content.Context
+import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
@@ -155,7 +156,32 @@ internal class ImmutableConfigTest {
     }
 
     @Test
-    fun configSanitisation() {
+    fun configSanitisationDevelopment() {
+        `when`(context.packageName).thenReturn("com.example.foo")
+        val appInfo = ApplicationInfo()
+        appInfo.flags = ApplicationInfo.FLAG_DEBUGGABLE
+        `when`(packageManager.getApplicationInfo("com.example.foo", PackageManager.GET_META_DATA)).thenReturn(appInfo)
+        `when`(context.packageManager).thenReturn(packageManager)
+        val cacheDir = Files.createTempDirectory("foo").toFile()
+        `when`(context.cacheDir).thenReturn(cacheDir)
+        val packageInfo = PackageInfo()
+        @Suppress("DEPRECATION")
+        packageInfo.versionCode = 55
+        `when`(packageManager.getPackageInfo("com.example.foo", 0)).thenReturn(packageInfo)
+
+        val seed = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
+        seed.logger = NoopLogger
+        val config = sanitiseConfiguration(context, seed, connectivity)
+        assertEquals(NoopLogger, config.logger)
+        assertEquals(setOf("com.example.foo"), config.projectPackages)
+        assertEquals("development", config.releaseStage)
+        assertEquals(55, config.versionCode)
+        assertNotNull(config.delivery)
+        assertEquals(cacheDir, config.persistenceDirectory)
+    }
+
+    @Test
+    fun configSanitisationProduction() {
         `when`(context.packageName).thenReturn("com.example.foo")
         `when`(context.packageManager).thenReturn(packageManager)
         val cacheDir = Files.createTempDirectory("foo").toFile()
