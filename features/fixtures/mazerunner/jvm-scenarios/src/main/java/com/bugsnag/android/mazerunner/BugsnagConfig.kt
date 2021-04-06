@@ -21,6 +21,7 @@ fun prepareConfig(
 
     // disable auto session tracking by default to avoid unnecessary requests in scenarios
     config.autoTrackSessions = false
+    config.releaseStage = "mazerunner"
 
     with(config.enabledErrorTypes) {
         ndkCrashes = true

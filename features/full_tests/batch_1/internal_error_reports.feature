@@ -33,7 +33,7 @@ Scenario: If an exception is thrown when sending errors/sessions then internal e
     # App data
     And the event "app.buildUUID" is not null
     And the event "app.id" equals "com.bugsnag.android.mazerunner"
-    And the event "app.releaseStage" matches "(production|development)"
+    And the event "app.releaseStage" equals "mazerunner"
     And the event "app.type" equals "android"
     And the event "app.version" equals "1.1.14"
     And the event "app.versionCode" equals 34

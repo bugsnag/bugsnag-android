@@ -17,7 +17,7 @@ Scenario: Automated sessions send
     # App data
     And the session payload field "app.buildUUID" equals "test-7.5.3"
     And the session payload field "app.id" equals "com.bugsnag.android.mazerunner"
-    And the session payload field "app.releaseStage" matches the regex "(production|development)"
+    And the session payload field "app.releaseStage" equals "mazerunner"
     And the session payload field "app.type" equals "android"
     And the session payload field "app.version" equals "1.1.14"
     And the session payload field "app.versionCode" equals 34
