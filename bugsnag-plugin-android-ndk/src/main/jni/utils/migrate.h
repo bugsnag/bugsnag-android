@@ -100,7 +100,6 @@ typedef struct {
   time_t duration_ms_offset;
   time_t duration_in_foreground_ms_offset;
   bool in_foreground;
-  bool is_launching;
   char binary_arch[32];
 } bsg_app_info_v2;
 
