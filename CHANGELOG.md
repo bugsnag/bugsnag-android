@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* Fix deserialization bug in persisted NDK errors
+  [#1220](https://github.com/bugsnag/bugsnag-android/pull/1220)
+
 ## 5.9.0 (2021-03-30)
 
 ### Enhancements

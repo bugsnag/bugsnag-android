@@ -515,6 +515,44 @@ TEST test_breadcrumbs_to_json(void) {
   PASS();
 }
 
+void migrate_app_v2(bugsnag_report_v4 *report_v4, bugsnag_event *event);
+
+TEST test_migrate_app_v2(void) {
+  bugsnag_report_v4 *report_v4 = malloc(sizeof(bugsnag_report_v4));
+  bugsnag_event *event = malloc(sizeof(bugsnag_event));
+  bsg_app_info_v2 *seed = &report_v4->app;
+  bsg_app_info *app = &event->app;
+
+  strcpy(seed->id, "id");
+  strcpy(seed->release_stage, "beta");
+  strcpy(seed->type, "c");
+  strcpy(seed->version, "1.5.2");
+  strcpy(seed->active_screen, "ExampleActivity");
+  strcpy(seed->build_uuid, "10f9");
+  strcpy(seed->binary_arch, "x86");
+  seed->version_code = 5;
+  seed->duration = 52;
+  seed->duration_in_foreground = 25;
+  seed->duration_ms_offset = 3;
+  seed->duration_in_foreground_ms_offset = 11;
+
+  // migrate pre-populated data
+  migrate_app_v2(report_v4, event);
+
+  ASSERT_STR_EQ("id", app->id);
+  ASSERT_STR_EQ("beta", app->release_stage);
+  ASSERT_STR_EQ("c", app->type);
+  ASSERT_STR_EQ("1.5.2", app->version);
+  ASSERT_STR_EQ("ExampleActivity", app->active_screen);
+  ASSERT_STR_EQ("10f9", app->build_uuid);
+  ASSERT_STR_EQ("x86", app->binary_arch);
+  ASSERT_FALSE(app->is_launching);
+
+  free(report_v4);
+  free(event);
+  PASS();
+}
+
 SUITE(serialize_utils) {
   RUN_TEST(test_report_to_file);
   RUN_TEST(test_last_run_info_serialization);
@@ -532,4 +570,5 @@ SUITE(serialize_utils) {
   RUN_TEST(test_custom_info_to_json);
   RUN_TEST(test_exception_to_json);
   RUN_TEST(test_breadcrumbs_to_json);
+  RUN_TEST(test_migrate_app_v2);
 }
