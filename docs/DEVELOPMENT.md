@@ -15,9 +15,9 @@ The following guide should get you setup for developing bugsnag-android.
 
 The project is comprised of three [Gradle modules](https://docs.gradle.org/current/userguide/multi_project_builds.html):
 
-- [bugsnag-android-core](bugsnag-android-core/README.md), responsible for capturing JVM errors and delivery of payloads
-- [bugsnag-plugin-android-ndk](bugsnag-plugin-android-ndk/README.md), responsible for capturing NDK errors
-- [bugsnag-plugin-android-anr](bugsnag-plugin-android-anr/README.md), responsible for capturing ANRs
+- [bugsnag-android-core](../bugsnag-android-core/README.md), responsible for capturing JVM errors and delivery of payloads
+- [bugsnag-plugin-android-ndk](../bugsnag-plugin-android-ndk/README.md), responsible for capturing NDK errors
+- [bugsnag-plugin-android-anr](../bugsnag-plugin-android-anr/README.md), responsible for capturing ANRs
 
 [Gradle tasks](https://docs.gradle.org/current/userguide/tutorial_using_tasks.html) can generally be run on the entire project, or on an individual module: 
 
@@ -28,7 +28,7 @@ The project is comprised of three [Gradle modules](https://docs.gradle.org/curre
 
 # Example app
 
-The example app can be found in [examples/sdk-app-example](examples/sdk-app-example). It contains example code which triggers crashes.
+The example app can be found in [examples/sdk-app-example](../examples/sdk-app-example). It contains example code which triggers crashes.
 
 You should open `examples/sdk-app-example` as a separate Android Studio project and [run the app](https://developer.android.com/training/basics/firstapp/running-app). This will require a connected device or emulator.
 

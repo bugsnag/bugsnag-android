@@ -42,11 +42,11 @@ Here’s a bit about our process designing and building the Bugsnag libraries:
 
 
 ## Developing
-For information on how to build the library and develop changes see [DEVELOPMENT.md](DEVELOPMENT.md)
+For information on how to build the library and develop changes see [DEVELOPMENT.md](docs/DEVELOPMENT.md)
 
 ## Testing
-For information on running the tests see [TESTING.md](TESTING.md)
-Full details of how to build and run tests can be found in [the testing guide](TESTING.md)
+For information on running the tests see [TESTING.md](docs/TESTING.md)
+Full details of how to build and run tests can be found in [the testing guide](docs/TESTING.md)
 
 ## Installing/testing against a local maven repository
 
@@ -61,4 +61,4 @@ This installs bugsnag-android to a local maven repository. To use it in the exam
 
 # Releasing a New Version
 
-Full details of how to release can be found in [the release guide](RELEASING.md)
+Full details of how to release can be found in [the release guide](docs/RELEASING.md)
