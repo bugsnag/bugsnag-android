@@ -11,4 +11,4 @@ echo "nexusUsername=$PUBLISH_USER" >> ~/.gradle/gradle.properties
 echo "nexusPassword=$PUBLISH_PASS" >> ~/.gradle/gradle.properties
 
 /app/gradlew assembleRelease publish && \
- echo "Go to https://oss.sonatype.org/ to release the final artefact. For the full release instructions, please read https://github.com/bugsnag/bugsnag-android/blob/next/RELEASING.md"
+ echo "Go to https://oss.sonatype.org/ to release the final artefact. For the full release instructions, please read https://github.com/bugsnag/bugsnag-android/blob/next/docs/RELEASING.md"

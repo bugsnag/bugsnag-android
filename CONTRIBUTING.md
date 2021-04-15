@@ -41,24 +41,6 @@ Here’s a bit about our process designing and building the Bugsnag libraries:
 * Finally, one of our goals is to ensure our libraries work reliably, even in crashy, multi-threaded environments. Oftentimes, this requires an intensive engineering design and code review process that adheres to our style and linting guidelines.
 
 
-## Developing
-For information on how to build the library and develop changes see [DEVELOPMENT.md](docs/DEVELOPMENT.md)
+## Further development docs
+For information on how to build the library and develop changes you should start by reading [the docs](docs/README.md).
 
-## Testing
-For information on running the tests see [TESTING.md](docs/TESTING.md)
-Full details of how to build and run tests can be found in [the testing guide](docs/TESTING.md)
-
-## Installing/testing against a local maven repository
-
-Change `VERSION_NAME` in `gradle.properties` to a version higher than the currently
-released bugsnag-android, then run:
-
-```shell
-./gradlew clean assembleRelease publishToMavenLocal
-```
-
-This installs bugsnag-android to a local maven repository. To use it in the example app, you'll need to modify its `build.gradle` to set the `com.bugsnag:bugsnag-android` dependency version to match (near the bottom of the file).
-
-# Releasing a New Version
-
-Full details of how to release can be found in [the release guide](docs/RELEASING.md)
