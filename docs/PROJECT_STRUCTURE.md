@@ -6,12 +6,12 @@ This gives a high-level overview of the major components of the bugsnag-android 
 
 The project consists of [6 Gradle modules](https://gradle.org/), which are linked to below:
 
-[bugsnag-android-core](../bugsnag-android-core/README.md) - contains the core functionality required to capture and deliver JVM errors to Bugsnag.
-[bugsnag-plugin-android-ndk](../bugsnag-plugin-android-ndk/README.md) - contains optional functionality that installs signal handlers and captures NDK errors.
-[bugsnag-plugin-android-anr](../bugsnag-plugin-android-ndk/README.md) - contains optional functionality that installs a signal handler to capture ANR errors.
-[bugsnag-plugin-react-native](../bugsnag-plugin-react-native/README.md) - contains optional functionality that serializes information into a format that can be understood by the React Native bridge.
-[bugsnag-android](../bugsnag-android/README.md) - an anchor package which allows users to pull in all the required modules.
-[bugsnag-android-ndk](../bugsnag-android-ndk/README.md) - an anchor package which allows users to pull in all the required modules. Published for legacy reasons
+- [bugsnag-android-core](../bugsnag-android-core/README.md) - contains the core functionality required to capture and deliver JVM errors to Bugsnag.
+- [bugsnag-plugin-android-ndk](../bugsnag-plugin-android-ndk/README.md) - contains optional functionality that installs signal handlers and captures NDK errors.
+- [bugsnag-plugin-android-anr](../bugsnag-plugin-android-ndk/README.md) - contains optional functionality that installs a signal handler to capture ANR errors.
+- [bugsnag-plugin-react-native](../bugsnag-plugin-react-native/README.md) - contains optional functionality that serializes information into a format that can be understood by the React Native bridge.
+- [bugsnag-android](../bugsnag-android/README.md) - an anchor package which allows users to pull in all the required modules.
+- [bugsnag-android-ndk](../bugsnag-android-ndk/README.md) - an anchor package which allows users to pull in all the required modules. Published for legacy reasons
 
 ## Example app
 

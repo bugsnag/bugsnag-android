@@ -1,6 +1,6 @@
 # Testing bugsnag-android
 
-This documents code quality checks which are used to improve the quality of bugsnag-android. Most of these can be run at once with `./gradlew check`.
+This documents code quality checks that are used to improve the quality of bugsnag-android. Most of these can be run all together using `./gradlew check`.
 
 ## Unit tests
 
@@ -98,49 +98,4 @@ The size impact of the bugsnag-android SDK is reported onto Github pull requests
 
 ## Running remote end-to-end tests
 
-These tests are implemented with our notifier testing tool [Maze runner](https://github.com/bugsnag/maze-runner).
-
-End to end tests are written in cucumber-style `.feature` files, and need Ruby-backed "steps" in order to know what to run. The tests are located in the top level [`features`](/features/) directory.
-
-Maze Runner's CLI and the test fixtures are containerized so you'll need Docker (and Docker Compose) to run them.
-
-__Note: only Bugsnag employees can run the end-to-end tests.__ We have dedicated test infrastructure and private BrowserStack credentials which can't be shared outside of the organisation.
-
-### Authenticating with the private container registry
-
-You'll need to set the credentials for the aws profile in order to access the private docker registry:
-
-```
-aws configure --profile=opensource
-```
-
-Subsequently you'll need to run the following commmand to authenticate with the registry:
-
-```
-$(aws ecr get-login --profile=opensource --no-include-email)
-```
-
-__Your session will periodically expire__, so you'll need to run this command to re-authenticate when that happens.
-
-Remote tests can be run against real devices provided by BrowserStack. In order to run these tests, you need:
-
-A BrowserStack App Automate Username: `MAZE_DEVICE_FARM_USERNAME`
-A BrowserStack App Automate Access Key: `MAZE_DEVICE_FARM_ACCESS_KEY`
-A BrowserStack local testing binary (see https://www.browserstack.com/local-testing/app-automate): `MAZE_BS_LOCAL`
-
-A local docker and docker-compose installation.
-
-### Running an end-to-end test
-
-1. Build the test fixtures `make test-fixtures` (separate fixtures are built with and without the NDK/ANR plugins)
-1. Check the contents of `Gemfile` to select the version of `maze-runner` to use
-1. To run a single feature:
-    ```shell script
-    make test-fixtures && \
-    bundle exec maze-runner --app=build/fixture.apk                 \
-                            --farm=bs                               \
-                            --device=ANDROID_9_0                    \
-                            features/smoke_tests/unhandled.feature
-    ```
-1. To run all features, omit the final argument.
-1. Maze Runner also supports all options that Cucumber does.  Run `bundle exec maze-runner --help` for full details.
+Please see the [mazerunner docs](MAZERUNNER.md) for information on how to run E2E tests locally.

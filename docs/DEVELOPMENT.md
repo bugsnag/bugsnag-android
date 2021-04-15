@@ -13,7 +13,7 @@ This provides an overview of common tasks which you are likely to perform in dev
 
 ## Running E2E tests
 
-Please see the [testing docs](TESTING.md) for information on how to run E2E tests locally.
+Please see the [mazerunner docs](MAZERUNNER.md) for information on how to run E2E tests locally.
 
 ## Example app
 
@@ -49,5 +49,3 @@ option:
 ```shell
 ./gradlew assembleRelease -PABI_FILTERS=x86,arm64-v8a
 ```
-
-For release purposes, the Makefile's build command includes the "armeabi" ABI for compatibility with devices using r16 and below of the NDK.

@@ -20,6 +20,10 @@ For instructions on common development tasks start [here](DEVELOPMENT.md).
 
 For details on tools used to maintain and improve code quality start [here](TESTING.md).
 
+## Mazerunner
+
+To learn how to use mazerunner to run E2E tests start [here](MAZERUNNER.md).
+
 ## Releasing a new version
 
 For instructions on releasing a new version start [here](RELEASING.md).

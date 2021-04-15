@@ -42,7 +42,7 @@ This contains a prompt of checks which you may want to test, depending on the ex
     - Trigger the release step by allowing the `Trigger package publish` step to continue
     - Verify the `Publish` step runs correctly and the artefacts are upload to sonatype.
   - Release to GitHub:
-    - [ ] Create a release from your new tag on [GitHub Releases](https://github.com/bugsnag/bugsnag-android/releases)`
+    - [ ] Create a release from your new tag on [GitHub Releases](https://github.com/bugsnag/bugsnag-android/releases)
   - Checkout `master` and pull the latest changes
   - [ ] Test the Sonatype artefacts in the example app by adding the newly created 'combugsnag-XXXX' repository to the build.gradle:  `maven {url "https://oss.sonatype.org/service/local/repositories/combugsnag-XXXX/content/"}`
   - [ ] "Promote" the release build on Maven Central:
