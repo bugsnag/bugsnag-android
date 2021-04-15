@@ -133,16 +133,17 @@ steps:
           run: android-ci
     command: './gradlew test'
 
-  - label: ':android: Android 4.4 Instrumentation tests'
+  - label: ':android: Android 7 Instrumentation tests'
     key: 'NDK-smoke-test'
-    depends_on: "android-ci"
+    depends_on:
+      - "android-ci"
     timeout_in_minutes: 30
     command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
     plugins:
       - docker-compose#v3.7.0:
           run: android-ci
     env:
-      INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4"]'
+      INSTRUMENTATION_DEVICES: '["Google Pixel-7.1"]'
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
