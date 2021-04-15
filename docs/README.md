@@ -10,11 +10,7 @@ Getting setup on a new machine for the first time? Start [here](ENVIRONMENT_SETU
 
 ## High-level project structure
 
-Read an overview of how the important components of the project [here](PROJECT_STRUCTURE.md). 
-
-## Releasing a new version
-
-For instructions on releasing a new version start [here](RELEASING.md).
+Read an overview of how the important components of the project are structured [here](PROJECT_STRUCTURE.md).
 
 ## General development
 
@@ -23,3 +19,7 @@ For instructions on common development tasks start [here](DEVELOPMENT.md).
 ## Code quality
 
 For details on tools used to maintain and improve code quality start [here](TESTING.md).
+
+## Releasing a new version
+
+For instructions on releasing a new version start [here](RELEASING.md).
