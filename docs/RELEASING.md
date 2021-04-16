@@ -1,41 +1,10 @@
-# Releasing a New Version
+# Releasing a new version
 
-If you are a project maintainer, you can build and release a new version of
-`bugsnag-android` as follows:
+`bugsnag-android` is released via [Sonatype](https://oss.sonatype.org/). If you are a project maintainer you can release a new version by unblocking the publish step on CI and following the steps below.
 
-## One-time setup
+## Pre-release checklist
 
--   Create a GPG key if you haven't got one already (`gpg --gen-key`). The build system requires a GPG key ring set up using GPG 1.x, but many systems now ship with GPG 2.x. As a workaround, after creating your key you can manually create the `secring.gpg` file by running `gpg --export-secret-keys >~/.gnupg/secring.gpg`
--   Create a [Sonatype JIRA](https://issues.sonatype.org) account
--   Ask in the [Bugsnag Sonatype JIRA ticket](https://issues.sonatype.org/browse/OSSRH-5533) to become a contributor
--   Ask an existing contributor (likely Simon) to confirm in the ticket
--   Wait for Sonatype them to confirm the approval
--   Create a file `~/.gradle/gradle.properties` with the following contents:
-
-    ```ini
-    # Your credentials for https://oss.sonatype.org/
-    # NOTE: An equals sign (`=`) in any of these fields will break the parser
-    # NOTE: Do not wrap any field in quotes
-
-    NEXUS_USERNAME=your-nexus-username
-    NEXUS_PASSWORD=your-nexus-password
-    nexusUsername=your-nexus-username
-    nexusPassword=your-nexus-password
-
-    # GPG key details
-    # Your key must be added to a public key server, such as http://keys.gnupg.net:
-    # 1. Get your key id by running `gpg --list-keys --keyid-format=short`. It
-    #    should be 8-character hexadecimal.
-    # 2. Export your key using `gpg --armor --export <key-id>`
-    # 3. Upload to a server using `gpg --keyserver hkp://keys.gnupg.net --send-keys <key-id>`
-    signing.keyId=<key-id>
-    signing.password=your-gpg-key-passphrase
-    signing.secretKeyRingFile=/Users/{username}/.gnupg/secring.gpg
-    ```
-
-## Every time
-
-### Pre-release Checklist
+This contains a prompt of checks which you may want to test, depending on the extent of the changeset:
 
 - [ ] Has the full test suite been triggered on Buildkite and does it pass?
 - [ ] Have versions of Android not covered by CI been considered?
@@ -60,7 +29,7 @@ If you are a project maintainer, you can build and release a new version of
 - [ ] Have the installation instructions been updated on the [dashboard](https://github.com/bugsnag/dashboard-js/tree/master/js/dashboard/components/integration_instructions) as well as the [docs site](https://github.com/bugsnag/docs.bugsnag.com)?
 - [ ] Do the installation instructions work for a manual integration?
 
-### Making the release
+## Making the release
 
 - Make a PR from `next` to `master` (or from a bug fix branch for urgent hot fixes):
   - [ ] Update the version number with `make VERSION=[number] bump`
@@ -73,9 +42,8 @@ If you are a project maintainer, you can build and release a new version of
     - Trigger the release step by allowing the `Trigger package publish` step to continue
     - Verify the `Publish` step runs correctly and the artefacts are upload to sonatype.
   - Release to GitHub:
-    - [ ] Create a release from your new tag on [GitHub Releases](https://github.com/bugsnag/bugsnag-android/releases)`
+    - [ ] Create a release from your new tag on [GitHub Releases](https://github.com/bugsnag/bugsnag-android/releases)
   - Checkout `master` and pull the latest changes
-  - [ ] Release to Bintray by running `./gradlew clean assembleRelease bintrayUpload`
   - [ ] Test the Sonatype artefacts in the example app by adding the newly created 'combugsnag-XXXX' repository to the build.gradle:  `maven {url "https://oss.sonatype.org/service/local/repositories/combugsnag-XXXX/content/"}`
   - [ ] "Promote" the release build on Maven Central:
     - Go to the [sonatype open source dashboard](https://oss.sonatype.org/index.html#stagingRepositories)
@@ -86,16 +54,47 @@ If you are a project maintainer, you can build and release a new version of
     - Click the “refresh” button
     - Select the com.bugsnag closed repository
     - Click the “release” button in the toolbar
-  - Open the Bintray repositories and publish the new artifacts:
-    - [ ] [SDK repo](https://bintray.com/bugsnag/maven/bugsnag-android/_latestVersion)
-    - [ ] [NDK repo](https://bintray.com/bugsnag/maven/bugsnag-android-ndk/_latestVersion)
   - Merge outstanding docs PRs related to this release
 
-### Post-release Checklist
+## Post-release checklist
 
 _(May take some time to propagate to maven central)_
 
 - [ ] Have all Docs PRs been merged?
 - [ ] Can a freshly created example app send an error report from a release build using the released artefact?
 - [ ] Do the existing example apps send an error report using the released artifact?
-- [ ] Make releases to downstream libraries, if appropriate (generally for bug fixes)
+- [ ] Make releases to downstream libraries, if appropriate (generally for critical bug fixes)
+
+### Manual publishing
+
+Manual publishing is discouraged, but is possible in exceptional circumstances by running `./gradlew assembleRelease publish`. This also requires creating a GPG key and registering an account with Sonatype.
+
+### Creating a GPG key
+
+-   Create a GPG key if you haven't got one already (`gpg --gen-key`). The build system requires a GPG key ring set up using GPG 1.x, but many systems now ship with GPG 2.x. As a workaround, after creating your key you can manually create the `secring.gpg` file by running `gpg --export-secret-keys >~/.gnupg/secring.gpg`
+-   Create a [Sonatype JIRA](https://issues.sonatype.org) account
+-   Ask in the [Bugsnag Sonatype JIRA ticket](https://issues.sonatype.org/browse/OSSRH-5533) to become a contributor
+-   Ask an existing contributor (likely Simon) to confirm in the ticket
+-   Wait for Sonatype to confirm the approval
+-   Create a file `~/.gradle/gradle.properties` with the following contents:
+
+    ```ini
+    # Your credentials for https://oss.sonatype.org/
+    # NOTE: An equals sign (`=`) in any of these fields will break the parser
+    # NOTE: Do not wrap any field in quotes
+
+    NEXUS_USERNAME=your-nexus-username
+    NEXUS_PASSWORD=your-nexus-password
+    nexusUsername=your-nexus-username
+    nexusPassword=your-nexus-password
+
+    # GPG key details
+    # Your key must be added to a public key server, such as http://keys.gnupg.net:
+    # 1. Get your key id by running `gpg --list-keys --keyid-format=short`. It
+    #    should be 8-character hexadecimal.
+    # 2. Export your key using `gpg --armor --export <key-id>`
+    # 3. Upload to a server using `gpg --keyserver hkp://keys.gnupg.net --send-keys <key-id>`
+    signing.keyId=<key-id>
+    signing.password=your-gpg-key-passphrase
+    signing.secretKeyRingFile=/Users/{username}/.gnupg/secring.gpg
+    ```

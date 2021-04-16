@@ -15,7 +15,6 @@ captures/
 
 # Misc
 .DS_Store
-docs/
 infer-out/
 *.log
 CMakeFiles
