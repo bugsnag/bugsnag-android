@@ -526,11 +526,11 @@ steps:
 
   - block: 'Trigger package publish'
     key: trigger_publish
-    if: build.tag != null
+    if: build.branch == "master"
     blocked_state: passed
 
   - label: 'Publish :rocket:'
-    if: build.tag != null
+    if: build.branch == "master"
     depends_on:
       - 'trigger_publish'
     env:
