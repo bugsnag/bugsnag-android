@@ -1,8 +1,8 @@
-# Releasing a New Version
+# Releasing a new version
 
 `bugsnag-android` is released via [Sonatype](https://oss.sonatype.org/). If you are a project maintainer you can release a new version by unblocking the publish step on CI and following the steps below.
 
-## Pre-release Checklist
+## Pre-release checklist
 
 This contains a prompt of checks which you may want to test, depending on the extent of the changeset:
 
@@ -56,7 +56,7 @@ This contains a prompt of checks which you may want to test, depending on the ex
     - Click the “release” button in the toolbar
   - Merge outstanding docs PRs related to this release
 
-## Post-release Checklist
+## Post-release checklist
 
 _(May take some time to propagate to maven central)_
 
