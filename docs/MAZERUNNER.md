@@ -8,7 +8,7 @@ End to end tests are written in cucumber-style `.feature` files, and need Ruby-b
 
 Maze Runner's CLI and the test fixtures are containerized so you'll need Docker (and Docker Compose) to run them.
 
-__Note: only Bugsnag employees can run the end-to-end tests.__ We have dedicated test infrastructure and private BrowserStack credentials which can't be shared outside of the organisation.
+__Note: only Bugsnag employees can run the end-to-end tests.__ We have dedicated test infrastructure and private BrowserStack credentials which can't be shared outside of the organization.
 
 ### Authenticating with the private container registry
 
@@ -44,5 +44,5 @@ Remote tests can be run against real devices provided by BrowserStack. In order 
                             --device=ANDROID_9_0                    \
                             features/smoke_tests/unhandled.feature
     ```
-1. To run all features, omit the final argument.
+1. To run all features, omit the final argument, but be wary of how many tests you run locally as we have a limited number of parallel tests and local running subverts the controls we have in place.  For a full test run it is generally best to push your branch to Github and let CI run them.
 1. Maze Runner also supports all options that Cucumber does.  Run `bundle exec maze-runner --help` for full details.

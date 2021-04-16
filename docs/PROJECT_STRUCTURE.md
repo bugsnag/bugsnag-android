@@ -11,7 +11,7 @@ The project consists of [6 Gradle modules](https://gradle.org/), which are linke
 - [bugsnag-plugin-android-anr](../bugsnag-plugin-android-ndk/README.md) - contains optional functionality that installs a signal handler to capture ANR errors.
 - [bugsnag-plugin-react-native](../bugsnag-plugin-react-native/README.md) - contains optional functionality that serializes information into a format that can be understood by the React Native bridge.
 - [bugsnag-android](../bugsnag-android/README.md) - an anchor package which allows users to pull in all the required modules.
-- [bugsnag-android-ndk](../bugsnag-android-ndk/README.md) - an anchor package which allows users to pull in all the required modules. Published for legacy reasons
+- [bugsnag-android-ndk](../bugsnag-android-ndk/README.md) - an anchor package which allows users to pull in all the required modules. Published for legacy reasons.
 
 ## Example app
 
@@ -27,6 +27,6 @@ The project uses one git submodule to access [libunwindstack](https://github.com
 
 ## E2E tests
 
-Bugsnag makes extensive use of E2E testing with [mazerunner](https://github.com/bugsnag/maze-runner), which is our customer black-box testing framework written in Ruby.
+Bugsnag makes extensive use of E2E testing with [mazerunner](https://github.com/bugsnag/maze-runner), which is our custom black-box testing framework written in Ruby.
 
 The [features](../features) directory contains test fixtures that run crashy code against tests written in [cucumber](https://cucumber.io/). These verify whether Bugsnag captures appropriate information in crashy scenarios.

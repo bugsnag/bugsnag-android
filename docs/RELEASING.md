@@ -75,7 +75,7 @@ Manual publishing is discouraged, but is possible in exceptional circumstances b
 -   Create a [Sonatype JIRA](https://issues.sonatype.org) account
 -   Ask in the [Bugsnag Sonatype JIRA ticket](https://issues.sonatype.org/browse/OSSRH-5533) to become a contributor
 -   Ask an existing contributor (likely Simon) to confirm in the ticket
--   Wait for Sonatype them to confirm the approval
+-   Wait for Sonatype to confirm the approval
 -   Create a file `~/.gradle/gradle.properties` with the following contents:
 
     ```ini

@@ -21,7 +21,7 @@ The example app can be found in [examples/sdk-app-example](../examples/sdk-app-e
 
 You should open `examples/sdk-app-example` as a separate Android Studio project and [run the app](https://developer.android.com/training/basics/firstapp/running-app). This will require a connected device or emulator.
 
-The app **does not use the local development version of Bugsnag**. To test local development changes, you will need to build the library locally with a version number of `9.9.9`, and update the `bugsnag-android` dependency in `examples/sdk-app-example/build.gradle` to use that version.
+The app **does not use the local development version of Bugsnag**. To test local development changes, you will need to build the library locally with an arbitrary version number, e.g. `9.9.9`, and update the `bugsnag-android` dependency in `examples/sdk-app-example/build.gradle` to use that version.
 
 ### Building the Library locally
 
