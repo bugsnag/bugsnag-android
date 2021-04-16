@@ -31,5 +31,4 @@ internal class CrashHandlerScenario(
         }
         throw RuntimeException("CrashHandlerScenario")
     }
-
 }
