@@ -5,6 +5,8 @@ import android.os.Handler
 import android.os.Looper
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
+import com.bugsnag.android.createDefaultDelivery
+import com.bugsnag.android.mazerunner.InterceptingDelivery
 
 /**
  * Sends an NDK error to Bugsnag shortly after the launchDurationMillis has past.
@@ -22,20 +24,22 @@ internal class CXXDelayedErrorScenario(
     external fun crash()
 
     init {
-        config.launchDurationMillis = CRASH_DELAY_MS
         System.loadLibrary("cxx-scenarios")
+        config.launchDurationMillis = CRASH_DELAY_MS
+        config.delivery = InterceptingDelivery(createDefaultDelivery()) {
+            val handler = Handler(Looper.getMainLooper())
+
+            handler.postDelayed(
+                {
+                    crash()
+                },
+                CRASH_DELAY_MS * 2
+            )
+        }
     }
 
     override fun startScenario() {
         super.startScenario()
         Bugsnag.notify(RuntimeException("first error"))
-        val handler = Handler(Looper.getMainLooper())
-
-        handler.postDelayed(
-            {
-                crash()
-            },
-            CRASH_DELAY_MS * 2
-        )
     }
 }
