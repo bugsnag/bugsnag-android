@@ -3,6 +3,9 @@ package com.bugsnag.android.mazerunner.scenarios
 import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
+import com.bugsnag.android.createDefaultDelivery
+import com.bugsnag.android.mazerunner.InterceptingDelivery
+import java.util.concurrent.CountDownLatch
 
 /**
  * Sends an exception after pausing the session
@@ -13,8 +16,13 @@ internal class ManualSessionSmokeScenario(
     eventMetadata: String
 ) : Scenario(config, context, eventMetadata) {
 
-    override fun startBugsnag(startBugsnagOnly: Boolean) {
-        super.startBugsnag(startBugsnagOnly)
+    private val deliveryLatch = CountDownLatch(3)
+
+    init {
+        val baseDelivery = createDefaultDelivery()
+        config.delivery = InterceptingDelivery(baseDelivery) {
+            deliveryLatch.countDown()
+        }
     }
 
     override fun startScenario() {
@@ -31,7 +39,10 @@ internal class ManualSessionSmokeScenario(
         Bugsnag.pauseSession()
         Bugsnag.notify(generateException())
 
-        // throw exception with session
+        // override to ensure request order, as the order of fatal errors
+        // can be indeterminate if they are persisted to disk at the same
+        // millisecond as another error.
+        deliveryLatch.await()
         Bugsnag.resumeSession()
         throw generateException()
     }

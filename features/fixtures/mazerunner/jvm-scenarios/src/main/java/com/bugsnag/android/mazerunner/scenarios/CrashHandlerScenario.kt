@@ -1,6 +1,7 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
+import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 
 /**
@@ -14,15 +15,20 @@ internal class CrashHandlerScenario(
 
     override fun startScenario() {
         super.startScenario()
-        val previousHandler = Thread.getDefaultUncaughtExceptionHandler()
+        val previousHandler = requireNotNull(Thread.getDefaultUncaughtExceptionHandler())
+        var customHandlerInvoked = false
 
+        // detect whether custom handler was invoked or not & add this to error reports
+        Bugsnag.addOnError {
+            it.addMetadata("customHandler", "invoked", customHandlerInvoked)
+            true
+        }
+
+        // set a custom handler that calls into the default handler
         Thread.setDefaultUncaughtExceptionHandler { t, e ->
-            config.logger?.d("CrashHandlerScenario: Intercepted uncaught exception")
+            customHandlerInvoked = true
             previousHandler.uncaughtException(t, e)
         }
         throw RuntimeException("CrashHandlerScenario")
     }
-
-    override fun getInterceptedLogMessages() =
-        listOf("CrashHandlerScenario: Intercepted uncaught exception")
 }
