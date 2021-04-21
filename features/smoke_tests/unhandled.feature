@@ -15,6 +15,8 @@ Scenario: Unhandled Java Exception with loaded configuration
     And the event "severity" equals "error"
     And the event "severityReason.type" equals "unhandledException"
     And the event "severityReason.unhandledOverridden" is false
+    And the error payload field "events.0.projectPackages" is a non-empty array
+    And the event "projectPackages.0" equals "com.bugsnag.android.mazerunner"
 
     # Stacktrace validation
     And the error payload field "events.0.exceptions.0.stacktrace" is a non-empty array

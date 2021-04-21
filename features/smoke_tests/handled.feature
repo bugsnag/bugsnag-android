@@ -22,6 +22,8 @@ Scenario: Notify caught Java exception with default configuration
     # R8 minification alters the lineNumber, see the mapping file/source code for the original value
     And the event "exceptions.0.stacktrace.0.lineNumber" equals 8
     And the event "exceptions.0.stacktrace.0.inProject" is true
+    And the error payload field "events.0.projectPackages" is a non-empty array
+    And the event "projectPackages.0" equals "com.bugsnag.android.mazerunner"
 
     And the thread with name "main" contains the error reporting flag
     And the "method" of stack frame 0 equals "com.bugsnag.android.mazerunner.scenarios.HandledJavaSmokeScenario.startScenario"
@@ -116,6 +118,8 @@ Scenario: Notify Kotlin exception with overwritten configuration
     And the event "severity" equals "error"
     And the event "severityReason.type" equals "userCallbackSetSeverity"
     And the event "severityReason.unhandledOverridden" is false
+    And the error payload field "events.0.projectPackages" is a non-empty array
+    And the event "projectPackages.0" equals "com.bugsnag.android.mazerunner"
 
     # Stacktrace validation
     And the error payload field "events.0.exceptions.0.stacktrace" is a non-empty array
@@ -171,6 +175,8 @@ Scenario: Handled C functionality
     And the event "severity" equals "error"
     And the event "severityReason.type" equals "userCallbackSetSeverity"
     And the event "severityReason.unhandledOverridden" is false
+    And the error payload field "events.0.projectPackages" is a non-empty array
+    And the event "projectPackages.0" equals "com.bugsnag.android.mazerunner"
 
     # App data
     And the event "app.buildUUID" is not null

@@ -24,6 +24,9 @@
       "stacktrace": []
     }
   ],
+  "projectPackages":[
+    "com.example.foo"
+  ],
   "user": {
     "name": "Jamie"
   },

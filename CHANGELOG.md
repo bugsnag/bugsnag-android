@@ -4,6 +4,9 @@
 
 ### Bug fixes
 
+* Add projectPackages field to error payloads
+  [#1226](https://github.com/bugsnag/bugsnag-android/pull/1226)
+
 * Fix deserialization bug in persisted NDK errors
   [#1220](https://github.com/bugsnag/bugsnag-android/pull/1220)
 

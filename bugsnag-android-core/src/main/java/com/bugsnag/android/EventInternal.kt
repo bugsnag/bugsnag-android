@@ -11,6 +11,7 @@ internal class EventInternal @JvmOverloads internal constructor(
 
     val metadata: Metadata = data.copy()
     private val discardClasses: Set<String> = config.discardClasses.toSet()
+    private val projectPackages = config.projectPackages
 
     @JvmField
     internal var session: Session? = null
@@ -82,6 +83,12 @@ internal class EventInternal @JvmOverloads internal constructor(
         writer.name("exceptions")
         writer.beginArray()
         errors.forEach { writer.value(it) }
+        writer.endArray()
+
+        // Write project packages
+        writer.name("projectPackages")
+        writer.beginArray()
+        projectPackages.forEach { writer.value(it) }
         writer.endArray()
 
         // Write user info

@@ -8,6 +8,9 @@
   },
   "unhandled": false,
   "exceptions": [],
+  "projectPackages":[
+    "com.example.foo"
+  ],
   "user": {},
   "app": {
     "type": "android",

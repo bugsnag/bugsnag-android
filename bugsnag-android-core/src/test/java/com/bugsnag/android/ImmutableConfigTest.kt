@@ -59,7 +59,7 @@ internal class ImmutableConfigTest {
             // release stages
             assertTrue(discardClasses.isEmpty())
             assertNull(enabledReleaseStages)
-            assertTrue(projectPackages.isEmpty())
+            assertEquals(setOf("com.example.foo"), projectPackages)
             assertEquals(seed.releaseStage, releaseStage)
 
             // identifiers
