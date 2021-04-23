@@ -2,6 +2,7 @@
 #include <utils/serializer.h>
 #include <stdlib.h>
 #include <utils/migrate.h>
+#include <utils/migrate_internal.h>
 
 #define SERIALIZE_TEST_FILE "/data/data/com.bugsnag.android.ndk.test/cache/foo.crash"
 
@@ -197,7 +198,7 @@ char *test_read_last_run_info(const bsg_environment *env) {
   return buf;
 }
 
-test_last_run_info_serialization(void) {
+TEST test_last_run_info_serialization(void) {
   bsg_environment *env = malloc(sizeof(bsg_environment));
   strcpy(env->last_run_info_path, SERIALIZE_TEST_FILE);
   
@@ -515,8 +516,6 @@ TEST test_breadcrumbs_to_json(void) {
   PASS();
 }
 
-void migrate_app_v2(bugsnag_report_v4 *report_v4, bugsnag_event *event);
-
 TEST test_migrate_app_v2(void) {
   bugsnag_report_v4 *report_v4 = malloc(sizeof(bugsnag_report_v4));
   bugsnag_event *event = malloc(sizeof(bugsnag_event));
@@ -537,7 +536,7 @@ TEST test_migrate_app_v2(void) {
   seed->duration_in_foreground_ms_offset = 11;
 
   // migrate pre-populated data
-  migrate_app_v2(report_v4, event);
+  bsg_migrate_app_v2(report_v4, event);
 
   ASSERT_STR_EQ("id", app->id);
   ASSERT_STR_EQ("beta", app->release_stage);
