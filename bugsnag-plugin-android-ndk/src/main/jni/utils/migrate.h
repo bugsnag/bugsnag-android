@@ -15,7 +15,7 @@ extern "C" {
 bool bsg_event_requires_migration(int event_version);
 
 /**
- * Read an event of the specified version from an FD and migrate it to the
+ * Read an event of the specified version from a FD and migrate it to the
  * latest structure.
  * @param event_version The version decoded from the event file header
  * @param fd The file descriptor after reading the header.
