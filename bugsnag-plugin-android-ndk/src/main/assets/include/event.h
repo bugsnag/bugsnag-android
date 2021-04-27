@@ -51,9 +51,9 @@ typedef enum {
 } bugsnag_breadcrumb_type;
 
 typedef struct {
-  char name[64];
-  char email[64];
-  char id[64];
+  char name[128];
+  char email[128];
+  char id[128];
 } bugsnag_user;
 
 typedef enum {

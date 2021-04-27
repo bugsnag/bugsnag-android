@@ -27,7 +27,7 @@
 /**
  * Version of the bugsnag_event struct. Serialized to report header.
  */
-#define BUGSNAG_EVENT_VERSION 5
+#define BUGSNAG_EVENT_VERSION 6
 
 #ifdef __cplusplus
 extern "C" {
@@ -74,7 +74,7 @@ typedef struct {
   bsg_cpu_abi cpu_abi[8];
   char orientation[32];
   time_t time;
-  char id[64];
+  char id[128];
   bool jailbroken;
   char locale[32];
   char manufacturer[64];
@@ -111,7 +111,7 @@ typedef struct {
   /**
    * The key identifying this metadata entry
    */
-  char name[32];
+  char name[64];
   /**
    * The metadata tab
    */
@@ -128,7 +128,7 @@ typedef struct {
   /**
    * Value if type is BSG_CHAR_VALUE
    */
-  char char_value[64];
+  char char_value[128];
   /**
    * Value if type is BSG_DOUBLE_VALUE
    */
@@ -162,7 +162,7 @@ typedef struct {
 } bsg_error;
 
 typedef struct {
-  char name[64];
+  char name[128];
   char timestamp[37];
   bugsnag_breadcrumb_type type;
 
@@ -192,14 +192,14 @@ typedef struct {
   int crumb_first_index;
   bugsnag_breadcrumb breadcrumbs[BUGSNAG_CRUMBS_MAX];
 
-  char context[64];
+  char context[128];
   bugsnag_severity severity;
 
   char session_id[33];
   char session_start[33];
   int handled_events;
   int unhandled_events;
-  char grouping_hash[64];
+  char grouping_hash[128];
   bool unhandled;
   char api_key[64];
 } bugsnag_event;
