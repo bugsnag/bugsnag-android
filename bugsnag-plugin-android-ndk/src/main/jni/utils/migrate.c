@@ -67,8 +67,110 @@ static bugsnag_report_v4 *report_v4_read(int fd) {
   return event;
 }
 
+static bugsnag_event_v5 *report_v5_read(int fd) {
+  size_t event_size = sizeof(bugsnag_event_v5);
+  bugsnag_event_v5 *event = malloc(event_size);
+
+  ssize_t len = read(fd, event, event_size);
+  if (len != event_size) {
+    free(event);
+    return NULL;
+  }
+  return event;
+}
+
 // ==================================================================
 // Migration
+
+#define COPY_SAME_SIZE(FIELD)                                                  \
+  memcpy(&struct_new->FIELD, &struct_old->FIELD, sizeof(struct_old->FIELD))
+#define MIGRATE_STRING(FIELD)                                                  \
+  bsg_strncpy_safe(struct_new->FIELD, struct_old->FIELD,                       \
+                   sizeof(struct_new->FIELD))
+
+static void migrate_device_v5(bsg_device_info_v5 *struct_old,
+                              bsg_device_info *struct_new) {
+  COPY_SAME_SIZE(api_level);
+  COPY_SAME_SIZE(cpu_abi_count);
+  COPY_SAME_SIZE(cpu_abi);
+  COPY_SAME_SIZE(orientation);
+  COPY_SAME_SIZE(time);
+  MIGRATE_STRING(id);
+  COPY_SAME_SIZE(jailbroken);
+  COPY_SAME_SIZE(locale);
+  COPY_SAME_SIZE(manufacturer);
+  COPY_SAME_SIZE(model);
+  COPY_SAME_SIZE(os_build);
+  COPY_SAME_SIZE(os_version);
+  COPY_SAME_SIZE(os_name);
+  COPY_SAME_SIZE(total_memory);
+}
+
+static void migrate_user_v5(bugsnag_user_v5 *struct_old,
+                            bugsnag_user *struct_new) {
+  MIGRATE_STRING(name);
+  MIGRATE_STRING(email);
+  MIGRATE_STRING(id);
+}
+
+static void migrate_metadata_value_v5(bsg_metadata_value_v5 *struct_old,
+                                      bsg_metadata_value *struct_new) {
+  MIGRATE_STRING(name);
+  COPY_SAME_SIZE(section);
+  COPY_SAME_SIZE(type);
+  COPY_SAME_SIZE(bool_value);
+  MIGRATE_STRING(char_value);
+  COPY_SAME_SIZE(double_value);
+}
+
+static void migrate_metadata_v5(bugsnag_metadata_v5 *struct_old,
+                                bugsnag_metadata *struct_new) {
+  COPY_SAME_SIZE(value_count);
+  for (int i = 0; i < struct_old->value_count; i++) {
+    migrate_metadata_value_v5(&struct_old->values[i], &struct_new->values[i]);
+  }
+}
+
+static void migrate_breadcrumb_v5(bugsnag_breadcrumb_v5 *struct_old,
+                                  bugsnag_breadcrumb *struct_new) {
+  MIGRATE_STRING(name);
+  COPY_SAME_SIZE(timestamp);
+  COPY_SAME_SIZE(type);
+  migrate_metadata_v5(&struct_old->metadata, &struct_new->metadata);
+}
+
+static bugsnag_event *map_v5_to_report(bugsnag_event_v5 *struct_old) {
+  if (struct_old == NULL) {
+    return NULL;
+  }
+
+  bugsnag_event *struct_new = calloc(1, sizeof(*struct_new));
+
+  if (struct_new != NULL) {
+    COPY_SAME_SIZE(notifier);
+    COPY_SAME_SIZE(app);
+    migrate_device_v5(&struct_old->device, &struct_new->device);
+    migrate_user_v5(&struct_old->user, &struct_new->user);
+    COPY_SAME_SIZE(error);
+    migrate_metadata_v5(&struct_old->metadata, &struct_new->metadata);
+    COPY_SAME_SIZE(crumb_count);
+    COPY_SAME_SIZE(crumb_first_index);
+    for (int i = 0; i < BUGSNAG_CRUMBS_MAX; i++) {
+      migrate_breadcrumb_v5(&struct_old->breadcrumbs[i],
+                            &struct_new->breadcrumbs[i]);
+    }
+    MIGRATE_STRING(context);
+    COPY_SAME_SIZE(severity);
+    COPY_SAME_SIZE(session_id);
+    COPY_SAME_SIZE(session_start);
+    COPY_SAME_SIZE(handled_events);
+    COPY_SAME_SIZE(unhandled_events);
+    MIGRATE_STRING(grouping_hash);
+    COPY_SAME_SIZE(unhandled);
+    COPY_SAME_SIZE(api_key);
+  }
+  return struct_new;
+}
 
 int bsg_calculate_total_crumbs(int old_count) {
   return old_count < BUGSNAG_CRUMBS_MAX ? old_count : BUGSNAG_CRUMBS_MAX;
@@ -107,7 +209,7 @@ void bsg_migrate_app_v1(bugsnag_report_v2 *report_v2,
   bugsnag_event_add_metadata_string(event, "app", "name", report_v2->app.name);
 }
 
-void bsg_migrate_app_v2(bugsnag_report_v4 *report_v4, bugsnag_event *event) {
+void bsg_migrate_app_v2(bugsnag_report_v4 *report_v4, bugsnag_event_v5 *event) {
   bsg_strncpy_safe(event->app.id, report_v4->app.id, sizeof(event->app.id));
   bsg_strncpy_safe(event->app.release_stage, report_v4->app.release_stage,
                    sizeof(event->app.release_stage));
@@ -182,7 +284,7 @@ static bugsnag_event *map_v4_to_report(bugsnag_report_v4 *report_v4) {
   if (report_v4 == NULL) {
     return NULL;
   }
-  bugsnag_event *event = malloc(sizeof(bugsnag_event));
+  bugsnag_event_v5 *event = malloc(sizeof(*event));
 
   if (event != NULL) {
     event->notifier = report_v4->notifier;
@@ -209,7 +311,7 @@ static bugsnag_event *map_v4_to_report(bugsnag_report_v4 *report_v4) {
     bsg_migrate_app_v2(report_v4, event);
     free(report_v4);
   }
-  return event;
+  return map_v5_to_report(event);
 }
 
 static void report_v3_add_breadcrumb(bugsnag_report_v3 *event,
@@ -377,23 +479,22 @@ static bugsnag_event *map_v1_to_report(bugsnag_report_v1 *report_v1) {
 // Public API
 
 bool bsg_event_requires_migration(int event_version) {
-  return event_version != 5;
+  return event_version != 6;
 }
 
 bugsnag_event *bsg_event_read_and_migrate(int event_version, int fd) {
-  if (event_version == 1) { // 'event->unhandled_events' was added in v2
-    bugsnag_report_v1 *report_v1 = report_v1_read(fd);
-    return map_v1_to_report(report_v1);
-  } else if (event_version == 2) {
-    bugsnag_report_v2 *report_v2 = report_v2_read(fd);
-    return map_v2_to_report(report_v2);
-  } else if (event_version == 3) {
-    bugsnag_report_v3 *report_v3 = report_v3_read(fd);
-    return map_v3_to_report(report_v3);
-  } else if (event_version == 4) {
-    bugsnag_report_v4 *report_v4 = report_v4_read(fd);
-    return map_v4_to_report(report_v4);
-  } else {
+  switch (event_version) {
+  case 1:
+    return map_v1_to_report(report_v1_read(fd));
+  case 2:
+    return map_v2_to_report(report_v2_read(fd));
+  case 3:
+    return map_v3_to_report(report_v3_read(fd));
+  case 4:
+    return map_v4_to_report(report_v4_read(fd));
+  case 5:
+    return map_v5_to_report(report_v5_read(fd));
+  default:
     return NULL;
   }
 }

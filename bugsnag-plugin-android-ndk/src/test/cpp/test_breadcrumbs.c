@@ -3,6 +3,10 @@
 #include <time.h>
 #include <utils/serializer.h>
 
+int bsg_calculate_total_crumbs(int old_count);
+int bsg_calculate_v1_start_index(int old_count);
+int bsg_calculate_v1_crumb_index(int crumb_pos, int first_index);
+
 bugsnag_breadcrumb *init_breadcrumb(const char *name, char *message, bugsnag_breadcrumb_type type) {
   bugsnag_breadcrumb *crumb = calloc(1, sizeof(bugsnag_breadcrumb));
   crumb->type = type;
