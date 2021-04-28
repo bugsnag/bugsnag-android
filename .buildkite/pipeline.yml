@@ -36,14 +36,14 @@ steps:
     plugins:
       - docker-compose#v3.7.0:
         run: android-license-audit
-        command: >
-          license_finder
-          --enabled-package-managers=gradle
-          --decisions-file=decisions.yml &&
-          license_finder
-          --project-path=bugsnag-plugin-android-ndk/src/main/jni/deps/parson
-          --enabled-package-managers=npm
-          --decisions-file=decisions.yml
+        command:
+          - "license_finder"
+          - "--enabled-package-managers=gradle"
+          - "--decisions-file=decisions.yml &&"
+          - "license_finder"
+          - "--project-path=bugsnag-plugin-android-ndk/src/main/jni/deps/parson"
+          - "--enabled-package-managers=npm"
+          - "--decisions-file=decisions.yml"
 
   - label: ':android: Build fixture APK r16'
     key: "fixture-r16"
