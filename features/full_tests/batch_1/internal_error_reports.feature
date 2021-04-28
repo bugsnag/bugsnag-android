@@ -1,8 +1,7 @@
 Feature: Cached Error Reports
 
 Scenario: If an exception is thrown when sending errors/sessions then internal error reports should be sent
-    When I set the screen orientation to portrait
-    And I run "InternalErrorScenario"
+    When I run "InternalErrorScenario"
     And I wait to receive 1 errors
 
     # Validate internal error report for error serialization
