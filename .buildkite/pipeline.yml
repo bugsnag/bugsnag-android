@@ -39,7 +39,7 @@ steps:
           command:
             - "license_finder"
             - "--enabled-package-managers=gradle"
-            - "--decisions-file=decisions.yml &&"
+            - "--decisions-file=decisions.yml"
             - "license_finder"
             - "--project-path=bugsnag-plugin-android-ndk/src/main/jni/deps/parson"
             - "--enabled-package-managers=npm"
