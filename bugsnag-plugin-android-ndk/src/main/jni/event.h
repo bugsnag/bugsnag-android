@@ -128,7 +128,7 @@ typedef struct {
   /**
    * Value if type is BSG_CHAR_VALUE
    */
-  char char_value[128];
+  char char_value[256];
   /**
    * Value if type is BSG_DOUBLE_VALUE
    */
@@ -162,7 +162,7 @@ typedef struct {
 } bsg_error;
 
 typedef struct {
-  char name[128];
+  char name[256];
   char timestamp[37];
   bugsnag_breadcrumb_type type;
 
