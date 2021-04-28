@@ -54,6 +54,10 @@ When("I close and relaunch the app") do
   Maze.driver.launch_app
 end
 
+When('I set the screen orientation to portrait') do
+  Maze.driver.set_rotation(:portrait)
+end
+
 When("I relaunch the app after a crash") do
   # This step should only be used when the app has crashed, but the notifier needs a little
   # time to write the crash report before being forced to reopen.  From trials, 2s was not enough.
@@ -63,9 +67,13 @@ end
 
 When("I tap the screen {int} times") do |count|
   (1..count).each { |i|
-    touch_action = Appium::TouchAction.new
-    touch_action.tap({:x => 500, :y => 300})
-    touch_action.perform
+    begin
+      touch_action = Appium::TouchAction.new
+      touch_action.tap({:x => 500, :y => 300})
+      touch_action.perform
+    rescue Selenium::WebDriver::Error::ElementNotInteractableError
+      # Ignore it§
+    end
     sleep(1)
   }
 end

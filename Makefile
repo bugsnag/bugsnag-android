@@ -12,11 +12,11 @@ test:
 	./gradlew connectedCheck
 
 remote-test:
-ifeq ($(MAZE_DEVICE_FARM_USERNAME),)
-	@$(error MAZE_DEVICE_FARM_USERNAME is not defined)
+ifeq ($(BROWSER_STACK_USERNAME),)
+	@$(error BROWSER_STACK_USERNAME is not defined)
 endif
-ifeq ($(MAZE_DEVICE_FARM_ACCESS_KEY),)
-	@$(error MAZE_DEVICE_FARM_ACCESS_KEY is not defined)
+ifeq ($(BROWSER_STACK_ACCESS_KEY),)
+	@$(error BROWSER_STACK_ACCESS_KEY is not defined)
 endif
 	@APP_LOCATION=/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk \
 	 INSTRUMENTATION_DEVICES='["Google Nexus 5-4.4", "Google Pixel-7.1", "Google Pixel 3-9.0"]' \
