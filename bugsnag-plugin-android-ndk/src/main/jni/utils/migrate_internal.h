@@ -33,6 +33,102 @@
  * bugsnag_event.
  */
 
+// Version 5
+
+typedef struct {
+  char name[64];  // CHANGED in v6
+  char email[64]; // CHANGED in v6
+  char id[64];    // CHANGED in v6
+} bugsnag_user_v5;
+
+typedef struct {
+  int api_level;
+  int cpu_abi_count;
+  bsg_cpu_abi cpu_abi[8];
+  char orientation[32];
+  time_t time;
+  char id[64]; // CHANGED in v6
+  bool jailbroken;
+  char locale[32];
+  char manufacturer[64];
+  char model[64];
+  char os_build[64];
+  char os_version[64];
+  char os_name[64];
+  long total_memory;
+} bsg_device_info_v5;
+
+typedef struct {
+  /**
+   * The key identifying this metadata entry
+   */
+  char name[32]; // CHANGED in v6
+  /**
+   * The metadata tab
+   */
+  char section[32];
+  /**
+   * The value type from bool, char, number
+   */
+  bugsnag_metadata_type type;
+
+  /**
+   * Value if type is BSG_BOOL_VALUE
+   */
+  bool bool_value;
+  /**
+   * Value if type is BSG_CHAR_VALUE
+   */
+  char char_value[64]; // CHANGED in v6
+  /**
+   * Value if type is BSG_DOUBLE_VALUE
+   */
+  double double_value;
+} bsg_metadata_value_v5;
+
+typedef struct {
+  /** The number of values in use */
+  int value_count;
+  bsg_metadata_value_v5 values[BUGSNAG_METADATA_MAX]; // CHANGED in v6
+} bugsnag_metadata_v5;
+
+typedef struct {
+  char name[64]; // CHANGED in v6
+  char timestamp[37];
+  bugsnag_breadcrumb_type type;
+
+  /**
+   * Key/value pairs of related information for debugging
+   */
+  bugsnag_metadata_v5 metadata; // CHANGED in v6
+} bugsnag_breadcrumb_v5;
+
+typedef struct {
+  bsg_notifier notifier;
+  bsg_app_info app;
+  bsg_device_info_v5 device; // CHANGED in v6
+  bugsnag_user_v5 user;      // CHANGED in v6
+  bsg_error error;
+  bugsnag_metadata_v5 metadata; // CHANGED in v6
+
+  int crumb_count;
+  // Breadcrumbs are a ring; the first index moves as the
+  // structure is filled and replaced.
+  int crumb_first_index;
+  bugsnag_breadcrumb_v5 breadcrumbs[BUGSNAG_CRUMBS_MAX]; // CHANGED in v6
+
+  char context[64]; // CHANGED in v6
+  bugsnag_severity severity;
+
+  char session_id[33];
+  char session_start[33];
+  int handled_events;
+  int unhandled_events;
+  char grouping_hash[64]; // CHANGED in v6
+  bool unhandled;
+  char api_key[64];
+} bugsnag_event_v5;
+
 typedef struct {
   char name[64];
   char version[16];
@@ -140,9 +236,9 @@ typedef struct {
   bsg_library notifier;
   bsg_app_info_v1 app;
   bsg_device_info_v1 device;
-  bugsnag_user user;
+  bugsnag_user_v5 user;
   bsg_exception exception;
-  bugsnag_metadata metadata;
+  bugsnag_metadata_v5 metadata;
 
   int crumb_count;
   // Breadcrumbs are a ring; the first index moves as the
@@ -162,9 +258,9 @@ typedef struct {
   bsg_library notifier;
   bsg_app_info_v1 app;
   bsg_device_info_v1 device;
-  bugsnag_user user;
+  bugsnag_user_v5 user;
   bsg_exception exception;
-  bugsnag_metadata metadata;
+  bugsnag_metadata_v5 metadata;
 
   int crumb_count;
   // Breadcrumbs are a ring; the first index moves as the
@@ -184,10 +280,10 @@ typedef struct {
 typedef struct {
   bsg_notifier notifier;
   bsg_app_info_v2 app;
-  bsg_device_info device;
-  bugsnag_user user;
+  bsg_device_info_v5 device;
+  bugsnag_user_v5 user;
   bsg_error error;
-  bugsnag_metadata metadata;
+  bugsnag_metadata_v5 metadata;
 
   int crumb_count;
   // Breadcrumbs are a ring; the first index moves as the
@@ -209,10 +305,10 @@ typedef struct {
 typedef struct {
   bsg_notifier notifier;
   bsg_app_info_v2 app;
-  bsg_device_info device;
-  bugsnag_user user;
+  bsg_device_info_v5 device;
+  bugsnag_user_v5 user;
   bsg_error error;
-  bugsnag_metadata metadata;
+  bugsnag_metadata_v5 metadata;
 
   int crumb_count;
   // Breadcrumbs are a ring; the first index moves as the
@@ -232,10 +328,12 @@ typedef struct {
   char api_key[64];
 } bugsnag_report_v4;
 
+// Legacy Functions
+
 int bsg_calculate_total_crumbs(int old_count);
 int bsg_calculate_v1_start_index(int old_count);
 int bsg_calculate_v1_crumb_index(int crumb_pos, int first_index);
 
-void bsg_migrate_app_v2(bugsnag_report_v4 *report_v4, bugsnag_event *event);
+void bsg_migrate_app_v2(bugsnag_report_v4 *report_v4, bugsnag_event_v5 *event);
 
 #endif // BUGSNAG_ANDROID_MIGRATE_INTERNAL_H
