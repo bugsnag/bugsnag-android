@@ -1,7 +1,7 @@
 steps:
 
   - label: 'Trigger RN tests if next has changed'
-    #if: build.branch == "next"
+    if: build.branch == "next"
     trigger: 'bugsnag-js'
     build:
       branch: 'next'
