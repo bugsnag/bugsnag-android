@@ -1,0 +1,7 @@
+ARG BRANCH_NAME
+FROM 855461928731.dkr.ecr.us-west-1.amazonaws.com/android:ci-${BRANCH_NAME} as android
+
+RUN apt-get install -y ruby-full
+RUN gem install license_finder
+
+RUN curl https://raw.githubusercontent.com/bugsnag/license-audit/master/config/decision_files/global.yml -o decisions.yml

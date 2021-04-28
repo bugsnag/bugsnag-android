@@ -30,6 +30,14 @@ steps:
           push:
             - android-ci:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:ci-${BRANCH_NAME}
 
+  - label: 'Audit current licenses'
+    depends_on: "android-ci"
+    timeout_in_minutes: 30
+    plugins:
+      - docker-compose#v3.7.0:
+        run: android-license-audit
+        command: license_finder --enabled-package-managers=gradle --decisions-file=decisions.yml
+
   - label: ':android: Build fixture APK r16'
     key: "fixture-r16"
     depends_on: "android-ci"
