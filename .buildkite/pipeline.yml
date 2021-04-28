@@ -36,7 +36,8 @@ steps:
     plugins:
       - docker-compose#v3.7.0:
           run: android-license-audit
-          command: ./scripts/audit-dependency-licenses.sh
+          command:
+            - ./scripts/audit-dependency-licenses.sh
 
   - label: ':android: Build fixture APK r16'
     key: "fixture-r16"
