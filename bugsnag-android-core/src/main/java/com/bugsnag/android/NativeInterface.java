@@ -404,4 +404,12 @@ public class NativeInterface {
     public static Logger getLogger() {
         return getClient().getConfig().getLogger();
     }
+
+    public static void setAutoNotify(boolean autoNotify) {
+        // TODO implement me
+    }
+
+    public static void setAutoDetectAnrs(boolean autoDetectAnrs) {
+        // TODO implement me
+    }
 }
