@@ -69,6 +69,13 @@ services:
       - ./maze-output:/app/maze-output
       - ./features/:/app/features/
 
+  android-license-audit:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.android-license-audit
+      args:
+        BRANCH_NAME: ${BRANCH_NAME}
+
 networks:
   default:
     name: ${BUILDKITE_JOB_ID:-android-maze-runner}
