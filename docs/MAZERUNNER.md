@@ -10,8 +10,8 @@ __Note: only Bugsnag employees can run the end-to-end tests.__ We have dedicated
 
 Remote tests can be run against real devices provided by BrowserStack. In order to run these tests, you need to set the following environment variables:
 
-- A BrowserStack App Automate Username: `MAZE_DEVICE_FARM_USERNAME`
-- A BrowserStack App Automate Access Key: `MAZE_DEVICE_FARM_ACCESS_KEY`
+- A BrowserStack App Automate Username: `BROWSER_STACK_USERNAME`
+- A BrowserStack App Automate Access Key: `BROWSER_STACK_ACCESS_KEY`
 - A path to a [BrowserStack local testing binary](https://www.browserstack.com/local-testing/app-automate): `MAZE_BS_LOCAL`
 
 ### Running an end-to-end test
