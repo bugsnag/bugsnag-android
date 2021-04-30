@@ -2,6 +2,7 @@ package com.bugsnag.android
 
 import android.os.Handler
 import android.os.Looper
+import java.util.concurrent.atomic.AtomicBoolean
 
 internal class AnrPlugin : Plugin {
 
@@ -20,7 +21,8 @@ internal class AnrPlugin : Plugin {
         }
     }
 
-    private val loader = LibraryLoader()
+    private val libraryLoader = LibraryLoader()
+    private val oneTimeSetupPerformed = AtomicBoolean(false)
     private lateinit var client: Client
     private val collector = AnrDetailsCollector()
 
@@ -37,31 +39,14 @@ internal class AnrPlugin : Plugin {
     }
 
     override fun load(client: Client) {
-        val loaded = loader.loadLibrary("bugsnag-plugin-android-anr", client) {
-            val error = it.errors[0]
-            error.errorClass = "AnrLinkError"
-            error.errorMessage = LOAD_ERR_MSG
-            true
+        this.client = client
+
+        if (!oneTimeSetupPerformed.getAndSet(true)) {
+            performOneTimeSetup(client)
         }
-
-        if (loaded) {
-            @Suppress("UNCHECKED_CAST")
-            val clz = loadClass("com.bugsnag.android.NdkPlugin") as Class<Plugin>?
-            if (clz != null) {
-                val ndkPlugin = client.getPlugin(clz)
-                if (ndkPlugin != null) {
-                    val method = ndkPlugin.javaClass.getMethod("getUnwindStackFunction")
-                    @Suppress("UNCHECKED_CAST")
-                    val function = method.invoke(ndkPlugin) as Long
-                    setUnwindFunction(function)
-                }
-            }
-
-            // this must be run from the main thread as the SIGQUIT is sent to the main thread,
-            // and if the handler is installed on a background thread instead we receive no signal
+        if (libraryLoader.isLoaded) {
             Handler(Looper.getMainLooper()).post(
                 Runnable {
-                    this.client = client
                     enableAnrReporting()
                     client.logger.i("Initialised ANR Plugin")
                 }
@@ -71,7 +56,32 @@ internal class AnrPlugin : Plugin {
         }
     }
 
-    override fun unload() = disableAnrReporting()
+    private fun performOneTimeSetup(client: Client) {
+        libraryLoader.loadLibrary("bugsnag-plugin-android-anr", client) {
+            val error = it.errors[0]
+            error.errorClass = "AnrLinkError"
+            error.errorMessage = LOAD_ERR_MSG
+            true
+        }
+        @Suppress("UNCHECKED_CAST")
+        val clz = loadClass("com.bugsnag.android.NdkPlugin") as Class<Plugin>?
+        if (clz != null) {
+            val ndkPlugin = client.getPlugin(clz)
+            if (ndkPlugin != null) {
+                val method = ndkPlugin.javaClass.getMethod("getUnwindStackFunction")
+
+                @Suppress("UNCHECKED_CAST")
+                val function = method.invoke(ndkPlugin) as Long
+                setUnwindFunction(function)
+            }
+        }
+    }
+
+    override fun unload() {
+        if (libraryLoader.isLoaded) {
+            disableAnrReporting()
+        }
+    }
 
     /**
      * Notifies bugsnag that an ANR has occurred, by generating an Error report and populating it

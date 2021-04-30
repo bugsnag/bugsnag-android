@@ -35,7 +35,13 @@ internal class ExceptionHandlerTest {
     @Test
     fun handlerInstalled() {
         val exceptionHandler = ExceptionHandler(client, NoopLogger)
+        assertSame(originalHandler, Thread.getDefaultUncaughtExceptionHandler())
+
+        exceptionHandler.install()
         assertSame(exceptionHandler, Thread.getDefaultUncaughtExceptionHandler())
+
+        exceptionHandler.uninstall()
+        assertSame(originalHandler, Thread.getDefaultUncaughtExceptionHandler())
     }
 
     @Test
