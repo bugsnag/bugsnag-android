@@ -223,4 +223,16 @@ internal class NativeInterfaceApiTest {
         NativeInterface.notify("SIGPIPE", "SIGSEGV 11", Severity.ERROR, arrayOf())
         verify(client, times(1)).notify(any(), any())
     }
+
+    @Test
+    fun autoDetectAnrs() {
+        NativeInterface.setAutoDetectAnrs(true)
+        verify(client, times(1)).setAutoDetectAnrs(true)
+    }
+
+    @Test
+    fun autoNotify() {
+        NativeInterface.setAutoNotify(true)
+        verify(client, times(1)).setAutoNotify(true)
+    }
 }

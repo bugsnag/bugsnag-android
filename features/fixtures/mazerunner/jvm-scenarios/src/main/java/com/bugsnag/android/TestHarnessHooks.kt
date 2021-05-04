@@ -88,3 +88,11 @@ fun generateEvent(client: Client): Event {
     event.device = generateDeviceWithState()
     return event
 }
+
+fun setAutoNotify(client: Client, enabled: Boolean) {
+    client.setAutoNotify(enabled)
+}
+
+fun setAutoDetectAnrs(client: Client, enabled: Boolean) {
+    client.setAutoDetectAnrs(enabled)
+}
