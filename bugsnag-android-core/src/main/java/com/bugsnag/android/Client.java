@@ -88,7 +88,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     final LastRunInfoStore lastRunInfoStore;
     final LaunchCrashTracker launchCrashTracker;
     final BackgroundTaskService bgTaskService = new BackgroundTaskService();
-    private ExceptionHandler exceptionHandler;
+    private final ExceptionHandler exceptionHandler;
 
     /**
      * Initialize a Bugsnag client
@@ -264,7 +264,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             Logger logger,
             DeliveryDelegate deliveryDelegate,
             LastRunInfoStore lastRunInfoStore,
-            LaunchCrashTracker launchCrashTracker
+            LaunchCrashTracker launchCrashTracker,
+            ExceptionHandler exceptionHandler
     ) {
         this.immutableConfig = immutableConfig;
         this.metadataState = metadataState;
@@ -289,6 +290,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         this.lastRunInfoStore = lastRunInfoStore;
         this.launchCrashTracker = launchCrashTracker;
         this.lastRunInfo = null;
+        this.exceptionHandler = exceptionHandler;
     }
 
     private LastRunInfo loadLastRunInfo() {
