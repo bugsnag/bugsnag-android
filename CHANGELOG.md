@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+ * Fix bug that terminated the app when multiple ANRs occur
+   [#1235](https://github.com/bugsnag/bugsnag-android/pull/1235)
+
 ## 5.9.1 (2021-04-22)
 
 ### Bug fixes
