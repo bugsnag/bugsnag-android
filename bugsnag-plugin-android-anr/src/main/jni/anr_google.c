@@ -38,20 +38,20 @@
 //
 // - Register a SIGQUIT handler via sigaction()
 //
-// - Our handler callback blocks SIGQUIT (allowing the Google handler to work
-//   again) and sets a flag like "should_report_anr"
+// - When our SIGQUIT handler triggers, we block SIGQUIT (so that the Google
+//   handler can run), then trigger another "worker" thread we have waiting
+//   to do the actual work, then return. The context switch to the "worker"
+//   thread debounces the signaling mechanism so that we can trigger the Google
+//   ANR thread safely. Our SIGQUIT handler MUST NOT run for more than 20
+//   seconds or else we'll be force-killed, which breaks Google reporting and
+//   the ANR popup in some cases.
 //
-// - We have another thread waiting on the "should_report_anr" flag, which then
-//   calls bsg_google_anr_call() after a short delay to raise a SIGQUIT on
-//   Google's handler thread. Re-raising the signal on the signal handler
-//   thread won't work because the signaling system in the OS won't finish
-//   updating the new blocking state until the current signal handler returns.
+// - Our ANR "worker" thread waits for our trigger, calls bsg_google_anr_call()
+//   to raise a SIGQUIT on Google's handler thread, and then does any extra
+//   processing we want to happen (this thread doesn't require async-safety).
 //
-// - Do our handler stuff, delay a short while (like 2 seconds) for Google's
-//   handlers to finish, then exit our watchdog thread. It's important that
-//   our watchdog thread stops before the runtime's timeout (currently 20
-//   seconds), or else we'll be force-killed, which breaks Google reporting
-//   and the ANR popup in some cases.
+// - When everything is done, we unblock SIGQUIT again so that our handler will
+//   trigger on the next ANR, and then put the "worker" thread back to sleep.
 //
 //
 // Functionality in this file:

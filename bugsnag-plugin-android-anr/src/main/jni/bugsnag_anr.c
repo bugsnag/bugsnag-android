@@ -19,7 +19,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_AnrPlugin_disableAnrReporting(
 
 JNIEXPORT void JNICALL Java_com_bugsnag_android_AnrPlugin_setUnwindFunction(
     JNIEnv *env, jobject thiz, jlong unwind_function) {
-  local_bsg_unwind_stack = (unwind_func)unwind_function;
+  bsg_set_unwind_function((unwind_func)unwind_function);
 }
 
 #ifdef __cplusplus
