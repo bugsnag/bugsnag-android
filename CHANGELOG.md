@@ -13,6 +13,9 @@
 * Prevent rare NPE when capturing thread traces
   [#1237](https://github.com/bugsnag/bugsnag-android/pull/1237)
 
+* Catch exceptions thrown by Context.registerReceiver to prevent rare crashes
+  [#1240](https://github.com/bugsnag/bugsnag-android/pull/1240)
+
 ## 5.9.1 (2021-04-22)
 
 ### Bug fixes

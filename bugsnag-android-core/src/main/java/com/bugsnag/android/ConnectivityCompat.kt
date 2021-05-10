@@ -61,10 +61,10 @@ internal class ConnectivityLegacy(
 
     override fun registerForNetworkChanges() {
         val intentFilter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
-        context.registerReceiver(changeReceiver, intentFilter)
+        context.registerReceiverSafe(changeReceiver, intentFilter)
     }
 
-    override fun unregisterForNetworkChanges() = context.unregisterReceiver(changeReceiver)
+    override fun unregisterForNetworkChanges() = context.unregisterReceiverSafe(changeReceiver)
 
     override fun hasNetworkConnection(): Boolean {
         return cm.activeNetworkInfo?.isConnectedOrConnecting ?: false
