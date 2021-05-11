@@ -135,7 +135,9 @@ static bool configure_anr_jni(JNIEnv *env) {
 }
 
 static void notify_anr_detected() {
+  BUGSNAG_LOG("### notify_anr_detected() running");
   if (!enabled) {
+    BUGSNAG_LOG("### notify_anr_detected() ended (enabled = false)");
     return;
   }
 
@@ -205,9 +207,11 @@ static void notify_anr_detected() {
     (*bsg_jvm)->DetachCurrentThread(
         bsg_jvm); // detach to restore initial condition
   }
+  BUGSNAG_LOG("### notify_anr_detected() ended");
 }
 
 static inline void block_sigquit() {
+  BUGSNAG_LOG("### block_sigquit() running");
   sigset_t sigmask;
   sigemptyset(&sigmask);
   sigaddset(&sigmask, SIGQUIT);
@@ -215,9 +219,11 @@ static inline void block_sigquit() {
     BUGSNAG_LOG(
         "Could not block SIGQUIT. Google's ANR handling will be disabled.");
   }
+  BUGSNAG_LOG("### block_sigquit() ended");
 }
 
 static inline void unblock_sigquit() {
+  BUGSNAG_LOG("### unblock_sigquit() running");
   sigset_t anr_sigmask;
   sigemptyset(&anr_sigmask);
   sigaddset(&anr_sigmask, SIGQUIT);
@@ -225,9 +231,11 @@ static inline void unblock_sigquit() {
     BUGSNAG_LOG(
         "Could not unblock SIGQUIT. Bugsnag's ANR handling will be disabled.");
   }
+  BUGSNAG_LOG("### unblock_sigquit() ended");
 }
 
 static inline void trigger_sigquit_watchdog_thread() {
+  BUGSNAG_LOG("### trigger_sigquit_watchdog_thread() running");
   // Set the trigger flag for the fallback spin-lock in
   // sigquit_watchdog_thread_main()
   should_report_anr_flag = true;
@@ -243,15 +251,19 @@ static inline void trigger_sigquit_watchdog_thread() {
       BUGSNAG_LOG("Could not unlock Bugsnag sigquit handler semaphore");
     }
   }
+  BUGSNAG_LOG("### trigger_sigquit_watchdog_thread() ended");
 }
 
 static void *sigquit_watchdog_thread_main(__unused void *_) {
   static const useconds_t delay_100ms = 100000;
+  BUGSNAG_LOG("### sigquit_watchdog_thread_main() running");
 
   while (enabled) {
+    BUGSNAG_LOG("### sigquit_watchdog_thread_main(): new loop");
     // Unblock SIGQUIT so that handle_sigquit() will be called.
     unblock_sigquit();
 
+    BUGSNAG_LOG("### sigquit_watchdog_thread_main(): Waiting for semaphore");
     // Wait until our SIGQUIT handler is ready for us to start.
     // Use sem_wait() if possible, falling back to polling.
     should_report_anr_flag = false;
@@ -263,21 +275,26 @@ static void *sigquit_watchdog_thread_main(__unused void *_) {
 
     if (!enabled) {
       // This happens if bsg_handler_uninstall_anr() woke us.
+      BUGSNAG_LOG("### sigquit_watchdog_thread_main() ended (enabled = false)");
       break;
     }
 
+    BUGSNAG_LOG("### calling bsg_google_anr_call()");
     // Trigger Google ANR processing (occurs on a different thread).
     bsg_google_anr_call();
+    BUGSNAG_LOG("### returned from bsg_google_anr_call()");
 
     // Do our ANR processing.
     notify_anr_detected();
   }
 
+  BUGSNAG_LOG("### sigquit_watchdog_thread_main() ended");
   return NULL;
 }
 
 static void handle_sigquit(__unused int signum, siginfo_t *info,
                            void *user_context) {
+  BUGSNAG_LOG("### handle_sigquit() running");
   // Re-block SIGQUIT so that the Google handler can trigger.
   // Do it in this handler so that the signal pending flags flip on the next
   // context switch and will be off when the next sigquit_watchdog_thread_main()
@@ -286,15 +303,18 @@ static void handle_sigquit(__unused int signum, siginfo_t *info,
 
   // The unwind function will be non-null if the NDK plugin is loaded.
   if (unwind_stack_function != NULL) {
+    BUGSNAG_LOG("### handle_sigquit(): Unwinding stack");
     anr_stacktrace_length =
         unwind_stack_function(anr_stacktrace, info, user_context);
   }
 
   // Tell sigquit_watchdog_thread_main() to report an ANR.
   trigger_sigquit_watchdog_thread();
+  BUGSNAG_LOG("### handle_sigquit() ended");
 }
 
 static void install_signal_handler() {
+  BUGSNAG_LOG("### install_signal_handler() running");
   if (!bsg_google_anr_init()) {
     BUGSNAG_LOG("Failed to initialize Google ANR caller. ANRs won't be sent to "
                 "Google.");
@@ -313,6 +333,7 @@ static void install_signal_handler() {
                      NULL) != 0) {
     BUGSNAG_LOG(
         "Could not create ANR watchdog thread. ANRs won't be sent to Bugsnag.");
+    BUGSNAG_LOG("### install_signal_handler() ended (fail)");
     return;
   }
 
@@ -327,14 +348,17 @@ static void install_signal_handler() {
     BUGSNAG_LOG(
         "Failed to install SIGQUIT handler: %s. ANRs won't be sent to Bugsnag.",
         strerror(errno));
+    BUGSNAG_LOG("### install_signal_handler() ended (fail)");
     return;
   }
 
   // Unblock SIGQUIT so that our newly installed handler can run.
   unblock_sigquit();
+  BUGSNAG_LOG("### install_signal_handler() ended");
 }
 
 bool bsg_handler_install_anr(JNIEnv *env, jobject plugin) {
+  BUGSNAG_LOG("### bsg_handler_install_anr() running");
   pthread_mutex_lock(&bsg_anr_handler_config);
 
   if (!installed && configure_anr_jni(env) && plugin != NULL) {
@@ -344,15 +368,22 @@ bool bsg_handler_install_anr(JNIEnv *env, jobject plugin) {
   }
   enabled = true;
   pthread_mutex_unlock(&bsg_anr_handler_config);
+  BUGSNAG_LOG("### bsg_handler_install_anr() ended");
   return true;
 }
 
 void bsg_handler_uninstall_anr() {
+  BUGSNAG_LOG("### bsg_handler_uninstall_anr() running");
   pthread_mutex_lock(&bsg_anr_handler_config);
   enabled = false;
   // Trigger sigquit_watchdog_thread_main() so that it can exit.
   trigger_sigquit_watchdog_thread();
   pthread_mutex_unlock(&bsg_anr_handler_config);
+  BUGSNAG_LOG("### bsg_handler_uninstall_anr() ended");
 }
 
-void bsg_set_unwind_function(unwind_func func) { unwind_stack_function = func; }
+void bsg_set_unwind_function(unwind_func func) {
+  BUGSNAG_LOG("### bsg_set_unwind_function() running");
+  unwind_stack_function = func;
+  BUGSNAG_LOG("### bsg_set_unwind_function() ended");
+}
