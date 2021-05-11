@@ -361,12 +361,12 @@ bool bsg_handler_install_anr(JNIEnv *env, jobject plugin) {
   BUGSNAG_LOG("### bsg_handler_install_anr() running");
   pthread_mutex_lock(&bsg_anr_handler_config);
 
+  enabled = true;
   if (!installed && configure_anr_jni(env) && plugin != NULL) {
     obj_plugin = (*env)->NewGlobalRef(env, plugin);
     install_signal_handler();
     installed = true;
   }
-  enabled = true;
   pthread_mutex_unlock(&bsg_anr_handler_config);
   BUGSNAG_LOG("### bsg_handler_install_anr() ended");
   return true;
