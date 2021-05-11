@@ -266,11 +266,15 @@ static void *sigquit_watchdog_thread_main(__unused void *_) {
       break;
     }
 
-    // Trigger Google ANR processing (occurs on a different thread).
-    bsg_google_anr_call();
+    usleep(2000);
 
     // Do our ANR processing.
     notify_anr_detected();
+
+    // Trigger Google ANR processing (occurs on a different thread).
+    bsg_google_anr_call();
+
+    sleep(2);
   }
 
   return NULL;
