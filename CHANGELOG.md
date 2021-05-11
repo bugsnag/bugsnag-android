@@ -16,6 +16,9 @@
 * Catch exceptions thrown by Context.registerReceiver to prevent rare crashes
   [#1240](https://github.com/bugsnag/bugsnag-android/pull/1240)
 
+* Fix possible NegativeArraySizeException in crash report deserialization
+  [#1245](https://github.com/bugsnag/bugsnag-android/pull/1245)
+
 ## 5.9.1 (2021-04-22)
 
 ### Bug fixes
