@@ -32,7 +32,7 @@ class SystemBroadcastReceiver extends BroadcastReceiver {
     }
 
     static SystemBroadcastReceiver register(final Client client,
-                                            Logger logger,
+                                            final Logger logger,
                                             BackgroundTaskService bgTaskService) {
         final SystemBroadcastReceiver receiver = new SystemBroadcastReceiver(client, logger);
         if (receiver.getActions().size() > 0) {
@@ -41,7 +41,9 @@ class SystemBroadcastReceiver extends BroadcastReceiver {
                     @Override
                     public void run() {
                         IntentFilter intentFilter = receiver.getIntentFilter();
-                        client.appContext.registerReceiver(receiver, intentFilter);
+                        Context context = client.appContext;
+                        ContextExtensionsKt.registerReceiverSafe(context,
+                                receiver, intentFilter, logger);
                     }
                 });
             } catch (RejectedExecutionException ex) {

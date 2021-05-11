@@ -343,7 +343,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                     }
                 }
         );
-        appContext.registerReceiver(receiver, configFilter);
+        ContextExtensionsKt.registerReceiverSafe(appContext, receiver, configFilter, logger);
     }
 
     void setupNdkPlugin() {
@@ -923,7 +923,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     protected void finalize() throws Throwable {
         if (systemBroadcastReceiver != null) {
             try {
-                appContext.unregisterReceiver(systemBroadcastReceiver);
+                ContextExtensionsKt.unregisterReceiverSafe(appContext,
+                        systemBroadcastReceiver, logger);
             } catch (IllegalArgumentException exception) {
                 logger.w("Receiver not registered");
             }
