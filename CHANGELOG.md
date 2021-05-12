@@ -1,5 +1,27 @@
 # Changelog
 
+## 5.9.2 (2021-05-12)
+
+### Bug fixes
+
+* Guard against exceptions with null stack traces
+  [#1239](https://github.com/bugsnag/bugsnag-android/pull/1239)
+
+* Fix bug that terminated the app when multiple ANRs occur
+  [#1235](https://github.com/bugsnag/bugsnag-android/pull/1235)
+
+* Prevent rare NPE in log message
+  [#1238](https://github.com/bugsnag/bugsnag-android/pull/1238)
+
+* Prevent rare NPE when capturing thread traces
+  [#1237](https://github.com/bugsnag/bugsnag-android/pull/1237)
+
+* Catch exceptions thrown by Context.registerReceiver to prevent rare crashes
+  [#1240](https://github.com/bugsnag/bugsnag-android/pull/1240)
+
+* Fix possible NegativeArraySizeException in crash report deserialization
+  [#1245](https://github.com/bugsnag/bugsnag-android/pull/1245)
+
 ## 5.9.1 (2021-04-22)
 
 ### Bug fixes

@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Sends a handled exception to Bugsnag, which has a short delay to allow the app to remain
@@ -15,12 +16,17 @@ internal class InForegroundScenario(
     eventMetadata: String
 ) : Scenario(config, context, eventMetadata) {
 
+    private var triggered = AtomicBoolean(false)
+
     override fun startScenario() {
         super.startScenario()
         registerActivityLifecycleCallbacks()
     }
 
     override fun onActivityStopped(activity: Activity) {
-        Bugsnag.notify(generateException())
+        // debounce so this can only ever occur once
+        if (!triggered.getAndSet(true)) {
+            Bugsnag.notify(generateException())
+        }
     }
 }

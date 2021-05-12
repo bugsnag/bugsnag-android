@@ -1,4 +1,15 @@
 steps:
+
+  - label: 'Trigger RN tests for all builds of our next branch'
+    if: build.branch == "next"
+    trigger: 'bugsnag-js'
+    build:
+      branch: 'next'
+      message: 'Run RN tests with latest Android next branch'
+      env:
+        BUILD_RN_WITH_LATEST_NATIVES: "true"
+    async: true
+
   # downloads the Android toolchain
   - label: ':docker: Build Android base image'
     key: "android-common"
@@ -29,6 +40,15 @@ steps:
       - docker-compose#v3.7.0:
           push:
             - android-ci:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:ci-${BRANCH_NAME}
+
+  - label: 'Audit current licenses'
+    depends_on: "android-ci"
+    timeout_in_minutes: 30
+    plugins:
+      - docker-compose#v3.7.0:
+          run: android-license-audit
+          command:
+            - ./scripts/audit-dependency-licenses.sh
 
   - label: ':android: Build fixture APK r16'
     key: "fixture-r16"

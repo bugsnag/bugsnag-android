@@ -13,8 +13,6 @@ typedef ssize_t (*unwind_func)(
     bugsnag_stackframe stacktrace[BUGSNAG_FRAMES_MAX], siginfo_t *info,
     void *user_context);
 
-extern unwind_func local_bsg_unwind_stack;
-
 #ifdef __cplusplus
 }
 #endif
