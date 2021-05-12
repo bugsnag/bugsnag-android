@@ -6,7 +6,17 @@ import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.eq
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
+import org.mockito.junit.MockitoJUnitRunner
+import java.util.concurrent.ScheduledThreadPoolExecutor
+import java.util.concurrent.TimeUnit
 
+@RunWith(MockitoJUnitRunner::class)
 class LaunchCrashTrackerTest {
 
     @Test
@@ -36,16 +46,19 @@ class LaunchCrashTrackerTest {
 
     @Test
     fun smallLaunchPeriodAutomatic() {
-        val tracker = LaunchCrashTracker(
+        val executor = mock(ScheduledThreadPoolExecutor::class.java)
+        LaunchCrashTracker(
             convert(
                 generateConfiguration().apply {
                     launchDurationMillis = 1
                 }
-            )
+            ),
+            executor
         )
-        assertTrue(tracker.isLaunching())
-
-        java.lang.Thread.sleep(20)
-        assertFalse(tracker.isLaunching())
+        verify(executor, times(1)).schedule(
+            any(Runnable::class.java),
+            eq(1L),
+            eq(TimeUnit.MILLISECONDS)
+        )
     }
 }
