@@ -4,6 +4,9 @@
 
 ### Bug fixes
 
+* Guard against exceptions with null stack traces
+  [#1239](https://github.com/bugsnag/bugsnag-android/pull/1239)
+
 * Fix bug that terminated the app when multiple ANRs occur
   [#1235](https://github.com/bugsnag/bugsnag-android/pull/1235)
 
