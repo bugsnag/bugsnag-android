@@ -1,5 +1,10 @@
 # Changelog
 
+## TBD
+
+* Avoid unnecessary collection of Thread stacktraces
+  [1249](https://github.com/bugsnag/bugsnag-android/pull/1249)
+
 ## 5.9.2 (2021-05-12)
 
 ### Bug fixes
