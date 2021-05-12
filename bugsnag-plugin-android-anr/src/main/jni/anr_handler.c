@@ -337,12 +337,12 @@ static void install_signal_handler() {
 bool bsg_handler_install_anr(JNIEnv *env, jobject plugin) {
   pthread_mutex_lock(&bsg_anr_handler_config);
 
+  enabled = true;
   if (!installed && configure_anr_jni(env) && plugin != NULL) {
     obj_plugin = (*env)->NewGlobalRef(env, plugin);
     install_signal_handler();
     installed = true;
   }
-  enabled = true;
   pthread_mutex_unlock(&bsg_anr_handler_config);
   return true;
 }
