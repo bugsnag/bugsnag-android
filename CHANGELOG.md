@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 5.9.2 (2021-05-12)
 
 ### Bug fixes
 
