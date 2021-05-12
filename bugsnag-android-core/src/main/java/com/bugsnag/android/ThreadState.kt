@@ -1,7 +1,5 @@
 package com.bugsnag.android
 
-import android.annotation.SuppressLint
-
 import java.io.IOException
 
 /**
