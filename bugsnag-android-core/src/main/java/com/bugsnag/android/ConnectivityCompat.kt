@@ -24,9 +24,7 @@ internal class ConnectivityCompat(
     callback: NetworkChangeCallback?
 ) : Connectivity {
 
-    private val cm =
-        runCatching { context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager }
-            .getOrNull()
+    private val cm = context.getConnectivityManager()
 
     private val connectivity: Connectivity =
         when {

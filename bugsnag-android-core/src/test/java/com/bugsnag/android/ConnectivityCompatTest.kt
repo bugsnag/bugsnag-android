@@ -12,7 +12,6 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
 
-@Suppress("DEPRECATION")
 @RunWith(MockitoJUnitRunner::class)
 class ConnectivityCompatTest {
 
@@ -61,6 +60,7 @@ class ConnectivityCompatTest {
             Mockito.`when`(connectivityManager.activeNetwork)
                 .thenThrow(SecurityException())
         } else {
+            @Suppress("DEPRECATION")
             Mockito.`when`(connectivityManager.activeNetworkInfo)
                 .thenThrow(SecurityException())
         }
