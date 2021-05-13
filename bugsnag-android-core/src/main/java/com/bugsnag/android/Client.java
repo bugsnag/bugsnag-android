@@ -74,7 +74,10 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     private final SessionLifecycleCallback sessionLifecycleCallback;
 
     private final Connectivity connectivity;
+
+    @Nullable
     private final StorageManager storageManager;
+
     final Logger logger;
     final DeliveryDelegate deliveryDelegate;
 
@@ -256,7 +259,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             ActivityBreadcrumbCollector activityBreadcrumbCollector,
             SessionLifecycleCallback sessionLifecycleCallback,
             Connectivity connectivity,
-            StorageManager storageManager,
+            @Nullable StorageManager storageManager,
             Logger logger,
             DeliveryDelegate deliveryDelegate,
             LastRunInfoStore lastRunInfoStore,
