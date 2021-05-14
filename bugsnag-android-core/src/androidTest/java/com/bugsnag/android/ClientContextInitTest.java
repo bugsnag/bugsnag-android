@@ -4,14 +4,14 @@ import static org.mockito.Mockito.when;
 
 import android.app.Application;
 import android.content.Context;
-
-import kotlin.TypeCastException;
+import android.content.SharedPreferences;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.io.File;
 
 /**
  * Verifies that the {@link Client} can be initialized with different subtypes
@@ -44,20 +44,33 @@ public class ClientContextInitTest {
     @Mock
     Context anotherContext;
 
+    @Mock
+    SharedPreferences preferences;
+
     /**
      * Verifies that if the application context is null the base context is used
      */
-    @Test(expected = TypeCastException.class)
+    @Test
     public void testClientBaseContext() {
+        mockContext(appContext);
         new Client(appContext, new Configuration("api-key"));
     }
 
     /**
      * Verifies that the application context is always used if it is not null
      */
-    @Test(expected = TypeCastException.class)
+    @Test
     public void testClientAppContext() {
         when(appContext.getApplicationContext()).thenReturn(anotherContext);
+        mockContext(anotherContext);
+
         new Client(appContext, new Configuration("api-key"));
+    }
+
+    private void mockContext(Context context) {
+        when(context.getPackageName()).thenReturn("mock.package.name");
+        when(context.getCacheDir()).thenReturn(new File(System.getProperty("java.io.tmpdir")));
+        when(context.getSharedPreferences("com.bugsnag.android", Context.MODE_PRIVATE))
+                .thenReturn(preferences);
     }
 }

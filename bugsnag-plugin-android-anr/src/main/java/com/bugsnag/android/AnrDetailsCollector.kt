@@ -23,7 +23,8 @@ internal class AnrDetailsCollector {
     }
 
     internal fun collectAnrDetails(ctx: Context): ProcessErrorStateInfo? {
-        val am = ctx.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val am = runCatching { ctx.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager }
+            .getOrNull()
         return captureProcessErrorState(am, Process.myPid())
     }
 
@@ -34,9 +35,9 @@ internal class AnrDetailsCollector {
      * See https://developer.android.com/reference/android/app/ActivityManager.html#getProcessesInErrorState()
      */
     @VisibleForTesting
-    internal fun captureProcessErrorState(am: ActivityManager, pid: Int): ProcessErrorStateInfo? {
+    internal fun captureProcessErrorState(am: ActivityManager?, pid: Int): ProcessErrorStateInfo? {
         return try {
-            val processes = am.processesInErrorState ?: emptyList()
+            val processes = am?.processesInErrorState ?: emptyList()
             processes.firstOrNull { it.pid == pid }
         } catch (exc: RuntimeException) {
             null

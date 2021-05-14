@@ -5,6 +5,9 @@
 * Avoid unnecessary collection of Thread stacktraces
   [1249](https://github.com/bugsnag/bugsnag-android/pull/1249)
 
+* Prevent errors in rare cases where either ConnectivityManager or StorageManager is not available
+  [1251](https://github.com/bugsnag/bugsnag-android/pull/1251)
+
 ## 5.9.2 (2021-05-12)
 
 ### Bug fixes
