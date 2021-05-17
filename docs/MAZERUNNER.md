@@ -14,9 +14,13 @@ Remote tests can be run against real devices provided by BrowserStack. In order 
 - A BrowserStack App Automate Access Key: `BROWSER_STACK_ACCESS_KEY`
 - A path to a [BrowserStack local testing binary](https://www.browserstack.com/local-testing/app-automate): `MAZE_BS_LOCAL`
 
+### Setting up local end-to-end testing
+
+1. Run `bundle install`
+1. Create and export a GPG key (follow the instructions in [RELEASING](RELEASING.md))
+
 ### Running an end-to-end test
 
-1. Run `bundle install` if you haven't run end-to-end tests before
 1. Check the contents of `Gemfile` to select the version of `maze-runner` to use
 1. To run a single feature:
     ```shell script
