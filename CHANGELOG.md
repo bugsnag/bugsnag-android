@@ -8,6 +8,9 @@
 * Prevent errors in rare cases where either ConnectivityManager or StorageManager is not available
   [1251](https://github.com/bugsnag/bugsnag-android/pull/1251)
 
+* Added Date support to ObjectJsonStreamer
+  [1256](https://github.com/bugsnag/bugsnag-android/pull/1256)
+
 ## 5.9.2 (2021-05-12)
 
 ### Bug fixes
