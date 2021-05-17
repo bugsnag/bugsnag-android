@@ -8,6 +8,9 @@
 * Prevent errors in rare cases where either ConnectivityManager or StorageManager is not available
   [1251](https://github.com/bugsnag/bugsnag-android/pull/1251)
 
+* Prevent resource exhaustion when Throwable cause chains are recursive
+  [1255](https://github.com/bugsnag/bugsnag-android/pull/1255)
+
 ## 5.9.2 (2021-05-12)
 
 ### Bug fixes
