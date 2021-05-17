@@ -89,7 +89,7 @@ class StrictModeHandler {
      * @return the root cause of the throwable
      */
     private Throwable getRootCause(Throwable throwable) {
-        List<Throwable> causes = ThrowableExtensionsKt.safeUnrollCauses(throwable);
+        List<Throwable> causes = ThrowableUtils.safeUnrollCauses(throwable);
         return causes.get(causes.size() - 1);
     }
 }

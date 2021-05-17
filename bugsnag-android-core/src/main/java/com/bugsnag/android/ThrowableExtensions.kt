@@ -1,3 +1,4 @@
+@file:JvmName("ThrowableUtils")
 package com.bugsnag.android
 
 /**
