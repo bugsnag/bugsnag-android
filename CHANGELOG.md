@@ -11,6 +11,9 @@
 * Change the Bugsnag-Internal-Error header to "bugsnag-android"
   [1252](https://github.com/bugsnag/bugsnag-android/pull/1252)
 
+* Prevent resource exhaustion when Throwable cause chains are recursive
+  [1255](https://github.com/bugsnag/bugsnag-android/pull/1255)
+
 ## 5.9.2 (2021-05-12)
 
 ### Bug fixes
