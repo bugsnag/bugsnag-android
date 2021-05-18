@@ -7,6 +7,9 @@
 
 * Prevent errors in rare cases where either ConnectivityManager or StorageManager is not available
   [1251](https://github.com/bugsnag/bugsnag-android/pull/1251)
+  
+* Change the Bugsnag-Internal-Error header to "bugsnag-android"
+  [1252](https://github.com/bugsnag/bugsnag-android/pull/1252)
 
 ## 5.9.2 (2021-05-12)
 
