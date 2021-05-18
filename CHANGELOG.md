@@ -14,6 +14,9 @@
 * Prevent resource exhaustion when Throwable cause chains are recursive
   [1255](https://github.com/bugsnag/bugsnag-android/pull/1255)
 
+* Added Date support to ObjectJsonStreamer
+  [1256](https://github.com/bugsnag/bugsnag-android/pull/1256)
+
 ## 5.9.2 (2021-05-12)
 
 ### Bug fixes
