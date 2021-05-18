@@ -71,7 +71,7 @@ Manual publishing is discouraged, but is possible in exceptional circumstances b
 
 ### Creating a GPG key
 
--   Create a GPG key if you haven't got one already (`gpg --gen-key`). The build system requires a GPG key ring set up using GPG 1.x, but many systems now ship with GPG 2.x. As a workaround, after creating your key you can manually create the `secring.gpg` file by running `gpg --export-secret-keys >~/.gnupg/secring.gpg`
+-   Create a GPG key if you haven't got one already (`gpg --full-gen-key` and select RSA/4096bit). The build system requires a GPG key ring set up using GPG 1.x, but many systems now ship with GPG 2.x. As a workaround, after creating your key you can manually create the `secring.gpg` file by running `gpg --export-secret-keys >~/.gnupg/secring.gpg`
 -   Create a [Sonatype JIRA](https://issues.sonatype.org) account
 -   Ask in the [Bugsnag Sonatype JIRA ticket](https://issues.sonatype.org/browse/OSSRH-5533) to become a contributor
 -   Ask an existing contributor (likely Simon) to confirm in the ticket

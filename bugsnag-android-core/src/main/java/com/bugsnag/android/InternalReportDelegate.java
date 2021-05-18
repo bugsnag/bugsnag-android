@@ -116,7 +116,7 @@ class InternalReportDelegate implements EventStore.Delegate {
                         // can only modify headers if DefaultDelivery is in use
                         if (delivery instanceof DefaultDelivery) {
                             Map<String, String> headers = params.getHeaders();
-                            headers.put(HEADER_INTERNAL_ERROR, "true");
+                            headers.put(HEADER_INTERNAL_ERROR, "bugsnag-android");
                             headers.remove(DeliveryHeadersKt.HEADER_API_KEY);
                             DefaultDelivery defaultDelivery = (DefaultDelivery) delivery;
                             defaultDelivery.deliver(params.getEndpoint(), payload, headers);

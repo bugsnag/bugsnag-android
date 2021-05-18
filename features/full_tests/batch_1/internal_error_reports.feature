@@ -5,7 +5,7 @@ Scenario: If an exception is thrown when sending errors/sessions then internal e
     And I wait to receive 1 errors
 
     # Validate internal error report for error serialization
-    Then the error "Bugsnag-Internal-Error" header equals "true"
+    Then the error "Bugsnag-Internal-Error" header equals "bugsnag-android"
 
     # Exception details
     And the error payload field "events" is an array with 1 elements
