@@ -11,7 +11,7 @@ extern "C" {
 /**
  * Copy the contents of src to dst where src is null-terminated
  */
-void bsg_strcpy(char *dst, char *src) __asyncsafe;
+void bsg_strcpy(char *dst, const char *src) __asyncsafe;
 
 /**
  * Return the length of a string
@@ -21,7 +21,7 @@ size_t bsg_strlen(const char *str) __asyncsafe;
 /**
  * Copy a maximum number of bytes from src to dst
  */
-void bsg_strncpy(char *dst, char *src, size_t len) __asyncsafe;
+void bsg_strncpy(char *dst, const char *src, size_t len) __asyncsafe;
 
 /**
  * Copy a string from src to dst, null padding the rest
