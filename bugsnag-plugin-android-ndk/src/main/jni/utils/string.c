@@ -3,9 +3,9 @@
 #include <stdbool.h>
 #include <string.h>
 
-void bsg_strcpy(char *dst, char *src) { bsg_strncpy(dst, src, INT_MAX); }
+void bsg_strcpy(char *dst, const char *src) { bsg_strncpy(dst, src, INT_MAX); }
 
-void bsg_strncpy(char *dst, char *src, size_t len) {
+void bsg_strncpy(char *dst, const char *src, size_t len) {
   int i = 0;
   while (i <= len) {
     char current = src[i];

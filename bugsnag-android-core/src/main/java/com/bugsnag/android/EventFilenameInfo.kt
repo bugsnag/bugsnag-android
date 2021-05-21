@@ -86,7 +86,7 @@ internal data class EventFilenameInfo(
          * is not encoded for the given event
          */
         private fun findApiKeyInFilename(file: File, config: ImmutableConfig): String {
-            val name = file.name.replace("_$STARTUP_CRASH.json".toRegex(), "")
+            val name = file.name.removeSuffix("_$STARTUP_CRASH.json")
             val start = name.indexOf("_") + 1
             val end = name.indexOf("_", start)
             val apiKey = if (start == 0 || end == -1 || end <= start) {

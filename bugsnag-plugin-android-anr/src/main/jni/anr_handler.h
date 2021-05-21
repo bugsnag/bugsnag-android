@@ -1,5 +1,6 @@
 #ifndef BUGSNAG_ANR_HANDLER_H
 #define BUGSNAG_ANR_HANDLER_H
+#include "unwind_func.h"
 #include <jni.h>
 #include <stdbool.h>
 
@@ -30,6 +31,8 @@ extern "C" {
 bool bsg_handler_install_anr(JNIEnv *env, jobject plugin);
 
 void bsg_handler_uninstall_anr(void);
+
+void bsg_set_unwind_function(unwind_func func);
 
 #ifdef __cplusplus
 }

@@ -138,15 +138,13 @@ class NativeBridge : Observer {
     }
 
     private fun isInvalidMessage(msg: Any?): Boolean {
-        if (msg !is StateEvent) {
+        if (msg == null || msg !is StateEvent) {
             return true
         }
         if (!installed.get() && msg !is Install) {
             logger.w("Received message before INSTALL: $msg")
             return true
         }
-
-        logger.d(String.format("Received NDK message %s", msg))
         return false
     }
 

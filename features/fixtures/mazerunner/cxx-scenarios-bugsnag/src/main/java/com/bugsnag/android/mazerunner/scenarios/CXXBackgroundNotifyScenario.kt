@@ -3,6 +3,7 @@ package com.bugsnag.android.mazerunner.scenarios
 import android.app.Activity
 import android.content.Context
 import com.bugsnag.android.Configuration
+import java.util.concurrent.atomic.AtomicBoolean
 
 internal class CXXBackgroundNotifyScenario(
     config: Configuration,
@@ -15,6 +16,8 @@ internal class CXXBackgroundNotifyScenario(
         System.loadLibrary("cxx-scenarios-bugsnag")
     }
 
+    private var triggered = AtomicBoolean(false)
+
     external fun activate()
 
     override fun startScenario() {
@@ -22,5 +25,10 @@ internal class CXXBackgroundNotifyScenario(
         registerActivityLifecycleCallbacks()
     }
 
-    override fun onActivityStopped(activity: Activity) = activate()
+    override fun onActivityStopped(activity: Activity) {
+        // debounce so this can only ever occur once
+        if (!triggered.getAndSet(true)) {
+            activate()
+        }
+    }
 }

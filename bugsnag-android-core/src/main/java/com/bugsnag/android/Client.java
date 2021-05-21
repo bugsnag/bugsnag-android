@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.ContextExtensionsKt.getActivityManagerFrom;
+import static com.bugsnag.android.ContextExtensionsKt.getStorageManagerFrom;
 import static com.bugsnag.android.ImmutableConfigKt.sanitiseConfiguration;
 import static com.bugsnag.android.SeverityReason.REASON_HANDLED_EXCEPTION;
 
@@ -74,7 +76,10 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     private final SessionLifecycleCallback sessionLifecycleCallback;
 
     private final Connectivity connectivity;
+
+    @Nullable
     private final StorageManager storageManager;
+
     final Logger logger;
     final DeliveryDelegate deliveryDelegate;
 
@@ -145,7 +150,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         int maxBreadcrumbs = immutableConfig.getMaxBreadcrumbs();
         breadcrumbState = new BreadcrumbState(maxBreadcrumbs, callbackState, logger);
 
-        storageManager = (StorageManager) appContext.getSystemService(Context.STORAGE_SERVICE);
+        storageManager = getStorageManagerFrom(appContext);
 
         contextState = new ContextState();
         contextState.setContext(configuration.getContext());
@@ -155,8 +160,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                 sessionStore, logger, bgTaskService);
         metadataState = copyMetadataState(configuration);
 
-        ActivityManager am =
-                (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
+        ActivityManager am = getActivityManagerFrom(appContext);
 
         launchCrashTracker = new LaunchCrashTracker(immutableConfig);
         appDataCollector = new AppDataCollector(appContext, appContext.getPackageManager(),
@@ -260,7 +264,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             ActivityBreadcrumbCollector activityBreadcrumbCollector,
             SessionLifecycleCallback sessionLifecycleCallback,
             Connectivity connectivity,
-            StorageManager storageManager,
+            @Nullable StorageManager storageManager,
             Logger logger,
             DeliveryDelegate deliveryDelegate,
             LastRunInfoStore lastRunInfoStore,
@@ -350,7 +354,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                     }
                 }
         );
-        appContext.registerReceiver(receiver, configFilter);
+        ContextExtensionsKt.registerReceiverSafe(appContext, receiver, configFilter, logger);
     }
 
     void setupNdkPlugin() {
@@ -941,7 +945,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     protected void finalize() throws Throwable {
         if (systemBroadcastReceiver != null) {
             try {
-                appContext.unregisterReceiver(systemBroadcastReceiver);
+                ContextExtensionsKt.unregisterReceiverSafe(appContext,
+                        systemBroadcastReceiver, logger);
             } catch (IllegalArgumentException exception) {
                 logger.w("Receiver not registered");
             }

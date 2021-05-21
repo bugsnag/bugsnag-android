@@ -10,10 +10,12 @@ import java.util.concurrent.atomic.AtomicBoolean
  * configuration.launchDurationMillis, after which which the launch period is considered
  * complete. If this value is zero, then the user must manually call markLaunchCompleted().
  */
-internal class LaunchCrashTracker(config: ImmutableConfig) : BaseObservable() {
+internal class LaunchCrashTracker @JvmOverloads constructor(
+    config: ImmutableConfig,
+    private val executor: ScheduledThreadPoolExecutor = ScheduledThreadPoolExecutor(1)
+) : BaseObservable() {
 
     private val launching = AtomicBoolean(true)
-    private val executor = ScheduledThreadPoolExecutor(1)
     private val logger = config.logger
 
     init {

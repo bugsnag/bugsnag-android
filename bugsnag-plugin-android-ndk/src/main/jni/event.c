@@ -61,25 +61,26 @@ void bsg_add_metadata_value_bool(bugsnag_metadata *metadata,
   }
 }
 
-void bugsnag_event_add_metadata_double(void *event_ptr, char *section,
-                                       char *name, double value) {
+void bugsnag_event_add_metadata_double(void *event_ptr, const char *section,
+                                       const char *name, double value) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
   bsg_add_metadata_value_double(&event->metadata, section, name, value);
 }
 
-void bugsnag_event_add_metadata_string(void *event_ptr, char *section,
-                                       char *name, char *value) {
+void bugsnag_event_add_metadata_string(void *event_ptr, const char *section,
+                                       const char *name, const char *value) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
   bsg_add_metadata_value_str(&event->metadata, section, name, value);
 }
 
-void bugsnag_event_add_metadata_bool(void *event_ptr, char *section, char *name,
-                                     bool value) {
+void bugsnag_event_add_metadata_bool(void *event_ptr, const char *section,
+                                     const char *name, bool value) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
   bsg_add_metadata_value_bool(&event->metadata, section, name, value);
 }
 
-void bugsnag_event_clear_metadata(void *event_ptr, char *section, char *name) {
+void bugsnag_event_clear_metadata(void *event_ptr, const char *section,
+                                  const char *name) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
   for (int i = 0; i < event->metadata.value_count; ++i) {
     if (strcmp(event->metadata.values[i].section, section) == 0 &&
@@ -95,7 +96,8 @@ void bugsnag_event_clear_metadata(void *event_ptr, char *section, char *name) {
   }
 }
 
-void bugsnag_event_clear_metadata_section(void *event_ptr, char *section) {
+void bugsnag_event_clear_metadata_section(void *event_ptr,
+                                          const char *section) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
   for (int i = 0; i < event->metadata.value_count; ++i) {
     if (strcmp(event->metadata.values[i].section, section) == 0) {
@@ -104,8 +106,9 @@ void bugsnag_event_clear_metadata_section(void *event_ptr, char *section) {
   }
 }
 
-bsg_metadata_value bugsnag_get_metadata_value(void *event_ptr, char *section,
-                                              char *name) {
+bsg_metadata_value bugsnag_get_metadata_value(void *event_ptr,
+                                              const char *section,
+                                              const char *name) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
 
   for (int k = 0; k < event->metadata.value_count; ++k) {
@@ -119,13 +122,14 @@ bsg_metadata_value bugsnag_get_metadata_value(void *event_ptr, char *section,
   return data;
 }
 
-bugsnag_metadata_type bugsnag_event_has_metadata(void *event_ptr, char *section,
-                                                 char *name) {
+bugsnag_metadata_type bugsnag_event_has_metadata(void *event_ptr,
+                                                 const char *section,
+                                                 const char *name) {
   return bugsnag_get_metadata_value(event_ptr, section, name).type;
 }
 
-double bugsnag_event_get_metadata_double(void *event_ptr, char *section,
-                                         char *name) {
+double bugsnag_event_get_metadata_double(void *event_ptr, const char *section,
+                                         const char *name) {
   bsg_metadata_value value =
       bugsnag_get_metadata_value(event_ptr, section, name);
 
@@ -135,8 +139,8 @@ double bugsnag_event_get_metadata_double(void *event_ptr, char *section,
   return 0.0;
 }
 
-char *bugsnag_event_get_metadata_string(void *event_ptr, char *section,
-                                        char *name) {
+char *bugsnag_event_get_metadata_string(void *event_ptr, const char *section,
+                                        const char *name) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
 
   for (int k = 0; k < event->metadata.value_count; ++k) {
@@ -148,8 +152,8 @@ char *bugsnag_event_get_metadata_string(void *event_ptr, char *section,
   return NULL;
 }
 
-bool bugsnag_event_get_metadata_bool(void *event_ptr, char *section,
-                                     char *name) {
+bool bugsnag_event_get_metadata_bool(void *event_ptr, const char *section,
+                                     const char *name) {
   bsg_metadata_value value =
       bugsnag_get_metadata_value(event_ptr, section, name);
 
@@ -174,7 +178,7 @@ char *bugsnag_event_get_api_key(void *event_ptr) {
   return event->api_key;
 }
 
-void bugsnag_event_set_api_key(void *event_ptr, char *value) {
+void bugsnag_event_set_api_key(void *event_ptr, const char *value) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
   bsg_strncpy_safe(event->api_key, value, sizeof(event->api_key));
 }
@@ -184,13 +188,13 @@ char *bugsnag_event_get_context(void *event_ptr) {
   return event->context;
 }
 
-void bugsnag_event_set_context(void *event_ptr, char *value) {
+void bugsnag_event_set_context(void *event_ptr, const char *value) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
   bsg_strncpy_safe(event->context, value, sizeof(event->context));
 }
 
-void bugsnag_event_set_user(void *event_ptr, char *id, char *email,
-                            char *name) {
+void bugsnag_event_set_user(void *event_ptr, const char *id, const char *email,
+                            const char *name) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
   bsg_strncpy_safe(event->user.id, id, sizeof(event->user.id));
   bsg_strncpy_safe(event->user.email, email, sizeof(event->user.email));
@@ -227,7 +231,7 @@ char *bugsnag_app_get_binary_arch(void *event_ptr) {
   return event->app.binary_arch;
 }
 
-void bugsnag_app_set_binary_arch(void *event_ptr, char *value) {
+void bugsnag_app_set_binary_arch(void *event_ptr, const char *value) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
   bsg_strncpy_safe(event->app.binary_arch, value,
                    sizeof(event->app.binary_arch));
@@ -238,7 +242,7 @@ char *bugsnag_app_get_build_uuid(void *event_ptr) {
   return event->app.build_uuid;
 }
 
-void bugsnag_app_set_build_uuid(void *event_ptr, char *value) {
+void bugsnag_app_set_build_uuid(void *event_ptr, const char *value) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
   bsg_strncpy_safe(event->app.build_uuid, value, sizeof(event->app.build_uuid));
 }
@@ -248,7 +252,7 @@ char *bugsnag_app_get_id(void *event_ptr) {
   return event->app.id;
 }
 
-void bugsnag_app_set_id(void *event_ptr, char *value) {
+void bugsnag_app_set_id(void *event_ptr, const char *value) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
   bsg_strncpy_safe(event->app.id, value, sizeof(event->app.id));
 }
@@ -258,7 +262,7 @@ char *bugsnag_app_get_release_stage(void *event_ptr) {
   return event->app.release_stage;
 }
 
-void bugsnag_app_set_release_stage(void *event_ptr, char *value) {
+void bugsnag_app_set_release_stage(void *event_ptr, const char *value) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
   bsg_strncpy_safe(event->app.release_stage, value,
                    sizeof(event->app.release_stage));
@@ -269,7 +273,7 @@ char *bugsnag_app_get_type(void *event_ptr) {
   return event->app.type;
 }
 
-void bugsnag_app_set_type(void *event_ptr, char *value) {
+void bugsnag_app_set_type(void *event_ptr, const char *value) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
   bsg_strncpy_safe(event->app.type, value, sizeof(event->app.type));
 }
@@ -279,7 +283,7 @@ char *bugsnag_app_get_version(void *event_ptr) {
   return event->app.version;
 }
 
-void bugsnag_app_set_version(void *event_ptr, char *value) {
+void bugsnag_app_set_version(void *event_ptr, const char *value) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
   bsg_strncpy_safe(event->app.version, value, sizeof(event->app.version));
 }
@@ -351,7 +355,7 @@ char *bugsnag_device_get_id(void *event_ptr) {
   return event->device.id;
 }
 
-void bugsnag_device_set_id(void *event_ptr, char *value) {
+void bugsnag_device_set_id(void *event_ptr, const char *value) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
   bsg_strncpy_safe(event->device.id, value, sizeof(event->device.id));
 }
@@ -361,7 +365,7 @@ char *bugsnag_device_get_locale(void *event_ptr) {
   return event->device.locale;
 }
 
-void bugsnag_device_set_locale(void *event_ptr, char *value) {
+void bugsnag_device_set_locale(void *event_ptr, const char *value) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
   bsg_strncpy_safe(event->device.locale, value, sizeof(event->device.locale));
 }
@@ -371,7 +375,7 @@ char *bugsnag_device_get_manufacturer(void *event_ptr) {
   return event->device.manufacturer;
 }
 
-void bugsnag_device_set_manufacturer(void *event_ptr, char *value) {
+void bugsnag_device_set_manufacturer(void *event_ptr, const char *value) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
   bsg_strncpy_safe(event->device.manufacturer, value,
                    sizeof(event->device.manufacturer));
@@ -382,7 +386,7 @@ char *bugsnag_device_get_model(void *event_ptr) {
   return event->device.model;
 }
 
-void bugsnag_device_set_model(void *event_ptr, char *value) {
+void bugsnag_device_set_model(void *event_ptr, const char *value) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
   bsg_strncpy_safe(event->device.model, value, sizeof(event->device.model));
 }
@@ -392,7 +396,7 @@ char *bugsnag_device_get_os_version(void *event_ptr) {
   return event->device.os_version;
 }
 
-void bugsnag_device_set_os_version(void *event_ptr, char *value) {
+void bugsnag_device_set_os_version(void *event_ptr, const char *value) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
   bsg_strncpy_safe(event->device.os_version, value,
                    sizeof(event->device.os_version));
@@ -413,7 +417,7 @@ char *bugsnag_device_get_orientation(void *event_ptr) {
   return event->device.orientation;
 }
 
-void bugsnag_device_set_orientation(void *event_ptr, char *value) {
+void bugsnag_device_set_orientation(void *event_ptr, const char *value) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
   bsg_strncpy_safe(event->device.orientation, value,
                    sizeof(event->device.orientation));
@@ -434,7 +438,7 @@ char *bugsnag_device_get_os_name(void *event_ptr) {
   return event->device.os_name;
 }
 
-void bugsnag_device_set_os_name(void *event_ptr, char *value) {
+void bugsnag_device_set_os_name(void *event_ptr, const char *value) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
   bsg_strncpy_safe(event->device.os_name, value, sizeof(event->device.os_name));
 }
@@ -444,7 +448,7 @@ char *bugsnag_error_get_error_class(void *event_ptr) {
   return event->error.errorClass;
 }
 
-void bugsnag_error_set_error_class(void *event_ptr, char *value) {
+void bugsnag_error_set_error_class(void *event_ptr, const char *value) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
   bsg_strncpy_safe(event->error.errorClass, value,
                    sizeof(event->error.errorClass));
@@ -455,7 +459,7 @@ char *bugsnag_error_get_error_message(void *event_ptr) {
   return event->error.errorMessage;
 }
 
-void bugsnag_error_set_error_message(void *event_ptr, char *value) {
+void bugsnag_error_set_error_message(void *event_ptr, const char *value) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
   bsg_strncpy_safe(event->error.errorMessage, value,
                    sizeof(event->error.errorMessage));
@@ -466,7 +470,7 @@ char *bugsnag_error_get_error_type(void *event_ptr) {
   return event->error.type;
 }
 
-void bugsnag_error_set_error_type(void *event_ptr, char *value) {
+void bugsnag_error_set_error_type(void *event_ptr, const char *value) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
   bsg_strncpy_safe(event->error.type, value, sizeof(event->error.type));
 }
@@ -501,7 +505,7 @@ char *bugsnag_event_get_grouping_hash(void *event_ptr) {
   return event->grouping_hash;
 }
 
-void bugsnag_event_set_grouping_hash(void *event_ptr, char *value) {
+void bugsnag_event_set_grouping_hash(void *event_ptr, const char *value) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
   bsg_strncpy_safe(event->grouping_hash, value, sizeof(event->grouping_hash));
 }

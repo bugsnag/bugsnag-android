@@ -29,14 +29,14 @@ class ConnectivityLegacyTest {
     fun registerForNetworkChanges() {
         val conn = ConnectivityLegacy(context, cm, null)
         conn.registerForNetworkChanges()
-        Mockito.verify(context, times(1)).registerReceiver(any(), any())
+        Mockito.verify(context, times(1)).registerReceiverSafe(any(), any())
     }
 
     @Test
     fun unregisterForNetworkChanges() {
         val conn = ConnectivityLegacy(context, cm, null)
         conn.unregisterForNetworkChanges()
-        Mockito.verify(context, times(1)).unregisterReceiver(any())
+        Mockito.verify(context, times(1)).unregisterReceiverSafe(any())
     }
 
     @Test

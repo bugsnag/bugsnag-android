@@ -131,7 +131,7 @@ internal class DeviceDataCollector(
     private fun getBatteryLevel(): Float? {
         try {
             val ifilter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
-            val batteryStatus = appContext.registerReceiver(null, ifilter)
+            val batteryStatus = appContext.registerReceiverSafe(null, ifilter, logger)
 
             if (batteryStatus != null) {
                 return batteryStatus.getIntExtra(
@@ -151,7 +151,7 @@ internal class DeviceDataCollector(
     private fun isCharging(): Boolean? {
         try {
             val ifilter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
-            val batteryStatus = appContext.registerReceiver(null, ifilter)
+            val batteryStatus = appContext.registerReceiverSafe(null, ifilter, logger)
 
             if (batteryStatus != null) {
                 val status = batteryStatus.getIntExtra("status", -1)

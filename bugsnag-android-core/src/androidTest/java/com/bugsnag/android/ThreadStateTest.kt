@@ -23,8 +23,7 @@ class ThreadStateTest {
         ThreadSendPolicy.ALWAYS,
         Collections.emptyList(),
         NoopLogger,
-        Thread.currentThread(),
-        Thread.getAllStackTraces()
+        Thread.currentThread()
     )
     private val json = streamableToJsonArray(threadState)
 
@@ -133,7 +132,6 @@ class ThreadStateTest {
     @Test
     fun testUnhandledStacktrace() {
         val currentThread = Thread.currentThread()
-        val allStackTraces = Thread.getAllStackTraces()
         val exc: Throwable = RuntimeException("Whoops")
         val expectedTrace = exc.stackTrace
 
@@ -143,8 +141,7 @@ class ThreadStateTest {
             ThreadSendPolicy.ALWAYS,
             Collections.emptyList(),
             NoopLogger,
-            currentThread,
-            allStackTraces
+            currentThread
         )
         val json = streamableToJsonArray(state)
 
@@ -163,6 +160,30 @@ class ThreadStateTest {
                 assertEquals(element.lineNumber, jsonObject.getInt("lineNumber"))
             }
         }
+
+        assertTrue(json.length() > 1)
+    }
+
+    /**
+     * Test that using [ThreadSendPolicy.NEVER] ignores any stack-traces and reports an empty
+     * array of Threads
+     */
+    @Test
+    fun testNeverPolicyNeverSendsThreads() {
+        val currentThread = Thread.currentThread()
+        val allStackTraces = Thread.getAllStackTraces()
+        val state = ThreadState(
+            trace,
+            true,
+            ThreadSendPolicy.NEVER,
+            Collections.emptyList(),
+            NoopLogger,
+            currentThread,
+            allStackTraces
+        )
+        val json = streamableToJsonArray(state)
+
+        assertEquals(0, json.length())
     }
 
     private fun verifyCurrentThreadStructure(
