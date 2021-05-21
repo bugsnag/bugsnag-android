@@ -18,13 +18,17 @@ void bugsnag_set_binary_arch(JNIEnv *env);
 
 void bugsnag_start(JNIEnv *env) { bsg_global_jni_env = env; }
 
-void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
+void bugsnag_notify_env(JNIEnv *env, const char *name, const char *message,
                         bugsnag_severity severity);
-void bugsnag_set_user_env(JNIEnv *env, char *id, char *email, char *name);
-void bugsnag_leave_breadcrumb_env(JNIEnv *env, char *message,
+
+void bugsnag_set_user_env(JNIEnv *env, const char *id, const char *email,
+                          const char *name);
+
+void bugsnag_leave_breadcrumb_env(JNIEnv *env, const char *message,
                                   bugsnag_breadcrumb_type type);
 
-void bugsnag_notify(char *name, char *message, bugsnag_severity severity) {
+void bugsnag_notify(const char *name, const char *message,
+                    bugsnag_severity severity) {
   if (bsg_global_jni_env != NULL) {
     bugsnag_notify_env(bsg_global_jni_env, name, message, severity);
   } else {
@@ -32,7 +36,7 @@ void bugsnag_notify(char *name, char *message, bugsnag_severity severity) {
   }
 }
 
-void bugsnag_set_user(char *id, char *email, char *name) {
+void bugsnag_set_user(const char *id, const char *email, const char *name) {
   if (bsg_global_jni_env != NULL) {
     bugsnag_set_user_env(bsg_global_jni_env, id, email, name);
   } else {
@@ -41,7 +45,8 @@ void bugsnag_set_user(char *id, char *email, char *name) {
   }
 }
 
-void bugsnag_leave_breadcrumb(char *message, bugsnag_breadcrumb_type type) {
+void bugsnag_leave_breadcrumb(const char *message,
+                              bugsnag_breadcrumb_type type) {
   if (bsg_global_jni_env != NULL) {
     bugsnag_leave_breadcrumb_env(bsg_global_jni_env, message, type);
   } else {
@@ -106,7 +111,7 @@ void bsg_populate_notify_stacktrace(JNIEnv *env, bugsnag_stackframe *stacktrace,
   }
 }
 
-void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
+void bugsnag_notify_env(JNIEnv *env, const char *name, const char *message,
                         bugsnag_severity severity) {
   jclass interface_class = NULL;
   jmethodID notify_method = NULL;
@@ -241,7 +246,8 @@ exit:
   bsg_safe_delete_local_ref(env, interface_class);
 }
 
-void bugsnag_set_user_env(JNIEnv *env, char *id, char *email, char *name) {
+void bugsnag_set_user_env(JNIEnv *env, const char *id, const char *email,
+                          const char *name) {
   // lookup com/bugsnag/android/NativeInterface
   jclass interface_class = NULL;
   jmethodID set_user_method = NULL;
@@ -303,7 +309,7 @@ jfieldID bsg_parse_jcrumb_type(JNIEnv *env, bugsnag_breadcrumb_type type,
   }
 }
 
-void bugsnag_leave_breadcrumb_env(JNIEnv *env, char *message,
+void bugsnag_leave_breadcrumb_env(JNIEnv *env, const char *message,
                                   bugsnag_breadcrumb_type type) {
   jclass interface_class = NULL;
   jmethodID leave_breadcrumb_method = NULL;
