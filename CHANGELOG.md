@@ -2,8 +2,6 @@
 
 ## TBD
 
-### Enhancements
-
 * Unity: add methods for setting autoNotify and autoDetectAnrs
   [#1233](https://github.com/bugsnag/bugsnag-android/pull/1233)
 
