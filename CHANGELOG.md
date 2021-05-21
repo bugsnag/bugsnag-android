@@ -8,6 +8,9 @@
 * Including bugsnag.h in C++ code will no longer cause writable-strings warnings
   [1260](https://github.com/bugsnag/bugsnag-android/pull/1260)
 
+* Small performance improvements to device and app state collection
+  [1258](https://github.com/bugsnag/bugsnag-android/pull/1258)
+
 ## 5.9.3 (2021-05-18)
 
 * Avoid unnecessary collection of Thread stacktraces
