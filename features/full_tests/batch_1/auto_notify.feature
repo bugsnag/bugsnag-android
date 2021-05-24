@@ -47,20 +47,21 @@ Scenario: NDK signal captured with autoNotify reenabled
     And the event "severityReason.type" equals "signal"
     And the event "severityReason.unhandledOverridden" is false
 
-@skip_android_8_1
-Scenario: ANR captured with autoDetectAnrs reenabled
-    When I run "AutoDetectAnrsTrueScenario"
-    And I wait for 2 seconds
-    And I tap the screen 3 times
-    And I wait for 4 seconds
-    And I clear any error dialogue
-    And I wait to receive an error
-    Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the error payload field "events" is an array with 1 elements
-    And the exception "errorClass" equals "ANR"
-    And the exception "message" starts with " Input dispatching timed out"
-    And the exception "type" equals "android"
-    And the event "unhandled" is true
-    And the event "severity" equals "error"
-    And the event "severityReason.type" equals "anrError"
-    And the event "severityReason.unhandledOverridden" is false
+# PLAT-6620
+# @skip_android_8_1
+# Scenario: ANR captured with autoDetectAnrs reenabled
+#     When I run "AutoDetectAnrsTrueScenario"
+#     And I wait for 2 seconds
+#     And I tap the screen 3 times
+#     And I wait for 4 seconds
+#     And I clear any error dialogue
+#     And I wait to receive an error
+#     Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+#     And the error payload field "events" is an array with 1 elements
+#     And the exception "errorClass" equals "ANR"
+#     And the exception "message" starts with " Input dispatching timed out"
+#     And the exception "type" equals "android"
+#     And the event "unhandled" is true
+#     And the event "severity" equals "error"
+#     And the event "severityReason.type" equals "anrError"
+#     And the event "severityReason.unhandledOverridden" is false
