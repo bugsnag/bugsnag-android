@@ -8,7 +8,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.storage.StorageManager;
 
 import androidx.annotation.NonNull;
@@ -23,6 +22,8 @@ import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 @SuppressWarnings("ConstantConditions")
 @RunWith(MockitoJUnitRunner.class)
@@ -42,6 +43,9 @@ public class ClientFacadeTest {
 
     @Mock
     UserState userState;
+
+    @Mock
+    ClientObservable clientObservable;
 
     @Mock
     Context appContext;
@@ -74,9 +78,6 @@ public class ClientFacadeTest {
     SessionLifecycleCallback sessionLifecycleCallback;
 
     @Mock
-    SharedPreferences sharedPrefs;
-
-    @Mock
     Connectivity connectivity;
 
     @Mock
@@ -97,6 +98,9 @@ public class ClientFacadeTest {
     @Mock
     LaunchCrashTracker launchCrashTracker;
 
+    @Mock
+    ExceptionHandler exceptionHandler;
+
     private Client client;
     private InterceptingLogger logger;
 
@@ -112,6 +116,7 @@ public class ClientFacadeTest {
                 contextState,
                 callbackState,
                 userState,
+                clientObservable,
                 appContext,
                 deviceDataCollector,
                 appDataCollector,
@@ -127,7 +132,8 @@ public class ClientFacadeTest {
                 logger,
                 deliveryDelegate,
                 lastRunInfoStore,
-                launchCrashTracker
+                launchCrashTracker,
+                exceptionHandler
         );
 
         // required fields for generating an event
@@ -482,4 +488,44 @@ public class ClientFacadeTest {
         client.markLaunchCompleted();
         verify(launchCrashTracker, times(1)).markLaunchCompleted();
     }
+
+
+    @Test
+    public void registerObserver() {
+        Observer observer = new Observer() {
+            @Override
+            public void update(Observable observable, Object arg) {
+            }
+        };
+        client.registerObserver(observer);
+
+        verify(metadataState, times(1)).addObserver(observer);
+        verify(breadcrumbState, times(1)).addObserver(observer);
+        verify(sessionTracker, times(1)).addObserver(observer);
+        verify(clientObservable, times(1)).addObserver(observer);
+        verify(userState, times(1)).addObserver(observer);
+        verify(contextState, times(1)).addObserver(observer);
+        verify(deliveryDelegate, times(1)).addObserver(observer);
+        verify(launchCrashTracker, times(1)).addObserver(observer);
+    }
+
+    @Test
+    public void unregisterObserver() {
+        Observer observer = new Observer() {
+            @Override
+            public void update(Observable observable, Object arg) {
+            }
+        };
+        client.unregisterObserver(observer);
+
+        verify(metadataState, times(1)).deleteObserver(observer);
+        verify(breadcrumbState, times(1)).deleteObserver(observer);
+        verify(sessionTracker, times(1)).deleteObserver(observer);
+        verify(clientObservable, times(1)).deleteObserver(observer);
+        verify(userState, times(1)).deleteObserver(observer);
+        verify(contextState, times(1)).deleteObserver(observer);
+        verify(deliveryDelegate, times(1)).deleteObserver(observer);
+        verify(launchCrashTracker, times(1)).deleteObserver(observer);
+    }
+
 }

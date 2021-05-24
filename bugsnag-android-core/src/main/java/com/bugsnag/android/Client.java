@@ -83,7 +83,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     final Logger logger;
     final DeliveryDelegate deliveryDelegate;
 
-    final ClientObservable clientObservable = new ClientObservable();
+    final ClientObservable clientObservable;
     private PluginClient pluginClient;
 
     final Notifier notifier = new Notifier();
@@ -93,6 +93,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     final LastRunInfoStore lastRunInfoStore;
     final LaunchCrashTracker launchCrashTracker;
     final BackgroundTaskService bgTaskService = new BackgroundTaskService();
+    private final ExceptionHandler exceptionHandler;
 
     /**
      * Initialize a Bugsnag client
@@ -142,6 +143,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         immutableConfig = sanitiseConfiguration(appContext, configuration, connectivity);
         logger = immutableConfig.getLogger();
         warnIfNotAppContext(androidContext);
+        clientObservable = new ClientObservable();
 
         // Set up breadcrumbs
         callbackState = configuration.impl.callbackState.copy();
@@ -213,8 +215,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                 immutableConfig, breadcrumbState, notifier, bgTaskService);
 
         // Install a default exception handler with this client
+        exceptionHandler = new ExceptionHandler(this, logger);
         if (immutableConfig.getEnabledErrorTypes().getUnhandledExceptions()) {
-            new ExceptionHandler(this, logger);
+            exceptionHandler.install();
         }
 
         // register a receiver for automatic breadcrumbs
@@ -249,6 +252,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             ContextState contextState,
             CallbackState callbackState,
             UserState userState,
+            ClientObservable clientObservable,
             Context appContext,
             @NonNull DeviceDataCollector deviceDataCollector,
             @NonNull AppDataCollector appDataCollector,
@@ -264,13 +268,15 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             Logger logger,
             DeliveryDelegate deliveryDelegate,
             LastRunInfoStore lastRunInfoStore,
-            LaunchCrashTracker launchCrashTracker
+            LaunchCrashTracker launchCrashTracker,
+            ExceptionHandler exceptionHandler
     ) {
         this.immutableConfig = immutableConfig;
         this.metadataState = metadataState;
         this.contextState = contextState;
         this.callbackState = callbackState;
         this.userState = userState;
+        this.clientObservable = clientObservable;
         this.appContext = appContext;
         this.deviceDataCollector = deviceDataCollector;
         this.appDataCollector = appDataCollector;
@@ -288,6 +294,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         this.lastRunInfoStore = lastRunInfoStore;
         this.launchCrashTracker = launchCrashTracker;
         this.lastRunInfo = null;
+        this.exceptionHandler = exceptionHandler;
     }
 
     private LastRunInfo loadLastRunInfo() {
@@ -367,6 +374,17 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         contextState.addObserver(observer);
         deliveryDelegate.addObserver(observer);
         launchCrashTracker.addObserver(observer);
+    }
+
+    void unregisterObserver(Observer observer) {
+        metadataState.deleteObserver(observer);
+        breadcrumbState.deleteObserver(observer);
+        sessionTracker.deleteObserver(observer);
+        clientObservable.deleteObserver(observer);
+        userState.deleteObserver(observer);
+        contextState.deleteObserver(observer);
+        deliveryDelegate.deleteObserver(observer);
+        launchCrashTracker.deleteObserver(observer);
     }
 
     /**
@@ -990,13 +1008,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     @SuppressWarnings("rawtypes")
     @Nullable
     Plugin getPlugin(@NonNull Class clz) {
-        Set<Plugin> plugins = pluginClient.getPlugins();
-        for (Plugin plugin : plugins) {
-            if (plugin.getClass().equals(clz)) {
-                return plugin;
-            }
-        }
-        return null;
+        return pluginClient.findPlugin(clz);
     }
 
     Notifier getNotifier() {
@@ -1005,5 +1017,19 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
     MetadataState getMetadataState() {
         return metadataState;
+    }
+
+    void setAutoNotify(boolean autoNotify) {
+        pluginClient.setAutoNotify(this, autoNotify);
+
+        if (autoNotify) {
+            exceptionHandler.install();
+        } else {
+            exceptionHandler.uninstall();
+        }
+    }
+
+    void setAutoDetectAnrs(boolean autoDetectAnrs) {
+        pluginClient.setAutoDetectAnrs(this, autoDetectAnrs);
     }
 }

@@ -353,4 +353,14 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXMarkLaunchCompletedScenario_cra
                                                                                    jobject thiz) {
   abort();
 }
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_UnhandledNdkAutoNotifyTrueScenario_crash(JNIEnv *env) {
+  abort();
+}
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_UnhandledNdkAutoNotifyFalseScenario_crash(JNIEnv *env) {
+  abort();
+}
 }

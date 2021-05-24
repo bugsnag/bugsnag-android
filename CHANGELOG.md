@@ -2,6 +2,9 @@
 
 ## TBD
 
+* Unity: add methods for setting autoNotify and autoDetectAnrs
+  [#1233](https://github.com/bugsnag/bugsnag-android/pull/1233)
+
 * Including bugsnag.h in C++ code will no longer cause writable-strings warnings
   [1260](https://github.com/bugsnag/bugsnag-android/pull/1260)
 
