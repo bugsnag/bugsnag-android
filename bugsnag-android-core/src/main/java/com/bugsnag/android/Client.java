@@ -19,6 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
 
 import java.util.ArrayList;
@@ -224,6 +225,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         systemBroadcastReceiver = SystemBroadcastReceiver.register(this, logger, bgTaskService);
 
         registerOrientationChangeListener();
+        registerMemoryTrimListener();
 
         // load last run info
         lastRunInfoStore = new LastRunInfoStore(immutableConfig);
@@ -355,6 +357,18 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                 }
         );
         ContextExtensionsKt.registerReceiverSafe(appContext, receiver, configFilter, logger);
+    }
+
+    private void registerMemoryTrimListener() {
+        appContext.registerComponentCallbacks(new ClientComponentCallbacks(
+                new Function1<Boolean, Unit>() {
+                    @Override
+                    public Unit invoke(Boolean isLowMemory) {
+                        clientObservable.postMemoryTrimEvent(isLowMemory);
+                        return null;
+                    }
+                }
+        ));
     }
 
     void setupNdkPlugin() {

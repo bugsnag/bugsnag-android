@@ -11,6 +11,9 @@
 * Small performance improvements to device and app state collection
   [1258](https://github.com/bugsnag/bugsnag-android/pull/1258)
 
+* NDK: lowMemory attribute is now reported as expected
+  [1262](https://github.com/bugsnag/bugsnag-android/pull/1262)
+
 ## 5.9.3 (2021-05-18)
 
 * Avoid unnecessary collection of Thread stacktraces

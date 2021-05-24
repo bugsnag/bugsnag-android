@@ -80,6 +80,7 @@ class NativeBridge : Observer {
     external fun updateUserEmail(newValue: String)
     external fun updateUserName(newValue: String)
     external fun getUnwindStackFunction(): Long
+    external fun updateLowMemory(newValue: Boolean)
 
     /**
      * Creates a new native bridge for interacting with native components.
@@ -134,6 +135,7 @@ class NativeBridge : Observer {
                 updateUserName(makeSafe(msg.user.name ?: ""))
                 updateUserEmail(makeSafe(msg.user.email ?: ""))
             }
+            is StateEvent.UpdateMemoryTrimEvent -> updateLowMemory(msg.isLowMemory)
         }
     }
 

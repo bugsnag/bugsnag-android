@@ -207,7 +207,7 @@ public class ObserverInterfaceTest {
     }
 
     static class BugsnagTestObserver implements Observer {
-        private final ArrayList<Object> observed;
+        final ArrayList<Object> observed;
 
         BugsnagTestObserver() {
             observed = new ArrayList<>(4);
