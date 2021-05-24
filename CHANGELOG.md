@@ -13,6 +13,9 @@
 
 * NDK: lowMemory attribute is now reported as expected
   [1262](https://github.com/bugsnag/bugsnag-android/pull/1262)
+  
+* Don't include loglog.so in ndk plugin builds performed on Linux
+  [1263](https://github.com/bugsnag/bugsnag-android/pull/1263)
 
 ## 5.9.3 (2021-05-18)
 
