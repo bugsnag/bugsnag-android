@@ -33,19 +33,10 @@ include_directories(
 
 target_include_directories(bugsnag-ndk PRIVATE ${BUGSNAG_DIR}/assets/include)
 
-find_library( # Defines the name of the path variable that stores the
-              # location of the NDK library.
-              log-lib
-
-              # Specifies the name of the NDK library that
-              # CMake needs to locate.
-              log )
-
 target_link_libraries( # Specifies the target library.
                      bugsnag-ndk
-
                      # Links the log library to the target library.
-                     ${log-lib})
+                     log)
 
 set_target_properties(bugsnag-ndk
                       PROPERTIES
