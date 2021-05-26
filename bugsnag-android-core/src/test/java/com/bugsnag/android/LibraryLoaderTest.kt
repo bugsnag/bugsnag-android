@@ -20,6 +20,7 @@ class LibraryLoaderTest {
         val libraryLoader = LibraryLoader()
         val loaded = libraryLoader.loadLibrary("foo", client) { true }
         assertFalse(loaded)
+        assertFalse(libraryLoader.isLoaded)
         verify(client, times(1)).notify(any(), any())
     }
 
@@ -28,10 +29,12 @@ class LibraryLoaderTest {
         val libraryLoader = LibraryLoader()
         var loaded = libraryLoader.loadLibrary("foo", client) { true }
         assertFalse(loaded)
+        assertFalse(libraryLoader.isLoaded)
 
         // duplicate calls only invoke System.loadLibrary once
         loaded = libraryLoader.loadLibrary("foo", client) { true }
         assertFalse(loaded)
+        assertFalse(libraryLoader.isLoaded)
         verify(client, times(1)).notify(any(), any())
     }
 }

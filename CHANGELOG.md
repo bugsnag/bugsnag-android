@@ -1,5 +1,22 @@
 # Changelog
 
+## 5.9.4 (2021-05-26)
+
+* Unity: add methods for setting autoNotify and autoDetectAnrs
+  [#1233](https://github.com/bugsnag/bugsnag-android/pull/1233)
+
+* Including bugsnag.h in C++ code will no longer cause writable-strings warnings
+  [1260](https://github.com/bugsnag/bugsnag-android/pull/1260)
+
+* Small performance improvements to device and app state collection
+  [1258](https://github.com/bugsnag/bugsnag-android/pull/1258)
+
+* NDK: lowMemory attribute is now reported as expected
+  [1262](https://github.com/bugsnag/bugsnag-android/pull/1262)
+  
+* Don't include loglog.so in ndk plugin builds performed on Linux
+  [1263](https://github.com/bugsnag/bugsnag-android/pull/1263)
+
 ## 5.9.3 (2021-05-18)
 
 * Avoid unnecessary collection of Thread stacktraces

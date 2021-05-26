@@ -4,6 +4,8 @@
   <CurrentIssues>
     <ID>MagicNumber:AnrHelper.kt$1000</ID>
     <ID>MagicNumber:AnrHelper.kt$&lt;no name provided&gt;$60000</ID>
+    <ID>MagicNumber:AutoDetectAnrsFalseScenario.kt$AutoDetectAnrsFalseScenario$100000</ID>
+    <ID>MagicNumber:AutoDetectAnrsTrueScenario.kt$AutoDetectAnrsTrueScenario$100000</ID>
     <ID>MagicNumber:BugsnagInitScenario.kt$BugsnagInitScenario$25</ID>
     <ID>MagicNumber:HandledKotlinSmokeScenario.kt$HandledKotlinSmokeScenario$999</ID>
     <ID>MagicNumber:JvmAnrSleepScenario.kt$JvmAnrSleepScenario$100000</ID>
