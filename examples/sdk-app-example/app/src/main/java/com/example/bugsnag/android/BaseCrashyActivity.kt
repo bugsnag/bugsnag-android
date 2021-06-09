@@ -12,6 +12,7 @@ import com.bugsnag.android.Severity
 import com.example.foo.CrashyClass
 import com.google.android.material.snackbar.Snackbar
 import java.util.HashMap
+import kotlin.concurrent.thread
 
 open class BaseCrashyActivity : AppCompatActivity() {
 
@@ -57,7 +58,12 @@ open class BaseCrashyActivity : AppCompatActivity() {
      */
     @Suppress("UNUSED_PARAMETER")
     fun crashUnhandled(view: View) {
-        throw CrashyClass.crash("Fatal Crash")
+        thread {
+            while(true) {
+                Bugsnag.leaveBreadcrumb("breadcrumb!")
+            }
+        }
+//        throw CrashyClass.crash("Fatal Crash")
     }
 
     /**

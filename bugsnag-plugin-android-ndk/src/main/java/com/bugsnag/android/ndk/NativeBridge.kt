@@ -24,6 +24,11 @@ import java.util.Observer
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.locks.ReentrantLock
+import org.json.JSONObject
+import org.json.JSONStringer
+import java.io.RandomAccessFile
+import java.nio.ByteBuffer
+import java.nio.channels.FileChannel
 
 /**
  * Observes changes in the Bugsnag environment, propagating them to the native layer
@@ -34,6 +39,10 @@ class NativeBridge : Observer {
     private val installed = AtomicBoolean(false)
     private val reportDirectory: String = NativeInterface.getNativeReportPath()
     private val logger = NativeInterface.getLogger()
+    private val journal: File
+    private val rwChannel: FileChannel
+//    private val wrBuf: ByteBuffer
+    private val utf8 = Charset.forName("UTF-8")
 
     private val is32bit: Boolean
         get() {
@@ -62,7 +71,7 @@ class NativeBridge : Observer {
     )
 
     external fun deliverReportAtPath(filePath: String)
-    external fun addBreadcrumb(name: String, type: String, timestamp: String, metadata: Any)
+//    external fun addBreadcrumb(name: String, type: String, timestamp: String, metadata: Any)
     external fun addMetadataString(tab: String, key: String, value: String)
     external fun addMetadataDouble(tab: String, key: String, value: Double)
     external fun addMetadataBoolean(tab: String, key: String, value: Boolean)
@@ -93,6 +102,25 @@ class NativeBridge : Observer {
         if (!outFile.exists() && !outFile.mkdirs()) {
             logger.w("The native reporting directory cannot be created.")
         }
+        journal = File(reportDirectory + "/test-journal.jrn")
+        rwChannel = RandomAccessFile(reportDirectory + "/test-journal2.jrn", "rw").channel
+        // For testing memory mapped IO
+//        wrBuf = rwChannel.map(FileChannel.MapMode.READ_WRITE, 0, 1000)
+    }
+
+    fun addBreadcrumb(name: String, type: String, timestamp: String, @Suppress("UNUSED_PARAMETER") metadata: Any) {
+        // TODO: Metadata
+        val s = JSONStringer()
+        s.`object`()
+        s.key("name")
+        s.value(name)
+        s.key("type")
+        s.value(type)
+        s.key("timestamp")
+        s.value(timestamp)
+        s.endObject()
+        val str = s.toString()
+        rwChannel.write(ByteBuffer.wrap(str.toByteArray(utf8)))
     }
 
     override fun update(observable: Observable, arg: Any?) {
@@ -108,11 +136,17 @@ class NativeBridge : Observer {
                 makeSafe(msg.key ?: "")
             )
             is AddBreadcrumb -> addBreadcrumb(
-                makeSafe(msg.message),
-                makeSafe(msg.type.toString()),
-                makeSafe(msg.timestamp),
+                msg.message,
+                msg.type.toString(),
+                msg.timestamp,
                 msg.metadata
             )
+//            is AddBreadcrumb -> addBreadcrumb(
+//                makeSafe(msg.message),
+//                makeSafe(msg.type.toString()),
+//                makeSafe(msg.timestamp),
+//                msg.metadata
+//            )
             NotifyHandled -> addHandledEvent()
             NotifyUnhandled -> addUnhandledEvent()
             PauseSession -> pausedSession()
