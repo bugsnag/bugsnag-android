@@ -81,7 +81,7 @@ class BugsnagBuildPlugin : Plugin<Project> {
                 ndk.setAbiFilters(abis)
             }
         }
-        externalNativeBuild.cmake.path = project.file("CMakeLists.txt")
+        externalNativeBuild.cmake.path = project.file("src/main/CMakeLists.txt")
     }
 
     /**
