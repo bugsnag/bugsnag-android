@@ -4,6 +4,7 @@ plugins {
 
 bugsnagBuildOptions {
     usesNdk = true
+    ndkLibName = "bugsnag-plugin-android-anr"
 }
 
 apply plugin: "com.android.library"

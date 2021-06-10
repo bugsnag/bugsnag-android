@@ -20,4 +20,14 @@ open class BugsnagBuildPluginExtension(@Suppress("UNUSED_PARAMETER") objects: Ob
      */
     open var usesNdk: Boolean = false
 
+    /**
+     * The library name used by this module if it uses the NDK. By default this is null.
+     */
+    open var ndkLibName: String? = null
+
+    /**
+     * The path for headers used by this module if it uses the NDK. By default this is null.
+     */
+    open var ndkHeaderPath: String? = null
+
 }

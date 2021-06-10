@@ -4,6 +4,8 @@ plugins {
 
 bugsnagBuildOptions {
     usesNdk = true
+    ndkLibName = "bugsnag-ndk"
+    ndkHeaderPath = "src/main/assets/include"
 }
 
 apply plugin: "com.android.library"

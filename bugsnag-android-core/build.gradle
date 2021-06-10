@@ -6,6 +6,7 @@ plugins {
 
 bugsnagBuildOptions {
     usesNdk = true
+    ndkLibName = "bugsnag-root-detection"
 }
 
 apply plugin: "com.android.library"

@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
@@ -38,7 +39,7 @@ class BugsnagBuildPlugin : Plugin<Project> {
         // load 3rd party gradle plugins
         project.applyPlugins(bugsnag)
 
-        val android = project.extensions.getByType(BaseExtension::class.java)
+        val android = project.extensions.getByType(LibraryExtension::class.java)
         android.apply {
             configureDefaults()
             configureAndroidLint(project)
@@ -47,6 +48,7 @@ class BugsnagBuildPlugin : Plugin<Project> {
 
             if (bugsnag.usesNdk) {
                 configureNdk(project)
+                configurePrefabPackaging(bugsnag)
             }
         }
 
@@ -66,7 +68,7 @@ class BugsnagBuildPlugin : Plugin<Project> {
     /**
      * Configures the Android NDK, if it is enabled
      */
-    private fun BaseExtension.configureNdk(project: Project) {
+    private fun LibraryExtension.configureNdk(project: Project) {
         defaultConfig {
             externalNativeBuild.cmake {
                 arguments("-DANDROID_CPP_FEATURES=exceptions", "-DANDROID_STL=c++_static")
@@ -82,6 +84,21 @@ class BugsnagBuildPlugin : Plugin<Project> {
             }
         }
         externalNativeBuild.cmake.path = project.file("src/main/CMakeLists.txt")
+    }
+
+    /**
+     * Enables generation of Prefab packages and includes them in the AAR.
+     *
+     * See https://github.com/android/ndk-samples/tree/main/prefab/prefab-publishing
+     */
+    private fun LibraryExtension.configurePrefabPackaging(bugsnag: BugsnagBuildPluginExtension) {
+        buildFeatures.prefabPublishing = true
+        val packagingOptions = prefab.create(requireNotNull(bugsnag.ndkLibName))
+
+        // export headers
+        if (bugsnag.ndkHeaderPath != null) {
+            packagingOptions.headers = bugsnag.ndkHeaderPath
+        }
     }
 
     /**
