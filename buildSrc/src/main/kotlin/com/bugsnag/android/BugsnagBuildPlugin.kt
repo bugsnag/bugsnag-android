@@ -117,8 +117,10 @@ class BugsnagBuildPlugin : Plugin<Project> {
             sourceCompatibility = Versions.java
             targetCompatibility = Versions.java
         }
+        // Avoid packing unnecessary libs into AAR.
+        // https://issuetracker.google.com/issues/168777344#comment5
         packagingOptions {
-            pickFirst("**/*.so")
+            exclude("**/*.so")
         }
     }
 
