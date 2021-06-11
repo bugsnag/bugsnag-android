@@ -71,7 +71,7 @@ class BugsnagBuildPlugin : Plugin<Project> {
     private fun LibraryExtension.configureNdk(project: Project) {
         defaultConfig {
             externalNativeBuild.cmake {
-                arguments("-DANDROID_CPP_FEATURES=exceptions", "-DANDROID_STL=c++_shared")
+                arguments("-DANDROID_CPP_FEATURES=exceptions", "-DANDROID_STL=c++_static")
 
                 val override: String? = project.findProperty("ABI_FILTERS") as String?
                 val abis = override?.split(",") ?: mutableSetOf(
