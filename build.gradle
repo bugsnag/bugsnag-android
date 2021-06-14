@@ -13,6 +13,7 @@ buildscript {
         classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:${Versions.detektPlugin}"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:${Versions.dokkaPlugin}"
         classpath "org.jlleitschuh.gradle:ktlint-gradle:${Versions.ktlintPlugin}"
+        classpath "androidx.benchmark:benchmark-gradle-plugin:1.0.0"
     }
 }
 plugins {
@@ -28,13 +29,6 @@ allprojects {
     gradle.projectsEvaluated {
         tasks.withType(JavaCompile) {
             options.compilerArgs << "-Xlint:all" << "-Werror"
-        }
-
-        tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-            kotlinOptions {
-                allWarningsAsErrors = true
-                jvmTarget = "1.6"
-            }
         }
     }
 }
