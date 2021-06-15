@@ -1,12 +1,13 @@
 package com.bugsnag.android
 
 import android.content.Context
+import java.util.Date
 
 internal fun generateClient(ctx: Context, cfg: Configuration = generateConfig()): Client {
     return Client(ctx, cfg)
 }
 
-internal fun generateConfig(): Configuration {
+fun generateConfig(): Configuration {
     return Configuration("your-api-key").apply {
         // logging is disabled by default in production apps
         logger = object : Logger {}
@@ -28,3 +29,15 @@ internal fun generateConfig(): Configuration {
 
 internal fun generateSeverityReason() =
     SeverityReason.newInstance(SeverityReason.REASON_UNHANDLED_EXCEPTION)
+
+
+internal fun generateSession(): Session {
+    return Session(
+        "test",
+        Date(),
+        null,
+        false,
+        Notifier(),
+        object : Logger {}
+    )
+}
