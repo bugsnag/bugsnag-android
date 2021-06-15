@@ -4,20 +4,17 @@ timestamp() {
   date +"%T"
 }
 
-#export TEST_LOCATION=bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk
-
-# allow switching test APK location as various modules run instrumentation tests
-if [ -z "$TEST_LOCATION" ]; then
-    echo "Please supply the path to the instrumentation test APK in the TEST_LOCATION variable."
+if [ -z "$TEST_APK_LOCATION" ]; then
+    echo "Please supply the path to the instrumentation test APK in the TEST_APK_LOCATION variable."
     exit 1
 fi
 
-export APP_LOCATION=examples/sdk-app-example/app/build/outputs/apk/release/app-release.apk
+export TARGET_APK_LOCATION=examples/sdk-app-example/app/build/outputs/apk/release/app-release.apk
 
 # First app.  This is not actually used, but must be present and different to the test app.
 echo "Android Tests [$(timestamp)]: Starting instrumentation test run against devices: $INSTRUMENTATION_DEVICES"
-echo "Android Tests [$(timestamp)]: Uploading first test app from $APP_LOCATION to BrowserStack"
-app_response=$(curl -u "$BROWSER_STACK_USERNAME:$BROWSER_STACK_ACCESS_KEY" -X POST "https://api-cloud.browserstack.com/app-automate/upload" -F "file=@$APP_LOCATION")
+echo "Android Tests [$(timestamp)]: Uploading first test app from $TARGET_APK_LOCATION to BrowserStack"
+app_response=$(curl -u "$BROWSER_STACK_USERNAME:$BROWSER_STACK_ACCESS_KEY" -X POST "https://api-cloud.browserstack.com/app-automate/upload" -F "file=@$TARGET_APK_LOCATION")
 app_url=$(echo "$app_response" | jq -r ".app_url")
 
 if [ -z "$app_url" ]; then
@@ -29,8 +26,8 @@ fi
 echo "Android Tests [$(timestamp)]: First app upload successful, url: $app_url"
 
 # Second app - the tests.
-echo "Android Tests [$(timestamp)]: Uploading second test app from $TEST_LOCATION to BrowserStack"
-test_response=$(curl -u "$BROWSER_STACK_USERNAME:$BROWSER_STACK_ACCESS_KEY" -X POST "https://api-cloud.browserstack.com/app-automate/espresso/test-suite" -F "file=@$TEST_LOCATION")
+echo "Android Tests [$(timestamp)]: Uploading second test app from $TEST_APK_LOCATION to BrowserStack"
+test_response=$(curl -u "$BROWSER_STACK_USERNAME:$BROWSER_STACK_ACCESS_KEY" -X POST "https://api-cloud.browserstack.com/app-automate/espresso/test-suite" -F "file=@$TEST_APK_LOCATION")
 test_url=$(echo "$test_response" | jq -r ".test_url")
 
 if [ -z "$test_url" ]; then
