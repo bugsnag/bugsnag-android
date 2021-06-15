@@ -164,6 +164,7 @@ steps:
           run: android-ci
     env:
       INSTRUMENTATION_DEVICES: '["Google Pixel-7.1"]'
+      TEST_LOCATION: 'bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk'
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
