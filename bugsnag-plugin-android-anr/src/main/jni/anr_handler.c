@@ -22,8 +22,8 @@ static bool installed = false;
 
 static pthread_t watchdog_thread;
 static bool should_wait_for_semaphore = false;
-static sem_t anr_reporting_semaphore;
-static volatile bool should_report_anr_flag = false;
+static sem_t watchdog_thread_semaphore;
+static volatile bool watchdog_thread_triggered = false;
 
 static JavaVM *bsg_jvm = NULL;
 static jmethodID mthd_notify_anr_detected = NULL;
@@ -230,14 +230,14 @@ static inline void unblock_sigquit() {
 static inline void trigger_sigquit_watchdog_thread() {
   // Set the trigger flag for the fallback spin-lock in
   // sigquit_watchdog_thread_main()
-  should_report_anr_flag = true;
+  watchdog_thread_triggered = true;
 
   if (should_wait_for_semaphore) {
     // Although sem_post() is not officially marked as async-safe, the Android
     // implementation simply does an atomic compare-and-exchange when there is
     // only one thread waiting (which is the case here).
     // https://cs.android.com/android/platform/superproject/+/master:bionic/libc/bionic/semaphore.cpp;l=289?q=sem_post&ss=android
-    if (sem_post(&anr_reporting_semaphore) != 0) {
+    if (sem_post(&watchdog_thread_semaphore) != 0) {
       // The only possible failure from sem_post is EOVERFLOW, which won't
       // happen in this code. But just to be thorough...
       BUGSNAG_LOG("Could not unlock Bugsnag sigquit handler semaphore");
@@ -245,35 +245,35 @@ static inline void trigger_sigquit_watchdog_thread() {
   }
 }
 
-static void *sigquit_watchdog_thread_main(__unused void *_) {
+static void watchdog_wait_for_trigger() {
   static const useconds_t delay_100ms = 100000;
 
-  while (enabled) {
-    // Unblock SIGQUIT so that handle_sigquit() will be called.
-    unblock_sigquit();
-
-    // Wait until our SIGQUIT handler is ready for us to start.
-    // Use sem_wait() if possible, falling back to polling.
-    should_report_anr_flag = false;
-    if (!should_wait_for_semaphore || sem_wait(&anr_reporting_semaphore) != 0) {
-      while (!should_report_anr_flag) {
-        usleep(delay_100ms);
-      }
+  // Use sem_wait() if possible, falling back to polling.
+  watchdog_thread_triggered = false;
+  if (!should_wait_for_semaphore || sem_wait(&watchdog_thread_semaphore) != 0) {
+    while (!watchdog_thread_triggered) {
+      usleep(delay_100ms);
     }
+  }
+}
 
-    if (!enabled) {
-      // This happens if bsg_handler_uninstall_anr() woke us.
-      break;
-    }
+_Noreturn static void *sigquit_watchdog_thread_main(__unused void *_) {
+  static const useconds_t delay_100ms = 100000;
+
+  for (;;) {
+    watchdog_wait_for_trigger();
 
     // Trigger Google ANR processing (occurs on a different thread).
     bsg_google_anr_call();
 
-    // Do our ANR processing.
-    notify_anr_detected();
-  }
+    if (enabled) {
+      // Do our ANR processing.
+      notify_anr_detected();
+    }
 
-  return NULL;
+    // Unblock SIGQUIT again so that handle_sigquit() will run again.
+    unblock_sigquit();
+  }
 }
 
 static void handle_sigquit(__unused int signum, siginfo_t *info,
@@ -301,11 +301,11 @@ static void install_signal_handler() {
     // We can still report to Bugsnag, so continue.
   }
 
-  if (sem_init(&anr_reporting_semaphore, 0, 0) == 0) {
+  if (sem_init(&watchdog_thread_semaphore, 0, 0) == 0) {
     should_wait_for_semaphore = true;
   } else {
     BUGSNAG_LOG("Failed to init semaphore");
-    // We can still poll should_report_anr_flag, so continue.
+    // We can still poll watchdog_thread_triggered, so continue.
   }
 
   // Start the watchdog thread sigquit_watchdog_thread_main().
@@ -350,8 +350,6 @@ bool bsg_handler_install_anr(JNIEnv *env, jobject plugin) {
 void bsg_handler_uninstall_anr() {
   pthread_mutex_lock(&bsg_anr_handler_config);
   enabled = false;
-  // Trigger sigquit_watchdog_thread_main() so that it can exit.
-  trigger_sigquit_watchdog_thread();
   pthread_mutex_unlock(&bsg_anr_handler_config);
 }
 
