@@ -15,3 +15,5 @@ dokka {
     outputFormat = "html"
     outputDirectory = "$buildDir/dokka"
 }
+
+apply from: "../gradle/kotlin.gradle"

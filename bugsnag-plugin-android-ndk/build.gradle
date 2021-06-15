@@ -11,3 +11,5 @@ apply plugin: "com.android.library"
 dependencies {
     api(project(":bugsnag-android-core"))
 }
+
+apply from: "../gradle/kotlin.gradle"

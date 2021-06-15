@@ -24,6 +24,7 @@ COPY bugsnag-plugin-android-anr/ bugsnag-plugin-android-anr/
 COPY bugsnag-android-core/ bugsnag-android-core/
 COPY bugsnag-plugin-android-ndk/ bugsnag-plugin-android-ndk/
 COPY bugsnag-plugin-react-native/ bugsnag-plugin-react-native/
+COPY bugsnag-benchmarks/ bugsnag-benchmarks/
 COPY scripts/ scripts/
 COPY config/ config/
 COPY LICENSE LICENSE

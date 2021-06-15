@@ -16,6 +16,7 @@ services:
       SAUCE_LABS_USERNAME:
       SAUCE_LABS_ACCESS_KEY:
       INSTRUMENTATION_DEVICES:
+      TEST_APK_LOCATION:
 
   android-builder:
     build:
