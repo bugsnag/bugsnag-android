@@ -115,6 +115,7 @@ class BugsnagBuildPlugin : Plugin<Project> {
             isCheckAllWarnings = true
             baseline(File(project.projectDir, "lint-baseline.xml"))
             disable("GradleDependency", "NewerVersionAvailable")
+            ignore("InvalidPackage")
         }
     }
 

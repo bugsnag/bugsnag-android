@@ -6,6 +6,8 @@ import androidx.annotation.Nullable;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.HttpURLConnection;
@@ -34,6 +36,23 @@ class IOUtils {
         while (EOF != (read = input.read(buffer))) {
             output.write(buffer, 0, read);
             count += read;
+        }
+
+        if (count > Integer.MAX_VALUE) {
+            return -1;
+        }
+
+        return (int) count;
+    }
+
+    public static int copy(final InputStream inputStream, final OutputStream outputStream)
+            throws IOException {
+        byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+        long count = 0;
+        int bytesRead;
+        while (EOF != (bytesRead = inputStream.read(buffer))) {
+            outputStream.write(buffer, 0, bytesRead);
+            count += bytesRead;
         }
 
         if (count > Integer.MAX_VALUE) {
