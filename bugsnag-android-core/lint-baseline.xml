@@ -1,4 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<issues format="5" by="lint 3.4.2" client="gradle" variant="all" version="3.4.2">
+<issues format="5" by="lint 4.1.1" client="gradle" variant="all" version="4.1.1">
+
+    <issue
+        id="InvalidPackage"
+        message="Invalid package reference in com.dslplatform:dsl-json; not included in Android: `java.awt.geom`. Referenced from `com.dslplatform.json.DslJson`.">
+        <location
+            file="../../../../.gradle/caches/modules-2/files-2.1/com.dslplatform/dsl-json/1.9.8/33d30c7b113651e1b0d060f3f0af35fbf43f1403/dsl-json-1.9.8.jar"/>
+    </issue>
+
+    <issue
+        id="InvalidPackage"
+        message="Invalid package reference in com.dslplatform:dsl-json; not included in Android: `java.awt.image`. Referenced from `com.dslplatform.json.DslJson`.">
+        <location
+            file="../../../../.gradle/caches/modules-2/files-2.1/com.dslplatform/dsl-json/1.9.8/33d30c7b113651e1b0d060f3f0af35fbf43f1403/dsl-json-1.9.8.jar"/>
+    </issue>
+
+    <issue
+        id="InvalidPackage"
+        message="Invalid package reference in com.dslplatform:dsl-json; not included in Android: `java.awt`. Referenced from `com.dslplatform.json.DslJson`.">
+        <location
+            file="../../../../.gradle/caches/modules-2/files-2.1/com.dslplatform/dsl-json/1.9.8/33d30c7b113651e1b0d060f3f0af35fbf43f1403/dsl-json-1.9.8.jar"/>
+    </issue>
+
+    <issue
+        id="InvalidPackage"
+        message="Invalid package reference in com.dslplatform:dsl-json; not included in Android: `javax.imageio`. Referenced from `com.dslplatform.json.JavaGeomConverter`.">
+        <location
+            file="../../../../.gradle/caches/modules-2/files-2.1/com.dslplatform/dsl-json/1.9.8/33d30c7b113651e1b0d060f3f0af35fbf43f1403/dsl-json-1.9.8.jar"/>
+    </issue>
 
 </issues>
