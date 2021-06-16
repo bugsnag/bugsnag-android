@@ -5,6 +5,8 @@ import static com.bugsnag.android.ContextExtensionsKt.getStorageManagerFrom;
 import static com.bugsnag.android.ImmutableConfigKt.sanitiseConfiguration;
 import static com.bugsnag.android.SeverityReason.REASON_HANDLED_EXCEPTION;
 
+import com.bugsnag.android.internal.StateObserver;
+
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
@@ -28,7 +30,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Observer;
 import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -379,7 +380,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         clientObservable.postNdkDeliverPending();
     }
 
-    void registerObserver(Observer observer) {
+    void addObserver(StateObserver observer) {
         metadataState.addObserver(observer);
         breadcrumbState.addObserver(observer);
         sessionTracker.addObserver(observer);
@@ -390,15 +391,15 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         launchCrashTracker.addObserver(observer);
     }
 
-    void unregisterObserver(Observer observer) {
-        metadataState.deleteObserver(observer);
-        breadcrumbState.deleteObserver(observer);
-        sessionTracker.deleteObserver(observer);
-        clientObservable.deleteObserver(observer);
-        userState.deleteObserver(observer);
-        contextState.deleteObserver(observer);
-        deliveryDelegate.deleteObserver(observer);
-        launchCrashTracker.deleteObserver(observer);
+    void removeObserver(StateObserver observer) {
+        metadataState.removeObserver(observer);
+        breadcrumbState.removeObserver(observer);
+        sessionTracker.removeObserver(observer);
+        clientObservable.removeObserver(observer);
+        userState.removeObserver(observer);
+        contextState.removeObserver(observer);
+        deliveryDelegate.removeObserver(observer);
+        launchCrashTracker.removeObserver(observer);
     }
 
     /**

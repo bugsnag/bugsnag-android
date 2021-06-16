@@ -5,8 +5,7 @@ import com.bugsnag.android.StateEvent.ClearMetadataSection
 import com.bugsnag.android.StateEvent.ClearMetadataValue
 import com.bugsnag.android.StateEvent.UpdateContext
 import com.bugsnag.android.StateEvent.UpdateUser
-import java.util.Observable
-import java.util.Observer
+import com.bugsnag.android.internal.StateObserver
 
 /**
  * Listens for changes in the user, context, and metadata, then informs the JS layer
@@ -15,33 +14,31 @@ import java.util.Observer
 internal class BugsnagReactNativeBridge(
     private val client: Client,
     private val cb: (event: MessageEvent) -> Unit
-) : Observer {
+) : StateObserver {
 
-    override fun update(observable: Observable, arg: Any?) {
-        if (arg is StateEvent) {
-            val event: MessageEvent? = when (arg) {
-                is UpdateContext -> {
-                    MessageEvent("ContextUpdate", arg.context)
-                }
-                is AddMetadata, is ClearMetadataSection, is ClearMetadataValue -> {
-                    MessageEvent("MetadataUpdate", client.metadata)
-                }
-                is UpdateUser -> {
-                    MessageEvent(
-                        "UserUpdate",
-                        mapOf(
-                            Pair("id", arg.user.id),
-                            Pair("email", arg.user.email),
-                            Pair("name", arg.user.name)
-                        )
+    override fun onStateChange(event: StateEvent) {
+        val msgEvent: MessageEvent? = when (event) {
+            is UpdateContext -> {
+                MessageEvent("ContextUpdate", event.context)
+            }
+            is AddMetadata, is ClearMetadataSection, is ClearMetadataValue -> {
+                MessageEvent("MetadataUpdate", client.metadata)
+            }
+            is UpdateUser -> {
+                MessageEvent(
+                    "UserUpdate",
+                    mapOf(
+                        Pair("id", event.user.id),
+                        Pair("email", event.user.email),
+                        Pair("name", event.user.name)
                     )
-                }
-                else -> null
+                )
             }
+            else -> null
+        }
 
-            if (event != null) {
-                cb(event)
-            }
+        if (msgEvent != null) {
+            cb(msgEvent)
         }
     }
 }

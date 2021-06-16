@@ -35,7 +35,7 @@ class BugsnagReactNativePlugin : Plugin {
         observerBridge = BugsnagReactNativeBridge(client) {
             jsCallback?.invoke(it)
         }
-        client.registerObserver(observerBridge)
+        client.addObserver(observerBridge)
         client.logger.i("Initialized React Native Plugin")
     }
 

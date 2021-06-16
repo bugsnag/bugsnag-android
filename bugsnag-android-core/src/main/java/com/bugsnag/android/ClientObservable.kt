@@ -3,15 +3,19 @@ package com.bugsnag.android
 internal class ClientObservable : BaseObservable() {
 
     fun postOrientationChange(orientation: String?) {
-        notifyObservers(StateEvent.UpdateOrientation(orientation))
+        updateState { StateEvent.UpdateOrientation(orientation) }
     }
 
     fun postMemoryTrimEvent(isLowMemory: Boolean) {
-        notifyObservers(StateEvent.UpdateMemoryTrimEvent(isLowMemory))
+        updateState { StateEvent.UpdateMemoryTrimEvent(isLowMemory) }
     }
 
-    fun postNdkInstall(conf: ImmutableConfig, lastRunInfoPath: String, consecutiveLaunchCrashes: Int) {
-        notifyObservers(
+    fun postNdkInstall(
+        conf: ImmutableConfig,
+        lastRunInfoPath: String,
+        consecutiveLaunchCrashes: Int
+    ) {
+        updateState {
             StateEvent.Install(
                 conf.apiKey,
                 conf.enabledErrorTypes.ndkCrashes,
@@ -21,10 +25,10 @@ internal class ClientObservable : BaseObservable() {
                 lastRunInfoPath,
                 consecutiveLaunchCrashes
             )
-        )
+        }
     }
 
     fun postNdkDeliverPending() {
-        notifyObservers(StateEvent.DeliverPending)
+        updateState { StateEvent.DeliverPending }
     }
 }

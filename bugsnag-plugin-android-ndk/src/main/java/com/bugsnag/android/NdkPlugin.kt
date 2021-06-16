@@ -21,7 +21,7 @@ internal class NdkPlugin : Plugin {
 
     private fun initNativeBridge(client: Client): NativeBridge {
         val nativeBridge = NativeBridge()
-        client.registerObserver(nativeBridge)
+        client.addObserver(nativeBridge)
         client.setupNdkPlugin()
         return nativeBridge
     }
@@ -56,7 +56,7 @@ internal class NdkPlugin : Plugin {
         if (libraryLoader.isLoaded) {
             disableCrashReporting()
             nativeBridge?.let { bridge ->
-                client?.unregisterObserver(bridge)
+                client?.removeObserver(bridge)
             }
         }
     }

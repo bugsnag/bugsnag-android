@@ -5,6 +5,8 @@ import static com.bugsnag.android.SeverityReason.REASON_PROMISE_REJECTION;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 
+import kotlin.jvm.functions.Function0;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -44,10 +46,20 @@ class DeliveryDelegate extends BaseObservable {
         if (session != null) {
             if (event.isUnhandled()) {
                 event.setSession(session.incrementUnhandledAndCopy());
-                notifyObservers(StateEvent.NotifyUnhandled.INSTANCE);
+                updateState(new Function0<StateEvent>() {
+                    @Override
+                    public StateEvent invoke() {
+                        return StateEvent.NotifyUnhandled.INSTANCE;
+                    }
+                });
             } else {
                 event.setSession(session.incrementHandledAndCopy());
-                notifyObservers(StateEvent.NotifyHandled.INSTANCE);
+                updateState(new Function0<StateEvent>() {
+                    @Override
+                    public StateEvent invoke() {
+                        return StateEvent.NotifyHandled.INSTANCE;
+                    }
+                });
             }
         }
 
