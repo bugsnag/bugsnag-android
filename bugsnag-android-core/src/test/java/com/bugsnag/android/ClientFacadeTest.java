@@ -7,11 +7,14 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.bugsnag.android.internal.StateObserver;
+
 import android.content.Context;
 import android.os.storage.StorageManager;
 
 import androidx.annotation.NonNull;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,8 +25,6 @@ import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
 
 @SuppressWarnings("ConstantConditions")
 @RunWith(MockitoJUnitRunner.class)
@@ -492,12 +493,12 @@ public class ClientFacadeTest {
 
     @Test
     public void registerObserver() {
-        Observer observer = new Observer() {
+        StateObserver observer = new StateObserver() {
             @Override
-            public void update(Observable observable, Object arg) {
+            public void onStateChange(@NotNull StateEvent event) {
             }
         };
-        client.registerObserver(observer);
+        client.addObserver(observer);
 
         verify(metadataState, times(1)).addObserver(observer);
         verify(breadcrumbState, times(1)).addObserver(observer);
@@ -511,21 +512,21 @@ public class ClientFacadeTest {
 
     @Test
     public void unregisterObserver() {
-        Observer observer = new Observer() {
+        StateObserver observer = new StateObserver() {
             @Override
-            public void update(Observable observable, Object arg) {
+            public void onStateChange(@NotNull StateEvent event) {
             }
         };
-        client.unregisterObserver(observer);
+        client.removeObserver(observer);
 
-        verify(metadataState, times(1)).deleteObserver(observer);
-        verify(breadcrumbState, times(1)).deleteObserver(observer);
-        verify(sessionTracker, times(1)).deleteObserver(observer);
-        verify(clientObservable, times(1)).deleteObserver(observer);
-        verify(userState, times(1)).deleteObserver(observer);
-        verify(contextState, times(1)).deleteObserver(observer);
-        verify(deliveryDelegate, times(1)).deleteObserver(observer);
-        verify(launchCrashTracker, times(1)).deleteObserver(observer);
+        verify(metadataState, times(1)).removeObserver(observer);
+        verify(breadcrumbState, times(1)).removeObserver(observer);
+        verify(sessionTracker, times(1)).removeObserver(observer);
+        verify(clientObservable, times(1)).removeObserver(observer);
+        verify(userState, times(1)).removeObserver(observer);
+        verify(contextState, times(1)).removeObserver(observer);
+        verify(deliveryDelegate, times(1)).removeObserver(observer);
+        verify(launchCrashTracker, times(1)).removeObserver(observer);
     }
 
 }

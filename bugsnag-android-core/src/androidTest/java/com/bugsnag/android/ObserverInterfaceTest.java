@@ -8,10 +8,13 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import com.bugsnag.android.internal.StateObserver;
+
 import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.filters.SmallTest;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,8 +22,6 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Set;
 
 @SmallTest
@@ -47,7 +48,7 @@ public class ObserverInterfaceTest {
         config.addMetadata("foo", "bar", true);
         client = new Client(ApplicationProvider.getApplicationContext(), config);
         observer = new BugsnagTestObserver();
-        client.registerObserver(observer);
+        client.addObserver(observer);
     }
 
     @After
@@ -206,7 +207,7 @@ public class ObserverInterfaceTest {
         throw new RuntimeException("Failed to find StateEvent message " + argClass.getSimpleName());
     }
 
-    static class BugsnagTestObserver implements Observer {
+    static class BugsnagTestObserver implements StateObserver {
         final ArrayList<Object> observed;
 
         BugsnagTestObserver() {
@@ -214,8 +215,8 @@ public class ObserverInterfaceTest {
         }
 
         @Override
-        public void update(Observable observable, Object arg) {
-            observed.add(arg);
+        public void onStateChange(@NotNull StateEvent event) {
+            observed.add(event);
         }
     }
 }

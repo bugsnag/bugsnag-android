@@ -41,7 +41,7 @@ public class BugsnagReactNativeBridgeTest {
         BugsnagReactNativeBridge bridge = new BugsnagReactNativeBridge(client, cb);
 
         User user = new User("123", "joe@example.com", "Joe Bloggs");
-        bridge.update(new Observable(), new StateEvent.UpdateUser(user));
+        bridge.onStateChange(new StateEvent.UpdateUser(user));
         assertNotNull(cb.event);
         assertEquals("UserUpdate", cb.event.getType());
 
@@ -57,7 +57,7 @@ public class BugsnagReactNativeBridgeTest {
         MessageEventCb cb = new MessageEventCb();
         BugsnagReactNativeBridge bridge = new BugsnagReactNativeBridge(client, cb);
 
-        bridge.update(new Observable(), new StateEvent.UpdateContext("Foo"));
+        bridge.onStateChange(new StateEvent.UpdateContext("Foo"));
         assertNotNull(cb.event);
         assertEquals("ContextUpdate", cb.event.getType());
         assertEquals("Foo", cb.event.getData());
@@ -69,7 +69,7 @@ public class BugsnagReactNativeBridgeTest {
         BugsnagReactNativeBridge bridge = new BugsnagReactNativeBridge(client, cb);
 
         StateEvent.AddMetadata arg = new StateEvent.AddMetadata("foo", "bar", true);
-        bridge.update(new Observable(), arg);
+        bridge.onStateChange(arg);
         assertNotNull(cb.event);
         assertEquals("MetadataUpdate", cb.event.getType());
         assertEquals(metadata, cb.event.getData());
@@ -81,7 +81,7 @@ public class BugsnagReactNativeBridgeTest {
         BugsnagReactNativeBridge bridge = new BugsnagReactNativeBridge(client, cb);
 
         StateEvent.ClearMetadataSection arg = new StateEvent.ClearMetadataSection("baz");
-        bridge.update(new Observable(), arg);
+        bridge.onStateChange(arg);
         assertNotNull(cb.event);
         assertEquals("MetadataUpdate", cb.event.getType());
         assertEquals(metadata, cb.event.getData());
@@ -93,7 +93,7 @@ public class BugsnagReactNativeBridgeTest {
         BugsnagReactNativeBridge bridge = new BugsnagReactNativeBridge(client, cb);
 
         StateEvent.ClearMetadataValue arg = new StateEvent.ClearMetadataValue("baz", "wham");
-        bridge.update(new Observable(), arg);
+        bridge.onStateChange(arg);
         assertNotNull(cb.event);
         assertEquals("MetadataUpdate", cb.event.getType());
         assertEquals(metadata, cb.event.getData());
