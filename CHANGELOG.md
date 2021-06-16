@@ -11,6 +11,9 @@
 * Optimize execution of callbacks
   [#1276](https://github.com/bugsnag/bugsnag-android/pull/1276)
 
+* Optimize implementation of internal state change observers
+  [#1274](https://github.com/bugsnag/bugsnag-android/pull/1274)
+
 ## 5.9.4 (2021-05-26)
 
 * Unity: add methods for setting autoNotify and autoDetectAnrs
