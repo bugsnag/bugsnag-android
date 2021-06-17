@@ -46,20 +46,10 @@ class DeliveryDelegate extends BaseObservable {
         if (session != null) {
             if (event.isUnhandled()) {
                 event.setSession(session.incrementUnhandledAndCopy());
-                updateState(new Function0<StateEvent>() {
-                    @Override
-                    public StateEvent invoke() {
-                        return StateEvent.NotifyUnhandled.INSTANCE;
-                    }
-                });
+                updateState(StateEvent.NotifyUnhandled.INSTANCE);
             } else {
                 event.setSession(session.incrementHandledAndCopy());
-                updateState(new Function0<StateEvent>() {
-                    @Override
-                    public StateEvent invoke() {
-                        return StateEvent.NotifyHandled.INSTANCE;
-                    }
-                });
+                updateState(StateEvent.NotifyHandled.INSTANCE);
             }
         }
 

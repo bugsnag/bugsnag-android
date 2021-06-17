@@ -5,7 +5,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 internal open class BaseObservable {
 
-    private val observers = CopyOnWriteArrayList<StateObserver>()
+    internal val observers = CopyOnWriteArrayList<StateObserver>()
 
     /**
      * Adds an observer that can react to [StateEvent] messages.
@@ -26,7 +26,7 @@ internal open class BaseObservable {
      * has been set, it will be notified of the [StateEvent] message so that it can react
      * appropriately. If no observer has been set then this method will no-op.
      */
-    fun updateState(provider: () -> StateEvent) {
+    internal inline fun updateState(provider: () -> StateEvent) {
         // optimization to avoid unnecessary iterator and StateEvent construction
         if (observers.isEmpty()) {
             return
@@ -36,4 +36,11 @@ internal open class BaseObservable {
         val event = provider()
         observers.forEach { it.onStateChange(event) }
     }
+
+    /**
+     * An eager version of [updateState], which is intended primarily for use in Java code.
+     * If the event will occur very frequently, you should consider calling the lazy method
+     * instead.
+     */
+    fun updateState(event: StateEvent) = updateState { event }
 }

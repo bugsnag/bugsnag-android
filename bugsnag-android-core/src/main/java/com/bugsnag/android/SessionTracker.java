@@ -97,12 +97,7 @@ class SessionTracker extends BaseObservable {
 
         if (session != null) {
             session.isPaused.set(true);
-            updateState(new Function0<StateEvent>() {
-                @Override
-                public StateEvent invoke() {
-                    return StateEvent.PauseSession.INSTANCE;
-                }
-            });
+            updateState(StateEvent.PauseSession.INSTANCE);
         }
     }
 
@@ -125,13 +120,8 @@ class SessionTracker extends BaseObservable {
 
     private void notifySessionStartObserver(final Session session) {
         final String startedAt = DateUtils.toIso8601(session.getStartedAt());
-        updateState(new Function0<StateEvent>() {
-            @Override
-            public StateEvent invoke() {
-                return new StateEvent.StartSession(session.getId(), startedAt,
-                        session.getHandledCount(), session.getUnhandledCount());
-            }
-        });
+        updateState(new StateEvent.StartSession(session.getId(), startedAt,
+                        session.getHandledCount(), session.getUnhandledCount()));
     }
 
     /**
@@ -155,12 +145,7 @@ class SessionTracker extends BaseObservable {
                     client.getNotifier(), logger);
             notifySessionStartObserver(session);
         } else {
-            updateState(new Function0<StateEvent>() {
-                @Override
-                public StateEvent invoke() {
-                    return StateEvent.PauseSession.INSTANCE;
-                }
-            });
+            updateState(StateEvent.PauseSession.INSTANCE);
         }
         currentSession.set(session);
         return session;
@@ -378,12 +363,7 @@ class SessionTracker extends BaseObservable {
     private void notifyNdkInForeground() {
         Boolean inForeground = isInForeground();
         final boolean foreground = inForeground != null ? inForeground : false;
-        updateState(new Function0<StateEvent>() {
-            @Override
-            public StateEvent invoke() {
-                return new StateEvent.UpdateInForeground(foreground, getContextActivity());
-            }
-        });
+        updateState(new StateEvent.UpdateInForeground(foreground, getContextActivity()));
     }
 
     @Nullable
