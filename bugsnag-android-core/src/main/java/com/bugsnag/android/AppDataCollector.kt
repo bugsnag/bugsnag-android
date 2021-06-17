@@ -24,6 +24,7 @@ internal class AppDataCollector(
     private val packageName: String = appContext.packageName
     private var packageInfo = packageManager?.getPackageInfo(packageName, 0)
     private var appInfo: ApplicationInfo? = packageManager?.getApplicationInfo(packageName, 0)
+    private val bgWorkRestricted = isBackgroundWorkRestricted()
 
     private var binaryArch: String? = null
     private val appName = getAppName()
@@ -51,8 +52,8 @@ internal class AppDataCollector(
         map["memoryUsage"] = getMemoryUsage()
         map["lowMemory"] = isLowMemory()
 
-        isBackgroundWorkRestricted()?.let {
-            map["backgroundWorkRestricted"] = it
+        bgWorkRestricted?.let {
+            map["backgroundWorkRestricted"] = bgWorkRestricted
         }
         return map
     }
