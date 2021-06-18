@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import com.bugsnag.android.internal.ImmutableConfig;
+
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -11,10 +13,6 @@ class InternalHooks {
 
     public InternalHooks(Client client) {
         this.client = client;
-    }
-
-    public ImmutableConfig getConfig() {
-        return client.getConfig();
     }
 
     public AppWithState getAppWithState() {
@@ -34,7 +32,7 @@ class InternalHooks {
     }
 
     public List<Thread> getThreads(boolean unhandled) {
-        return new ThreadState(null, unhandled, getConfig()).getThreads();
+        return new ThreadState(null, unhandled, client.getConfig()).getThreads();
     }
 
     public Collection<String> getProjectPackages(ImmutableConfig config) {
