@@ -77,7 +77,7 @@ class BugsnagReactNativePlugin : Plugin {
         if (!ignoreJsExceptionCallbackAdded) { ignoreJavaScriptExceptions() }
 
         val map = HashMap<String, Any?>()
-        configSerializer.serialize(map, internalHooks.config)
+        configSerializer.serialize(map, client.config)
         return map
     }
 
@@ -138,6 +138,14 @@ class BugsnagReactNativePlugin : Plugin {
         requireNotNull(payload)
         val projectPackages = internalHooks.getProjectPackages(client.config)
         val event = EventDeserializer(client, projectPackages).deserialize(payload)
+
+        if (event.errors.isEmpty()) {
+            return
+        }
+        val errorClass = event.errors[0].errorClass
+        if (client.immutableConfig.shouldDiscardError(errorClass)) {
+            return
+        }
         client.notifyInternal(event, null)
     }
 
