@@ -64,7 +64,7 @@ internal data class Metadata @JvmOverloads constructor(
         val tab = store[section]
         tab?.remove(key)
 
-        if (tab?.isEmpty() == true) {
+        if (tab.isNullOrEmpty()) {
             store.remove(section)
         }
     }
