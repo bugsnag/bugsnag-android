@@ -30,6 +30,7 @@ Scenario: Notify caught Java exception with default configuration
     And the error payload field "events.0.threads.0.stacktrace.0.method" ends with "getThreadStackTrace"
 
     # App data
+    And the event binary arch field is valid
     And the event "app.buildUUID" equals "test-7.5.3"
     And the event "app.id" equals "com.bugsnag.android.mazerunner"
     And the event "app.releaseStage" equals "mazerunner"
@@ -179,6 +180,7 @@ Scenario: Handled C functionality
     And the event "projectPackages.0" equals "com.bugsnag.android.mazerunner"
 
     # App data
+    And the event binary arch field is valid
     And the event "app.buildUUID" is not null
     And the event "app.id" equals "com.bugsnag.android.mazerunner"
     And the event "app.releaseStage" equals "mazerunner"
