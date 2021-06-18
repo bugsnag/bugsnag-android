@@ -16,7 +16,7 @@ internal class MetadataConcurrentModificationTest {
         repeat(100) { count ->
             assertNotNull(metadata.toMap())
             executor.execute {
-                metadata.store["$count"] = count
+                metadata.store["$count"] = mutableMapOf<String, Any>(Pair("$count", count))
             }
         }
     }

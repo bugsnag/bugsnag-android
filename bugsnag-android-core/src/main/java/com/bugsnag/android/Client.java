@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.RejectedExecutionException;
 
 /**
@@ -865,9 +866,12 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         }
     }
 
+    // cast map to retain original signature until next major version bump, as this
+    // method signature is used by Unity/React native
     @NonNull
+    @SuppressWarnings({"unchecked", "rawtypes"})
     Map<String, Object> getMetadata() {
-        return metadataState.getMetadata().toMap();
+        return (Map) metadataState.getMetadata().toMap();
     }
 
     /**
