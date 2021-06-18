@@ -34,7 +34,7 @@ internal class LaunchCrashTracker @JvmOverloads constructor(
     fun markLaunchCompleted() {
         executor.shutdown()
         launching.set(false)
-        notifyObservers(StateEvent.UpdateIsLaunching(false))
+        updateState { StateEvent.UpdateIsLaunching(false) }
         logger.d("App launch period marked as complete")
     }
 

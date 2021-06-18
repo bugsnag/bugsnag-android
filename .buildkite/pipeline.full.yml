@@ -84,21 +84,6 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: Performance benchmarks'
-    key: 'perf-benchmarks'
-    depends_on:
-      - "android-ci"
-    timeout_in_minutes: 30
-    command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    env:
-      INSTRUMENTATION_DEVICES: '["Google Pixel-7.1"]'
-      TEST_APK_LOCATION: 'bugsnag-benchmarks/build/outputs/apk/androidTest/release/bugsnag-benchmarks-release-androidTest.apk'
-    concurrency: 9
-    concurrency_group: 'browserstack-app'
-
   - label: ':android: Android 5 NDK r16 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r16"

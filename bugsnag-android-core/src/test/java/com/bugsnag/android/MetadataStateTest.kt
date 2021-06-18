@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.internal.StateObserver
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Before
@@ -50,10 +51,12 @@ internal class MetadataStateTest {
         state.addMetadata("bar", "another", true)
 
         val data = mutableSetOf<String>()
-        state.addObserver { _, arg ->
-            val msg = arg as StateEvent.AddMetadata
-            data.add(msg.section)
-        }
+        state.addObserver(
+            StateObserver {
+                val msg = it as StateEvent.AddMetadata
+                data.add(msg.section)
+            }
+        )
 
         state.emitObservableEvent()
         assertEquals(setOf("foo", "bar"), data)
@@ -72,11 +75,13 @@ internal class MetadataStateTest {
 
         val sections = mutableSetOf<String>()
         val keys = mutableSetOf<String?>()
-        state.addObserver { _, arg ->
-            val msg = arg as StateEvent.AddMetadata
-            sections.add(msg.section)
-            keys.add(msg.key)
-        }
+        state.addObserver(
+            StateObserver {
+                val msg = it as StateEvent.AddMetadata
+                sections.add(msg.section)
+                keys.add(msg.key)
+            }
+        )
 
         state.emitObservableEvent()
         assertEquals(setOf("foo"), sections)

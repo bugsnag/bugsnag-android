@@ -36,14 +36,15 @@ internal class BreadcrumbState(
 
         store.add(breadcrumb)
         pruneBreadcrumbs()
-        notifyObservers(
+
+        updateState {
             StateEvent.AddBreadcrumb(
                 breadcrumb.message,
                 breadcrumb.type,
                 DateUtils.toIso8601(breadcrumb.timestamp),
                 breadcrumb.metadata ?: mutableMapOf()
             )
-        )
+        }
     }
 
     private fun pruneBreadcrumbs() {

@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
+import kotlin.jvm.functions.Function0;
+
 import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
@@ -95,7 +97,7 @@ class SessionTracker extends BaseObservable {
 
         if (session != null) {
             session.isPaused.set(true);
-            notifyObservers(StateEvent.PauseSession.INSTANCE);
+            updateState(StateEvent.PauseSession.INSTANCE);
         }
     }
 
@@ -116,10 +118,10 @@ class SessionTracker extends BaseObservable {
         return resumed;
     }
 
-    private void notifySessionStartObserver(Session session) {
-        String startedAt = DateUtils.toIso8601(session.getStartedAt());
-        notifyObservers(new StateEvent.StartSession(session.getId(), startedAt,
-                session.getHandledCount(), session.getUnhandledCount()));
+    private void notifySessionStartObserver(final Session session) {
+        final String startedAt = DateUtils.toIso8601(session.getStartedAt());
+        updateState(new StateEvent.StartSession(session.getId(), startedAt,
+                        session.getHandledCount(), session.getUnhandledCount()));
     }
 
     /**
@@ -143,7 +145,7 @@ class SessionTracker extends BaseObservable {
                     client.getNotifier(), logger);
             notifySessionStartObserver(session);
         } else {
-            notifyObservers(StateEvent.PauseSession.INSTANCE);
+            updateState(StateEvent.PauseSession.INSTANCE);
         }
         currentSession.set(session);
         return session;
@@ -360,8 +362,8 @@ class SessionTracker extends BaseObservable {
 
     private void notifyNdkInForeground() {
         Boolean inForeground = isInForeground();
-        boolean foreground = inForeground != null ? inForeground : false;
-        notifyObservers(new StateEvent.UpdateInForeground(foreground, getContextActivity()));
+        final boolean foreground = inForeground != null ? inForeground : false;
+        updateState(new StateEvent.UpdateInForeground(foreground, getContextActivity()));
     }
 
     @Nullable
