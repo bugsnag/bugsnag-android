@@ -2,10 +2,10 @@ package com.bugsnag.android;
 
 import static com.bugsnag.android.SeverityReason.REASON_PROMISE_REJECTION;
 
+import com.bugsnag.android.internal.ImmutableConfig;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
-
-import kotlin.jvm.functions.Function0;
 
 import java.util.Date;
 import java.util.HashMap;

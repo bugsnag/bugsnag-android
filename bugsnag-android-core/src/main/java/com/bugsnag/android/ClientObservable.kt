@@ -1,5 +1,7 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.internal.ImmutableConfig
+
 internal class ClientObservable : BaseObservable() {
 
     fun postOrientationChange(orientation: String?) {

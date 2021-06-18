@@ -7,6 +7,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.bugsnag.android.internal.ImmutableConfig;
 import com.bugsnag.android.internal.StateObserver;
 
 import android.content.Context;
@@ -141,7 +142,6 @@ public class ClientFacadeTest {
         when(metadataState.getMetadata()).thenReturn(new Metadata());
         when(immutableConfig.getLogger()).thenReturn(logger);
         when(immutableConfig.getSendThreads()).thenReturn(ThreadSendPolicy.ALWAYS);
-        when(immutableConfig.shouldNotifyForReleaseStage()).thenReturn(true);
 
         when(deviceDataCollector.generateDeviceWithState(anyLong())).thenReturn(device);
         when(deviceDataCollector.getDeviceMetadata()).thenReturn(new HashMap<String, Object>());

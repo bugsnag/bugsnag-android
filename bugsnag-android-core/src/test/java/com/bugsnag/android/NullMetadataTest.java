@@ -3,6 +3,8 @@ package com.bugsnag.android;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import com.bugsnag.android.internal.ImmutableConfig;
+
 import org.junit.Before;
 import org.junit.Test;
 
