@@ -55,7 +55,7 @@ public class MemoryTrimTest {
 
         assertTrue(
                 "observed event should be marked isLowMemory",
-                ((StateEvent.UpdateMemoryTrimEvent) observedEvent).isLowMemory()
+                ((StateEvent.UpdateMemoryTrimEvent) observedEvent).isLowMemory
         );
     }
 

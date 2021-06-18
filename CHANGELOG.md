@@ -20,6 +20,9 @@
 * Trim stacktraces to <200 frames before attempting to construct POJOs
   [#1281](https://github.com/bugsnag/bugsnag-android/pull/1281)
 
+* Use direct field access when adding breadcrumbs and state updates
+  [#1279](https://github.com/bugsnag/bugsnag-android/pull/1279)
+
 ## 5.9.4 (2021-05-26)
 
 * Unity: add methods for setting autoNotify and autoDetectAnrs
