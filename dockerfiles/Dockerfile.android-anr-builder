@@ -1,0 +1,11 @@
+ARG BRANCH_NAME
+FROM 855461928731.dkr.ecr.us-west-1.amazonaws.com/android:ci-${BRANCH_NAME} as android
+
+WORKDIR /app
+ENV FIXTURE_PROJECT=/app/features/fixtures/anrapp
+
+COPY features/ /app/features
+
+CMD ./gradlew -p=${FIXTURE_PROJECT} assembleRelease \
+  -PTEST_FIXTURE_NAME=${TEST_FIXTURE_NAME} \
+  && cp -R ${FIXTURE_PROJECT}/app/build/outputs/apk/release /app/build

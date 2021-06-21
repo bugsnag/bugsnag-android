@@ -89,6 +89,17 @@ steps:
       TEST_FIXTURE_NDK_VERSION: "21.3.6528147"
       TEST_FIXTURE_NAME: "fixture-r21.apk"
 
+  - label: ':android: Build ANR fixture APK r21'
+    key: "anr-fixture-r21"
+    depends_on: "android-ci"
+    timeout_in_minutes: 30
+    artifact_paths: build/release/anr-fixture-fixture-r21.apk
+    plugins:
+      - docker-compose#v3.7.0:
+          run: android-anr-builder
+    env:
+      TEST_FIXTURE_NAME: "anr-fixture-fixture-r21.apk"
+
   - label: ':android: Lint'
     depends_on: "android-ci"
     timeout_in_minutes: 10

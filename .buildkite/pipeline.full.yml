@@ -521,6 +521,31 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
+  #
+  # Startup ANR tests ensure that Application Not Responding errors produced during an applications
+  # first Messages can be detected and reported
+  #
+  - label: ':android: Android 11 r21 startup ANR tests'
+    depends_on:
+      - "startup-anr-fixture-r21"
+    timeout_in_minutes: 90
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/startup-anr-fixture-r21.apk"
+      docker-compose#v3.7.0:
+        pull: android-maze-runner
+        run: android-maze-runner
+        command:
+          - "features/startup_anr_tests"
+          - "--app=/app/build/release/startup-anr-fixture-r21.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_11_0"
+          - "--fail-fast"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+    soft_fail:
+      - exit_status: "*"
+
   # If there is a tag present activate a manual publishing step
 
   - block: 'Trigger package publish'

@@ -31,6 +31,19 @@ services:
     volumes:
       - ./build:/app/build
 
+  android-anr-builder:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.android-anr-builder
+      args:
+        BRANCH_NAME: ${BRANCH_NAME}
+    environment:
+      MINIMAL_FIXTURE:
+      TEST_FIXTURE_NDK_VERSION:
+      TEST_FIXTURE_NAME:
+    volumes:
+      - ./build:/app/build
+
   android-publisher:
     build:
       context: .

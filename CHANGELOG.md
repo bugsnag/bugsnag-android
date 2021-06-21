@@ -20,6 +20,9 @@
 * Trim stacktraces to <200 frames before attempting to construct POJOs
   [#1281](https://github.com/bugsnag/bugsnag-android/pull/1281)
 
+* Enable ANR handling on immediately if started from the main thread
+  [#1283](https://github.com/bugsnag/bugsnag-android/pull/1283)
+
 ## 5.9.4 (2021-05-26)
 
 * Unity: add methods for setting autoNotify and autoDetectAnrs
