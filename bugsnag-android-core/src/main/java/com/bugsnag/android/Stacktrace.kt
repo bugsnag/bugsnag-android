@@ -71,7 +71,7 @@ internal class Stacktrace : JsonStream.Streamable {
 
             return Stackframe(
                 methodName,
-                if (el.fileName == null) "Unknown" else el.fileName,
+                el.fileName ?: "Unknown",
                 el.lineNumber,
                 inProject(el.className, projectPackages)
             )
