@@ -1,0 +1,69 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'com.bugsnag.android.gradle'
+}
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
+
+    defaultConfig {
+        applicationId "com.bugsnag.android.anrapp"
+        minSdkVersion 16
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        manifestPlaceholders = [
+                // omit any of the following placeholders to use the default values
+                bugsnagApiKey: "abc12312312312312312312312312312",
+                bugsnagAppType: "test",
+                bugsnagAppVersion: "7.5.3",
+                bugsnagAutoDetectErrors: true,
+                bugsnagAutoTrackSessions: false,
+                bugsnagBuildUuid: "test-7.5.3",
+                bugsnagDiscardClasses: "com.domain.ClassName,com.domain.SecondClassName",
+                bugsnagEnabledReleaseStages: "production,development,testing",
+                bugsnagEndpoint: "http://bs-local.com:9339/notify",
+                bugsnagEndpointSessions: "http://bs-local.com:9339/sessions",
+                bugsnagLaunchCrashThresholdMs: 10000,
+                bugsnagMaxBreadcrumbs: 1,
+                bugsnagPersistUser: false,
+                bugsnagProjectPackages: "java.net.UnknownHostException,com.example.Custom",
+                bugsnagRedactedKeys: "filter_me",
+                bugsnagReleaseStage: "testing",
+                bugsnagSendThreads: "always",
+                bugsnagVersionCode: 753,
+        ]
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            if (project.hasProperty("TEST_FIXTURE_NAME")) {
+                outputFileName = project.property("TEST_FIXTURE_NAME")
+            } else {
+                outputFileName = "fixture.apk"
+            }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "com.bugsnag:bugsnag-android:9.9.9"
+}

@@ -8,7 +8,7 @@ internal class AnrPlugin : Plugin {
 
     internal companion object {
         private const val LOAD_ERR_MSG = "Native library could not be linked. Bugsnag will " +
-            "not report ANRs. See https://docs.bugsnag.com/platforms/android/anr-link-errors"
+                "not report ANRs. See https://docs.bugsnag.com/platforms/android/anr-link-errors"
 
         internal fun doesJavaTraceLeadToNativeTrace(
             javaTrace: Array<StackTraceElement>
@@ -45,15 +45,20 @@ internal class AnrPlugin : Plugin {
             performOneTimeSetup(client)
         }
         if (libraryLoader.isLoaded) {
-            Handler(Looper.getMainLooper()).post(
-                Runnable {
-                    enableAnrReporting()
-                    client.logger.i("Initialised ANR Plugin")
-                }
-            )
+            val mainLooper = Looper.getMainLooper()
+            if (Looper.myLooper() == mainLooper) {
+                initNativePlugin()
+            } else {
+                Handler(Looper.getMainLooper()).postAtFrontOfQueue(this::initNativePlugin)
+            }
         } else {
             client.logger.e(LOAD_ERR_MSG)
         }
+    }
+
+    private fun initNativePlugin() {
+        enableAnrReporting()
+        client.logger.i("Initialised ANR Plugin")
     }
 
     private fun performOneTimeSetup(client: Client) {

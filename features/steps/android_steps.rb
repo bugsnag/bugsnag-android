@@ -20,6 +20,28 @@ When('any dialog is cleared and the element {string} is present') do |element_id
   assert(present, "The element #{element_id} could not be found")
 end
 
+When("I set an onCreate delay of {int} seconds") do |number|
+    steps %Q{
+      Given any dialog is cleared and the element "onCreateDelay" is present
+      When I send the keys "#{number}" to the element "onCreateDelay"
+    }
+end
+
+When("I set Bugsnag to start in Background") do
+    steps %Q{
+      Given any dialog is cleared and the element "startOnBackground" is present
+      When I click the element "startOnBackground"
+    }
+end
+
+When("I restart the ANR app") do
+    steps %Q{
+      Given any dialog is cleared and the element "restart" is present
+      When I click the element "restart"
+      And I relaunch the app after a crash
+    }
+end
+
 When("I run {string}") do |event_type|
   steps %Q{
     Given any dialog is cleared and the element "scenario_name" is present

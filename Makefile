@@ -35,6 +35,10 @@ test-fixtures:
 	@./gradlew -PMINIMAL_FIXTURE=true -PTEST_FIXTURE_NAME=fixture-minimal.apk  -p=features/fixtures/mazerunner/ assembleRelease
 	@cp features/fixtures/mazerunner/app/build/outputs/apk/release/fixture-minimal.apk build/fixture-minimal.apk
 
+	# And the ANR test fixture
+	@./gradlew -PTEST_FIXTURE_NAME=fixture-anrapp.apk -p=features/fixtures/anrapp/ assembleRelease
+	@cp features/fixtures/anrapp/app/build/outputs/apk/release/fixture-anrapp.apk build/fixture-anrapp.apk
+
 bump:
 ifneq ($(shell git diff --staged),)
 	@git diff --staged
