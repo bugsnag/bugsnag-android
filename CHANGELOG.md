@@ -23,6 +23,9 @@
 * Use direct field access when adding breadcrumbs and state updates
   [#1279](https://github.com/bugsnag/bugsnag-android/pull/1279)
 
+* Avoid using regex to validate api key
+  [#1282](https://github.com/bugsnag/bugsnag-android/pull/1282)
+
 ## 5.9.4 (2021-05-26)
 
 * Unity: add methods for setting autoNotify and autoDetectAnrs
