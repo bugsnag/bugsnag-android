@@ -711,7 +711,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         event.addMetadata("app", appDataCollector.getAppDataMetadata());
 
         // Attach breadcrumbState to the event
-        event.setBreadcrumbs(new ArrayList<>(breadcrumbState.getStore()));
+        event.setBreadcrumbs(breadcrumbState.copy());
 
         // Attach user info to the event
         User user = userState.getUser();
@@ -765,7 +765,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      */
     @NonNull
     public List<Breadcrumb> getBreadcrumbs() {
-        return new ArrayList<>(breadcrumbState.getStore());
+        return breadcrumbState.copy();
     }
 
     @NonNull

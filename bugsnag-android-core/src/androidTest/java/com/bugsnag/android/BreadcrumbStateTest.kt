@@ -31,7 +31,7 @@ class BreadcrumbStateTest {
     fun testClientMethods() {
         client = generateClient()
         client!!.leaveBreadcrumb("Hello World")
-        val store = client!!.breadcrumbState.store
+        val store = client!!.breadcrumbState.copy()
         var count = 0
 
         for (breadcrumb in store) {
