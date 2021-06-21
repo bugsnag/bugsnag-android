@@ -48,15 +48,22 @@ internal class AnrPlugin : Plugin {
             performOneTimeSetup(client)
         }
         if (libraryLoader.isLoaded) {
-            Handler(Looper.getMainLooper()).post(
-                Runnable {
-                    enableAnrReporting()
-                    client.logger.i("Initialised ANR Plugin")
+            val mainLooper = Looper.getMainLooper()
+            if (Looper.myLooper() == mainLooper) {
+                initNativePlugin()
+            } else {
+                Handler(mainLooper).postAtFrontOfQueue {
+                    initNativePlugin()
                 }
-            )
+            }
         } else {
             client.logger.e(LOAD_ERR_MSG)
         }
+    }
+
+    private fun initNativePlugin() {
+        enableAnrReporting()
+        client.logger.i("Initialised ANR Plugin")
     }
 
     private fun performOneTimeSetup(client: Client) {
