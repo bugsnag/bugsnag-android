@@ -1,48 +1,37 @@
 package com.bugsnag.android
 
-import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ApiKeyValidationTest {
 
     @Test(expected = IllegalArgumentException::class)
+    fun testNullApiKey() {
+        Configuration.isInvalidApiKey(null)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
     fun testEmptyApiKey() {
-        Configuration("")
+        Configuration.isInvalidApiKey("")
     }
 
     @Test
     fun testWrongSizeApiKey() {
-        Configuration("abfe05f")
-    }
-
-    @Test
-    fun testNonHexApiKey() {
-        Configuration("yej0492j55z92z2p")
-    }
-
-    @Test(expected = IllegalArgumentException::class)
-    fun testSettingEmptyApiKey() {
-        val config = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
-        config.apiKey = ""
-    }
-
-    @Test
-    fun testSettingWrongSizeApiKey() {
-        val config = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
-        config.apiKey = "abfe05f"
+        assertTrue(Configuration.isInvalidApiKey("abfe05f"))
+        assertTrue(Configuration.isInvalidApiKey("5d1ec5bd39a74caa1267142706a7fb212"))
     }
 
     @Test
     fun testSettingNonHexApiKey() {
-        val config = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
-        config.apiKey = "yej0492j55z92z2p"
+        assertTrue(Configuration.isInvalidApiKey("5d1ec5bd3Ga74caa1267142706a7fb21"))
+        assertTrue(Configuration.isInvalidApiKey("5d1ec5bd39a7%caa1267_42706P7fb212"))
+        assertFalse(Configuration.isInvalidApiKey("5d1ec5bd39a74caa1267142706a7fb21"))
     }
 
     @Test
     fun setApiKey() {
-        val config = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
-        assertEquals("5d1ec5bd39a74caa1267142706a7fb21", config.apiKey)
-        config.apiKey = "000005bd39a74caa1267142706a7fb21"
-        assertEquals("000005bd39a74caa1267142706a7fb21", config.apiKey)
+        assertFalse(Configuration.isInvalidApiKey("5d1ec5bd39a74caa1267142706a7fb21"))
+        assertFalse(Configuration.isInvalidApiKey("000005bd39a74caa1267142706a7fb21"))
     }
 }
