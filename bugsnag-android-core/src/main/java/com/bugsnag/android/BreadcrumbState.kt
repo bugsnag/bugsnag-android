@@ -38,11 +38,12 @@ internal class BreadcrumbState(
         pruneBreadcrumbs()
 
         updateState {
+            // use direct field access to avoid overhead of accessor method
             StateEvent.AddBreadcrumb(
-                breadcrumb.message,
-                breadcrumb.type,
-                DateUtils.toIso8601(breadcrumb.timestamp),
-                breadcrumb.metadata ?: mutableMapOf()
+                breadcrumb.impl.message,
+                breadcrumb.impl.type,
+                DateUtils.toIso8601(breadcrumb.impl.timestamp),
+                breadcrumb.impl.metadata ?: mutableMapOf()
             )
         }
     }
