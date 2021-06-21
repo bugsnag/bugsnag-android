@@ -17,6 +17,9 @@
 * Optimize metadata implementation by reducing type casts
   [#1277](https://github.com/bugsnag/bugsnag-android/pull/1277)
 
+* Trim stacktraces to <200 frames before attempting to construct POJOs
+  [#1281](https://github.com/bugsnag/bugsnag-android/pull/1281)
+
 ## 5.9.4 (2021-05-26)
 
 * Unity: add methods for setting autoNotify and autoDetectAnrs
