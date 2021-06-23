@@ -29,6 +29,9 @@
 * Discard unwanted automatic data earlier where possible
   [#1280](https://github.com/bugsnag/bugsnag-android/pull/1280)
 
+* Enable ANR handling on immediately if started from the main thread
+  [#1283](https://github.com/bugsnag/bugsnag-android/pull/1283)
+
 ## 5.9.4 (2021-05-26)
 
 * Unity: add methods for setting autoNotify and autoDetectAnrs

@@ -8,6 +8,7 @@ class MazerunnerApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        triggerStartupAnrIfRequired()
         setupNonSdkUsageStrictMode()
     }
 
