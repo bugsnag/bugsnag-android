@@ -2,6 +2,7 @@ package com.bugsnag.android.internal
 
 import android.content.Context
 import android.content.pm.ApplicationInfo
+import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import androidx.annotation.VisibleForTesting
 import com.bugsnag.android.BreadcrumbType
@@ -47,7 +48,11 @@ data class ImmutableConfig(
     val maxPersistedEvents: Int,
     val maxPersistedSessions: Int,
     val persistenceDirectory: File,
-    val sendLaunchCrashesSynchronously: Boolean
+    val sendLaunchCrashesSynchronously: Boolean,
+
+    // results cached here to avoid unnecessary lookups in Client.
+    val packageInfo: PackageInfo?,
+    val appInfo: ApplicationInfo?
 ) {
 
     @JvmName("getErrorApiDeliveryParams")
@@ -118,9 +123,12 @@ data class ImmutableConfig(
     }
 }
 
+@JvmOverloads
 internal fun convertToImmutableConfig(
     config: Configuration,
-    buildUuid: String? = null
+    buildUuid: String? = null,
+    packageInfo: PackageInfo? = null,
+    appInfo: ApplicationInfo? = null
 ): ImmutableConfig {
     val errorTypes = when {
         config.autoDetectErrors -> config.enabledErrorTypes.copy()
@@ -151,7 +159,9 @@ internal fun convertToImmutableConfig(
         maxPersistedSessions = config.maxPersistedSessions,
         enabledBreadcrumbTypes = config.enabledBreadcrumbTypes?.toSet(),
         persistenceDirectory = config.persistenceDirectory!!,
-        sendLaunchCrashesSynchronously = config.sendLaunchCrashesSynchronously
+        sendLaunchCrashesSynchronously = config.sendLaunchCrashesSynchronously,
+        packageInfo = packageInfo,
+        appInfo = appInfo
     )
 }
 
@@ -208,7 +218,7 @@ internal fun sanitiseConfiguration(
     if (configuration.persistenceDirectory == null) {
         configuration.persistenceDirectory = appContext.cacheDir
     }
-    return convertToImmutableConfig(configuration, buildUuid)
+    return convertToImmutableConfig(configuration, buildUuid, packageInfo, appInfo)
 }
 
 internal const val RELEASE_STAGE_DEVELOPMENT = "development"

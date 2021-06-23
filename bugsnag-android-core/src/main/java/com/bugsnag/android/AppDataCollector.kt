@@ -23,8 +23,8 @@ internal class AppDataCollector(
     var codeBundleId: String? = null
 
     private val packageName: String = appContext.packageName
-    private var packageInfo = packageManager?.getPackageInfo(packageName, 0)
-    private var appInfo: ApplicationInfo? = packageManager?.getApplicationInfo(packageName, 0)
+    private var packageInfo = config.packageInfo
+    private var appInfo: ApplicationInfo? = config.appInfo
     private val bgWorkRestricted = isBackgroundWorkRestricted()
 
     private var binaryArch: String? = null

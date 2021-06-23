@@ -22,7 +22,9 @@ internal class LastRunInfoStoreTest {
         val config = convertToImmutableConfig(
             generateConfiguration().apply {
                 persistenceDirectory = ApplicationProvider.getApplicationContext<Context>().cacheDir
-            }
+            },
+            packageInfo = null,
+            appInfo = null
         )
         file = File(config.persistenceDirectory, "last-run-info")
         file.delete()
