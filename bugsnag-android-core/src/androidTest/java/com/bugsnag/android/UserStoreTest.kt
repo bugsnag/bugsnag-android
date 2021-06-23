@@ -3,6 +3,7 @@ package com.bugsnag.android
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.test.core.app.ApplicationProvider
+import com.bugsnag.android.internal.ImmutableConfig
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull

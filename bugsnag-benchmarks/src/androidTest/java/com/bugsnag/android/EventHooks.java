@@ -2,6 +2,9 @@ package com.bugsnag.android;
 
 import static com.bugsnag.android.ClientHooksKt.generateConfig;
 
+import com.bugsnag.android.internal.ImmutableConfig;
+import com.bugsnag.android.internal.ImmutableConfigKt;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;

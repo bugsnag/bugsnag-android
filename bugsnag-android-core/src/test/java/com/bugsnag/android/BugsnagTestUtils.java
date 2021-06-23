@@ -1,5 +1,8 @@
 package com.bugsnag.android;
 
+import com.bugsnag.android.internal.ImmutableConfig;
+import com.bugsnag.android.internal.ImmutableConfigKt;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;

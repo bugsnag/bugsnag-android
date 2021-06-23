@@ -4,6 +4,7 @@ import android.app.ActivityManager
 import android.content.Context
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import com.bugsnag.android.BugsnagTestUtils.generateDevice
+import com.bugsnag.android.internal.ImmutableConfig
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
@@ -29,6 +30,9 @@ internal class SessionTrackerPauseResumeTest {
     lateinit var client: Client
 
     @Mock
+    lateinit var cfg: ImmutableConfig
+
+    @Mock
     lateinit var appDataCollector: AppDataCollector
 
     @Mock
@@ -51,6 +55,7 @@ internal class SessionTrackerPauseResumeTest {
         `when`(client.getNotifier()).thenReturn(Notifier())
         `when`(client.getAppContext()).thenReturn(context)
         `when`(client.getAppDataCollector()).thenReturn(appDataCollector)
+        `when`(client.config).thenReturn(cfg)
         `when`(appDataCollector.generateApp()).thenReturn(app)
         `when`(client.getDeviceDataCollector()).thenReturn(deviceDataCollector)
         `when`(deviceDataCollector.generateDevice()).thenReturn(generateDevice())

@@ -26,6 +26,9 @@
 * Avoid using regex to validate api key
   [#1282](https://github.com/bugsnag/bugsnag-android/pull/1282)
 
+* Discard unwanted automatic data earlier where possible
+  [#1280](https://github.com/bugsnag/bugsnag-android/pull/1280)
+
 ## 5.9.4 (2021-05-26)
 
 * Unity: add methods for setting autoNotify and autoDetectAnrs

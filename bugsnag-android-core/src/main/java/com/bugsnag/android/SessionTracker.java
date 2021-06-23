@@ -1,10 +1,10 @@
 package com.bugsnag.android;
 
+import com.bugsnag.android.internal.ImmutableConfig;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
-
-import kotlin.jvm.functions.Function0;
 
 import java.io.File;
 import java.util.Collection;
@@ -81,6 +81,9 @@ class SessionTracker extends BaseObservable {
     @VisibleForTesting
     Session startNewSession(@NonNull Date date, @Nullable User user,
                             boolean autoCaptured) {
+        if (client.getConfig().shouldDiscardSession(autoCaptured)) {
+            return null;
+        }
         String id = UUID.randomUUID().toString();
         Session session = new Session(id, date, user, autoCaptured, client.getNotifier(), logger);
         currentSession.set(session);
@@ -89,6 +92,9 @@ class SessionTracker extends BaseObservable {
     }
 
     Session startSession(boolean autoCaptured) {
+        if (client.getConfig().shouldDiscardSession(autoCaptured)) {
+            return null;
+        }
         return startNewSession(new Date(), client.getUser(), autoCaptured);
     }
 
@@ -139,6 +145,9 @@ class SessionTracker extends BaseObservable {
     Session registerExistingSession(@Nullable Date date, @Nullable String sessionId,
                                     @Nullable User user, int unhandledCount,
                                     int handledCount) {
+        if (client.getConfig().shouldDiscardSession(false)) {
+            return null;
+        }
         Session session = null;
         if (date != null && sessionId != null) {
             session = new Session(sessionId, date, user, unhandledCount, handledCount,
@@ -159,18 +168,12 @@ class SessionTracker extends BaseObservable {
      */
     private void trackSessionIfNeeded(final Session session) {
         logger.d("SessionTracker#trackSessionIfNeeded() - session captured by Client");
-
-        boolean notifyForRelease = configuration.shouldNotifyForReleaseStage();
-
         session.setApp(client.getAppDataCollector().generateApp());
         session.setDevice(client.getDeviceDataCollector().generateDevice());
         boolean deliverSession = callbackState.runOnSessionTasks(session, logger);
 
-        if (deliverSession && notifyForRelease
-                && (configuration.getAutoTrackSessions() || !session.isAutoCaptured())
-                && session.isTracked().compareAndSet(false, true)) {
+        if (deliverSession && session.isTracked().compareAndSet(false, true)) {
             notifySessionStartObserver(session);
-
             flushAsync();
             flushInMemorySession(session);
         }

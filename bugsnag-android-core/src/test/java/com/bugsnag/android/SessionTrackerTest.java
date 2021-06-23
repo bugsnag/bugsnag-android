@@ -7,6 +7,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
 
+import com.bugsnag.android.internal.ImmutableConfig;
+
 import android.app.ActivityManager;
 import android.content.Context;
 
@@ -34,6 +36,9 @@ public class SessionTrackerTest {
     Client client;
 
     @Mock
+    ImmutableConfig cfg;
+
+    @Mock
     AppDataCollector appDataCollector;
 
     @Mock
@@ -59,6 +64,7 @@ public class SessionTrackerTest {
         when(client.getNotifier()).thenReturn(new Notifier());
         when(client.getAppContext()).thenReturn(context);
         when(client.getAppDataCollector()).thenReturn(appDataCollector);
+        when(client.getConfig()).thenReturn(cfg);
         when(appDataCollector.generateApp()).thenReturn(app);
         when(client.getDeviceDataCollector()).thenReturn(deviceDataCollector);
         when(deviceDataCollector.generateDevice()).thenReturn(generateDevice());

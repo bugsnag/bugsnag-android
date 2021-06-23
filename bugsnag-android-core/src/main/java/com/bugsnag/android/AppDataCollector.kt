@@ -6,6 +6,7 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.SystemClock
+import com.bugsnag.android.internal.ImmutableConfig
 
 /**
  * Collects various data on the application state

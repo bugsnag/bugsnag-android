@@ -23,6 +23,5 @@ internal class EmptyEnabledReleaseStageScenario(
         Bugsnag.notify(generateException())
     }
 
-    override fun getInterceptedLogMessages() =
-        listOf("Skipping notification - should not notify for this release stage")
+    override fun getInterceptedLogMessages() = listOf("Bugsnag loaded")
 }

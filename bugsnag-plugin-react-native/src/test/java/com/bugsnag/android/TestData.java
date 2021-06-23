@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import com.bugsnag.android.internal.ImmutableConfig;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collections;

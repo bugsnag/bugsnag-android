@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import com.bugsnag.android.internal.ImmutableConfig;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

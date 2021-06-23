@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
+import com.bugsnag.android.internal.convertToImmutableConfig
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test

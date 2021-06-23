@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.internal.convertToImmutableConfig
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.io.File

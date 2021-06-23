@@ -3,6 +3,7 @@ package com.bugsnag.android
 import android.content.Context
 import com.bugsnag.android.BugsnagTestUtils.generateAppWithState
 import com.bugsnag.android.BugsnagTestUtils.generateDeviceWithState
+import com.bugsnag.android.internal.ImmutableConfig
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
