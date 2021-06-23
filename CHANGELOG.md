@@ -32,6 +32,9 @@
 * Enable ANR handling on immediately if started from the main thread
   [#1283](https://github.com/bugsnag/bugsnag-android/pull/1283)
 
+* Include `app.binaryArch` in all events
+  [#1287](https://github.com/bugsnag/bugsnag-android/pull/1287)
+
 ## 5.9.4 (2021-05-26)
 
 * Unity: add methods for setting autoNotify and autoDetectAnrs

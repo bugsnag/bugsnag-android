@@ -405,20 +405,6 @@ exit:
   bsg_safe_delete_local_ref(env, keylist);
 }
 
-char *bsg_binary_arch() {
-#if defined(__i386__)
-  return "x86";
-#elif defined(__x86_64__)
-  return "x86_64";
-#elif defined(__arm__)
-  return "arm32";
-#elif defined(__aarch64__)
-  return "arm64";
-#else
-  return "unknown";
-#endif
-}
-
 void bsg_populate_app_data(JNIEnv *env, bsg_jni_cache *jni_cache,
                            bugsnag_event *event) {
   jobject data = bsg_safe_call_static_object_method(
@@ -427,9 +413,9 @@ void bsg_populate_app_data(JNIEnv *env, bsg_jni_cache *jni_cache,
     return;
   }
 
-  bsg_strncpy_safe(event->app.binary_arch, bsg_binary_arch(),
-                   sizeof(event->app.binary_arch));
-
+  bsg_copy_map_value_string(env, jni_cache, data, "binaryArch",
+                            event->app.binary_arch,
+                            sizeof(event->app.binary_arch));
   bsg_copy_map_value_string(env, jni_cache, data, "buildUUID",
                             event->app.build_uuid,
                             sizeof(event->app.build_uuid));

@@ -80,6 +80,22 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_NdkPlugin_disableCrashReporting(
   bsg_handler_uninstall_cpp();
 }
 
+JNIEXPORT jstring JNICALL
+Java_com_bugsnag_android_NdkPlugin_getBinaryArch(JNIEnv *env, jobject _this) {
+#if defined(__i386__)
+  const char *binary_arch = "x86";
+#elif defined(__x86_64__)
+  const char *binary_arch = "x86_64";
+#elif defined(__arm__)
+  const char *binary_arch = "arm32";
+#elif defined(__aarch64__)
+  const char *binary_arch = "arm64";
+#else
+  const char *binary_arch = "unknown";
+#endif
+  return bsg_safe_new_string_utf(env, binary_arch);
+}
+
 JNIEXPORT void JNICALL
 Java_com_bugsnag_android_ndk_NativeBridge_enableCrashReporting(JNIEnv *env,
                                                                jobject _this) {

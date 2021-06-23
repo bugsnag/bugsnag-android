@@ -251,6 +251,13 @@ Then("the exception stacktrace matches the thread stacktrace") do
   end
 end
 
+Then("the event binary arch field is valid") do
+  arch = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.app.binaryArch")
+  assert_block "'#{arch}' is not a valid value for app.binaryArch" do
+    ["x86", "x86_64", "arm32", "arm64"].include? arch
+  end
+end
+
 # EventStore flushes multiple times on launch with access controlled via a semaphore,
 # which results in multiple similar log messages
 Then("Bugsnag confirms it has no errors to send") do
