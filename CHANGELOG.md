@@ -8,6 +8,9 @@
 * Register system callbacks on background thread
   [#1292](https://github.com/bugsnag/bugsnag-android/pull/1292)
 
+* Replace Set implementations with HashSet where possible
+  [#1290](https://github.com/bugsnag/bugsnag-android/pull/1290)
+
 ## 5.9.5 (2021-06-25)
 
 * Unity: Properly handle ANRs after multiple calls to autoNotify and autoDetectAnrs

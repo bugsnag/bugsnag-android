@@ -29,7 +29,7 @@ internal class PluginClient(
         ndkPlugin?.let(set::add)
         anrPlugin?.let(set::add)
         rnPlugin?.let(set::add)
-        plugins = set.toSet()
+        plugins = set.toHashSet()
     }
 
     private fun instantiatePlugin(clz: String): Plugin? {
