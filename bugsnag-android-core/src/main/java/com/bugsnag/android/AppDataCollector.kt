@@ -2,7 +2,6 @@ package com.bugsnag.android
 
 import android.app.ActivityManager
 import android.content.Context
-import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.SystemClock
@@ -23,14 +22,12 @@ internal class AppDataCollector(
     var codeBundleId: String? = null
 
     private val packageName: String = appContext.packageName
-    private var packageInfo = packageManager?.getPackageInfo(packageName, 0)
-    private var appInfo: ApplicationInfo? = packageManager?.getApplicationInfo(packageName, 0)
     private val bgWorkRestricted = isBackgroundWorkRestricted()
 
     private var binaryArch: String? = null
     private val appName = getAppName()
     private val releaseStage = config.releaseStage
-    private val versionName = config.appVersion ?: packageInfo?.versionName
+    private val versionName = config.appVersion ?: config.packageInfo?.versionName
 
     fun generateApp(): App =
         App(config, binaryArch, packageName, releaseStage, versionName, codeBundleId)
@@ -131,7 +128,7 @@ internal class AppDataCollector(
      * AndroidManifest.xml
      */
     private fun getAppName(): String? {
-        val copy = appInfo
+        val copy = config.appInfo
         return when {
             packageManager != null && copy != null -> {
                 packageManager.getApplicationLabel(copy).toString()

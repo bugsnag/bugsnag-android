@@ -35,6 +35,9 @@
 * Include `app.binaryArch` in all events
   [#1287](https://github.com/bugsnag/bugsnag-android/pull/1287)
 
+* Cache results from PackageManager
+  [#1288](https://github.com/bugsnag/bugsnag-android/pull/1288)
+
 ## 5.9.4 (2021-05-26)
 
 * Unity: add methods for setting autoNotify and autoDetectAnrs

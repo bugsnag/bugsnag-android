@@ -90,7 +90,7 @@ final class BugsnagTestUtils {
         } catch (IOException ignored) {
             // swallow
         }
-        return ImmutableConfigKt.convertToImmutableConfig(config, null);
+        return ImmutableConfigKt.convertToImmutableConfig(config, null, null, null);
     }
 
     static Device generateDevice() {

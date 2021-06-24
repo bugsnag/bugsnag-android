@@ -4,7 +4,7 @@ import android.app.ActivityManager
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
-import com.bugsnag.android.BugsnagTestUtils.convert
+import com.bugsnag.android.internal.convertToImmutableConfig
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -40,14 +40,14 @@ internal class AppMetadataSerializationTest {
 
             // populate metadata fields
             `when`(sessionTracker.contextActivity).thenReturn("MyActivity")
-            `when`(pm.getApplicationInfo(any(), anyInt())).thenReturn(ApplicationInfo())
             `when`(pm.getApplicationLabel(any())).thenReturn("MyApp")
+            `when`(pm.getApplicationInfo(any(), anyInt())).thenReturn(ApplicationInfo())
 
             // construct AppDataCollector object
             val appData = AppDataCollector(
                 context,
                 pm,
-                convert(config),
+                convertToImmutableConfig(config, null, null, ApplicationInfo()),
                 sessionTracker,
                 am,
                 launchCrashTracker,
