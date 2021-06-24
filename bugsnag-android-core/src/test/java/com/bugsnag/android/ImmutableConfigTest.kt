@@ -83,7 +83,7 @@ internal class ImmutableConfigTest {
             assertEquals(seed.maxPersistedEvents, maxPersistedEvents)
             assertEquals(seed.maxPersistedSessions, maxPersistedSessions)
             assertEquals(seed.persistUser, persistUser)
-            assertEquals(seed.enabledBreadcrumbTypes, BreadcrumbType.values().toSet())
+            assertNull(seed.enabledBreadcrumbTypes)
             assertNotNull(persistenceDirectory)
         }
     }

@@ -41,6 +41,9 @@
 * Use ring buffer to store breadcrumbs
   [#1286](https://github.com/bugsnag/bugsnag-android/pull/1286)
 
+* Avoid expensive set construction in Config constructor
+  [#1289](https://github.com/bugsnag/bugsnag-android/pull/1289)
+
 ## 5.9.4 (2021-05-26)
 
 * Unity: add methods for setting autoNotify and autoDetectAnrs
