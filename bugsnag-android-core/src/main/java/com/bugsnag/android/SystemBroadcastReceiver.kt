@@ -35,7 +35,7 @@ internal class SystemBroadcastReceiver(
 
         fun shortenActionNameIfNeeded(action: String): String {
             return if (isAndroidKey(action)) {
-                action.substring(action.lastIndexOf(".") + 1)
+                action.substringAfterLast('.')
             } else {
                 action
             }

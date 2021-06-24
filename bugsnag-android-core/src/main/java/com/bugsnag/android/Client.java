@@ -220,11 +220,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             exceptionHandler.install();
         }
 
-        // register listeners for system events in the background.
-        systemBroadcastReceiver = new SystemBroadcastReceiver(this, logger);
-        registerComponentCallbacks();
-        registerListenersInBackground();
-
         // load last run info
         lastRunInfoStore = new LastRunInfoStore(immutableConfig);
         lastRunInfo = loadLastRunInfo();
@@ -236,6 +231,11 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         eventStore.flushOnLaunch();
         eventStore.flushAsync();
         sessionTracker.flushAsync();
+
+        // register listeners for system events in the background.
+        systemBroadcastReceiver = new SystemBroadcastReceiver(this, logger);
+        registerComponentCallbacks();
+        registerListenersInBackground();
 
         // leave auto breadcrumb
         Map<String, Object> data = Collections.emptyMap();
