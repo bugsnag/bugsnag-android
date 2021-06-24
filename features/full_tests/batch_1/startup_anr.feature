@@ -1,5 +1,6 @@
 Feature: onCreate ANR
 
+@skip_android_10
 Scenario: onCreate ANR is reported
   When I run "ConfigureStartupAnrScenario"
   And I relaunch the app after a crash
