@@ -129,7 +129,7 @@ abstract class FileStore {
             Writer out = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
             stream = new JsonStream(out);
             stream.value(streamable);
-            logger.i("Saved unsent payload to disk: " + filename);
+            logger.i("Saved unsent payload to disk: '" + filename + '\'');
             return filename;
         } catch (FileNotFoundException exc) {
             logger.w("Ignoring FileNotFoundException - unable to create file", exc);
@@ -168,7 +168,7 @@ abstract class FileStore {
 
                     if (!queuedFiles.contains(oldestFile)) {
                         logger.w("Discarding oldest error as stored "
-                                + "error limit reached: " + oldestFile.getPath());
+                                + "error limit reached: '" + oldestFile.getPath() + '\'');
                         deleteStoredFiles(Collections.singleton(oldestFile));
                         files.remove(k);
                         k--;
