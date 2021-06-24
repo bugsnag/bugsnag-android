@@ -310,9 +310,9 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (launchDurationMillis >= MIN_LAUNCH_CRASH_THRESHOLD_MS) {
             impl.setLaunchDurationMillis(launchDurationMillis);
         } else {
-            getLogger().e(String.format(Locale.US, "Invalid configuration value detected. "
+            getLogger().e("Invalid configuration value detected. "
                     + "Option launchDurationMillis should be a positive long value."
-                    + "Supplied value is %d", launchDurationMillis));
+                    + "Supplied value is " + launchDurationMillis);
         }
     }
 
@@ -529,9 +529,9 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (maxBreadcrumbs >= MIN_BREADCRUMBS && maxBreadcrumbs <= MAX_BREADCRUMBS) {
             impl.setMaxBreadcrumbs(maxBreadcrumbs);
         } else {
-            getLogger().e(String.format(Locale.US, "Invalid configuration value detected. "
+            getLogger().e("Invalid configuration value detected. "
                     + "Option maxBreadcrumbs should be an integer between 0-100. "
-                    + "Supplied value is %d", maxBreadcrumbs));
+                    + "Supplied value is " + maxBreadcrumbs);
         }
     }
 
@@ -555,9 +555,9 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (maxPersistedEvents >= 0) {
             impl.setMaxPersistedEvents(maxPersistedEvents);
         } else {
-            getLogger().e(String.format(Locale.US, "Invalid configuration value detected. "
+            getLogger().e("Invalid configuration value detected. "
                     + "Option maxPersistedEvents should be a positive integer."
-                    + "Supplied value is %d", maxPersistedEvents));
+                    + "Supplied value is " + maxPersistedEvents);
         }
     }
 
@@ -581,9 +581,9 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         if (maxPersistedSessions >= 0) {
             impl.setMaxPersistedSessions(maxPersistedSessions);
         } else {
-            getLogger().e(String.format(Locale.US, "Invalid configuration value detected. "
+            getLogger().e("Invalid configuration value detected. "
                     + "Option maxPersistedSessions should be a positive integer."
-                    + "Supplied value is %d", maxPersistedSessions));
+                    + "Supplied value is " + maxPersistedSessions);
         }
     }
 
