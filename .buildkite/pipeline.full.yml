@@ -45,8 +45,6 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_9_0"
           - "--fail-fast"
-          - "--tags"
-          - "not @Flaky"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -103,8 +101,6 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_5_0"
           - "--fail-fast"
-          - "--tags"
-          - "not @Flaky"
     concurrency: 9
     concurrency_group: 'browserstack-app'
     soft_fail:
@@ -128,8 +124,6 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_5_0"
           - "--fail-fast"
-          - "--tags"
-          - "not @Flaky"
     concurrency: 9
     concurrency_group: 'browserstack-app'
     soft_fail:
@@ -153,8 +147,6 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_6_0"
           - "--fail-fast"
-          - "--tags"
-          - "not @Flaky"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -176,8 +168,6 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_6_0"
           - "--fail-fast"
-          - "--tags"
-          - "not @Flaky"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -199,8 +189,6 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_7_1"
           - "--fail-fast"
-          - "--tags"
-          - "not @Flaky"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -222,8 +210,6 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_7_1"
           - "--fail-fast"
-          - "--tags"
-          - "not @Flaky"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -245,8 +231,6 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_8_1"
           - "--fail-fast"
-          - "--tags"
-          - "not @Flaky"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -268,8 +252,6 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_8_1"
           - "--fail-fast"
-          - "--tags"
-          - "not @Flaky"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -291,8 +273,6 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_10_0"
           - "--fail-fast"
-          - "--tags"
-          - "not @Flaky"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -314,8 +294,6 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_10_0"
           - "--fail-fast"
-          - "--tags"
-          - "not @Flaky"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -341,8 +319,6 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_11_0"
           - "--fail-fast"
-          - "--tags"
-          - "not @Flaky"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -364,8 +340,6 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_11_0"
           - "--fail-fast"
-          - "--tags"
-          - "not @Flaky"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 

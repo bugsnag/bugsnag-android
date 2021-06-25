@@ -118,8 +118,6 @@ steps:
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_9_0"
-          - "--tags"
-          - "not @Flaky"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -140,8 +138,6 @@ steps:
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_9_0"
-          - "--tags"
-          - "not @Flaky"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
