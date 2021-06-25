@@ -82,7 +82,7 @@ class SystemBroadcastReceiver extends BroadcastReceiver {
                     String val = valObj.toString();
 
                     if (isAndroidKey(key)) { // shorten the Intent action
-                        meta.put("Extra", String.format("%s: %s", shortAction, val));
+                        meta.put("Extra", shortAction + ": " + val);
                     } else {
                         meta.put(key, val);
                     }

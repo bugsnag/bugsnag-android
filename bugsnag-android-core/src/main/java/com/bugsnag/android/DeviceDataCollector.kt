@@ -187,7 +187,7 @@ internal class DeviceDataCollector(
         return if (displayMetrics != null) {
             val max = max(displayMetrics.widthPixels, displayMetrics.heightPixels)
             val min = min(displayMetrics.widthPixels, displayMetrics.heightPixels)
-            String.format(Locale.US, "%dx%d", max, min)
+            "${max}x$min"
         } else {
             null
         }
