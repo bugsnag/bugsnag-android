@@ -190,6 +190,7 @@ steps:
     plugins:
       artifacts#v1.2.0:
         download: "build/release/fixture-r16.apk"
+        upload: "maze_output/failed/**/*"
       docker-compose#v3.7.0:
         pull: android-maze-runner
         run: android-maze-runner
@@ -213,6 +214,7 @@ steps:
     plugins:
       artifacts#v1.2.0:
         download: "build/release/fixture-r21.apk"
+        upload: "maze_output/failed/**/*"
       docker-compose#v3.7.0:
         pull: android-maze-runner
         run: android-maze-runner

@@ -67,8 +67,8 @@ services:
       SAUCE_LABS_ACCESS_KEY:
     volumes:
       - ./build:/app/build
-      - ./maze-output:/app/maze-output
       - ./features/:/app/features/
+      - ./maze_output:/app/maze_output
 
   android-license-audit:
     build:
