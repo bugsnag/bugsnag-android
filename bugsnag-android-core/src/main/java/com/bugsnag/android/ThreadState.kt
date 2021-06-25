@@ -12,7 +12,7 @@ internal class ThreadState @Suppress("LongParameterList") @JvmOverloads construc
     sendThreads: ThreadSendPolicy,
     projectPackages: Collection<String>,
     logger: Logger,
-    currentThread: java.lang.Thread = java.lang.Thread.currentThread(),
+    currentThread: java.lang.Thread? = null,
     stackTraces: MutableMap<java.lang.Thread, Array<StackTraceElement>>? = null
 ) : JsonStream.Streamable {
 
@@ -31,7 +31,7 @@ internal class ThreadState @Suppress("LongParameterList") @JvmOverloads construc
         threads = when {
             recordThreads -> captureThreadTrace(
                 stackTraces ?: java.lang.Thread.getAllStackTraces(),
-                currentThread,
+                currentThread ?: java.lang.Thread.currentThread(),
                 exc,
                 isUnhandled,
                 projectPackages,

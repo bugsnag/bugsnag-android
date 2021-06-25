@@ -47,6 +47,9 @@
 * Replace calls to String.format() with concatenation
   [#1293](https://github.com/bugsnag/bugsnag-android/pull/1293)
 
+* Optimize capture of thread traces
+  [#1300](https://github.com/bugsnag/bugsnag-android/pull/1300)
+
 ## 5.9.4 (2021-05-26)
 
 * Unity: add methods for setting autoNotify and autoDetectAnrs

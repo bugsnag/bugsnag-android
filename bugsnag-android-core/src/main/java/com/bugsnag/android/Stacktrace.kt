@@ -20,12 +20,10 @@ internal class Stacktrace : JsonStream.Streamable {
          * not.
          */
         fun inProject(className: String, projectPackages: Collection<String>): Boolean? {
-            for (packageName in projectPackages) {
-                if (className.startsWith(packageName)) {
-                    return true
-                }
+            return when {
+                projectPackages.any { className.startsWith(it) } -> true
+                else -> null
             }
-            return null
         }
     }
 
@@ -64,8 +62,9 @@ internal class Stacktrace : JsonStream.Streamable {
         logger: Logger
     ): Stackframe? {
         try {
+            val className = el.className
             val methodName = when {
-                el.className.isNotEmpty() -> el.className + "." + el.methodName
+                className.isNotEmpty() -> className + "." + el.methodName
                 else -> el.methodName
             }
 
@@ -73,7 +72,7 @@ internal class Stacktrace : JsonStream.Streamable {
                 methodName,
                 el.fileName ?: "Unknown",
                 el.lineNumber,
-                inProject(el.className, projectPackages)
+                inProject(className, projectPackages)
             )
         } catch (lineEx: Exception) {
             logger.w("Failed to serialize stacktrace", lineEx)
