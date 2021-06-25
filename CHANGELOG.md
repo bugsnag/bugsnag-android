@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 5.9.5 (2021-06-25)
 
 * Unity: Properly handle ANRs after multiple calls to autoNotify and autoDetectAnrs
   [#1265](https://github.com/bugsnag/bugsnag-android/pull/1265)
