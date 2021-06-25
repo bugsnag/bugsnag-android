@@ -22,7 +22,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -148,7 +148,7 @@ public class ClientFacadeTest {
         when(appDataCollector.generateAppWithState()).thenReturn(app);
         when(appDataCollector.getAppDataMetadata()).thenReturn(new HashMap<String, Object>());
 
-        when(breadcrumbState.getStore()).thenReturn(new ArrayDeque<Breadcrumb>());
+        when(breadcrumbState.copy()).thenReturn(new ArrayList<Breadcrumb>());
         when(userState.getUser()).thenReturn(new User());
         when(callbackState.runOnErrorTasks(any(Event.class), any(Logger.class))).thenReturn(true);
     }

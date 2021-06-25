@@ -76,14 +76,14 @@ public class ClientTest {
         config.setEnabledBreadcrumbTypes(new HashSet<>(breadcrumbTypes));
         config.setMaxBreadcrumbs(2);
         client = generateClient(config);
-        assertEquals(0, client.breadcrumbState.getStore().size());
+        assertEquals(0, client.breadcrumbState.copy().size());
 
         client.leaveBreadcrumb("test");
         client.leaveBreadcrumb("another");
         client.leaveBreadcrumb("yet another");
-        assertEquals(2, client.breadcrumbState.getStore().size());
+        assertEquals(2, client.breadcrumbState.copy().size());
 
-        Breadcrumb poll = client.breadcrumbState.getStore().poll();
+        Breadcrumb poll = client.breadcrumbState.copy().get(0);
         assertEquals(BreadcrumbType.MANUAL, poll.getType());
         assertEquals("another", poll.getMessage());
     }
@@ -129,7 +129,7 @@ public class ClientTest {
         client = generateClient();
         client.leaveBreadcrumb("Hello World");
         List<Breadcrumb> breadcrumbs = client.getBreadcrumbs();
-        List<Breadcrumb> store = new ArrayList<>(client.breadcrumbState.getStore());
+        List<Breadcrumb> store = new ArrayList<>(client.breadcrumbState.copy());
         assertEquals(store, breadcrumbs);
         assertNotSame(store, breadcrumbs);
     }
@@ -153,8 +153,8 @@ public class ClientTest {
 
         breadcrumbs.clear(); // only the copy should be cleared
         assertTrue(breadcrumbs.isEmpty());
-        assertEquals(1, client.breadcrumbState.getStore().size());
-        assertEquals("Manual breadcrumb", client.breadcrumbState.getStore().remove().getMessage());
+        assertEquals(1, client.breadcrumbState.copy().size());
+        assertEquals("Manual breadcrumb", client.breadcrumbState.copy().get(0).getMessage());
     }
 
     @Test

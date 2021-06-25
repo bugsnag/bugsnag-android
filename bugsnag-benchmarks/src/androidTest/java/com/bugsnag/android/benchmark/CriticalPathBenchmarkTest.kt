@@ -95,6 +95,19 @@ class CriticalPathBenchmarkTest {
     }
 
     /**
+     * Make a copy of breadcrumbs on the Client (required when generating events)
+     */
+    @Test
+    fun copyBreadcrumbs() {
+        repeat(201) { count ->
+            client.leaveBreadcrumb("Hello world $count")
+        }
+        benchmarkRule.measureRepeated {
+            client.breadcrumbs
+        }
+    }
+
+    /**
      * Add a single value to the Client metadata
      */
     @Test
