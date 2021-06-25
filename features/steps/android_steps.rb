@@ -232,6 +232,9 @@ def click_if_present(element)
   return false unless Maze.driver.wait_for_element(element, 1)
 
   Maze.driver.click_element_if_present(element)
+rescue Selenium::WebDriver::Error::UnknownError
+  # Ignore Appium errors (e.g. during an ANR)
+  return false
 end
 
 Then("I sort the errors by {string}") do |comparator|
