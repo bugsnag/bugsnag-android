@@ -31,6 +31,7 @@ This contains a prompt of checks which you may want to test, depending on the ex
 
 ## Making the release
 
+- Check the performance benchmarks against the [baseline](BENCHMARKS.md) to confirm there are no serious regressions
 - Make a PR from `next` to `master` (or from a bug fix branch for urgent hot fixes):
   - [ ] Update the version number with `make VERSION=[number] bump`
   - [ ] Inspect the updated CHANGELOG, README, and version files to ensure they are correct

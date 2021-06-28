@@ -2,6 +2,8 @@ package com.bugsnag.android
 
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import com.bugsnag.android.BugsnagTestUtils.generateSession
+import com.bugsnag.android.internal.ImmutableConfig
+import com.bugsnag.android.internal.convertToImmutableConfig
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before

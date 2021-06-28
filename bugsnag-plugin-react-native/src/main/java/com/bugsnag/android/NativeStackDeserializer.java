@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import com.bugsnag.android.internal.ImmutableConfig;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -44,7 +46,7 @@ class NativeStackDeserializer implements MapDeserializer<List<Stackframe>> {
         }
 
         String clz = MapUtils.getOrNull(map, "class");
-        String method = String.format("%s.%s", clz, methodName);
+        String method = clz + "." + methodName;
 
         // RN <0.63.2 doesn't add class, gracefully fallback by only reporting
         // method name. see https://github.com/facebook/react-native/pull/25014

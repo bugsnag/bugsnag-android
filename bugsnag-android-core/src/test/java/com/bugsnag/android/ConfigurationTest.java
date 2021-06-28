@@ -6,6 +6,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import com.bugsnag.android.internal.ImmutableConfig;
+
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,51 +41,26 @@ public class ConfigurationTest {
         ImmutableConfig immutableConfig;
         immutableConfig = createConfigWithReleaseStages(config,
                 null, "development");
-        assertTrue(immutableConfig.shouldNotifyForReleaseStage());
+        assertFalse(immutableConfig.shouldDiscardByReleaseStage());
 
         // Should not notify if enabledReleaseStages is null
         immutableConfig = createConfigWithReleaseStages(config,
                 Collections.<String>emptySet(), "development");
-        assertFalse(immutableConfig.shouldNotifyForReleaseStage());
+        assertTrue(immutableConfig.shouldDiscardByReleaseStage());
 
         // Shouldn't notify if enabledReleaseStages is set and releaseStage is null
         Set<String> example = Collections.singleton("example");
         immutableConfig = createConfigWithReleaseStages(config, example, null);
-        assertFalse(immutableConfig.shouldNotifyForReleaseStage());
+        assertTrue(immutableConfig.shouldDiscardByReleaseStage());
 
         // Shouldn't notify if releaseStage not in enabledReleaseStages
         Set<String> stages = Collections.singleton("production");
         immutableConfig = createConfigWithReleaseStages(config, stages, "not-production");
-        assertFalse(immutableConfig.shouldNotifyForReleaseStage());
+        assertTrue(immutableConfig.shouldDiscardByReleaseStage());
 
         // Should notify if releaseStage in enabledReleaseStages
         immutableConfig = createConfigWithReleaseStages(config, stages, "production");
-        assertTrue(immutableConfig.shouldNotifyForReleaseStage());
-    }
-
-    @Test
-    public void testShouldSendBreadcrumb() {
-        ImmutableConfig immutableConfig;
-
-        // Should notify if enabledBreadcrumbTypes is null
-        config.setEnabledBreadcrumbTypes(null);
-        immutableConfig = BugsnagTestUtils.convert(config);
-        assertTrue(immutableConfig.shouldRecordBreadcrumbType(BreadcrumbType.MANUAL));
-
-        // Should not notify if enabledBreadcrumbTypes is empty
-        config.setEnabledBreadcrumbTypes(Collections.<BreadcrumbType>emptySet());
-        immutableConfig = BugsnagTestUtils.convert(config);
-        assertFalse(immutableConfig.shouldRecordBreadcrumbType(BreadcrumbType.MANUAL));
-
-        // Should notify if present in enabled types
-        config.setEnabledBreadcrumbTypes(Collections.singleton(BreadcrumbType.MANUAL));
-        immutableConfig = BugsnagTestUtils.convert(config);
-        assertTrue(immutableConfig.shouldRecordBreadcrumbType(BreadcrumbType.MANUAL));
-
-        // Should not notify if not present in enabled types
-        config.setEnabledBreadcrumbTypes(Collections.singleton(BreadcrumbType.ERROR));
-        immutableConfig = BugsnagTestUtils.convert(config);
-        assertFalse(immutableConfig.shouldRecordBreadcrumbType(BreadcrumbType.MANUAL));
+        assertFalse(immutableConfig.shouldDiscardByReleaseStage());
     }
 
     private ImmutableConfig createConfigWithReleaseStages(Configuration config,

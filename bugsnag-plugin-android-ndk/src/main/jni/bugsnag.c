@@ -14,8 +14,6 @@
 
 static JNIEnv *bsg_global_jni_env = NULL;
 
-void bugsnag_set_binary_arch(JNIEnv *env);
-
 void bugsnag_start(JNIEnv *env) { bsg_global_jni_env = env; }
 
 void bugsnag_notify_env(JNIEnv *env, const char *name, const char *message,
@@ -188,9 +186,6 @@ void bugsnag_notify_env(JNIEnv *env, const char *name, const char *message,
   jname = bsg_byte_ary_from_string(env, name);
   jmessage = bsg_byte_ary_from_string(env, message);
 
-  // set application's binary arch
-  bugsnag_set_binary_arch(env);
-
   bsg_safe_call_static_void_method(env, interface_class, notify_method, jname,
                                    jmessage, jseverity, trace);
 
@@ -211,39 +206,6 @@ exit:
   bsg_safe_delete_local_ref(env, severity_class);
   bsg_safe_delete_local_ref(env, trace);
   bsg_safe_delete_local_ref(env, jseverity);
-}
-
-void bugsnag_set_binary_arch(JNIEnv *env) {
-  jclass interface_class = NULL;
-  jmethodID set_arch_method = NULL;
-  jstring arch = NULL;
-
-  // lookup com/bugsnag/android/NativeInterface
-  interface_class =
-      bsg_safe_find_class(env, "com/bugsnag/android/NativeInterface");
-  if (interface_class == NULL) {
-    goto exit;
-  }
-
-  // lookup NativeInterface.setBinaryArch()
-  set_arch_method = bsg_safe_get_static_method_id(
-      env, interface_class, "setBinaryArch", "(Ljava/lang/String;)V");
-  if (set_arch_method == NULL) {
-    goto exit;
-  }
-
-  // call NativeInterface.setBinaryArch()
-  arch = bsg_safe_new_string_utf(env, bsg_binary_arch());
-  if (arch != NULL) {
-    bsg_safe_call_static_void_method(env, interface_class, set_arch_method,
-                                     arch);
-  }
-
-  goto exit;
-
-exit:
-  bsg_safe_delete_local_ref(env, arch);
-  bsg_safe_delete_local_ref(env, interface_class);
 }
 
 void bugsnag_set_user_env(JNIEnv *env, const char *id, const char *email,

@@ -17,10 +17,9 @@ import com.bugsnag.android.StateEvent.UpdateContext
 import com.bugsnag.android.StateEvent.UpdateInForeground
 import com.bugsnag.android.StateEvent.UpdateOrientation
 import com.bugsnag.android.StateEvent.UpdateUser
+import com.bugsnag.android.internal.StateObserver
 import java.io.File
 import java.nio.charset.Charset
-import java.util.Observable
-import java.util.Observer
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.locks.ReentrantLock
@@ -28,7 +27,7 @@ import java.util.concurrent.locks.ReentrantLock
 /**
  * Observes changes in the Bugsnag environment, propagating them to the native layer
  */
-class NativeBridge : Observer {
+class NativeBridge : StateObserver {
 
     private val lock = ReentrantLock()
     private val installed = AtomicBoolean(false)
@@ -95,47 +94,47 @@ class NativeBridge : Observer {
         }
     }
 
-    override fun update(observable: Observable, arg: Any?) {
-        if (isInvalidMessage(arg)) return
+    override fun onStateChange(event: StateEvent) {
+        if (isInvalidMessage(event)) return
 
-        when (val msg = arg as StateEvent) {
-            is Install -> handleInstallMessage(msg)
+        when (event) {
+            is Install -> handleInstallMessage(event)
             DeliverPending -> deliverPendingReports()
-            is AddMetadata -> handleAddMetadata(msg)
-            is ClearMetadataSection -> clearMetadataTab(makeSafe(msg.section))
+            is AddMetadata -> handleAddMetadata(event)
+            is ClearMetadataSection -> clearMetadataTab(makeSafe(event.section))
             is ClearMetadataValue -> removeMetadata(
-                makeSafe(msg.section),
-                makeSafe(msg.key ?: "")
+                makeSafe(event.section),
+                makeSafe(event.key ?: "")
             )
             is AddBreadcrumb -> addBreadcrumb(
-                makeSafe(msg.message),
-                makeSafe(msg.type.toString()),
-                makeSafe(msg.timestamp),
-                msg.metadata
+                makeSafe(event.message),
+                makeSafe(event.type.toString()),
+                makeSafe(event.timestamp),
+                event.metadata
             )
             NotifyHandled -> addHandledEvent()
             NotifyUnhandled -> addUnhandledEvent()
             PauseSession -> pausedSession()
             is StartSession -> startedSession(
-                makeSafe(msg.id),
-                makeSafe(msg.startedAt),
-                msg.handledCount,
-                msg.unhandledCount
+                makeSafe(event.id),
+                makeSafe(event.startedAt),
+                event.handledCount,
+                event.unhandledCount
             )
-            is UpdateContext -> updateContext(makeSafe(msg.context ?: ""))
+            is UpdateContext -> updateContext(makeSafe(event.context ?: ""))
             is UpdateInForeground -> updateInForeground(
-                msg.inForeground,
-                makeSafe(msg.contextActivity ?: "")
+                event.inForeground,
+                makeSafe(event.contextActivity ?: "")
             )
-            is StateEvent.UpdateLastRunInfo -> updateLastRunInfo(msg.consecutiveLaunchCrashes)
-            is StateEvent.UpdateIsLaunching -> updateIsLaunching(msg.isLaunching)
-            is UpdateOrientation -> updateOrientation(msg.orientation ?: "")
+            is StateEvent.UpdateLastRunInfo -> updateLastRunInfo(event.consecutiveLaunchCrashes)
+            is StateEvent.UpdateIsLaunching -> updateIsLaunching(event.isLaunching)
+            is UpdateOrientation -> updateOrientation(event.orientation ?: "")
             is UpdateUser -> {
-                updateUserId(makeSafe(msg.user.id ?: ""))
-                updateUserName(makeSafe(msg.user.name ?: ""))
-                updateUserEmail(makeSafe(msg.user.email ?: ""))
+                updateUserId(makeSafe(event.user.id ?: ""))
+                updateUserName(makeSafe(event.user.name ?: ""))
+                updateUserEmail(makeSafe(event.user.email ?: ""))
             }
-            is StateEvent.UpdateMemoryTrimEvent -> updateLowMemory(msg.isLowMemory)
+            is StateEvent.UpdateMemoryTrimEvent -> updateLowMemory(event.isLowMemory)
         }
     }
 

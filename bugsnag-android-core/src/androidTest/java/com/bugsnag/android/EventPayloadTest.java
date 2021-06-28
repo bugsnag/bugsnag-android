@@ -5,6 +5,8 @@ import static com.bugsnag.android.BugsnagTestUtils.generateDeviceWithState;
 import static com.bugsnag.android.BugsnagTestUtils.streamableToJson;
 import static org.junit.Assert.assertEquals;
 
+import com.bugsnag.android.internal.ImmutableConfig;
+
 import androidx.test.filters.SmallTest;
 
 import org.json.JSONArray;
@@ -22,7 +24,6 @@ public class EventPayloadTest {
 
     /**
      * Generates a eventPayload
-     *
      */
     @Before
     public void setUp() {

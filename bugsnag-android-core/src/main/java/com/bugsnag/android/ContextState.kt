@@ -7,7 +7,7 @@ internal class ContextState(context: String? = null) : BaseObservable() {
             emitObservableEvent()
         }
 
-    fun emitObservableEvent() = notifyObservers(StateEvent.UpdateContext(context))
+    fun emitObservableEvent() = updateState { StateEvent.UpdateContext(context) }
 
     fun copy() = ContextState(context)
 }

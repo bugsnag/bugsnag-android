@@ -40,7 +40,7 @@ public class MemoryTrimTest {
         verify(context, times(1)).registerComponentCallbacks(componentCallbacksCaptor.capture());
 
         BugsnagTestObserver observer = new BugsnagTestObserver();
-        client.registerObserver(observer);
+        client.addObserver(observer);
 
         ComponentCallbacks callbacks = componentCallbacksCaptor.getValue();
         callbacks.onLowMemory();
@@ -55,7 +55,7 @@ public class MemoryTrimTest {
 
         assertTrue(
                 "observed event should be marked isLowMemory",
-                ((StateEvent.UpdateMemoryTrimEvent) observedEvent).isLowMemory()
+                ((StateEvent.UpdateMemoryTrimEvent) observedEvent).isLowMemory
         );
     }
 

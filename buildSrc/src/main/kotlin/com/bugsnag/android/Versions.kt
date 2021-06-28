@@ -16,9 +16,10 @@ object Versions {
     // plugins
     val androidGradlePlugin = "4.1.1"
     val bintrayPlugin = "1.8.5"
-    val detektPlugin = "1.14.1"
+    val detektPlugin = "1.17.1"
     val ktlintPlugin = "9.4.1"
     val dokkaPlugin = "0.10.1"
+    val benchmarkPlugin = "1.0.0"
 
     // dependencies
     val supportLib = "1.1.0"

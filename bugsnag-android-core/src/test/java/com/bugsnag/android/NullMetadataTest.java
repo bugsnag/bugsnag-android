@@ -3,6 +3,8 @@ package com.bugsnag.android;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import com.bugsnag.android.internal.ImmutableConfig;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -45,7 +47,7 @@ public class NullMetadataTest {
                 = SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION);
         Event event = new Event(new RuntimeException(), config, reason, NoopLogger.INSTANCE);
         List<String> projectPackages = Collections.emptyList();
-        Stacktrace trace = Stacktrace.Companion.stacktraceFromJavaTrace(new StackTraceElement[]{},
+        Stacktrace trace = new Stacktrace(new StackTraceElement[]{},
                 projectPackages,
                 NoopLogger.INSTANCE);
         Error err = new Error(new ErrorInternal("RuntimeException", "Something broke",

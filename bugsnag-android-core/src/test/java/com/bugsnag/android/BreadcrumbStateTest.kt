@@ -18,7 +18,15 @@ class BreadcrumbStateTest {
 
     @Before
     fun setUp() {
-        breadcrumbState = BreadcrumbState(20, CallbackState(), NoopLogger)
+        breadcrumbState = createBreadcrumbState(CallbackState())
+    }
+
+    private fun createBreadcrumbState(cbState: CallbackState): BreadcrumbState {
+        return BreadcrumbState(
+            20,
+            cbState,
+            NoopLogger
+        )
     }
 
     /**
@@ -36,46 +44,119 @@ class BreadcrumbStateTest {
             )
         breadcrumbState.add(Breadcrumb(longStr, NoopLogger))
 
-        val crumbs = breadcrumbState.store.toList()
+        val crumbs = breadcrumbState.copy()
         assertEquals(3, crumbs.size)
         assertEquals(longStr, crumbs[2].message)
-    }
-
-    /**
-     * Verifies that leaving breadcrumbs drops the oldest breadcrumb after reaching the max limit
-     */
-    @Test
-    fun testSizeLimitBeforeAdding() {
-        breadcrumbState = BreadcrumbState(5, CallbackState(), NoopLogger)
-
-        for (k in 1..6) {
-            breadcrumbState.add(Breadcrumb("$k", NoopLogger))
-        }
-
-        val crumbs = breadcrumbState.store.toList()
-        assertEquals("2", crumbs.first().message)
-        assertEquals("6", crumbs.last().message)
     }
 
     /**
      * Verifies that no breadcrumbs are added if the size limit is set to 0
      */
     @Test
-    fun testSetSizeEmpty() {
+    fun testZeroMaxBreadcrumbs() {
         breadcrumbState = BreadcrumbState(0, CallbackState(), NoopLogger)
         breadcrumbState.add(Breadcrumb("1", NoopLogger))
         breadcrumbState.add(Breadcrumb("2", NoopLogger))
-        assertTrue(breadcrumbState.store.isEmpty())
+        assertTrue(breadcrumbState.copy().isEmpty())
     }
 
     /**
-     * Verifies that setting a negative size has no effect
+     * Verifies that one breadcrumb is added if the size limit is set to 1
      */
     @Test
-    fun testSetSizeNegative() {
-        breadcrumbState = BreadcrumbState(-1, CallbackState(), NoopLogger)
-        breadcrumbState.add(Breadcrumb("1", NoopLogger))
-        assertEquals(0, breadcrumbState.store.size)
+    fun testOneMaxBreadcrumb() {
+        breadcrumbState = BreadcrumbState(1, CallbackState(), NoopLogger)
+        assertTrue(breadcrumbState.copy().isEmpty())
+
+        breadcrumbState.add(Breadcrumb("A", NoopLogger))
+        assertEquals(1, breadcrumbState.copy().size)
+        assertEquals("A", breadcrumbState.copy()[0].message)
+
+        breadcrumbState.add(Breadcrumb("B", NoopLogger))
+        assertEquals(1, breadcrumbState.copy().size)
+        assertEquals("B", breadcrumbState.copy()[0].message)
+
+        breadcrumbState.add(Breadcrumb("C", NoopLogger))
+        assertEquals(1, breadcrumbState.copy().size)
+        assertEquals("C", breadcrumbState.copy()[0].message)
+    }
+
+    /**
+     * Verifies that the ring buffer can be filled up to the maxBreadcrumbs limit
+     */
+    @Test
+    fun testRingBufferFilled() {
+        breadcrumbState = BreadcrumbState(5, CallbackState(), NoopLogger)
+
+        for (k in 1..5) {
+            breadcrumbState.add(Breadcrumb("$k", NoopLogger))
+        }
+
+        val crumbs = breadcrumbState.copy()
+        assertEquals(5, crumbs.size)
+        assertEquals("1", crumbs[0].message)
+        assertEquals("2", crumbs[1].message)
+        assertEquals("3", crumbs[2].message)
+        assertEquals("4", crumbs[3].message)
+        assertEquals("5", crumbs[4].message)
+    }
+
+    /**
+     * Verifies that the breadcrumbs are in order after the ring buffer wraps around by one
+     */
+    @Test
+    fun testRingBufferExceededByOne() {
+        breadcrumbState = BreadcrumbState(5, CallbackState(), NoopLogger)
+
+        for (k in 1..6) {
+            breadcrumbState.add(Breadcrumb("$k", NoopLogger))
+        }
+
+        val crumbs = breadcrumbState.copy()
+        assertEquals(5, crumbs.size)
+        assertEquals("2", crumbs[0].message)
+        assertEquals("3", crumbs[1].message)
+        assertEquals("4", crumbs[2].message)
+        assertEquals("5", crumbs[3].message)
+        assertEquals("6", crumbs[4].message)
+    }
+
+    /**
+     * Verifies that the breadcrumbs are in order after the ring buffer wraps around by four
+     */
+    @Test
+    fun testRingBufferExceededByFour() {
+        breadcrumbState = BreadcrumbState(5, CallbackState(), NoopLogger)
+
+        for (k in 1..9) {
+            breadcrumbState.add(Breadcrumb("$k", NoopLogger))
+        }
+
+        val crumbs = breadcrumbState.copy()
+        assertEquals(5, crumbs.size)
+        assertEquals("5", crumbs[0].message)
+        assertEquals("6", crumbs[1].message)
+        assertEquals("7", crumbs[2].message)
+        assertEquals("8", crumbs[3].message)
+        assertEquals("9", crumbs[4].message)
+    }
+
+    /**
+     * Verifies that the breadcrumbs are in order after the ring buffer is filled twice
+     */
+    @Test
+    fun testRingBufferFilledTwice() {
+        breadcrumbState = BreadcrumbState(3, CallbackState(), NoopLogger)
+
+        for (k in 1..6) {
+            breadcrumbState.add(Breadcrumb("$k", NoopLogger))
+        }
+
+        val crumbs = breadcrumbState.copy()
+        assertEquals(3, crumbs.size)
+        assertEquals("4", crumbs[0].message)
+        assertEquals("5", crumbs[1].message)
+        assertEquals("6", crumbs[2].message)
     }
 
     /**
@@ -84,7 +165,7 @@ class BreadcrumbStateTest {
     @Test
     fun testDefaultBreadcrumbType() {
         breadcrumbState.add(Breadcrumb("1", NoopLogger))
-        val crumb = requireNotNull(breadcrumbState.store.peek())
+        val crumb = breadcrumbState.copy()[0]
         assertEquals(MANUAL, crumb.type)
     }
 
@@ -97,8 +178,16 @@ class BreadcrumbStateTest {
         for (i in 0..399) {
             metadata[String.format(Locale.US, "%d", i)] = "!!"
         }
-        breadcrumbState.add(Breadcrumb("Rotated Menu", BreadcrumbType.STATE, metadata, Date(0), NoopLogger))
-        assertFalse(breadcrumbState.store.isEmpty())
+        breadcrumbState.add(
+            Breadcrumb(
+                "Rotated Menu",
+                BreadcrumbType.STATE,
+                metadata,
+                Date(0),
+                NoopLogger
+            )
+        )
+        assertFalse(breadcrumbState.copy().isEmpty())
     }
 
     /**
@@ -125,14 +214,18 @@ class BreadcrumbStateTest {
     @Test
     fun testOnBreadcrumbCallback() {
         val breadcrumb = Breadcrumb("Whoops", NoopLogger)
-        breadcrumbState.callbackState.addOnBreadcrumb(
-            OnBreadcrumbCallback {
-                true
-            }
+        val cbState = CallbackState(
+            onBreadcrumbTasks = mutableListOf(
+                OnBreadcrumbCallback {
+                    true
+                }
+            )
         )
+        breadcrumbState = createBreadcrumbState(cbState)
         breadcrumbState.add(breadcrumb)
-        assertEquals(1, breadcrumbState.store.size)
-        assertEquals(breadcrumb, breadcrumbState.store.peek())
+        val copy = breadcrumbState.copy()
+        assertEquals(1, copy.size)
+        assertEquals(breadcrumb, copy.first())
     }
 
     /**
@@ -140,25 +233,31 @@ class BreadcrumbStateTest {
      */
     @Test
     fun testOnBreadcrumbCallbackFalse() {
+        val cbState = CallbackState()
+        breadcrumbState = createBreadcrumbState(cbState)
+
         val requiredBreadcrumb = Breadcrumb("Hello there", NoopLogger)
         breadcrumbState.add(requiredBreadcrumb)
 
-        val breadcrumb = Breadcrumb("Whoops", NoopLogger)
-        breadcrumbState.callbackState.addOnBreadcrumb(
+        cbState.addOnBreadcrumb(
             OnBreadcrumbCallback { givenBreadcrumb ->
                 givenBreadcrumb.metadata?.put("callback", "first")
                 false
             }
         )
-        breadcrumbState.callbackState.addOnBreadcrumb(
+        cbState.addOnBreadcrumb(
             OnBreadcrumbCallback { givenBreadcrumb ->
                 givenBreadcrumb.metadata?.put("callback", "second")
                 true
             }
         )
+
+        val breadcrumb = Breadcrumb("Whoops", NoopLogger)
         breadcrumbState.add(breadcrumb)
-        assertEquals(1, breadcrumbState.store.size)
-        assertEquals(requiredBreadcrumb, breadcrumbState.store.first())
+
+        val copy = breadcrumbState.copy()
+        assertEquals(1, copy.size)
+        assertEquals(requiredBreadcrumb, copy.first())
         assertNotNull(breadcrumb.metadata)
         assertEquals("first", breadcrumb.metadata?.get("callback"))
     }
@@ -168,22 +267,37 @@ class BreadcrumbStateTest {
      */
     @Test
     fun testOnBreadcrumbCallbackException() {
+        val cbState = CallbackState(
+            onBreadcrumbTasks = mutableListOf(
+                OnBreadcrumbCallback {
+                    throw IllegalStateException("Oh no")
+                },
+                OnBreadcrumbCallback { givenBreadcrumb ->
+                    givenBreadcrumb.metadata?.put("callback", "second")
+                    true
+                }
+            )
+        )
+        breadcrumbState = createBreadcrumbState(cbState)
+
         val breadcrumb = Breadcrumb("Whoops", NoopLogger)
-        breadcrumbState.callbackState.addOnBreadcrumb(
-            OnBreadcrumbCallback {
-                throw IllegalStateException("Oh no")
-            }
-        )
-        breadcrumbState.callbackState.addOnBreadcrumb(
-            OnBreadcrumbCallback { givenBreadcrumb ->
-                givenBreadcrumb.metadata?.put("callback", "second")
-                true
-            }
-        )
         breadcrumbState.add(breadcrumb)
-        assertEquals(1, breadcrumbState.store.size)
-        assertEquals(breadcrumb, breadcrumbState.store.peek())
+
+        val copy = breadcrumbState.copy()
+        assertEquals(1, copy.size)
+        assertEquals(breadcrumb, copy[0])
         assertNotNull(breadcrumb.metadata)
         assertEquals("second", breadcrumb.metadata?.get("callback"))
+    }
+
+    @Test
+    fun testCopyThenAdd() {
+        breadcrumbState = BreadcrumbState(25, CallbackState(), NoopLogger)
+
+        repeat(1000) { count ->
+            breadcrumbState.add(Breadcrumb("$count", NoopLogger))
+        }
+
+        assertEquals(25, breadcrumbState.copy().size)
     }
 }

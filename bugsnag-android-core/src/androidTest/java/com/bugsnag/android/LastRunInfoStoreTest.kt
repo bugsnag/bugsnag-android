@@ -3,6 +3,7 @@ package com.bugsnag.android
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
+import com.bugsnag.android.internal.convertToImmutableConfig
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -21,7 +22,9 @@ internal class LastRunInfoStoreTest {
         val config = convertToImmutableConfig(
             generateConfiguration().apply {
                 persistenceDirectory = ApplicationProvider.getApplicationContext<Context>().cacheDir
-            }
+            },
+            packageInfo = null,
+            appInfo = null
         )
         file = File(config.persistenceDirectory, "last-run-info")
         file.delete()

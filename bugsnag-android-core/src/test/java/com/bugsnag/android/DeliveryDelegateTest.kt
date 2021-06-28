@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
+import com.bugsnag.android.internal.StateObserver
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -44,9 +45,11 @@ internal class DeliveryDelegateTest {
     @Test
     fun generateUnhandledReport() {
         var msg: StateEvent.NotifyUnhandled? = null
-        deliveryDelegate.addObserver { _, arg ->
-            msg = arg as StateEvent.NotifyUnhandled
-        }
+        deliveryDelegate.addObserver(
+            StateObserver {
+                msg = it as StateEvent.NotifyUnhandled
+            }
+        )
         deliveryDelegate.deliver(event)
 
         // verify message sent
@@ -66,9 +69,11 @@ internal class DeliveryDelegateTest {
         event.session = Session("123", Date(), User(null, null, null), false, notifier, NoopLogger)
 
         var msg: StateEvent.NotifyHandled? = null
-        deliveryDelegate.addObserver { _, arg ->
-            msg = arg as StateEvent.NotifyHandled
-        }
+        deliveryDelegate.addObserver(
+            StateObserver {
+                msg = it as StateEvent.NotifyHandled
+            }
+        )
         deliveryDelegate.deliver(event)
 
         // verify message sent
@@ -88,9 +93,11 @@ internal class DeliveryDelegateTest {
         event.errors.clear()
 
         var msg: StateEvent.NotifyHandled? = null
-        deliveryDelegate.addObserver { _, arg ->
-            msg = arg as StateEvent.NotifyHandled
-        }
+        deliveryDelegate.addObserver(
+            StateObserver {
+                msg = it as StateEvent.NotifyHandled
+            }
+        )
         deliveryDelegate.deliver(event)
 
         // verify no payload was sent for an Event with no errors
@@ -104,7 +111,7 @@ internal class DeliveryDelegateTest {
         assertEquals(DeliveryStatus.DELIVERED, status)
         assertEquals("Sent 1 new event to Bugsnag", logger.msg)
 
-        val breadcrumb = requireNotNull(breadcrumbState.store.peek())
+        val breadcrumb = requireNotNull(breadcrumbState.copy().first())
         assertEquals(BreadcrumbType.ERROR, breadcrumb.type)
         assertEquals("java.lang.RuntimeException", breadcrumb.message)
         assertEquals("java.lang.RuntimeException", breadcrumb.metadata!!["errorClass"])

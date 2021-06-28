@@ -5,6 +5,8 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
+import com.bugsnag.android.internal.convertToImmutableConfig
+import com.bugsnag.android.internal.sanitiseConfiguration
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -81,7 +83,7 @@ internal class ImmutableConfigTest {
             assertEquals(seed.maxPersistedEvents, maxPersistedEvents)
             assertEquals(seed.maxPersistedSessions, maxPersistedSessions)
             assertEquals(seed.persistUser, persistUser)
-            assertEquals(seed.enabledBreadcrumbTypes, BreadcrumbType.values().toSet())
+            assertNull(seed.enabledBreadcrumbTypes)
             assertNotNull(persistenceDirectory)
         }
     }

@@ -4,7 +4,6 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        jcenter()
         maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
@@ -14,6 +13,7 @@ buildscript {
         classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:${Versions.detektPlugin}"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:${Versions.dokkaPlugin}"
         classpath "org.jlleitschuh.gradle:ktlint-gradle:${Versions.ktlintPlugin}"
+        classpath "androidx.benchmark:benchmark-gradle-plugin:${Versions.benchmarkPlugin}"
     }
 }
 plugins {
@@ -24,19 +24,11 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        jcenter()
     }
 
     gradle.projectsEvaluated {
         tasks.withType(JavaCompile) {
             options.compilerArgs << "-Xlint:all" << "-Werror"
-        }
-
-        tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-            kotlinOptions {
-                allWarningsAsErrors = true
-                jvmTarget = "1.6"
-            }
         }
     }
 }

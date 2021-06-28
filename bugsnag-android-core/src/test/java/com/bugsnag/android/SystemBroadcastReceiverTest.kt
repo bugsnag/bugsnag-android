@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import com.bugsnag.android.SystemBroadcastReceiver.shortenActionNameIfNeeded
+import com.bugsnag.android.internal.ImmutableConfig
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith

@@ -1,10 +1,13 @@
 package com.bugsnag.android;
 
+import com.bugsnag.android.internal.ImmutableConfig;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 
 import java.util.HashMap;
@@ -79,7 +82,7 @@ class SystemBroadcastReceiver extends BroadcastReceiver {
                     String val = valObj.toString();
 
                     if (isAndroidKey(key)) { // shorten the Intent action
-                        meta.put("Extra", String.format("%s: %s", shortAction, val));
+                        meta.put("Extra", shortAction + ": " + val);
                     } else {
                         meta.put(key, val);
                     }
@@ -121,7 +124,9 @@ class SystemBroadcastReceiver extends BroadcastReceiver {
     private Map<String, BreadcrumbType> buildActions() {
 
         Map<String, BreadcrumbType> actions = new HashMap<>();
-        if (client.getConfig().shouldRecordBreadcrumbType(BreadcrumbType.USER)) {
+        ImmutableConfig config = client.getConfig();
+
+        if (!config.shouldDiscardBreadcrumb(BreadcrumbType.USER)) {
             actions.put("android.appwidget.action.APPWIDGET_DELETED", BreadcrumbType.USER);
             actions.put("android.appwidget.action.APPWIDGET_DISABLED", BreadcrumbType.USER);
             actions.put("android.appwidget.action.APPWIDGET_ENABLED", BreadcrumbType.USER);
@@ -130,7 +135,7 @@ class SystemBroadcastReceiver extends BroadcastReceiver {
             actions.put("android.intent.action.DOCK_EVENT", BreadcrumbType.USER);
         }
 
-        if (client.getConfig().shouldRecordBreadcrumbType(BreadcrumbType.STATE)) {
+        if (!config.shouldDiscardBreadcrumb(BreadcrumbType.STATE)) {
             actions.put("android.appwidget.action.APPWIDGET_HOST_RESTORED", BreadcrumbType.STATE);
             actions.put("android.appwidget.action.APPWIDGET_RESTORED", BreadcrumbType.STATE);
             actions.put("android.appwidget.action.APPWIDGET_UPDATE", BreadcrumbType.STATE);
@@ -158,7 +163,7 @@ class SystemBroadcastReceiver extends BroadcastReceiver {
             actions.put("android.os.action.POWER_SAVE_MODE_CHANGED", BreadcrumbType.STATE);
         }
 
-        if (client.getConfig().shouldRecordBreadcrumbType(BreadcrumbType.NAVIGATION)) {
+        if (!config.shouldDiscardBreadcrumb(BreadcrumbType.NAVIGATION)) {
             actions.put("android.intent.action.DREAMING_STARTED", BreadcrumbType.NAVIGATION);
             actions.put("android.intent.action.DREAMING_STOPPED", BreadcrumbType.NAVIGATION);
         }

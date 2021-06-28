@@ -8,10 +8,13 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import com.bugsnag.android.internal.StateObserver;
+
 import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.filters.SmallTest;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,8 +22,6 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Set;
 
 @SmallTest
@@ -47,7 +48,7 @@ public class ObserverInterfaceTest {
         config.addMetadata("foo", "bar", true);
         client = new Client(ApplicationProvider.getApplicationContext(), config);
         observer = new BugsnagTestObserver();
-        client.registerObserver(observer);
+        client.addObserver(observer);
     }
 
     @After
@@ -84,9 +85,9 @@ public class ObserverInterfaceTest {
     public void testAddMetadataSendsMessage() {
         client.addMetadata("foo", "bar", "baz");
         StateEvent.AddMetadata msg = findMessageInQueue(StateEvent.AddMetadata.class);
-        assertEquals("foo", msg.getSection());
-        assertEquals("bar", msg.getKey());
-        assertEquals("baz", msg.getValue());
+        assertEquals("foo", msg.section);
+        assertEquals("bar", msg.key);
+        assertEquals("baz", msg.value);
     }
 
     @Test
@@ -94,8 +95,8 @@ public class ObserverInterfaceTest {
         client.addMetadata("foo", "bar", "baz");
         client.addMetadata("foo", "bar", null);
         StateEvent.ClearMetadataValue msg = findMessageInQueue(StateEvent.ClearMetadataValue.class);
-        assertEquals("foo", msg.getSection());
-        assertEquals("bar", msg.getKey());
+        assertEquals("foo", msg.section);
+        assertEquals("bar", msg.key);
     }
 
     @Test
@@ -103,7 +104,7 @@ public class ObserverInterfaceTest {
         client.clearMetadata("axis");
         StateEvent.ClearMetadataSection value
                 = findMessageInQueue(StateEvent.ClearMetadataSection.class);
-        assertEquals("axis", value.getSection());
+        assertEquals("axis", value.section);
     }
 
     @Test
@@ -111,8 +112,8 @@ public class ObserverInterfaceTest {
         client.clearMetadata("axis", "foo");
         StateEvent.ClearMetadataValue value
                 = findMessageInQueue(StateEvent.ClearMetadataValue.class);
-        assertEquals("axis", value.getSection());
-        assertEquals("foo", value.getKey());
+        assertEquals("axis", value.section);
+        assertEquals("foo", value.key);
     }
 
     @Test
@@ -126,9 +127,9 @@ public class ObserverInterfaceTest {
     public void testStartSessionSendsMessage() {
         client.startSession();
         StateEvent.StartSession sessionInfo = findMessageInQueue(StateEvent.StartSession.class);
-        assertNotNull(sessionInfo.getId());
-        assertNotNull(sessionInfo.getStartedAt());
-        assertEquals(0, sessionInfo.getHandledCount());
+        assertNotNull(sessionInfo.id);
+        assertNotNull(sessionInfo.startedAt);
+        assertEquals(0, sessionInfo.handledCount);
         assertEquals(0, sessionInfo.getUnhandledCount());
     }
 
@@ -149,32 +150,32 @@ public class ObserverInterfaceTest {
     public void testClientSetContextSendsMessage() {
         client.setContext("Pod Bay");
         StateEvent.UpdateContext msg = findMessageInQueue(StateEvent.UpdateContext.class);
-        assertEquals("Pod Bay", msg.getContext());
+        assertEquals("Pod Bay", msg.context);
     }
 
     @Test
     public void testClientMarkLaunchCompletedSendsMessage() {
         client.markLaunchCompleted();
         StateEvent.UpdateIsLaunching msg = findMessageInQueue(StateEvent.UpdateIsLaunching.class);
-        assertFalse(msg.isLaunching());
+        assertFalse(msg.isLaunching);
     }
 
     @Test
     public void testClientSetUserId() {
         client.setUser("personX", "bip@example.com", "Loblaw");
         StateEvent.UpdateUser idMsg = findMessageInQueue(StateEvent.UpdateUser.class);
-        assertEquals("personX", idMsg.getUser().getId());
-        assertEquals("bip@example.com", idMsg.getUser().getEmail());
-        assertEquals("Loblaw", idMsg.getUser().getName());
+        assertEquals("personX", idMsg.user.getId());
+        assertEquals("bip@example.com", idMsg.user.getEmail());
+        assertEquals("Loblaw", idMsg.user.getName());
     }
 
     @Test
     public void testLeaveStringBreadcrumbSendsMessage() {
         client.leaveBreadcrumb("Drift 4 units left");
         StateEvent.AddBreadcrumb crumb = findMessageInQueue(StateEvent.AddBreadcrumb.class);
-        assertEquals(BreadcrumbType.MANUAL, crumb.getType());
-        assertEquals("Drift 4 units left", crumb.getMessage());
-        assertTrue(crumb.getMetadata().isEmpty());
+        assertEquals(BreadcrumbType.MANUAL, crumb.type);
+        assertEquals("Drift 4 units left", crumb.message);
+        assertTrue(crumb.metadata.isEmpty());
     }
 
     @Test
@@ -182,18 +183,18 @@ public class ObserverInterfaceTest {
         Breadcrumb obj = new Breadcrumb("Drift 4 units left", NoopLogger.INSTANCE);
         client.breadcrumbState.add(obj);
         StateEvent.AddBreadcrumb crumb = findMessageInQueue(StateEvent.AddBreadcrumb.class);
-        assertEquals(BreadcrumbType.MANUAL, crumb.getType());
-        assertEquals("Drift 4 units left", crumb.getMessage());
-        assertTrue(crumb.getMetadata().isEmpty());
+        assertEquals(BreadcrumbType.MANUAL, crumb.type);
+        assertEquals("Drift 4 units left", crumb.message);
+        assertTrue(crumb.metadata.isEmpty());
     }
 
     @Test
     public void testLeaveBreadcrumbSendsMessage() {
         client.leaveBreadcrumb("Rollback", new HashMap<String, Object>(), BreadcrumbType.LOG);
         StateEvent.AddBreadcrumb crumb = findMessageInQueue(StateEvent.AddBreadcrumb.class);
-        assertEquals(BreadcrumbType.LOG, crumb.getType());
-        assertEquals("Rollback", crumb.getMessage());
-        assertEquals(0, crumb.getMetadata().size());
+        assertEquals(BreadcrumbType.LOG, crumb.type);
+        assertEquals("Rollback", crumb.message);
+        assertEquals(0, crumb.metadata.size());
     }
 
     @NonNull
@@ -206,7 +207,7 @@ public class ObserverInterfaceTest {
         throw new RuntimeException("Failed to find StateEvent message " + argClass.getSimpleName());
     }
 
-    static class BugsnagTestObserver implements Observer {
+    static class BugsnagTestObserver implements StateObserver {
         final ArrayList<Object> observed;
 
         BugsnagTestObserver() {
@@ -214,8 +215,8 @@ public class ObserverInterfaceTest {
         }
 
         @Override
-        public void update(Observable observable, Object arg) {
-            observed.add(arg);
+        public void onStateChange(@NotNull StateEvent event) {
+            observed.add(event);
         }
     }
 }

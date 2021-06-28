@@ -1,5 +1,55 @@
 # Changelog
 
+## 5.9.5 (2021-06-25)
+
+* Unity: Properly handle ANRs after multiple calls to autoNotify and autoDetectAnrs
+  [#1265](https://github.com/bugsnag/bugsnag-android/pull/1265)
+
+* Cache value of app.backgroundWorkRestricted
+  [#1275](https://github.com/bugsnag/bugsnag-android/pull/1275)
+
+* Optimize execution of callbacks
+  [#1276](https://github.com/bugsnag/bugsnag-android/pull/1276)
+
+* Optimize implementation of internal state change observers
+  [#1274](https://github.com/bugsnag/bugsnag-android/pull/1274)
+
+* Optimize metadata implementation by reducing type casts
+  [#1277](https://github.com/bugsnag/bugsnag-android/pull/1277)
+
+* Trim stacktraces to <200 frames before attempting to construct POJOs
+  [#1281](https://github.com/bugsnag/bugsnag-android/pull/1281)
+
+* Use direct field access when adding breadcrumbs and state updates
+  [#1279](https://github.com/bugsnag/bugsnag-android/pull/1279)
+
+* Avoid using regex to validate api key
+  [#1282](https://github.com/bugsnag/bugsnag-android/pull/1282)
+
+* Discard unwanted automatic data earlier where possible
+  [#1280](https://github.com/bugsnag/bugsnag-android/pull/1280)
+
+* Enable ANR handling on immediately if started from the main thread
+  [#1283](https://github.com/bugsnag/bugsnag-android/pull/1283)
+
+* Include `app.binaryArch` in all events
+  [#1287](https://github.com/bugsnag/bugsnag-android/pull/1287)
+
+* Cache results from PackageManager
+  [#1288](https://github.com/bugsnag/bugsnag-android/pull/1288)
+
+* Use ring buffer to store breadcrumbs
+  [#1286](https://github.com/bugsnag/bugsnag-android/pull/1286)
+
+* Avoid expensive set construction in Config constructor
+  [#1289](https://github.com/bugsnag/bugsnag-android/pull/1289)
+
+* Replace calls to String.format() with concatenation
+  [#1293](https://github.com/bugsnag/bugsnag-android/pull/1293)
+
+* Optimize capture of thread traces
+  [#1300](https://github.com/bugsnag/bugsnag-android/pull/1300)
+
 ## 5.9.4 (2021-05-26)
 
 * Unity: add methods for setting autoNotify and autoDetectAnrs

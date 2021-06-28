@@ -232,6 +232,9 @@ def click_if_present(element)
   return false unless Maze.driver.wait_for_element(element, 1)
 
   Maze.driver.click_element_if_present(element)
+rescue Selenium::WebDriver::Error::UnknownError
+  # Ignore Appium errors (e.g. during an ANR)
+  return false
 end
 
 Then("I sort the errors by {string}") do |comparator|
@@ -248,6 +251,13 @@ Then("the exception stacktrace matches the thread stacktrace") do
   thread_trace.each_with_index do |thread_frame, index|
     exc_frame = exc_trace[index]
     assert_equal(exc_frame, thread_frame)
+  end
+end
+
+Then("the event binary arch field is valid") do
+  arch = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.app.binaryArch")
+  assert_block "'#{arch}' is not a valid value for app.binaryArch" do
+    ["x86", "x86_64", "arm32", "arm64"].include? arch
   end
 end
 

@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.internal.StateObserver
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -23,9 +24,11 @@ internal class UserStateTest {
     @Test
     fun setUser() {
         val msgs = mutableListOf<StateEvent>()
-        state.addObserver { _, arg ->
-            msgs.add(arg as StateEvent)
-        }
+        state.addObserver(
+            StateObserver {
+                msgs.add(it)
+            }
+        )
 
         state.user = User("99", "tc@example.com", "Tobias")
 

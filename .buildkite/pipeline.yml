@@ -164,6 +164,22 @@ steps:
           run: android-ci
     env:
       INSTRUMENTATION_DEVICES: '["Google Pixel-7.1"]'
+      TEST_APK_LOCATION: 'bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk'
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
+  - label: ':android: Performance benchmarks'
+    key: 'perf-benchmarks'
+    depends_on:
+      - "android-ci"
+    timeout_in_minutes: 30
+    command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
+    plugins:
+      - docker-compose#v3.7.0:
+          run: android-ci
+    env:
+      INSTRUMENTATION_DEVICES: '["Google Pixel-7.1"]'
+      TEST_APK_LOCATION: 'bugsnag-benchmarks/build/outputs/apk/androidTest/release/bugsnag-benchmarks-release-androidTest.apk'
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
@@ -174,6 +190,7 @@ steps:
     plugins:
       artifacts#v1.2.0:
         download: "build/release/fixture-r16.apk"
+        upload: "maze_output/failed/**/*"
       docker-compose#v3.7.0:
         pull: android-maze-runner
         run: android-maze-runner
@@ -197,6 +214,7 @@ steps:
     plugins:
       artifacts#v1.2.0:
         download: "build/release/fixture-r21.apk"
+        upload: "maze_output/failed/**/*"
       docker-compose#v3.7.0:
         pull: android-maze-runner
         run: android-maze-runner

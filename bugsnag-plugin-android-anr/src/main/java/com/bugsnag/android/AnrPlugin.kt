@@ -7,8 +7,11 @@ import java.util.concurrent.atomic.AtomicBoolean
 internal class AnrPlugin : Plugin {
 
     internal companion object {
+
         private const val LOAD_ERR_MSG = "Native library could not be linked. Bugsnag will " +
             "not report ANRs. See https://docs.bugsnag.com/platforms/android/anr-link-errors"
+        private const val ANR_ERROR_CLASS = "ANR"
+        private const val ANR_ERROR_MSG = "Application did not respond to UI input"
 
         internal fun doesJavaTraceLeadToNativeTrace(
             javaTrace: Array<StackTraceElement>
@@ -45,15 +48,22 @@ internal class AnrPlugin : Plugin {
             performOneTimeSetup(client)
         }
         if (libraryLoader.isLoaded) {
-            Handler(Looper.getMainLooper()).post(
-                Runnable {
-                    enableAnrReporting()
-                    client.logger.i("Initialised ANR Plugin")
+            val mainLooper = Looper.getMainLooper()
+            if (Looper.myLooper() == mainLooper) {
+                initNativePlugin()
+            } else {
+                Handler(mainLooper).postAtFrontOfQueue {
+                    initNativePlugin()
                 }
-            )
+            }
         } else {
             client.logger.e(LOAD_ERR_MSG)
         }
+    }
+
+    private fun initNativePlugin() {
+        enableAnrReporting()
+        client.logger.i("Initialised ANR Plugin")
     }
 
     private fun performOneTimeSetup(client: Client) {
@@ -89,6 +99,9 @@ internal class AnrPlugin : Plugin {
      */
     private fun notifyAnrDetected(nativeTrace: List<NativeStackframe>) {
         try {
+            if (client.immutableConfig.shouldDiscardError(ANR_ERROR_CLASS)) {
+                return
+            }
             // generate a full report as soon as possible, then wait for extra process error info
             val stackTrace = Looper.getMainLooper().thread.stackTrace
             val hasNativeComponent = doesJavaTraceLeadToNativeTrace(stackTrace)
@@ -101,8 +114,8 @@ internal class AnrPlugin : Plugin {
                 SeverityReason.newInstance(SeverityReason.REASON_ANR)
             )
             val err = event.errors[0]
-            err.errorClass = "ANR"
-            err.errorMessage = "Application did not respond to UI input"
+            err.errorClass = ANR_ERROR_CLASS
+            err.errorMessage = ANR_ERROR_MSG
 
             // append native stackframes to error/thread stacktrace
             if (hasNativeComponent) {

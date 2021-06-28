@@ -38,7 +38,7 @@ internal class EventSerializationTest {
 
                 // threads included
                 createEvent {
-                    val stacktrace = Stacktrace.stacktraceFromJavaTrace(arrayOf(), emptySet(), NoopLogger)
+                    val stacktrace = Stacktrace(arrayOf(), emptySet(), NoopLogger)
                     it.threads.clear()
                     it.threads.add(Thread(5, "main", ThreadType.ANDROID, true, stacktrace, NoopLogger))
                 },
@@ -53,7 +53,7 @@ internal class EventSerializationTest {
                     val crumb = Breadcrumb("hello world", BreadcrumbType.MANUAL, mutableMapOf(), Date(0), NoopLogger)
                     it.breadcrumbs = listOf(crumb)
 
-                    val stacktrace = Stacktrace.stacktraceFromJavaTrace(arrayOf(), emptySet(), NoopLogger)
+                    val stacktrace = Stacktrace(arrayOf(), emptySet(), NoopLogger)
                     val err = Error(ErrorInternal("WhoopsException", "Whoops", stacktrace), NoopLogger)
                     it.errors.clear()
                     it.errors.add(err)

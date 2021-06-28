@@ -1,5 +1,8 @@
 package com.bugsnag.android;
 
+import com.bugsnag.android.internal.ImmutableConfig;
+import com.bugsnag.android.internal.ImmutableConfigKt;
+
 import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
 
@@ -87,7 +90,7 @@ final class BugsnagTestUtils {
         } catch (IOException ignored) {
             // swallow
         }
-        return ImmutableConfigKt.convertToImmutableConfig(config, null);
+        return ImmutableConfigKt.convertToImmutableConfig(config, null, null, null);
     }
 
     static Device generateDevice() {

@@ -24,8 +24,7 @@ class BreadcrumbFilterTest {
         client = generateClient(configuration)
 
         client.leaveBreadcrumb("Hello World")
-
-        assertEquals(1, client.breadcrumbState.store.size)
+        assertEquals(1, client.breadcrumbState.copy().size)
     }
 
     @Test
@@ -36,6 +35,6 @@ class BreadcrumbFilterTest {
 
         client.leaveBreadcrumb("Hello World")
 
-        assertEquals(1, client.breadcrumbState.store.size)
+        assertEquals(1, client.breadcrumbState.copy().size)
     }
 }

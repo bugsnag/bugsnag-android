@@ -16,12 +16,14 @@ internal class NdkPlugin : Plugin {
     private external fun enableCrashReporting()
     private external fun disableCrashReporting()
 
+    private external fun getBinaryArch(): String
+
     private var nativeBridge: NativeBridge? = null
     private var client: Client? = null
 
     private fun initNativeBridge(client: Client): NativeBridge {
         val nativeBridge = NativeBridge()
-        client.registerObserver(nativeBridge)
+        client.addObserver(nativeBridge)
         client.setupNdkPlugin()
         return nativeBridge
     }
@@ -46,6 +48,7 @@ internal class NdkPlugin : Plugin {
             true
         }
         if (libraryLoader.isLoaded) {
+            client.setBinaryArch(getBinaryArch())
             nativeBridge = initNativeBridge(client)
         } else {
             client.logger.e(LOAD_ERR_MSG)
@@ -56,7 +59,7 @@ internal class NdkPlugin : Plugin {
         if (libraryLoader.isLoaded) {
             disableCrashReporting()
             nativeBridge?.let { bridge ->
-                client?.unregisterObserver(bridge)
+                client?.removeObserver(bridge)
             }
         }
     }
