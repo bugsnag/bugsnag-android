@@ -127,7 +127,7 @@ public class ClientTest {
     @Test
     public void testClientBreadcrumbRetrieval() {
         Configuration config = new Configuration("api-key");
-        config.setEnabledBreadcrumbTypes(Collections.emptySet());
+        config.setEnabledBreadcrumbTypes(Collections.<BreadcrumbType>emptySet());
         client = generateClient(config);
         client.leaveBreadcrumb("Hello World");
         List<Breadcrumb> breadcrumbs = client.getBreadcrumbs();
