@@ -68,7 +68,7 @@
 
 * NDK: lowMemory attribute is now reported as expected
   [1262](https://github.com/bugsnag/bugsnag-android/pull/1262)
-  
+
 * Don't include loglog.so in ndk plugin builds performed on Linux
   [1263](https://github.com/bugsnag/bugsnag-android/pull/1263)
 
@@ -79,7 +79,7 @@
 
 * Prevent errors in rare cases where either ConnectivityManager or StorageManager is not available
   [1251](https://github.com/bugsnag/bugsnag-android/pull/1251)
-  
+
 * Change the Bugsnag-Internal-Error header to "bugsnag-android"
   [1252](https://github.com/bugsnag/bugsnag-android/pull/1252)
 
@@ -217,7 +217,7 @@ The packaging for this version was incorrect so it should not be used.
   [#1117](https://github.com/bugsnag/bugsnag-android/pull/1117)
 
 * Add global metadata to ANR error reports
-  [#1095](https://github.com/bugsnag/bugsnag-android/pull/1095)  
+  [#1095](https://github.com/bugsnag/bugsnag-android/pull/1095)
 
 ## 5.5.2 (2021-01-27)
 
@@ -235,7 +235,7 @@ The packaging for this version was incorrect so it should not be used.
 
 * Alter HTTP requests to stop using chunked transfer encoding
   [#1077](https://github.com/bugsnag/bugsnag-android/pull/1077)
-  
+
 * Allow null device IDs, preventing rare crash in Bugsnag initialization
   [#1083](https://github.com/bugsnag/bugsnag-android/pull/1083)
 
@@ -330,7 +330,7 @@ with a unique `persistenceDirectory` value for each process. Please see [the doc
 
 * Ensure device ID is set separately to the user ID
   [#939](https://github.com/bugsnag/bugsnag-android/pull/939)
-  
+
 * Improve stack traces and grouping for promise rejections on React Native < 0.63.2
   [#940](https://github.com/bugsnag/bugsnag-android/pull/940)
 
@@ -340,7 +340,7 @@ with a unique `persistenceDirectory` value for each process. Please see [the doc
 
 * Prevent ConcurrentModificationException thrown from Metadata class
   [#935](https://github.com/bugsnag/bugsnag-android/pull/935)
-  
+
 * Prevent incorrect merge of nested maps in metadata
   [#936](https://github.com/bugsnag/bugsnag-android/pull/936)
 
