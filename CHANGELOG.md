@@ -5,6 +5,9 @@
 * Avoid unnecessary BroadcastReceiver registration for monitoring device orientation
   [#1303](https://github.com/bugsnag/bugsnag-android/pull/1303)
 
+* Register system callbacks on background thread
+  [#1292](https://github.com/bugsnag/bugsnag-android/pull/1292)
+
 ## 5.9.5 (2021-06-25)
 
 * Unity: Properly handle ANRs after multiple calls to autoNotify and autoDetectAnrs

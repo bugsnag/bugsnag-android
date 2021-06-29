@@ -71,11 +71,11 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
     final SessionTracker sessionTracker;
 
-    private final SystemBroadcastReceiver systemBroadcastReceiver;
+    final SystemBroadcastReceiver systemBroadcastReceiver;
     private final ActivityBreadcrumbCollector activityBreadcrumbCollector;
     private final SessionLifecycleCallback sessionLifecycleCallback;
 
-    private final Connectivity connectivity;
+    final Connectivity connectivity;
 
     @Nullable
     private final StorageManager storageManager;
@@ -220,10 +220,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             exceptionHandler.install();
         }
 
-        // register a receiver for automatic breadcrumbs
-        systemBroadcastReceiver = SystemBroadcastReceiver.register(this, logger, bgTaskService);
-        registerComponentCallbacks();
-
         // load last run info
         lastRunInfoStore = new LastRunInfoStore(immutableConfig);
         lastRunInfo = loadLastRunInfo();
@@ -231,12 +227,15 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         // initialise plugins before attempting to flush any errors
         loadPlugins(configuration);
 
-        connectivity.registerForNetworkChanges();
-
         // Flush any on-disk errors and sessions
         eventStore.flushOnLaunch();
         eventStore.flushAsync();
         sessionTracker.flushAsync();
+
+        // register listeners for system events in the background.
+        systemBroadcastReceiver = new SystemBroadcastReceiver(this, logger);
+        registerComponentCallbacks();
+        registerListenersInBackground();
 
         // leave auto breadcrumb
         Map<String, Object> data = Collections.emptyMap();
@@ -294,6 +293,25 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         this.launchCrashTracker = launchCrashTracker;
         this.lastRunInfo = null;
         this.exceptionHandler = exceptionHandler;
+    }
+
+    /**
+     * Registers listeners for system events in the background. This offloads work from the main
+     * thread that collects useful information from callbacks, but that don't need to be done
+     * immediately on client construction.
+     */
+    void registerListenersInBackground() {
+        try {
+            bgTaskService.submitTask(TaskType.DEFAULT, new Runnable() {
+                @Override
+                public void run() {
+                    connectivity.registerForNetworkChanges();
+                    SystemBroadcastReceiver.register(appContext, systemBroadcastReceiver, logger);
+                }
+            });
+        } catch (RejectedExecutionException ex) {
+            logger.w("Failed to register for system events", ex);
+        }
     }
 
     private LastRunInfo loadLastRunInfo() {
