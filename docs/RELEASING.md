@@ -56,6 +56,7 @@ This contains a prompt of checks which you may want to test, depending on the ex
     - Select the com.bugsnag closed repository
     - Click the “release” button in the toolbar
   - Merge outstanding docs PRs related to this release
+  - Raise PRs to update the bugsnag-android dependency for bugsnag-js and bugsnag-unity
 
 ## Post-release checklist
 
