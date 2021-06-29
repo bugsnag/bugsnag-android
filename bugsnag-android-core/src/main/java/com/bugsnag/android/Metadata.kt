@@ -97,7 +97,7 @@ internal data class Metadata @JvmOverloads constructor(
         }
 
         internal fun mergeMaps(data: List<Map<String, Any>>): MutableMap<String, Any> {
-            val keys = data.flatMap { it.keys }.toSet()
+            val keys = data.flatMapTo(HashSet()) { it.keys }
             val result = ConcurrentHashMap<String, Any>()
 
             for (map in data) {

@@ -11,7 +11,7 @@ internal class EventInternal @JvmOverloads internal constructor(
 ) : JsonStream.Streamable, MetadataAware, UserAware {
 
     val metadata: Metadata = data.copy()
-    private val discardClasses: Set<String> = config.discardClasses.toSet()
+    private val discardClasses: Set<String> = config.discardClasses.toHashSet()
     private val projectPackages = config.projectPackages
 
     @JvmField
