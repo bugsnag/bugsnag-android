@@ -11,8 +11,6 @@ import com.bugsnag.android.internal.StateObserver;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.os.Environment;
 import android.os.storage.StorageManager;
@@ -25,7 +23,6 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -225,9 +222,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
         // register a receiver for automatic breadcrumbs
         systemBroadcastReceiver = SystemBroadcastReceiver.register(this, logger, bgTaskService);
-
-        registerOrientationChangeListener();
-        registerMemoryTrimListener();
+        registerComponentCallbacks();
 
         // load last run info
         lastRunInfoStore = new LastRunInfoStore(immutableConfig);
@@ -342,10 +337,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         return configuration.impl.metadataState.copy(copy);
     }
 
-    private void registerOrientationChangeListener() {
-        IntentFilter configFilter = new IntentFilter();
-        configFilter.addAction(Intent.ACTION_CONFIGURATION_CHANGED);
-        ConfigChangeReceiver receiver = new ConfigChangeReceiver(deviceDataCollector,
+    private void registerComponentCallbacks() {
+        appContext.registerComponentCallbacks(new ClientComponentCallbacks(
+                deviceDataCollector,
                 new Function2<String, String, Unit>() {
                     @Override
                     public Unit invoke(String oldOrientation, String newOrientation) {
@@ -356,14 +350,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                         clientObservable.postOrientationChange(newOrientation);
                         return null;
                     }
-                }
-        );
-        ContextExtensionsKt.registerReceiverSafe(appContext, receiver, configFilter, logger);
-    }
-
-    private void registerMemoryTrimListener() {
-        appContext.registerComponentCallbacks(new ClientComponentCallbacks(
-                new Function1<Boolean, Unit>() {
+                }, new Function1<Boolean, Unit>() {
                     @Override
                     public Unit invoke(Boolean isLowMemory) {
                         clientObservable.postMemoryTrimEvent(isLowMemory);
