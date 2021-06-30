@@ -56,15 +56,19 @@ public class SessionTrackerTest {
     @Mock
     App app;
 
+    ContextState contextState;
+
     /**
      * Configures a session tracker that automatically captures sessions
      */
     @Before
     public void setUp() {
+        contextState = new ContextState();
         when(client.getNotifier()).thenReturn(new Notifier());
         when(client.getAppContext()).thenReturn(context);
         when(client.getAppDataCollector()).thenReturn(appDataCollector);
         when(client.getConfig()).thenReturn(cfg);
+        when(client.getContextState()).thenReturn(contextState);
         when(appDataCollector.generateApp()).thenReturn(app);
         when(client.getDeviceDataCollector()).thenReturn(deviceDataCollector);
         when(deviceDataCollector.generateDevice()).thenReturn(generateDevice());
@@ -147,6 +151,7 @@ public class SessionTrackerTest {
     public void testBasicInForeground() {
         assertNull(sessionTracker.getCurrentSession());
         assertNull(sessionTracker.getContextActivity());
+        assertNull(contextState.getContext());
 
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, System.currentTimeMillis());
         Session firstSession = sessionTracker.getCurrentSession();
@@ -155,9 +160,11 @@ public class SessionTrackerTest {
         sessionTracker.updateForegroundTracker("other", true, System.currentTimeMillis());
         assertEquals(firstSession, sessionTracker.getCurrentSession());
         assertEquals("other", sessionTracker.getContextActivity());
+        assertEquals("other", contextState.getContext());
 
         sessionTracker.updateForegroundTracker("other", false, System.currentTimeMillis());
         assertEquals(ACTIVITY_NAME, sessionTracker.getContextActivity());
+        assertEquals(ACTIVITY_NAME, contextState.getContext());
     }
 
     @Test

@@ -151,9 +151,11 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         breadcrumbState = new BreadcrumbState(maxBreadcrumbs, callbackState, logger);
 
         storageManager = getStorageManagerFrom(appContext);
-
         contextState = new ContextState();
-        contextState.setContext(configuration.getContext());
+
+        if (configuration.getContext() != null) {
+            contextState.setManualContext(configuration.getContext());
+        }
 
         sessionStore = new SessionStore(immutableConfig, logger, null);
         sessionTracker = new SessionTracker(immutableConfig, callbackState, this,
@@ -164,7 +166,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
         launchCrashTracker = new LaunchCrashTracker(immutableConfig);
         appDataCollector = new AppDataCollector(appContext, appContext.getPackageManager(),
-                immutableConfig, sessionTracker, am, launchCrashTracker, logger);
+                immutableConfig, sessionTracker, am, launchCrashTracker, contextState, logger);
 
         // load the device + user information
         SharedPrefMigrator sharedPrefMigrator = new SharedPrefMigrator(appContext);
@@ -501,7 +503,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      * If you would like to set this value manually, you should alter this property.
      */
     public void setContext(@Nullable String context) {
-        contextState.setContext(context);
+        contextState.setManualContext(context);
     }
 
     /**
@@ -722,11 +724,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         User user = userState.getUser();
         event.setUser(user.getId(), user.getEmail(), user.getName());
 
-        // Attach default context from active activity
-        if (Intrinsics.isEmpty(event.getContext())) {
-            String context = contextState.getContext();
-            event.setContext(context != null ? context : appDataCollector.getActiveScreenClass());
-        }
+        // Attach context to the event
+        event.setContext(contextState.getContext());
         notifyInternal(event, onError);
     }
 
@@ -1031,6 +1030,10 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
     MetadataState getMetadataState() {
         return metadataState;
+    }
+
+    ContextState getContextState() {
+        return contextState;
     }
 
     void setAutoNotify(boolean autoNotify) {

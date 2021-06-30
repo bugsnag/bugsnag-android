@@ -47,6 +47,7 @@ class AppDataCollectorTest {
             client.sessionTracker,
             am,
             client.launchCrashTracker,
+            client.contextState,
             NoopLogger
         )
         val app = collector.getAppDataMetadata()
@@ -68,6 +69,7 @@ class AppDataCollectorTest {
             client.sessionTracker,
             am,
             client.launchCrashTracker,
+            client.contextState,
             NoopLogger
         )
         val app = collector.getAppDataMetadata()
