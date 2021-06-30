@@ -143,7 +143,7 @@ internal class ManifestConfigLoader {
 
         return when (val ary = delimitedStr?.split(",")) {
             null -> default
-            else -> ary.toHashSet()
+            else -> ary.toSet()
         }
     }
 }
