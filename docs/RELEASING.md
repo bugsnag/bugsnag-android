@@ -91,11 +91,12 @@ Manual publishing is discouraged, but is possible in exceptional circumstances b
     nexusPassword=your-nexus-password
 
     # GPG key details
-    # Your key must be added to a public key server, such as http://keys.gnupg.net:
+    # See https://central.sonatype.org/publish/requirements/gpg/ for full documentation
+    # Your key must be added to a public key server, such as http://keyserver.ubuntu.com:
     # 1. Get your key id by running `gpg --list-keys --keyid-format=short`. It
     #    should be 8-character hexadecimal.
     # 2. Export your key using `gpg --armor --export <key-id>`
-    # 3. Upload to a server using `gpg --keyserver hkp://keys.gnupg.net --send-keys <key-id>`
+    # 3. Distribute your public key: `gpg --keyserver keyserver.ubuntu.com --send-keys`
     signing.keyId=<key-id>
     signing.password=your-gpg-key-passphrase
     signing.secretKeyRingFile=/Users/{username}/.gnupg/secring.gpg
