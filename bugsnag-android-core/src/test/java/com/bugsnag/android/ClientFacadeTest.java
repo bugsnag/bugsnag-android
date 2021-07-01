@@ -174,9 +174,9 @@ public class ClientFacadeTest {
     @Test
     public void setContextValid() {
         client.setContext("foo");
-        verify(contextState, times(1)).setContext("foo");
+        verify(contextState, times(1)).setManualContext("foo");
         client.setContext(null);
-        verify(contextState, times(1)).setContext(null);
+        verify(contextState, times(1)).setManualContext(null);
     }
 
     @Test
