@@ -25,6 +25,7 @@
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun updateSeverityInternal(severity: Severity)</ID>
     <ID>ReturnCount:DefaultDelivery.kt$DefaultDelivery$fun deliver( urlString: String, streamable: JsonStream.Streamable, headers: Map&lt;String, String?&gt; ): DeliveryStatus</ID>
     <ID>SwallowedException:AppDataCollector.kt$AppDataCollector$catch (exception: Exception) { logger.w("Could not check lowMemory status") }</ID>
+    <ID>SwallowedException:ConnectivityCompat.kt$ConnectivityLegacy$catch (e: NullPointerException) { // in some rare cases we get a remote NullPointerException via Parcel.readException null }</ID>
     <ID>SwallowedException:ContextExtensions.kt$catch (exc: RuntimeException) { null }</ID>
     <ID>SwallowedException:DeviceDataCollector.kt$DeviceDataCollector$catch (exc: Exception) { false }</ID>
     <ID>SwallowedException:DeviceDataCollector.kt$DeviceDataCollector$catch (exception: Exception) { logger.w("Could not get battery status") }</ID>
@@ -32,7 +33,6 @@
     <ID>SwallowedException:DeviceIdStore.kt$DeviceIdStore$catch (exc: OverlappingFileLockException) { Thread.sleep(FILE_LOCK_WAIT_MS) }</ID>
     <ID>SwallowedException:PluginClient.kt$PluginClient$catch (exc: ClassNotFoundException) { logger.d("Plugin '$clz' is not on the classpath - functionality will not be enabled.") null }</ID>
     <ID>UnusedPrivateMember:ThreadStateTest.kt$ThreadStateTest$private val configuration = generateImmutableConfig()</ID>
-    <ID>VarCouldBeVal:SystemBroadcastReceiverTest.kt$SystemBroadcastReceiverTest$var config = BugsnagTestUtils.generateConfiguration()</ID>
     <ID>VariableNaming:EventInternal.kt$EventInternal$/** * @return user information associated with this Event */ internal var _user = User(null, null, null)</ID>
   </CurrentIssues>
 </SmellBaseline>

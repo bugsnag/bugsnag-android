@@ -8,6 +8,9 @@
 * Register system callbacks on background thread
   [#1292](https://github.com/bugsnag/bugsnag-android/pull/1292)
 
+* Fix rare NullPointerExceptions from ConnectivityManager
+  [1311](https://github.com/bugsnag/bugsnag-android/pull/1311)
+
 ## 5.9.5 (2021-06-25)
 
 * Unity: Properly handle ANRs after multiple calls to autoNotify and autoDetectAnrs
