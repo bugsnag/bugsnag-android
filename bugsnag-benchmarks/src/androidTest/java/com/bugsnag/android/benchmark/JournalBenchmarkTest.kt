@@ -19,8 +19,8 @@ class JournalBenchmarkTest {
     @get:Rule
     val benchmarkRule = BenchmarkRule()
 
-    lateinit var client: Client
-    lateinit var ctx: Context
+    private lateinit var client: Client
+    private lateinit var ctx: Context
 
     @Before
     fun setUp() {
@@ -30,8 +30,8 @@ class JournalBenchmarkTest {
 
     @Test
     fun serializeJournal() {
-        val journal = Journal()
-        val entries = listOf<Journal.Command>(
+        val journal = Journal("Bugsnag state",1)
+        val entries = listOf(
             Journal.Command("a", "b")
         )
 

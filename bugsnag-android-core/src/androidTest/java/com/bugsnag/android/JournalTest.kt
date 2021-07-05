@@ -8,7 +8,7 @@ import java.io.ByteArrayOutputStream
 class JournalTest {
     @Test
     fun testEmptyEverything() {
-        val journal = Journal()
+        val journal = Journal(standardType, standardVersion)
         val document = mutableMapOf<String, Any>()
         val observed = journal.applyTo(document)
         val expected = mutableMapOf<String, Any>()
@@ -17,7 +17,7 @@ class JournalTest {
 
     @Test
     fun testBasicMap() {
-        val journal = Journal()
+        val journal = Journal(standardType, standardVersion)
         journal.add(Journal.Command("a", 1))
         val document = mutableMapOf<String, Any>()
         val observed = journal.applyTo(document)
@@ -27,7 +27,7 @@ class JournalTest {
 
     @Test
     fun testNonAscii() {
-        val journal = Journal()
+        val journal = Journal(standardType, standardVersion)
         journal.add(Journal.Command("猫", "cat (Japanese)"))
         journal.add(Journal.Command("பூனை", "cat (Tamil)"))
         val document = mutableMapOf<String, Any>()
@@ -41,7 +41,7 @@ class JournalTest {
 
     @Test
     fun testLargeValues() {
-        val journal = Journal()
+        val journal = Journal(standardType, standardVersion)
         journal.add(Journal.Command("int", 1000000000000))
         journal.add(Journal.Command("float", 1.3529104022e80))
         val document = mutableMapOf<String, Any>()
@@ -55,7 +55,7 @@ class JournalTest {
 
     @Test
     fun testSubmap() {
-        val journal = Journal()
+        val journal = Journal(standardType, standardVersion)
         journal.add(Journal.Command("a", mapOf(1 to 2)))
         val document = mutableMapOf<String, Any>()
         val observed = journal.applyTo(document)
@@ -65,7 +65,7 @@ class JournalTest {
 
     @Test
     fun testSublist() {
-        val journal = Journal()
+        val journal = Journal(standardType, standardVersion)
         journal.add(Journal.Command("a", listOf(1, 2)))
         val document = mutableMapOf<String, Any>()
         val observed = journal.applyTo(document)
@@ -76,7 +76,7 @@ class JournalTest {
     @Test
     fun test1EntryJournal() {
         assertSerializeDeserialize(
-            "{\"a\":1}\u0000".toByteArray(Charsets.UTF_8),
+            (standardJournalInfoSerialized + "{\"a\":1}\u0000").toByteArray(Charsets.UTF_8),
             Journal.Command("a", 1)
         )
     }
@@ -84,7 +84,7 @@ class JournalTest {
     @Test
     fun test2EntryJournal() {
         assertSerializeDeserialize(
-            "{\"a\":1}\u0000{\"b\":\"x\"}\u0000".toByteArray(Charsets.UTF_8),
+            (standardJournalInfoSerialized + "{\"a\":1}\u0000{\"b\":\"x\"}\u0000").toByteArray(Charsets.UTF_8),
             Journal.Command("a", 1),
             Journal.Command("b", "x")
         )
@@ -94,7 +94,8 @@ class JournalTest {
     fun testRunSerializedJournal() {
         assertRunSerializedJournal(
             initialDocument = mutableMapOf("q" to 100),
-            serializedJournal = "{\"a\":1}\u0000{\"b\":\"x\"}\u0000".toByteArray(Charsets.UTF_8),
+            serializedJournal = (standardJournalInfoSerialized + "{\"a\":1}\u0000{\"b\":\"x\"}\u0000")
+                .toByteArray(Charsets.UTF_8),
             expectedDocument = mutableMapOf("q" to 100, "a" to 1, "b" to "x")
         )
     }
@@ -103,7 +104,8 @@ class JournalTest {
     fun testRunSerializedJournalWithEscapesDot() {
         assertRunSerializedJournal(
             initialDocument = mutableMapOf("q" to 100),
-            serializedJournal = "{\"f\\\\.oo.-1\":1}\u0000{\"b\":\"x\"}\u0000".toByteArray(Charsets.UTF_8),
+            serializedJournal = (standardJournalInfoSerialized + "{\"f\\\\.oo.-1\":1}\u0000{\"b\":\"x\"}\u0000")
+                .toByteArray(Charsets.UTF_8),
             expectedDocument = mutableMapOf(
                 "q" to 100,
                 "f.oo" to mutableListOf(1),
@@ -116,7 +118,8 @@ class JournalTest {
     fun testRunSerializedJournalWithEscapesBackslash() {
         assertRunSerializedJournal(
             initialDocument = mutableMapOf("q" to 100),
-            serializedJournal = "{\"f\\\\\\\\oo.xyz\":1}\u0000{\"b\":\"x\"}\u0000".toByteArray(Charsets.UTF_8),
+            serializedJournal = (standardJournalInfoSerialized + "{\"f\\\\\\\\oo.xyz\":1}\u0000{\"b\":\"x\"}\u0000")
+                .toByteArray(Charsets.UTF_8),
             expectedDocument = mutableMapOf(
                 "q" to 100,
                 "f\\oo" to mutableMapOf("xyz" to 1),
@@ -129,7 +132,8 @@ class JournalTest {
     fun testRunSerializedJournalDeep() {
         assertRunSerializedJournal(
             initialDocument = mutableMapOf("q" to 100),
-            serializedJournal = "{\"a.b.-1\":1}\u0000{\"b.-1.\":\"x\"}\u0000".toByteArray(Charsets.UTF_8),
+            serializedJournal = (standardJournalInfoSerialized + "{\"a.b.-1\":1}\u0000{\"b.-1.\":\"x\"}\u0000")
+                .toByteArray(Charsets.UTF_8),
             expectedDocument = mutableMapOf(
                 "q" to 100,
                 "a" to mapOf<String, Any>("b" to listOf<Any>(1L)),
@@ -141,18 +145,57 @@ class JournalTest {
     @Test(expected = IllegalStateException::class)
     fun testDeserializeFail() {
         deserialize(
-            "{\"a.\":10false}\u0000".toByteArray(Charsets.UTF_8)
+            (standardJournalInfoSerialized + "{\"a.\":10false}\u0000").toByteArray(Charsets.UTF_8)
+        )
+    }
+
+    @Test
+    fun testDeserializeEmpty() {
+        deserialize(
+            (
+                "{\"*\":{\"type\":\"Bugsnag state\",\"version\":1}}\u0000"
+                ).toByteArray(Charsets.UTF_8)
+        )
+    }
+
+    @Test
+    fun testDeserializeBasic() {
+        deserialize(
+            (
+                "{\"*\":{\"type\":\"Bugsnag state\",\"version\":1}}\u0000" +
+                    "{\"a\":10}\u0000"
+                ).toByteArray(Charsets.UTF_8)
+        )
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun testDeserializeMissingType() {
+        deserialize(
+            (
+                "{\"*\":{\"version\":1}}\u0000" +
+                    "{\"a\":10}\u0000"
+                ).toByteArray(Charsets.UTF_8)
+        )
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun testDeserializeMissingVersion() {
+        deserialize(
+            (
+                "{\"*\":{\"type\":\"Bugsnag state\"}}\u0000" +
+                    "{\"a\":10}\u0000"
+                ).toByteArray(Charsets.UTF_8)
         )
     }
 
     private fun assertSerializeDeserialize(serialized: ByteArray, vararg entries: Journal.Command) {
-        val journal = Journal()
+        val journal = Journal(standardType, standardVersion)
         for (entry in entries) {
             journal.add(entry)
         }
-        val expectedBytes = serialized
-        val observedBytes = serialize(journal)
-        Assert.assertArrayEquals(expectedBytes, observedBytes)
+        val expectedAsString = serialized.toString(Charsets.UTF_8)
+        val observedAsString = serialize(journal).toString(Charsets.UTF_8)
+        Assert.assertEquals(expectedAsString, observedAsString)
 
         val expectedEntry = journal
         val observedEntry = deserialize(serialized)
@@ -185,5 +228,11 @@ class JournalTest {
         val expectedMap = BugsnagTestUtils.normalized(expectedDocument)
         val observedMap = BugsnagTestUtils.normalized(observedDocument)
         Assert.assertEquals(expectedMap, observedMap)
+    }
+
+    companion object {
+        const val standardType = "Bugsnag state"
+        const val standardVersion = 1
+        const val standardJournalInfoSerialized = "{\"*\":{\"type\":\"Bugsnag state\",\"version\":1}}\u0000"
     }
 }

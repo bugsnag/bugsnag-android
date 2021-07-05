@@ -9,7 +9,7 @@ import java.io.OutputStream
  * Sometimes it's more efficient to serialize a base document and a list of modifications
  * to be made to it rather than to re-serialize the entire document after every modification.
  */
-class Journal {
+class Journal(private val type: String, private val version: Int) {
     private val commands: MutableList<Command> = mutableListOf()
 
     /**
@@ -52,6 +52,15 @@ class Journal {
      */
     @Throws(IOException::class)
     fun serialize(out: OutputStream) {
+        val journalInfoEntry = mutableMapOf<String, Any>(
+            JOURNAL_INFO_PATH to mutableMapOf(
+                TYPE_KEY to type,
+                VERSION_KEY to version
+            )
+        )
+        dslJson.serialize(journalInfoEntry, out)
+        out.write(0)
+
         for (command in commands) {
             command.serialize(out)
         }
@@ -99,6 +108,9 @@ class Journal {
         internal val dslJson = DslJson<MutableMap<String, Any>>()
 
         private const val NULL_BYTE = 0.toByte()
+        private const val TYPE_KEY = "type"
+        private const val VERSION_KEY = "version"
+        private const val JOURNAL_INFO_PATH = "*"
 
         /**
          * Deserialize an entire journal from a byte array.
@@ -110,9 +122,39 @@ class Journal {
          * @return The journal
          */
         fun deserialize(bytes: ByteArray): Journal {
-            val journal = Journal()
             var currentStart = 0
-            for (i in bytes.indices) {
+            val length = bytes.size
+
+            // Decode the journal info entry
+            for (i in 0 until length) {
+                if (bytes[i] == 0.toByte()) {
+                    currentStart = i + 1
+                    break
+                }
+            }
+            require(currentStart > 0) { "Serialized journal doesn't contain a journal info entry" }
+            val infoDocument = bytes.copyOfRange(0, currentStart - 1)
+            val infoEntry = deserializeEntry(dslJson, infoDocument)
+            require(infoEntry.key == JOURNAL_INFO_PATH) { "Invalid or corrupt journal journal info entry" }
+            val journalInfo = infoEntry.value
+            require(journalInfo is MutableMap<*, *>) { "Invalid or corrupt journal journal info entry" }
+            val type = journalInfo[TYPE_KEY]
+            require(type != null && type is String) { "Type must exist in the journal info and be a string" }
+            var version = journalInfo[VERSION_KEY]
+            when (version) {
+                is Int -> {}
+                is Long -> {
+                    version = version.toInt()
+                }
+                else -> {
+                    throw IllegalArgumentException("Version must exist in the journal info and be an integer")
+                }
+            }
+
+            val journal = Journal(type, version)
+
+            // Decode the journal entries
+            for (i in currentStart until length) {
                 if (bytes[i] == NULL_BYTE) {
                     try {
                         val document = bytes.copyOfRange(currentStart, i)
@@ -137,15 +179,27 @@ class Journal {
          */
         @Throws(IOException::class)
         fun deserializeCommand(dslJson: DslJson<MutableMap<String, Any>>, document: ByteArray): Command {
+            val mapEntry = deserializeEntry(dslJson, document)
+            return Command(mapEntry.key, mapEntry.value)
+        }
+
+        /**
+         * Deserialize a journal entry from a byte buffer.
+         *
+         * @param document The document to deserialize from
+         * @return The journal entry
+         * @throws IOException If an IO exception occurs
+         */
+        @Throws(IOException::class)
+        fun deserializeEntry(dslJson: DslJson<MutableMap<String, Any>>, document: ByteArray): Map.Entry<String, Any> {
             @Suppress("UNCHECKED_CAST")
             val map: MutableMap<String, Any>? = dslJson.deserialize(
                 MutableMap::class.java,
                 document,
                 document.size
             ) as MutableMap<String, Any>?
-            require(!map.isNullOrEmpty()) { "Journal entry data is corrupt and could not be decoded" }
-            val mapEntry = map.entries.single()
-            return Command(mapEntry.key, mapEntry.value)
+            require(!map.isNullOrEmpty()) { "Journal entry is invalid" }
+            return map.entries.single()
         }
     }
 }
