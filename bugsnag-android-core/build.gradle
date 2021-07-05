@@ -11,6 +11,10 @@ bugsnagBuildOptions {
 apply plugin: "com.android.library"
 apply plugin: "org.jetbrains.dokka"
 
+dependencies {
+    implementation 'com.dslplatform:dsl-json:1.9.8'
+}
+
 dokka {
     outputFormat = "html"
     outputDirectory = "$buildDir/dokka"

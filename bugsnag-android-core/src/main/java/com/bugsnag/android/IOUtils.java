@@ -8,8 +8,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
-import java.net.HttpURLConnection;
-import java.net.URLConnection;
 
 @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
 class IOUtils {
