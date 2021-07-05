@@ -31,7 +31,14 @@ void bsg_serialize_custom_metadata(const bugsnag_metadata metadata,
                                    JSON_Object *event_obj);
 void bsg_serialize_user(const bugsnag_user user, JSON_Object *event_obj);
 void bsg_serialize_session(bugsnag_event *event, JSON_Object *event_obj);
-void bsg_serialize_stackframe(bugsnag_stackframe *stackframe,
+/**
+ * Append a JSON-serialized stackframe to an array
+ *
+ * @param stackframe the frame to serialize
+ * @param is_pc      true if the current frame is the program counter
+ * @param stacktrace the destination array
+ */
+void bsg_serialize_stackframe(bugsnag_stackframe *stackframe, bool is_pc,
                               JSON_Array *stacktrace);
 void bsg_serialize_error(bsg_error exc, JSON_Object *exception,
                          JSON_Array *stacktrace);

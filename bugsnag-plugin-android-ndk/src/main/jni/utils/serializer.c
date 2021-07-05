@@ -694,13 +694,20 @@ void bsg_serialize_error(bsg_error exc, JSON_Object *exception,
   json_object_set_string(exception, "errorClass", exc.errorClass);
   json_object_set_string(exception, "message", exc.errorMessage);
   json_object_set_string(exception, "type", "c");
-  for (int findex = 0; findex < exc.frame_count; findex++) {
+  // assuming that the initial frame is the program counter. This logic will
+  // need to be revisited if (for example) we add more intelligent processing
+  // for stack overflow-type errors, like discarding the top frames, which
+  // would mean no stored frame is the program counter.
+  if (exc.frame_count > 0) {
+    bsg_serialize_stackframe(&(exc.stacktrace[0]), true, stacktrace);
+  }
+  for (int findex = 1; findex < exc.frame_count; findex++) {
     bugsnag_stackframe stackframe = exc.stacktrace[findex];
-    bsg_serialize_stackframe(&stackframe, stacktrace);
+    bsg_serialize_stackframe(&stackframe, false, stacktrace);
   }
 }
 
-void bsg_serialize_stackframe(bugsnag_stackframe *stackframe,
+void bsg_serialize_stackframe(bugsnag_stackframe *stackframe, bool is_pc,
                               JSON_Array *stacktrace) {
   JSON_Value *frame_val = json_value_init_object();
   JSON_Object *frame = json_value_get_object(frame_val);
@@ -708,6 +715,11 @@ void bsg_serialize_stackframe(bugsnag_stackframe *stackframe,
   json_object_set_number(frame, "symbolAddress", (*stackframe).symbol_address);
   json_object_set_number(frame, "loadAddress", (*stackframe).load_address);
   json_object_set_number(frame, "lineNumber", (*stackframe).line_number);
+  if (is_pc) {
+    // only necessary to set to true, false is the default value and omitting
+    // the field keeps payload sizes smaller.
+    json_object_set_boolean(frame, "isPC", true);
+  }
   if (strlen((*stackframe).filename) > 0) {
     json_object_set_string(frame, "file", (*stackframe).filename);
   }
