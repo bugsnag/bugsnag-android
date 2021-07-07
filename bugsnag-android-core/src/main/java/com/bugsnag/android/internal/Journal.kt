@@ -1,6 +1,6 @@
 package com.bugsnag.android.internal
 
-import com.dslplatform.json.DslJson
+import java.io.File
 import java.io.IOException
 import java.io.OutputStream
 
@@ -9,7 +9,7 @@ import java.io.OutputStream
  * Sometimes it's more efficient to serialize a base document and a list of modifications
  * to be made to it rather than to re-serialize the entire document after every modification.
  */
-class Journal(private val type: String, private val version: Int) {
+class Journal(val type: String, val version: Int) {
     private val commands: MutableList<Command> = mutableListOf()
 
     /**
@@ -58,7 +58,7 @@ class Journal(private val type: String, private val version: Int) {
                 VERSION_KEY to version
             )
         )
-        dslJson.serialize(journalInfoEntry, out)
+        JsonHelper.serialize(journalInfoEntry, out)
         out.write(0)
 
         for (command in commands) {
@@ -97,26 +97,29 @@ class Journal(private val type: String, private val version: Int) {
          */
         @Throws(IOException::class)
         fun serialize(out: OutputStream) {
-            dslJson.serialize(mutableMapOf(path to value), out)
+            JsonHelper.serialize(mutableMapOf(path to value), out)
             out.write(0)
         }
     }
 
     companion object {
-        // Only one global DslJson is needed, and is thread-safe
-        // Note: dsl-json adds about 150k to the final binary size.
-        internal val dslJson = DslJson<MutableMap<String, Any>>()
-
         private const val NULL_BYTE = 0.toByte()
         private const val TYPE_KEY = "type"
         private const val VERSION_KEY = "version"
         private const val JOURNAL_INFO_PATH = "*"
 
         /**
-         * Deserialize an entire journal from a byte array.
+         * Deserialize an entire journal from a file.
          *
-         * Note: This method will skip any journal command entries that fail to deserialize
-         * (corrupt, invalid, or malformed data) and generate log entries describing the problem(s).
+         * @param file The file to read from
+         * @return The journal
+         */
+        fun deserialize(file: File): Journal {
+            return deserialize(file.readBytes())
+        }
+
+        /**
+         * Deserialize an entire journal from a byte array.
          *
          * @param bytes The bytes to deserialize from
          * @return The journal
@@ -134,7 +137,7 @@ class Journal(private val type: String, private val version: Int) {
             }
             require(currentStart > 0) { "Serialized journal doesn't contain a journal info entry" }
             val infoDocument = bytes.copyOfRange(0, currentStart - 1)
-            val infoEntry = deserializeEntry(dslJson, infoDocument)
+            val infoEntry = deserializeEntry(infoDocument)
             require(infoEntry.key == JOURNAL_INFO_PATH) { "Invalid or corrupt journal journal info entry" }
             val journalInfo = infoEntry.value
             require(journalInfo is MutableMap<*, *>) { "Invalid or corrupt journal journal info entry" }
@@ -158,7 +161,7 @@ class Journal(private val type: String, private val version: Int) {
                 if (bytes[i] == NULL_BYTE) {
                     try {
                         val document = bytes.copyOfRange(currentStart, i)
-                        journal.add(deserializeCommand(dslJson, document))
+                        journal.add(deserializeCommand(document))
                         currentStart = i + 1
                     } catch (exception: Exception) {
                         throw IllegalStateException(
@@ -178,8 +181,8 @@ class Journal(private val type: String, private val version: Int) {
          * @throws IOException If an IO exception occurs
          */
         @Throws(IOException::class)
-        fun deserializeCommand(dslJson: DslJson<MutableMap<String, Any>>, document: ByteArray): Command {
-            val mapEntry = deserializeEntry(dslJson, document)
+        fun deserializeCommand(document: ByteArray): Command {
+            val mapEntry = deserializeEntry(document)
             return Command(mapEntry.key, mapEntry.value)
         }
 
@@ -191,15 +194,8 @@ class Journal(private val type: String, private val version: Int) {
          * @throws IOException If an IO exception occurs
          */
         @Throws(IOException::class)
-        fun deserializeEntry(dslJson: DslJson<MutableMap<String, Any>>, document: ByteArray): Map.Entry<String, Any> {
-            @Suppress("UNCHECKED_CAST")
-            val map: MutableMap<String, Any>? = dslJson.deserialize(
-                MutableMap::class.java,
-                document,
-                document.size
-            ) as MutableMap<String, Any>?
-            require(!map.isNullOrEmpty()) { "Journal entry is invalid" }
-            return map.entries.single()
+        fun deserializeEntry(document: ByteArray): Map.Entry<String, Any> {
+            return JsonHelper.deserialize(document).entries.single()
         }
     }
 }
