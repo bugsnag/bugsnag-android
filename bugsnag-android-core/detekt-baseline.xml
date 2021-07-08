@@ -30,6 +30,9 @@
     <ID>SwallowedException:DeviceDataCollector.kt$DeviceDataCollector$catch (exception: Exception) { logger.w("Could not get battery status") }</ID>
     <ID>SwallowedException:DeviceDataCollector.kt$DeviceDataCollector$catch (exception: Exception) { logger.w("Could not get locationStatus") }</ID>
     <ID>SwallowedException:DeviceIdStore.kt$DeviceIdStore$catch (exc: OverlappingFileLockException) { Thread.sleep(FILE_LOCK_WAIT_MS) }</ID>
+    <ID>SwallowedException:JournaledDocument.kt$JournaledDocument$catch (ex: BufferOverflowException) { snapshot() command.serialize(journalStream) }</ID>
+    <ID>SwallowedException:JournaledDocument.kt$JournaledDocument.Companion$catch (ex: IOException) { // Ignored - there is no new snapshot or it's invalid }</ID>
+    <ID>SwallowedException:JournaledDocument.kt$JournaledDocument.Companion$catch (ex: IOException) { // The journal is corrupt; just return the document. return document }</ID>
     <ID>SwallowedException:PluginClient.kt$PluginClient$catch (exc: ClassNotFoundException) { logger.d("Plugin '$clz' is not on the classpath - functionality will not be enabled.") null }</ID>
     <ID>UnusedPrivateMember:ThreadStateTest.kt$ThreadStateTest$private val configuration = generateImmutableConfig()</ID>
     <ID>VarCouldBeVal:SystemBroadcastReceiverTest.kt$SystemBroadcastReceiverTest$var config = BugsnagTestUtils.generateConfiguration()</ID>

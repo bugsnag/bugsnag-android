@@ -32,14 +32,14 @@ class JsonHelper private constructor() {
                 bytes,
                 bytes.size
             )
-            require(!document.isNullOrEmpty()) { "JSON document is invalid" }
+            requireNotNull(document) { "JSON document is invalid" }
             @Suppress("UNCHECKED_CAST")
             return document as MutableMap<String, Any>
         }
 
         fun deserialize(stream: InputStream): MutableMap<String, Any> {
             val document = dslJson.deserialize(MutableMap::class.java, stream)
-            require(!document.isNullOrEmpty()) { "JSON document is invalid" }
+            requireNotNull(document) { "JSON document is invalid" }
             @Suppress("UNCHECKED_CAST")
             return document as MutableMap<String, Any>
         }
