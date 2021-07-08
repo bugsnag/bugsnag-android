@@ -14,6 +14,9 @@
 * Respect manual setting of context
   [#1310](https://github.com/bugsnag/bugsnag-android/pull/1310)
 
+* Handle interrupt when shutting down executors
+  [#1315](https://github.com/bugsnag/bugsnag-android/pull/1315)
+
 ## 5.9.5 (2021-06-25)
 
 * Unity: Properly handle ANRs after multiple calls to autoNotify and autoDetectAnrs
