@@ -696,11 +696,11 @@ void bsg_serialize_error(bsg_error exc, JSON_Object *exception,
   json_object_set_string(exception, "type", "c");
   for (int findex = 0; findex < exc.frame_count; findex++) {
     bugsnag_stackframe stackframe = exc.stacktrace[findex];
-    bsg_serialize_stackframe(&stackframe, stacktrace);
+    bsg_serialize_stackframe(findex, &stackframe, stacktrace);
   }
 }
 
-void bsg_serialize_stackframe(bugsnag_stackframe *stackframe,
+void bsg_serialize_stackframe(int frame_index, bugsnag_stackframe *stackframe,
                               JSON_Array *stacktrace) {
   JSON_Value *frame_val = json_value_init_object();
   JSON_Object *frame = json_value_get_object(frame_val);
@@ -708,6 +708,9 @@ void bsg_serialize_stackframe(bugsnag_stackframe *stackframe,
   json_object_set_number(frame, "symbolAddress", (*stackframe).symbol_address);
   json_object_set_number(frame, "loadAddress", (*stackframe).load_address);
   json_object_set_number(frame, "lineNumber", (*stackframe).line_number);
+  if (frame_index == 0) {
+    json_object_set_boolean(frame, "isPC", true);
+  }
   if (strlen((*stackframe).filename) > 0) {
     json_object_set_string(frame, "file", (*stackframe).filename);
   }

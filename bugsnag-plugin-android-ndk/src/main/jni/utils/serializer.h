@@ -31,7 +31,7 @@ void bsg_serialize_custom_metadata(const bugsnag_metadata metadata,
                                    JSON_Object *event_obj);
 void bsg_serialize_user(const bugsnag_user user, JSON_Object *event_obj);
 void bsg_serialize_session(bugsnag_event *event, JSON_Object *event_obj);
-void bsg_serialize_stackframe(bugsnag_stackframe *stackframe,
+void bsg_serialize_stackframe(int frame_index, bugsnag_stackframe *stackframe,
                               JSON_Array *stacktrace);
 void bsg_serialize_error(bsg_error exc, JSON_Object *exception,
                          JSON_Array *stacktrace);

@@ -237,12 +237,12 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_BreadcrumbStateSerializationT
 }
 
 TEST test_stackframe_serialization(test_case *test_case) {
-    JSON_Value *event_val = json_value_init_array();
-    JSON_Array *event = json_value_get_array(event_val);
-    bugsnag_stackframe *frame = test_case->data_ptr;
-    bsg_serialize_stackframe(frame, event);
-    free(frame);
-    return validate_serialized_json(test_case, event_val);
+  JSON_Value *event_val = json_value_init_array();
+  JSON_Array *event = json_value_get_array(event_val);
+  bugsnag_stackframe *frame = test_case->data_ptr;
+  bsg_serialize_stackframe(1, frame, event);
+  free(frame);
+  return validate_serialized_json(test_case, event_val);
 }
 
 JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_StackframeSerializationTest_run(
