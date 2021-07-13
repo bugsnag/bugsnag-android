@@ -17,6 +17,9 @@
 * Handle interrupt when shutting down executors
   [#1315](https://github.com/bugsnag/bugsnag-android/pull/1315)
 
+* React Native: allow serializing enabledBreadcrumbTypes as null
+  [#1316](https://github.com/bugsnag/bugsnag-android/pull/1316)
+
 ## 5.9.5 (2021-06-25)
 
 * Unity: Properly handle ANRs after multiple calls to autoNotify and autoDetectAnrs
