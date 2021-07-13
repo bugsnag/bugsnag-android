@@ -5,10 +5,12 @@
 #include <greatest/greatest.h>
 #include <jni.h>
 
+#include <safejni.h>
 #include <utils/serializer.h>
 #include <stdlib.h>
 #include <utils/migrate.h>
 #include "test_serializer.h"
+#include "test_helpers.h"
 
 SUITE(suite_string_utils);
 SUITE(suite_json_serialization);
@@ -18,8 +20,19 @@ SUITE(suite_event_app_mutators);
 SUITE(suite_event_device_mutators);
 SUITE(suite_struct_to_file);
 SUITE(suite_struct_migration);
+SUITE(suite_ctjournal);
+SUITE(suite_buffered_writer);
+SUITE(suite_number_to_string);
 
 GREATEST_MAIN_DEFS();
+
+static TEST set_temporary_folder_path(JNIEnv *env, jstring path) {
+    test_temporary_folder_path = bsg_safe_get_string_utf_chars(env, path);
+    if (test_temporary_folder_path == NULL) {
+        FAILm("Error retrieving temporary folder string");
+    }
+    return GREATEST_TEST_RES_PASS;
+}
 
 /**
  * Runs a test suite using greatest.
@@ -221,4 +234,21 @@ JNIEXPORT jstring JNICALL Java_com_bugsnag_android_ndk_ExceptionSerializationTes
     char *string = json_serialize_to_string(event_val);
     return (*env)->NewStringUTF(env, string);
 
+}
+
+JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_NativeCrashtimeJournalTest_run(
+        JNIEnv *_env, jobject _this, jstring _temporary_folder) {
+    STOP_ON_FAIL(set_temporary_folder_path(_env, _temporary_folder));
+    return run_test_suite(suite_ctjournal);
+}
+
+JNIEXPORT jint JNICALL Java_com_bugsnag_android_ndk_NativeBufferedWriterTest_run(
+        JNIEnv *_env, jobject _this, jstring _temporary_folder) {
+    STOP_ON_FAIL(set_temporary_folder_path(_env, _temporary_folder));
+    return run_test_suite(suite_buffered_writer);
+}
+
+JNIEXPORT jint JNICALL
+Java_com_bugsnag_android_ndk_NativeNumberToStringTest_run(JNIEnv *env, jobject thiz) {
+    return run_test_suite(suite_number_to_string);
 }
