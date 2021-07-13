@@ -4,7 +4,6 @@ import android.util.Log
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.EndpointConfiguration
 import com.bugsnag.android.Logger
-import com.bugsnag.android.mazerunner.multiprocess.findCurrentProcessName
 import java.net.URL
 
 fun prepareConfig(
@@ -37,7 +36,6 @@ fun prepareConfig(
             mazerunnerHttpClient.postLog(logLevel, msg)
         }
     }
-    config.addMetadata("process", "name", findCurrentProcessName())
     return config
 }
 

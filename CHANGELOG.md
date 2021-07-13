@@ -20,6 +20,9 @@
 * React Native: allow serializing enabledBreadcrumbTypes as null
   [#1316](https://github.com/bugsnag/bugsnag-android/pull/1316)
 
+* Capture process name in Event payload
+  [#1318](https://github.com/bugsnag/bugsnag-android/pull/1318)
+
 ## 5.9.5 (2021-06-25)
 
 * Unity: Properly handle ANRs after multiple calls to autoNotify and autoDetectAnrs
