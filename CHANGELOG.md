@@ -2,6 +2,13 @@
 
 ## 5.10.0 (2021-07-14)
 
+### Enhancements
+
+* Capture process name in Event payload
+  [#1318](https://github.com/bugsnag/bugsnag-android/pull/1318)
+
+### Bug fixes
+
 * Avoid unnecessary BroadcastReceiver registration for monitoring device orientation
   [#1303](https://github.com/bugsnag/bugsnag-android/pull/1303)
 
@@ -9,7 +16,7 @@
   [#1292](https://github.com/bugsnag/bugsnag-android/pull/1292)
 
 * Fix rare NullPointerExceptions from ConnectivityManager
-  [1311](https://github.com/bugsnag/bugsnag-android/pull/1311)
+  [#1311](https://github.com/bugsnag/bugsnag-android/pull/1311)
 
 * Respect manual setting of context
   [#1310](https://github.com/bugsnag/bugsnag-android/pull/1310)
@@ -19,9 +26,6 @@
 
 * React Native: allow serializing enabledBreadcrumbTypes as null
   [#1316](https://github.com/bugsnag/bugsnag-android/pull/1316)
-
-* Capture process name in Event payload
-  [#1318](https://github.com/bugsnag/bugsnag-android/pull/1318)
 
 ## 5.9.5 (2021-06-25)
 
