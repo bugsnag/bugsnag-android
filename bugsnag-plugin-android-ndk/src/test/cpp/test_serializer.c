@@ -124,15 +124,16 @@ bugsnag_event * loadSessionTestCase(jint num) {
     return data;
 }
 
-bugsnag_event * loadBreadcrumbsTestCase(jint num) {
-    bugsnag_event *event = malloc(sizeof(bugsnag_event));
-
-    // ensure that serialization loop is covered by test
+bugsnag_event *loadBreadcrumbsTestCase(bugsnag_event *event) {
+    bugsnag_breadcrumb *crumb = malloc(sizeof(bugsnag_breadcrumb));
+    memset(crumb, 0, sizeof(bugsnag_breadcrumb));
     event->crumb_count = 4;
     event->crumb_first_index = BUGSNAG_CRUMBS_MAX - 2;
 
+    // ensure that serialization loop is covered by test
+
     // first breadcrumb
-    bugsnag_breadcrumb *crumb = &event->breadcrumbs[BUGSNAG_CRUMBS_MAX - 2];
+    crumb = &event->breadcrumbs[BUGSNAG_CRUMBS_MAX - 2];
     crumb->type = BSG_CRUMB_USER;
     strcpy(crumb->name, "Jane");
     strcpy(crumb->timestamp, "2018-10-08T12:07:09Z");

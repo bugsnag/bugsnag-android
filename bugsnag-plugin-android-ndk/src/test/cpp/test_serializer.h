@@ -20,6 +20,6 @@ bugsnag_metadata * loadCustomMetadataTestCase(jint num);
 bugsnag_event * loadContextTestCase(jint num);
 bugsnag_event * loadSeverityReasonTestCase(jint num);
 bugsnag_event * loadSessionTestCase(jint num);
-bugsnag_event * loadBreadcrumbsTestCase(jint num);
+bugsnag_event *loadBreadcrumbsTestCase(bugsnag_event *event);
 bugsnag_stackframe * loadStackframeTestCase(jint num);
 bsg_error * loadExceptionTestCase(jint num);
