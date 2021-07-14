@@ -4,6 +4,7 @@ import android.app.ActivityManager
 import android.content.Context
 import android.os.Build
 import androidx.test.core.app.ApplicationProvider
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -35,7 +36,7 @@ class AppDataCollectorTest {
      * The flag is not set in the app metadata if the user has not enabled background restrictions
      */
     @Test
-    fun testNoBackgroundRestrictions() {
+    fun testDefaultValues() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             `when`(am.isBackgroundRestricted).thenReturn(false)
         }
@@ -47,10 +48,12 @@ class AppDataCollectorTest {
             client.sessionTracker,
             am,
             client.launchCrashTracker,
+            client.contextState,
             NoopLogger
         )
         val app = collector.getAppDataMetadata()
         assertNull(app["backgroundWorkRestricted"])
+        assertEquals("com.bugsnag.android.core.test", app["processName"] as String)
     }
 
     /**
@@ -68,6 +71,7 @@ class AppDataCollectorTest {
             client.sessionTracker,
             am,
             client.launchCrashTracker,
+            client.contextState,
             NoopLogger
         )
         val app = collector.getAppDataMetadata()

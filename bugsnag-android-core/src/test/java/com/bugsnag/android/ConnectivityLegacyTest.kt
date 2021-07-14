@@ -75,4 +75,20 @@ class ConnectivityLegacyTest {
         Mockito.`when`(info.type).thenReturn(1)
         assertEquals("wifi", conn.retrieveNetworkAccessState())
     }
+
+    @Test
+    fun hasNetworkConnectionNullPointerException() {
+        val conn = ConnectivityLegacy(context, cm, null)
+
+        Mockito.`when`(cm.activeNetworkInfo).thenThrow(NullPointerException())
+        assertFalse(conn.hasNetworkConnection())
+    }
+
+    @Test
+    fun retrieveNetworkAccessStateNullPointerException() {
+        val conn = ConnectivityLegacy(context, cm, null)
+
+        Mockito.`when`(cm.activeNetworkInfo).thenThrow(NullPointerException())
+        assertEquals("none", conn.retrieveNetworkAccessState())
+    }
 }

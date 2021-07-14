@@ -526,11 +526,7 @@ const char *bsg_severity_string(bugsnag_severity type) {
 }
 
 void bsg_serialize_context(const bugsnag_event *event, JSON_Object *event_obj) {
-  if (strlen(event->context) > 0) {
-    json_object_set_string(event_obj, "context", event->context);
-  } else {
-    json_object_set_string(event_obj, "context", event->app.active_screen);
-  }
+  json_object_set_string(event_obj, "context", event->context);
 }
 
 void bsg_serialize_grouping_hash(const bugsnag_event *event,

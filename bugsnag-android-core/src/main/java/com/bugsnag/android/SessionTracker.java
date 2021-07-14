@@ -360,6 +360,7 @@ class SessionTracker extends BaseObservable {
                 lastExitedForegroundMs.set(nowMs);
             }
         }
+        client.getContextState().setAutomaticContext(getContextActivity());
         notifyNdkInForeground();
     }
 

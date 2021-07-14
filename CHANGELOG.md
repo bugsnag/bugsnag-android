@@ -1,5 +1,32 @@
 # Changelog
 
+## 5.10.0 (2021-07-14)
+
+### Enhancements
+
+* Capture process name in Event payload
+  [#1318](https://github.com/bugsnag/bugsnag-android/pull/1318)
+
+### Bug fixes
+
+* Avoid unnecessary BroadcastReceiver registration for monitoring device orientation
+  [#1303](https://github.com/bugsnag/bugsnag-android/pull/1303)
+
+* Register system callbacks on background thread
+  [#1292](https://github.com/bugsnag/bugsnag-android/pull/1292)
+
+* Fix rare NullPointerExceptions from ConnectivityManager
+  [#1311](https://github.com/bugsnag/bugsnag-android/pull/1311)
+
+* Respect manual setting of context
+  [#1310](https://github.com/bugsnag/bugsnag-android/pull/1310)
+
+* Handle interrupt when shutting down executors
+  [#1315](https://github.com/bugsnag/bugsnag-android/pull/1315)
+
+* React Native: allow serializing enabledBreadcrumbTypes as null
+  [#1316](https://github.com/bugsnag/bugsnag-android/pull/1316)
+
 ## 5.9.5 (2021-06-25)
 
 * Unity: Properly handle ANRs after multiple calls to autoNotify and autoDetectAnrs
@@ -63,7 +90,7 @@
 
 * NDK: lowMemory attribute is now reported as expected
   [1262](https://github.com/bugsnag/bugsnag-android/pull/1262)
-  
+
 * Don't include loglog.so in ndk plugin builds performed on Linux
   [1263](https://github.com/bugsnag/bugsnag-android/pull/1263)
 
@@ -74,7 +101,7 @@
 
 * Prevent errors in rare cases where either ConnectivityManager or StorageManager is not available
   [1251](https://github.com/bugsnag/bugsnag-android/pull/1251)
-  
+
 * Change the Bugsnag-Internal-Error header to "bugsnag-android"
   [1252](https://github.com/bugsnag/bugsnag-android/pull/1252)
 
@@ -212,7 +239,7 @@ The packaging for this version was incorrect so it should not be used.
   [#1117](https://github.com/bugsnag/bugsnag-android/pull/1117)
 
 * Add global metadata to ANR error reports
-  [#1095](https://github.com/bugsnag/bugsnag-android/pull/1095)  
+  [#1095](https://github.com/bugsnag/bugsnag-android/pull/1095)
 
 ## 5.5.2 (2021-01-27)
 
@@ -230,7 +257,7 @@ The packaging for this version was incorrect so it should not be used.
 
 * Alter HTTP requests to stop using chunked transfer encoding
   [#1077](https://github.com/bugsnag/bugsnag-android/pull/1077)
-  
+
 * Allow null device IDs, preventing rare crash in Bugsnag initialization
   [#1083](https://github.com/bugsnag/bugsnag-android/pull/1083)
 
@@ -325,7 +352,7 @@ with a unique `persistenceDirectory` value for each process. Please see [the doc
 
 * Ensure device ID is set separately to the user ID
   [#939](https://github.com/bugsnag/bugsnag-android/pull/939)
-  
+
 * Improve stack traces and grouping for promise rejections on React Native < 0.63.2
   [#940](https://github.com/bugsnag/bugsnag-android/pull/940)
 
@@ -335,7 +362,7 @@ with a unique `persistenceDirectory` value for each process. Please see [the doc
 
 * Prevent ConcurrentModificationException thrown from Metadata class
   [#935](https://github.com/bugsnag/bugsnag-android/pull/935)
-  
+
 * Prevent incorrect merge of nested maps in metadata
   [#936](https://github.com/bugsnag/bugsnag-android/pull/936)
 

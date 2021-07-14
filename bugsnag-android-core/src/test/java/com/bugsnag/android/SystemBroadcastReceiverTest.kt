@@ -3,7 +3,7 @@ package com.bugsnag.android
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.bugsnag.android.SystemBroadcastReceiver.shortenActionNameIfNeeded
+import com.bugsnag.android.SystemBroadcastReceiver.Companion.shortenActionNameIfNeeded
 import com.bugsnag.android.internal.ImmutableConfig
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -96,7 +96,7 @@ class SystemBroadcastReceiverTest {
     }
 
     private fun getConfig(breadcrumbTypes: Set<BreadcrumbType>): ImmutableConfig {
-        var config = BugsnagTestUtils.generateConfiguration()
+        val config = BugsnagTestUtils.generateConfiguration()
         config.enabledBreadcrumbTypes = breadcrumbTypes
         return BugsnagTestUtils.convert(config)
     }

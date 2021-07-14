@@ -11,8 +11,6 @@ import com.bugsnag.android.internal.StateObserver;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.os.Environment;
 import android.os.storage.StorageManager;
@@ -25,7 +23,6 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -74,11 +71,11 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
     final SessionTracker sessionTracker;
 
-    private final SystemBroadcastReceiver systemBroadcastReceiver;
+    final SystemBroadcastReceiver systemBroadcastReceiver;
     private final ActivityBreadcrumbCollector activityBreadcrumbCollector;
     private final SessionLifecycleCallback sessionLifecycleCallback;
 
-    private final Connectivity connectivity;
+    final Connectivity connectivity;
 
     @Nullable
     private final StorageManager storageManager;
@@ -154,9 +151,11 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         breadcrumbState = new BreadcrumbState(maxBreadcrumbs, callbackState, logger);
 
         storageManager = getStorageManagerFrom(appContext);
-
         contextState = new ContextState();
-        contextState.setContext(configuration.getContext());
+
+        if (configuration.getContext() != null) {
+            contextState.setManualContext(configuration.getContext());
+        }
 
         sessionStore = new SessionStore(immutableConfig, logger, null);
         sessionTracker = new SessionTracker(immutableConfig, callbackState, this,
@@ -167,7 +166,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
         launchCrashTracker = new LaunchCrashTracker(immutableConfig);
         appDataCollector = new AppDataCollector(appContext, appContext.getPackageManager(),
-                immutableConfig, sessionTracker, am, launchCrashTracker, logger);
+                immutableConfig, sessionTracker, am, launchCrashTracker, contextState, logger);
 
         // load the device + user information
         SharedPrefMigrator sharedPrefMigrator = new SharedPrefMigrator(appContext);
@@ -223,12 +222,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             exceptionHandler.install();
         }
 
-        // register a receiver for automatic breadcrumbs
-        systemBroadcastReceiver = SystemBroadcastReceiver.register(this, logger, bgTaskService);
-
-        registerOrientationChangeListener();
-        registerMemoryTrimListener();
-
         // load last run info
         lastRunInfoStore = new LastRunInfoStore(immutableConfig);
         lastRunInfo = loadLastRunInfo();
@@ -236,12 +229,15 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         // initialise plugins before attempting to flush any errors
         loadPlugins(configuration);
 
-        connectivity.registerForNetworkChanges();
-
         // Flush any on-disk errors and sessions
         eventStore.flushOnLaunch();
         eventStore.flushAsync();
         sessionTracker.flushAsync();
+
+        // register listeners for system events in the background.
+        systemBroadcastReceiver = new SystemBroadcastReceiver(this, logger);
+        registerComponentCallbacks();
+        registerListenersInBackground();
 
         // leave auto breadcrumb
         Map<String, Object> data = Collections.emptyMap();
@@ -301,6 +297,25 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         this.exceptionHandler = exceptionHandler;
     }
 
+    /**
+     * Registers listeners for system events in the background. This offloads work from the main
+     * thread that collects useful information from callbacks, but that don't need to be done
+     * immediately on client construction.
+     */
+    void registerListenersInBackground() {
+        try {
+            bgTaskService.submitTask(TaskType.DEFAULT, new Runnable() {
+                @Override
+                public void run() {
+                    connectivity.registerForNetworkChanges();
+                    SystemBroadcastReceiver.register(appContext, systemBroadcastReceiver, logger);
+                }
+            });
+        } catch (RejectedExecutionException ex) {
+            logger.w("Failed to register for system events", ex);
+        }
+    }
+
     private LastRunInfo loadLastRunInfo() {
         LastRunInfo lastRunInfo = lastRunInfoStore.load();
         LastRunInfo currentRunInfo = new LastRunInfo(0, false, false);
@@ -342,10 +357,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         return configuration.impl.metadataState.copy(copy);
     }
 
-    private void registerOrientationChangeListener() {
-        IntentFilter configFilter = new IntentFilter();
-        configFilter.addAction(Intent.ACTION_CONFIGURATION_CHANGED);
-        ConfigChangeReceiver receiver = new ConfigChangeReceiver(deviceDataCollector,
+    private void registerComponentCallbacks() {
+        appContext.registerComponentCallbacks(new ClientComponentCallbacks(
+                deviceDataCollector,
                 new Function2<String, String, Unit>() {
                     @Override
                     public Unit invoke(String oldOrientation, String newOrientation) {
@@ -356,14 +370,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                         clientObservable.postOrientationChange(newOrientation);
                         return null;
                     }
-                }
-        );
-        ContextExtensionsKt.registerReceiverSafe(appContext, receiver, configFilter, logger);
-    }
-
-    private void registerMemoryTrimListener() {
-        appContext.registerComponentCallbacks(new ClientComponentCallbacks(
-                new Function1<Boolean, Unit>() {
+                }, new Function1<Boolean, Unit>() {
                     @Override
                     public Unit invoke(Boolean isLowMemory) {
                         clientObservable.postMemoryTrimEvent(isLowMemory);
@@ -496,7 +503,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      * If you would like to set this value manually, you should alter this property.
      */
     public void setContext(@Nullable String context) {
-        contextState.setContext(context);
+        contextState.setManualContext(context);
     }
 
     /**
@@ -717,11 +724,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         User user = userState.getUser();
         event.setUser(user.getId(), user.getEmail(), user.getName());
 
-        // Attach default context from active activity
-        if (Intrinsics.isEmpty(event.getContext())) {
-            String context = contextState.getContext();
-            event.setContext(context != null ? context : appDataCollector.getActiveScreenClass());
-        }
+        // Attach context to the event
+        event.setContext(contextState.getContext());
         notifyInternal(event, onError);
     }
 
@@ -1026,6 +1030,10 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
     MetadataState getMetadataState() {
         return metadataState;
+    }
+
+    ContextState getContextState() {
+        return contextState;
     }
 
     void setAutoNotify(boolean autoNotify) {

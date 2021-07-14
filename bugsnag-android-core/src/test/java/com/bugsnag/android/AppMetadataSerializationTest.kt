@@ -39,7 +39,8 @@ internal class AppMetadataSerializationTest {
             `when`(context.packageName).thenReturn("com.example.foo")
 
             // populate metadata fields
-            `when`(sessionTracker.contextActivity).thenReturn("MyActivity")
+            val contextState = ContextState()
+            contextState.setAutomaticContext("MyActivity")
             `when`(pm.getApplicationLabel(any())).thenReturn("MyApp")
             `when`(pm.getApplicationInfo(any(), anyInt())).thenReturn(ApplicationInfo())
 
@@ -51,6 +52,7 @@ internal class AppMetadataSerializationTest {
                 sessionTracker,
                 am,
                 launchCrashTracker,
+                contextState,
                 NoopLogger
             )
             appData.codeBundleId = "foo-99"
