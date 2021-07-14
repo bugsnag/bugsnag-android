@@ -1,10 +1,8 @@
 package com.bugsnag.android.ndk
 
+import org.junit.Assert.assertEquals
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
 
-@RunWith(Parameterized::class)
 internal class UserSerializationTest {
 
     companion object {
@@ -12,20 +10,14 @@ internal class UserSerializationTest {
             System.loadLibrary("bugsnag-ndk")
             System.loadLibrary("bugsnag-ndk-test")
         }
-
-        @JvmStatic
-        @Parameterized.Parameters
-        fun testCases() = (0..1)
     }
 
-    external fun run(testCase: Int, expectedJson: String): Int
-
-    @Parameterized.Parameter
-    lateinit var testCase: Number
+    external fun run(): String
 
     @Test
     fun testPassesNativeSuite() {
-        val expectedJson = loadJson("user_serialization_$testCase.json")
-        verifyNativeRun(run(testCase.toInt(), expectedJson))
+        val expected = loadJson("user_serialization.json")
+        val json = run()
+        assertEquals(expected, json)
     }
 }

@@ -12,12 +12,12 @@ internal class BreadcrumbStateSerializationTest {
         }
     }
 
-    external fun serializeBreadcrumbs(): String
+    external fun run(): String
 
     @Test
     fun testBreadcrumbSerialization() {
         val expected = loadJson("breadcrumbs_serialization.json")
-        val json = serializeBreadcrumbs()
+        val json = run()
         assertEquals(expected, json)
     }
 }
