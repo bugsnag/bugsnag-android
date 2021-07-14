@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 5.10.0 (2021-07-14)
 
 * Avoid unnecessary BroadcastReceiver registration for monitoring device orientation
   [#1303](https://github.com/bugsnag/bugsnag-android/pull/1303)
