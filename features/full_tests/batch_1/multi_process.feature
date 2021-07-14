@@ -3,13 +3,13 @@ Feature: Reporting errors in multi process apps
 Scenario: Handled JVM error
     When I run "MultiProcessHandledExceptionScenario"
     Then I wait to receive 2 errors
-    And I sort the errors by "events.0.metaData.process.name"
+    And I sort the errors by "events.0.metaData.app.processName"
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the error payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "MultiProcessHandledExceptionScenario"
     And the event "unhandled" is false
-    And the error payload field "events.0.metaData.process.name" equals "com.bugsnag.android.mazerunner"
+    And the error payload field "events.0.metaData.app.processName" equals "com.bugsnag.android.mazerunner"
     And the error payload field "events.0.device.id" is stored as the value "first_device_id"
     And the error payload field "events.0.user.id" equals "2"
     And the error payload field "events.0.user.name" equals "MultiProcessHandledExceptionScenario"
@@ -21,7 +21,7 @@ Scenario: Handled JVM error
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "MultiProcessHandledExceptionScenario"
     And the event "unhandled" is false
-    And the error payload field "events.0.metaData.process.name" equals "com.example.bugsnag.android.mazerunner.multiprocess"
+    And the error payload field "events.0.metaData.app.processName" equals "com.example.bugsnag.android.mazerunner.multiprocess"
 
     # device ID is shared between processes
     And the error payload field "events.0.device.id" equals the stored value "first_device_id"
@@ -36,13 +36,13 @@ Scenario: Unhandled JVM error
     And I run "MultiProcessUnhandledExceptionScenario" and relaunch the app
     And I run "MultiProcessUnhandledExceptionScenario"
     Then I wait to receive 2 errors
-    And I sort the errors by "events.0.metaData.process.name"
+    And I sort the errors by "events.0.metaData.app.processName"
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the error payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "MultiProcessUnhandledExceptionScenario"
     And the event "unhandled" is true
-    And the error payload field "events.0.metaData.process.name" equals "com.bugsnag.android.mazerunner"
+    And the error payload field "events.0.metaData.app.processName" equals "com.bugsnag.android.mazerunner"
 
     Then I discard the oldest error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
@@ -50,19 +50,19 @@ Scenario: Unhandled JVM error
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "MultiProcessUnhandledExceptionScenario"
     And the event "unhandled" is true
-    And the error payload field "events.0.metaData.process.name" equals "com.example.bugsnag.android.mazerunner.multiprocess"
+    And the error payload field "events.0.metaData.app.processName" equals "com.example.bugsnag.android.mazerunner.multiprocess"
 
 Scenario: Handled NDK error
     When I run "MultiProcessHandledCXXErrorScenario"
     Then I wait to receive 2 errors
-    And I sort the errors by "events.0.metaData.process.name"
+    And I sort the errors by "events.0.metaData.app.processName"
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the error payload contains a completed handled native report
     And the error payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "activate"
     And the exception "message" equals "MultiProcessHandledCXXErrorScenario"
     And the event "unhandled" is false
-    And the error payload field "events.0.metaData.process.name" equals "com.bugsnag.android.mazerunner"
+    And the error payload field "events.0.metaData.app.processName" equals "com.bugsnag.android.mazerunner"
     And the error payload field "events.0.device.id" is stored as the value "first_device_id"
     And the error payload field "events.0.user.id" equals the stored value "first_device_id"
 
@@ -73,7 +73,7 @@ Scenario: Handled NDK error
     And the exception "errorClass" equals "activate"
     And the exception "message" equals "MultiProcessHandledCXXErrorScenario"
     And the event "unhandled" is false
-    And the error payload field "events.0.metaData.process.name" equals "com.example.bugsnag.android.mazerunner.multiprocess"
+    And the error payload field "events.0.metaData.app.processName" equals "com.example.bugsnag.android.mazerunner.multiprocess"
 
     # device ID is shared between processes
     And the error payload field "events.0.device.id" equals the stored value "first_device_id"
@@ -86,14 +86,14 @@ Scenario: Unhandled NDK error
     And I run "MultiProcessUnhandledCXXErrorScenario" and relaunch the app
     And I run "MultiProcessUnhandledCXXErrorScenario"
     Then I wait to receive 2 errors
-    And I sort the errors by "events.0.metaData.process.name"
+    And I sort the errors by "events.0.metaData.app.processName"
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the error payload contains a completed handled native report
     And the error payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "SIGABRT"
     And the exception "message" equals "Abort program"
     And the event "unhandled" is true
-    And the error payload field "events.0.metaData.process.name" equals "com.bugsnag.android.mazerunner"
+    And the error payload field "events.0.metaData.app.processName" equals "com.bugsnag.android.mazerunner"
     And the error payload field "events.0.device.id" is stored as the value "first_device_id"
     And the error payload field "events.0.user.id" equals "2"
     And the error payload field "events.0.user.name" equals "MultiProcessUnhandledCXXErrorScenario"
@@ -106,7 +106,7 @@ Scenario: Unhandled NDK error
     And the exception "errorClass" equals "SIGABRT"
     And the exception "message" equals "Abort program"
     And the event "unhandled" is true
-    And the error payload field "events.0.metaData.process.name" equals "com.example.bugsnag.android.mazerunner.multiprocess"
+    And the error payload field "events.0.metaData.app.processName" equals "com.example.bugsnag.android.mazerunner.multiprocess"
     And the error payload field "events.0.device.id" equals the stored value "first_device_id"
     And the error payload field "events.0.user.id" equals "1"
     And the error payload field "events.0.user.name" equals "MultiProcessUnhandledCXXErrorScenario"
@@ -115,13 +115,13 @@ Scenario: Unhandled NDK error
 Scenario: User/device information is migrated from SharedPreferences
     When I run "SharedPrefMigrationScenario"
     Then I wait to receive 2 errors
-    And I sort the errors by "events.0.metaData.process.name"
+    And I sort the errors by "events.0.metaData.app.processName"
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the error payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "SharedPrefMigrationScenario"
     And the event "unhandled" is false
-    And the error payload field "events.0.metaData.process.name" equals "com.bugsnag.android.mazerunner"
+    And the error payload field "events.0.metaData.app.processName" equals "com.bugsnag.android.mazerunner"
     And the error payload field "events.0.device.id" equals "267160a7-5cf2-42d4-be21-969f1573ecb0"
     And the error payload field "events.0.user.id" equals "3"
     And the error payload field "events.0.user.name" equals "SharedPrefMigrationScenario"
@@ -133,7 +133,7 @@ Scenario: User/device information is migrated from SharedPreferences
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "SharedPrefMigrationScenario"
     And the event "unhandled" is false
-    And the error payload field "events.0.metaData.process.name" equals "com.example.bugsnag.android.mazerunner.multiprocess"
+    And the error payload field "events.0.metaData.app.processName" equals "com.example.bugsnag.android.mazerunner.multiprocess"
 
     # device ID is shared between processes
     And the error payload field "events.0.device.id" equals "267160a7-5cf2-42d4-be21-969f1573ecb0"
