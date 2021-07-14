@@ -211,7 +211,7 @@ test_last_run_info_serialization(void) {
   env->next_event.app.is_launching = true;
   env->consecutive_launch_crashes = 7;
   bsg_update_next_run_info(env);
-  ASSERT_STR_EQ("consecutiveLaunchCrashes=7\ncrashed=true\ncrashedDuringLaunch=true\0", env->next_last_run_info);
+  ASSERT_STR_EQ("consecutiveLaunchCrashes=8\ncrashed=true\ncrashedDuringLaunch=true\0", env->next_last_run_info);
 
   free(env);
   PASS();
@@ -553,14 +553,8 @@ TEST test_migrate_app_v2(void) {
   PASS();
 }
 
-SUITE(serialize_utils) {
-  RUN_TEST(test_report_to_file);
+SUITE(suite_json_serialization) {
   RUN_TEST(test_last_run_info_serialization);
-  RUN_TEST(test_file_to_report);
-  RUN_TEST(test_report_v1_migration);
-  RUN_TEST(test_report_v2_migration);
-  RUN_TEST(test_report_v3_migration);
-  RUN_TEST(test_report_v4_migration);
   RUN_TEST(test_session_handled_counts);
   RUN_TEST(test_context_to_json);
   RUN_TEST(test_grouping_hash_to_json);
@@ -570,5 +564,17 @@ SUITE(serialize_utils) {
   RUN_TEST(test_custom_info_to_json);
   RUN_TEST(test_exception_to_json);
   RUN_TEST(test_breadcrumbs_to_json);
+}
+
+SUITE(suite_struct_to_file) {
+  RUN_TEST(test_report_to_file);
+  RUN_TEST(test_file_to_report);
+}
+
+SUITE(suite_struct_migration) {
+  RUN_TEST(test_report_v1_migration);
+  RUN_TEST(test_report_v2_migration);
+  RUN_TEST(test_report_v3_migration);
+  RUN_TEST(test_report_v4_migration);
   RUN_TEST(test_migrate_app_v2);
 }

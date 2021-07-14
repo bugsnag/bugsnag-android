@@ -113,7 +113,7 @@ TEST test_bsg_calculate_crumb_index(void) {
   PASS();
 }
 
-SUITE(breadcrumbs) {
+SUITE(suite_breadcrumbs) {
   RUN_TEST(test_add_breadcrumb);
   RUN_TEST(test_add_breadcrumbs_over_max);
   RUN_TEST(test_bsg_calculate_total_crumbs);
