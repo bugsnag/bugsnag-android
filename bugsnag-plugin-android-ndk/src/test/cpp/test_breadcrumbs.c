@@ -43,7 +43,7 @@ TEST test_add_breadcrumbs_over_max(void) {
   int breadcrumb_count = 64;
 
   for (int i=0; i < breadcrumb_count; i++) {
-    char *format = malloc(sizeof(char) * breadcrumb_count);
+    char *format = calloc(1, sizeof(char) * breadcrumb_count);
     memset(format, 0, sizeof(char) * breadcrumb_count);
     sprintf(format, "crumb: %d", i);
     bugsnag_breadcrumb *crumb = init_breadcrumb(format, "go go go", BSG_CRUMB_USER);

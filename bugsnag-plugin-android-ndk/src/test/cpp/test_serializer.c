@@ -17,12 +17,12 @@ bugsnag_user * loadUserTestCase(jint num) {
     bugsnag_user *user;
 
     if (num == 0) {
-        user = malloc(sizeof(bugsnag_user));
+        user = calloc(1, sizeof(bugsnag_user));
         strcpy(user->name, "Fenton");
         strcpy(user->email, "fenton@io.example.com");
         strcpy(user->id, "1234");
     } else {
-        user = malloc(sizeof(bugsnag_user));
+        user = calloc(1, sizeof(bugsnag_user));
         strcpy(user->name, "Jamie");
         strcpy(user->email, "jamie@bugsnag.com");
         strcpy(user->id, "456");
@@ -31,7 +31,7 @@ bugsnag_user * loadUserTestCase(jint num) {
 }
 
 bsg_app_info * loadAppTestCase(jint num) {
-    bsg_app_info *app = malloc(sizeof(bsg_app_info));
+    bsg_app_info *app = calloc(1, sizeof(bsg_app_info));
     strcpy(app->id, "com.bugsnag.example");
     strcpy(app->release_stage, "prod");
     strcpy(app->type, "android");
@@ -55,7 +55,7 @@ bsg_app_info * loadAppMetadataTestCase(jint num) {
 }
 
 bsg_device_info * loadDeviceTestCase(jint num) {
-    bsg_device_info *device = malloc(sizeof(bsg_device_info));
+    bsg_device_info *device = calloc(1, sizeof(bsg_device_info));
     device->api_level = 29;
     bsg_strncpy_safe(device->cpu_abi[0].value, "x86", sizeof(device->cpu_abi[0].value));
     device->cpu_abi_count = 1;
@@ -76,7 +76,7 @@ bsg_device_info * loadDeviceTestCase(jint num) {
 }
 
 bugsnag_metadata * loadCustomMetadataTestCase(jint num) {
-    bugsnag_metadata *data = malloc(sizeof(bugsnag_metadata));
+    bugsnag_metadata *data = calloc(1, sizeof(bugsnag_metadata));
     data->value_count = 4;
 
     data->values[0].type = BSG_METADATA_CHAR_VALUE;
@@ -101,14 +101,14 @@ bugsnag_metadata * loadCustomMetadataTestCase(jint num) {
 }
 
 bugsnag_event * loadContextTestCase(jint num) {
-    bugsnag_event *data = malloc(sizeof(bugsnag_event));
+    bugsnag_event *data = calloc(1, sizeof(bugsnag_event));
     strcpy(data->context, "CustomContext");
     strcpy(data->app.active_screen, "ExampleActivity");
     return data;
 }
 
 bugsnag_event * loadSeverityReasonTestCase(jint num) {
-    bugsnag_event *data = malloc(sizeof(bugsnag_event));
+    bugsnag_event *data = calloc(1, sizeof(bugsnag_event));
     data->unhandled = true;
     data->severity = BSG_SEVERITY_ERR;
     strcpy(data->error.errorClass, "SIGABRT");
@@ -116,7 +116,7 @@ bugsnag_event * loadSeverityReasonTestCase(jint num) {
 }
 
 bugsnag_event * loadSessionTestCase(jint num) {
-    bugsnag_event *data = malloc(sizeof(bugsnag_event));
+    bugsnag_event *data = calloc(1, sizeof(bugsnag_event));
     strcpy(data->session_id, "123");
     strcpy(data->session_start, "2018-10-08T12:07:09Z");
     data->handled_events = 2;
@@ -125,7 +125,7 @@ bugsnag_event * loadSessionTestCase(jint num) {
 }
 
 bugsnag_event *loadBreadcrumbsTestCase(bugsnag_event *event) {
-    bugsnag_breadcrumb *crumb = malloc(sizeof(bugsnag_breadcrumb));
+    bugsnag_breadcrumb *crumb = calloc(1, sizeof(bugsnag_breadcrumb));
     memset(crumb, 0, sizeof(bugsnag_breadcrumb));
     event->crumb_count = 4;
     event->crumb_first_index = BUGSNAG_CRUMBS_MAX - 2;
@@ -188,7 +188,7 @@ bugsnag_event *loadBreadcrumbsTestCase(bugsnag_event *event) {
 }
 
 bugsnag_stackframe * loadStackframeTestCase(jint num) {
-    bugsnag_stackframe *data = malloc(sizeof(bugsnag_stackframe));
+    bugsnag_stackframe *data = calloc(1, sizeof(bugsnag_stackframe));
     data->frame_address = 0x20000000;
     data->symbol_address = 0x16000000;
     data->load_address = 0x12000000;
@@ -199,7 +199,7 @@ bugsnag_stackframe * loadStackframeTestCase(jint num) {
 }
 
 bsg_error * loadExceptionTestCase(jint num) {
-    bsg_error *data = malloc(sizeof(bsg_error));
+    bsg_error *data = calloc(1, sizeof(bsg_error));
     strcpy(data->errorClass, "signal");
     strcpy(data->errorMessage, "whoops something went wrong");
     strcpy(data->type, "c");

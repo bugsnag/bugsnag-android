@@ -42,7 +42,7 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_UserSerializationTest_run(
         JNIEnv *_env, jobject _this, jint num, jstring expected_json) {
     int argc = 0;
     char *argv[] = {};
-    test_case *test_case = malloc(sizeof(test_case));
+    test_case *test_case = calloc(1, sizeof(test_case));
     test_case->data_ptr = loadUserTestCase(num);
 
     char *str = (char *) (*_env)->GetStringUTFChars(_env, expected_json, 0);
@@ -65,7 +65,7 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_AppSerializationTest_run(
         JNIEnv *_env, jobject _this, jint num, jstring expected_json) {
     int argc = 0;
     char *argv[] = {};
-    test_case *test_case = malloc(sizeof(test_case));
+    test_case *test_case = calloc(1, sizeof(test_case));
     test_case->data_ptr = loadAppTestCase(num);
 
     char *str = (char *) (*_env)->GetStringUTFChars(_env, expected_json, 0);
@@ -88,7 +88,7 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_AppMetadataSerializationTest_
         JNIEnv *_env, jobject _this, jint num, jstring expected_json) {
     int argc = 0;
     char *argv[] = {};
-    test_case *test_case = malloc(sizeof(test_case));
+    test_case *test_case = calloc(1, sizeof(test_case));
     test_case->data_ptr = loadAppMetadataTestCase(num);
 
     char *str = (char *) (*_env)->GetStringUTFChars(_env, expected_json, 0);
@@ -111,7 +111,7 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_DeviceSerializationTest_run(
         JNIEnv *_env, jobject _this, jint num, jstring expected_json) {
     int argc = 0;
     char *argv[] = {};
-    test_case *test_case = malloc(sizeof(test_case));
+    test_case *test_case = calloc(1, sizeof(test_case));
     test_case->data_ptr = loadDeviceTestCase(num);
 
     char *str = (char *) (*_env)->GetStringUTFChars(_env, expected_json, 0);
@@ -134,7 +134,7 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_CustomMetadataSerializationTe
         JNIEnv *_env, jobject _this, jint num, jstring expected_json) {
     int argc = 0;
     char *argv[] = {};
-    test_case *test_case = malloc(sizeof(test_case));
+    test_case *test_case = calloc(1, sizeof(test_case));
     test_case->data_ptr = loadCustomMetadataTestCase(num);
 
     char *str = (char *) (*_env)->GetStringUTFChars(_env, expected_json, 0);
@@ -157,7 +157,7 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_ContextSerializationTest_run(
         JNIEnv *_env, jobject _this, jint num, jstring expected_json) {
     int argc = 0;
     char *argv[] = {};
-    test_case *test_case = malloc(sizeof(test_case));
+    test_case *test_case = calloc(1, sizeof(test_case));
     test_case->data_ptr = loadContextTestCase(num);
 
     char *str = (char *) (*_env)->GetStringUTFChars(_env, expected_json, 0);
@@ -180,7 +180,7 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_SeverityReasonSerializationTe
         JNIEnv *_env, jobject _this, jint num, jstring expected_json) {
     int argc = 0;
     char *argv[] = {};
-    test_case *test_case = malloc(sizeof(test_case));
+    test_case *test_case = calloc(1, sizeof(test_case));
     test_case->data_ptr = loadSeverityReasonTestCase(num);
 
     char *str = (char *) (*_env)->GetStringUTFChars(_env, expected_json, 0);
@@ -203,7 +203,7 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_SessionSerializationTest_run(
         JNIEnv *_env, jobject _this, jint num, jstring expected_json) {
     int argc = 0;
     char *argv[] = {};
-    test_case *test_case = malloc(sizeof(test_case));
+    test_case *test_case = calloc(1, sizeof(test_case));
     test_case->data_ptr = loadSessionTestCase(num);
 
     char *str = (char *) (*_env)->GetStringUTFChars(_env, expected_json, 0);
@@ -239,7 +239,7 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_StackframeSerializationTest_r
         JNIEnv *_env, jobject _this, jint num, jstring expected_json) {
     int argc = 0;
     char *argv[] = {};
-    test_case *test_case = malloc(sizeof(test_case));
+    test_case *test_case = calloc(1, sizeof(test_case));
     test_case->data_ptr = loadStackframeTestCase(num);
 
     char *str = (char *) (*_env)->GetStringUTFChars(_env, expected_json, 0);
@@ -266,7 +266,7 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_ExceptionSerializationTest_ru
         JNIEnv *_env, jobject _this, jint num, jstring expected_json) {
     int argc = 0;
     char *argv[] = {};
-    test_case *test_case = malloc(sizeof(test_case));
+    test_case *test_case = calloc(1, sizeof(test_case));
     test_case->data_ptr = loadExceptionTestCase(num);
 
     char *str = (char *) (*_env)->GetStringUTFChars(_env, expected_json, 0);

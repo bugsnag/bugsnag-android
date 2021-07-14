@@ -192,13 +192,13 @@ void bsg_update_next_run_info(bsg_environment *env);
 char *test_read_last_run_info(const bsg_environment *env) {
   int fd = open(SERIALIZE_TEST_FILE, O_RDONLY);
   size_t size = sizeof(env->next_last_run_info);
-  char *buf = malloc(size);
+  char *buf = calloc(1, size);
   read(fd, buf, size);
   return buf;
 }
 
 test_last_run_info_serialization(void) {
-  bsg_environment *env = malloc(sizeof(bsg_environment));
+  bsg_environment *env = calloc(1, sizeof(bsg_environment));
   strcpy(env->last_run_info_path, SERIALIZE_TEST_FILE);
   
   // update LastRunInfo with defaults
@@ -218,7 +218,7 @@ test_last_run_info_serialization(void) {
 }
 
 TEST test_report_to_file(void) {
-  bsg_environment *env = malloc(sizeof(bsg_environment));
+  bsg_environment *env = calloc(1, sizeof(bsg_environment));
   env->report_header.version = 7;
   env->report_header.big_endian = 1;
   bugsnag_event *report = bsg_generate_event();
@@ -232,7 +232,7 @@ TEST test_report_to_file(void) {
 }
 
 TEST test_file_to_report(void) {
-  bsg_environment *env = malloc(sizeof(bsg_environment));
+  bsg_environment *env = calloc(1, sizeof(bsg_environment));
   env->report_header.version = 5;
   env->report_header.big_endian = 1;
   strcpy(env->report_header.os_build, "macOS Sierra");
@@ -252,7 +252,7 @@ TEST test_file_to_report(void) {
 }
 
 TEST test_report_v1_migration(void) {
-  bsg_environment *env = malloc(sizeof(bsg_environment));
+  bsg_environment *env = calloc(1, sizeof(bsg_environment));
   env->report_header.version = 1;
   env->report_header.big_endian = 1;
   strcpy(env->report_header.os_build, "macOS Sierra");
@@ -276,7 +276,7 @@ TEST test_report_v1_migration(void) {
 }
 
 TEST test_report_v2_migration(void) {
-  bsg_environment *env = malloc(sizeof(bsg_environment));
+  bsg_environment *env = calloc(1, sizeof(bsg_environment));
 
   bugsnag_report_v2 *generated_report = bsg_generate_report_v2();
   memcpy(&env->next_event, generated_report, sizeof(bugsnag_report_v2));
@@ -330,7 +330,7 @@ TEST test_report_v2_migration(void) {
 }
 
 TEST test_report_v3_migration(void) {
-  bsg_environment *env = malloc(sizeof(bsg_environment));
+  bsg_environment *env = calloc(1, sizeof(bsg_environment));
   env->report_header.version = 3;
   env->report_header.big_endian = 1;
   strcpy(env->report_header.os_build, "macOS Sierra");
@@ -362,7 +362,7 @@ TEST test_report_v3_migration(void) {
 }
 
 TEST test_report_v4_migration(void) {
-  bsg_environment *env = malloc(sizeof(bsg_environment));
+  bsg_environment *env = calloc(1, sizeof(bsg_environment));
   env->report_header.version = 4;
   env->report_header.big_endian = 1;
   strcpy(env->report_header.os_build, "macOS Sierra");
@@ -518,8 +518,8 @@ TEST test_breadcrumbs_to_json(void) {
 void migrate_app_v2(bugsnag_report_v4 *report_v4, bugsnag_event *event);
 
 TEST test_migrate_app_v2(void) {
-  bugsnag_report_v4 *report_v4 = malloc(sizeof(bugsnag_report_v4));
-  bugsnag_event *event = malloc(sizeof(bugsnag_event));
+  bugsnag_report_v4 *report_v4 = calloc(1, sizeof(bugsnag_report_v4));
+  bugsnag_event *event = calloc(1, sizeof(bugsnag_event));
   bsg_app_info_v2 *seed = &report_v4->app;
   bsg_app_info *app = &event->app;
 
