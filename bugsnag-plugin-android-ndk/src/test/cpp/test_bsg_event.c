@@ -386,13 +386,21 @@ TEST test_event_stacktrace(void) {
     PASS();
 }
 
-SUITE(event_mutators) {
+SUITE(suite_event_mutators) {
     RUN_TEST(test_event_api_key);
     RUN_TEST(test_event_context);
     RUN_TEST(test_event_severity);
     RUN_TEST(test_event_unhandled);
     RUN_TEST(test_event_user);
     RUN_TEST(test_event_grouping_hash);
+    RUN_TEST(test_error_class);
+    RUN_TEST(test_error_message);
+    RUN_TEST(test_error_type);
+    RUN_TEST(test_event_metadata);
+    RUN_TEST(test_event_stacktrace);
+}
+
+SUITE(suite_event_app_mutators) {
     RUN_TEST(test_app_binary_arch);
     RUN_TEST(test_app_build_uuid);
     RUN_TEST(test_app_id);
@@ -404,6 +412,9 @@ SUITE(event_mutators) {
     RUN_TEST(test_app_duration_in_foreground);
     RUN_TEST(test_app_in_foreground);
     RUN_TEST(test_app_is_launching);
+}
+
+SUITE(suite_event_device_mutators) {
     RUN_TEST(test_device_jailbroken);
     RUN_TEST(test_device_id);
     RUN_TEST(test_device_locale);
@@ -414,9 +425,4 @@ SUITE(event_mutators) {
     RUN_TEST(test_device_orientation);
     RUN_TEST(test_device_time);
     RUN_TEST(test_device_os_name);
-    RUN_TEST(test_error_class);
-    RUN_TEST(test_error_message);
-    RUN_TEST(test_error_type);
-    RUN_TEST(test_event_metadata);
-    RUN_TEST(test_event_stacktrace);
 }

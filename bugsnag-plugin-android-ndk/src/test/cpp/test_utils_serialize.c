@@ -126,49 +126,161 @@ void generate_basic_report(bugsnag_event *event) {
 }
 
 bugsnag_report_v4 *bsg_generate_report_v4(void) {
-  bugsnag_report_v4 *report = calloc(1, sizeof(bugsnag_report_v4));
-  generate_basic_report((bugsnag_event *) report);
-  return report;
+  bugsnag_report_v4 *event = calloc(1, sizeof(bugsnag_report_v4));
+  strcpy(event->grouping_hash, "foo-hash");
+  strcpy(event->api_key, "5d1e5fbd39a74caa1200142706a90b20");
+  strcpy(event->context, "SomeActivity");
+  strcpy(event->error.errorClass, "SIGBUS");
+  strcpy(event->error.errorMessage, "POSIX is serious about oncoming traffic");
+  event->error.stacktrace[0].frame_address = 454379;
+  event->error.stacktrace[1].frame_address = 342334;
+  event->error.frame_count = 2;
+  strcpy(event->error.type, "C");
+  strcpy(event->error.stacktrace[0].method, "makinBacon");
+  strcpy(event->app.id, "com.example.PhotoSnapPlus");
+  strcpy(event->app.release_stage, "リリース");
+  strcpy(event->app.version, "2.0.52");
+  event->app.version_code = 57;
+  strcpy(event->app.build_uuid, "1234-9876-adfe");
+  strcpy(event->device.manufacturer, "HI-TEC™");
+  strcpy(event->device.model, "Rasseur");
+  strcpy(event->device.locale, "en_AU#Melbun");
+  strcpy(event->device.os_name, "android");
+  strcpy(event->user.email, "fenton@io.example.com");
+  strcpy(event->user.id, "fex");
+  event->device.total_memory = 234678100;
+  event->app.duration = 6502;
+  bugsnag_event_add_metadata_bool(event, "metrics", "experimentX", false);
+  bugsnag_event_add_metadata_string(event, "metrics", "subject", "percy");
+  bugsnag_event_add_metadata_string(event, "app", "weather", "rain");
+  bugsnag_event_add_metadata_double(event, "metrics", "counter", 47.8);
+
+  bugsnag_breadcrumb *crumb1 = init_breadcrumb("decrease torque", "Moving laterally 26º",
+                                               BSG_CRUMB_STATE);
+  bugsnag_breadcrumb *crumb2 = init_breadcrumb("enable blasters", "this is a drill.",
+                                               BSG_CRUMB_USER);
+  memcpy(&event->breadcrumbs[0], crumb1, sizeof(bugsnag_breadcrumb));
+  memcpy(&event->breadcrumbs[1], crumb2, sizeof(bugsnag_breadcrumb));
+  event->crumb_count = 2;
+  event->crumb_first_index = 0;
+
+  event->handled_events = 1;
+  event->unhandled_events = 1;
+  strcpy(event->session_id, "f1ab");
+  strcpy(event->session_start, "2019-03-19T12:58:19+00:00");
+
+  strcpy(event->notifier.version, "1.0");
+  strcpy(event->notifier.url, "bugsnag.com");
+  strcpy(event->notifier.name, "Test Notifier");
+  return event;
 }
 
 bugsnag_report_v3 *bsg_generate_report_v3(void) {
-    bugsnag_report_v3 *report = calloc(1, sizeof(bugsnag_report_v3));
-    generate_basic_report((bugsnag_event *) report);
-    return report;
+  bugsnag_report_v3 *event = calloc(1, sizeof(bugsnag_report_v3));
+  strcpy(event->grouping_hash, "foo-hash");
+  strcpy(event->context, "SomeActivity");
+  strcpy(event->error.errorClass, "SIGBUS");
+  strcpy(event->error.errorMessage, "POSIX is serious about oncoming traffic");
+  event->error.stacktrace[0].frame_address = 454379;
+  event->error.stacktrace[1].frame_address = 342334;
+  event->error.frame_count = 2;
+  strcpy(event->error.type, "C");
+  strcpy(event->error.stacktrace[0].method, "makinBacon");
+  strcpy(event->app.id, "com.example.PhotoSnapPlus");
+  strcpy(event->app.release_stage, "リリース");
+  strcpy(event->app.version, "2.0.52");
+  event->app.version_code = 57;
+  strcpy(event->app.build_uuid, "1234-9876-adfe");
+  strcpy(event->device.manufacturer, "HI-TEC™");
+  strcpy(event->device.model, "Rasseur");
+  strcpy(event->device.locale, "en_AU#Melbun");
+  strcpy(event->device.os_name, "android");
+  strcpy(event->user.email, "fenton@io.example.com");
+  strcpy(event->user.id, "fex");
+  event->device.total_memory = 234678100;
+  event->app.duration = 6502;
+  bugsnag_event_add_metadata_bool(event, "metrics", "experimentX", false);
+  bugsnag_event_add_metadata_string(event, "metrics", "subject", "percy");
+  bugsnag_event_add_metadata_string(event, "app", "weather", "rain");
+  bugsnag_event_add_metadata_double(event, "metrics", "counter", 47.8);
+
+  bugsnag_breadcrumb *crumb1 = init_breadcrumb("decrease torque", "Moving laterally 26º",
+                                               BSG_CRUMB_STATE);
+  bugsnag_breadcrumb *crumb2 = init_breadcrumb("enable blasters", "this is a drill.",
+                                               BSG_CRUMB_USER);
+  memcpy(&event->breadcrumbs[0], crumb1, sizeof(bugsnag_breadcrumb));
+  memcpy(&event->breadcrumbs[1], crumb2, sizeof(bugsnag_breadcrumb));
+  event->crumb_count = 2;
+  event->crumb_first_index = 0;
+
+  event->handled_events = 1;
+  event->unhandled_events = 1;
+  strcpy(event->session_id, "f1ab");
+  strcpy(event->session_start, "2019-03-19T12:58:19+00:00");
+
+  strcpy(event->notifier.version, "1.0");
+  strcpy(event->notifier.url, "bugsnag.com");
+  strcpy(event->notifier.name, "Test Notifier");
+  return event;
 }
 
 bugsnag_report_v2 *bsg_generate_report_v2(void) {
-  bugsnag_report_v2 *report = calloc(1, sizeof(bugsnag_report_v2));
-  generate_basic_report((bugsnag_event *) report);
+  bugsnag_report_v2 *event = calloc(1, sizeof(bugsnag_report_v2));
+  strcpy(event->context, "SomeActivity");
+  strcpy(event->app.id, "com.example.PhotoSnapPlus");
+  strcpy(event->app.release_stage, "リリース");
+  strcpy(event->app.version, "2.0.52");
+  event->app.version_code = 57;
+  strcpy(event->app.build_uuid, "1234-9876-adfe");
+  strcpy(event->device.manufacturer, "HI-TEC™");
+  strcpy(event->device.model, "Rasseur");
+  strcpy(event->device.locale, "en_AU#Melbun");
+  strcpy(event->user.email, "fenton@io.example.com");
+  strcpy(event->user.id, "fex");
+  event->device.total_memory = 234678100;
+  event->app.duration = 6502;
+  bugsnag_event_add_metadata_bool(event, "metrics", "experimentX", false);
+  bugsnag_event_add_metadata_string(event, "metrics", "subject", "percy");
+  bugsnag_event_add_metadata_string(event, "app", "weather", "rain");
+  bugsnag_event_add_metadata_double(event, "metrics", "counter", 47.8);
 
-  strcpy(report->exception.name, "SIGBUS");
-  strcpy(report->exception.message, "POSIX is serious about oncoming traffic");
-  report->exception.stacktrace[0].frame_address = 454379;
-  report->exception.frame_count = 1;
-  strcpy(report->exception.type, "C");
-  strcpy(report->exception.stacktrace[0].method, "makinBacon");
 
-  strcpy(report->app.package_name, "com.example.foo");
-  strcpy(report->app.version_name, "2.5");
+  event->handled_events = 1;
+  event->unhandled_events = 1;
+  strcpy(event->session_id, "f1ab");
+  strcpy(event->session_start, "2019-03-19T12:58:19+00:00");
 
-  bugsnag_breadcrumb_v1 *crumb1 = &report->breadcrumbs[0];
+  strcpy(event->notifier.version, "1.0");
+  strcpy(event->notifier.url, "bugsnag.com");
+  strcpy(event->notifier.name, "Test Notifier");
+
+  strcpy(event->exception.name, "SIGBUS");
+  strcpy(event->exception.message, "POSIX is serious about oncoming traffic");
+  event->exception.stacktrace[0].frame_address = 454379;
+  event->exception.frame_count = 1;
+  strcpy(event->exception.type, "C");
+  strcpy(event->exception.stacktrace[0].method, "makinBacon");
+
+  strcpy(event->app.package_name, "com.example.foo");
+  strcpy(event->app.version_name, "2.5");
+
+  bugsnag_breadcrumb_v1 *crumb1 = &event->breadcrumbs[0];
   crumb1->type = BSG_CRUMB_STATE;
   strcpy(crumb1->timestamp, "2018-08-29T21:41:39Z");
   strcpy(crumb1->name, "decrease torque");
   strcpy(crumb1->metadata[0].key, "message");
   strcpy(crumb1->metadata[0].value, "Moving laterally 26º");
 
-  bugsnag_breadcrumb_v1 *crumb2 = &report->breadcrumbs[1];
+  bugsnag_breadcrumb_v1 *crumb2 = &event->breadcrumbs[1];
   crumb2->type = BSG_CRUMB_USER;
   strcpy(crumb2->timestamp, "2018-08-29T21:41:39Z");
   strcpy(crumb2->name, "enable blasters");
   strcpy(crumb2->metadata[0].key, "message");
   strcpy(crumb2->metadata[0].value, "this is a drill.");
 
-  report->crumb_first_index = 0;
-  report->crumb_count = 2;
-
-  return report;
+  event->crumb_first_index = 0;
+  event->crumb_count = 2;
+  return event;
 }
 
 bugsnag_report_v1 *bsg_generate_report_v1(void) {
@@ -181,7 +293,52 @@ bugsnag_report_v1 *bsg_generate_report_v1(void) {
 
 bugsnag_event *bsg_generate_event(void) {
   bugsnag_event *report = calloc(1, sizeof(bugsnag_event));
-  generate_basic_report(report);
+  strcpy(report->grouping_hash, "foo-hash");
+  strcpy(report->api_key, "5d1e5fbd39a74caa1200142706a90b20");
+  strcpy(report->context, "SomeActivity");
+  strcpy(report->error.errorClass, "SIGBUS");
+  strcpy(report->error.errorMessage, "POSIX is serious about oncoming traffic");
+  report->error.stacktrace[0].frame_address = 454379;
+  report->error.stacktrace[1].frame_address = 342334;
+  report->error.frame_count = 2;
+  strcpy(report->error.type, "C");
+  strcpy(report->error.stacktrace[0].method, "makinBacon");
+  strcpy(report->app.id, "com.example.PhotoSnapPlus");
+  strcpy(report->app.release_stage, "リリース");
+  strcpy(report->app.version, "2.0.52");
+  report->app.version_code = 57;
+  strcpy(report->app.build_uuid, "1234-9876-adfe");
+  strcpy(report->device.manufacturer, "HI-TEC™");
+  strcpy(report->device.model, "Rasseur");
+  strcpy(report->device.locale, "en_AU#Melbun");
+  strcpy(report->device.os_name, "android");
+  strcpy(report->user.email, "fenton@io.example.com");
+  strcpy(report->user.id, "fex");
+  report->device.total_memory = 234678100;
+  report->app.duration = 6502;
+  bugsnag_event_add_metadata_bool(report, "metrics", "experimentX", false);
+  bugsnag_event_add_metadata_string(report, "metrics", "subject", "percy");
+  bugsnag_event_add_metadata_string(report, "app", "weather", "rain");
+  bugsnag_event_add_metadata_double(report, "metrics", "counter", 47.8);
+
+  report->crumb_count = 0;
+  report->crumb_first_index = 0;
+  bugsnag_breadcrumb *crumb1 = init_breadcrumb("decrease torque", "Moving laterally 26º",
+                                               BSG_CRUMB_STATE);
+  bugsnag_event_add_breadcrumb(report, crumb1);
+
+  bugsnag_breadcrumb *crumb2 = init_breadcrumb("enable blasters", "this is a drill.",
+                                               BSG_CRUMB_USER);
+  bugsnag_event_add_breadcrumb(report, crumb2);
+
+  report->handled_events = 1;
+  report->unhandled_events = 1;
+  strcpy(report->session_id, "f1ab");
+  strcpy(report->session_start, "2019-03-19T12:58:19+00:00");
+
+  strcpy(report->notifier.version, "1.0");
+  strcpy(report->notifier.url, "bugsnag.com");
+  strcpy(report->notifier.name, "Test Notifier");
   report->unhandled_events = 2;
   return report;
 }
@@ -192,13 +349,13 @@ void bsg_update_next_run_info(bsg_environment *env);
 char *test_read_last_run_info(const bsg_environment *env) {
   int fd = open(SERIALIZE_TEST_FILE, O_RDONLY);
   size_t size = sizeof(env->next_last_run_info);
-  char *buf = malloc(size);
+  char *buf = calloc(1, size);
   read(fd, buf, size);
   return buf;
 }
 
 test_last_run_info_serialization(void) {
-  bsg_environment *env = malloc(sizeof(bsg_environment));
+  bsg_environment *env = calloc(1, sizeof(bsg_environment));
   strcpy(env->last_run_info_path, SERIALIZE_TEST_FILE);
   
   // update LastRunInfo with defaults
@@ -211,14 +368,14 @@ test_last_run_info_serialization(void) {
   env->next_event.app.is_launching = true;
   env->consecutive_launch_crashes = 7;
   bsg_update_next_run_info(env);
-  ASSERT_STR_EQ("consecutiveLaunchCrashes=7\ncrashed=true\ncrashedDuringLaunch=true\0", env->next_last_run_info);
+  ASSERT_STR_EQ("consecutiveLaunchCrashes=8\ncrashed=true\ncrashedDuringLaunch=true\0", env->next_last_run_info);
 
   free(env);
   PASS();
 }
 
 TEST test_report_to_file(void) {
-  bsg_environment *env = malloc(sizeof(bsg_environment));
+  bsg_environment *env = calloc(1, sizeof(bsg_environment));
   env->report_header.version = 7;
   env->report_header.big_endian = 1;
   bugsnag_event *report = bsg_generate_event();
@@ -232,7 +389,7 @@ TEST test_report_to_file(void) {
 }
 
 TEST test_file_to_report(void) {
-  bsg_environment *env = malloc(sizeof(bsg_environment));
+  bsg_environment *env = calloc(1, sizeof(bsg_environment));
   env->report_header.version = 5;
   env->report_header.big_endian = 1;
   strcpy(env->report_header.os_build, "macOS Sierra");
@@ -252,7 +409,7 @@ TEST test_file_to_report(void) {
 }
 
 TEST test_report_v1_migration(void) {
-  bsg_environment *env = malloc(sizeof(bsg_environment));
+  bsg_environment *env = calloc(1, sizeof(bsg_environment));
   env->report_header.version = 1;
   env->report_header.big_endian = 1;
   strcpy(env->report_header.os_build, "macOS Sierra");
@@ -276,7 +433,7 @@ TEST test_report_v1_migration(void) {
 }
 
 TEST test_report_v2_migration(void) {
-  bsg_environment *env = malloc(sizeof(bsg_environment));
+  bsg_environment *env = calloc(1, sizeof(bsg_environment));
 
   bugsnag_report_v2 *generated_report = bsg_generate_report_v2();
   memcpy(&env->next_event, generated_report, sizeof(bugsnag_report_v2));
@@ -330,7 +487,7 @@ TEST test_report_v2_migration(void) {
 }
 
 TEST test_report_v3_migration(void) {
-  bsg_environment *env = malloc(sizeof(bsg_environment));
+  bsg_environment *env = calloc(1, sizeof(bsg_environment));
   env->report_header.version = 3;
   env->report_header.big_endian = 1;
   strcpy(env->report_header.os_build, "macOS Sierra");
@@ -362,7 +519,7 @@ TEST test_report_v3_migration(void) {
 }
 
 TEST test_report_v4_migration(void) {
-  bsg_environment *env = malloc(sizeof(bsg_environment));
+  bsg_environment *env = calloc(1, sizeof(bsg_environment));
   env->report_header.version = 4;
   env->report_header.big_endian = 1;
   strcpy(env->report_header.os_build, "macOS Sierra");
@@ -518,8 +675,8 @@ TEST test_breadcrumbs_to_json(void) {
 void migrate_app_v2(bugsnag_report_v4 *report_v4, bugsnag_event *event);
 
 TEST test_migrate_app_v2(void) {
-  bugsnag_report_v4 *report_v4 = malloc(sizeof(bugsnag_report_v4));
-  bugsnag_event *event = malloc(sizeof(bugsnag_event));
+  bugsnag_report_v4 *report_v4 = calloc(1, sizeof(bugsnag_report_v4));
+  bugsnag_event *event = calloc(1, sizeof(bugsnag_event));
   bsg_app_info_v2 *seed = &report_v4->app;
   bsg_app_info *app = &event->app;
 
@@ -553,14 +710,8 @@ TEST test_migrate_app_v2(void) {
   PASS();
 }
 
-SUITE(serialize_utils) {
-  RUN_TEST(test_report_to_file);
+SUITE(suite_json_serialization) {
   RUN_TEST(test_last_run_info_serialization);
-  RUN_TEST(test_file_to_report);
-  RUN_TEST(test_report_v1_migration);
-  RUN_TEST(test_report_v2_migration);
-  RUN_TEST(test_report_v3_migration);
-  RUN_TEST(test_report_v4_migration);
   RUN_TEST(test_session_handled_counts);
   RUN_TEST(test_context_to_json);
   RUN_TEST(test_grouping_hash_to_json);
@@ -570,5 +721,17 @@ SUITE(serialize_utils) {
   RUN_TEST(test_custom_info_to_json);
   RUN_TEST(test_exception_to_json);
   RUN_TEST(test_breadcrumbs_to_json);
+}
+
+SUITE(suite_struct_to_file) {
+  RUN_TEST(test_report_to_file);
+  RUN_TEST(test_file_to_report);
+}
+
+SUITE(suite_struct_migration) {
+  RUN_TEST(test_report_v1_migration);
+  RUN_TEST(test_report_v2_migration);
+  RUN_TEST(test_report_v3_migration);
+  RUN_TEST(test_report_v4_migration);
   RUN_TEST(test_migrate_app_v2);
 }

@@ -1,9 +1,8 @@
 package com.bugsnag.android.ndk
 
-import org.junit.Assert.assertEquals
 import org.junit.Test
 
-internal class CustomMetadataSerializationTest {
+class NativeEventMutatorsTest {
 
     companion object {
         init {
@@ -12,12 +11,10 @@ internal class CustomMetadataSerializationTest {
         }
     }
 
-    external fun run(): String
+    external fun run(): Int
 
     @Test
     fun testPassesNativeSuite() {
-        val expected = loadJson("custom_meta_data_serialization.json")
-        val json = run()
-        assertEquals(expected, json)
+        verifyNativeRun(run())
     }
 }

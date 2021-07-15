@@ -42,7 +42,6 @@ class AppDataCollectorForegroundTest {
             sessionTracker,
             null,
             launchCrashTracker,
-            ContextState(),
             NoopLogger
         )
     }

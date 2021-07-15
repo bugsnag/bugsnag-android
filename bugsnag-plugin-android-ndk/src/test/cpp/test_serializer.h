@@ -12,14 +12,14 @@ typedef struct {
 
 enum greatest_test_res validate_serialized_json(const test_case *test_case,
                                                 JSON_Value *event_val);
-bugsnag_user * loadUserTestCase(jint num);
-bsg_app_info * loadAppTestCase(jint num);
-bsg_app_info * loadAppMetadataTestCase(jint num);
-bsg_device_info * loadDeviceTestCase(jint num);
-bugsnag_metadata * loadCustomMetadataTestCase(jint num);
-bugsnag_event * loadContextTestCase(jint num);
-bugsnag_event * loadSeverityReasonTestCase(jint num);
-bugsnag_event * loadSessionTestCase(jint num);
-bugsnag_event * loadBreadcrumbsTestCase(jint num);
-bugsnag_stackframe * loadStackframeTestCase(jint num);
-bsg_error * loadExceptionTestCase(jint num);
+void loadUserTestCase(bugsnag_event *event);
+void loadAppTestCase(bugsnag_event *event);
+void loadAppMetadataTestCase(bugsnag_event *event);
+void loadDeviceTestCase(bugsnag_event *event);
+void loadCustomMetadataTestCase(bugsnag_event *event);
+void loadContextTestCase(bugsnag_event *event);
+void loadSessionTestCase(bugsnag_event *event);
+void loadSeverityReasonTestCase(bugsnag_event *event);
+void loadBreadcrumbsTestCase(bugsnag_event *event);
+bugsnag_stackframe *loadStackframeTestCase();
+void loadExceptionTestCase(bugsnag_event *event);

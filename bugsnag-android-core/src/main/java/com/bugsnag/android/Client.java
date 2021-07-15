@@ -166,7 +166,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
         launchCrashTracker = new LaunchCrashTracker(immutableConfig);
         appDataCollector = new AppDataCollector(appContext, appContext.getPackageManager(),
-                immutableConfig, sessionTracker, am, launchCrashTracker, contextState, logger);
+                immutableConfig, sessionTracker, am, launchCrashTracker, logger);
 
         // load the device + user information
         SharedPrefMigrator sharedPrefMigrator = new SharedPrefMigrator(appContext);

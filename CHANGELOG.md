@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.10.1 (2021-07-15)
+
+### Bug fixes
+
+* Prefer `calloc()` to `malloc()` in NDK code
+  [#1320](https://github.com/bugsnag/bugsnag-android/pull/1320)
+
+* Ensure correct value always collected for activeScreen
+  [#1322](https://github.com/bugsnag/bugsnag-android/pull/1322)
+
 ## 5.10.0 (2021-07-14)
 
 ### Enhancements
