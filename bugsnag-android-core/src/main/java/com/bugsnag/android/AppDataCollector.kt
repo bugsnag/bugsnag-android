@@ -20,7 +20,6 @@ internal class AppDataCollector(
     private val sessionTracker: SessionTracker,
     private val activityManager: ActivityManager?,
     private val launchCrashTracker: LaunchCrashTracker,
-    private val contextState: ContextState,
     private val logger: Logger
 ) {
     var codeBundleId: String? = null
@@ -51,7 +50,7 @@ internal class AppDataCollector(
     fun getAppDataMetadata(): MutableMap<String, Any?> {
         val map = HashMap<String, Any?>()
         map["name"] = appName
-        map["activeScreen"] = contextState.getContext()
+        map["activeScreen"] = sessionTracker.contextActivity
         map["memoryUsage"] = getMemoryUsage()
         map["lowMemory"] = isLowMemory()
 
