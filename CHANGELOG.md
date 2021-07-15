@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* Prefer `calloc()` to `malloc()` in NDK code
+  [#1320](https://github.com/bugsnag/bugsnag-android/pull/1320)
+
 ## 5.10.0 (2021-07-14)
 
 ### Enhancements

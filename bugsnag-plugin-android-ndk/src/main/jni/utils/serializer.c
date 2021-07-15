@@ -70,7 +70,7 @@ bugsnag_event *bsg_deserialize_event_from_file(char *filepath) {
 
 bugsnag_report_v1 *bsg_report_v1_read(int fd) {
   size_t event_size = sizeof(bugsnag_report_v1);
-  bugsnag_report_v1 *event = malloc(event_size);
+  bugsnag_report_v1 *event = calloc(1, event_size);
 
   ssize_t len = read(fd, event, event_size);
   if (len != event_size) {
@@ -82,7 +82,7 @@ bugsnag_report_v1 *bsg_report_v1_read(int fd) {
 
 bugsnag_report_v2 *bsg_report_v2_read(int fd) {
   size_t event_size = sizeof(bugsnag_report_v2);
-  bugsnag_report_v2 *event = malloc(event_size);
+  bugsnag_report_v2 *event = calloc(1, event_size);
 
   ssize_t len = read(fd, event, event_size);
   if (len != event_size) {
@@ -94,7 +94,7 @@ bugsnag_report_v2 *bsg_report_v2_read(int fd) {
 
 bugsnag_report_v3 *bsg_report_v3_read(int fd) {
   size_t event_size = sizeof(bugsnag_report_v3);
-  bugsnag_report_v3 *event = malloc(event_size);
+  bugsnag_report_v3 *event = calloc(1, event_size);
 
   ssize_t len = read(fd, event, event_size);
   if (len != event_size) {
@@ -106,7 +106,7 @@ bugsnag_report_v3 *bsg_report_v3_read(int fd) {
 
 bugsnag_report_v4 *bsg_report_v4_read(int fd) {
   size_t event_size = sizeof(bugsnag_report_v4);
-  bugsnag_report_v4 *event = malloc(event_size);
+  bugsnag_report_v4 *event = calloc(1, event_size);
 
   ssize_t len = read(fd, event, event_size);
   if (len != event_size) {
@@ -118,7 +118,7 @@ bugsnag_report_v4 *bsg_report_v4_read(int fd) {
 
 bugsnag_event *bsg_report_v5_read(int fd) {
   size_t event_size = sizeof(bugsnag_event);
-  bugsnag_event *event = malloc(event_size);
+  bugsnag_event *event = calloc(1, event_size);
 
   ssize_t len = read(fd, event, event_size);
   if (len != event_size) {
@@ -170,7 +170,7 @@ bugsnag_event *bsg_map_v4_to_report(bugsnag_report_v4 *report_v4) {
   if (report_v4 == NULL) {
     return NULL;
   }
-  bugsnag_event *event = malloc(sizeof(bugsnag_event));
+  bugsnag_event *event = calloc(1, sizeof(bugsnag_event));
 
   if (event != NULL) {
     event->notifier = report_v4->notifier;
@@ -204,7 +204,7 @@ bugsnag_event *bsg_map_v3_to_report(bugsnag_report_v3 *report_v3) {
   if (report_v3 == NULL) {
     return NULL;
   }
-  bugsnag_report_v4 *event = malloc(sizeof(bugsnag_event));
+  bugsnag_report_v4 *event = calloc(1, sizeof(bugsnag_event));
 
   if (event != NULL) {
     event->notifier = report_v3->notifier;
@@ -236,7 +236,7 @@ bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2) {
   if (report_v2 == NULL) {
     return NULL;
   }
-  bugsnag_report_v3 *event = malloc(sizeof(bugsnag_report_v3));
+  bugsnag_report_v3 *event = calloc(1, sizeof(bugsnag_report_v3));
 
   if (event != NULL) {
     // assign metadata first as old app/device fields are migrated there
@@ -317,7 +317,7 @@ void migrate_breadcrumb_v1(bugsnag_report_v2 *report_v2,
     int crumb_index =
         bsg_calculate_v1_crumb_index(k, report_v2->crumb_first_index);
     bugsnag_breadcrumb_v1 *old_crumb = &report_v2->breadcrumbs[crumb_index];
-    bugsnag_breadcrumb *new_crumb = malloc(sizeof(bugsnag_breadcrumb));
+    bugsnag_breadcrumb *new_crumb = calloc(1, sizeof(bugsnag_breadcrumb));
 
     // copy old crumb fields to new
     new_crumb->type = old_crumb->type;
@@ -439,7 +439,7 @@ bugsnag_event *bsg_map_v1_to_report(bugsnag_report_v1 *report_v1) {
     return NULL;
   }
   size_t report_size = sizeof(bugsnag_report_v2);
-  bugsnag_report_v2 *event_v2 = malloc(report_size);
+  bugsnag_report_v2 *event_v2 = calloc(1, report_size);
 
   if (event_v2 != NULL) {
     event_v2->notifier = report_v1->notifier;
@@ -468,7 +468,7 @@ bugsnag_event *bsg_map_v1_to_report(bugsnag_report_v1 *report_v1) {
 }
 
 bsg_report_header *bsg_report_header_read(int fd) {
-  bsg_report_header *header = malloc(sizeof(bsg_report_header));
+  bsg_report_header *header = calloc(1, sizeof(bsg_report_header));
   ssize_t len = read(fd, header, sizeof(bsg_report_header));
   if (len != sizeof(bsg_report_header)) {
     free(header);
@@ -619,7 +619,7 @@ void bsg_serialize_device_metadata(const bsg_device_info device,
 void bsg_serialize_custom_metadata(const bugsnag_metadata metadata,
                                    JSON_Object *event_obj) {
   for (int i = 0; i < metadata.value_count; i++) {
-    char *format = malloc(sizeof(char) * 256);
+    char *format = calloc(1, sizeof(char) * 256);
     bsg_metadata_value value = metadata.values[i];
 
     switch (value.type) {
@@ -645,7 +645,7 @@ void bsg_serialize_custom_metadata(const bugsnag_metadata metadata,
 void bsg_serialize_breadcrumb_metadata(const bugsnag_metadata metadata,
                                        JSON_Object *event_obj) {
   for (int i = 0; i < metadata.value_count; i++) {
-    char *format = malloc(sizeof(char) * 256);
+    char *format = calloc(1, sizeof(char) * 256);
     bsg_metadata_value value = metadata.values[i];
 
     switch (value.type) {
@@ -712,7 +712,7 @@ void bsg_serialize_stackframe(bugsnag_stackframe *stackframe,
     json_object_set_string(frame, "file", (*stackframe).filename);
   }
   if (strlen((*stackframe).method) == 0) {
-    char *frame_address = malloc(sizeof(char) * 32);
+    char *frame_address = calloc(1, sizeof(char) * 32);
     sprintf(frame_address, "0x%lx", (unsigned long)(*stackframe).frame_address);
     json_object_set_string(frame, "method", frame_address);
     free(frame_address);

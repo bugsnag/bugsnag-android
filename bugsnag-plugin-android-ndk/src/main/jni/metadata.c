@@ -49,7 +49,7 @@ void bsg_populate_metadata_value(JNIEnv *env, bugsnag_metadata *dst,
  * references here.
  */
 bsg_jni_cache *bsg_populate_jni_cache(JNIEnv *env) {
-  bsg_jni_cache *jni_cache = malloc(sizeof(bsg_jni_cache));
+  bsg_jni_cache *jni_cache = calloc(1, sizeof(bsg_jni_cache));
 
   // lookup java/lang/Integer
   jni_cache->integer = bsg_safe_find_class(env, "java/lang/Integer");
