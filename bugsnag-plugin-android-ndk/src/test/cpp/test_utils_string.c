@@ -40,8 +40,7 @@ TEST length_empty_string(void) {
     PASS();
 }
 
-
-SUITE(string_utils) {
+SUITE(suite_string_utils) {
     RUN_TEST(test_copy_empty_string);
     RUN_TEST(test_copy_literal_string);
     RUN_TEST(length_empty_string);
