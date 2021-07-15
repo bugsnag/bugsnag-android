@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 5.10.1 (2021-07-15)
 
 ### Bug fixes
 
