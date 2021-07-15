@@ -49,7 +49,7 @@ void bsg_populate_metadata_value(JNIEnv *env, bugsnag_metadata *dst,
  * references here.
  */
 bsg_jni_cache *bsg_populate_jni_cache(JNIEnv *env) {
-  bsg_jni_cache *jni_cache = malloc(sizeof(bsg_jni_cache));
+  bsg_jni_cache *jni_cache = calloc(1, sizeof(bsg_jni_cache));
 
   // lookup java/lang/Integer
   jni_cache->integer = bsg_safe_find_class(env, "java/lang/Integer");
@@ -451,6 +451,11 @@ void bsg_populate_app_data(JNIEnv *env, bsg_jni_cache *jni_cache,
     bugsnag_event_add_metadata_bool(event, "app", "backgroundWorkRestricted",
                                     restricted);
   }
+
+  char process_name[64];
+  bsg_copy_map_value_string(env, jni_cache, data, "processName", process_name,
+                            sizeof(process_name));
+  bugsnag_event_add_metadata_string(event, "app", "processName", process_name);
 
   bsg_safe_delete_local_ref(env, data);
 }

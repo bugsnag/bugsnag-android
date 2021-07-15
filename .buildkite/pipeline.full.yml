@@ -69,6 +69,21 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
+  - label: ':android: NDK Instrumentation tests'
+    key: 'ndk-instrumentation-tests'
+    depends_on:
+      - "android-ci"
+    timeout_in_minutes: 30
+    command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
+    plugins:
+      - docker-compose#v3.7.0:
+          run: android-ci
+    env:
+      INSTRUMENTATION_DEVICES: '["Google Pixel-7.1"]'
+      TEST_APK_LOCATION: 'bugsnag-plugin-android-ndk/build/outputs/apk/androidTest/debug/bugsnag-plugin-android-ndk-debug-androidTest.apk'
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+
   - label: ':android: Android 9 Instrumentation tests'
     depends_on:
       - "android-ci"

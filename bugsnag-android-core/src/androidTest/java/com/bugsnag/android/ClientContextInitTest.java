@@ -5,6 +5,9 @@ import static org.mockito.Mockito.when;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+
+import androidx.test.core.app.ApplicationProvider;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -68,6 +71,8 @@ public class ClientContextInitTest {
     }
 
     private void mockContext(Context context) {
+        Resources resources = ApplicationProvider.getApplicationContext().getResources();
+        when(context.getResources()).thenReturn(resources);
         when(context.getPackageName()).thenReturn("mock.package.name");
         when(context.getCacheDir()).thenReturn(new File(System.getProperty("java.io.tmpdir")));
         when(context.getSharedPreferences("com.bugsnag.android", Context.MODE_PRIVATE))

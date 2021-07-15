@@ -35,12 +35,13 @@ class ConfigSerializer implements MapSerializer<ImmutableConfig> {
     }
 
     private Collection<String> serializeBreadrumbTypes(ImmutableConfig config) {
-        Collection<String> crumbTypes = new HashSet<>();
         Set<BreadcrumbType> types = config.getEnabledBreadcrumbTypes();
-        if (types != null) {
-            for (BreadcrumbType type : types) {
-                crumbTypes.add(type.toString());
-            }
+        if (types == null) {
+            return null;
+        }
+        Collection<String> crumbTypes = new HashSet<>();
+        for (BreadcrumbType type : types) {
+            crumbTypes.add(type.toString());
         }
         return crumbTypes;
     }

@@ -13,25 +13,15 @@ enum greatest_test_res validate_serialized_json(const test_case *test_case,
     PASS();
 }
 
-bugsnag_user * loadUserTestCase(jint num) {
-    bugsnag_user *user;
-
-    if (num == 0) {
-        user = malloc(sizeof(bugsnag_user));
-        strcpy(user->name, "Fenton");
-        strcpy(user->email, "fenton@io.example.com");
-        strcpy(user->id, "1234");
-    } else {
-        user = malloc(sizeof(bugsnag_user));
-        strcpy(user->name, "Jamie");
-        strcpy(user->email, "jamie@bugsnag.com");
-        strcpy(user->id, "456");
-    }
-    return user;
+void loadUserTestCase(bugsnag_event *event) {
+    bugsnag_user *user = &event->user;
+    strcpy(user->name, "Fenton");
+    strcpy(user->email, "fenton@io.example.com");
+    strcpy(user->id, "1234");
 }
 
-bsg_app_info * loadAppTestCase(jint num) {
-    bsg_app_info *app = malloc(sizeof(bsg_app_info));
+void loadAppTestCase(bugsnag_event *event) {
+    bsg_app_info *app = &event->app;
     strcpy(app->id, "com.bugsnag.example");
     strcpy(app->release_stage, "prod");
     strcpy(app->type, "android");
@@ -46,16 +36,14 @@ bsg_app_info * loadAppTestCase(jint num) {
     app->in_foreground = true;
     app->is_launching = true;
     strcpy(app->binary_arch, "x86");
-    return app;
 }
 
-bsg_app_info * loadAppMetadataTestCase(jint num) {
-    bsg_app_info *app = loadAppTestCase(num);
-    return app;
+void loadAppMetadataTestCase(bugsnag_event *event) {
+  loadAppTestCase(event);
 }
 
-bsg_device_info * loadDeviceTestCase(jint num) {
-    bsg_device_info *device = malloc(sizeof(bsg_device_info));
+void loadDeviceTestCase(bugsnag_event *event) {
+    bsg_device_info *device = &event->device;
     device->api_level = 29;
     bsg_strncpy_safe(device->cpu_abi[0].value, "x86", sizeof(device->cpu_abi[0].value));
     device->cpu_abi_count = 1;
@@ -72,11 +60,10 @@ bsg_device_info * loadDeviceTestCase(jint num) {
     strcpy(device->os_version, "8.1");
     strcpy(device->os_name, "android");
     device->total_memory = 512340922;
-    return device;
 }
 
-bugsnag_metadata * loadCustomMetadataTestCase(jint num) {
-    bugsnag_metadata *data = malloc(sizeof(bugsnag_metadata));
+void loadCustomMetadataTestCase(bugsnag_event *event) {
+    bugsnag_metadata *data = &event->metadata;
     data->value_count = 4;
 
     data->values[0].type = BSG_METADATA_CHAR_VALUE;
@@ -97,42 +84,36 @@ bugsnag_metadata * loadCustomMetadataTestCase(jint num) {
     data->values[3].type = BSG_METADATA_NONE_VALUE;
     strcpy(data->values[3].section, "custom");
     strcpy(data->values[3].name, "none");
-    return data;
 }
 
-bugsnag_event * loadContextTestCase(jint num) {
-    bugsnag_event *data = malloc(sizeof(bugsnag_event));
-    strcpy(data->context, "CustomContext");
-    strcpy(data->app.active_screen, "ExampleActivity");
-    return data;
+void loadContextTestCase(bugsnag_event *event) {
+    strcpy(event->context, "CustomContext");
+    strcpy(event->app.active_screen, "ExampleActivity");
 }
 
-bugsnag_event * loadSeverityReasonTestCase(jint num) {
-    bugsnag_event *data = malloc(sizeof(bugsnag_event));
+void loadSeverityReasonTestCase(bugsnag_event *data) {
     data->unhandled = true;
     data->severity = BSG_SEVERITY_ERR;
     strcpy(data->error.errorClass, "SIGABRT");
-    return data;
 }
 
-bugsnag_event * loadSessionTestCase(jint num) {
-    bugsnag_event *data = malloc(sizeof(bugsnag_event));
+void loadSessionTestCase(bugsnag_event *data) {
     strcpy(data->session_id, "123");
     strcpy(data->session_start, "2018-10-08T12:07:09Z");
     data->handled_events = 2;
     data->unhandled_events = 1;
-    return data;
 }
 
-bugsnag_event * loadBreadcrumbsTestCase(jint num) {
-    bugsnag_event *event = malloc(sizeof(bugsnag_event));
-
-    // ensure that serialization loop is covered by test
+void loadBreadcrumbsTestCase(bugsnag_event *event) {
+    bugsnag_breadcrumb *crumb = calloc(1, sizeof(bugsnag_breadcrumb));
+    memset(crumb, 0, sizeof(bugsnag_breadcrumb));
     event->crumb_count = 4;
     event->crumb_first_index = BUGSNAG_CRUMBS_MAX - 2;
 
+    // ensure that serialization loop is covered by test
+
     // first breadcrumb
-    bugsnag_breadcrumb *crumb = &event->breadcrumbs[BUGSNAG_CRUMBS_MAX - 2];
+    crumb = &event->breadcrumbs[BUGSNAG_CRUMBS_MAX - 2];
     crumb->type = BSG_CRUMB_USER;
     strcpy(crumb->name, "Jane");
     strcpy(crumb->timestamp, "2018-10-08T12:07:09Z");
@@ -183,11 +164,10 @@ bugsnag_event * loadBreadcrumbsTestCase(jint num) {
     data->values[0].type = BSG_METADATA_NONE_VALUE;
     strcpy(data->values[0].section, "custom");
     strcpy(data->values[0].name, "none");
-    return event;
 }
 
-bugsnag_stackframe * loadStackframeTestCase(jint num) {
-    bugsnag_stackframe *data = malloc(sizeof(bugsnag_stackframe));
+bugsnag_stackframe *loadStackframeTestCase() {
+    bugsnag_stackframe *data = calloc(1, sizeof(bugsnag_stackframe));
     data->frame_address = 0x20000000;
     data->symbol_address = 0x16000000;
     data->load_address = 0x12000000;
@@ -197,8 +177,8 @@ bugsnag_stackframe * loadStackframeTestCase(jint num) {
     return data;
 }
 
-bsg_error * loadExceptionTestCase(jint num) {
-    bsg_error *data = malloc(sizeof(bsg_error));
+void loadExceptionTestCase(bugsnag_event *event) {
+    bsg_error *data = &event->error;
     strcpy(data->errorClass, "signal");
     strcpy(data->errorMessage, "whoops something went wrong");
     strcpy(data->type, "c");
@@ -209,5 +189,4 @@ bsg_error * loadExceptionTestCase(jint num) {
     data->stacktrace[0].line_number= 52;
     strcpy(data->stacktrace[0].filename, "foo.c");
     strcpy(data->stacktrace[0].method, "bar()");
-    return data;
 }
