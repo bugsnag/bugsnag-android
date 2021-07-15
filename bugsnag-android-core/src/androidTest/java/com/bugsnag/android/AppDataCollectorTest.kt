@@ -48,12 +48,32 @@ class AppDataCollectorTest {
             client.sessionTracker,
             am,
             client.launchCrashTracker,
-            client.contextState,
             NoopLogger
         )
         val app = collector.getAppDataMetadata()
         assertNull(app["backgroundWorkRestricted"])
         assertEquals("com.bugsnag.android.core.test", app["processName"] as String)
+    }
+
+    @Test
+    fun testActiveScreenValue() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            `when`(am.isBackgroundRestricted).thenReturn(false)
+        }
+
+        val collector = AppDataCollector(
+            context,
+            context.packageManager,
+            client.immutableConfig,
+            client.sessionTracker,
+            am,
+            client.launchCrashTracker,
+            NoopLogger
+        )
+        client.context = "Some Custom Context"
+        client.sessionTracker.updateForegroundTracker("MyActivity", true, 0L)
+        val app = collector.getAppDataMetadata()
+        assertEquals("MyActivity", app["activeScreen"] as String)
     }
 
     /**
@@ -71,7 +91,6 @@ class AppDataCollectorTest {
             client.sessionTracker,
             am,
             client.launchCrashTracker,
-            client.contextState,
             NoopLogger
         )
         val app = collector.getAppDataMetadata()

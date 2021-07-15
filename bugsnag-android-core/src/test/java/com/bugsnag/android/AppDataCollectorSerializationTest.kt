@@ -51,7 +51,6 @@ internal class AppDataCollectorSerializationTest {
                 sessionTracker,
                 am,
                 launchCrashTracker,
-                ContextState(),
                 NoopLogger
             )
             appData.codeBundleId = "foo-99"
