@@ -13,7 +13,10 @@ add_library( # Specifies the name of the library.
     jni/event.c
     jni/handlers/signal_handler.c
     jni/handlers/cpp_handler.cpp
+    jni/ctjournal.c
+    jni/utils/buffered_writer.c
     jni/utils/crash_info.c
+    jni/utils/number_to_string.c
     jni/utils/stack_unwinder.c
     jni/utils/stack_unwinder_libunwindstack.cpp
     jni/utils/stack_unwinder_libcorkscrew.c
