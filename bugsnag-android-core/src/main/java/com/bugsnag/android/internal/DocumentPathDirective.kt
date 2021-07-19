@@ -1,5 +1,9 @@
 package com.bugsnag.android.internal
 
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentMap
+import java.util.concurrent.CopyOnWriteArrayList
+
 /**
  * A directive determines how document path commands are interpreted. Making a container,
  * getting from a container, or setting to a container will require different operations to
@@ -30,13 +34,56 @@ internal interface DocumentPathDirective<C> {
      */
     fun setInContainer(container: C, value: Any?)
 
+    companion object {
+        private fun convertToConcurrent(list: List<*>): CopyOnWriteArrayList<*> {
+            val concurrentList = CopyOnWriteArrayList(list)
+            for (i in list.indices) {
+                val entry = list[i]
+                if (entry is Map<*, *>) {
+                    concurrentList[i] = convertToConcurrent(entry)
+                } else if (entry is List<*>) {
+                    concurrentList[i] = convertToConcurrent(entry)
+                }
+            }
+            return concurrentList
+        }
+
+        private fun convertToConcurrent(map: Map<*, *>): ConcurrentMap<*, *> {
+            val concurrentMap = ConcurrentHashMap(map)
+            map.forEach {
+                val entry = it.value
+                if (entry is Map<*, *>) {
+                    concurrentMap[it.key] = convertToConcurrent(entry)
+                } else if (entry is List<*>) {
+                    concurrentMap[it.key] = convertToConcurrent(entry)
+                }
+            }
+            return concurrentMap
+        }
+
+        /**
+         * Convert an arbitrary type to a concurrency safe version.
+         * This only converts if it's a map or list, and simply returns the original value if
+         * it's another type or null.
+         */
+        internal fun convertToConcurrent(obj: Any?): Any? {
+            if (obj is Map<*, *>) {
+                return convertToConcurrent(obj)
+            }
+            if (obj is List<*>) {
+                return convertToConcurrent(obj)
+            }
+            return obj
+        }
+    }
+
     /**
      * Modifies a particular key in a map, or creates a new (String, Object) map.
      * Setting null removes the value.
      */
     class MapKeyDirective(private val key: String) : DocumentPathDirective<MutableMap<String, in Any>> {
         override fun newContainer(): MutableMap<String, in Any> {
-            return mutableMapOf()
+            return ConcurrentHashMap()
         }
 
         override fun getFromContainer(container: MutableMap<String, in Any>): Any? {
@@ -44,10 +91,11 @@ internal interface DocumentPathDirective<C> {
         }
 
         override fun setInContainer(container: MutableMap<String, in Any>, value: Any?) {
-            if (value == null) {
+            val convertedValue = convertToConcurrent(value)
+            if (convertedValue == null) {
                 container.remove(key)
             } else {
-                container[key] = value
+                container[key] = convertedValue
             }
         }
     }
@@ -58,7 +106,7 @@ internal interface DocumentPathDirective<C> {
      */
     open class ListIndexDirective(private val index: Int) : DocumentPathDirective<MutableList<in Any>> {
         override fun newContainer(): MutableList<in Any> {
-            return mutableListOf()
+            return CopyOnWriteArrayList()
         }
 
         override fun getFromContainer(container: MutableList<in Any>): Any? {
@@ -66,9 +114,10 @@ internal interface DocumentPathDirective<C> {
         }
 
         override fun setInContainer(container: MutableList<in Any>, value: Any?) {
+            val convertedValue = convertToConcurrent(value)
             container.removeAt(index)
-            if (value != null) {
-                container.add(index, value)
+            if (convertedValue != null) {
+                container.add(index, convertedValue)
             }
         }
     }
@@ -84,11 +133,12 @@ internal interface DocumentPathDirective<C> {
         }
 
         override fun setInContainer(container: MutableList<in Any>, value: Any?) {
+            val convertedValue = convertToConcurrent(value)
             if (container.isNotEmpty()) {
                 container.removeAt(container.lastIndex)
             }
-            if (value != null) {
-                container.add(value)
+            if (convertedValue != null) {
+                container.add(convertedValue)
             }
         }
     }
@@ -104,8 +154,9 @@ internal interface DocumentPathDirective<C> {
         }
 
         override fun setInContainer(container: MutableList<in Any>, value: Any?) {
-            requireNotNull(value) { "Cannot use null for last path insert value" }
-            container.add(value)
+            val convertedValue = convertToConcurrent(value)
+            requireNotNull(convertedValue) { "Cannot use null for last path insert value" }
+            container.add(convertedValue)
         }
     }
 }
