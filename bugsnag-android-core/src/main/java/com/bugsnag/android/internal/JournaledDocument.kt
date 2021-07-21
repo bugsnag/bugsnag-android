@@ -5,14 +5,18 @@ import androidx.annotation.RequiresApi
 import java.io.Closeable
 import java.io.File
 import java.io.IOException
-import java.lang.IllegalStateException
 import java.nio.BufferOverflowException
+import java.util.concurrent.ConcurrentHashMap
 import java.util.function.BiConsumer
 
 /**
  * A document with journal backing.
  * Document snapshots are persisted to files, and journal entries are persisted to a memory-mapped
  * file.
+ *
+ * This document will always be internally composed of ConcurrentHashMap and CopyOnWriteArrayList.
+ * Thus, the document and its children will have the same concurrency protections and requirements
+ * of those classes.
  *
  * Changes to the document must me made only via journal commands. Do not modify the document or any
  * of its sub-components directly!
@@ -27,20 +31,23 @@ class JournaledDocument
  *                    journal is reloaded)
  * @param version The journal type version (to support migration)
  * @param bufferSize The size of the shared memory buffer (and thus the maximum size of the journal)
- * @param initialDocument The initial document contents (will be shallow copied)
+ * @param highWater The "high water" point. If the size of the serialized journal exceeds this, the
+ *                  journal will be snapshotted when snapshotIfHighWater() is called.
+ * @param initialDocument The initial document contents (will be deep copied)
  */
 constructor(
     baseDocumentPath: File,
     journalType: String,
     version: Int,
     bufferSize: Long,
-    initialDocument: MutableMap<String, Any>
+    private val highWater: Long,
+    initialDocument: Map<String, Any>
 ) : Map<String, Any>, Closeable {
     private val journalPath = getJournalPath(baseDocumentPath)
     private val snapshotPath = getSnapshotPath(baseDocumentPath)
     private val newSnapshotPath = getNewSnapshotPath(baseDocumentPath)
 
-    private val document = initialDocument.toMutableMap()
+    private val document = convertDocumentToConcurrent(initialDocument)
     private val journal = Journal(journalType, version)
     private val journalStream = MemoryMappedOutputStream(journalPath, bufferSize, clearedByteValue)
     private var isOpen = true
@@ -57,41 +64,77 @@ constructor(
      * This will first serialize the command to shared memory. If the memory is too full,
      * it will create a snapshot to free up some room and try a second time.
      * Next, it will apply the command to the document, and then add it to the journal itself.
+     *
+     * @param path The path describing where to set the value
+     * @param value The value to set
+     * @see DocumentPath
+     */
+    fun addCommand(path: String, value: Any?) {
+        return addCommand(Journal.Command(path, value))
+    }
+
+    /**
+     * Add a journal command.
+     *
+     * This will first serialize the command to shared memory. If the memory is too full,
+     * it will create a snapshot to free up some room and try a second time.
+     * Next, it will apply the command to the document, and then add it to the journal itself.
      */
     fun addCommand(command: Journal.Command) {
-        if (!isOpen) {
-            throw IllegalStateException("Cannot add commands to a closed document")
+        synchronized(journal) {
+            if (!isOpen) {
+                throw IllegalStateException("Cannot add commands to a closed document")
+            }
+            try {
+                command.serialize(journalStream)
+            } catch (ex: BufferOverflowException) {
+                snapshot()
+                command.serialize(journalStream)
+            }
+            command.apply(document)
+            journal.add(command)
         }
-        try {
-            command.serialize(journalStream)
-        } catch (ex: BufferOverflowException) {
-            snapshot()
-            command.serialize(journalStream)
-        }
-        command.apply(document)
-        journal.add(command)
     }
 
     /**
      * Save a current document snapshot and clear the journal
      */
     fun snapshot() {
-        if (!isOpen) {
-            throw IllegalStateException("Cannot snapshot a closed document")
+        synchronized(journal) {
+            snapshotInternal()
         }
-        JsonHelper.serialize(document, newSnapshotPath)
-        journal.clear()
-        journalStream.clear()
-        journal.serialize(journalStream)
-        newSnapshotPath.renameTo(snapshotPath)
+    }
+
+    /**
+     * Save a current snapshot if the journal has passed the high water mark.
+     * Use this in a BG thread to reduce the incidence of snapshotting on the critical path.
+     */
+    fun snapshotIfHighWater() {
+        if (journalStream.bufferSize - journalStream.bytesRemaining() >= highWater) {
+            synchronized(journal) {
+                // Second check in case someone else beat us to it
+                if (journalStream.bufferSize - journalStream.bytesRemaining() >= highWater) {
+                    snapshotInternal()
+                }
+            }
+        }
     }
 
     /**
      * Close the journal backing this document. All further modifications will throw exceptions.
      */
     override fun close() {
-        journalStream.close()
-        isOpen = false
+        synchronized(journal) {
+            if (!isOpen) {
+                return
+            }
+            try {
+                snapshotInternal()
+            } finally {
+                isOpen = false
+                journalStream.close()
+            }
+        }
     }
 
     override val entries: Set<Map.Entry<String, Any>> get() = document.entries
@@ -106,6 +149,19 @@ constructor(
     @RequiresApi(Build.VERSION_CODES.N)
     override fun getOrDefault(key: String, defaultValue: Any): Any { return document.getOrDefault(key, defaultValue) }
     override fun isEmpty(): Boolean { return document.isEmpty() }
+
+    private fun snapshotInternal() {
+        if (!isOpen) {
+            throw IllegalStateException("Cannot snapshot a closed document")
+        }
+        JsonHelper.serialize(document, newSnapshotPath)
+        journal.clear()
+        journalStream.clear()
+        journal.serialize(journalStream)
+        if (!newSnapshotPath.renameTo(snapshotPath)) {
+            throw FileSystemException(newSnapshotPath, snapshotPath, "Could not rename file")
+        }
+    }
 
     companion object {
         // 0x99 is guaranteed to be an invalid UTF-8 start byte
@@ -173,6 +229,11 @@ constructor(
 
             // A valid journal must run without error.
             return journal.applyTo(document)
+        }
+
+        internal fun convertDocumentToConcurrent(map: Map<String, Any>): ConcurrentHashMap<String, Any> {
+            @Suppress("UNCHECKED_CAST")
+            return DocumentPathDirective.convertToConcurrent(map) as ConcurrentHashMap<String, Any>
         }
     }
 }

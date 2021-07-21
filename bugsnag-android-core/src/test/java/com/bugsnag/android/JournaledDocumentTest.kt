@@ -12,13 +12,20 @@ import java.io.File
 class JournaledDocumentTest {
     @Rule
     @JvmField
-    var folder: TemporaryFolder = TemporaryFolder()
+    val folder: TemporaryFolder = TemporaryFolder()
 
     @Test
     fun testEmptyDocumentEmptyJournal() {
         val baseDocumentPath = folder.newFile("mydocument")
         val bufferSize = 100L
-        val document = JournaledDocument(baseDocumentPath, standardType, standardVersion, bufferSize, mutableMapOf())
+        val document = JournaledDocument(
+            baseDocumentPath,
+            standardType,
+            standardVersion,
+            bufferSize,
+            bufferSize,
+            mutableMapOf()
+        )
         document.close()
 
         assertReloadedDocument(baseDocumentPath, mutableMapOf())
@@ -35,6 +42,7 @@ class JournaledDocumentTest {
             standardType,
             standardVersion,
             bufferSize,
+            bufferSize,
             mutableMapOf("a" to 1)
         )
         document.close()
@@ -48,8 +56,31 @@ class JournaledDocumentTest {
     fun testEmptyDocumentNonEmptyJournal() {
         val baseDocumentPath = folder.newFile("mydocument")
         val bufferSize = 100L
-        val document = JournaledDocument(baseDocumentPath, standardType, standardVersion, bufferSize, mutableMapOf())
+        val document = JournaledDocument(
+            baseDocumentPath,
+            standardType,
+            standardVersion,
+            bufferSize,
+            bufferSize,
+            mutableMapOf()
+        )
         document.addCommand(Journal.Command("a.-1.b", "test"))
+
+        assertReloadedDocument(
+            baseDocumentPath,
+            mutableMapOf(
+                "a" to mutableListOf(
+                    mutableMapOf("b" to "test")
+                )
+            )
+        )
+        assertJournalContents(
+            baseDocumentPath,
+            bufferSize,
+            "$standardJournalInfoSerialized{\"a.-1.b\":\"test\"}\u0000".toByteArray(Charsets.UTF_8)
+        )
+        assertSnapshotContents(baseDocumentPath, mutableMapOf())
+
         document.close()
 
         assertReloadedDocument(
@@ -63,9 +94,16 @@ class JournaledDocumentTest {
         assertJournalContents(
             baseDocumentPath,
             bufferSize,
-            (standardJournalInfoSerialized + "{\"a.-1.b\":\"test\"}\u0000").toByteArray(Charsets.UTF_8)
+            standardJournalInfoSerialized.toByteArray(Charsets.UTF_8)
         )
-        assertSnapshotContents(baseDocumentPath, mutableMapOf())
+        assertSnapshotContents(
+            baseDocumentPath,
+            mutableMapOf(
+                "a" to mutableListOf(
+                    mutableMapOf("b" to "test")
+                )
+            )
+        )
     }
 
     @Test
@@ -77,11 +115,29 @@ class JournaledDocumentTest {
             standardType,
             standardVersion,
             bufferSize,
+            bufferSize,
             mutableMapOf("x" to 9)
         )
         document.addCommand(Journal.Command("a.-1.b", "test"))
         // The in-memory document is updated immediately.
         Assert.assertEquals("test", ((document["a"] as List<*>)[0] as Map<*, *>)["b"])
+
+        assertReloadedDocument(
+            baseDocumentPath,
+            mutableMapOf(
+                "a" to mutableListOf(
+                    mutableMapOf("b" to "test")
+                ),
+                "x" to 9
+            )
+        )
+        assertJournalContents(
+            baseDocumentPath,
+            bufferSize,
+            "$standardJournalInfoSerialized{\"a.-1.b\":\"test\"}\u0000".toByteArray(Charsets.UTF_8)
+        )
+        assertSnapshotContents(baseDocumentPath, mutableMapOf("x" to 9))
+
         // The journal is force-flushed when closed or the app terminates for any reason.
         document.close()
 
@@ -97,9 +153,17 @@ class JournaledDocumentTest {
         assertJournalContents(
             baseDocumentPath,
             bufferSize,
-            (standardJournalInfoSerialized + "{\"a.-1.b\":\"test\"}\u0000").toByteArray(Charsets.UTF_8)
+            standardJournalInfoSerialized.toByteArray(Charsets.UTF_8)
         )
-        assertSnapshotContents(baseDocumentPath, mutableMapOf("x" to 9))
+        assertSnapshotContents(
+            baseDocumentPath,
+            mutableMapOf(
+                "a" to mutableListOf(
+                    mutableMapOf("b" to "test")
+                ),
+                "x" to 9
+            )
+        )
     }
 
     @Test
@@ -111,10 +175,33 @@ class JournaledDocumentTest {
             standardType,
             standardVersion,
             bufferSize,
+            bufferSize,
             mutableMapOf("x" to 9)
         )
         document.addCommand(Journal.Command("a", 1))
-        document.addCommand(Journal.Command("b", 2))
+        document.addCommand("b", 2)
+
+        assertReloadedDocument(
+            baseDocumentPath,
+            mutableMapOf(
+                "a" to 1,
+                "b" to 2,
+                "x" to 9
+            )
+        )
+        assertJournalContents(
+            baseDocumentPath,
+            bufferSize,
+            "$standardJournalInfoSerialized{\"b\":2}\u0000".toByteArray(Charsets.UTF_8)
+        )
+        assertSnapshotContents(
+            baseDocumentPath,
+            mutableMapOf(
+                "a" to 1,
+                "x" to 9
+            )
+        )
+
         document.close()
 
         assertReloadedDocument(
@@ -128,12 +215,97 @@ class JournaledDocumentTest {
         assertJournalContents(
             baseDocumentPath,
             bufferSize,
-            (standardJournalInfoSerialized + "{\"b\":2}\u0000").toByteArray(Charsets.UTF_8)
+            standardJournalInfoSerialized.toByteArray(Charsets.UTF_8)
         )
         assertSnapshotContents(
             baseDocumentPath,
             mutableMapOf(
                 "a" to 1,
+                "b" to 2,
+                "x" to 9
+            )
+        )
+    }
+
+    @Test
+    fun testHighWater() {
+        val baseDocumentPath = folder.newFile("mydocument")
+        val bufferSize = standardJournalInfoSerialized.length + 20L
+        val document = JournaledDocument(
+            baseDocumentPath,
+            standardType,
+            standardVersion,
+            bufferSize,
+            bufferSize - 10,
+            mutableMapOf("x" to 9)
+        )
+        document.addCommand(Journal.Command("a", 1))
+        document.addCommand(Journal.Command("b", 2))
+
+        assertJournalContents(
+            baseDocumentPath,
+            bufferSize,
+            "$standardJournalInfoSerialized{\"a\":1}\u0000{\"b\":2}\u0000".toByteArray(Charsets.UTF_8)
+        )
+        assertSnapshotContents(
+            baseDocumentPath,
+            mutableMapOf(
+                "x" to 9
+            )
+        )
+        assertReloadedDocument(
+            baseDocumentPath,
+            mutableMapOf(
+                "a" to 1,
+                "b" to 2,
+                "x" to 9
+            )
+        )
+
+        document.snapshotIfHighWater()
+
+        assertJournalContents(
+            baseDocumentPath,
+            bufferSize,
+            standardJournalInfoSerialized.toByteArray(Charsets.UTF_8)
+        )
+        assertSnapshotContents(
+            baseDocumentPath,
+            mutableMapOf(
+                "a" to 1,
+                "b" to 2,
+                "x" to 9
+            )
+        )
+        assertReloadedDocument(
+            baseDocumentPath,
+            mutableMapOf(
+                "a" to 1,
+                "b" to 2,
+                "x" to 9
+            )
+        )
+
+        document.close()
+
+        assertJournalContents(
+            baseDocumentPath,
+            bufferSize,
+            standardJournalInfoSerialized.toByteArray(Charsets.UTF_8)
+        )
+        assertSnapshotContents(
+            baseDocumentPath,
+            mutableMapOf(
+                "a" to 1,
+                "b" to 2,
+                "x" to 9
+            )
+        )
+        assertReloadedDocument(
+            baseDocumentPath,
+            mutableMapOf(
+                "a" to 1,
+                "b" to 2,
                 "x" to 9
             )
         )
@@ -147,6 +319,7 @@ class JournaledDocumentTest {
             baseDocumentPath,
             standardType,
             standardVersion,
+            bufferSize,
             bufferSize,
             mutableMapOf("x" to 9)
         )
@@ -164,6 +337,7 @@ class JournaledDocumentTest {
             baseDocumentPath,
             standardType,
             standardVersion,
+            bufferSize,
             bufferSize,
             mutableMapOf("x" to 9)
         )

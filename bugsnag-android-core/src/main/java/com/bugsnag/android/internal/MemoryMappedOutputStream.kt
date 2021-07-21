@@ -16,9 +16,9 @@ import java.nio.channels.FileChannel
  * The memory mapped file is fixed to the length specified at instantiation, meaning that
  * write() will throw java.nio.BufferOverflowException if the file is too full.
  */
-class MemoryMappedOutputStream(
+internal class MemoryMappedOutputStream(
     file: File,
-    private val bufferSize: Long,
+    internal val bufferSize: Long,
     private val clearedByteValue: Byte = 0
 ) : OutputStream() {
 
@@ -30,7 +30,11 @@ class MemoryMappedOutputStream(
         raf.setLength(bufferSize)
     }
 
-    fun clear() {
+    internal fun bytesRemaining(): Int {
+        return memory.remaining()
+    }
+
+    internal fun clear() {
         memory.rewind()
         for (i in 1..bufferSize) {
             memory.put(clearedByteValue)
@@ -39,8 +43,11 @@ class MemoryMappedOutputStream(
     }
 
     override fun close() {
-        memory.force()
-        raf.close()
+        try {
+            memory.force()
+        } finally {
+            raf.close()
+        }
     }
 
     /**
