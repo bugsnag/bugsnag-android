@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* Address pre-existing StrictMode violations
+  [#1328](https://github.com/bugsnag/bugsnag-android/pull/1328)
+
 ## 5.10.1 (2021-07-15)
 
 ### Bug fixes
