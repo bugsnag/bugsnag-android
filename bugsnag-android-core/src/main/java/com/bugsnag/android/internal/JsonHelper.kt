@@ -19,6 +19,12 @@ class JsonHelper private constructor() {
         }
 
         fun serialize(value: Any, file: File) {
+            val parentFile = file.parentFile
+            if (parentFile != null && !parentFile.exists()) {
+                if (!parentFile.mkdirs()) {
+                    throw FileSystemException(file, null, "Could not create parent dirs of file")
+                }
+            }
             try {
                 FileOutputStream(file).use { stream -> dslJson.serialize(value, stream) }
             } catch (ex: IOException) {

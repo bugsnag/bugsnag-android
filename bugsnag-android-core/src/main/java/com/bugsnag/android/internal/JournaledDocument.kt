@@ -6,7 +6,6 @@ import java.io.Closeable
 import java.io.File
 import java.io.IOException
 import java.nio.BufferOverflowException
-import java.util.concurrent.ConcurrentHashMap
 import java.util.function.BiConsumer
 
 /**
@@ -47,7 +46,7 @@ constructor(
     private val snapshotPath = getSnapshotPath(baseDocumentPath)
     private val newSnapshotPath = getNewSnapshotPath(baseDocumentPath)
 
-    private val document = convertDocumentToConcurrent(initialDocument)
+    private var document = convertDocumentToConcurrent(initialDocument)
     private val journal = Journal(journalType, version)
     private val journalStream = MemoryMappedOutputStream(journalPath, bufferSize, clearedByteValue)
     private var isOpen = true
@@ -91,7 +90,7 @@ constructor(
                 snapshot()
                 command.serialize(journalStream)
             }
-            command.apply(document)
+            document = command.apply(document)
             journal.add(command)
         }
     }
@@ -231,9 +230,9 @@ constructor(
             return journal.applyTo(document)
         }
 
-        internal fun convertDocumentToConcurrent(map: Map<String, Any>): ConcurrentHashMap<String, Any> {
+        internal fun convertDocumentToConcurrent(document: Map<String, Any>): MutableMap<String, Any> {
             @Suppress("UNCHECKED_CAST")
-            return DocumentPathDirective.convertToConcurrent(map) as ConcurrentHashMap<String, Any>
+            return document.asConcurrent() as MutableMap<String, Any>
         }
     }
 }

@@ -1,7 +1,6 @@
 package com.bugsnag.android.internal
 
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ConcurrentMap
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
@@ -34,49 +33,6 @@ internal interface DocumentPathDirective<C> {
      */
     fun setInContainer(container: C, value: Any?)
 
-    companion object {
-        private fun convertToConcurrent(list: List<*>): CopyOnWriteArrayList<*> {
-            val concurrentList = CopyOnWriteArrayList(list)
-            for (i in list.indices) {
-                val entry = list[i]
-                if (entry is Map<*, *>) {
-                    concurrentList[i] = convertToConcurrent(entry)
-                } else if (entry is List<*>) {
-                    concurrentList[i] = convertToConcurrent(entry)
-                }
-            }
-            return concurrentList
-        }
-
-        private fun convertToConcurrent(map: Map<*, *>): ConcurrentMap<*, *> {
-            val concurrentMap = ConcurrentHashMap(map)
-            map.forEach {
-                val entry = it.value
-                if (entry is Map<*, *>) {
-                    concurrentMap[it.key] = convertToConcurrent(entry)
-                } else if (entry is List<*>) {
-                    concurrentMap[it.key] = convertToConcurrent(entry)
-                }
-            }
-            return concurrentMap
-        }
-
-        /**
-         * Convert an arbitrary type to a concurrency safe version.
-         * This only converts if it's a map or list, and simply returns the original value if
-         * it's another type or null.
-         */
-        internal fun convertToConcurrent(obj: Any?): Any? {
-            if (obj is Map<*, *>) {
-                return convertToConcurrent(obj)
-            }
-            if (obj is List<*>) {
-                return convertToConcurrent(obj)
-            }
-            return obj
-        }
-    }
-
     /**
      * Modifies a particular key in a map, or creates a new (String, Object) map.
      * Setting null removes the value.
@@ -91,11 +47,11 @@ internal interface DocumentPathDirective<C> {
         }
 
         override fun setInContainer(container: MutableMap<String, in Any>, value: Any?) {
-            val convertedValue = convertToConcurrent(value)
-            if (convertedValue == null) {
+            val concurrentValue = value.asConcurrent()
+            if (concurrentValue == null) {
                 container.remove(key)
             } else {
-                container[key] = convertedValue
+                container[key] = concurrentValue
             }
         }
     }
@@ -114,10 +70,10 @@ internal interface DocumentPathDirective<C> {
         }
 
         override fun setInContainer(container: MutableList<in Any>, value: Any?) {
-            val convertedValue = convertToConcurrent(value)
+            val concurrentValue = value.asConcurrent()
             container.removeAt(index)
-            if (convertedValue != null) {
-                container.add(index, convertedValue)
+            if (concurrentValue != null) {
+                container.add(index, concurrentValue)
             }
         }
     }
@@ -133,12 +89,12 @@ internal interface DocumentPathDirective<C> {
         }
 
         override fun setInContainer(container: MutableList<in Any>, value: Any?) {
-            val convertedValue = convertToConcurrent(value)
+            val concurrentValue = value.asConcurrent()
             if (container.isNotEmpty()) {
                 container.removeAt(container.lastIndex)
             }
-            if (convertedValue != null) {
-                container.add(convertedValue)
+            if (concurrentValue != null) {
+                container.add(concurrentValue)
             }
         }
     }
@@ -154,9 +110,9 @@ internal interface DocumentPathDirective<C> {
         }
 
         override fun setInContainer(container: MutableList<in Any>, value: Any?) {
-            val convertedValue = convertToConcurrent(value)
-            requireNotNull(convertedValue) { "Cannot use null for last path insert value" }
-            container.add(convertedValue)
+            val concurrentValue = value.asConcurrent()
+            requireNotNull(concurrentValue) { "Cannot use null for last path insert value" }
+            container.add(concurrentValue)
         }
     }
 }
