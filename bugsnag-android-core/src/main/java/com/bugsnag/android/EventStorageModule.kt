@@ -4,8 +4,6 @@ import com.bugsnag.android.internal.dag.ConfigModule
 import com.bugsnag.android.internal.dag.ContextModule
 import com.bugsnag.android.internal.dag.DependencyModule
 import com.bugsnag.android.internal.dag.SystemServiceModule
-import com.bugsnag.android.internal.dag.loadDepModuleIoObjects
-import java.util.concurrent.Future
 
 /**
  * A dependency module which constructs the objects that persist events to disk in Bugsnag.
@@ -18,11 +16,11 @@ internal class EventStorageModule(
     trackerModule: TrackerModule,
     systemServiceModule: SystemServiceModule,
     notifier: Notifier
-) : DependencyModule {
+) : DependencyModule() {
 
     private val cfg = configModule.config
 
-    private val delegate by lazy {
+    private val delegate by future {
         InternalReportDelegate(
             contextModule.ctx,
             cfg.logger,
@@ -36,15 +34,5 @@ internal class EventStorageModule(
         )
     }
 
-    val eventStore by lazy { EventStore(cfg, cfg.logger, notifier, bgTaskService, delegate) }
-
-    // trigger initialization on a background thread. Client<init> will then block on the main
-    // thread if these have not completed by the appropriate time.
-    private val future: Future<*>? = loadDepModuleIoObjects(bgTaskService) { eventStore }
-
-    override fun resolveDependencies(bgTaskService: BackgroundTaskService, taskType: TaskType) {
-        runCatching {
-            future?.get()
-        }
-    }
+    val eventStore by future { EventStore(cfg, cfg.logger, notifier, bgTaskService, delegate) }
 }

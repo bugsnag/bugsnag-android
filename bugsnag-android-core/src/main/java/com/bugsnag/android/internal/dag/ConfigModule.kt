@@ -12,7 +12,7 @@ internal class ConfigModule(
     contextModule: ContextModule,
     configuration: Configuration,
     connectivity: Connectivity
-) : DependencyModule {
+) : DependencyModule() {
 
     val config = sanitiseConfiguration(contextModule.ctx, configuration, connectivity)
 }

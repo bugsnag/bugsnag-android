@@ -81,19 +81,6 @@ class NativeBridge : StateObserver {
     external fun getUnwindStackFunction(): Long
     external fun updateLowMemory(newValue: Boolean)
 
-    /**
-     * Creates a new native bridge for interacting with native components.
-     * Configures logging and ensures that the reporting directory exists
-     * immediately.
-     */
-    init {
-        val outFile = File(reportDirectory)
-        NativeInterface.getLogger()
-        if (!outFile.exists() && !outFile.mkdirs()) {
-            logger.w("The native reporting directory cannot be created.")
-        }
-    }
-
     override fun onStateChange(event: StateEvent) {
         if (isInvalidMessage(event)) return
 

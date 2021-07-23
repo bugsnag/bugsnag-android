@@ -3,8 +3,6 @@ package com.bugsnag.android
 import android.content.Context
 import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.dag.DependencyModule
-import com.bugsnag.android.internal.dag.loadDepModuleIoObjects
-import java.util.concurrent.Future
 
 /**
  * A dependency module which constructs the objects that store information to disk in Bugsnag.
@@ -12,13 +10,12 @@ import java.util.concurrent.Future
 internal class StorageModule(
     appContext: Context,
     immutableConfig: ImmutableConfig,
-    bgTaskService: BackgroundTaskService,
     logger: Logger
-) : DependencyModule {
+) : DependencyModule() {
 
-    val sharedPrefMigrator by lazy { SharedPrefMigrator(appContext) }
+    val sharedPrefMigrator by future { SharedPrefMigrator(appContext) }
 
-    private val deviceIdStore by lazy {
+    private val deviceIdStore by future {
         DeviceIdStore(
             appContext,
             sharedPrefMigrator = sharedPrefMigrator,
@@ -26,9 +23,9 @@ internal class StorageModule(
         )
     }
 
-    val deviceId by lazy { deviceIdStore.loadDeviceId() }
+    val deviceId by future { deviceIdStore.loadDeviceId() }
 
-    val userStore by lazy {
+    val userStore by future {
         UserStore(
             immutableConfig,
             deviceId,
@@ -37,32 +34,14 @@ internal class StorageModule(
         )
     }
 
-    val lastRunInfoStore by lazy { LastRunInfoStore(immutableConfig) }
+    val lastRunInfoStore by future { LastRunInfoStore(immutableConfig) }
 
-    val sessionStore by lazy { SessionStore(immutableConfig, logger, null) }
+    val sessionStore by future { SessionStore(immutableConfig, logger, null) }
 
-    val lastRunInfo by lazy {
+    val lastRunInfo by future {
         val info = lastRunInfoStore.load()
         val currentRunInfo = LastRunInfo(0, crashed = false, crashedDuringLaunch = false)
         lastRunInfoStore.persist(currentRunInfo)
         info
-    }
-
-    // trigger initialization on a background thread. Client<init> will then block on the main
-    // thread if these have not completed by the appropriate time.
-    private val future: Future<*>? = loadDepModuleIoObjects(bgTaskService) {
-        sharedPrefMigrator
-        deviceIdStore
-        deviceId
-        userStore
-        lastRunInfoStore
-        lastRunInfo
-        sessionStore
-    }
-
-    override fun resolveDependencies(bgTaskService: BackgroundTaskService, taskType: TaskType) {
-        runCatching {
-            future?.get()
-        }
     }
 }

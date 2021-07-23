@@ -19,16 +19,15 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Callable;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /**
  * A Bugsnag Client instance allows you to use Bugsnag in your Android app.
@@ -138,7 +137,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
         // setup storage as soon as possible
         final StorageModule storageModule = new StorageModule(appContext,
-                immutableConfig, bgTaskService, logger);
+                immutableConfig, logger);
 
         // setup state trackers for bugsnag
         BugsnagStateModule bugsnagStateModule = new BugsnagStateModule(
@@ -164,6 +163,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         DataCollectionModule dataCollectionModule = new DataCollectionModule(contextModule,
                 configModule, systemServiceModule, trackerModule,
                 bgTaskService, connectivity, storageModule.getDeviceId());
+        dataCollectionModule.resolveDependencies(bgTaskService, TaskType.IO);
         appDataCollector = dataCollectionModule.getAppDataCollector();
         deviceDataCollector = dataCollectionModule.getDeviceDataCollector();
 
@@ -314,20 +314,10 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     }
 
     private void loadPlugins(@NonNull final Configuration configuration) {
-        try {
-            bgTaskService.submitTask(TaskType.DEFAULT, new Runnable() {
-                @Override
-                public void run() {
-                    NativeInterface.setClient(Client.this);
-                    Set<Plugin> userPlugins = configuration.getPlugins();
-                    pluginClient = new PluginClient(userPlugins, immutableConfig, logger);
-                    pluginClient.loadPlugins(Client.this);
-                }
-            }).get(3, TimeUnit.SECONDS);
-        } catch (RejectedExecutionException | InterruptedException
-                | ExecutionException | TimeoutException exc) {
-            logger.w("Failed to load plugins", exc);
-        }
+        NativeInterface.setClient(Client.this);
+        Set<Plugin> userPlugins = configuration.getPlugins();
+        pluginClient = new PluginClient(userPlugins, immutableConfig, logger);
+        pluginClient.loadPlugins(Client.this);
     }
 
     private void logNull(String property) {
@@ -358,11 +348,30 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     }
 
     void setupNdkPlugin() {
+        if (!setupNdkDirectory()) {
+            logger.w("Failed to setup NDK directory.");
+            return;
+        }
+
         String lastRunInfoPath = lastRunInfoStore.getFile().getAbsolutePath();
         int crashes = (lastRunInfo != null) ? lastRunInfo.getConsecutiveLaunchCrashes() : 0;
         clientObservable.postNdkInstall(immutableConfig, lastRunInfoPath, crashes);
         syncInitialState();
         clientObservable.postNdkDeliverPending();
+    }
+
+    private boolean setupNdkDirectory() {
+        try {
+            return bgTaskService.submitTask(TaskType.IO, new Callable<Boolean>() {
+                @Override
+                public Boolean call() {
+                    File outFile = new File(NativeInterface.getNativeReportPath());
+                    return !outFile.exists() && !outFile.mkdirs();
+                }
+            }).get();
+        } catch (Throwable exc) {
+            return false;
+        }
     }
 
     void addObserver(StateObserver observer) {

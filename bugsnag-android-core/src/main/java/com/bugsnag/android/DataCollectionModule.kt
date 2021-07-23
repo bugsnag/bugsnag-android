@@ -5,8 +5,6 @@ import com.bugsnag.android.internal.dag.ConfigModule
 import com.bugsnag.android.internal.dag.ContextModule
 import com.bugsnag.android.internal.dag.DependencyModule
 import com.bugsnag.android.internal.dag.SystemServiceModule
-import com.bugsnag.android.internal.dag.loadDepModuleIoObjects
-import java.util.concurrent.Future
 
 /**
  * A dependency module which constructs the objects that collect data in Bugsnag. For example, this
@@ -20,7 +18,7 @@ internal class DataCollectionModule(
     bgTaskService: BackgroundTaskService,
     connectivity: Connectivity,
     deviceId: String?
-) : DependencyModule {
+) : DependencyModule() {
 
     private val ctx = contextModule.ctx
     private val cfg = configModule.config
@@ -28,7 +26,7 @@ internal class DataCollectionModule(
     private val deviceBuildInfo: DeviceBuildInfo = DeviceBuildInfo.defaultInfo()
     private val dataDir = Environment.getDataDirectory()
 
-    val appDataCollector by lazy {
+    val appDataCollector by future {
         AppDataCollector(
             ctx,
             ctx.packageManager,
@@ -40,25 +38,21 @@ internal class DataCollectionModule(
         )
     }
 
-    private val rootDetector by lazy {
+    private val rootDetector by future {
         RootDetector(logger = logger, deviceBuildInfo = deviceBuildInfo)
     }
 
-    val deviceDataCollector by lazy {
+    val deviceDataCollector by future {
         DeviceDataCollector(
-            connectivity, ctx,
-            ctx.resources, deviceId, deviceBuildInfo, dataDir,
-            rootDetector, bgTaskService, logger
+            connectivity,
+            ctx,
+            ctx.resources,
+            deviceId,
+            deviceBuildInfo,
+            dataDir,
+            rootDetector,
+            bgTaskService,
+            logger
         )
-    }
-
-    // trigger initialization on a background thread. Client<init> will then block on the main
-    // thread with resolveDependencies() if these have not completed by the appropriate time.
-    private val future: Future<*>? = loadDepModuleIoObjects(bgTaskService) { rootDetector }
-
-    override fun resolveDependencies(bgTaskService: BackgroundTaskService, taskType: TaskType) {
-        runCatching {
-            future?.get()
-        }
     }
 }

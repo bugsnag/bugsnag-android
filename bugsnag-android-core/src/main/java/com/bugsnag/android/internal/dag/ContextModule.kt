@@ -8,7 +8,7 @@ import android.content.Context
  */
 internal class ContextModule(
     appContext: Context
-) : DependencyModule {
+) : DependencyModule() {
 
     val ctx: Context = when (appContext.applicationContext) {
         null -> appContext

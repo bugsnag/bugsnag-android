@@ -8,7 +8,7 @@ import com.bugsnag.android.getStorageManager
  */
 internal class SystemServiceModule(
     contextModule: ContextModule
-) : DependencyModule {
+) : DependencyModule() {
 
     val storageManager = contextModule.ctx.getStorageManager()
     val activityManager = contextModule.ctx.getActivityManager()

@@ -10,7 +10,7 @@ import com.bugsnag.android.internal.dag.DependencyModule
 internal class BugsnagStateModule(
     configModule: ConfigModule,
     configuration: Configuration
-) : DependencyModule {
+) : DependencyModule() {
 
     private val cfg = configModule.config
 
