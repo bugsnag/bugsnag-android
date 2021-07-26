@@ -366,7 +366,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                 @Override
                 public Boolean call() {
                     File outFile = new File(NativeInterface.getNativeReportPath());
-                    return !outFile.exists() && !outFile.mkdirs();
+                    return outFile.exists() || outFile.mkdirs();
                 }
             }).get();
         } catch (Throwable exc) {
