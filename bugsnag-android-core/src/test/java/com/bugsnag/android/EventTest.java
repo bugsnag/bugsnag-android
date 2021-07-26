@@ -184,4 +184,20 @@ public class EventTest {
         String severityReasonType = event.getImpl().getSeverityReasonType();
         assertEquals(SeverityReason.REASON_HANDLED_EXCEPTION, severityReasonType);
     }
+
+    @Test
+    public void testSeverityReasonInternalOverload() {
+        RuntimeException exc = new RuntimeException("Something went wrong");
+        Event event = new Event(exc, config, severityReason, NoopLogger.INSTANCE);
+
+        String severityReasonType = event.getImpl().getSeverityReasonType();
+        assertEquals(SeverityReason.REASON_HANDLED_EXCEPTION, severityReasonType);
+        assertEquals(Severity.WARNING, event.getSeverity());
+
+        event.updateSeverityInternal(Severity.INFO);
+        event.updateSeverityReason(SeverityReason.REASON_STRICT_MODE);
+        severityReasonType = event.getImpl().getSeverityReasonType();
+        assertEquals(SeverityReason.REASON_STRICT_MODE, severityReasonType);
+        assertEquals(Severity.INFO, event.getSeverity());
+    }
 }

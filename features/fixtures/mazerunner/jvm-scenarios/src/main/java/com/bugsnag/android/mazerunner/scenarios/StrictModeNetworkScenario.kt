@@ -20,7 +20,6 @@ internal class StrictModeNetworkScenario(
         super.startScenario()
         setupBugsnagStrictModeDetection()
         val urlConnection = URL("http://example.com").openConnection() as HttpURLConnection
-        urlConnection.doOutput = true
         urlConnection.responseMessage
     }
 
@@ -33,6 +32,5 @@ internal class StrictModeNetworkScenario(
                     .build()
             )
         }
-        // Android 9 not supported as of yet
     }
 }

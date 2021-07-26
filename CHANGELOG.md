@@ -2,6 +2,11 @@
 
 ## TBD
 
+### Enhancements
+
+* Add Bugsnag listeners for StrictMode violation detection
+  [#1331](https://github.com/bugsnag/bugsnag-android/pull/1331)
+
 ### Bug fixes
 
 * Address pre-existing StrictMode violations
