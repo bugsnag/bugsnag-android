@@ -64,12 +64,12 @@ class DocumentPath(path: String) {
      * @param value    The value to modify with.
      * @return The modified document (may not be the same document that was passed in).
      */
-    fun modifyDocument(document: MutableMap<in String, out Any>, value: Any?): MutableMap<in String, out Any> {
+    fun modifyDocument(document: MutableMap<in String, out Any>, value: Any?): MutableMap<String, Any> {
         if (directives.isEmpty()) {
-            requireNotNull(value) { "Cannot replace entire document with null" }
-            require(value is MutableMap<*, *>) { "Value replacing document must be a mutable map" }
+            val concurrentValue = value.asConcurrent()
+            require(concurrentValue is MutableMap<*, *>) { "Value replacing document must be a map" }
             @Suppress("UNCHECKED_CAST")
-            return value as MutableMap<String, Any>
+            return concurrentValue as MutableMap<String, Any>
         }
         val filledInDocument = fillInMissingContainers(document, 0)
         require(filledInDocument is MutableMap<*, *>) { "Document path must result in a top level map" }

@@ -85,7 +85,7 @@ class Journal(val type: String, val version: Int) {
          * @param document The document to modify.
          * @return The resulting document (may not be the same as the one passed in).
          */
-        fun apply(document: MutableMap<in String, out Any>): MutableMap<in String, out Any> {
+        fun apply(document: MutableMap<in String, out Any>): MutableMap<String, Any> {
             return documentPath.modifyDocument(document, value)
         }
 
