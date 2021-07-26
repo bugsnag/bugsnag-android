@@ -75,7 +75,7 @@ internal class NativeInterfaceApiTest {
     @Test
     fun getNativeReportPathPersistenceDirectory() {
         val customDir = Files.createTempDirectory("custom").toFile()
-        `when`(immutableConfig.persistenceDirectory).thenReturn(customDir)
+        `when`(immutableConfig.persistenceDirectory).thenReturn(lazy { customDir })
         val observed = NativeInterface.getNativeReportPath()
         assertEquals("${customDir.absolutePath}/bugsnag-native", observed)
     }

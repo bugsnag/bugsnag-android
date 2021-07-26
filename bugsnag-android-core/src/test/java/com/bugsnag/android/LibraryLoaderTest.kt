@@ -3,10 +3,7 @@ package com.bugsnag.android
 import org.junit.Assert.assertFalse
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers.any
 import org.mockito.Mock
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
@@ -21,7 +18,6 @@ class LibraryLoaderTest {
         val loaded = libraryLoader.loadLibrary("foo", client) { true }
         assertFalse(loaded)
         assertFalse(libraryLoader.isLoaded)
-        verify(client, times(1)).notify(any(), any())
     }
 
     @Test
@@ -35,6 +31,5 @@ class LibraryLoaderTest {
         loaded = libraryLoader.loadLibrary("foo", client) { true }
         assertFalse(loaded)
         assertFalse(libraryLoader.isLoaded)
-        verify(client, times(1)).notify(any(), any())
     }
 }

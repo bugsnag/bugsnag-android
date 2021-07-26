@@ -2,6 +2,10 @@ package com.bugsnag.android;
 
 import com.bugsnag.android.internal.ImmutableConfig;
 
+import kotlin.LazyKt;
+import kotlin.jvm.functions.Function0;
+
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collections;
@@ -33,7 +37,16 @@ class TestData {
                 22,
                 32,
                 32,
-                Files.createTempDirectory("foo").toFile(),
+                LazyKt.lazy(new Function0<File>() {
+                    @Override
+                    public File invoke() {
+                        try {
+                            return Files.createTempDirectory("foo").toFile();
+                        } catch (IOException ignored) {
+                            return null;
+                        }
+                    }
+                }),
                 true,
                 null,
                 null
