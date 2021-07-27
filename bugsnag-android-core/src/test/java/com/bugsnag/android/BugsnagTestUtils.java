@@ -4,6 +4,7 @@ import com.bugsnag.android.internal.ImmutableConfig;
 import com.bugsnag.android.internal.ImmutableConfigKt;
 
 import org.jetbrains.annotations.NotNull;
+import org.junit.Assert;
 
 import java.io.File;
 import java.io.IOException;
@@ -193,5 +194,16 @@ final class BugsnagTestUtils {
             return normalizedList((List<Object>)obj);
         }
         return obj;
+    }
+
+    /**
+     * Assert equality on normalized deep copies of list & map containers so that different
+     * sized numeric fields containing the same value will be considered equal.
+     *
+     * @param expected The expected value
+     * @param observed The observed value
+     */
+    public static void assertNormalizedEquals(Object expected, Object observed) {
+        Assert.assertEquals(normalized(expected), normalized(observed));
     }
 }

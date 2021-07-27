@@ -1,17 +1,20 @@
 package com.bugsnag.android.internal
 
+import java.lang.IllegalArgumentException
+
 /**
  * DocumentPath records a path into a hierarchical acyclic document, and can be used to modify
  * documents by navigating down the DAG and then applying a modification at that level.
  *
- * Paths are explained as follows in PLAT-6353:
- *
  * Paths follow a dotted notation similar to internet hostnames, such that each path component
- * is separated by a dot '.' If a literal dot is required, the path supports an escaping
- * mechanism using the backslash character:
+ * is separated by a dot '.' If a literal dot is required, use an escape sequence: A backslash
+ * character causes the parser to NOT treat the next character specially (regardless of whether
+ * it's a special character or not):
  *
  * \. = literal dot
  * \\ = literal backslash
+ * \+ = literal plus
+ * \z = literal z
  *
  * Path components are either integers or non-integers. Integers refer to the previous path
  * component as a list, providing the index to look up. Non-integers refer to the previous path
@@ -41,9 +44,11 @@ package com.bugsnag.android.internal
  * the entire document.
  * - The integer path component -1 refers to the last index in the array, or index 0 if the
  * array is empty or nonexistent.
- * - If a path ends in a dot (e.g. events.exceptions.stacktrace.), It means that the last
- * path entry (e.g. stacktrace) is to be treated as a list, and the value is to be appended
+ * - If a path ends in an unescaped dot (e.g. events.exceptions.stacktrace.), it means that the
+ * last path entry (e.g. stacktrace) is to be treated as a list, and the value is to be appended
  * to that list.
+ * - If a path ends in an unescaped plus (e.g. session.events.handled+), it means that the value
+ * must be ADDED to any existing value (or inserted if no value exists yet). Value must be numeric.
  *
  * The document to be modified must be serializable into JSON. The following types are supported:
  * - null
@@ -132,6 +137,13 @@ class DocumentPath(path: String) {
 
         private const val ESCAPE_CHAR = '\\'
         private const val PATH_SEPARATOR = '.'
+        private const val ADD_OPERATOR = '+'
+
+        private enum class PathType {
+            PATH_TYPE_NORMAL,
+            PATH_TYPE_LIST_INSERT,
+            PATH_TYPE_ADD,
+        }
 
         /**
          * Generate path directives from a path string.
@@ -140,22 +152,28 @@ class DocumentPath(path: String) {
             if (path.isEmpty()) {
                 return emptyList()
             }
+            val pathType = getPathType(path)
+            val trimmedPath = trimPath(path, pathType)
             val directives = ArrayList<DocumentPathDirective<*>>()
             var requiresEscaping = false
             var strBegin = 0
+
+            val buildPathComponent = fun(endIndex: Int): String {
+                return when {
+                    requiresEscaping -> unescape(trimmedPath, strBegin, endIndex)
+                    else -> trimmedPath.substring(strBegin, endIndex)
+                }
+            }
+
             var i = 0
-            while (i < path.length) {
-                when (path[i]) {
+            while (i < trimmedPath.length) {
+                when (trimmedPath[i]) {
                     ESCAPE_CHAR -> {
                         requiresEscaping = true
                         i++
                     }
                     PATH_SEPARATOR -> {
-                        val pathComponent: String = when {
-                            requiresEscaping -> unescape(path, strBegin, i)
-                            else -> path.substring(strBegin, i)
-                        }
-                        directives.add(makeDirectiveFromPathComponent(pathComponent))
+                        directives.add(makeDirectiveFromPathComponent(buildPathComponent(i)))
                         strBegin = i + 1
                         requiresEscaping = false
                     }
@@ -164,17 +182,19 @@ class DocumentPath(path: String) {
                 }
                 i++
             }
-            if (strBegin < path.length) {
-                val pathComponent: String = when {
-                    requiresEscaping -> unescape(path, strBegin, path.length)
-                    else -> path.substring(strBegin)
+            if (strBegin < trimmedPath.length) {
+                val pathComponent = buildPathComponent(trimmedPath.length)
+                val directive = when (pathType) {
+                    PathType.PATH_TYPE_ADD -> makeAddDirectiveFromPathComponent(pathComponent)
+                    else -> makeDirectiveFromPathComponent(pathComponent)
                 }
-                directives.add(makeDirectiveFromPathComponent(pathComponent))
+                directives.add(directive)
             }
-            if (doesPathEndWithPathSeparator(path)) {
-                // A path ending in a dot implies a list insert.
+
+            if (pathType == PathType.PATH_TYPE_LIST_INSERT) {
                 directives.add(DocumentPathDirective.ListInsertDirective())
             }
+
             @Suppress("UNCHECKED_CAST")
             return directives as MutableList<DocumentPathDirective<Any>>
         }
@@ -199,28 +219,38 @@ class DocumentPath(path: String) {
             return buff.toString()
         }
 
-        /**
-         * Check if the path string ends in a path separator '.'
-         *
-         * Note: This is 40% faster than using regex.
-         */
-        private fun doesPathEndWithPathSeparator(path: String): Boolean {
-            if (path[path.length - 1] != PATH_SEPARATOR) {
-                return false
+        private fun getPathType(path: String): PathType {
+            if (path.length == 0) {
+                return PathType.PATH_TYPE_NORMAL
             }
-            if (path.length == 1) {
-                return true
+
+            if (path.length > 1 && path[path.lastIndex - 1] == ESCAPE_CHAR) {
+                return PathType.PATH_TYPE_NORMAL
             }
-            var isUnescapedDot = true
-            for (i in path.length - 2 downTo 0) {
-                val ch = path[i]
-                isUnescapedDot = if (ch == ESCAPE_CHAR) {
-                    !isUnescapedDot
-                } else {
-                    break
+
+            return when (path[path.lastIndex]) {
+                PATH_SEPARATOR -> PathType.PATH_TYPE_LIST_INSERT
+                ADD_OPERATOR -> PathType.PATH_TYPE_ADD
+                else -> PathType.PATH_TYPE_NORMAL
+            }
+        }
+
+        private fun trimPath(path: String, pathType: PathType): String {
+            val trimmedPath = when (pathType) {
+                PathType.PATH_TYPE_ADD -> path.substring(0, path.lastIndex)
+                else -> path
+            }
+            if (path.length != trimmedPath.length) {
+                if (trimmedPath.isEmpty()) {
+                    throw IllegalArgumentException("Path component cannot consist solely of an operator")
+                }
+                if (trimmedPath[trimmedPath.lastIndex] == PATH_SEPARATOR) {
+                    if (!(trimmedPath.length > 1 && trimmedPath[trimmedPath.lastIndex - 1] == ESCAPE_CHAR)) {
+                        throw IllegalArgumentException("Path component cannot consist solely of an operator")
+                    }
                 }
             }
-            return isUnescapedDot
+            return trimmedPath
         }
 
         /**
@@ -231,6 +261,8 @@ class DocumentPath(path: String) {
          * - Value -1: Last list index directive
          */
         private fun makeDirectiveFromPathComponent(pathComponent: String): DocumentPathDirective<out Any> {
+            require(pathComponent.isNotEmpty(), { "Path component cannot be empty" })
+
             val index = pathComponent.toIntOrNull()
             if (index != null) {
                 return if (index == -1) {
@@ -240,6 +272,20 @@ class DocumentPath(path: String) {
                 }
             }
             return DocumentPathDirective.MapKeyDirective(pathComponent)
+        }
+
+        private fun makeAddDirectiveFromPathComponent(pathComponent: String): DocumentPathDirective<out Any> {
+            require(pathComponent.isNotEmpty(), { "Path component cannot be empty" })
+
+            val index = pathComponent.toIntOrNull()
+            if (index != null) {
+                return if (index == -1) {
+                    DocumentPathDirective.ListLastIndexAddDirective()
+                } else {
+                    DocumentPathDirective.ListIndexAddDirective(index)
+                }
+            }
+            return DocumentPathDirective.MapKeyAddDirective(pathComponent)
         }
     }
 }
