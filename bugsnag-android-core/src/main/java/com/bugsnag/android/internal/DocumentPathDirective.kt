@@ -9,6 +9,20 @@ import java.util.concurrent.CopyOnWriteArrayList
  * complete, depending on the context.
  */
 internal interface DocumentPathDirective<C> {
+    companion object {
+        internal fun addNumbers(a: Number, b: Number): Number {
+            if (a is Float || a is Double) {
+                if (b is Float || b is Double) {
+                    return a.toDouble() + b.toDouble()
+                }
+                return a.toDouble() + b.toLong()
+            }
+            if (b is Float || b is Double) {
+                return a.toLong() + b.toDouble()
+            }
+            return a.toLong() + b.toLong()
+        }
+    }
 
     /**
      * Make a new container at the current level.
@@ -37,7 +51,7 @@ internal interface DocumentPathDirective<C> {
      * Modifies a particular key in a map, or creates a new (String, Object) map.
      * Setting null removes the value.
      */
-    class MapKeyDirective(private val key: String) : DocumentPathDirective<MutableMap<String, in Any>> {
+    open class MapKeyDirective(private val key: String) : DocumentPathDirective<MutableMap<String, in Any>> {
         override fun newContainer(): MutableMap<String, in Any> {
             return ConcurrentHashMap()
         }
@@ -52,6 +66,19 @@ internal interface DocumentPathDirective<C> {
                 container.remove(key)
             } else {
                 container[key] = concurrentValue
+            }
+        }
+    }
+
+    class MapKeyAddDirective(private val key: String) : MapKeyDirective(key) {
+        override fun setInContainer(container: MutableMap<String, in Any>, value: Any?) {
+            require(value is Number, { "Value to an add directive must be a number (got $value)" })
+            val oldValue = container[key]
+            if (oldValue == null) {
+                container[key] = value
+            } else {
+                require(oldValue is Number, { "Existing value to an add directive must be a number (got $oldValue)" })
+                container[key] = addNumbers(oldValue, value)
             }
         }
     }
@@ -78,12 +105,25 @@ internal interface DocumentPathDirective<C> {
         }
     }
 
+    open class ListIndexAddDirective(private val index: Int) : ListIndexDirective(index) {
+        override fun setInContainer(container: MutableList<in Any>, value: Any?) {
+            require(value is Number, { "Value to an add directive must be a number (got $value)" })
+            val oldValue = container[index]
+            if (oldValue == null) {
+                container[index] = value
+            } else {
+                require(oldValue is Number, { "Existing value to an add directive must be a number (got $oldValue)" })
+                container[index] = addNumbers(oldValue, value)
+            }
+        }
+    }
+
     /**
      * Special list directive for the last index in a list (-1).
      * This directive inserts a new entry if one isn't present already when setting.
      * Setting null deletes the last index (if present).
      */
-    class ListLastIndexDirective : ListIndexDirective(0) {
+    open class ListLastIndexDirective : ListIndexDirective(0) {
         override fun getFromContainer(container: MutableList<in Any>): Any? {
             return container.lastOrNull()
         }
@@ -95,6 +135,29 @@ internal interface DocumentPathDirective<C> {
             }
             if (concurrentValue != null) {
                 container.add(concurrentValue)
+            }
+        }
+    }
+
+    class ListLastIndexAddDirective : ListLastIndexDirective() {
+        override fun setInContainer(container: MutableList<in Any>, value: Any?) {
+            require(value is Number, { "Value to an add directive must be a number (got $value)" })
+            if (container.isEmpty()) {
+                container.add(value)
+            } else {
+                val index = container.size - 1
+                val oldValue = container[index]
+                if (oldValue == null) {
+                    container[index] = value
+                } else {
+                    require(
+                        oldValue is Number,
+                        {
+                            "Existing value to an add directive must be a number (got $oldValue)"
+                        }
+                    )
+                    container[index] = addNumbers(oldValue, value)
+                }
             }
         }
     }
