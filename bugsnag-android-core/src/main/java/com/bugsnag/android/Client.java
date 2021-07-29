@@ -23,6 +23,7 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -95,6 +96,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     final BackgroundTaskService bgTaskService = new BackgroundTaskService();
     private final ExceptionHandler exceptionHandler;
 
+    final BugsnagJournal journal;
+
     /**
      * Initialize a Bugsnag client
      *
@@ -142,6 +145,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         // set sensible defaults for delivery/project packages etc if not set
         immutableConfig = sanitiseConfiguration(appContext, configuration, connectivity);
         logger = immutableConfig.getLogger();
+        File baseDocumentPath = new File(immutableConfig.getPersistenceDirectory(),
+                "bugsnag-journal");
+        journal = new BugsnagJournal(logger, baseDocumentPath);
         warnIfNotAppContext(androidContext);
         clientObservable = new ClientObservable();
 
@@ -234,6 +240,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         eventStore.flushAsync();
         sessionTracker.flushAsync();
 
+        addObserver(new JournaledStateObserver(this, journal));
+
         // register listeners for system events in the background.
         systemBroadcastReceiver = new SystemBroadcastReceiver(this, logger);
         registerComponentCallbacks();
@@ -266,6 +274,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             Connectivity connectivity,
             @Nullable StorageManager storageManager,
             Logger logger,
+            BugsnagJournal journal,
             DeliveryDelegate deliveryDelegate,
             LastRunInfoStore lastRunInfoStore,
             LaunchCrashTracker launchCrashTracker,
@@ -290,6 +299,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         this.connectivity = connectivity;
         this.storageManager = storageManager;
         this.logger = logger;
+        this.journal = journal;
         this.deliveryDelegate = deliveryDelegate;
         this.lastRunInfoStore = lastRunInfoStore;
         this.launchCrashTracker = launchCrashTracker;

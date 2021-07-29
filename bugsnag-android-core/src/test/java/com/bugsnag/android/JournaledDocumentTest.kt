@@ -347,7 +347,37 @@ class JournaledDocumentTest {
         document.snapshot()
     }
 
-    private fun assertReloadedDocument(file: File, expectedDocument: MutableMap<String, Any>) {
+    @Test
+    fun testAddMultiple() {
+        val baseDocumentPath = folder.newFile("mydocument")
+        val bufferSize = 100L
+        val document = JournaledDocument(
+            baseDocumentPath,
+            standardType,
+            standardVersion,
+            bufferSize,
+            bufferSize,
+            mapOf("a" to 1)
+        )
+        document.addCommands(
+            Pair("x", 1),
+            Pair("y", 100),
+            Pair("z", 10000)
+        )
+        document.close()
+
+        val expectedDocument = mapOf<String, Any>(
+            "a" to 1,
+            "x" to 1,
+            "y" to 100,
+            "z" to 10000
+        )
+        assertReloadedDocument(baseDocumentPath, expectedDocument)
+        assertJournalContents(baseDocumentPath, bufferSize, standardJournalInfoSerialized.toByteArray(Charsets.UTF_8))
+        assertSnapshotContents(baseDocumentPath, expectedDocument)
+    }
+
+    private fun assertReloadedDocument(file: File, expectedDocument: Map<String, Any>) {
         val observedDocument = JournaledDocument.loadDocumentContents(file)
         Assert.assertEquals(
             BugsnagTestUtils.normalized(expectedDocument),
@@ -368,7 +398,7 @@ class JournaledDocumentTest {
         assertFileContents(journalPath, expectedContents)
     }
 
-    private fun assertSnapshotContents(file: File, expectedSnapshot: MutableMap<String, Any>) {
+    private fun assertSnapshotContents(file: File, expectedSnapshot: Map<String, Any>) {
         val snapshotPath = File("${file.path}.snapshot")
         val observedSnapshot = JsonHelper.deserialize(snapshotPath)
 

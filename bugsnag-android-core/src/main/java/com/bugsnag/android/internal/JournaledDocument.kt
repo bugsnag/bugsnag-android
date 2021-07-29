@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import java.io.Closeable
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.IOException
 import java.nio.BufferOverflowException
 import java.util.function.BiConsumer
@@ -81,18 +82,38 @@ constructor(
      */
     fun addCommand(command: Journal.Command) {
         synchronized(journal) {
-            if (!isOpen) {
-                throw IllegalStateException("Cannot add commands to a closed document")
-            }
-            try {
-                command.serialize(journalStream)
-            } catch (ex: BufferOverflowException) {
-                snapshot()
-                command.serialize(journalStream)
-            }
-            document = command.apply(document)
-            journal.add(command)
+            requireOpen()
+            internalAddCommand(command)
         }
+    }
+
+    fun addCommands(vararg commands: Journal.Command) {
+        synchronized(journal) {
+            requireOpen()
+            commands.forEach { internalAddCommand(it) }
+        }
+    }
+
+    fun addCommands(vararg commands: Pair<String, Any?>) {
+        synchronized(journal) {
+            requireOpen()
+            commands.forEach { internalAddCommand(it.first, it.second) }
+        }
+    }
+
+    private fun internalAddCommand(documentPath: String, value: Any?) {
+        internalAddCommand(Journal.Command(documentPath, value))
+    }
+
+    private fun internalAddCommand(command: Journal.Command) {
+        try {
+            command.serialize(journalStream)
+        } catch (ex: BufferOverflowException) {
+            snapshot()
+            command.serialize(journalStream)
+        }
+        document = command.apply(document)
+        journal.add(command)
     }
 
     /**
@@ -150,15 +171,19 @@ constructor(
     override fun isEmpty(): Boolean { return document.isEmpty() }
 
     private fun snapshotInternal() {
-        if (!isOpen) {
-            throw IllegalStateException("Cannot snapshot a closed document")
-        }
+        requireOpen()
         JsonHelper.serialize(document, newSnapshotPath)
         journal.clear()
         journalStream.clear()
         journal.serialize(journalStream)
         if (!newSnapshotPath.renameTo(snapshotPath)) {
             throw FileSystemException(newSnapshotPath, snapshotPath, "Could not rename file")
+        }
+    }
+
+    private fun requireOpen() {
+        if (!isOpen) {
+            throw IllegalStateException("Cannot modify a closed document")
         }
     }
 
@@ -200,9 +225,9 @@ constructor(
          *   - Return the finished document.
          *
          * @param baseDocumentPath The base path + filename to derive snapshot and journal names from.
-         * @return The document.
+         * @return The document, or null if no journal files exist at the path.
          */
-        fun loadDocumentContents(baseDocumentPath: File): MutableMap<in String, out Any> {
+        fun loadDocumentContents(baseDocumentPath: File): MutableMap<in String, out Any>? {
             val journalPath = getJournalPath(baseDocumentPath)
             val snapshotPath = getSnapshotPath(baseDocumentPath)
             val newSnapshotPath = getNewSnapshotPath(baseDocumentPath)
@@ -214,10 +239,14 @@ constructor(
                 // Ignored - there is no new snapshot or it's invalid
             }
 
-            // The base snapshot must exist and must be valid.
-            val document = JsonHelper.deserialize(snapshotPath)
+            // The base snapshot must be valid if it exists.
+            val document = try {
+                JsonHelper.deserialize(snapshotPath)
+            } catch (ex: FileNotFoundException) {
+                return null
+            }
 
-            // The journal might not be valid.
+            // The journal file might exist and might be valid.
             val journal: Journal
             try {
                 journal = Journal.deserialize(journalPath)

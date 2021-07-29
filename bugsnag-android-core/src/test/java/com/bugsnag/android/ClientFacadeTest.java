@@ -83,6 +83,9 @@ public class ClientFacadeTest {
     Connectivity connectivity;
 
     @Mock
+    BugsnagJournal journal;
+
+    @Mock
     StorageManager storageManager;
 
     @Mock
@@ -132,6 +135,7 @@ public class ClientFacadeTest {
                 connectivity,
                 storageManager,
                 logger,
+                journal,
                 deliveryDelegate,
                 lastRunInfoStore,
                 launchCrashTracker,

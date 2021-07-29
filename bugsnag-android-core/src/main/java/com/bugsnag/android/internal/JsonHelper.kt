@@ -3,6 +3,7 @@ package com.bugsnag.android.internal
 import com.dslplatform.json.DslJson
 import java.io.File
 import java.io.FileInputStream
+import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
@@ -53,6 +54,8 @@ class JsonHelper private constructor() {
         fun deserialize(file: File): MutableMap<String, Any> {
             try {
                 FileInputStream(file).use { stream -> return deserialize(stream) }
+            } catch (ex: FileNotFoundException) {
+                throw ex
             } catch (ex: IOException) {
                 throw IOException("Could not deserialize from $file", ex)
             }

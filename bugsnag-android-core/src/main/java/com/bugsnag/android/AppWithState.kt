@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import com.bugsnag.android.internal.ImmutableConfig
+import com.bugsnag.android.internal.JournalKeys
 
 /**
  * Stateful information set by the notifier about your app can be found on this class. These values
@@ -70,5 +71,16 @@ class AppWithState(
         writer.name("durationInForeground").value(durationInForeground)
         writer.name("inForeground").value(inForeground)
         writer.name("isLaunching").value(isLaunching)
+    }
+
+    override fun toJournalSection(): Map<String, Any?> {
+        val map = mutableMapOf<String, Any?>(
+            JournalKeys.keyDuration to duration,
+            JournalKeys.keyDurationInFG to durationInForeground,
+            JournalKeys.keyInForeground to inForeground,
+            JournalKeys.keyIsLaunching to isLaunching
+        )
+        map.putAll(super.toJournalSection())
+        return map
     }
 }
