@@ -7,6 +7,8 @@ import android.net.Uri
 import android.os.Build
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
+import com.bugsnag.android.Bugsnag
+import com.bugsnag.android.BugsnagVmViolationListener
 import com.bugsnag.android.Configuration
 import java.io.File
 
@@ -35,13 +37,17 @@ internal class StrictModeFileUriExposeScenario(
     }
 
     private fun setupBugsnagStrictModeDetection() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            StrictMode.setVmPolicy(
-                VmPolicy.Builder()
-                    .detectFileUriExposure()
-                    .penaltyDeath() // raises SIGKILL on Android <9
-                    .build()
-            )
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            return
         }
+        val policy = VmPolicy.Builder().detectFileUriExposure() // raises SIGKILL on Android <9
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+            policy.penaltyDeath()
+        } else {
+            val listener = BugsnagVmViolationListener(Bugsnag.getClient())
+            policy.penaltyListener(context.mainExecutor, listener)
+        }
+        StrictMode.setVmPolicy(policy.build())
     }
 }

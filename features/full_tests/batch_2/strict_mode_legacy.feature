@@ -1,6 +1,5 @@
-Feature: Reporting Strict Mode Exceptions
+Feature: Reporting Strict Mode Violations
 
-# These scenarios are being skipped on Android 9 until ROAD-757 is resolved
 @skip_above_android_8
 Scenario: StrictMode DiscWrite violation
     When I run "StrictModeDiscScenario" and relaunch the app
@@ -9,6 +8,7 @@ Scenario: StrictMode DiscWrite violation
     Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "errorClass" equals "android.os.StrictMode$StrictModeViolation"
     And the event "metaData.StrictMode.Violation" equals "DiskWrite"
+    And the event "severityReason.type" equals "strictMode"
 
 @skip_above_android_8
 Scenario: StrictMode Network on Main Thread violation
@@ -18,6 +18,7 @@ Scenario: StrictMode Network on Main Thread violation
     Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "errorClass" equals "android.os.StrictMode$StrictModeViolation"
     And the event "metaData.StrictMode.Violation" equals "NetworkOperation"
+    And the event "severityReason.type" equals "strictMode"
 
 # In Android <9 StrictMode kills VM policy violations with SIGKILL, so no requests are received.
 @skip_above_android_8
