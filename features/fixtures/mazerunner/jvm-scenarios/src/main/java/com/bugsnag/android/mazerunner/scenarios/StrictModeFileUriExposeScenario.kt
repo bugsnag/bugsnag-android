@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
-import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.BugsnagVmViolationListener
 import com.bugsnag.android.Configuration
 import java.io.File
@@ -45,7 +44,7 @@ internal class StrictModeFileUriExposeScenario(
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
             policy.penaltyDeath()
         } else {
-            val listener = BugsnagVmViolationListener(Bugsnag.getClient())
+            val listener = BugsnagVmViolationListener()
             policy.penaltyListener(context.mainExecutor, listener)
         }
         StrictMode.setVmPolicy(policy.build())

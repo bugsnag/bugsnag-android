@@ -24,6 +24,10 @@ public class BugsnagThreadViolationListener implements OnThreadViolationListener
     private final Client client;
     private final OnThreadViolationListener listener;
 
+    public BugsnagThreadViolationListener() {
+        this(Bugsnag.getClient(), null);
+    }
+
     public BugsnagThreadViolationListener(@NonNull Client client) {
         this(client, null);
     }

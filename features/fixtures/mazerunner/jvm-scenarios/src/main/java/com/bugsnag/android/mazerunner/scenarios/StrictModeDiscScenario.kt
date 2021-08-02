@@ -3,7 +3,6 @@ package com.bugsnag.android.mazerunner.scenarios
 import android.content.Context
 import android.os.Build
 import android.os.StrictMode
-import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.BugsnagThreadViolationListener
 import com.bugsnag.android.Configuration
 import java.io.File
@@ -30,7 +29,7 @@ internal class StrictModeDiscScenario(
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
             policy.penaltyDeath()
         } else {
-            val listener = BugsnagThreadViolationListener(Bugsnag.getClient())
+            val listener = BugsnagThreadViolationListener()
             policy.penaltyListener(context.mainExecutor, listener)
         }
         StrictMode.setThreadPolicy(policy.build())

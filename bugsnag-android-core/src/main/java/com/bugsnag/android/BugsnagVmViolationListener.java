@@ -24,6 +24,10 @@ public class BugsnagVmViolationListener implements OnVmViolationListener {
     private final Client client;
     private final OnVmViolationListener listener;
 
+    public BugsnagVmViolationListener() {
+        this(Bugsnag.getClient(), null);
+    }
+
     public BugsnagVmViolationListener(@NonNull Client client) {
         this(client, null);
     }
