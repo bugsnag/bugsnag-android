@@ -157,7 +157,7 @@ steps:
     key: 'core-instrumentation-tests'
     depends_on:
       - "android-ci"
-    timeout_in_minutes: 30
+    timeout_in_minutes: 60
     command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
     plugins:
       - docker-compose#v3.7.0:
@@ -172,7 +172,7 @@ steps:
     key: 'ndk-instrumentation-tests'
     depends_on:
       - "android-ci"
-    timeout_in_minutes: 30
+    timeout_in_minutes: 60
     command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
     plugins:
       - docker-compose#v3.7.0:
@@ -187,7 +187,7 @@ steps:
     key: 'perf-benchmarks'
     depends_on:
       - "android-ci"
-    timeout_in_minutes: 30
+    timeout_in_minutes: 60
     command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
     plugins:
       - docker-compose#v3.7.0:
