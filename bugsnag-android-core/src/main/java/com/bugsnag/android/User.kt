@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import android.util.JsonReader
+import com.bugsnag.android.internal.JournalKeys
 import java.io.IOException
 
 /**
@@ -30,6 +31,14 @@ class User @JvmOverloads internal constructor(
         writer.name(KEY_EMAIL).value(email)
         writer.name(KEY_NAME).value(name)
         writer.endObject()
+    }
+
+    internal fun toJournalSection(): Map<String, Any?> {
+        return mapOf(
+            JournalKeys.keyName to name,
+            JournalKeys.keyId to id,
+            JournalKeys.keyEmail to email
+        )
     }
 
     internal companion object : JsonReadable<User> {

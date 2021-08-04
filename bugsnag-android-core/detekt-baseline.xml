@@ -2,6 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues></ManuallySuppressedIssues>
   <CurrentIssues>
+    <ID>ComplexMethod:JournaledStateObserver.kt$JournaledStateObserver$override fun onStateChange(event: StateEvent)</ID>
     <ID>ImplicitDefaultLocale:DeliveryHeaders.kt$String.format("%02x", byte)</ID>
     <ID>LongMethod:JournaledDocumentTest.kt$JournaledDocumentTest$@Test fun testHighWater()</ID>
     <ID>LongParameterList:App.kt$App$( /** * The architecture of the running application binary */ var binaryArch: String?, /** * The package name of the application */ var id: String?, /** * The release stage set in [Configuration.releaseStage] */ var releaseStage: String?, /** * The version of the application set in [Configuration.version] */ var version: String?, /** The revision ID from the manifest (React Native apps only) */ var codeBundleId: String?, /** * The unique identifier for the build of the application set in [Configuration.buildUuid] */ var buildUuid: String?, /** * The application type set in [Configuration#version] */ var type: String?, /** * The version code of the application set in [Configuration.versionCode] */ var versionCode: Number? )</ID>
@@ -24,9 +25,9 @@
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun isAnr(event: Event): Boolean</ID>
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun shouldDiscardClass(): Boolean</ID>
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun updateSeverityInternal(severity: Severity)</ID>
+    <ID>RethrowCaughtException:JsonHelper.kt$JsonHelper.Companion$throw ex</ID>
     <ID>ReturnCount:DefaultDelivery.kt$DefaultDelivery$fun deliver( urlString: String, streamable: JsonStream.Streamable, headers: Map&lt;String, String?&gt; ): DeliveryStatus</ID>
     <ID>SwallowedException:AppDataCollector.kt$AppDataCollector$catch (exception: Exception) { logger.w("Could not check lowMemory status") }</ID>
-    <ID>SwallowedException:BugsnagMainJournal.kt$BugsnagMainJournal.Companion$catch (exc: IOException) { null }</ID>
     <ID>SwallowedException:ConnectivityCompat.kt$ConnectivityLegacy$catch (e: NullPointerException) { // in some rare cases we get a remote NullPointerException via Parcel.readException null }</ID>
     <ID>SwallowedException:ContextExtensions.kt$catch (exc: RuntimeException) { null }</ID>
     <ID>SwallowedException:DeviceDataCollector.kt$DeviceDataCollector$catch (exc: Exception) { false }</ID>
@@ -34,6 +35,7 @@
     <ID>SwallowedException:DeviceDataCollector.kt$DeviceDataCollector$catch (exception: Exception) { logger.w("Could not get locationStatus") }</ID>
     <ID>SwallowedException:DeviceIdStore.kt$DeviceIdStore$catch (exc: OverlappingFileLockException) { Thread.sleep(FILE_LOCK_WAIT_MS) }</ID>
     <ID>SwallowedException:JournaledDocument.kt$JournaledDocument$catch (ex: BufferOverflowException) { snapshot() command.serialize(journalStream) }</ID>
+    <ID>SwallowedException:JournaledDocument.kt$JournaledDocument.Companion$catch (ex: FileNotFoundException) { return null }</ID>
     <ID>SwallowedException:JournaledDocument.kt$JournaledDocument.Companion$catch (ex: IOException) { // Ignored - there is no new snapshot or it's invalid }</ID>
     <ID>SwallowedException:JournaledDocument.kt$JournaledDocument.Companion$catch (ex: IOException) { // The journal is corrupt; just return the document. return document }</ID>
     <ID>SwallowedException:PluginClient.kt$PluginClient$catch (exc: ClassNotFoundException) { logger.d("Plugin '$clz' is not on the classpath - functionality will not be enabled.") null }</ID>

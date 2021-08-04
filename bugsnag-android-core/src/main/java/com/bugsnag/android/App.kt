@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import com.bugsnag.android.internal.ImmutableConfig
+import com.bugsnag.android.internal.JournalKeys
 import java.io.IOException
 
 /**
@@ -83,5 +84,18 @@ open class App internal constructor(
         writer.beginObject()
         serialiseFields(writer)
         writer.endObject()
+    }
+
+    internal open fun toJournalSection(): Map<String, Any?> {
+        return mapOf(
+            JournalKeys.keyBinaryArch to binaryArch,
+            JournalKeys.keyBuildUUID to buildUuid,
+            JournalKeys.keyCodeBundleId to codeBundleId,
+            JournalKeys.keyId to id,
+            JournalKeys.keyReleaseStage to releaseStage,
+            JournalKeys.keyType to type,
+            JournalKeys.keyVersion to version,
+            JournalKeys.keyVersionCode to versionCode
+        )
     }
 }

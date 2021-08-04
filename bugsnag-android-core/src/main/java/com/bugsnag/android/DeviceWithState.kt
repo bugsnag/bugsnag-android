@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.internal.JournalKeys
 import java.util.Date
 
 /**
@@ -44,5 +45,15 @@ class DeviceWithState internal constructor(
         if (time != null) {
             writer.name("time").value(time)
         }
+    }
+
+    override fun toJournalSection(): Map<String, Any?> {
+        val map = mutableMapOf(
+            JournalKeys.keyFreeDisk to freeDisk,
+            JournalKeys.keyFreeMemory to freeMemory,
+            JournalKeys.keyOrientation to orientation
+        )
+        map.putAll(super.toJournalSection())
+        return map
     }
 }

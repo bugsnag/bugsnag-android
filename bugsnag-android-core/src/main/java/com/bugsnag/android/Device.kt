@@ -1,5 +1,7 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.internal.JournalKeys
+
 /**
  * Stateless information set by the notifier about the device on which the event occurred can be
  * found on this class. These values can be accessed and amended if necessary.
@@ -76,5 +78,20 @@ open class Device internal constructor(
         writer.beginObject()
         serializeFields(writer)
         writer.endObject()
+    }
+
+    internal open fun toJournalSection(): Map<String, Any?> {
+        return mapOf(
+            JournalKeys.keyCpuAbi to cpuAbi,
+            JournalKeys.keyJailbroken to jailbroken,
+            JournalKeys.keyId to id,
+            JournalKeys.keyLocale to locale,
+            JournalKeys.keyManufacturer to manufacturer,
+            JournalKeys.keyModel to model,
+            JournalKeys.keyOSName to osName,
+            JournalKeys.keyOSVersion to osVersion,
+            JournalKeys.keyRuntimeVersions to runtimeVersions,
+            JournalKeys.keyTotalMemory to totalMemory
+        )
     }
 }
