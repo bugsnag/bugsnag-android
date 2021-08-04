@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import com.bugsnag.android.internal.ImmutableConfig
+import com.bugsnag.android.internal.Journalable
 import java.io.IOException
 
 /**
@@ -14,7 +15,7 @@ internal class ThreadState @Suppress("LongParameterList") @JvmOverloads construc
     logger: Logger,
     currentThread: java.lang.Thread? = null,
     stackTraces: MutableMap<java.lang.Thread, Array<StackTraceElement>>? = null
-) : JsonStream.Streamable {
+) : JsonStream.Streamable, Journalable {
 
     internal constructor(
         exc: Throwable?,
@@ -81,5 +82,11 @@ internal class ThreadState @Suppress("LongParameterList") @JvmOverloads construc
             writer.value(thread)
         }
         writer.endArray()
+    }
+
+    override fun toJournalSection(): Map<String, Any?> {
+        // Need to change the return type to Any to support this:
+//        return threads.map { it.toJournalSection() }
+        return emptyMap()
     }
 }

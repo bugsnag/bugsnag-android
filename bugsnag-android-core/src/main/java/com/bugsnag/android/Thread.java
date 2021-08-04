@@ -1,15 +1,18 @@
 package com.bugsnag.android;
 
+import com.bugsnag.android.internal.Journalable;
+
 import androidx.annotation.NonNull;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A representation of a thread recorded in an {@link Event}
  */
 @SuppressWarnings("ConstantConditions")
-public class Thread implements JsonStream.Streamable {
+public class Thread implements JsonStream.Streamable, Journalable {
 
     private final ThreadInternal impl;
     private final Logger logger;
@@ -110,5 +113,11 @@ public class Thread implements JsonStream.Streamable {
     @Override
     public void toStream(@NonNull JsonStream stream) throws IOException {
         impl.toStream(stream);
+    }
+
+    @NonNull
+    @Override
+    public Map<String, Object> toJournalSection() {
+        return impl.toJournalSection();
     }
 }

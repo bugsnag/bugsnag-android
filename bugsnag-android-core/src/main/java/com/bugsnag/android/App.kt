@@ -2,6 +2,7 @@ package com.bugsnag.android
 
 import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.JournalKeys
+import com.bugsnag.android.internal.Journalable
 import java.io.IOException
 
 /**
@@ -48,7 +49,7 @@ open class App internal constructor(
      * The version code of the application set in [Configuration.versionCode]
      */
     var versionCode: Number?
-) : JsonStream.Streamable {
+) : JsonStream.Streamable, Journalable {
 
     internal constructor(
         config: ImmutableConfig,
@@ -86,7 +87,7 @@ open class App internal constructor(
         writer.endObject()
     }
 
-    internal open fun toJournalSection(): Map<String, Any?> {
+    override fun toJournalSection(): Map<String, Any?> {
         return mapOf(
             JournalKeys.keyBinaryArch to binaryArch,
             JournalKeys.keyBuildUUID to buildUuid,

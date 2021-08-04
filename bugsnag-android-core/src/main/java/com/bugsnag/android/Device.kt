@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import com.bugsnag.android.internal.JournalKeys
+import com.bugsnag.android.internal.Journalable
 
 /**
  * Stateless information set by the notifier about the device on which the event occurred can be
@@ -39,7 +40,7 @@ open class Device internal constructor(
      * runtimes that the application is running on
      */
     var runtimeVersions: MutableMap<String, Any>?
-) : JsonStream.Streamable {
+) : JsonStream.Streamable, Journalable {
 
     /**
      * The manufacturer of the device used
@@ -80,7 +81,7 @@ open class Device internal constructor(
         writer.endObject()
     }
 
-    internal open fun toJournalSection(): Map<String, Any?> {
+    override fun toJournalSection(): Map<String, Any?> {
         return mapOf(
             JournalKeys.keyCpuAbi to cpuAbi,
             JournalKeys.keyJailbroken to jailbroken,

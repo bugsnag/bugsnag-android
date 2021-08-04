@@ -1,5 +1,7 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.internal.JournalKeys
+import com.bugsnag.android.internal.Journalable
 import java.io.IOException
 
 class ThreadInternal internal constructor(
@@ -8,7 +10,7 @@ class ThreadInternal internal constructor(
     var type: ThreadType,
     val isErrorReportingThread: Boolean,
     stacktrace: Stacktrace
-) : JsonStream.Streamable {
+) : JsonStream.Streamable, Journalable {
 
     var stacktrace: MutableList<Stackframe> = stacktrace.trace.toMutableList()
 
@@ -28,5 +30,15 @@ class ThreadInternal internal constructor(
             writer.name("errorReportingThread").value(true)
         }
         writer.endObject()
+    }
+
+    override fun toJournalSection(): Map<String, Any?> {
+        return mapOf(
+            JournalKeys.keyId to id,
+            JournalKeys.keyName to name,
+            JournalKeys.keyType to type.desc,
+            JournalKeys.keyErrorReportingThread to isErrorReportingThread,
+            JournalKeys.keyStackTrace to stacktrace.map { it.toJournalSection() }
+        )
     }
 }

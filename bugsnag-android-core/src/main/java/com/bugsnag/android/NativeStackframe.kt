@@ -1,5 +1,7 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.internal.JournalKeys
+import com.bugsnag.android.internal.Journalable
 import java.io.IOException
 
 /**
@@ -36,7 +38,7 @@ class NativeStackframe internal constructor(
      * The address of the library where the event occurred.
      */
     var loadAddress: Long?
-) : JsonStream.Streamable {
+) : JsonStream.Streamable, Journalable {
 
     /**
      * The type of the error
@@ -57,5 +59,17 @@ class NativeStackframe internal constructor(
             writer.name("type").value(it.desc)
         }
         writer.endObject()
+    }
+
+    override fun toJournalSection(): Map<String, Any?> {
+        return mapOf(
+            JournalKeys.keyMethod to method,
+            JournalKeys.keyFile to file,
+            JournalKeys.keyLineNumber to lineNumber,
+            JournalKeys.keyFrameAddress to frameAddress,
+            JournalKeys.keySymbolAddress to symbolAddress,
+            JournalKeys.keyLoadAddress to loadAddress,
+            JournalKeys.keyType to type?.desc
+        )
     }
 }

@@ -1,11 +1,13 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.internal.JournalKeys
+import com.bugsnag.android.internal.Journalable
 import java.io.IOException
 
 /**
  * Represents a single stackframe from a [Throwable]
  */
-class Stackframe : JsonStream.Streamable {
+class Stackframe : JsonStream.Streamable, Journalable {
     /**
      * The name of the method that was being executed
      */
@@ -119,5 +121,22 @@ class Stackframe : JsonStream.Streamable {
             }
         }
         writer.endObject()
+    }
+
+    override fun toJournalSection(): Map<String, Any?> {
+        val ndkFrame = nativeFrame
+        if (ndkFrame != null) {
+            return ndkFrame.toJournalSection()
+        }
+
+        return mapOf(
+            JournalKeys.keyMethod to method,
+            JournalKeys.keyFile to method,
+            JournalKeys.keyLineNumber to method,
+            JournalKeys.keyInProject to method,
+            JournalKeys.keyColumnNumber to method,
+            JournalKeys.keyCode to code,
+            JournalKeys.keyType to type?.desc
+        )
     }
 }
