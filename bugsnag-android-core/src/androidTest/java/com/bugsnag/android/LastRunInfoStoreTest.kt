@@ -26,7 +26,7 @@ internal class LastRunInfoStoreTest {
             packageInfo = null,
             appInfo = null
         )
-        file = File(config.persistenceDirectory, "last-run-info")
+        file = File(config.persistenceDirectory.value, "last-run-info")
         file.delete()
         lastRunInfoStore = LastRunInfoStore(config)
     }

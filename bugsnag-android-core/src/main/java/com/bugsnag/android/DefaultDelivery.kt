@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import android.net.TrafficStats
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.PrintWriter
@@ -42,6 +43,7 @@ internal class DefaultDelivery(
         headers: Map<String, String?>
     ): DeliveryStatus {
 
+        TrafficStats.setThreadStatsTag(1)
         if (connectivity != null && !connectivity.hasNetworkConnection()) {
             return DeliveryStatus.UNDELIVERED
         }

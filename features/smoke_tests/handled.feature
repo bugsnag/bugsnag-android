@@ -174,7 +174,7 @@ Scenario: Handled C functionality
     And the error payload field "events.0.exceptions.0.stacktrace" is a non-empty array
     And the event "unhandled" is false
     And the event "severity" equals "error"
-    And the event "severityReason.type" equals "userCallbackSetSeverity"
+    And the event "severityReason.type" equals "handledException"
     And the event "severityReason.unhandledOverridden" is false
     And the error payload field "events.0.projectPackages" is a non-empty array
     And the event "projectPackages.0" equals "com.bugsnag.android.mazerunner"
