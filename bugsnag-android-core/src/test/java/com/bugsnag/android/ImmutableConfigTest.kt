@@ -179,7 +179,7 @@ internal class ImmutableConfigTest {
         assertEquals("development", config.releaseStage)
         assertEquals(55, config.versionCode)
         assertNotNull(config.delivery)
-        assertEquals(cacheDir, config.persistenceDirectory)
+        assertEquals(cacheDir, config.persistenceDirectory.value)
     }
 
     @Test
@@ -201,6 +201,6 @@ internal class ImmutableConfigTest {
         assertEquals("production", config.releaseStage)
         assertEquals(55, config.versionCode)
         assertNotNull(config.delivery)
-        assertEquals(cacheDir, config.persistenceDirectory)
+        assertEquals(cacheDir, config.persistenceDirectory.value)
     }
 }
