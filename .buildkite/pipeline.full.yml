@@ -16,7 +16,7 @@ steps:
   - label: ':android: Build Example App'
     depends_on: "android-ci"
     timeout_in_minutes: 5
-    command: 'cd examples/sdk-app-example && ./gradlew assembleRelease'
+    command: 'cd examples/sdk-app-example && ./gradlew clean assembleRelease'
     plugins:
       docker-compose#v3.7.0:
         run: android-ci
