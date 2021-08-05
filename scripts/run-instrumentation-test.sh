@@ -58,7 +58,7 @@ status_response=$(curl -s -u "$BROWSER_STACK_USERNAME:$BROWSER_STACK_ACCESS_KEY"
 status=$(echo "$status_response" | jq -r ".status")
 
 WAIT_COUNT=0
-until [ "$status" == "\"done\"" ] || [ "$status" == "\"error\"" ] || [ "$status" == "\"failed\"" ] || [ $WAIT_COUNT -eq 100 ]; do
+until [ "$status" == "\"done\"" ] || [ "$status" == "\"error\"" ] || [ "$status" == "\"failed\"" ] || [ $WAIT_COUNT -eq 240 ]; do
     echo "Android Tests [$(timestamp)]: Current test status: $status, Time waited: $((WAIT_COUNT * 15))"
     ((WAIT_COUNT++))
     sleep 15
