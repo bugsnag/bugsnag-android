@@ -33,8 +33,7 @@ internal class DataCollectionModule(
             cfg,
             trackerModule.sessionTracker,
             systemServiceModule.activityManager,
-            trackerModule.launchCrashTracker,
-            logger
+            trackerModule.launchCrashTracker
         )
     }
 

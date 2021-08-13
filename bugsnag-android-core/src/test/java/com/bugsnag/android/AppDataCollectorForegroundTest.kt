@@ -41,8 +41,7 @@ class AppDataCollectorForegroundTest {
             BugsnagTestUtils.generateImmutableConfig(),
             sessionTracker,
             null,
-            launchCrashTracker,
-            NoopLogger
+            launchCrashTracker
         )
     }
 

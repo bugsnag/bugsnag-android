@@ -340,6 +340,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                 }, new Function1<Boolean, Unit>() {
                     @Override
                     public Unit invoke(Boolean isLowMemory) {
+                        appDataCollector.setLowMemory(Boolean.TRUE.equals(isLowMemory));
                         clientObservable.postMemoryTrimEvent(isLowMemory);
                         return null;
                     }

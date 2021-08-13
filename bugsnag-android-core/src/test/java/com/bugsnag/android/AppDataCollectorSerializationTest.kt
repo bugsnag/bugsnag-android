@@ -50,8 +50,7 @@ internal class AppDataCollectorSerializationTest {
                 convert(config),
                 sessionTracker,
                 am,
-                launchCrashTracker,
-                NoopLogger
+                launchCrashTracker
             )
             appData.codeBundleId = "foo-99"
             appData.setBinaryArch("x86")

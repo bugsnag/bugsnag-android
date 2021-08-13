@@ -50,8 +50,7 @@ internal class AppMetadataSerializationTest {
                 convertToImmutableConfig(config, null, null, ApplicationInfo()),
                 sessionTracker,
                 am,
-                launchCrashTracker,
-                NoopLogger
+                launchCrashTracker
             )
             appData.codeBundleId = "foo-99"
             appData.setBinaryArch("x86")
