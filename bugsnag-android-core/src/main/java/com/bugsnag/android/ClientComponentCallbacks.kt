@@ -6,7 +6,7 @@ import android.content.res.Configuration
 internal class ClientComponentCallbacks(
     private val deviceDataCollector: DeviceDataCollector,
     private val cb: (oldOrientation: String?, newOrientation: String?) -> Unit,
-    val callback: (Boolean) -> Unit
+    val memoryCallback: (Boolean, Int?) -> Unit
 ) : ComponentCallbacks2 {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -19,10 +19,10 @@ internal class ClientComponentCallbacks(
     }
 
     override fun onTrimMemory(level: Int) {
-        callback(level >= ComponentCallbacks2.TRIM_MEMORY_COMPLETE)
+        memoryCallback(level >= ComponentCallbacks2.TRIM_MEMORY_COMPLETE, level)
     }
 
     override fun onLowMemory() {
-        callback(true)
+        memoryCallback(true, null)
     }
 }

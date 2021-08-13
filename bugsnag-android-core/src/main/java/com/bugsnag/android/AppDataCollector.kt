@@ -19,13 +19,10 @@ internal class AppDataCollector(
     private val config: ImmutableConfig,
     private val sessionTracker: SessionTracker,
     private val activityManager: ActivityManager?,
-    private val launchCrashTracker: LaunchCrashTracker
+    private val launchCrashTracker: LaunchCrashTracker,
+    private val memoryTrimState: MemoryTrimState
 ) {
-    /**
-     * Is the app considered to be an a low-memory state as defined by
-     * [android.content.ComponentCallbacks]
-     */
-    var isLowMemory: Boolean = false
+
     var codeBundleId: String? = null
 
     private val packageName: String = appContext.packageName
@@ -56,7 +53,8 @@ internal class AppDataCollector(
         map["name"] = appName
         map["activeScreen"] = sessionTracker.contextActivity
         map["memoryUsage"] = getMemoryUsage()
-        map["lowMemory"] = isLowMemory
+        map["lowMemory"] = memoryTrimState.isLowMemory
+        map["memoryTrimLevel"] = memoryTrimState.trimLevelDescription
 
         bgWorkRestricted?.let {
             map["backgroundWorkRestricted"] = bgWorkRestricted

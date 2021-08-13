@@ -44,6 +44,7 @@ Scenario: Notify caught Java exception with default configuration
     And the error payload field "events.0.metaData.app.memoryUsage" is greater than 0
     And the event "metaData.app.name" equals "MazeRunner"
     And the event "metaData.app.lowMemory" is false
+    And the event "metaData.app.memoryTrimLevel" equals "None"
 
     # Device data
     And the error payload field "events.0.device.cpuAbi" is a non-empty array
