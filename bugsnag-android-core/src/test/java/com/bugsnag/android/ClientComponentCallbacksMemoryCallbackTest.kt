@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import android.content.ComponentCallbacks2
+import android.content.Context
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -12,6 +13,9 @@ import org.mockito.junit.MockitoJUnitRunner
 class ClientComponentCallbacksMemoryCallbackTest {
 
     @Mock
+    lateinit var context: Context
+
+    @Mock
     internal lateinit var deviceDataCollector: DeviceDataCollector
     private lateinit var clientComponentCallbacks: ClientComponentCallbacks
 
@@ -21,9 +25,8 @@ class ClientComponentCallbacksMemoryCallbackTest {
     fun setUp() {
         clientComponentCallbacks = ClientComponentCallbacks(
             deviceDataCollector,
-            { _: String?, _: String? -> },
-            this::isLowMemory::set
-        )
+            { _: String?, _: String? -> }
+        ) { lowMemory, _ -> isLowMemory = lowMemory }
         isLowMemory = null
     }
 

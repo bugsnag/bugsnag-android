@@ -28,6 +28,7 @@ internal class AppMetadataSerializationTest {
             val sessionTracker = mock(SessionTracker::class.java)
             val launchCrashTracker = mock(LaunchCrashTracker::class.java)
             val config = BugsnagTestUtils.generateConfiguration()
+            val memoryTrimState = MemoryTrimState()
 
             // populate summary fields
             config.appType = "React Native"
@@ -50,7 +51,8 @@ internal class AppMetadataSerializationTest {
                 convertToImmutableConfig(config, null, null, ApplicationInfo()),
                 sessionTracker,
                 am,
-                launchCrashTracker
+                launchCrashTracker,
+                memoryTrimState
             )
             appData.codeBundleId = "foo-99"
             appData.setBinaryArch("x86")
