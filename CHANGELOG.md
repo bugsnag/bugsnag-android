@@ -1,5 +1,10 @@
 # Changelog
 
+## TBD
+
+* The `app.lowMemory` value always report the most recent `onTrimMemory`/`onLowMemory` status
+  [#1342](https://github.com/bugsnag/bugsnag-android/pull/1342)
+
 ## 5.11.0 (2021-08-05)
 
 ### Enhancements

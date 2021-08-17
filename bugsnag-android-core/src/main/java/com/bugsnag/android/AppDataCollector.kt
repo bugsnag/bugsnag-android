@@ -19,9 +19,13 @@ internal class AppDataCollector(
     private val config: ImmutableConfig,
     private val sessionTracker: SessionTracker,
     private val activityManager: ActivityManager?,
-    private val launchCrashTracker: LaunchCrashTracker,
-    private val logger: Logger
+    private val launchCrashTracker: LaunchCrashTracker
 ) {
+    /**
+     * Is the app considered to be an a low-memory state as defined by
+     * [android.content.ComponentCallbacks]
+     */
+    var isLowMemory: Boolean = false
     var codeBundleId: String? = null
 
     private val packageName: String = appContext.packageName
@@ -52,7 +56,7 @@ internal class AppDataCollector(
         map["name"] = appName
         map["activeScreen"] = sessionTracker.contextActivity
         map["memoryUsage"] = getMemoryUsage()
-        map["lowMemory"] = isLowMemory()
+        map["lowMemory"] = isLowMemory
 
         bgWorkRestricted?.let {
             map["backgroundWorkRestricted"] = bgWorkRestricted
@@ -84,22 +88,6 @@ internal class AppDataCollector(
         } else {
             null
         }
-    }
-
-    /**
-     * Check if the device is currently running low on memory.
-     */
-    private fun isLowMemory(): Boolean? {
-        try {
-            if (activityManager != null) {
-                val memInfo = ActivityManager.MemoryInfo()
-                activityManager.getMemoryInfo(memInfo)
-                return memInfo.lowMemory
-            }
-        } catch (exception: Exception) {
-            logger.w("Could not check lowMemory status")
-        }
-        return null
     }
 
     fun setBinaryArch(binaryArch: String) {

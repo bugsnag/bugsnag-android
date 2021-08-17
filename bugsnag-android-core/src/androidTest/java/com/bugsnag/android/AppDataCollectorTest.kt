@@ -47,8 +47,7 @@ class AppDataCollectorTest {
             client.immutableConfig,
             client.sessionTracker,
             am,
-            client.launchCrashTracker,
-            NoopLogger
+            client.launchCrashTracker
         )
         val app = collector.getAppDataMetadata()
         assertNull(app["backgroundWorkRestricted"])
@@ -67,8 +66,7 @@ class AppDataCollectorTest {
             client.immutableConfig,
             client.sessionTracker,
             am,
-            client.launchCrashTracker,
-            NoopLogger
+            client.launchCrashTracker
         )
         client.context = "Some Custom Context"
         client.sessionTracker.updateForegroundTracker("MyActivity", true, 0L)
@@ -90,8 +88,7 @@ class AppDataCollectorTest {
             client.immutableConfig,
             client.sessionTracker,
             am,
-            client.launchCrashTracker,
-            NoopLogger
+            client.launchCrashTracker
         )
         val app = collector.getAppDataMetadata()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
