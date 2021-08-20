@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import android.annotation.SuppressLint
+import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -8,6 +9,7 @@ import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import android.content.res.Resources
 import android.os.BatteryManager
+import android.os.Build
 import android.provider.Settings
 import java.io.File
 import java.util.Date
@@ -19,6 +21,7 @@ import java.util.concurrent.RejectedExecutionException
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.max
 import kotlin.math.min
+import android.os.Process as AndroidProcess
 
 internal class DeviceDataCollector(
     private val connectivity: Connectivity,
@@ -41,6 +44,7 @@ internal class DeviceDataCollector(
     private val cpuAbi = getCpuAbi()
     private val runtimeVersions: MutableMap<String, Any>
     private val rootedFuture: Future<Boolean>?
+    private val totalMemoryFuture: Future<Long?>? = tryRetrieveTotalDeviceMemory()
     private var orientation = AtomicInteger(resources.configuration.orientation)
 
     init {
@@ -68,7 +72,7 @@ internal class DeviceDataCollector(
         checkIsRooted(),
         deviceId,
         locale,
-        calculateTotalMemory(),
+        totalMemoryFuture.runCatching { this?.get() }.getOrNull(),
         runtimeVersions.toMutableMap()
     )
 
@@ -77,7 +81,7 @@ internal class DeviceDataCollector(
         checkIsRooted(),
         deviceId,
         locale,
-        calculateTotalMemory(),
+        totalMemoryFuture.runCatching { this?.get() }.getOrNull(),
         runtimeVersions.toMutableMap(),
         calculateFreeDisk(),
         calculateFreeMemory(),
@@ -216,29 +220,49 @@ internal class DeviceDataCollector(
     }
 
     /**
-     * Get the amount of memory remaining that the VM can allocate
+     * Get the amount of memory remaining on the device
      */
-    private fun calculateFreeMemory(): Long {
-        val runtime = Runtime.getRuntime()
-        val maxMemory = runtime.maxMemory()
-
-        return if (maxMemory != Long.MAX_VALUE) {
-            maxMemory - runtime.totalMemory() + runtime.freeMemory()
-        } else {
-            runtime.freeMemory()
-        }
+    @SuppressLint("PrivateApi")
+    private fun calculateFreeMemory(): Long? {
+        return runCatching {
+            AndroidProcess::class.java.getDeclaredMethod("getFreeMemory").invoke(null) as Long?
+        }.getOrNull()
     }
 
     /**
-     * Get the total memory available on the current Android device, in bytes
+     * Attempt to retrieve the total amount of memory available on the device
      */
-    private fun calculateTotalMemory(): Long {
-        val runtime = Runtime.getRuntime()
-        val maxMemory = runtime.maxMemory()
-        return when {
-            maxMemory != Long.MAX_VALUE -> maxMemory
-            else -> runtime.totalMemory()
+    @SuppressLint("PrivateApi")
+    private fun tryRetrieveTotalDeviceMemory(): Future<Long?>? {
+        return try {
+            bgTaskService.submitTask(
+                TaskType.DEFAULT,
+                Callable {
+                    calculateTotalMemory()
+                }
+            )
+        } catch (exc: RejectedExecutionException) {
+            logger.w("Failed to lookup available device memory", exc)
+            null
         }
+    }
+
+    @SuppressLint("PrivateApi")
+    private fun calculateTotalMemory(): Long? {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            val totalMemory = appContext.getActivityManager()
+                ?.let { am -> ActivityManager.MemoryInfo().also { am.getMemoryInfo(it) } }
+                ?.totalMem
+
+            if (totalMemory != null) {
+                return totalMemory
+            }
+        }
+
+        // we try falling back to a reflective API
+        return runCatching {
+            AndroidProcess::class.java.getDeclaredMethod("getTotalMemory").invoke(null) as Long?
+        }.getOrNull()
     }
 
     /**
