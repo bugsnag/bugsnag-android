@@ -44,7 +44,7 @@ internal class DeviceDataCollector(
     private val cpuAbi = getCpuAbi()
     private val runtimeVersions: MutableMap<String, Any>
     private val rootedFuture: Future<Boolean>?
-    private val totalMemoryFuture: Future<Long?>? = tryRetrieveTotalDeviceMemory()
+    private val totalMemoryFuture: Future<Long?>? = retrieveTotalDeviceMemory()
     private var orientation = AtomicInteger(resources.configuration.orientation)
 
     init {
@@ -222,9 +222,19 @@ internal class DeviceDataCollector(
     /**
      * Get the amount of memory remaining on the device
      */
-    @SuppressLint("PrivateApi")
     private fun calculateFreeMemory(): Long? {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            val freeMemory = appContext.getActivityManager()
+                ?.let { am -> ActivityManager.MemoryInfo().also { am.getMemoryInfo(it) } }
+                ?.availMem
+
+            if (freeMemory != null) {
+                return freeMemory
+            }
+        }
+
         return runCatching {
+            @Suppress("PrivateApi")
             AndroidProcess::class.java.getDeclaredMethod("getFreeMemory").invoke(null) as Long?
         }.getOrNull()
     }
@@ -232,8 +242,7 @@ internal class DeviceDataCollector(
     /**
      * Attempt to retrieve the total amount of memory available on the device
      */
-    @SuppressLint("PrivateApi")
-    private fun tryRetrieveTotalDeviceMemory(): Future<Long?>? {
+    private fun retrieveTotalDeviceMemory(): Future<Long?>? {
         return try {
             bgTaskService.submitTask(
                 TaskType.DEFAULT,
@@ -247,7 +256,6 @@ internal class DeviceDataCollector(
         }
     }
 
-    @SuppressLint("PrivateApi")
     private fun calculateTotalMemory(): Long? {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             val totalMemory = appContext.getActivityManager()
@@ -261,6 +269,7 @@ internal class DeviceDataCollector(
 
         // we try falling back to a reflective API
         return runCatching {
+            @Suppress("PrivateApi")
             AndroidProcess::class.java.getDeclaredMethod("getTotalMemory").invoke(null) as Long?
         }.getOrNull()
     }
