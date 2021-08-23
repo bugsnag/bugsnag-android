@@ -42,6 +42,9 @@ Scenario: Notify caught Java exception with default configuration
     And the event "app.inForeground" is true
     And the event "app.isLaunching" is true
     And the error payload field "events.0.metaData.app.memoryUsage" is greater than 0
+    And the error payload field "events.0.metaData.app.totalMemory" is greater than 0
+    And the error payload field "events.0.metaData.app.freeMemory" is greater than 0
+    And the error payload field "events.0.metaData.app.memoryLimit" is greater than 0
     And the event "metaData.app.name" equals "MazeRunner"
     And the event "metaData.app.lowMemory" is false
     And the event "metaData.app.memoryTrimLevel" equals "None"
