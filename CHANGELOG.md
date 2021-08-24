@@ -8,6 +8,9 @@
 * Added the `app.memoryTrimLevel` metadata to report a description of the latest `onTrimMemory` status
   [#1344](https://github.com/bugsnag/bugsnag-android/pull/1344)
 
+* Added `STATE` Breadcrumbs for `onTrimMemory` events
+  [#1345](https://github.com/bugsnag/bugsnag-android/pull/1345)
+
 ## 5.11.0 (2021-08-05)
 
 ### Enhancements

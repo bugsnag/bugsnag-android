@@ -8,6 +8,15 @@ internal class MemoryTrimState : BaseObservable() {
 
     val trimLevelDescription: String get() = descriptionFor(memoryTrimLevel)
 
+    fun updateMemoryTrimLevel(newTrimLevel: Int?): Boolean {
+        if (memoryTrimLevel == newTrimLevel) {
+            return false
+        }
+
+        memoryTrimLevel = newTrimLevel
+        return true
+    }
+
     fun emitObservableEvent() {
         updateState {
             StateEvent.UpdateMemoryTrimEvent(
