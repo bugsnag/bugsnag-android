@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import com.bugsnag.android.internal.DateUtils;
+
 import java.util.Date;
 import java.util.Map;
 

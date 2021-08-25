@@ -1,42 +1,36 @@
-package com.bugsnag.android;
+package com.bugsnag.android.internal
 
-import androidx.annotation.NonNull;
+import java.text.DateFormat
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
-
-class DateUtils {
+object DateUtils {
     // SimpleDateFormat isn't thread safe, cache one instance per thread as needed.
-    private static final ThreadLocal<DateFormat> iso8601Holder = new ThreadLocal<DateFormat>() {
-        @NonNull
-        @Override
-        protected DateFormat initialValue() {
-            TimeZone tz = TimeZone.getTimeZone("UTC");
-            DateFormat iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
-            iso8601.setTimeZone(tz);
-            return iso8601;
+    private val iso8601Holder = object : ThreadLocal<DateFormat>() {
+        override fun initialValue(): DateFormat {
+            return SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US).apply {
+                timeZone = TimeZone.getTimeZone("UTC")
+            }
         }
-    };
-
-    @NonNull
-    static String toIso8601(@NonNull Date date) {
-        DateFormat dateFormat = iso8601Holder.get();
-        if (dateFormat == null) {
-            throw new IllegalStateException("Unable to find valid dateformatter");
-        }
-        return dateFormat.format(date);
     }
 
-    @NonNull
-    static Date fromIso8601(@NonNull String date) {
-        try {
-            return iso8601Holder.get().parse(date);
-        } catch (ParseException exc) {
-            throw new IllegalArgumentException("Failed to parse timestamp", exc);
+    private val iso8601Format: DateFormat
+        get() = requireNotNull(iso8601Holder.get()) { "Unable to find valid dateformatter" }
+
+    @JvmStatic
+    fun toIso8601(date: Date): String {
+        return iso8601Format.format(date)
+    }
+
+    @JvmStatic
+    fun fromIso8601(date: String): Date {
+        return try {
+            iso8601Format.parse(date) ?: throw ParseException("DateFormat.parse returned null", 0)
+        } catch (exc: ParseException) {
+            throw IllegalArgumentException("Failed to parse timestamp", exc)
         }
     }
 }
