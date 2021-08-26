@@ -457,6 +457,11 @@ void bsg_populate_app_data(JNIEnv *env, bsg_jni_cache *jni_cache,
                             sizeof(process_name));
   bugsnag_event_add_metadata_string(event, "app", "processName", process_name);
 
+  long total_memory =
+      bsg_get_map_value_long(env, jni_cache, data, "memoryLimit");
+  bugsnag_event_add_metadata_double(event, "app", "memoryLimit",
+                                    (double)total_memory);
+
   bsg_safe_delete_local_ref(env, data);
 }
 

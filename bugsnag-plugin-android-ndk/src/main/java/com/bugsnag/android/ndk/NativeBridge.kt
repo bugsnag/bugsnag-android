@@ -79,7 +79,7 @@ class NativeBridge : StateObserver {
     external fun updateUserEmail(newValue: String)
     external fun updateUserName(newValue: String)
     external fun getUnwindStackFunction(): Long
-    external fun updateLowMemory(newValue: Boolean)
+    external fun updateLowMemory(newValue: Boolean, memoryTrimLevelDescription: String)
 
     override fun onStateChange(event: StateEvent) {
         if (isInvalidMessage(event)) return
@@ -121,7 +121,7 @@ class NativeBridge : StateObserver {
                 updateUserName(makeSafe(event.user.name ?: ""))
                 updateUserEmail(makeSafe(event.user.email ?: ""))
             }
-            is StateEvent.UpdateMemoryTrimEvent -> updateLowMemory(event.isLowMemory)
+            is StateEvent.UpdateMemoryTrimEvent -> updateLowMemory(event.isLowMemory, event.memoryTrimLevelDescription)
         }
     }
 
