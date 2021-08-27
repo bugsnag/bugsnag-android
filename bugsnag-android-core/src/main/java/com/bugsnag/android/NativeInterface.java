@@ -436,4 +436,13 @@ public class NativeInterface {
     public static void markLaunchCompleted() {
         getClient().markLaunchCompleted();
     }
+
+    /**
+     * Get the last run info object
+     */
+    @Nullable
+    public static LastRunInfo getLastRunInfo() {
+        return getClient().getLastRunInfo();
+    }
+
 }
