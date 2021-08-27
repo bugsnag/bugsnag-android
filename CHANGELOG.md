@@ -10,6 +10,9 @@
 
 * Added `STATE` Breadcrumbs for `onTrimMemory` events
   [#1345](https://github.com/bugsnag/bugsnag-android/pull/1345)
+  
+* The `device.totalMemory` and `device.freeMemory` values report device-level memory, and `app.memoryUsage`, `app.totalMemory`, `app.app.freeMemory`, and `app.memoryLimit` report VM level memory status 
+  [#1346](https://github.com/bugsnag/bugsnag-android/pull/1346)
 
 ## 5.11.0 (2021-08-05)
 
