@@ -440,6 +440,9 @@ public class NativeInterface {
     /**
      * Get the last run info object
      */
-    public static LastRunInfo getLastRunInfo(){ return getClient().getLastRunInfo(); }
+    @Nullable
+    public static LastRunInfo getLastRunInfo(){
+        return getClient().getLastRunInfo();
+    }
 
 }
