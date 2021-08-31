@@ -136,8 +136,8 @@ class BugsnagBuildPlugin : Plugin<Project> {
         project.dependencies {
             // needs to be kept as 'compile' for license checking to work
             // as otherwise the downloadLicenses task misses these deps
-            add("compile", "androidx.annotation:annotation:${Versions.supportLib}")
-            add("compile", "org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}")
+            add("api", "androidx.annotation:annotation:${Versions.supportLib}")
+            add("api", "org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}")
 
             add("testImplementation", "junit:junit:${Versions.junitTestLib}")
             add("testImplementation", "org.mockito:mockito-core:${Versions.mockitoTestLib}")

@@ -6,9 +6,9 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:4.2.2"
+        classpath "com.android.tools.build:gradle:7.0.1"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "com.bugsnag:bugsnag-android-gradle-plugin:5.7.7"
+        classpath "com.bugsnag:bugsnag-android-gradle-plugin:7.0.0"
     }
 }
 

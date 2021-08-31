@@ -15,6 +15,11 @@
     <ID>MagicNumber:StartupCrashFlushScenario.kt$StartupCrashFlushScenario$6000</ID>
     <ID>MagicNumber:TestHarnessHooks.kt$&lt;no name provided&gt;$500</ID>
     <ID>MagicNumber:TrimmedStacktraceScenario.kt$TrimmedStacktraceScenario$100000</ID>
+    <ID>ThrowingExceptionsWithoutMessageOrCause:AnrHelper.kt$&lt;no name provided&gt;$IllegalStateException()</ID>
+    <ID>ThrowingExceptionsWithoutMessageOrCause:BugsnagInitScenario.kt$BugsnagInitScenario$RuntimeException()</ID>
+    <ID>ThrowingExceptionsWithoutMessageOrCause:CustomPluginNotifierDescriptionScenario.kt$CustomPluginNotifierDescriptionScenario$RuntimeException()</ID>
+    <ID>ThrowingExceptionsWithoutMessageOrCause:TestHarnessHooks.kt$RuntimeException()</ID>
+    <ID>ThrowingExceptionsWithoutMessageOrCause:TrimmedStacktraceScenario.kt$TrimmedStacktraceScenario$RuntimeException()</ID>
     <ID>TooGenericExceptionThrown:CrashHandlerScenario.kt$CrashHandlerScenario$throw RuntimeException("CrashHandlerScenario")</ID>
     <ID>TooGenericExceptionThrown:CustomHttpClientFlushScenario.kt$CustomHttpClientFlushScenario$throw RuntimeException("ReportCacheScenario")</ID>
     <ID>TooGenericExceptionThrown:DisableAutoDetectErrorsScenario.kt$DisableAutoDetectErrorsScenario$throw RuntimeException("Should never appear")</ID>
