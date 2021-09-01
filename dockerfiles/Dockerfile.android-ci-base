@@ -7,10 +7,11 @@ WORKDIR /app
 COPY gradlew gradle.properties /app/
 COPY gradle/ /app/gradle/
 ENV GRADLE_OPTS="-Dorg.gradle.daemon=false"
+COPY settings.gradle /app/
 RUN ./gradlew
 
 # Copy remaining Gradle files
-COPY build.gradle settings.gradle /app/
+COPY build.gradle /app/
 COPY buildSrc/ buildSrc/
 
 # Build the example app - needed for Espresso tests
