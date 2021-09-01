@@ -3,7 +3,7 @@ apply plugin: "kotlin-android"
 
 android {
     compileSdkVersion 30
-    ndkVersion "16.1.4479499"
+    ndkVersion "17.2.4988734"
 
     defaultConfig {
         applicationId "com.example.bugsnag.android"
