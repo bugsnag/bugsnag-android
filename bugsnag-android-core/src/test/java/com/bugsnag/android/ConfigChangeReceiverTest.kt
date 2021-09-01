@@ -44,6 +44,8 @@ internal class ConfigChangeReceiverTest {
     @Mock
     lateinit var bgTaskService: BackgroundTaskService
 
+    private val memoryCallback: (Boolean, Int?) -> Unit = { _, _ -> }
+
     private fun createDeviceDataCollector(): DeviceDataCollector = DeviceDataCollector(
         connectivity,
         appContext,
@@ -92,7 +94,11 @@ internal class ConfigChangeReceiverTest {
             assertEquals("portrait", new)
         }
         config.orientation = Configuration.ORIENTATION_UNDEFINED
-        val callbacks = ClientComponentCallbacks(createDeviceDataCollector(), orientationCb, {})
+        val callbacks = ClientComponentCallbacks(
+            createDeviceDataCollector(),
+            orientationCb,
+            memoryCallback
+        )
 
         configUpdate.orientation = Configuration.ORIENTATION_PORTRAIT
         callbacks.onConfigurationChanged(configUpdate)
@@ -106,7 +112,11 @@ internal class ConfigChangeReceiverTest {
             assertEquals("landscape", new)
         }
         config.orientation = Configuration.ORIENTATION_PORTRAIT
-        val callbacks = ClientComponentCallbacks(createDeviceDataCollector(), orientationCb, {})
+        val callbacks = ClientComponentCallbacks(
+            createDeviceDataCollector(),
+            orientationCb,
+            memoryCallback
+        )
 
         configUpdate.orientation = Configuration.ORIENTATION_LANDSCAPE
         callbacks.onConfigurationChanged(configUpdate)
@@ -123,7 +133,11 @@ internal class ConfigChangeReceiverTest {
         }
         `when`(resources.configuration).thenReturn(config)
         config.orientation = Configuration.ORIENTATION_PORTRAIT
-        val callbacks = ClientComponentCallbacks(createDeviceDataCollector(), orientationCb, {})
+        val callbacks = ClientComponentCallbacks(
+            createDeviceDataCollector(),
+            orientationCb,
+            memoryCallback
+        )
 
         configUpdate.orientation = Configuration.ORIENTATION_PORTRAIT
         callbacks.onConfigurationChanged(configUpdate)

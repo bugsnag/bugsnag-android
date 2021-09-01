@@ -471,16 +471,30 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateIsLaunching(
 }
 
 JNIEXPORT void JNICALL
-Java_com_bugsnag_android_ndk_NativeBridge_updateLowMemory(JNIEnv *env,
-                                                          jobject _this,
-                                                          jboolean new_value) {
+Java_com_bugsnag_android_ndk_NativeBridge_updateLowMemory(
+    JNIEnv *env, jobject _this, jboolean low_memory,
+    jstring memory_trim_level_description) {
   if (bsg_global_env == NULL) {
     return;
   }
+
+  char *memory_trim_level =
+      (char *)bsg_safe_get_string_utf_chars(env, memory_trim_level_description);
+
+  if (memory_trim_level == NULL) {
+    return;
+  }
+
   bsg_request_env_write_lock();
   bugsnag_event_add_metadata_bool(&bsg_global_env->next_event, "app",
-                                  "lowMemory", (bool)new_value);
+                                  "lowMemory", (bool)low_memory);
+  bugsnag_event_add_metadata_string(&bsg_global_env->next_event, "app",
+                                    "memoryTrimLevel", memory_trim_level);
   bsg_release_env_write_lock();
+  if (memory_trim_level_description != NULL) {
+    bsg_safe_release_string_utf_chars(env, memory_trim_level_description,
+                                      memory_trim_level);
+  }
 }
 
 JNIEXPORT void JNICALL

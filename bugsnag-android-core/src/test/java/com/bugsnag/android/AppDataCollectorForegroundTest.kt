@@ -29,6 +29,9 @@ class AppDataCollectorForegroundTest {
     @Mock
     internal lateinit var launchCrashTracker: LaunchCrashTracker
 
+    @Mock
+    internal lateinit var memoryTrimState: MemoryTrimState
+
     private lateinit var appDataCollector: AppDataCollector
 
     @Before
@@ -42,7 +45,7 @@ class AppDataCollectorForegroundTest {
             sessionTracker,
             null,
             launchCrashTracker,
-            NoopLogger
+            memoryTrimState
         )
     }
 

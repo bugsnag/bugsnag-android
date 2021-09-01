@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import com.bugsnag.android.internal.DateUtils;
 import com.bugsnag.android.internal.ImmutableConfig;
 
 import androidx.annotation.NonNull;

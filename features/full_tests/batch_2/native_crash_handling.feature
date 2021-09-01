@@ -11,7 +11,9 @@ Scenario: Dereference a null pointer
         And the event "severity" equals "error"
         And the event "unhandled" is true
         And the event "app.binaryArch" is not null
+        And the event "device.totalMemory" is not null
         And the error payload field "events.0.device.cpuAbi" is a non-empty array
+        And the error payload field "events.0.metaData.app.memoryLimit" is greater than 0
 
     # This scenario will not pass on API levels < 18, as stack corruption
     # is handled without calling atexit handlers, etc.

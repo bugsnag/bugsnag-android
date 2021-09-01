@@ -28,6 +28,7 @@ internal class AppDataCollectorSerializationTest {
             val sessionTracker = mock(SessionTracker::class.java)
             val launchCrashTracker = mock(LaunchCrashTracker::class.java)
             val config = BugsnagTestUtils.generateConfiguration()
+            val memoryTrimState = MemoryTrimState()
 
             // populate summary fields
             config.appType = "React Native"
@@ -51,7 +52,7 @@ internal class AppDataCollectorSerializationTest {
                 sessionTracker,
                 am,
                 launchCrashTracker,
-                NoopLogger
+                memoryTrimState
             )
             appData.codeBundleId = "foo-99"
             appData.setBinaryArch("x86")
