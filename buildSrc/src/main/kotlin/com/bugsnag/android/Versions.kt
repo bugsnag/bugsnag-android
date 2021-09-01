@@ -9,12 +9,12 @@ object Versions {
     // Note minSdkVersion must be >=21 for 64 bit architectures
     val minSdkVersion = 14
     val compileSdkVersion = 30
-    val ndk = "16.1.4479499"
+    val ndk = "17.2.4988734"
     val java = JavaVersion.VERSION_1_7
     val kotlin = "1.3.72"
 
     // plugins
-    val androidGradlePlugin = "4.2.2"
+    val androidGradlePlugin = "7.0.2"
     val detektPlugin = "1.18.1"
     val ktlintPlugin = "10.1.0"
     val dokkaPlugin = "1.5.0"

@@ -49,9 +49,9 @@ task validatePublishOptions() {
     }
 }
 
-tasks.whenTaskAdded { task ->
-    if ((task.name == "publish")) {
-        task.dependsOn validatePublishOptions
+project.afterEvaluate {
+    tasks.named("publish").configure { task ->
+        task.dependsOn(validatePublishOptions)
     }
 }
 

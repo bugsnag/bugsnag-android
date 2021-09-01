@@ -3,7 +3,7 @@ all: build
 .PHONY: build test clean bump release
 
 build:
-	./gradlew build -PABI_FILTERS=arm64-v8a,armeabi,armeabi-v7a,x86,x86_64
+	./gradlew build -PABI_FILTERS=arm64-v8a,armeabi-v7a,x86,x86_64
 
 clean:
 	./gradlew clean
