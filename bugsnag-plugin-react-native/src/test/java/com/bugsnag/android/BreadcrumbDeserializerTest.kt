@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import com.bugsnag.android.BreadcrumbType.NAVIGATION
+import com.bugsnag.android.internal.DateUtils
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
