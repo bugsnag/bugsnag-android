@@ -1,6 +1,5 @@
 apply plugin: "maven-publish"
 apply plugin: "signing"
-apply plugin: "com.jfrog.bintray"
 
 String pomName = project.getProperties().get("pomName")
 archivesBaseName = project.getProperties().get("artefactId")
@@ -51,7 +50,7 @@ task validatePublishOptions() {
 }
 
 tasks.whenTaskAdded { task ->
-    if ((task.name == "publish") || (task.name == "bintrayUpload")) {
+    if ((task.name == "publish")) {
         task.dependsOn validatePublishOptions
     }
 }
@@ -112,26 +111,5 @@ project.afterEvaluate {
 
     signing {
         sign publishing.publications
-    }
-
-    // Bintray upload
-    bintray {
-        user = project.hasProperty("bintray_user") ? "$bintray_user" : System.getenv("bintray_user")
-        key = project.hasProperty("bintray_api_key") ? "$bintray_api_key" : System.getenv("bintray_api_key")
-        publications = ["SDK"]
-        configurations = ["archives"]
-
-        pkg {
-            repo = "maven"
-            name = archivesBaseName
-            userOrg = "bugsnag"
-            licenses = ["MIT"]
-            vcsUrl = "https://github.com/bugsnag/bugsnag-android.git"
-
-            version {
-                name = "${project.VERSION_NAME}"
-                vcsTag = "v${project.VERSION_NAME}"
-            }
-        }
     }
 }

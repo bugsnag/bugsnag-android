@@ -96,7 +96,7 @@ dependencies {
         implementation project(":cxx-scenarios-bugsnag")
     }
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "androidx.annotation:annotation:1.1.0"
+    implementation "androidx.annotation:annotation:1.2.0"
 }
 
 apply from: "../bugsnag-dependency.gradle"
