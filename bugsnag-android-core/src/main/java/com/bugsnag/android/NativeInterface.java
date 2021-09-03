@@ -442,6 +442,7 @@ public class NativeInterface {
         return getClient().resumeSession();
     }
 
+    @Nullable
     public static Session getCurrentSession() {
         return getClient().sessionTracker.getCurrentSession();
     }
