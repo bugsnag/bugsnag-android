@@ -344,7 +344,16 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                     @Override
                     public Unit invoke(Boolean isLowMemory, Integer memoryTrimLevel) {
                         memoryTrimState.setLowMemory(Boolean.TRUE.equals(isLowMemory));
-                        memoryTrimState.setMemoryTrimLevel(memoryTrimLevel);
+                        if (memoryTrimState.updateMemoryTrimLevel(memoryTrimLevel)) {
+                            leaveAutoBreadcrumb(
+                                    "Trim Memory",
+                                    BreadcrumbType.STATE,
+                                    Collections.<String, Object>singletonMap(
+                                            "trimLevel", memoryTrimState.getTrimLevelDescription()
+                                    )
+                            );
+                        }
+
                         memoryTrimState.emitObservableEvent();
                         return null;
                     }

@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import com.bugsnag.android.internal.convertToImmutableConfig
+import org.junit.Assert.assertNotNull
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -58,7 +59,11 @@ internal class AppMetadataSerializationTest {
             appData.setBinaryArch("x86")
 
             val metadata = appData.getAppDataMetadata()
-            metadata.remove("memoryUsage")
+            assertNotNull(metadata.remove("memoryUsage"))
+            assertNotNull(metadata.remove("totalMemory"))
+            assertNotNull(metadata.remove("freeMemory"))
+            assertNotNull(metadata.remove("memoryLimit"))
+
             @Suppress("UNCHECKED_CAST")
             return generateSerializationTestCases("app_meta_data", metadata.toMap() as Map<String, Any>)
         }
