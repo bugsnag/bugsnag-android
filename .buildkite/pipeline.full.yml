@@ -64,6 +64,7 @@ steps:
       - docker-compose#v3.7.0:
           run: android-ci
     env:
+      SINGLE_RUNNER: "true"
       INSTRUMENTATION_DEVICES: '["Google Pixel 3-9.0"]'
       TEST_APK_LOCATION: 'bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk'
     concurrency: 9
