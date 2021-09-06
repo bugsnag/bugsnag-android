@@ -1,8 +1,6 @@
-apply plugin: 'com.android.application'
-
-apply plugin: 'kotlin-android'
-
-apply plugin: 'kotlin-android-extensions'
+apply plugin: "com.android.application"
+apply plugin: "kotlin-android"
+apply plugin: "kotlin-android-extensions"
 
 repositories {
     mavenLocal()
@@ -23,7 +21,7 @@ android {
     buildTypes {
         release {
             minifyEnabled project.hasProperty("minified")
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }
     packagingOptions {
@@ -39,10 +37,10 @@ if (project.hasProperty("withBugsnag")) {
     project.logger.info("Building with Bugsnag")
 
     dependencies {
-        implementation 'com.bugsnag:bugsnag-android:+'
+        implementation "com.bugsnag:bugsnag-android:+"
     }
 
-    apply plugin: 'com.bugsnag.android.gradle'
+    apply plugin: "com.bugsnag.android.gradle"
 
     bugsnag {
         uploadNdkMappings = false
