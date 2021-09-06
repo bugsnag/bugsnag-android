@@ -2,6 +2,9 @@
 
 ## TBD
 
+* Capture breadcrumbs for OkHttp network requests
+  [#1358](https://github.com/bugsnag/bugsnag-android/pull/1358)
+
 * Update project to build using Gradle/AGP 7
   [#1354](https://github.com/bugsnag/bugsnag-android/pull/1354)
 

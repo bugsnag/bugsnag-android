@@ -1,0 +1,15 @@
+plugins {
+    id("bugsnag-build-plugin")
+}
+
+apply plugin: "com.android.library"
+
+dependencies {
+    api(project(":bugsnag-android-core"))
+}
+
+apply from: "../gradle/kotlin.gradle"
+
+dependencies {
+    compileOnly("com.squareup.okhttp3:okhttp:4.9.0")
+}
