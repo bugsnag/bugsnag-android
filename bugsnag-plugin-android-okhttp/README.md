@@ -1,4 +1,4 @@
-# bugsnag-plugin-android-anr
+# bugsnag-plugin-android-okhttp
 
 This module captures a breadcrumb for each network request made by OkHttp.
 
