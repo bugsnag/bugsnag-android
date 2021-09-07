@@ -16,5 +16,6 @@ include(
     ":bugsnag-plugin-android-anr",
     ":bugsnag-plugin-android-ndk",
     ":bugsnag-plugin-react-native",
+    ":bugsnag-plugin-android-okhttp",
     ":bugsnag-benchmarks"
 )
