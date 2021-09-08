@@ -53,15 +53,11 @@ internal class NetworkBreadcrumbScenario(
 
         // 1. make a GET request
         makeSimpleGetRequest(okHttpClient)
-        Bugsnag.leaveBreadcrumb(
-            "My request breadcrumb",
-            emptyMap(),
-            BreadcrumbType.REQUEST
-        )
     }
 
     private fun makeSimpleGetRequest(okHttpClient: OkHttpClient) {
-        val request = Request.Builder().url("https://google.com").build()
-        okHttpClient.newCall(request).execute()
+        val request = Request.Builder().url("https://google.com?test=true").build()
+        val response = requireNotNull(okHttpClient.newCall(request).execute())
+        response.close()
     }
 }

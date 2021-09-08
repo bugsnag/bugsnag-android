@@ -8,8 +8,15 @@ Scenario: Breadcrumbs are captured for OkHttp network requests
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "NetworkBreadcrumbScenario"
 
-    # TODO validate that an actual network breadcrumb was captured
     And the event has 1 breadcrumbs
     And the event "breadcrumbs.0.timestamp" is a timestamp
-    And the event "breadcrumbs.0.name" equals "My request breadcrumb"
+    And the event "breadcrumbs.0.name" equals "OkHttp call succeeded"
     And the event "breadcrumbs.0.type" equals "request"
+    And the event "breadcrumbs.0.metaData.method" equals "GET"
+    And the event "breadcrumbs.0.metaData.url" equals "https://google.com/"
+    And the error payload field "events.0.breadcrumbs.0.metaData.duration" is a number
+    And the error payload field "events.0.exceptions.0.stacktrace.0.type" is null
+    And the event "breadcrumbs.0.metaData.urlParams.test" equals "true"
+    And the error payload field "events.0.breadcrumbs.0.metaData.requestContentLength" is a number
+    And the error payload field "events.0.breadcrumbs.0.metaData.responseContentLength" is a number
+    And the error payload field "events.0.breadcrumbs.0.metaData.status" is a number
