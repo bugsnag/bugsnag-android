@@ -29,6 +29,7 @@ services:
       MINIMAL_FIXTURE:
       TEST_FIXTURE_NDK_VERSION:
       TEST_FIXTURE_NAME:
+      USE_LEGACY_OKHTTP:
     volumes:
       - ./build:/app/build
 
