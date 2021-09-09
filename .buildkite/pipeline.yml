@@ -62,6 +62,7 @@ steps:
       MAVEN_VERSION: "3.6.1"
       TEST_FIXTURE_NDK_VERSION: "17.2.4988734"
       TEST_FIXTURE_NAME: "fixture-r16.apk"
+      USE_LEGACY_OKHTTP: "true"
 
   - label: ':android: Build fixture APK r19'
     key: "fixture-r19"

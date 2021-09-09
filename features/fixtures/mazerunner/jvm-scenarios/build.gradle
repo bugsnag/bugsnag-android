@@ -32,7 +32,20 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    if (useLegacyOkHttp()) {
+        project.logger.lifecycle("Using OkHttp 3 dependency in test fixture")
+        implementation "com.squareup.okhttp3:okhttp:3.12.0"
+    } else {
+        project.logger.lifecycle("Using OkHttp 4 dependency in test fixture")
+        implementation "com.squareup.okhttp3:okhttp:4.9.1"
+    }
 }
+
+private boolean useLegacyOkHttp() {
+    project.hasProperty("USE_LEGACY_OKHTTP") && "true" == project.property("USE_LEGACY_OKHTTP")
+}
+
 apply from: "../bugsnag-dependency.gradle"
 apply from: "../../../../gradle/detekt.gradle"
 apply from: "../../../../gradle/checkstyle.gradle"
