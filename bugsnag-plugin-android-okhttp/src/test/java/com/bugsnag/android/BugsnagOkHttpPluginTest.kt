@@ -8,7 +8,6 @@ import okhttp3.Response
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -94,12 +93,10 @@ class BugsnagOkHttpPluginTest {
                 "debug" to "true"
             ),
             "duration" to 1L,
-            "requestContentLength" to -1L,
-            "responseContentLength" to -1L,
-            "status" to -1
+            "requestContentLength" to 0L
         )
         verify(client, times(1)).leaveBreadcrumb(
-            "OkHttp call failed",
+            "OkHttp call error",
             map,
             BreadcrumbType.REQUEST
         )
@@ -127,12 +124,10 @@ class BugsnagOkHttpPluginTest {
                 "debug" to "true"
             ),
             "duration" to 1L,
-            "requestContentLength" to -1L,
-            "responseContentLength" to -1L,
-            "status" to -1
+            "requestContentLength" to 0L
         )
         verify(client, times(1)).leaveBreadcrumb(
-            "OkHttp call succeeded",
+            "OkHttp call error",
             map,
             BreadcrumbType.REQUEST
         )
@@ -144,22 +139,33 @@ class BugsnagOkHttpPluginTest {
      */
     @Test
     fun callCancelled() {
-        val plugin = BugsnagOkHttpPlugin()
+        val request = Request.Builder().url("https://example.com?debug=true").build()
+        `when`(call.request()).thenReturn(request)
+        val plugin = BugsnagOkHttpPlugin { 1 }
         plugin.apply {
             load(client)
             assertNull(requestMap[call])
 
             callStart(call)
             assertNotNull(requestMap[call])
-            assertTrue(requireNotNull(requestMap[call]).startTime > 0)
+            assertEquals(1L, requireNotNull(requestMap[call]).startTime)
 
             canceled(call)
             assertNull(requestMap[call])
         }
-        verify(client, times(0)).leaveBreadcrumb(
-            anyString(),
-            anyMap(),
-            any()
+        val map = mapOf(
+            "method" to "GET",
+            "url" to "https://example.com/",
+            "urlParams" to mapOf(
+                "debug" to "true"
+            ),
+            "duration" to 0L,
+            "requestContentLength" to 0L
+        )
+        verify(client, times(1)).leaveBreadcrumb(
+            "OkHttp call error",
+            map,
+            BreadcrumbType.REQUEST
         )
     }
 
@@ -173,7 +179,7 @@ class BugsnagOkHttpPluginTest {
             load(client)
             callStart(call)
             val info = requireNotNull(requestMap[call])
-            assertEquals(-1, info.requestBodyCount)
+            assertEquals(0, info.requestBodyCount)
             requestBodyEnd(call, 2340)
             assertEquals(2340, info.requestBodyCount)
         }
@@ -189,7 +195,7 @@ class BugsnagOkHttpPluginTest {
             load(client)
             callStart(call)
             val info = requireNotNull(requestMap[call])
-            assertEquals(-1, info.responseBodyCount)
+            assertEquals(0, info.responseBodyCount)
             responseBodyEnd(call, 5092)
             assertEquals(5092, info.responseBodyCount)
         }
@@ -212,9 +218,30 @@ class BugsnagOkHttpPluginTest {
             load(client)
             callStart(call)
             val info = requireNotNull(requestMap[call])
-            assertEquals(-1, info.status)
+            assertEquals(0, info.status)
             responseHeadersEnd(call, response)
             assertEquals(200, info.status)
         }
+    }
+
+    /**
+     * A breadcrumb is not left when the enabledBreadcrumbTypes does not include
+     * [BreadcrumbType.REQUEST]
+     */
+    @Test
+    fun disabledBreadrumbType() {
+        val cfg = Configuration("api-key").apply { enabledBreadcrumbTypes = emptySet() }
+        `when`(client.config).thenReturn(BugsnagTestUtils.generateImmutableConfig(cfg))
+
+        BugsnagOkHttpPlugin().apply {
+            load(client)
+            callStart(call)
+            callEnd(call)
+        }
+        verify(client, times(0)).leaveBreadcrumb(
+            anyString(),
+            anyMap(),
+            any()
+        )
     }
 }

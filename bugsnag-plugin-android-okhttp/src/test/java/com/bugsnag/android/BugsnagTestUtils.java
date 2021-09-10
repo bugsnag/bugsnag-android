@@ -14,6 +14,10 @@ final class BugsnagTestUtils {
 
     static ImmutableConfig generateImmutableConfig() {
         Configuration config = new Configuration("5d1ec5bd39a74caa1267142706a7fb21");
+        return generateImmutableConfig(config);
+    }
+
+    static ImmutableConfig generateImmutableConfig(Configuration config) {
         config.setDelivery(generateDelivery());
         config.setLogger(NoopLogger.INSTANCE);
         config.setProjectPackages(Collections.singleton("com.example.foo"));

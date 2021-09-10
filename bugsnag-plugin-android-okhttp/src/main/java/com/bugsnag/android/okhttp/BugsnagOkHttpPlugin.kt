@@ -5,6 +5,7 @@ import com.bugsnag.android.BreadcrumbType
 import com.bugsnag.android.Client
 import com.bugsnag.android.Plugin
 import com.bugsnag.android.redactMap
+import com.bugsnag.android.shouldDiscardNetworkBreadcrumb
 import okhttp3.Call
 import okhttp3.EventListener
 import okhttp3.Request
@@ -19,6 +20,10 @@ import java.util.concurrent.ConcurrentHashMap
  *
  * To enable this functionality in Bugsnag call [com.bugsnag.android.Configuration.addPlugin]
  * with an instance of this object before calling [com.bugsnag.android.Bugsnag.start].
+ *
+ * You *must* close the [Response] body as documented by OkHttp. Failing to do so will leak the
+ * OkHttp connection and prevent breadcrumbs from being collected. For further information, see:
+ * https://square.github.io/okhttp/4.x/okhttp/okhttp3/-response-body/#the-response-body-must-be-closed
  */
 class BugsnagOkHttpPlugin @JvmOverloads constructor(
     internal val timeProvider: () -> Long = { System.currentTimeMillis() }
@@ -39,10 +44,6 @@ class BugsnagOkHttpPlugin @JvmOverloads constructor(
         requestMap[call] = NetworkRequestMetadata(timeProvider())
     }
 
-    override fun canceled(call: Call) {
-        requestMap.remove(call)
-    }
-
     override fun requestBodyEnd(call: Call, byteCount: Long) {
         requestMap[call]?.requestBodyCount = byteCount
     }
@@ -55,24 +56,20 @@ class BugsnagOkHttpPlugin @JvmOverloads constructor(
         requestMap[call]?.status = response.code
     }
 
-    override fun callEnd(call: Call) {
-        requestMap.remove(call)?.let { requestInfo ->
-            client?.apply {
-                leaveBreadcrumb(
-                    "OkHttp call succeeded",
-                    collateMetadata(call, requestInfo, timeProvider()),
-                    BreadcrumbType.REQUEST
-                )
-            }
-        }
-    }
+    override fun callEnd(call: Call) = captureNetworkBreadcrumb(call)
+    override fun callFailed(call: Call, ioe: IOException) = captureNetworkBreadcrumb(call)
+    override fun canceled(call: Call) = captureNetworkBreadcrumb(call)
 
-    override fun callFailed(call: Call, ioe: IOException) {
-        requestMap.remove(call)?.let { requestInfo ->
-            client?.apply {
+    private fun captureNetworkBreadcrumb(call: Call) {
+        client?.apply {
+            requestMap.remove(call)?.let { requestInfo ->
+                if (shouldDiscardNetworkBreadcrumb()) {
+                    return
+                }
+                val result = getRequestResult(requestInfo)
                 leaveBreadcrumb(
-                    "OkHttp call failed",
-                    collateMetadata(call, requestInfo, timeProvider()),
+                    result.message,
+                    collateMetadata(call, requestInfo, result, timeProvider()),
                     BreadcrumbType.REQUEST
                 )
             }
@@ -83,19 +80,25 @@ class BugsnagOkHttpPlugin @JvmOverloads constructor(
     internal fun Client.collateMetadata(
         call: Call,
         info: NetworkRequestMetadata,
+        result: RequestResult,
         nowMs: Long
     ): Map<String, Any> {
         val request = call.request()
 
-        return mapOf(
+        val data = mutableMapOf(
             "method" to request.method,
             "url" to sanitizeUrl(request),
             "duration" to nowMs - info.startTime,
             "urlParams" to buildQueryParams(request),
-            "requestContentLength" to info.requestBodyCount,
-            "responseContentLength" to info.responseBodyCount,
-            "status" to info.status
+            "requestContentLength" to info.requestBodyCount
         )
+
+        // only add response body length + status for requests that did not error
+        if (result != RequestResult.ERROR) {
+            data["responseContentLength"] = info.responseBodyCount
+            data["status"] = info.status
+        }
+        return data.toMap()
     }
 
     /**
@@ -129,6 +132,19 @@ class BugsnagOkHttpPlugin @JvmOverloads constructor(
     }
 }
 
+internal fun getRequestResult(requestInfo: NetworkRequestMetadata) =
+    when (requestInfo.status) {
+        in 100..399 -> RequestResult.SUCCESS
+        in 400..599 -> RequestResult.FAILURE
+        else -> RequestResult.ERROR
+    }
+
+internal enum class RequestResult(val message: String) {
+    SUCCESS("OkHttp call succeeded"),
+    FAILURE("OkHttp call failed"),
+    ERROR("OkHttp call error");
+}
+
 /**
  * Stores stateful information about the in-flight network request, and contains functions
  * that construct breadcrumb metadata from this information.
@@ -140,13 +156,13 @@ internal class NetworkRequestMetadata(
 
     @JvmField
     @Volatile
-    var status: Int = -1
+    var status: Int = 0
 
     @JvmField
     @Volatile
-    var requestBodyCount: Long = -1
+    var requestBodyCount: Long = 0
 
     @JvmField
     @Volatile
-    var responseBodyCount: Long = -1
+    var responseBodyCount: Long = 0
 }

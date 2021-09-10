@@ -45,7 +45,7 @@ class RedactedQueryParamsTest {
         }
 
         verify(client, times(1)).leaveBreadcrumb(
-            eq("OkHttp call succeeded"),
+            eq("OkHttp call error"),
             mapCaptor.capture(),
             eq(BreadcrumbType.REQUEST)
         )

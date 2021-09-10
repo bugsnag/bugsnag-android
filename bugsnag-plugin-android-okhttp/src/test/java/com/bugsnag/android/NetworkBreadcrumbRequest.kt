@@ -1,11 +1,12 @@
-package com.bugsnag.android.okhttp
+package com.bugsnag.android
 
-import com.bugsnag.android.Client
+import com.bugsnag.android.okhttp.BugsnagOkHttpPlugin
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.mockito.Mockito
+import java.io.IOException
 
 /**
  * Makes a HTTP request to a MockWebServer that returns a mocked response. A
@@ -15,26 +16,32 @@ import org.mockito.Mockito
 internal fun makeNetworkBreadcrumbRequest(
     client: Client,
     request: Request.Builder,
-    response: MockResponse,
-    path: String = "/test"
-) {
+    response: MockResponse? = null,
+    path: String = "/test",
+    action: (OkHttpClient.Builder) -> Unit = {}
+): String {
     val server = MockWebServer().apply {
-        enqueue(response)
+        response?.let(this::enqueue)
         start()
     }
     val baseUrl = server.url(path)
     val plugin = BugsnagOkHttpPlugin().apply {
         load(client)
     }
-    val okHttpClient = OkHttpClient.Builder()
-        .eventListener(plugin)
-        .build()
+    val builder = OkHttpClient.Builder().eventListener(plugin)
+    action(builder)
+    val okHttpClient = builder.build()
 
     // assert that leaveBreadcrumb has not been called
     Mockito.verify(client, Mockito.times(0))
         .leaveBreadcrumb(Mockito.anyString(), Mockito.anyMap(), Mockito.any())
 
     val req = request.url(baseUrl).build()
-    okHttpClient.newCall(req).execute().close()
+    val call = okHttpClient.newCall(req)
+    try {
+        call.execute().close()
+    } catch (ignored: IOException) {
+    }
     server.shutdown()
+    return baseUrl.toString()
 }
