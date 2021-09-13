@@ -5,6 +5,9 @@
 * Update project to build using Gradle/AGP 7
   [#1354](https://github.com/bugsnag/bugsnag-android/pull/1354)
 
+* Capture and report Thread.state for Android Runtime threads
+  [#1367](https://github.com/bugsnag/bugsnag-android/pull/1367)
+
 ## 5.12.0 (2021-08-26)
 
 * The `app.lowMemory` value always report the most recent `onTrimMemory`/`onLowMemory` status
