@@ -25,6 +25,7 @@ class ThreadDeserializerTest {
         map["id"] = 52L
         map["type"] = "reactnativejs"
         map["name"] = "thread-worker-02"
+        map["state"] = "RUNNABLE"
         map["errorReportingThread"] = true
     }
 
