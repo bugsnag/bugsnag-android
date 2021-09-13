@@ -10,7 +10,7 @@ steps:
     env:
       MAVEN_VERSION: "3.6.1"
       MINIMAL_FIXTURE: true
-      TEST_FIXTURE_NDK_VERSION: "16.1.4479499"
+      TEST_FIXTURE_NDK_VERSION: "17.2.4988734"
       TEST_FIXTURE_NAME: "fixture-minimal.apk"
 
   - label: ':android: Build Example App'
@@ -64,6 +64,7 @@ steps:
       - docker-compose#v3.7.0:
           run: android-ci
     env:
+      SINGLE_RUNNER: "true"
       INSTRUMENTATION_DEVICES: '["Google Pixel 3-9.0"]'
       TEST_APK_LOCATION: 'bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk'
     concurrency: 9

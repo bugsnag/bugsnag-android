@@ -4,5 +4,5 @@ license {
     ignoreFailures true
 }
 downloadLicenses {
-    dependencyConfiguration = "compile"
+    dependencyConfiguration = "api"
 }

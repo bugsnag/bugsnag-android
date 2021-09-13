@@ -8,7 +8,6 @@ buildscript {
     }
     dependencies {
         classpath "com.android.tools.build:gradle:${Versions.androidGradlePlugin}"
-        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:${Versions.bintrayPlugin}"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
         classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:${Versions.detektPlugin}"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:${Versions.dokkaPlugin}"
@@ -17,7 +16,7 @@ buildscript {
     }
 }
 plugins {
-    id "com.github.hierynomus.license" version "0.15.0"
+    id "com.github.hierynomus.license" version "0.16.1"
 }
 
 allprojects {
