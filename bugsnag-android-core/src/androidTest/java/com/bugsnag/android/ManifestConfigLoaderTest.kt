@@ -45,7 +45,7 @@ class ManifestConfigLoaderTest {
             assertEquals(setOf("password"), redactedKeys)
 
             // misc
-            assertEquals(maxBreadcrumbs, 25)
+            assertEquals(maxBreadcrumbs, 50)
             assertEquals(maxPersistedEvents, 32)
             assertEquals(maxPersistedSessions, 128)
             assertTrue(sendLaunchCrashesSynchronously)
@@ -83,7 +83,7 @@ class ManifestConfigLoaderTest {
             putString("com.bugsnag.android.REDACTED_KEYS", "password,auth,foo")
 
             // misc
-            putInt("com.bugsnag.android.MAX_BREADCRUMBS", 50)
+            putInt("com.bugsnag.android.MAX_BREADCRUMBS", 75)
             putInt("com.bugsnag.android.MAX_PERSISTED_EVENTS", 52)
             putInt("com.bugsnag.android.MAX_PERSISTED_SESSIONS", 64)
             putInt("com.bugsnag.android.LAUNCH_DURATION_MILLIS", 7000)
@@ -117,7 +117,7 @@ class ManifestConfigLoaderTest {
             assertEquals(setOf("password", "auth", "foo"), redactedKeys)
 
             // misc
-            assertEquals(maxBreadcrumbs, 50)
+            assertEquals(maxBreadcrumbs, 75)
             assertEquals(maxPersistedEvents, 52)
             assertEquals(maxPersistedSessions, 64)
             @Suppress("DEPRECATION")

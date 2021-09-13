@@ -16,7 +16,7 @@
 /**
  *  Max number of breadcrumbs in an event. Configures a default if not defined.
  */
-#define BUGSNAG_CRUMBS_MAX 25
+#define BUGSNAG_CRUMBS_MAX 50
 #endif
 #ifndef BUGSNAG_DEFAULT_EX_TYPE
 /**
@@ -27,7 +27,7 @@
 /**
  * Version of the bugsnag_event struct. Serialized to report header.
  */
-#define BUGSNAG_EVENT_VERSION 5
+#define BUGSNAG_EVENT_VERSION 6
 
 #ifdef __cplusplus
 extern "C" {
