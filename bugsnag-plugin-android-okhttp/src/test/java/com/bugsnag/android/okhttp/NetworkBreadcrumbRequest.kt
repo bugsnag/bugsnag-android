@@ -34,6 +34,7 @@ internal fun makeNetworkBreadcrumbRequest(
     Mockito.verify(client, Mockito.times(0))
         .leaveBreadcrumb(Mockito.anyString(), Mockito.anyMap(), Mockito.any())
 
-    okHttpClient.newCall(request.url(baseUrl).build()).execute()
+    val req = request.url(baseUrl).build()
+    okHttpClient.newCall(req).execute().close()
     server.shutdown()
 }

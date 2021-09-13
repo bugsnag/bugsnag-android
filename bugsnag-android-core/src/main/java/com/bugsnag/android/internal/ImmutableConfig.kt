@@ -52,7 +52,8 @@ data class ImmutableConfig(
 
     // results cached here to avoid unnecessary lookups in Client.
     val packageInfo: PackageInfo?,
-    val appInfo: ApplicationInfo?
+    val appInfo: ApplicationInfo?,
+    val redactedKeys: Collection<String>
 ) {
 
     @JvmName("getErrorApiDeliveryParams")
@@ -162,7 +163,8 @@ internal fun convertToImmutableConfig(
         persistenceDirectory = persistenceDir,
         sendLaunchCrashesSynchronously = config.sendLaunchCrashesSynchronously,
         packageInfo = packageInfo,
-        appInfo = appInfo
+        appInfo = appInfo,
+        redactedKeys = config.redactedKeys.toSet()
     )
 }
 
