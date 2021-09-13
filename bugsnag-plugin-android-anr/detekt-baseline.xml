@@ -1,10 +1,10 @@
-<?xml version="1.0" ?>
+<?xml version='1.0' encoding='UTF-8'?>
 <SmellBaseline>
-  <ManuallySuppressedIssues></ManuallySuppressedIssues>
+  <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>SwallowedException:AnrDetailsCollector.kt$AnrDetailsCollector$catch (exc: RuntimeException) { null }</ID>
     <ID>SwallowedException:AnrPlugin.kt$AnrPlugin$catch (exc: Throwable) { null }</ID>
     <ID>ThrowingExceptionsWithoutMessageOrCause:AnrPlugin.kt$AnrPlugin$RuntimeException()</ID>
-    <ID>UnusedPrivateMember:AnrPlugin.kt$AnrPlugin$ private fun notifyAnrDetected(nativeTrace: List&lt;NativeStackframe&gt;)</ID>
+    <ID>UnusedPrivateMember:AnrPlugin.kt$AnrPlugin$ private fun notifyAnrDetected(nativeTrace: List&lt;NativeStackframe>)</ID>
   </CurrentIssues>
 </SmellBaseline>

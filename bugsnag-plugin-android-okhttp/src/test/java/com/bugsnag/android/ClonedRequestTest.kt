@@ -1,6 +1,6 @@
-package com.bugsnag.android.okhttp
+package com.bugsnag.android
 
-import com.bugsnag.android.Client
+import com.bugsnag.android.okhttp.BugsnagOkHttpPlugin
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.mockwebserver.MockWebServer
