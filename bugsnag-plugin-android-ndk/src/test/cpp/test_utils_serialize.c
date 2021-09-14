@@ -45,6 +45,15 @@ bool bsg_report_v4_write(bsg_report_header *header, bugsnag_report_v4 *report,
   return len == sizeof(bugsnag_report_v4);
 }
 
+bool bsg_report_v5_write(bsg_report_header *header, bugsnag_report_v5 *report,
+                         int fd) {
+  if (!bsg_report_header_write(header, fd)) {
+    return false;
+  }
+  ssize_t len = write(fd, report, sizeof(bugsnag_report_v5));
+  return len == sizeof(bugsnag_report_v5);
+}
+
 bool bsg_serialize_report_v1_to_file(bsg_environment *env, bugsnag_report_v1 *report) {
   int fd = open(env->next_event_path, O_WRONLY | O_CREAT, 0644);
   if (fd == -1) {
@@ -77,6 +86,13 @@ bool bsg_serialize_report_v4_to_file(bsg_environment *env, bugsnag_report_v4 *re
   return bsg_report_v4_write(&env->report_header, report, fd);
 }
 
+bool bsg_serialize_report_v5_to_file(bsg_environment *env, bugsnag_report_v5 *report) {
+  int fd = open(env->next_event_path, O_WRONLY | O_CREAT, 0644);
+  if (fd == -1) {
+    return false;
+  }
+  return bsg_report_v5_write(&env->report_header, report, fd);
+}
 
 void generate_basic_report(bugsnag_event *event) {
   strcpy(event->grouping_hash, "foo-hash");
@@ -547,6 +563,90 @@ TEST test_report_v4_migration(void) {
   PASS();
 }
 
+void prepare_v5_report(bsg_environment *env, bugsnag_report_v5 *generated_report,
+                       int first_crumb_index) {
+  strcpy(generated_report->context, "SomeActivity");
+
+  for (int k = 0; k < V2_BUGSNAG_CRUMBS_MAX + first_crumb_index; k++) {
+    int index = k % V2_BUGSNAG_CRUMBS_MAX;
+    char *str = calloc(1, sizeof(char) * 64);
+    sprintf(str, "%d", k);
+    bugsnag_breadcrumb *crumb = init_breadcrumb(str, "Oh crumbs", BSG_CRUMB_STATE);
+    memcpy(&generated_report->breadcrumbs[index], crumb, sizeof(bugsnag_breadcrumb));
+    free(crumb);
+    free(str);
+  }
+  generated_report->crumb_count = V2_BUGSNAG_CRUMBS_MAX;
+  generated_report->crumb_first_index = first_crumb_index;
+  memcpy(&env->next_event, generated_report, sizeof(bugsnag_report_v5));
+  strcpy(env->next_event_path, SERIALIZE_TEST_FILE);
+  bsg_serialize_report_v5_to_file(env, generated_report);
+}
+
+TEST test_report_v5_migration(void) {
+  bsg_environment *env = calloc(1, sizeof(bsg_environment));
+  env->report_header.version = 5;
+  env->report_header.big_endian = 1;
+  strcpy(env->report_header.os_build, "macOS Sierra");
+
+  // verify that breadcrumbs and context (after breadcrumbs in struct) are migrated correctly.
+  bugsnag_report_v5 *generated_report = calloc(1, sizeof(bugsnag_report_v5));
+  prepare_v5_report(env, generated_report, 0);
+  bugsnag_event *event = bsg_deserialize_event_from_file(SERIALIZE_TEST_FILE);
+  ASSERT(event != NULL);
+
+  // values are migrated correctly
+  ASSERT_STR_EQ("SomeActivity", event->context);
+  ASSERT_EQ(25, event->crumb_count);
+  ASSERT_EQ(0, event->crumb_first_index);
+
+  for (int k = 0; k < V2_BUGSNAG_CRUMBS_MAX; ++k) {
+    char *str = calloc(1, sizeof(char) * 64);
+    sprintf(str, "%d", k);
+    bugsnag_breadcrumb *crumb = &event->breadcrumbs[k];
+    ASSERT_STR_EQ(str, crumb->name);
+    ASSERT_EQ(BSG_CRUMB_STATE, crumb->type);
+    free(str);
+  }
+
+  free(generated_report);
+  free(env);
+  free(event);
+  PASS();
+}
+
+TEST test_report_v5_migration_crumb_index(void) {
+  bsg_environment *env = calloc(1, sizeof(bsg_environment));
+  env->report_header.version = 5;
+  env->report_header.big_endian = 1;
+  strcpy(env->report_header.os_build, "macOS Sierra");
+
+  // verify that breadcrumbs and context (after breadcrumbs in struct) are migrated correctly.
+  bugsnag_report_v5 *generated_report = calloc(1, sizeof(bugsnag_report_v5));
+  int offset = 12;
+  prepare_v5_report(env, generated_report, offset);
+  strcpy(env->next_event_path, SERIALIZE_TEST_FILE);
+  bsg_serialize_report_v5_to_file(env, generated_report);
+
+  bugsnag_event *event = bsg_deserialize_event_from_file(SERIALIZE_TEST_FILE);
+  ASSERT(event != NULL);
+
+  // values are migrated correctly
+  ASSERT_STR_EQ("SomeActivity", event->context);
+  ASSERT_EQ(25, event->crumb_count);
+  ASSERT_EQ(0, event->crumb_first_index);
+
+  ASSERT_STR_EQ("12", event->breadcrumbs[0].name);
+  ASSERT_STR_EQ("13", event->breadcrumbs[1].name);
+  ASSERT_STR_EQ("26", event->breadcrumbs[14].name);
+  ASSERT_STR_EQ("36", event->breadcrumbs[24].name);
+
+  free(generated_report);
+  free(env);
+  free(event);
+  PASS();
+}
+
 // helper function
 JSON_Value *bsg_generate_json(void) {
   bugsnag_event *event = bsg_generate_event();
@@ -733,5 +833,7 @@ SUITE(suite_struct_migration) {
   RUN_TEST(test_report_v2_migration);
   RUN_TEST(test_report_v3_migration);
   RUN_TEST(test_report_v4_migration);
+  RUN_TEST(test_report_v5_migration);
+  RUN_TEST(test_report_v5_migration_crumb_index);
   RUN_TEST(test_migrate_app_v2);
 }

@@ -19,6 +19,7 @@ bool bsg_event_write(bsg_report_header *header, bugsnag_event *event, int fd);
 
 bugsnag_event *bsg_event_read(int fd);
 bsg_report_header *bsg_report_header_read(int fd);
+bugsnag_event *bsg_map_v5_to_report(bugsnag_report_v5 *report_v5);
 bugsnag_event *bsg_map_v4_to_report(bugsnag_report_v4 *report_v4);
 bugsnag_event *bsg_map_v3_to_report(bugsnag_report_v3 *report_v3);
 bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2);
@@ -29,6 +30,7 @@ void migrate_app_v2(bugsnag_report_v4 *report_v4, bugsnag_event *event);
 void migrate_device_v1(bugsnag_report_v2 *report_v2, bugsnag_report_v3 *event);
 void migrate_breadcrumb_v1(bugsnag_report_v2 *report_v2,
                            bugsnag_report_v3 *event);
+void migrate_breadcrumb_v2(bugsnag_report_v5 *report_v5, bugsnag_event *event);
 
 #ifdef __cplusplus
 }
@@ -116,7 +118,19 @@ bugsnag_report_v4 *bsg_report_v4_read(int fd) {
   return event;
 }
 
-bugsnag_event *bsg_report_v5_read(int fd) {
+bugsnag_report_v5 *bsg_report_v5_read(int fd) {
+  size_t event_size = sizeof(bugsnag_report_v5);
+  bugsnag_report_v5 *event = calloc(1, event_size);
+
+  ssize_t len = read(fd, event, event_size);
+  if (len != event_size) {
+    free(event);
+    return NULL;
+  }
+  return event;
+}
+
+bugsnag_event *bsg_report_v6_read(int fd) {
   size_t event_size = sizeof(bugsnag_event);
   bugsnag_event *event = calloc(1, event_size);
 
@@ -161,7 +175,43 @@ bugsnag_event *bsg_event_read(int fd) {
     bugsnag_report_v4 *report_v4 = bsg_report_v4_read(fd);
     event = bsg_map_v4_to_report(report_v4);
   } else if (event_version == 5) {
-    event = bsg_report_v5_read(fd);
+    bugsnag_report_v5 *report_v5 = bsg_report_v5_read(fd);
+    event = bsg_map_v5_to_report(report_v5);
+  } else if (event_version == 6) {
+    event = bsg_report_v6_read(fd);
+  }
+  return event;
+}
+
+bugsnag_event *bsg_map_v5_to_report(bugsnag_report_v5 *report_v5) {
+  if (report_v5 == NULL) {
+    return NULL;
+  }
+  bugsnag_event *event = calloc(1, sizeof(bugsnag_event));
+
+  if (event != NULL) {
+    event->notifier = report_v5->notifier;
+    event->app = report_v5->app;
+    event->device = report_v5->device;
+    bsg_strcpy(event->context, report_v5->context);
+    event->user = report_v5->user;
+    event->error = report_v5->error;
+    event->metadata = report_v5->metadata;
+    event->severity = report_v5->severity;
+    bsg_strncpy_safe(event->session_id, report_v5->session_id,
+                     sizeof(event->session_id));
+    bsg_strncpy_safe(event->session_start, report_v5->session_start,
+                     sizeof(event->session_id));
+    event->handled_events = report_v5->handled_events;
+    event->unhandled_events = report_v5->unhandled_events;
+    bsg_strncpy_safe(event->grouping_hash, report_v5->grouping_hash,
+                     sizeof(event->session_id));
+    event->unhandled = report_v5->unhandled;
+    bsg_strncpy_safe(event->api_key, report_v5->api_key,
+                     sizeof(event->api_key));
+
+    migrate_breadcrumb_v2(report_v5, event);
+    free(report_v5);
   }
   return event;
 }
@@ -280,7 +330,8 @@ int bsg_calculate_total_crumbs(int old_count) {
 }
 
 int bsg_calculate_v1_start_index(int old_count) {
-  return old_count < BUGSNAG_CRUMBS_MAX ? 0 : old_count % BUGSNAG_CRUMBS_MAX;
+  return old_count < V2_BUGSNAG_CRUMBS_MAX ? 0
+                                           : old_count % V2_BUGSNAG_CRUMBS_MAX;
 }
 
 int bsg_calculate_v1_crumb_index(int crumb_pos, int first_index) {
@@ -290,13 +341,13 @@ int bsg_calculate_v1_crumb_index(int crumb_pos, int first_index) {
 void bugsnag_report_v3_add_breadcrumb(bugsnag_report_v3 *event,
                                       bugsnag_breadcrumb *crumb) {
   int crumb_index;
-  if (event->crumb_count < BUGSNAG_CRUMBS_MAX) {
+  if (event->crumb_count < V2_BUGSNAG_CRUMBS_MAX) {
     crumb_index = event->crumb_count;
     event->crumb_count++;
   } else {
     crumb_index = event->crumb_first_index;
     event->crumb_first_index =
-        (event->crumb_first_index + 1) % BUGSNAG_CRUMBS_MAX;
+        (event->crumb_first_index + 1) % V2_BUGSNAG_CRUMBS_MAX;
   }
   memcpy(&event->breadcrumbs[crumb_index], crumb, sizeof(bugsnag_breadcrumb));
 }
@@ -362,6 +413,19 @@ void migrate_app_v1(bugsnag_report_v2 *report_v2, bugsnag_report_v3 *event) {
   bugsnag_event_add_metadata_string(event, "app", "versionName",
                                     report_v2->app.version_name);
   bugsnag_event_add_metadata_string(event, "app", "name", report_v2->app.name);
+}
+
+void migrate_breadcrumb_v2(bugsnag_report_v5 *report_v5, bugsnag_event *event) {
+  int old_first_index = report_v5->crumb_first_index;
+  event->crumb_count = report_v5->crumb_count;
+  event->crumb_first_index = 0; // sort crumbs while copying across
+
+  // rationalize order of breadcrumbs while copying over to new struct
+  for (int new_index = 0; new_index < event->crumb_count; new_index++) {
+    int old_index = (new_index + old_first_index) % V2_BUGSNAG_CRUMBS_MAX;
+    bugsnag_breadcrumb crumb = report_v5->breadcrumbs[old_index];
+    memcpy(&event->breadcrumbs[new_index], &crumb, sizeof(bugsnag_breadcrumb));
+  }
 }
 
 void migrate_app_v2(bugsnag_report_v4 *report_v4, bugsnag_event *event) {
