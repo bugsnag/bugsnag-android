@@ -222,3 +222,14 @@ JNIEXPORT jstring JNICALL Java_com_bugsnag_android_ndk_ExceptionSerializationTes
     return (*env)->NewStringUTF(env, string);
 
 }
+
+JNIEXPORT jstring JNICALL
+Java_com_bugsnag_android_ndk_ThreadSerializationTest_run(JNIEnv *env, jobject thiz) {
+    bugsnag_event *event = calloc(1, sizeof(bugsnag_event));
+    loadThreadTestCase(event);
+    JSON_Value *threads_val = json_value_init_array();
+    JSON_Array *threads_array = json_value_get_array(threads_val);
+    bsg_serialize_threads(event, threads_array);
+    char *string = json_serialize_to_string(threads_val);
+    return (*env)->NewStringUTF(env, string);
+}

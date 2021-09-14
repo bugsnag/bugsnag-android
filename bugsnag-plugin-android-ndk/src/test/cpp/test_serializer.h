@@ -21,5 +21,6 @@ void loadContextTestCase(bugsnag_event *event);
 void loadSessionTestCase(bugsnag_event *event);
 void loadSeverityReasonTestCase(bugsnag_event *event);
 void loadBreadcrumbsTestCase(bugsnag_event *event);
+void loadThreadTestCase(bugsnag_event *event);
 bugsnag_stackframe *loadStackframeTestCase();
 void loadExceptionTestCase(bugsnag_event *event);
