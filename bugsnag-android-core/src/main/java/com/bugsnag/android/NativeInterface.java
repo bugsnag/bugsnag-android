@@ -430,6 +430,23 @@ public class NativeInterface {
         getClient().setAutoDetectAnrs(autoDetectAnrs);
     }
 
+    public static void startSession() {
+        getClient().startSession();
+    }
+
+    public static void pauseSession() {
+        getClient().pauseSession();
+    }
+
+    public static boolean resumeSession() {
+        return getClient().resumeSession();
+    }
+
+    @Nullable
+    public static Session getCurrentSession() {
+        return getClient().sessionTracker.getCurrentSession();
+    }
+
     /**
      * Marks the launch period as complete
      */
