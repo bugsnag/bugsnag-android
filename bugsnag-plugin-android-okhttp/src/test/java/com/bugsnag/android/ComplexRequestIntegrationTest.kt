@@ -114,7 +114,7 @@ class ComplexRequestIntegrationTest {
             {
                 call.cancel()
             },
-            20, TimeUnit.MILLISECONDS
+            100, TimeUnit.MILLISECONDS
         )
 
         runCatching {
