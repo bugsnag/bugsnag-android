@@ -8,6 +8,7 @@ internal class ThreadSerializer : MapSerializer<Thread> {
         map["name"] = thread.name
         map["type"] = thread.type.toString().toLowerCase(Locale.US)
         map["errorReportingThread"] = thread.errorReportingThread
+        map["state"] = thread.state.descriptor
 
         map["stacktrace"] = thread.stacktrace.map {
             val frame = mutableMapOf<String, Any?>()

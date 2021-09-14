@@ -37,7 +37,7 @@
       "id": 5,
       "name": "main",
       "type": "android",
-      "state": "RUNNABLE",
+      "state": "runnable",
       "stacktrace": [],
       "errorReportingThread": true
     }

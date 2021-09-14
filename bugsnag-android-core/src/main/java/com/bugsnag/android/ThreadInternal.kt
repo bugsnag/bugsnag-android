@@ -19,7 +19,7 @@ class ThreadInternal internal constructor(
         writer.name("id").value(id)
         writer.name("name").value(name)
         writer.name("type").value(type.desc)
-        writer.name("state").value(state.name)
+        writer.name("state").value(state.descriptor)
 
         writer.name("stacktrace")
         writer.beginArray()

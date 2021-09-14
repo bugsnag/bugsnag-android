@@ -139,13 +139,23 @@ public class Thread implements JsonStream.Streamable {
      * a state could not be captured or mapped.
      */
     public enum State {
-        NEW,
-        BLOCKED,
-        RUNNABLE,
-        TERMINATED,
-        TIMED_WAITING,
-        WAITING,
-        UNKNOWN;
+        NEW("new"),
+        BLOCKED("blocked"),
+        RUNNABLE("runnable"),
+        TERMINATED("terminated"),
+        TIMED_WAITING("timed waiting"),
+        WAITING("waiting"),
+        UNKNOWN("unknown");
+
+        private final String descriptor;
+
+        State(String descriptor) {
+            this.descriptor = descriptor;
+        }
+
+        public String getDescriptor() {
+            return descriptor;
+        }
 
         @NonNull
         public static State forThread(@NonNull java.lang.Thread thread) {
@@ -154,24 +164,26 @@ public class Thread implements JsonStream.Streamable {
         }
 
         /**
-         * An exception-safe wrapper for {@link #valueOf(String)} which also handles {@code null}
-         * names. This method is used in-preference to the standard {@code valueOf} as it will
-         * return {@link #UNKNOWN} instead of throwing an exception.
+         * Lookup the {@code State} for a given {@link #getDescriptor() descriptor} code. Unlike
+         * {@link #valueOf(String) valueOf}, this method will return {@link #UNKNOWN} is no
+         * matching {@code State} constant can be found.
          *
-         * @param name the name of the state constant to lookup
-         * @return the named {@link State} or {@link #UNKNOWN}
+         * @param descriptor a consistent descriptor of the state constant to lookup
+         * @return the requested {@link State} or {@link #UNKNOWN}
          */
         @NonNull
-        public static State byName(@Nullable String name) {
-            if (name == null) {
+        public static State byDescriptor(@Nullable String descriptor) {
+            if (descriptor == null) {
                 return UNKNOWN;
             }
 
-            try {
-                return valueOf(name);
-            } catch (IllegalArgumentException iae) {
-                return UNKNOWN;
+            for (State state : values()) {
+                if (state.getDescriptor().equals(descriptor)) {
+                    return state;
+                }
             }
+
+            return UNKNOWN;
         }
 
         @NonNull
