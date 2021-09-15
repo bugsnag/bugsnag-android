@@ -2,6 +2,7 @@
   "id": 24,
   "name": "main-one",
   "type": "android",
+  "state": "runnable",
   "stacktrace": [
     {
       "method": "run_func",

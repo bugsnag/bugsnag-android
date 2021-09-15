@@ -24,6 +24,7 @@ internal class ThreadSerializationTest {
                 "main-one",
                 ThreadType.ANDROID,
                 true,
+                Thread.State.RUNNABLE,
                 Stacktrace(
                     stacktrace,
                     emptySet(),
@@ -43,6 +44,7 @@ internal class ThreadSerializationTest {
                 "main-one",
                 ThreadType.ANDROID,
                 false,
+                Thread.State.RUNNABLE,
                 Stacktrace(
                     stacktrace1,
                     emptySet(),
@@ -76,6 +78,7 @@ internal class ThreadSerializationTest {
                 "main-one",
                 ThreadType.ANDROID,
                 true,
+                Thread.State.BLOCKED,
                 trace,
                 NoopLogger
             )
@@ -98,6 +101,7 @@ internal class ThreadSerializationTest {
                 "main-one",
                 ThreadType.ANDROID,
                 false,
+                Thread.State.WAITING,
                 trace,
                 NoopLogger
             )
