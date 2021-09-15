@@ -153,6 +153,7 @@ public class Thread implements JsonStream.Streamable {
             this.descriptor = descriptor;
         }
 
+        @NonNull
         public String getDescriptor() {
             return descriptor;
         }
