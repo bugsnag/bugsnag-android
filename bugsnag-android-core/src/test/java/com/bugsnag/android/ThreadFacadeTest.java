@@ -27,15 +27,7 @@ public class ThreadFacadeTest {
         logger = new InterceptingLogger();
         List<Stackframe> frames = Collections.emptyList();
         stacktrace = new Stacktrace(frames);
-        thread = new Thread(
-                1,
-                "thread-2",
-                ThreadType.ANDROID,
-                false,
-                Thread.State.RUNNABLE,
-                stacktrace,
-                logger
-        );
+        thread = new Thread(1, "thread-2", ThreadType.ANDROID, false, stacktrace, logger);
     }
 
     @Test

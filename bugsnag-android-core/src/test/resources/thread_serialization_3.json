@@ -2,7 +2,6 @@
   "id": 24,
   "name": "main-one",
   "type": "android",
-  "state": "waiting",
   "stacktrace": [
     {
       "method": "run_func",

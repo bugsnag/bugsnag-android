@@ -56,7 +56,6 @@ class EventDeserializerTest {
         "id" to 52L,
         "type" to "reactnativejs",
         "name" to "thread-worker-02",
-        "state" to "RUNNABLE",
         "errorReportingThread" to true
     )
 

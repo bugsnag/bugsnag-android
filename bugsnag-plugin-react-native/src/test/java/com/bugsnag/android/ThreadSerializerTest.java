@@ -37,7 +37,7 @@ public class ThreadSerializerTest {
         List<Stackframe> frames = Collections.singletonList(stackframe);
         Stacktrace stacktrace = new Stacktrace(frames);
         thread = new Thread(1, "fake-thread", ThreadType.ANDROID,
-                true, Thread.State.RUNNABLE, stacktrace, NoopLogger.INSTANCE);
+                true, stacktrace, NoopLogger.INSTANCE);
     }
 
     @Test
