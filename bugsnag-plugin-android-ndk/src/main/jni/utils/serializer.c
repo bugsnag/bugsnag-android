@@ -15,18 +15,29 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 bool bsg_event_write(bsg_report_header *header, bugsnag_event *event, int fd);
 
 bugsnag_event *bsg_event_read(int fd);
+
 bsg_report_header *bsg_report_header_read(int fd);
+
+bugsnag_event *bsg_map_v5_to_report(bugsnag_report_v5 *report_v5);
+
 bugsnag_event *bsg_map_v4_to_report(bugsnag_report_v4 *report_v4);
+
 bugsnag_event *bsg_map_v3_to_report(bugsnag_report_v3 *report_v3);
+
 bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2);
+
 bugsnag_event *bsg_map_v1_to_report(bugsnag_report_v1 *report_v1);
 
 void migrate_app_v1(bugsnag_report_v2 *report_v2, bugsnag_report_v3 *event);
+
 void migrate_app_v2(bugsnag_report_v4 *report_v4, bugsnag_event *event);
+
 void migrate_device_v1(bugsnag_report_v2 *report_v2, bugsnag_report_v3 *event);
+
 void migrate_breadcrumb_v1(bugsnag_report_v2 *report_v2,
                            bugsnag_report_v3 *event);
 
@@ -116,7 +127,19 @@ bugsnag_report_v4 *bsg_report_v4_read(int fd) {
   return event;
 }
 
-bugsnag_event *bsg_report_v5_read(int fd) {
+bugsnag_report_v5 *bsg_report_v5_read(int fd) {
+  size_t event_size = sizeof(bugsnag_event);
+  bugsnag_report_v5 *event = calloc(1, event_size);
+
+  ssize_t len = read(fd, event, event_size);
+  if (len != event_size) {
+    free(event);
+    return NULL;
+  }
+  return event;
+}
+
+bugsnag_event *bsg_report_v6_read(int fd) {
   size_t event_size = sizeof(bugsnag_event);
   bugsnag_event *event = calloc(1, event_size);
 
@@ -161,7 +184,23 @@ bugsnag_event *bsg_event_read(int fd) {
     bugsnag_report_v4 *report_v4 = bsg_report_v4_read(fd);
     event = bsg_map_v4_to_report(report_v4);
   } else if (event_version == 5) {
-    event = bsg_report_v5_read(fd);
+    bugsnag_report_v5 *report_v5 = bsg_report_v5_read(fd);
+    event = bsg_map_v5_to_report(report_v5);
+  } else if (event_version == 6) {
+    event = bsg_report_v6_read(fd);
+  }
+  return event;
+}
+
+bugsnag_event *bsg_map_v5_to_report(bugsnag_report_v5 *report_v5) {
+  if (report_v5 == NULL) {
+    return NULL;
+  }
+  bugsnag_event *event = calloc(1, sizeof(bugsnag_event));
+
+  if (event != NULL) {
+    memcpy(event, report_v5, sizeof(bugsnag_report_v5));
+    free(report_v5);
   }
   return event;
 }
