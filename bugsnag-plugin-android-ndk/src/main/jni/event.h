@@ -24,6 +24,13 @@
  */
 #define BUGSNAG_DEFAULT_EX_TYPE "c"
 #endif
+#ifndef BUGSNAG_THREADS_MAX
+/**
+ * Maximum number of threads recorded for an event. Configures a default if not
+ * defined.
+ */
+#define BUGSNAG_THREADS_MAX 255
+#endif
 /**
  * Version of the bugsnag_event struct. Serialized to report header.
  */
@@ -179,6 +186,12 @@ typedef struct {
 } bsg_notifier;
 
 typedef struct {
+  pid_t id;
+  char name[16];
+  char state;
+} bsg_thread;
+
+typedef struct {
   bsg_notifier notifier;
   bsg_app_info app;
   bsg_device_info device;
@@ -202,6 +215,9 @@ typedef struct {
   char grouping_hash[64];
   bool unhandled;
   char api_key[64];
+
+  int thread_count;
+  bsg_thread threads[BUGSNAG_THREADS_MAX];
 } bugsnag_event;
 
 void bugsnag_event_add_breadcrumb(bugsnag_event *event,
