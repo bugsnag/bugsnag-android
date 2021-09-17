@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <utils/threads.h>
 
 #include "../utils/crash_info.h"
 #include "../utils/serializer.h"
@@ -184,6 +185,9 @@ void bsg_handle_signal(int signum, siginfo_t *info,
   bsg_global_env->next_event.error.frame_count = bsg_unwind_stack(
       bsg_global_env->signal_unwind_style,
       bsg_global_env->next_event.error.stacktrace, info, user_context);
+
+  bsg_global_env->next_event.thread_count = bsg_capture_thread_states(
+      bsg_global_env->next_event.threads, BUGSNAG_THREADS_MAX);
 
   for (int i = 0; i < BSG_HANDLED_SIGNAL_COUNT; i++) {
     const int signal = bsg_native_signals[i];

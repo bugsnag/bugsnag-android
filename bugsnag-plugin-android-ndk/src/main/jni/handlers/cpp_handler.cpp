@@ -4,6 +4,7 @@
 #include <pthread.h>
 #include <stdexcept>
 #include <string>
+#include <utils/threads.h>
 
 #include "../utils/crash_info.h"
 #include "../utils/serializer.h"
@@ -94,6 +95,8 @@ void bsg_handle_cpp_terminate() {
   bsg_global_env->next_event.error.frame_count =
       bsg_unwind_stack(bsg_global_env->unwind_style,
                        bsg_global_env->next_event.error.stacktrace, NULL, NULL);
+  bsg_global_env->next_event.thread_count = bsg_capture_thread_states(
+      bsg_global_env->next_event.threads, BUGSNAG_THREADS_MAX);
 
   std::type_info *tinfo = __cxxabiv1::__cxa_current_exception_type();
   if (tinfo != NULL) {
