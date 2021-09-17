@@ -19,6 +19,7 @@ bool bsg_event_write(bsg_report_header *header, bugsnag_event *event, int fd);
 
 bugsnag_event *bsg_event_read(int fd);
 bsg_report_header *bsg_report_header_read(int fd);
+bugsnag_event *bsg_map_v6_to_report(bugsnag_report_v6 *report_v6);
 bugsnag_event *bsg_map_v5_to_report(bugsnag_report_v5 *report_v5);
 bugsnag_event *bsg_map_v4_to_report(bugsnag_report_v4 *report_v4);
 bugsnag_event *bsg_map_v3_to_report(bugsnag_report_v3 *report_v3);
@@ -130,7 +131,19 @@ bugsnag_report_v5 *bsg_report_v5_read(int fd) {
   return event;
 }
 
-bugsnag_event *bsg_report_v6_read(int fd) {
+bugsnag_report_v6 *bsg_report_v6_read(int fd) {
+  size_t event_size = sizeof(bugsnag_report_v6);
+  bugsnag_report_v6 *event = calloc(1, event_size);
+
+  ssize_t len = read(fd, event, event_size);
+  if (len != event_size) {
+    free(event);
+    return NULL;
+  }
+  return event;
+}
+
+bugsnag_event *bsg_report_v7_read(int fd) {
   size_t event_size = sizeof(bugsnag_event);
   bugsnag_event *event = calloc(1, event_size);
 
@@ -178,7 +191,23 @@ bugsnag_event *bsg_event_read(int fd) {
     bugsnag_report_v5 *report_v5 = bsg_report_v5_read(fd);
     event = bsg_map_v5_to_report(report_v5);
   } else if (event_version == 6) {
-    event = bsg_report_v6_read(fd);
+    bugsnag_report_v6 *report_v6 = bsg_report_v6_read(fd);
+    event = bsg_map_v6_to_report(report_v6);
+  } else if (event_version == 7) {
+    event = bsg_report_v7_read(fd);
+  }
+  return event;
+}
+
+bugsnag_event *bsg_map_v6_to_report(bugsnag_report_v6 *report_v6) {
+  if (report_v6 == NULL) {
+    return NULL;
+  }
+  bugsnag_event *event = calloc(1, sizeof(bugsnag_event));
+
+  if (event != NULL) {
+    memcpy(event, report_v6, sizeof(bugsnag_report_v6));
+    free(report_v6);
   }
   return event;
 }
