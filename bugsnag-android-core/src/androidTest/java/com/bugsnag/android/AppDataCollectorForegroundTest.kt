@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import android.content.Context
+import android.os.SystemClock
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -26,22 +27,21 @@ class AppDataCollectorForegroundTest {
     @Mock
     internal lateinit var sessionTracker: SessionTracker
 
-    @Mock
-    internal lateinit var launchCrashTracker: LaunchCrashTracker
-
-    @Mock
-    internal lateinit var memoryTrimState: MemoryTrimState
-
+    private lateinit var launchCrashTracker: LaunchCrashTracker
+    private lateinit var memoryTrimState: MemoryTrimState
     private lateinit var appDataCollector: AppDataCollector
 
     @Before
     fun setUp() {
         `when`(appContext.packageName).thenReturn("test.package.name")
+        val config = BugsnagTestUtils.generateImmutableConfig()
+        launchCrashTracker = LaunchCrashTracker(config)
+        memoryTrimState = MemoryTrimState()
 
         appDataCollector = AppDataCollector(
             appContext,
             null,
-            BugsnagTestUtils.generateImmutableConfig(),
+            config,
             sessionTracker,
             null,
             launchCrashTracker,
@@ -54,7 +54,7 @@ class AppDataCollectorForegroundTest {
      */
     @Test
     fun durationInForeground() {
-        val time = System.currentTimeMillis()
+        val time = SystemClock.elapsedRealtime()
         val lastForegroundTime = time - 1000L
 
         `when`(sessionTracker.isInForeground).thenReturn(true)
