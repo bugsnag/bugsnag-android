@@ -43,6 +43,9 @@ Scenario: Unhandled Java Exception with loaded configuration
     And the event "app.inForeground" is true
     And the event "app.isLaunching" is true
     And the error payload field "events.0.metaData.app.memoryUsage" is greater than 0
+    And the error payload field "events.0.metaData.app.totalMemory" is greater than 0
+    And the error payload field "events.0.metaData.app.freeMemory" is greater than 0
+    And the error payload field "events.0.metaData.app.memoryLimit" is greater than 0
 
     # Metadata
     And the event "metaData.app.name" equals "MazeRunner"
@@ -115,6 +118,7 @@ Scenario: Signal raised with overwritten config
 
     # Stacktrace validation
     And the error payload field "events.0.exceptions.0.stacktrace" is a non-empty array
+    And the event stacktrace identifies the program counter
     And the event "exceptions.0.stacktrace.0.method" is not null
     And the event "exceptions.0.stacktrace.0.file" is not null
     And the error payload field "events.0.exceptions.0.stacktrace.0.frameAddress" is greater than 0
@@ -196,6 +200,7 @@ Scenario: C++ exception thrown with overwritten config
 
     # Stacktrace validation
     And the error payload field "events.0.exceptions.0.stacktrace" is a non-empty array
+    And the event stacktrace identifies the program counter
     And the event "exceptions.0.stacktrace.0.method" is not null
     And the event "exceptions.0.stacktrace.0.file" is not null
     And the error payload field "events.0.exceptions.0.stacktrace.0.frameAddress" is greater than 0

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.os.Bundle
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import com.bugsnag.android.internal.convertToImmutableConfig
 import com.bugsnag.android.internal.sanitiseConfiguration
@@ -18,6 +19,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.anyInt
+import org.mockito.Mockito.anyString
+import org.mockito.Mockito.mock
 import org.mockito.junit.MockitoJUnitRunner
 import java.nio.file.Files
 
@@ -162,7 +166,12 @@ internal class ImmutableConfigTest {
         `when`(context.packageName).thenReturn("com.example.foo")
         val appInfo = ApplicationInfo()
         appInfo.flags = ApplicationInfo.FLAG_DEBUGGABLE
-        `when`(packageManager.getApplicationInfo("com.example.foo", PackageManager.GET_META_DATA)).thenReturn(appInfo)
+        `when`(
+            packageManager.getApplicationInfo(
+                "com.example.foo",
+                PackageManager.GET_META_DATA
+            )
+        ).thenReturn(appInfo)
         `when`(context.packageManager).thenReturn(packageManager)
         val cacheDir = Files.createTempDirectory("foo").toFile()
         `when`(context.cacheDir).thenReturn(cacheDir)
@@ -179,7 +188,7 @@ internal class ImmutableConfigTest {
         assertEquals("development", config.releaseStage)
         assertEquals(55, config.versionCode)
         assertNotNull(config.delivery)
-        assertEquals(cacheDir, config.persistenceDirectory)
+        assertEquals(cacheDir, config.persistenceDirectory.value)
     }
 
     @Test
@@ -201,6 +210,60 @@ internal class ImmutableConfigTest {
         assertEquals("production", config.releaseStage)
         assertEquals(55, config.versionCode)
         assertNotNull(config.delivery)
-        assertEquals(cacheDir, config.persistenceDirectory)
+        assertEquals(cacheDir, config.persistenceDirectory.value)
+    }
+
+    @Test
+    fun sanitizeConfigBuildUuidString() {
+        `when`(context.packageName).thenReturn("com.example.foo")
+        `when`(context.packageManager).thenReturn(packageManager)
+
+        // setup build uuid
+        val bundle = mock(Bundle::class.java)
+        `when`(bundle.containsKey("com.bugsnag.android.BUILD_UUID")).thenReturn(true)
+        `when`(bundle.getString("com.bugsnag.android.BUILD_UUID")).thenReturn("6533e9f7-0e98-40fe-84b4-0e4ed6df6866")
+        val appInfo = ApplicationInfo().apply { metaData = bundle }
+        `when`(packageManager.getApplicationInfo(anyString(), anyInt())).thenReturn(appInfo)
+
+        // validate build uuid
+        val seed = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
+        val config = sanitiseConfiguration(context, seed, connectivity)
+        assertEquals("6533e9f7-0e98-40fe-84b4-0e4ed6df6866", config.buildUuid)
+    }
+
+    @Test
+    fun sanitizeConfigBuildUuidInt() {
+        `when`(context.packageName).thenReturn("com.example.foo")
+        `when`(context.packageManager).thenReturn(packageManager)
+
+        // setup build uuid
+        val bundle = mock(Bundle::class.java)
+        `when`(bundle.containsKey("com.bugsnag.android.BUILD_UUID")).thenReturn(true)
+        `when`(bundle.getString("com.bugsnag.android.BUILD_UUID")).thenReturn(null)
+        `when`(bundle.getInt("com.bugsnag.android.BUILD_UUID")).thenReturn(590265330)
+        val appInfo = ApplicationInfo().apply { metaData = bundle }
+        `when`(packageManager.getApplicationInfo(anyString(), anyInt())).thenReturn(appInfo)
+
+        // validate build uuid
+        val seed = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
+        val config = sanitiseConfiguration(context, seed, connectivity)
+        assertEquals("590265330", config.buildUuid)
+    }
+
+    @Test
+    fun sanitizeConfigNoBuildUuid() {
+        `when`(context.packageName).thenReturn("com.example.foo")
+        `when`(context.packageManager).thenReturn(packageManager)
+
+        // setup build uuid
+        val bundle = mock(Bundle::class.java)
+        `when`(bundle.containsKey("com.bugsnag.android.BUILD_UUID")).thenReturn(false)
+        val appInfo = ApplicationInfo().apply { metaData = bundle }
+        `when`(packageManager.getApplicationInfo(anyString(), anyInt())).thenReturn(appInfo)
+
+        // validate build uuid
+        val seed = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
+        val config = sanitiseConfiguration(context, seed, connectivity)
+        assertNull(config.buildUuid)
     }
 }

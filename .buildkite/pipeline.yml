@@ -60,7 +60,7 @@ steps:
           run: android-builder
     env:
       MAVEN_VERSION: "3.6.1"
-      TEST_FIXTURE_NDK_VERSION: "16.1.4479499"
+      TEST_FIXTURE_NDK_VERSION: "17.2.4988734"
       TEST_FIXTURE_NAME: "fixture-r16.apk"
 
   - label: ':android: Build fixture APK r19'
@@ -157,12 +157,13 @@ steps:
     key: 'core-instrumentation-tests'
     depends_on:
       - "android-ci"
-    timeout_in_minutes: 30
+    timeout_in_minutes: 60
     command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
     plugins:
       - docker-compose#v3.7.0:
           run: android-ci
     env:
+      SINGLE_RUNNER: "true"
       INSTRUMENTATION_DEVICES: '["Google Pixel-7.1"]'
       TEST_APK_LOCATION: 'bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk'
     concurrency: 9
@@ -172,12 +173,13 @@ steps:
     key: 'ndk-instrumentation-tests'
     depends_on:
       - "android-ci"
-    timeout_in_minutes: 30
+    timeout_in_minutes: 60
     command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
     plugins:
       - docker-compose#v3.7.0:
           run: android-ci
     env:
+      SINGLE_RUNNER: "true"
       INSTRUMENTATION_DEVICES: '["Google Pixel-7.1"]'
       TEST_APK_LOCATION: 'bugsnag-plugin-android-ndk/build/outputs/apk/androidTest/debug/bugsnag-plugin-android-ndk-debug-androidTest.apk'
     concurrency: 9
@@ -187,12 +189,13 @@ steps:
     key: 'perf-benchmarks'
     depends_on:
       - "android-ci"
-    timeout_in_minutes: 30
+    timeout_in_minutes: 60
     command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
     plugins:
       - docker-compose#v3.7.0:
           run: android-ci
     env:
+      SINGLE_RUNNER: "false"
       INSTRUMENTATION_DEVICES: '["Google Pixel-7.1"]'
       TEST_APK_LOCATION: 'bugsnag-benchmarks/build/outputs/apk/androidTest/release/bugsnag-benchmarks-release-androidTest.apk'
     concurrency: 9

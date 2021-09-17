@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import com.bugsnag.android.internal.convertToImmutableConfig
+import org.junit.Assert.assertNotNull
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -28,6 +29,7 @@ internal class AppMetadataSerializationTest {
             val sessionTracker = mock(SessionTracker::class.java)
             val launchCrashTracker = mock(LaunchCrashTracker::class.java)
             val config = BugsnagTestUtils.generateConfiguration()
+            val memoryTrimState = MemoryTrimState()
 
             // populate summary fields
             config.appType = "React Native"
@@ -39,8 +41,7 @@ internal class AppMetadataSerializationTest {
             `when`(context.packageName).thenReturn("com.example.foo")
 
             // populate metadata fields
-            val contextState = ContextState()
-            contextState.setAutomaticContext("MyActivity")
+            `when`(sessionTracker.contextActivity).thenReturn("MyActivity")
             `when`(pm.getApplicationLabel(any())).thenReturn("MyApp")
             `when`(pm.getApplicationInfo(any(), anyInt())).thenReturn(ApplicationInfo())
 
@@ -52,14 +53,17 @@ internal class AppMetadataSerializationTest {
                 sessionTracker,
                 am,
                 launchCrashTracker,
-                contextState,
-                NoopLogger
+                memoryTrimState
             )
             appData.codeBundleId = "foo-99"
             appData.setBinaryArch("x86")
 
             val metadata = appData.getAppDataMetadata()
-            metadata.remove("memoryUsage")
+            assertNotNull(metadata.remove("memoryUsage"))
+            assertNotNull(metadata.remove("totalMemory"))
+            assertNotNull(metadata.remove("freeMemory"))
+            assertNotNull(metadata.remove("memoryLimit"))
+
             @Suppress("UNCHECKED_CAST")
             return generateSerializationTestCases("app_meta_data", metadata.toMap() as Map<String, Any>)
         }

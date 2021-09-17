@@ -1,5 +1,7 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.internal.DateUtils
+
 internal class DeviceSerializer : MapSerializer<DeviceWithState> {
     override fun serialize(map: MutableMap<String, Any?>, device: DeviceWithState) {
         map["cpuAbi"] = device.cpuAbi?.toList()

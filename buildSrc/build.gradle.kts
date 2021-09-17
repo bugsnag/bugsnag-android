@@ -19,5 +19,5 @@ repositories {
 
 dependencies {
     compileOnly(gradleApi())
-    implementation("com.android.tools.build:gradle:4.1.1")
+    implementation("com.android.tools.build:gradle:7.0.2")
 }

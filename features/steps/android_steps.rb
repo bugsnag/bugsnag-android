@@ -261,6 +261,17 @@ Then("the event binary arch field is valid") do
   end
 end
 
+Then("the event stacktrace identifies the program counter") do
+  trace = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.exceptions.0.stacktrace")
+  trace.each_with_index do |frame, index|
+    if index == 0
+      assert_equal(frame["isPC"], true, "The first frame should be the program counter")
+    else
+      assert_equal(frame["isPC"], nil, "The #{index} frame should not be the program counter")
+    end
+  end
+end
+
 # EventStore flushes multiple times on launch with access controlled via a semaphore,
 # which results in multiple similar log messages
 Then("Bugsnag confirms it has no errors to send") do

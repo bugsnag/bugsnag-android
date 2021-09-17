@@ -216,7 +216,7 @@ JNIEXPORT jstring JNICALL Java_com_bugsnag_android_ndk_StackframeSerializationTe
     bugsnag_stackframe *frame = loadStackframeTestCase();
     JSON_Value *event_val = json_value_init_array();
     JSON_Array *event_obj = json_value_get_array(event_val);
-    bsg_serialize_stackframe(frame, event_obj);
+    bsg_serialize_stackframe(frame, false, event_obj);
     char *string = json_serialize_to_string(event_val);
     return (*env)->NewStringUTF(env, string);
 }

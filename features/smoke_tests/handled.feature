@@ -42,8 +42,12 @@ Scenario: Notify caught Java exception with default configuration
     And the event "app.inForeground" is true
     And the event "app.isLaunching" is true
     And the error payload field "events.0.metaData.app.memoryUsage" is greater than 0
+    And the error payload field "events.0.metaData.app.totalMemory" is greater than 0
+    And the error payload field "events.0.metaData.app.freeMemory" is greater than 0
+    And the error payload field "events.0.metaData.app.memoryLimit" is greater than 0
     And the event "metaData.app.name" equals "MazeRunner"
     And the event "metaData.app.lowMemory" is false
+    And the event "metaData.app.memoryTrimLevel" equals "None"
 
     # Device data
     And the error payload field "events.0.device.cpuAbi" is a non-empty array
@@ -174,7 +178,7 @@ Scenario: Handled C functionality
     And the error payload field "events.0.exceptions.0.stacktrace" is a non-empty array
     And the event "unhandled" is false
     And the event "severity" equals "error"
-    And the event "severityReason.type" equals "userCallbackSetSeverity"
+    And the event "severityReason.type" equals "handledException"
     And the event "severityReason.unhandledOverridden" is false
     And the error payload field "events.0.projectPackages" is a non-empty array
     And the event "projectPackages.0" equals "com.bugsnag.android.mazerunner"

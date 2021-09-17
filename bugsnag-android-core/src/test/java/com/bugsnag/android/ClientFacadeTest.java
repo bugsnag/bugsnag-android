@@ -11,7 +11,6 @@ import com.bugsnag.android.internal.ImmutableConfig;
 import com.bugsnag.android.internal.StateObserver;
 
 import android.content.Context;
-import android.os.storage.StorageManager;
 
 import androidx.annotation.NonNull;
 
@@ -65,28 +64,16 @@ public class ClientFacadeTest {
     EventStore eventStore;
 
     @Mock
-    SessionStore sessionStore;
-
-    @Mock
     SystemBroadcastReceiver systemBroadcastReceiver;
 
     @Mock
     SessionTracker sessionTracker;
 
     @Mock
-    ActivityBreadcrumbCollector activityBreadcrumbCollector;
-
-    @Mock
-    SessionLifecycleCallback sessionLifecycleCallback;
-
-    @Mock
     Connectivity connectivity;
 
     @Mock
     BugsnagJournal journal;
-
-    @Mock
-    StorageManager storageManager;
 
     @Mock
     DeliveryDelegate deliveryDelegate;
@@ -127,13 +114,9 @@ public class ClientFacadeTest {
                 appDataCollector,
                 breadcrumbState,
                 eventStore,
-                sessionStore,
                 systemBroadcastReceiver,
                 sessionTracker,
-                activityBreadcrumbCollector,
-                sessionLifecycleCallback,
                 connectivity,
-                storageManager,
                 logger,
                 journal,
                 deliveryDelegate,

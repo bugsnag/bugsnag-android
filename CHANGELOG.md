@@ -2,10 +2,44 @@
 
 ## TBD
 
+* Update project to build using Gradle/AGP 7
+  [#1354](https://github.com/bugsnag/bugsnag-android/pull/1354)
+
+* Support integer values in buildUuid
+  [#1375](https://github.com/bugsnag/bugsnag-android/pull/1375)
+
+## 5.12.0 (2021-08-26)
+
+* The `app.lowMemory` value always report the most recent `onTrimMemory`/`onLowMemory` status
+  [#1342](https://github.com/bugsnag/bugsnag-android/pull/1342)
+  
+* Added the `app.memoryTrimLevel` metadata to report a description of the latest `onTrimMemory` status
+  [#1344](https://github.com/bugsnag/bugsnag-android/pull/1344)
+
+* Added `STATE` Breadcrumbs for `onTrimMemory` events
+  [#1345](https://github.com/bugsnag/bugsnag-android/pull/1345)
+
+## 5.11.0 (2021-08-05)
+
+### Enhancements
+
+* Add Bugsnag listeners for StrictMode violation detection
+  [#1331](https://github.com/bugsnag/bugsnag-android/pull/1331)
+
+### Bug fixes
+
+* Address pre-existing StrictMode violations
+  [#1328](https://github.com/bugsnag/bugsnag-android/pull/1328)
+
+## 5.10.1 (2021-07-15)
+
 ### Bug fixes
 
 * Prefer `calloc()` to `malloc()` in NDK code
   [#1320](https://github.com/bugsnag/bugsnag-android/pull/1320)
+
+* Ensure correct value always collected for activeScreen
+  [#1322](https://github.com/bugsnag/bugsnag-android/pull/1322)
 
 ## 5.10.0 (2021-07-14)
 

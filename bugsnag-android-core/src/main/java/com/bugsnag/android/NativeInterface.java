@@ -56,7 +56,7 @@ public class NativeInterface {
     @NonNull
     public static String getNativeReportPath() {
         ImmutableConfig config = getClient().getConfig();
-        File persistenceDirectory = config.getPersistenceDirectory();
+        File persistenceDirectory = config.getPersistenceDirectory().getValue();
         return new File(persistenceDirectory, "bugsnag-native").getAbsolutePath();
     }
 
@@ -429,4 +429,37 @@ public class NativeInterface {
     public static void setAutoDetectAnrs(boolean autoDetectAnrs) {
         getClient().setAutoDetectAnrs(autoDetectAnrs);
     }
+
+    public static void startSession() {
+        getClient().startSession();
+    }
+
+    public static void pauseSession() {
+        getClient().pauseSession();
+    }
+
+    public static boolean resumeSession() {
+        return getClient().resumeSession();
+    }
+
+    @Nullable
+    public static Session getCurrentSession() {
+        return getClient().sessionTracker.getCurrentSession();
+    }
+
+    /**
+     * Marks the launch period as complete
+     */
+    public static void markLaunchCompleted() {
+        getClient().markLaunchCompleted();
+    }
+
+    /**
+     * Get the last run info object
+     */
+    @Nullable
+    public static LastRunInfo getLastRunInfo() {
+        return getClient().getLastRunInfo();
+    }
+
 }

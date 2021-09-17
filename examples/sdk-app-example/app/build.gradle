@@ -3,7 +3,7 @@ apply plugin: "kotlin-android"
 
 android {
     compileSdkVersion 30
-    ndkVersion "16.1.4479499"
+    ndkVersion "17.2.4988734"
 
     defaultConfig {
         applicationId "com.example.bugsnag.android"
@@ -38,11 +38,10 @@ android {
 }
 
 dependencies {
-    implementation "com.bugsnag:bugsnag-android:5.4.0"
+    implementation "com.bugsnag:bugsnag-android:5.12.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "androidx.appcompat:appcompat:1.2.0"
-    implementation "androidx.core:core-ktx:1.3.2"
-    implementation "com.google.android.material:material:1.2.1"
+    implementation "androidx.appcompat:appcompat:1.3.1"
+    implementation "com.google.android.material:material:1.4.0"
 }
 
 apply plugin: "com.bugsnag.android.gradle"

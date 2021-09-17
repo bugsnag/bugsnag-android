@@ -68,18 +68,16 @@ class BugsnagBuildPlugin : Plugin<Project> {
      */
     private fun BaseExtension.configureNdk(project: Project) {
         defaultConfig {
-            externalNativeBuild.cmake {
-                arguments("-DANDROID_CPP_FEATURES=exceptions", "-DANDROID_STL=c++_static")
+            externalNativeBuild.cmake.arguments += listOf("-DANDROID_CPP_FEATURES=exceptions", "-DANDROID_STL=c++_static")
 
-                val override: String? = project.findProperty("ABI_FILTERS") as String?
-                val abis = override?.split(",") ?: mutableSetOf(
-                    "arm64-v8a",
-                    "armeabi-v7a",
-                    "x86",
-                    "x86_64"
-                )
-                ndk.setAbiFilters(abis)
-            }
+            val override: String? = project.findProperty("ABI_FILTERS") as String?
+            val abis = override?.split(",") ?: mutableSetOf(
+                "arm64-v8a",
+                "armeabi-v7a",
+                "x86",
+                "x86_64"
+            )
+            ndk.setAbiFilters(abis)
         }
         externalNativeBuild.cmake.path = project.file("CMakeLists.txt")
     }
@@ -136,8 +134,8 @@ class BugsnagBuildPlugin : Plugin<Project> {
         project.dependencies {
             // needs to be kept as 'compile' for license checking to work
             // as otherwise the downloadLicenses task misses these deps
-            add("compile", "androidx.annotation:annotation:${Versions.supportLib}")
-            add("compile", "org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}")
+            add("api", "androidx.annotation:annotation:${Versions.supportLib}")
+            add("api", "org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}")
 
             add("testImplementation", "junit:junit:${Versions.junitTestLib}")
             add("testImplementation", "org.mockito:mockito-core:${Versions.mockitoTestLib}")
@@ -162,7 +160,7 @@ class BugsnagBuildPlugin : Plugin<Project> {
     private fun BaseExtension.configureDefaults() {
         defaultConfig {
             setCompileSdkVersion(Versions.compileSdkVersion)
-            minSdkVersion(Versions.minSdkVersion)
+            minSdk = Versions.minSdkVersion
             ndkVersion = Versions.ndk
             consumerProguardFiles("proguard-rules.pro")
             testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

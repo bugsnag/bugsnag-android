@@ -16,7 +16,7 @@ import com.bugsnag.android.EndpointConfiguration
 import com.bugsnag.android.ErrorTypes
 import com.bugsnag.android.EventPayload
 import com.bugsnag.android.Logger
-import com.bugsnag.android.ManifestConfigLoader
+import com.bugsnag.android.ManifestConfigLoader.Companion.BUILD_UUID
 import com.bugsnag.android.NoopLogger
 import com.bugsnag.android.ThreadSendPolicy
 import com.bugsnag.android.errorApiHeaders
@@ -47,7 +47,7 @@ data class ImmutableConfig(
     val maxBreadcrumbs: Int,
     val maxPersistedEvents: Int,
     val maxPersistedSessions: Int,
-    val persistenceDirectory: File,
+    val persistenceDirectory: Lazy<File>,
     val sendLaunchCrashesSynchronously: Boolean,
 
     // results cached here to avoid unnecessary lookups in Client.
@@ -128,7 +128,8 @@ internal fun convertToImmutableConfig(
     config: Configuration,
     buildUuid: String? = null,
     packageInfo: PackageInfo? = null,
-    appInfo: ApplicationInfo? = null
+    appInfo: ApplicationInfo? = null,
+    persistenceDir: Lazy<File> = lazy { requireNotNull(config.persistenceDirectory) }
 ): ImmutableConfig {
     val errorTypes = when {
         config.autoDetectErrors -> config.enabledErrorTypes.copy()
@@ -158,7 +159,7 @@ internal fun convertToImmutableConfig(
         maxPersistedEvents = config.maxPersistedEvents,
         maxPersistedSessions = config.maxPersistedSessions,
         enabledBreadcrumbTypes = config.enabledBreadcrumbTypes?.toSet(),
-        persistenceDirectory = config.persistenceDirectory!!,
+        persistenceDirectory = persistenceDir,
         sendLaunchCrashesSynchronously = config.sendLaunchCrashesSynchronously,
         packageInfo = packageInfo,
         appInfo = appInfo
@@ -208,17 +209,29 @@ internal fun sanitiseConfiguration(
     }
 
     // populate buildUUID from manifest
-    val buildUuid = appInfo?.metaData?.getString(ManifestConfigLoader.BUILD_UUID)
+    val buildUuid = populateBuildUuid(appInfo)
 
     @Suppress("SENSELESS_COMPARISON")
     if (configuration.delivery == null) {
         configuration.delivery = DefaultDelivery(connectivity, configuration.logger!!)
     }
+    return convertToImmutableConfig(
+        configuration,
+        buildUuid,
+        packageInfo,
+        appInfo,
+        lazy { configuration.persistenceDirectory ?: appContext.cacheDir }
+    )
+}
 
-    if (configuration.persistenceDirectory == null) {
-        configuration.persistenceDirectory = appContext.cacheDir
+private fun populateBuildUuid(appInfo: ApplicationInfo?): String? {
+    val bundle = appInfo?.metaData
+    return when {
+        bundle?.containsKey(BUILD_UUID) == true -> {
+            bundle.getString(BUILD_UUID) ?: bundle.getInt(BUILD_UUID).toString()
+        }
+        else -> null
     }
-    return convertToImmutableConfig(configuration, buildUuid, packageInfo, appInfo)
 }
 
 internal const val RELEASE_STAGE_DEVELOPMENT = "development"

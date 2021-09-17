@@ -79,20 +79,7 @@ class NativeBridge : StateObserver {
     external fun updateUserEmail(newValue: String)
     external fun updateUserName(newValue: String)
     external fun getUnwindStackFunction(): Long
-    external fun updateLowMemory(newValue: Boolean)
-
-    /**
-     * Creates a new native bridge for interacting with native components.
-     * Configures logging and ensures that the reporting directory exists
-     * immediately.
-     */
-    init {
-        val outFile = File(reportDirectory)
-        NativeInterface.getLogger()
-        if (!outFile.exists() && !outFile.mkdirs()) {
-            logger.w("The native reporting directory cannot be created.")
-        }
-    }
+    external fun updateLowMemory(newValue: Boolean, memoryTrimLevelDescription: String)
 
     override fun onStateChange(event: StateEvent) {
         if (isInvalidMessage(event)) return
@@ -134,7 +121,7 @@ class NativeBridge : StateObserver {
                 updateUserName(makeSafe(event.user.name ?: ""))
                 updateUserEmail(makeSafe(event.user.email ?: ""))
             }
-            is StateEvent.UpdateMemoryTrimEvent -> updateLowMemory(event.isLowMemory)
+            is StateEvent.UpdateMemoryTrimEvent -> updateLowMemory(event.isLowMemory, event.memoryTrimLevelDescription)
         }
     }
 
