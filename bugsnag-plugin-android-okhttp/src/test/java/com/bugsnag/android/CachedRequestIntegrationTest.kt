@@ -99,7 +99,7 @@ class CachedRequestIntegrationTest {
             assertEquals(0L, get("requestContentLength"))
             assertEquals(13L, get("responseContentLength"))
             assertTrue(get("duration") is Long)
-            assertEquals(emptyMap<String, Any>(), get("urlParams"))
+            assertNull(get("urlParams"))
             assertEquals(url.toString(), get("url"))
         }
     }
@@ -129,7 +129,7 @@ class CachedRequestIntegrationTest {
             assertEquals(0L, get("requestContentLength"))
             assertEquals(13L, get("responseContentLength"))
             assertTrue(get("duration") is Long)
-            assertEquals(emptyMap<String, Any>(), get("urlParams"))
+            assertNull(get("urlParams"))
             assertEquals(url.toString(), get("url"))
         }
     }

@@ -6,6 +6,7 @@
   [#1358](https://github.com/bugsnag/bugsnag-android/pull/1358)
   [#1361](https://github.com/bugsnag/bugsnag-android/pull/1361)
   [#1363](https://github.com/bugsnag/bugsnag-android/pull/1363)
+  [#1379](https://github.com/bugsnag/bugsnag-android/pull/1379)
 
 * Update project to build using Gradle/AGP 7
   [#1354](https://github.com/bugsnag/bugsnag-android/pull/1354)

@@ -89,9 +89,13 @@ class BugsnagOkHttpPlugin @JvmOverloads constructor(
             "method" to request.method,
             "url" to sanitizeUrl(request),
             "duration" to nowMs - info.startTime,
-            "urlParams" to buildQueryParams(request),
             "requestContentLength" to info.requestBodyCount
         )
+
+        val queryParams = buildQueryParams(request)
+        if (queryParams.isNotEmpty()) {
+            data["urlParams"] = queryParams
+        }
 
         // only add response body length + status for requests that did not error
         if (result != RequestResult.ERROR) {

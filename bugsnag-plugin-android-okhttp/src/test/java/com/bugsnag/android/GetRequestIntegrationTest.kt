@@ -3,6 +3,7 @@ package com.bugsnag.android
 import okhttp3.Request
 import okhttp3.mockwebserver.MockResponse
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -50,7 +51,7 @@ class GetRequestIntegrationTest {
             assertEquals(0L, get("requestContentLength"))
             assertEquals(0L, get("responseContentLength"))
             assertTrue(get("duration") is Long)
-            assertEquals(emptyMap<String, Any>(), get("urlParams"))
+            assertNull(get("urlParams"))
             assertEquals(url, get("url"))
         }
     }
@@ -109,7 +110,7 @@ class GetRequestIntegrationTest {
             assertEquals(0L, get("requestContentLength"))
             assertEquals(0L, get("responseContentLength"))
             assertTrue(get("duration") is Long)
-            assertEquals(emptyMap<String, Any>(), get("urlParams"))
+            assertNull(get("urlParams"))
             assertEquals(url, get("url"))
         }
     }
@@ -164,7 +165,7 @@ class GetRequestIntegrationTest {
             assertEquals(0L, get("requestContentLength"))
             assertEquals(0L, get("responseContentLength"))
             assertTrue(get("duration") is Long)
-            assertEquals(emptyMap<String, Any>(), get("urlParams"))
+            assertNull(get("urlParams"))
             assertEquals(url, get("url"))
         }
     }
