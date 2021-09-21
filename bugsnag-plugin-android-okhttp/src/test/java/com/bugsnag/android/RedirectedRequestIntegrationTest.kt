@@ -6,6 +6,7 @@ import okhttp3.Request
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -68,7 +69,7 @@ class RedirectedRequestIntegrationTest {
             assertEquals(0L, get("requestContentLength"))
             assertEquals(0L, get("responseContentLength"))
             assertTrue(get("duration") is Long)
-            assertEquals(emptyMap<String, Any>(), get("urlParams"))
+            assertNull(get("urlParams"))
             assertEquals(server.url("/test").toString(), get("url"))
         }
     }
