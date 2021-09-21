@@ -65,22 +65,12 @@ class AppWithState(
         isLaunching
     )
 
-    override fun serialiseFields(writer: JsonStream) {
-        super.serialiseFields(writer)
-        writer.name("duration").value(duration)
-        writer.name("durationInForeground").value(durationInForeground)
-        writer.name("inForeground").value(inForeground)
-        writer.name("isLaunching").value(isLaunching)
-    }
-
-    override fun toJournalSection(): Map<String, Any?> {
-        val map = mutableMapOf<String, Any?>(
+    override fun toJournalSection(): Map<String, Any?> = super.toJournalSection().plus(
+        mapOf(
             JournalKeys.keyDuration to duration,
             JournalKeys.keyDurationInFG to durationInForeground,
             JournalKeys.keyInForeground to inForeground,
             JournalKeys.keyIsLaunching to isLaunching
         )
-        map.putAll(super.toJournalSection())
-        return map
-    }
+    )
 }

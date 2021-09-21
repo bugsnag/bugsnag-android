@@ -46,30 +46,15 @@ class NativeStackframe internal constructor(
     var type: ErrorType? = ErrorType.C
 
     @Throws(IOException::class)
-    override fun toStream(writer: JsonStream) {
-        writer.beginObject()
-        writer.name("method").value(method)
-        writer.name("file").value(file)
-        writer.name("lineNumber").value(lineNumber)
-        writer.name("frameAddress").value(frameAddress)
-        writer.name("symbolAddress").value(symbolAddress)
-        writer.name("loadAddress").value(loadAddress)
+    override fun toStream(writer: JsonStream) = writer.value(toJournalSection())
 
-        type?.let {
-            writer.name("type").value(it.desc)
-        }
-        writer.endObject()
-    }
-
-    override fun toJournalSection(): Map<String, Any?> {
-        return mapOf(
-            JournalKeys.keyMethod to method,
-            JournalKeys.keyFile to file,
-            JournalKeys.keyLineNumber to lineNumber,
-            JournalKeys.keyFrameAddress to frameAddress,
-            JournalKeys.keySymbolAddress to symbolAddress,
-            JournalKeys.keyLoadAddress to loadAddress,
-            JournalKeys.keyType to type?.desc
-        )
-    }
+    override fun toJournalSection(): Map<String, Any?> = mapOf(
+        JournalKeys.keyMethod to method,
+        JournalKeys.keyFile to file,
+        JournalKeys.keyLineNumber to lineNumber,
+        JournalKeys.keyFrameAddress to frameAddress,
+        JournalKeys.keySymbolAddress to symbolAddress,
+        JournalKeys.keyLoadAddress to loadAddress,
+        JournalKeys.keyType to type?.desc
+    )
 }

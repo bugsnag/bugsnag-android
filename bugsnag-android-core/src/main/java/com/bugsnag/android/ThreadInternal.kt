@@ -15,30 +15,21 @@ class ThreadInternal internal constructor(
     var stacktrace: MutableList<Stackframe> = stacktrace.trace.toMutableList()
 
     @Throws(IOException::class)
-    override fun toStream(writer: JsonStream) {
-        writer.beginObject()
-        writer.name("id").value(id)
-        writer.name("name").value(name)
-        writer.name("type").value(type.desc)
-
-        writer.name("stacktrace")
-        writer.beginArray()
-        stacktrace.forEach { writer.value(it) }
-        writer.endArray()
-
-        if (isErrorReportingThread) {
-            writer.name("errorReportingThread").value(true)
-        }
-        writer.endObject()
-    }
+    override fun toStream(writer: JsonStream) = writer.value(toJournalSection())
 
     override fun toJournalSection(): Map<String, Any?> {
-        return mapOf(
+        val data = mapOf(
             JournalKeys.keyId to id,
             JournalKeys.keyName to name,
             JournalKeys.keyType to type.desc,
-            JournalKeys.keyErrorReportingThread to isErrorReportingThread,
             JournalKeys.keyStackTrace to stacktrace.map { it.toJournalSection() }
         )
+
+        return when {
+            isErrorReportingThread -> data.plus(
+                Pair(JournalKeys.keyErrorReportingThread, isErrorReportingThread)
+            )
+            else -> data
+        }
     }
 }

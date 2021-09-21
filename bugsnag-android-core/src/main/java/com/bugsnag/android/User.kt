@@ -26,21 +26,13 @@ class User @JvmOverloads internal constructor(
 ) : JsonStream.Streamable, Journalable {
 
     @Throws(IOException::class)
-    override fun toStream(writer: JsonStream) {
-        writer.beginObject()
-        writer.name(KEY_ID).value(id)
-        writer.name(KEY_EMAIL).value(email)
-        writer.name(KEY_NAME).value(name)
-        writer.endObject()
-    }
+    override fun toStream(writer: JsonStream) = writer.value(toJournalSection())
 
-    override fun toJournalSection(): Map<String, Any?> {
-        return mapOf(
-            JournalKeys.keyName to name,
-            JournalKeys.keyId to id,
-            JournalKeys.keyEmail to email
-        )
-    }
+    override fun toJournalSection(): Map<String, Any?> = mapOf(
+        JournalKeys.keyId to id,
+        JournalKeys.keyEmail to email,
+        JournalKeys.keyName to name
+    )
 
     internal companion object : JsonReadable<User> {
         private const val KEY_ID = "id"

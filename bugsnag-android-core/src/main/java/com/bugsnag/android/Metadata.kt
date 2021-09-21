@@ -26,12 +26,10 @@ internal data class Metadata @JvmOverloads constructor(
 
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) {
-        jsonStreamer.objectToStream(store, writer, true)
+        jsonStreamer.objectToStream(toJournalSection(), writer, true)
     }
 
-    override fun toJournalSection(): Map<String, Any?> {
-        return store
-    }
+    override fun toJournalSection(): Map<String, Any?> = store.toMap()
 
     override fun addMetadata(section: String, value: Map<String, Any?>) {
         value.entries.forEach {

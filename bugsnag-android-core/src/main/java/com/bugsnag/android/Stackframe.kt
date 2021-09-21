@@ -92,51 +92,16 @@ class Stackframe : JsonStream.Streamable, Journalable {
     }
 
     @Throws(IOException::class)
-    override fun toStream(writer: JsonStream) {
-        val ndkFrame = nativeFrame
-        if (ndkFrame != null) {
-            ndkFrame.toStream(writer)
-            return
-        }
+    override fun toStream(writer: JsonStream) = writer.value(toJournalSection())
 
-        writer.beginObject()
-        writer.name("method").value(method)
-        writer.name("file").value(file)
-        writer.name("lineNumber").value(lineNumber)
-        writer.name("inProject").value(inProject)
-        writer.name("columnNumber").value(columnNumber)
-
-        type?.let {
-            writer.name("type").value(it.desc)
-        }
-
-        code?.let { map: Map<String, String?> ->
-            writer.name("code")
-
-            map.forEach {
-                writer.beginObject()
-                writer.name(it.key)
-                writer.value(it.value)
-                writer.endObject()
-            }
-        }
-        writer.endObject()
-    }
-
-    override fun toJournalSection(): Map<String, Any?> {
-        val ndkFrame = nativeFrame
-        if (ndkFrame != null) {
-            return ndkFrame.toJournalSection()
-        }
-
-        return mapOf(
+    override fun toJournalSection(): Map<String, Any?> = nativeFrame?.toJournalSection()
+        ?: mapOf(
             JournalKeys.keyMethod to method,
-            JournalKeys.keyFile to method,
-            JournalKeys.keyLineNumber to method,
-            JournalKeys.keyInProject to method,
-            JournalKeys.keyColumnNumber to method,
+            JournalKeys.keyFile to file,
+            JournalKeys.keyLineNumber to lineNumber,
+            JournalKeys.keyInProject to inProject,
+            JournalKeys.keyColumnNumber to columnNumber,
             JournalKeys.keyCode to code,
             JournalKeys.keyType to type?.desc
         )
-    }
 }

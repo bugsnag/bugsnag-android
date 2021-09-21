@@ -62,37 +62,18 @@ open class Device internal constructor(
      */
     var osVersion: String? = buildInfo.osVersion
 
-    internal open fun serializeFields(writer: JsonStream) {
-        writer.name("cpuAbi").value(cpuAbi)
-        writer.name("jailbroken").value(jailbroken)
-        writer.name("id").value(id)
-        writer.name("locale").value(locale)
-        writer.name("manufacturer").value(manufacturer)
-        writer.name("model").value(model)
-        writer.name("osName").value(osName)
-        writer.name("osVersion").value(osVersion)
-        writer.name("runtimeVersions").value(runtimeVersions)
-        writer.name("totalMemory").value(totalMemory)
-    }
+    override fun toStream(writer: JsonStream) = writer.value(toJournalSection())
 
-    override fun toStream(writer: JsonStream) {
-        writer.beginObject()
-        serializeFields(writer)
-        writer.endObject()
-    }
-
-    override fun toJournalSection(): Map<String, Any?> {
-        return mapOf(
-            JournalKeys.keyCpuAbi to cpuAbi,
-            JournalKeys.keyJailbroken to jailbroken,
-            JournalKeys.keyId to id,
-            JournalKeys.keyLocale to locale,
-            JournalKeys.keyManufacturer to manufacturer,
-            JournalKeys.keyModel to model,
-            JournalKeys.keyOSName to osName,
-            JournalKeys.keyOSVersion to osVersion,
-            JournalKeys.keyRuntimeVersions to runtimeVersions,
-            JournalKeys.keyTotalMemory to totalMemory
-        )
-    }
+    override fun toJournalSection(): Map<String, Any?> = mapOf(
+        JournalKeys.keyCpuAbi to cpuAbi,
+        JournalKeys.keyJailbroken to jailbroken,
+        JournalKeys.keyId to id,
+        JournalKeys.keyLocale to locale,
+        JournalKeys.keyManufacturer to manufacturer,
+        JournalKeys.keyModel to model,
+        JournalKeys.keyOSName to osName,
+        JournalKeys.keyOSVersion to osVersion,
+        JournalKeys.keyRuntimeVersions to runtimeVersions,
+        JournalKeys.keyTotalMemory to totalMemory
+    )
 }

@@ -69,34 +69,17 @@ open class App internal constructor(
         config.versionCode
     )
 
-    internal open fun serialiseFields(writer: JsonStream) {
-        writer.name("binaryArch").value(binaryArch)
-        writer.name("buildUUID").value(buildUuid)
-        writer.name("codeBundleId").value(codeBundleId)
-        writer.name("id").value(id)
-        writer.name("releaseStage").value(releaseStage)
-        writer.name("type").value(type)
-        writer.name("version").value(version)
-        writer.name("versionCode").value(versionCode)
-    }
-
     @Throws(IOException::class)
-    override fun toStream(writer: JsonStream) {
-        writer.beginObject()
-        serialiseFields(writer)
-        writer.endObject()
-    }
+    override fun toStream(writer: JsonStream) = writer.value(toJournalSection())
 
-    override fun toJournalSection(): Map<String, Any?> {
-        return mapOf(
-            JournalKeys.keyBinaryArch to binaryArch,
-            JournalKeys.keyBuildUUID to buildUuid,
-            JournalKeys.keyCodeBundleId to codeBundleId,
-            JournalKeys.keyId to id,
-            JournalKeys.keyReleaseStage to releaseStage,
-            JournalKeys.keyType to type,
-            JournalKeys.keyVersion to version,
-            JournalKeys.keyVersionCode to versionCode
-        )
-    }
+    override fun toJournalSection(): Map<String, Any?> = mapOf(
+        JournalKeys.keyBinaryArch to binaryArch,
+        JournalKeys.keyBuildUUID to buildUuid,
+        JournalKeys.keyCodeBundleId to codeBundleId,
+        JournalKeys.keyId to id,
+        JournalKeys.keyReleaseStage to releaseStage,
+        JournalKeys.keyType to type,
+        JournalKeys.keyVersion to version,
+        JournalKeys.keyVersionCode to versionCode
+    )
 }
