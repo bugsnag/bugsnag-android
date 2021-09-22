@@ -14,6 +14,12 @@
 * Increased default breadcrumb collection limit to 50
   [#1366](https://github.com/bugsnag/bugsnag-android/pull/1366)
 
+* Support integer values in buildUuid
+  [#1375](https://github.com/bugsnag/bugsnag-android/pull/1375)
+
+* Use SystemClock.elapsedRealtime to track `app.durationInForeground`
+  [#1375](https://github.com/bugsnag/bugsnag-android/pull/1375)
+
 ## 5.12.0 (2021-08-26)
 
 * The `app.lowMemory` value always report the most recent `onTrimMemory`/`onLowMemory` status

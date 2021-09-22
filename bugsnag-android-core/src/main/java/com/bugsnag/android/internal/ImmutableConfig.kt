@@ -16,7 +16,7 @@ import com.bugsnag.android.EndpointConfiguration
 import com.bugsnag.android.ErrorTypes
 import com.bugsnag.android.EventPayload
 import com.bugsnag.android.Logger
-import com.bugsnag.android.ManifestConfigLoader
+import com.bugsnag.android.ManifestConfigLoader.Companion.BUILD_UUID
 import com.bugsnag.android.NoopLogger
 import com.bugsnag.android.ThreadSendPolicy
 import com.bugsnag.android.errorApiHeaders
@@ -211,7 +211,7 @@ internal fun sanitiseConfiguration(
     }
 
     // populate buildUUID from manifest
-    val buildUuid = appInfo?.metaData?.getString(ManifestConfigLoader.BUILD_UUID)
+    val buildUuid = populateBuildUuid(appInfo)
 
     @Suppress("SENSELESS_COMPARISON")
     if (configuration.delivery == null) {
@@ -224,6 +224,16 @@ internal fun sanitiseConfiguration(
         appInfo,
         lazy { configuration.persistenceDirectory ?: appContext.cacheDir }
     )
+}
+
+private fun populateBuildUuid(appInfo: ApplicationInfo?): String? {
+    val bundle = appInfo?.metaData
+    return when {
+        bundle?.containsKey(BUILD_UUID) == true -> {
+            bundle.getString(BUILD_UUID) ?: bundle.getInt(BUILD_UUID).toString()
+        }
+        else -> null
+    }
 }
 
 internal const val RELEASE_STAGE_DEVELOPMENT = "development"
