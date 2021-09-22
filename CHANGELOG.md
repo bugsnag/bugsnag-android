@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 5.13.0 (2021-09-22)
 
 * Capture breadcrumbs for OkHttp network requests
   [#1358](https://github.com/bugsnag/bugsnag-android/pull/1358)
