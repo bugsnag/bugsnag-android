@@ -52,19 +52,19 @@ TEST test_add_breadcrumbs_over_max(void) {
     free(format);
   }
 
-  // assertions assume that the crumb count is always 25
+  // assertions assume that the crumb count is always 50
   ASSERT_EQ(BUGSNAG_CRUMBS_MAX, event->crumb_count);
   ASSERT_EQ(14, event->crumb_first_index);
 
-  ASSERT(strcmp("crumb: 50", event->breadcrumbs[0].name) == 0);
-  ASSERT(strcmp("crumb: 51", event->breadcrumbs[1].name) == 0);
-  ASSERT(strcmp("crumb: 52", event->breadcrumbs[2].name) == 0);
-  ASSERT(strcmp("crumb: 53", event->breadcrumbs[3].name) == 0);
+  ASSERT_STR_EQ("crumb: 50", event->breadcrumbs[0].name);
+  ASSERT_STR_EQ("crumb: 51", event->breadcrumbs[1].name);
+  ASSERT_STR_EQ("crumb: 52", event->breadcrumbs[2].name);
+  ASSERT_STR_EQ("crumb: 53", event->breadcrumbs[3].name);
 
-  ASSERT(strcmp("crumb: 63", event->breadcrumbs[13].name) == 0);
-  ASSERT(strcmp("crumb: 39", event->breadcrumbs[14].name) == 0);
-  ASSERT(strcmp("crumb: 40", event->breadcrumbs[15].name) == 0);
-  ASSERT(strcmp("crumb: 41", event->breadcrumbs[16].name) == 0);
+  ASSERT_STR_EQ("crumb: 63", event->breadcrumbs[13].name);
+  ASSERT_STR_EQ("crumb: 14", event->breadcrumbs[14].name);
+  ASSERT_STR_EQ("crumb: 15", event->breadcrumbs[15].name);
+  ASSERT_STR_EQ("crumb: 16", event->breadcrumbs[16].name);
   free(event);
   PASS();
 }
@@ -74,8 +74,8 @@ TEST test_bsg_calculate_total_crumbs(void) {
   ASSERT_EQ(5, bsg_calculate_total_crumbs(5));
   ASSERT_EQ(22, bsg_calculate_total_crumbs(22));
   ASSERT_EQ(25, bsg_calculate_total_crumbs(25));
-  ASSERT_EQ(25, bsg_calculate_total_crumbs(26));
-  ASSERT_EQ(25, bsg_calculate_total_crumbs(30));
+  ASSERT_EQ(50, bsg_calculate_total_crumbs(51));
+  ASSERT_EQ(50, bsg_calculate_total_crumbs(55));
   PASS();
 }
 

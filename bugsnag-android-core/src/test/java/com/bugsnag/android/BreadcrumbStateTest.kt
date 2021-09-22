@@ -196,16 +196,16 @@ class BreadcrumbStateTest {
     @Test
     fun testMaxBreadcrumbAccessors() {
         val config = generateConfiguration()
+        assertEquals(50, config.maxBreadcrumbs)
+
+        config.maxBreadcrumbs = 25
         assertEquals(25, config.maxBreadcrumbs)
 
-        config.maxBreadcrumbs = 50
-        assertEquals(50, config.maxBreadcrumbs)
-
         config.maxBreadcrumbs = Int.MAX_VALUE
-        assertEquals(50, config.maxBreadcrumbs)
+        assertEquals(25, config.maxBreadcrumbs)
 
         config.maxBreadcrumbs = -5
-        assertEquals(50, config.maxBreadcrumbs)
+        assertEquals(25, config.maxBreadcrumbs)
     }
 
     /**
