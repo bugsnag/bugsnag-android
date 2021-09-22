@@ -18,7 +18,7 @@
   [#1375](https://github.com/bugsnag/bugsnag-android/pull/1375)
 
 * Use SystemClock.elapsedRealtime to track `app.durationInForeground`
-  [#1375](https://github.com/bugsnag/bugsnag-android/pull/1375)
+  [#1378](https://github.com/bugsnag/bugsnag-android/pull/1378)
 
 ## 5.12.0 (2021-08-26)
 
