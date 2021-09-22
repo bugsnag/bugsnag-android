@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MagicNumber:BugsnagOkHttpPlugin.kt$100</ID>
+    <ID>MagicNumber:BugsnagOkHttpPlugin.kt$399</ID>
+    <ID>MagicNumber:BugsnagOkHttpPlugin.kt$400</ID>
+    <ID>MagicNumber:BugsnagOkHttpPlugin.kt$599</ID>
+  </CurrentIssues>
+</SmellBaseline>

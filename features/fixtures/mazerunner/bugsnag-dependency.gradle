@@ -10,9 +10,11 @@ dependencies {
             exclude group: "com.bugsnag", module: "bugsnag-plugin-android-anr"
             exclude group: "com.bugsnag", module: "bugsnag-plugin-android-ndk"
         }
+        implementation "com.bugsnag:bugsnag-plugin-android-okhttp:9.9.9"
     } else {
         // compile with the NDK scenarios by default
         project.logger.lifecycle("Compiling full mazerunner fixture with ANR/NDK scenarios")
         implementation "com.bugsnag:bugsnag-android:9.9.9"
+        implementation "com.bugsnag:bugsnag-plugin-android-okhttp:9.9.9"
     }
 }

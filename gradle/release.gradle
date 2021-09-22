@@ -6,12 +6,6 @@ archivesBaseName = project.getProperties().get("artefactId")
 version = "${project.VERSION_NAME}"
 group = "${project.GROUP}"
 
-def expectedAbiLists = // Controls which combinations of ABIs are expected for release
-[
-    ["arm64-v8a", "armeabi", "armeabi-v7a", "x86", "x86_64"] as Set,
-    ["armeabi-v7a", "x86"] as Set
-]
-
 // Disable doclint:
 // https://github.com/GPars/GPars/blob/312c5ae87605a0552bc72e22e3b2bd2fa1fdf98c/build.gradle#L208-L214
 if (JavaVersion.current().isJava8Compatible()) {
@@ -33,26 +27,6 @@ task javadoc(type: Javadoc) {
 task sourceJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
     classifier "sources"
-}
-
-task validatePublishOptions() {
-    description = "Ensures assembleRelease is run with the correct NDK library version and ABI list"
-    doFirst {
-        if (project.android.defaultConfig.ndk.abiFilters != null) {
-            for (abiList in expectedAbiLists) {
-                if (abiList == project.android.defaultConfig.ndk.abiFilters as Set) {
-                    return
-                }
-            }
-            throw new GradleException("Unexpected list of ABIs for release: ${project.android.defaultConfig.ndk.abiFilters}")
-        }
-    }
-}
-
-project.afterEvaluate {
-    tasks.named("publish").configure { task ->
-        task.dependsOn(validatePublishOptions)
-    }
 }
 
 // https://developer.android.com/studio/build/maven-publish-plugin

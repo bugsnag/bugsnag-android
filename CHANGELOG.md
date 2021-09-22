@@ -1,9 +1,18 @@
 # Changelog
 
-## TBD
+## 5.13.0 (2021-09-22)
+
+* Capture breadcrumbs for OkHttp network requests
+  [#1358](https://github.com/bugsnag/bugsnag-android/pull/1358)
+  [#1361](https://github.com/bugsnag/bugsnag-android/pull/1361)
+  [#1363](https://github.com/bugsnag/bugsnag-android/pull/1363)
+  [#1379](https://github.com/bugsnag/bugsnag-android/pull/1379)
 
 * Update project to build using Gradle/AGP 7
   [#1354](https://github.com/bugsnag/bugsnag-android/pull/1354)
+
+* Increased default breadcrumb collection limit to 50
+  [#1366](https://github.com/bugsnag/bugsnag-android/pull/1366)
 
 * Support integer values in buildUuid
   [#1375](https://github.com/bugsnag/bugsnag-android/pull/1375)
