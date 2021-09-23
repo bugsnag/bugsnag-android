@@ -26,10 +26,6 @@ class ExampleApplication : Application() {
         super.onCreate()
 
         val config = Configuration.load(this)
-        config.endpoints = EndpointConfiguration(
-            notify = "http://10.0.2.2:19283/notify",
-            sessions = "http://10.0.2.2:19283/session"
-        )
         config.setUser("123456", "joebloggs@example.com", "Joe Bzloggs")
         config.addMetadata("user", "age", 31)
 
