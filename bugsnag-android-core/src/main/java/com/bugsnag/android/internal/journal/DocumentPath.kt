@@ -1,5 +1,6 @@
-package com.bugsnag.android.internal
+package com.bugsnag.android.internal.journal
 
+import com.bugsnag.android.internal.asConcurrent
 import java.lang.IllegalArgumentException
 
 /**

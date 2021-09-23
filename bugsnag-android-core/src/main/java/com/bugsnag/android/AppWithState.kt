@@ -1,7 +1,7 @@
 package com.bugsnag.android
 
 import com.bugsnag.android.internal.ImmutableConfig
-import com.bugsnag.android.internal.JournalKeys
+import com.bugsnag.android.internal.journal.JournalKeys
 
 /**
  * Stateful information set by the notifier about your app can be found on this class. These values

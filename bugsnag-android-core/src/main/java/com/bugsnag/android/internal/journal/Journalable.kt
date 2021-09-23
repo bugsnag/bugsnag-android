@@ -1,4 +1,4 @@
-package com.bugsnag.android.internal
+package com.bugsnag.android.internal.journal
 
 interface Journalable {
 

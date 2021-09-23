@@ -1,8 +1,8 @@
 package com.bugsnag.android
 
 import android.util.JsonReader
-import com.bugsnag.android.internal.JournalKeys
-import com.bugsnag.android.internal.Journalable
+import com.bugsnag.android.internal.journal.JournalKeys
+import com.bugsnag.android.internal.journal.Journalable
 import java.io.IOException
 
 /**

@@ -1,7 +1,7 @@
 package com.bugsnag.android
 
 import com.bugsnag.android.internal.DateUtils
-import com.bugsnag.android.internal.JournalKeys
+import com.bugsnag.android.internal.journal.JournalKeys
 import java.util.Date
 
 /**

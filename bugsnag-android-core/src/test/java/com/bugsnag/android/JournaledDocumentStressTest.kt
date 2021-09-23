@@ -1,7 +1,7 @@
 package com.bugsnag.android
 
-import com.bugsnag.android.internal.JournaledDocument
-import com.bugsnag.android.internal.JsonHelper
+import com.bugsnag.android.internal.journal.JournaledDocument
+import com.bugsnag.android.internal.journal.JsonHelper
 import org.junit.Assert
 import org.junit.Rule
 import org.junit.Test

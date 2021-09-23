@@ -2,7 +2,7 @@
 
 package com.bugsnag.android
 
-import com.bugsnag.android.internal.Journalable
+import com.bugsnag.android.internal.journal.Journalable
 import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
 

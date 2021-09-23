@@ -1,6 +1,6 @@
 package com.bugsnag.android
 
-import com.bugsnag.android.internal.DocumentPath
+import com.bugsnag.android.internal.journal.DocumentPath
 import org.junit.Test
 import java.util.LinkedList
 
