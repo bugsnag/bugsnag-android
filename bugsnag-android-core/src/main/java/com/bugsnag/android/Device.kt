@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import com.bugsnag.android.internal.JournalKeys
+import com.bugsnag.android.internal.Journalable
 
 /**
  * Stateless information set by the notifier about the device on which the event occurred can be
@@ -39,7 +40,7 @@ open class Device internal constructor(
      * runtimes that the application is running on
      */
     var runtimeVersions: MutableMap<String, Any>?
-) : JsonStream.Streamable {
+) : JsonStream.Streamable, Journalable {
 
     /**
      * The manufacturer of the device used
@@ -61,37 +62,18 @@ open class Device internal constructor(
      */
     var osVersion: String? = buildInfo.osVersion
 
-    internal open fun serializeFields(writer: JsonStream) {
-        writer.name("cpuAbi").value(cpuAbi)
-        writer.name("jailbroken").value(jailbroken)
-        writer.name("id").value(id)
-        writer.name("locale").value(locale)
-        writer.name("manufacturer").value(manufacturer)
-        writer.name("model").value(model)
-        writer.name("osName").value(osName)
-        writer.name("osVersion").value(osVersion)
-        writer.name("runtimeVersions").value(runtimeVersions)
-        writer.name("totalMemory").value(totalMemory)
-    }
+    override fun toStream(writer: JsonStream) = writer.value(toJournalSection())
 
-    override fun toStream(writer: JsonStream) {
-        writer.beginObject()
-        serializeFields(writer)
-        writer.endObject()
-    }
-
-    internal open fun toJournalSection(): Map<String, Any?> {
-        return mapOf(
-            JournalKeys.keyCpuAbi to cpuAbi,
-            JournalKeys.keyJailbroken to jailbroken,
-            JournalKeys.keyId to id,
-            JournalKeys.keyLocale to locale,
-            JournalKeys.keyManufacturer to manufacturer,
-            JournalKeys.keyModel to model,
-            JournalKeys.keyOSName to osName,
-            JournalKeys.keyOSVersion to osVersion,
-            JournalKeys.keyRuntimeVersions to runtimeVersions,
-            JournalKeys.keyTotalMemory to totalMemory
-        )
-    }
+    override fun toJournalSection(): Map<String, Any?> = mapOf(
+        JournalKeys.keyCpuAbi to cpuAbi,
+        JournalKeys.keyJailbroken to jailbroken,
+        JournalKeys.keyId to id,
+        JournalKeys.keyLocale to locale,
+        JournalKeys.keyManufacturer to manufacturer,
+        JournalKeys.keyModel to model,
+        JournalKeys.keyOSName to osName,
+        JournalKeys.keyOSVersion to osVersion,
+        JournalKeys.keyRuntimeVersions to runtimeVersions,
+        JournalKeys.keyTotalMemory to totalMemory
+    )
 }

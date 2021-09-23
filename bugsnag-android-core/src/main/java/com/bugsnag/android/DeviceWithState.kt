@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.internal.DateUtils
 import com.bugsnag.android.internal.JournalKeys
 import java.util.Date
 
@@ -36,24 +37,12 @@ class DeviceWithState internal constructor(
     var time: Date?
 ) : Device(buildInfo, buildInfo.cpuAbis, jailbroken, id, locale, totalMemory, runtimeVersions) {
 
-    override fun serializeFields(writer: JsonStream) {
-        super.serializeFields(writer)
-        writer.name("freeDisk").value(freeDisk)
-        writer.name("freeMemory").value(freeMemory)
-        writer.name("orientation").value(orientation)
-
-        if (time != null) {
-            writer.name("time").value(time)
-        }
-    }
-
-    override fun toJournalSection(): Map<String, Any?> {
-        val map = mutableMapOf(
+    override fun toJournalSection(): Map<String, Any?> = super.toJournalSection().plus(
+        mapOf(
             JournalKeys.keyFreeDisk to freeDisk,
             JournalKeys.keyFreeMemory to freeMemory,
-            JournalKeys.keyOrientation to orientation
+            JournalKeys.keyOrientation to orientation,
+            JournalKeys.keyTime to time?.let(DateUtils::toIso8601)
         )
-        map.putAll(super.toJournalSection())
-        return map
-    }
+    )
 }

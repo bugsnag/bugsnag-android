@@ -2,6 +2,7 @@ package com.bugsnag.android
 
 import android.util.JsonReader
 import com.bugsnag.android.internal.JournalKeys
+import com.bugsnag.android.internal.Journalable
 import java.io.IOException
 
 /**
@@ -22,24 +23,16 @@ class User @JvmOverloads internal constructor(
      * @return the user's name, if available
      */
     val name: String? = null
-) : JsonStream.Streamable {
+) : JsonStream.Streamable, Journalable {
 
     @Throws(IOException::class)
-    override fun toStream(writer: JsonStream) {
-        writer.beginObject()
-        writer.name(KEY_ID).value(id)
-        writer.name(KEY_EMAIL).value(email)
-        writer.name(KEY_NAME).value(name)
-        writer.endObject()
-    }
+    override fun toStream(writer: JsonStream) = writer.value(toJournalSection())
 
-    internal fun toJournalSection(): Map<String, Any?> {
-        return mapOf(
-            JournalKeys.keyName to name,
-            JournalKeys.keyId to id,
-            JournalKeys.keyEmail to email
-        )
-    }
+    override fun toJournalSection(): Map<String, Any?> = mapOf(
+        JournalKeys.keyId to id,
+        JournalKeys.keyEmail to email,
+        JournalKeys.keyName to name
+    )
 
     internal companion object : JsonReadable<User> {
         private const val KEY_ID = "id"

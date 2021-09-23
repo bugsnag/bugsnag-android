@@ -1,5 +1,7 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.internal.JournalKeys
+import com.bugsnag.android.internal.Journalable
 import java.io.IOException
 
 /**
@@ -9,23 +11,24 @@ class Notifier @JvmOverloads constructor(
     var name: String = "Android Bugsnag Notifier",
     var version: String = "5.13.0",
     var url: String = "https://bugsnag.com"
-) : JsonStream.Streamable {
+) : JsonStream.Streamable, Journalable {
 
     var dependencies = listOf<Notifier>()
 
     @Throws(IOException::class)
-    override fun toStream(writer: JsonStream) {
-        writer.beginObject()
-        writer.name("name").value(name)
-        writer.name("version").value(version)
-        writer.name("url").value(url)
+    override fun toStream(writer: JsonStream) = writer.value(toJournalSection())
 
-        if (dependencies.isNotEmpty()) {
-            writer.name("dependencies")
-            writer.beginArray()
-            dependencies.forEach { writer.value(it) }
-            writer.endArray()
+    override fun toJournalSection(): Map<String, Any?> {
+        val data = mapOf(
+            JournalKeys.keyName to name,
+            JournalKeys.keyVersion to version,
+            JournalKeys.keyUrl to url
+        )
+        return when {
+            dependencies.isNotEmpty() -> data.plus(
+                Pair("dependencies", dependencies.map(Notifier::toJournalSection))
+            )
+            else -> data
         }
-        writer.endObject()
     }
 }
