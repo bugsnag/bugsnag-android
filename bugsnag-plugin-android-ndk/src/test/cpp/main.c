@@ -26,7 +26,7 @@ SUITE(suite_number_to_string);
 
 GREATEST_MAIN_DEFS();
 
-static TEST set_temporary_folder_path(JNIEnv *env, jstring path) {
+TEST set_temporary_folder_path(JNIEnv *env, jstring path) {
     test_temporary_folder_path = bsg_safe_get_string_utf_chars(env, path);
     if (test_temporary_folder_path == NULL) {
         FAILm("Error retrieving temporary folder string");

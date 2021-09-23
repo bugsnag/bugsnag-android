@@ -17,7 +17,7 @@ static bool init_test() {
     return bsg_ctjournal_init(journal_filename);
 }
 
-static TEST expect_journal_contents(const char* expected_contents, int expected_length) {
+TEST expect_journal_contents(const char* expected_contents, int expected_length) {
     return bsg_expect_file_contents(journal_filename, expected_contents, expected_length);
 }
 
@@ -169,34 +169,34 @@ TEST test_ctjournal_set_user(void) {
 TEST test_add_breadcrumb(void) {
     ASSERT(init_test());
     bugsnag_breadcrumb bc = {
-        name: "myname",
-        timestamp: "2021-06-02T08:56:06.106Z",
-        type: BSG_CRUMB_USER,
-        metadata: {
-        value_count: 4,
-        values: {
+        .name =  "myname",
+        .timestamp =  "2021-06-02T08:56:06.106Z",
+        .type =  BSG_CRUMB_USER,
+        .metadata =  {
+        .value_count =  4,
+        .values =  {
                 {
-                        name: "mybool",
-                        section: "mysection",
-                        type: BSG_METADATA_BOOL_VALUE,
-                        bool_value: true,
+                        .name =  "mybool",
+                        .section =  "mysection",
+                        .type =  BSG_METADATA_BOOL_VALUE,
+                        .bool_value =  true,
                 },
                 {
-                    name: "mynull",
-                    section: "mysection",
-                    type: BSG_METADATA_NONE_VALUE,
+                    .name =  "mynull",
+                    .section =  "mysection",
+                    .type =  BSG_METADATA_NONE_VALUE,
                 },
                 {
-                    name: "mynumber",
-                    section: "mysection",
-                    type: BSG_METADATA_NUMBER_VALUE,
-                    double_value: 3.91444e-20,
+                    .name =  "mynumber",
+                    .section =  "mysection",
+                    .type =  BSG_METADATA_NUMBER_VALUE,
+                    .double_value =  3.91444e-20,
                 },
                 {
-                    name: "mystring",
-                    section: "mysection",
-                    type: BSG_METADATA_CHAR_VALUE,
-                    char_value: "a string",
+                    .name =  "mystring",
+                    .section =  "mysection",
+                    .type =  BSG_METADATA_CHAR_VALUE,
+                    .char_value =  "a string",
                 },
     }
     }
@@ -215,34 +215,34 @@ TEST test_add_breadcrumb(void) {
 TEST test_add_breadcrumb_escaped(void) {
     ASSERT(init_test());
     bugsnag_breadcrumb bc = {
-            name: "my\\na\"me",
-            timestamp: "2021-06-02T08:56:06.106Z",
-            type: BSG_CRUMB_USER,
-            metadata: {
-                    value_count: 4,
-                    values: {
+            .name =  "my\\na\"me",
+            .timestamp =  "2021-06-02T08:56:06.106Z",
+            .type =  BSG_CRUMB_USER,
+            .metadata =  {
+                    .value_count =  4,
+                    .values =  {
                             {
-                                    name: "my\"b\\ool",
-                                    section: "my\\s\"ection",
-                                    type: BSG_METADATA_BOOL_VALUE,
-                                    bool_value: true,
+                                    .name =  "my\"b\\ool",
+                                    .section =  "my\\s\"ection",
+                                    .type =  BSG_METADATA_BOOL_VALUE,
+                                    .bool_value =  true,
                             },
                             {
-                                    name: "mynull",
-                                    section: "mysection",
-                                    type: BSG_METADATA_NONE_VALUE,
+                                    .name =  "mynull",
+                                    .section =  "mysection",
+                                    .type =  BSG_METADATA_NONE_VALUE,
                             },
                             {
-                                    name: "mynumber",
-                                    section: "mysection",
-                                    type: BSG_METADATA_NUMBER_VALUE,
-                                    double_value: 3.91444e-20,
+                                    .name =  "mynumber",
+                                    .section =  "mysection",
+                                    .type =  BSG_METADATA_NUMBER_VALUE,
+                                    .double_value =  3.91444e-20,
                             },
                             {
-                                    name: "mystring",
-                                    section: "mysection",
-                                    type: BSG_METADATA_CHAR_VALUE,
-                                    char_value: "\"a\" str\\ing",
+                                    .name =  "mystring",
+                                    .section =  "mysection",
+                                    .type =  BSG_METADATA_CHAR_VALUE,
+                                    .char_value =  "\"a\" str\\ing",
                             },
                     }
             }
