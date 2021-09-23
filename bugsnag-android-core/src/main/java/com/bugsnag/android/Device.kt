@@ -1,7 +1,7 @@
 package com.bugsnag.android
 
-import com.bugsnag.android.internal.JournalKeys
-import com.bugsnag.android.internal.Journalable
+import com.bugsnag.android.internal.journal.JournalKeys
+import com.bugsnag.android.internal.journal.Journalable
 
 /**
  * Stateless information set by the notifier about the device on which the event occurred can be

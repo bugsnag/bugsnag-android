@@ -1,7 +1,7 @@
 package com.bugsnag.android
 
-import com.bugsnag.android.internal.JournalKeys
 import com.bugsnag.android.internal.StateObserver
+import com.bugsnag.android.internal.journal.JournalKeys
 import java.util.Date
 
 internal class JournaledStateObserver(val client: Client, val journal: BugsnagJournal) : StateObserver {

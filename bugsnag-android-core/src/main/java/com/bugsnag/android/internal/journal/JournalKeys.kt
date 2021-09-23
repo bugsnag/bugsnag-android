@@ -1,6 +1,6 @@
-package com.bugsnag.android.internal
+package com.bugsnag.android.internal.journal
 
-object JournalKeys {
+internal object JournalKeys {
     // Keys
     internal const val keyApp = "app"
     internal const val keyBinaryArch = "binaryArch"

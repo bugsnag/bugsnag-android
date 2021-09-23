@@ -1,7 +1,9 @@
-package com.bugsnag.android.internal
+package com.bugsnag.android.internal.journal
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.bugsnag.android.internal.MemoryMappedOutputStream
+import com.bugsnag.android.internal.asConcurrent
 import java.io.Closeable
 import java.io.File
 import java.io.FileNotFoundException
@@ -21,7 +23,7 @@ import java.util.function.BiConsumer
  * Changes to the document must me made only via journal commands. Do not modify the document or any
  * of its sub-components directly!
  */
-class JournaledDocument
+internal class JournaledDocument
 /**
  * Constructor.
  * Upon construction, this document will have associated snapshot and journal files.

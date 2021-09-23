@@ -7,7 +7,7 @@ import androidx.benchmark.junit4.measureRepeated
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.bugsnag.android.*
-import com.bugsnag.android.internal.Journal
+import com.bugsnag.android.internal.journal.Journal
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -15,7 +15,8 @@ import org.junit.runner.RunWith
 import java.io.ByteArrayOutputStream
 
 @RunWith(AndroidJUnit4::class)
-class JournalBenchmarkTest {
+internal class JournalBenchmarkTest {
+
     @get:Rule
     val benchmarkRule = BenchmarkRule()
 

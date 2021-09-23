@@ -1,8 +1,7 @@
 package com.bugsnag.android
 
-import com.bugsnag.android.internal.DocumentPath
-import com.bugsnag.android.internal.JournalKeys
-import com.bugsnag.android.internal.JournaledDocument
+import com.bugsnag.android.internal.journal.JournalKeys
+import com.bugsnag.android.internal.journal.JournaledDocument
 import java.io.Closeable
 import java.io.File
 import java.io.IOException

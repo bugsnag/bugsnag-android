@@ -1,6 +1,6 @@
 package com.bugsnag.android
 
-import com.bugsnag.android.internal.Journal
+import com.bugsnag.android.internal.journal.Journal
 import org.junit.Assert
 import org.junit.Test
 import java.io.ByteArrayOutputStream

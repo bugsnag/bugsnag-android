@@ -1,4 +1,4 @@
-package com.bugsnag.android.internal
+package com.bugsnag.android.internal.journal
 
 import com.dslplatform.json.DslJson
 import java.io.File
@@ -9,7 +9,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 
-class JsonHelper private constructor() {
+internal class JsonHelper private constructor() {
     companion object {
         // Only one global DslJson is needed, and is thread-safe
         // Note: dsl-json adds about 150k to the final binary size.

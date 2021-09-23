@@ -2,11 +2,11 @@ package com.bugsnag.android.benchmark
 
 import androidx.benchmark.junit4.BenchmarkRule
 import androidx.benchmark.junit4.measureRepeated
-import com.bugsnag.android.internal.DocumentPath
+import com.bugsnag.android.internal.journal.DocumentPath
 import org.junit.Rule
 import org.junit.Test
 
-class DocumentPathBenchmarkTest {
+internal class DocumentPathBenchmarkTest {
 
     @get:Rule
     val benchmarkRule = BenchmarkRule()

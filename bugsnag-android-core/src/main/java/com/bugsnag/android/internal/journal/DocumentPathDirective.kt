@@ -1,5 +1,6 @@
-package com.bugsnag.android.internal
+package com.bugsnag.android.internal.journal
 
+import com.bugsnag.android.internal.asConcurrent
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -51,7 +52,8 @@ internal interface DocumentPathDirective<C> {
      * Modifies a particular key in a map, or creates a new (String, Object) map.
      * Setting null removes the value.
      */
-    open class MapKeyDirective(private val key: String) : DocumentPathDirective<MutableMap<String, in Any>> {
+    open class MapKeyDirective(private val key: String) :
+        DocumentPathDirective<MutableMap<String, in Any>> {
         override fun newContainer(): MutableMap<String, in Any> {
             return ConcurrentHashMap()
         }
@@ -87,7 +89,8 @@ internal interface DocumentPathDirective<C> {
      * Modifies a list at the current level, or creates a new list.
      * Setting null removes the item at the specified index.
      */
-    open class ListIndexDirective(private val index: Int) : DocumentPathDirective<MutableList<in Any>> {
+    open class ListIndexDirective(private val index: Int) :
+        DocumentPathDirective<MutableList<in Any>> {
         override fun newContainer(): MutableList<in Any> {
             return CopyOnWriteArrayList()
         }

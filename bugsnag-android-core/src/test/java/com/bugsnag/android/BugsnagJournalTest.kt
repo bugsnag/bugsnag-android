@@ -1,6 +1,6 @@
 package com.bugsnag.android
 
-import com.bugsnag.android.internal.JournalKeys
+import com.bugsnag.android.internal.journal.JournalKeys
 import org.junit.Assert
 import org.junit.ClassRule
 import org.junit.Test
