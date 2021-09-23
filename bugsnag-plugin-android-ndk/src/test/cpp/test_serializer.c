@@ -181,7 +181,7 @@ void loadThreadTestCase(bugsnag_event *event) {
     event->thread_count = 1;
     bsg_thread *thread = &event->threads[0];
     strcpy(thread->name, "Binder 1");
-    thread->state = 'R';
+    strcpy(thread->state, "Running");
     thread->id = 1234;
 }
 

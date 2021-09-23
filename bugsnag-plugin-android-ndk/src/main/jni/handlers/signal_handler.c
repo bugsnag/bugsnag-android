@@ -10,11 +10,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <utils/threads.h>
 
 #include "../utils/crash_info.h"
 #include "../utils/serializer.h"
 #include "../utils/string.h"
+#include "../utils/threads.h"
 #define BSG_HANDLED_SIGNAL_COUNT 6
 
 /**

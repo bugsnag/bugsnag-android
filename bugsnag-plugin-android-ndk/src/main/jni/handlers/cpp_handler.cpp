@@ -4,11 +4,11 @@
 #include <pthread.h>
 #include <stdexcept>
 #include <string>
-#include <utils/threads.h>
 
 #include "../utils/crash_info.h"
 #include "../utils/serializer.h"
 #include "../utils/string.h"
+#include "../utils/threads.h"
 /**
  * Previously installed termination handler
  */

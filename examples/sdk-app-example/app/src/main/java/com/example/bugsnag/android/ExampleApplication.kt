@@ -26,7 +26,7 @@ class ExampleApplication : Application() {
         super.onCreate()
 
         val config = Configuration.load(this)
-        config.setUser("123456", "joebloggs@example.com", "Joe Bzloggs")
+        config.setUser("123456", "joebloggs@example.com", "Joe Bloggs")
         config.addMetadata("user", "age", 31)
 
         // Configure the persistence directory when running MultiProcessActivity in a separate

@@ -188,7 +188,7 @@ typedef struct {
 typedef struct {
   pid_t id;
   char name[16];
-  char state;
+  char state[13];
 } bsg_thread;
 
 typedef enum {

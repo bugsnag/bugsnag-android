@@ -22,7 +22,7 @@
 #define TASK_STAT_PATH_SUFFIX "/stat"
 
 // in theory we could optimise this - since all paths have a common prefix
-void path_for_tid_stat(char *dest, const char *tid) {
+static void path_for_tid_stat(char *dest, const char *tid) {
   size_t tidlen = bsg_strlen(tid);
   size_t remaining = MAX_STAT_PATH_LENGTH;
   bsg_strncpy(dest, TASK_STAT_PATH_PREFIX, remaining);
@@ -31,6 +31,30 @@ void path_for_tid_stat(char *dest, const char *tid) {
   remaining -= tidlen;
   bsg_strncpy(&dest[TASK_STAT_PATH_PREFIX_LEN + tidlen], TASK_STAT_PATH_SUFFIX,
               remaining);
+}
+
+/**
+ * Possible task states as defined in:
+ * https://github.com/torvalds/linux/blob/v5.13/fs/proc/array.c#L132-L143
+ */
+static const char *const task_state_array[] = {
+    "R running", "S sleeping", "D disk sleep", "T stopped", "t tracing stop",
+    "X dead",    "Z zombie",   "P parked",     "I idle",
+};
+
+static void get_task_state_description(const char code, char *dest) {
+  for (size_t index = 0; index < (sizeof(task_state_array) / sizeof(char *));
+       index++) {
+    if (task_state_array[index][0] == code) {
+      bsg_strcpy(dest, &task_state_array[index][2]);
+      return;
+    }
+  }
+
+  // if we reached here we failed to map the code, store the single-character
+  // code as a fallback
+  dest[0] = code;
+  dest[1] = '\0';
 }
 
 /**
@@ -50,7 +74,7 @@ void path_for_tid_stat(char *dest, const char *tid) {
  *
  * @return true if the thread-data was parsed, false if not
  */
-bool parse_stat_content(bsg_thread *dest, char *content, size_t len) {
+static bool parse_stat_content(bsg_thread *dest, char *content, size_t len) {
   enum stat_parse_state {
     PARSE_ID,
     PARSE_NAME_START,
@@ -97,7 +121,7 @@ bool parse_stat_content(bsg_thread *dest, char *content, size_t len) {
       }
       break;
     case PARSE_STATUS:
-      dest->state = current;
+      get_task_state_description(current, dest->state);
       state = PARSE_DONE;
       break;
     case PARSE_DONE:
@@ -116,7 +140,7 @@ end:
  * Reads the /stat file fields we are looking for (TID, Name, State) into `dest`
  * with a signal-safe approach.
  */
-bool read_thread_state(bsg_thread *dest, const char *tid) {
+static bool read_thread_state(bsg_thread *dest, const char *tid) {
   // we filter out anything not numeric
   if (tid[0] < '0' || tid[0] > '9') {
     return false;
