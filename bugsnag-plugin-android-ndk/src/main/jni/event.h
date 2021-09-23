@@ -191,6 +191,12 @@ typedef struct {
   char state;
 } bsg_thread;
 
+typedef enum {
+  SEND_THREADS_ALWAYS = 0,
+  SEND_THREADS_UNHANDLED_ONLY = 1,
+  SEND_THREADS_NEVER = 2
+} bsg_thread_send_policy;
+
 typedef struct {
   bsg_notifier notifier;
   bsg_app_info app;

@@ -22,14 +22,15 @@
 #define TASK_STAT_PATH_SUFFIX "/stat"
 
 // in theory we could optimise this - since all paths have a common prefix
-inline void path_for_tid_stat(char *dest, const char *tid) {
+void path_for_tid_stat(char *dest, const char *tid) {
   size_t tidlen = bsg_strlen(tid);
   size_t remaining = MAX_STAT_PATH_LENGTH;
   bsg_strncpy(dest, TASK_STAT_PATH_PREFIX, remaining);
   remaining -= TASK_STAT_PATH_PREFIX_LEN;
   bsg_strncpy(&dest[TASK_STAT_PATH_PREFIX_LEN], tid, remaining);
   remaining -= tidlen;
-  bsg_strncpy(&dest[TASK_STAT_PATH_PREFIX_LEN + tidlen], TASK_STAT_PATH_SUFFIX, remaining);
+  bsg_strncpy(&dest[TASK_STAT_PATH_PREFIX_LEN + tidlen], TASK_STAT_PATH_SUFFIX,
+              remaining);
 }
 
 /**
@@ -67,46 +68,46 @@ bool parse_stat_content(bsg_thread *dest, char *content, size_t len) {
     char current = content[i];
 
     switch (state) {
-      case PARSE_ID:
-        if (current == ' ') {
-          // we create a terminator for the numeric parse
-          content[i] = '\0';
-          // atoi is async-safe, strtol is not guaranteed to be
-          dest->id = atoi(content);
-          state = PARSE_NAME_START;
-        }
-        break;
-      case PARSE_NAME_START:
-        if (current == '(') {
-          state = PARSE_NAME_CONTENT;
-        }
-        break;
-      case PARSE_NAME_CONTENT:
-        if (current == ')') {
-          state = PARSE_NAME_END;
-        } else if (name_length < sizeof(dest->name)) {
-          dest->name[name_length] = current;
-          name_length++;
-        }
-        break;
-      case PARSE_NAME_END:
-        dest->name[name_length] = '\0';
-        if (current == ' ') {
-          state = PARSE_STATUS;
-        }
-        break;
-      case PARSE_STATUS:
-        dest->state = current;
-        state = PARSE_DONE;
-        break;
-      case PARSE_DONE:
-        goto end;
+    case PARSE_ID:
+      if (current == ' ') {
+        // we create a terminator for the numeric parse
+        content[i] = '\0';
+        // atoi is async-safe, strtol is not guaranteed to be
+        dest->id = atoi(content);
+        state = PARSE_NAME_START;
+      }
+      break;
+    case PARSE_NAME_START:
+      if (current == '(') {
+        state = PARSE_NAME_CONTENT;
+      }
+      break;
+    case PARSE_NAME_CONTENT:
+      if (current == ')') {
+        state = PARSE_NAME_END;
+      } else if (name_length < sizeof(dest->name)) {
+        dest->name[name_length] = current;
+        name_length++;
+      }
+      break;
+    case PARSE_NAME_END:
+      dest->name[name_length] = '\0';
+      if (current == ' ') {
+        state = PARSE_STATUS;
+      }
+      break;
+    case PARSE_STATUS:
+      dest->state = current;
+      state = PARSE_DONE;
+      break;
+    case PARSE_DONE:
+      goto end;
     }
 
     i += 1;
   }
 
-  end:
+end:
   // success if we hit the DONE marker
   return state == PARSE_DONE;
 }
@@ -159,7 +160,7 @@ size_t bsg_capture_thread_states(bsg_thread *threads, size_t max_threads) {
     }
 
     for (offset = 0; offset < available && total_thread_count < max_threads;) {
-      entry = (struct dirent64 *) (buffer + offset);
+      entry = (struct dirent64 *)(buffer + offset);
       if (read_thread_state(&threads[total_thread_count], entry->d_name)) {
         total_thread_count += 1;
       }

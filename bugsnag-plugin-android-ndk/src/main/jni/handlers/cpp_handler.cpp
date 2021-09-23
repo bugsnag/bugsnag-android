@@ -95,8 +95,13 @@ void bsg_handle_cpp_terminate() {
   bsg_global_env->next_event.error.frame_count =
       bsg_unwind_stack(bsg_global_env->unwind_style,
                        bsg_global_env->next_event.error.stacktrace, NULL, NULL);
-  bsg_global_env->next_event.thread_count = bsg_capture_thread_states(
-      bsg_global_env->next_event.threads, BUGSNAG_THREADS_MAX);
+
+  if (bsg_global_env->send_threads != SEND_THREADS_NEVER) {
+    bsg_global_env->next_event.thread_count = bsg_capture_thread_states(
+        bsg_global_env->next_event.threads, BUGSNAG_THREADS_MAX);
+  } else {
+    bsg_global_env->next_event.thread_count = 0;
+  }
 
   std::type_info *tinfo = __cxxabiv1::__cxa_current_exception_type();
   if (tinfo != NULL) {
