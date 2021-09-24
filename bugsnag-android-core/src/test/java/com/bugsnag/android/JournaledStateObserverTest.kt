@@ -372,4 +372,21 @@ internal class JournaledStateObserverTest {
         )
         BugsnagTestUtils.assertNormalizedEquals(expected, journal.document)
     }
+
+    @Test
+    fun testNotifierInfo() {
+        val journal = emptyJournal()
+        val observer = JournaledStateObserver(client, journal)
+        observer.onStateChange(StateEvent.UpdateNotifierInfo(Notifier(version = "1.2.3")))
+        val expected = BugsnagJournal.withInitialDocumentContents(
+            mapOf(
+                "notifier" to mapOf(
+                    "name" to "Android Bugsnag Notifier",
+                    "version" to "1.2.3",
+                    "url" to "https://bugsnag.com"
+                )
+            )
+        )
+        BugsnagTestUtils.assertNormalizedEquals(expected, journal.document)
+    }
 }

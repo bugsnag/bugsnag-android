@@ -47,11 +47,13 @@ class BugsnagReactNativePlugin : Plugin {
         engine?.let { client.addRuntimeVersionInfo("reactNativeJsEngine", it) }
 
         val jsVersion = env["notifierVersion"] as String
-        val notifier = client.notifier
-        notifier.name = "Bugsnag React Native"
-        notifier.url = "https://github.com/bugsnag/bugsnag-js"
-        notifier.version = jsVersion
-        notifier.dependencies = listOf(Notifier()) // depend on bugsnag-android
+        client.setNotifier(
+            Notifier(
+                "Bugsnag React Native",
+                jsVersion,
+                "https://github.com/bugsnag/bugsnag-js"
+            ).apply { dependencies = listOf(Notifier()) } // depend on bugsnag-android
+        )
     }
 
     private fun ignoreJavaScriptExceptions() {
@@ -74,7 +76,9 @@ class BugsnagReactNativePlugin : Plugin {
         // in this plugin. When a JS exception crashes the app, we get a duplicate
         // native exception for the same error so we ignore those once the JS layer
         // has started.
-        if (!ignoreJsExceptionCallbackAdded) { ignoreJavaScriptExceptions() }
+        if (!ignoreJsExceptionCallbackAdded) {
+            ignoreJavaScriptExceptions()
+        }
 
         val map = HashMap<String, Any?>()
         configSerializer.serialize(map, client.config)

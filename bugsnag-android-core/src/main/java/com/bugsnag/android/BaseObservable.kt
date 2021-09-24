@@ -43,4 +43,9 @@ internal open class BaseObservable {
      * instead.
      */
     fun updateState(event: StateEvent) = updateState { event }
+
+    /**
+     * Triggers the observer with a snapshot of the current state.
+     */
+    open fun emitObservableEvent() {}
 }

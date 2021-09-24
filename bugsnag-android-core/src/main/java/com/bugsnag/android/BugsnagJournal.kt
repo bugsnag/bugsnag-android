@@ -135,6 +135,7 @@ internal class BugsnagJournal @JvmOverloads internal constructor (
          * @param baseDocumentPath The base path to load the journal data from
          * @return a map containing the document, or null if no journal exists at this path.
          */
+        @JvmStatic
         fun loadPreviousDocument(baseDocumentPath: File): MutableMap<in String, out Any>? {
             return JournaledDocument.loadDocumentContents(baseDocumentPath)
         }

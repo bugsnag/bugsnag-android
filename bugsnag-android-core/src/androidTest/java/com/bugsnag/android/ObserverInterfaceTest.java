@@ -79,6 +79,8 @@ public class ObserverInterfaceTest {
         assertNotNull(findMessageInQueue(StateEvent.UpdateUser.class));
         assertNotNull(findMessageInQueue(StateEvent.AddMetadata.class));
         assertNotNull(findMessageInQueue(StateEvent.UpdateContext.class));
+        assertNotNull(findMessageInQueue(StateEvent.UpdateMemoryTrimEvent.class));
+        assertNotNull(findMessageInQueue(StateEvent.UpdateNotifierInfo.class));
     }
 
     @Test
@@ -121,6 +123,12 @@ public class ObserverInterfaceTest {
         client.startSession();
         client.notify(new Exception("ruh roh"));
         assertNotNull(findMessageInQueue(StateEvent.NotifyHandled.class));
+    }
+
+    @Test
+    public void testNotifierInfoUpdate() {
+        client.setNotifier(new Notifier("foo"));
+        assertNotNull(findMessageInQueue(StateEvent.UpdateNotifierInfo.class));
     }
 
     @Test

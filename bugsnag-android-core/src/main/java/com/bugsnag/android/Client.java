@@ -7,6 +7,7 @@ import com.bugsnag.android.internal.StateObserver;
 import com.bugsnag.android.internal.dag.ConfigModule;
 import com.bugsnag.android.internal.dag.ContextModule;
 import com.bugsnag.android.internal.dag.SystemServiceModule;
+import com.bugsnag.android.internal.journal.BugsnagJournalEventMapper;
 
 import android.app.Application;
 import android.content.Context;
@@ -16,7 +17,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
 
 import java.io.File;
@@ -50,6 +50,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     private final ContextState contextState;
     private final CallbackState callbackState;
     private final UserState userState;
+    private final NotifierState notifierState;
 
     final Context appContext;
 
@@ -78,8 +79,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
     final ClientObservable clientObservable;
     PluginClient pluginClient;
-
-    final Notifier notifier = new Notifier();
 
     @Nullable
     final LastRunInfo lastRunInfo;
@@ -138,10 +137,14 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         ConfigModule configModule = new ConfigModule(contextModule, configuration, connectivity);
         immutableConfig = configModule.getConfig();
         logger = immutableConfig.getLogger();
-        File baseDocumentPath = new File(immutableConfig.getPersistenceDirectory().getValue(),
-                "bugsnag-journal");
-        journal = new BugsnagJournal(logger, baseDocumentPath);
         warnIfNotAppContext(androidContext);
+
+        File journalDir = immutableConfig.getPersistenceDirectory().getValue();
+        File baseDocumentPath = new File(journalDir, "bugsnag-journal");
+
+        BugsnagJournalEventMapper eventMapper = new BugsnagJournalEventMapper(logger);
+        eventMapper.convertToEvent(baseDocumentPath);
+        journal = new BugsnagJournal(logger, baseDocumentPath);
 
         // setup storage as soon as possible
         final StorageModule storageModule = new StorageModule(appContext,
@@ -155,6 +158,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         breadcrumbState = bugsnagStateModule.getBreadcrumbState();
         contextState = bugsnagStateModule.getContextState();
         metadataState = bugsnagStateModule.getMetadataState();
+        notifierState = bugsnagStateModule.getNotifierState();
 
         // lookup system services
         final SystemServiceModule systemServiceModule = new SystemServiceModule(contextModule);
@@ -181,8 +185,10 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
         registerLifecycleCallbacks();
 
+        Notifier notifier = notifierState.getNotifier();
         EventStorageModule eventStorageModule = new EventStorageModule(contextModule, configModule,
-                dataCollectionModule, bgTaskService, trackerModule, systemServiceModule, notifier);
+                dataCollectionModule, bgTaskService, trackerModule, systemServiceModule,
+                notifier);
         eventStorageModule.resolveDependencies(bgTaskService, TaskType.IO);
         eventStore = eventStorageModule.getEventStore();
 
@@ -199,6 +205,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         lastRunInfoStore = storageModule.getLastRunInfoStore();
         lastRunInfo = storageModule.getLastRunInfo();
 
+        // add observer before syncing initial state
+        addObserver(new JournaledStateObserver(this, journal));
+
         // initialise plugins before attempting to flush any errors
         loadPlugins(configuration);
 
@@ -207,7 +216,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         eventStore.flushAsync();
         sessionTracker.flushAsync();
 
-        addObserver(new JournaledStateObserver(this, journal));
 
         // register listeners for system events in the background.
         systemBroadcastReceiver = new SystemBroadcastReceiver(this, logger);
@@ -227,6 +235,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             ContextState contextState,
             CallbackState callbackState,
             UserState userState,
+            NotifierState notifierState,
             ClientObservable clientObservable,
             Context appContext,
             @NonNull DeviceDataCollector deviceDataCollector,
@@ -248,6 +257,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         this.contextState = contextState;
         this.callbackState = callbackState;
         this.userState = userState;
+        this.notifierState = notifierState;
         this.clientObservable = clientObservable;
         this.appContext = appContext;
         this.deviceDataCollector = deviceDataCollector;
@@ -407,6 +417,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         deliveryDelegate.addObserver(observer);
         launchCrashTracker.addObserver(observer);
         memoryTrimState.addObserver(observer);
+        notifierState.addObserver(observer);
     }
 
     void removeObserver(StateObserver observer) {
@@ -419,6 +430,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         deliveryDelegate.removeObserver(observer);
         launchCrashTracker.removeObserver(observer);
         memoryTrimState.removeObserver(observer);
+        notifierState.removeObserver(observer);
     }
 
     /**
@@ -429,6 +441,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         contextState.emitObservableEvent();
         userState.emitObservableEvent();
         memoryTrimState.emitObservableEvent();
+        notifierState.emitObservableEvent();
     }
 
     /**
@@ -1036,8 +1049,12 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         return pluginClient.findPlugin(clz);
     }
 
-    Notifier getNotifier() {
-        return notifier;
+    void setNotifier(Notifier notifier) {
+        notifierState.setNotifier(notifier);
+    }
+
+    NotifierState getNotifierState() {
+        return notifierState;
     }
 
     MetadataState getMetadataState() {

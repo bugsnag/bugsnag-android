@@ -61,6 +61,7 @@ internal object JournalKeys {
     internal const val pathMetadata = keyMetadata
     internal const val pathSession = "session"
     internal const val pathUser = "user"
+    internal const val pathNotifier = "notifier"
 
     // Composite paths
     internal const val pathAppInForeground = "$pathApp.$keyInForeground"

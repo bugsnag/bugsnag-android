@@ -52,7 +52,7 @@ internal class SessionTrackerPauseResumeTest {
 
     @Before
     fun setUp() {
-        `when`(client.getNotifier()).thenReturn(Notifier())
+        `when`(client.notifierState).thenReturn(NotifierState())
         `when`(client.getAppContext()).thenReturn(context)
         `when`(client.getAppDataCollector()).thenReturn(appDataCollector)
         `when`(client.config).thenReturn(cfg)

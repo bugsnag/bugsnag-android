@@ -40,7 +40,7 @@ internal data class MetadataState(val metadata: Metadata = Metadata()) :
      * Fires the initial observable messages for all the metadata which has been added before an
      * Observer was added. This is used initially to populate the NDK with data.
      */
-    fun emitObservableEvent() {
+    override fun emitObservableEvent() {
         val sections = metadata.store.keys
 
         for (section in sections) {

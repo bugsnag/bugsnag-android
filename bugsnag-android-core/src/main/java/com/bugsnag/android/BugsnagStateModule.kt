@@ -14,6 +14,7 @@ internal class BugsnagStateModule(
 
     private val cfg = configModule.config
 
+    val notifierState = NotifierState()
     val clientObservable = ClientObservable()
 
     val callbackState = configuration.impl.callbackState.copy()
