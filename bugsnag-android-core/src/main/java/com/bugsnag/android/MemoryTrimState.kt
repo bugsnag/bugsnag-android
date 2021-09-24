@@ -17,7 +17,7 @@ internal class MemoryTrimState : BaseObservable() {
         return true
     }
 
-    fun emitObservableEvent() {
+    override fun emitObservableEvent() {
         updateState {
             StateEvent.UpdateMemoryTrimEvent(
                 isLowMemory,

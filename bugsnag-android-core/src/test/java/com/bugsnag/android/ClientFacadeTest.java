@@ -46,6 +46,9 @@ public class ClientFacadeTest {
     UserState userState;
 
     @Mock
+    NotifierState notifierState;
+
+    @Mock
     ClientObservable clientObservable;
 
     @Mock
@@ -108,6 +111,7 @@ public class ClientFacadeTest {
                 contextState,
                 callbackState,
                 userState,
+                notifierState,
                 clientObservable,
                 appContext,
                 deviceDataCollector,
@@ -495,6 +499,7 @@ public class ClientFacadeTest {
         verify(contextState, times(1)).addObserver(observer);
         verify(deliveryDelegate, times(1)).addObserver(observer);
         verify(launchCrashTracker, times(1)).addObserver(observer);
+        verify(notifierState, times(1)).addObserver(observer);
     }
 
     @Test
@@ -514,6 +519,7 @@ public class ClientFacadeTest {
         verify(contextState, times(1)).removeObserver(observer);
         verify(deliveryDelegate, times(1)).removeObserver(observer);
         verify(launchCrashTracker, times(1)).removeObserver(observer);
+        verify(notifierState, times(1)).removeObserver(observer);
     }
 
 }

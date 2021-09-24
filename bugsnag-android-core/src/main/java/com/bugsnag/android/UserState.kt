@@ -7,5 +7,5 @@ internal class UserState(user: User) : BaseObservable() {
             emitObservableEvent()
         }
 
-    fun emitObservableEvent() = updateState { StateEvent.UpdateUser(user) }
+    override fun emitObservableEvent() = updateState { StateEvent.UpdateUser(user) }
 }

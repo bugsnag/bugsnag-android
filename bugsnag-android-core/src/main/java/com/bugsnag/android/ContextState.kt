@@ -32,5 +32,5 @@ internal class ContextState : BaseObservable() {
         return automaticContext.takeIf { it !== MANUAL } ?: manualContext
     }
 
-    fun emitObservableEvent() = updateState { StateEvent.UpdateContext(getContext()) }
+    override fun emitObservableEvent() = updateState { StateEvent.UpdateContext(getContext()) }
 }
