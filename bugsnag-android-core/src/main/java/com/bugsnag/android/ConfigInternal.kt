@@ -49,6 +49,8 @@ internal class ConfigInternal(var apiKey: String) : CallbackAware, MetadataAware
     var projectPackages: Set<String> = emptySet()
     var persistenceDirectory: File? = null
 
+    val notifier: Notifier = Notifier()
+
     protected val plugins = HashSet<Plugin>()
 
     override fun addOnError(onError: OnErrorCallback) = callbackState.addOnError(onError)

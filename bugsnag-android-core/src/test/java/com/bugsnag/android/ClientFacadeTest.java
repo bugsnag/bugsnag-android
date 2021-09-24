@@ -90,6 +90,9 @@ public class ClientFacadeTest {
     @Mock
     ExceptionHandler exceptionHandler;
 
+    @Mock
+    Notifier notifier;
+
     private Client client;
     private InterceptingLogger logger;
 
@@ -118,7 +121,8 @@ public class ClientFacadeTest {
                 deliveryDelegate,
                 lastRunInfoStore,
                 launchCrashTracker,
-                exceptionHandler
+                exceptionHandler,
+                notifier
         );
 
         // required fields for generating an event
