@@ -20,7 +20,9 @@
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$429</ID>
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$499</ID>
     <ID>MagicNumber:LastRunInfoStore.kt$LastRunInfoStore$3</ID>
+    <ID>MaxLineLength:EventSerializationTest.kt$EventSerializationTest.Companion$it.threads.add(Thread(5, "main", ThreadType.ANDROID, true, Thread.State.RUNNABLE, stacktrace, NoopLogger))</ID>
     <ID>MaxLineLength:LastRunInfo.kt$LastRunInfo$return "LastRunInfo(consecutiveLaunchCrashes=$consecutiveLaunchCrashes, crashed=$crashed, crashedDuringLaunch=$crashedDuringLaunch)"</ID>
+    <ID>MaxLineLength:ThreadState.kt$ThreadState$Thread(thread.id, thread.name, ThreadType.ANDROID, errorThread, Thread.State.forThread(thread), stacktrace, logger)</ID>
     <ID>ProtectedMemberInFinalClass:ConfigInternal.kt$ConfigInternal$protected val plugins = HashSet&lt;Plugin>()</ID>
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun isAnr(event: Event): Boolean</ID>
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun shouldDiscardClass(): Boolean</ID>

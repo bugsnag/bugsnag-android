@@ -1,5 +1,10 @@
 # Changelog
 
+## TBD
+
+* Capture and report Thread.state for Android Runtime threads
+  [#1367](https://github.com/bugsnag/bugsnag-android/pull/1367)
+
 ## 5.13.0 (2021-09-22)
 
 * Capture breadcrumbs for OkHttp network requests
