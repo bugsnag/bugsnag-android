@@ -88,5 +88,9 @@ open class Device internal constructor(
 
     override fun toStream(writer: JsonStream) = writer.value(toJournalSection())
 
-    override fun toJournalSection(): Map<String, Any?> = map
+    override fun toJournalSection(): Map<String, Any?> {
+        val copy = map.toMutableMap()
+        copy["cpuAbi"] = cpuAbi?.toList()
+        return copy
+    }
 }

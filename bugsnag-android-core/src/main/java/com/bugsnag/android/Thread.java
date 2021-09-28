@@ -12,7 +12,7 @@ import java.util.List;
 @SuppressWarnings("ConstantConditions")
 public class Thread implements JsonStream.Streamable {
 
-    private final ThreadInternal impl;
+    final ThreadInternal impl;
     private final Logger logger;
 
     Thread(
