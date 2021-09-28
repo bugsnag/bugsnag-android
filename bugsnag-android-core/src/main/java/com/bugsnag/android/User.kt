@@ -8,55 +8,51 @@ import java.io.IOException
 /**
  * Information about the current user of your application.
  */
-class User @JvmOverloads internal constructor(
+class User internal constructor(
+    data: Map<String, String?> = mapOf()
+) : JsonStream.Streamable, Journalable {
+
+    private val map: Map<String, String?> = data.withDefault { null }
+
     /**
      * @return the user ID, by default a UUID generated on installation
      */
-    val id: String? = null,
+    val id: String? by map
 
     /**
      * @return the user's email, if available
      */
-    val email: String? = null,
+    val email: String? by map
 
     /**
      * @return the user's name, if available
      */
-    val name: String? = null
-) : JsonStream.Streamable, Journalable {
+    val name: String? by map
+
+    internal constructor(id: String?, email: String?, name: String?) : this(
+        mapOf(
+            JournalKeys.keyId to id,
+            JournalKeys.keyEmail to email,
+            JournalKeys.keyName to name
+        )
+    )
 
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) = writer.value(toJournalSection())
 
-    override fun toJournalSection(): Map<String, Any?> = mapOf(
-        JournalKeys.keyId to id,
-        JournalKeys.keyEmail to email,
-        JournalKeys.keyName to name
-    )
+    override fun toJournalSection(): Map<String, Any?> = map
 
     internal companion object : JsonReadable<User> {
-        private const val KEY_ID = "id"
-        private const val KEY_NAME = "name"
-        private const val KEY_EMAIL = "email"
 
         override fun fromReader(reader: JsonReader): User {
             var user: User
             with(reader) {
                 beginObject()
-                var id: String? = null
-                var email: String? = null
-                var name: String? = null
-
+                val map = mutableMapOf<String, String?>()
                 while (hasNext()) {
-                    val key = nextName()
-                    val value = nextString()
-                    when (key) {
-                        KEY_ID -> id = value
-                        KEY_EMAIL -> email = value
-                        KEY_NAME -> name = value
-                    }
+                    map[nextName()] = nextString()
                 }
-                user = User(id, email, name)
+                user = User(map)
                 endObject()
             }
             return user

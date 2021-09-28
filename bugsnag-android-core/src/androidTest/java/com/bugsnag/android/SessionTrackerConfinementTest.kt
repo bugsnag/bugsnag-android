@@ -27,7 +27,7 @@ internal class SessionTrackerConfinementTest {
 
         // send 20 sessions
         repeat(SESSION_CONFINEMENT_ATTEMPTS) { count ->
-            client.sessionTracker.startNewSession(Date(0), User("$count"), false)
+            client.sessionTracker.startNewSession(Date(0), User("$count", null, null), false)
         }
         retainingDelivery.latch.await(1, TimeUnit.SECONDS)
 
