@@ -134,7 +134,8 @@ void bsg_update_next_run_info(bsg_environment *env) {
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
     JNIEnv *env, jobject _this, jstring _api_key, jstring _event_path,
     jstring _last_run_info_path, jint consecutive_launch_crashes,
-    jboolean auto_detect_ndk_crashes, jint _api_level, jboolean is32bit) {
+    jboolean auto_detect_ndk_crashes, jint _api_level, jboolean is32bit,
+    jint send_threads) {
   bsg_environment *bugsnag_env = calloc(1, sizeof(bsg_environment));
   bsg_set_unwind_types((int)_api_level, (bool)is32bit,
                        &bugsnag_env->signal_unwind_style,
@@ -143,6 +144,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
       htonl(47) == 47; // potentially too clever, see man 3 htonl
   bugsnag_env->report_header.version = BUGSNAG_EVENT_VERSION;
   bugsnag_env->consecutive_launch_crashes = consecutive_launch_crashes;
+  bugsnag_env->send_threads = send_threads;
 
   // copy event path to env struct
   const char *event_path = bsg_safe_get_string_utf_chars(env, _event_path);

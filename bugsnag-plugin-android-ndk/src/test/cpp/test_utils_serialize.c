@@ -420,7 +420,7 @@ char *test_read_last_run_info(const bsg_environment *env) {
   return buf;
 }
 
-test_last_run_info_serialization(void) {
+TEST test_last_run_info_serialization(void) {
   bsg_environment *env = calloc(1, sizeof(bsg_environment));
   strcpy(env->last_run_info_path, SERIALIZE_TEST_FILE);
   

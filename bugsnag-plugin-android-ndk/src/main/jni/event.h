@@ -188,8 +188,14 @@ typedef struct {
 typedef struct {
   pid_t id;
   char name[16];
-  char state;
+  char state[13];
 } bsg_thread;
+
+typedef enum {
+  SEND_THREADS_ALWAYS = 0,
+  SEND_THREADS_UNHANDLED_ONLY = 1,
+  SEND_THREADS_NEVER = 2
+} bsg_thread_send_policy;
 
 typedef struct {
   bsg_notifier notifier;
