@@ -62,7 +62,10 @@ internal class JournaledStateObserver(val client: Client, val journal: BugsnagJo
                 journal.addCommand(JournalKeys.pathNotifier, event.notifier.toJournalSection())
             }
             is StateEvent.UpdateMemoryTrimEvent -> {
-                journal.addCommand(JournalKeys.pathMetadataAppLowMemory, event.isLowMemory)
+                journal.addCommands(
+                    Pair(JournalKeys.pathMetadataAppLowMemory, event.isLowMemory),
+                    Pair(JournalKeys.pathMetadataAppMemoryTrimLevel, event.memoryTrimLevelDescription)
+                )
             }
         }
     }
