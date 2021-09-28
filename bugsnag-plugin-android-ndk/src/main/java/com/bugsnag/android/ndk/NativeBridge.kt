@@ -48,9 +48,7 @@ class NativeBridge : StateObserver {
         autoDetectNdkCrashes: Boolean,
         apiLevel: Int,
         is32bit: Boolean,
-        appVersion: String,
-        buildUuid: String,
-        releaseStage: String
+        threadSendPolicy: Int
     )
 
     external fun startedSession(
@@ -172,9 +170,7 @@ class NativeBridge : StateObserver {
                     arg.autoDetectNdkCrashes,
                     Build.VERSION.SDK_INT,
                     is32bit,
-                    makeSafe(arg.appVersion ?: ""),
-                    makeSafe(arg.buildUuid ?: ""),
-                    makeSafe(arg.releaseStage ?: "")
+                    arg.sendThreads.ordinal
                 )
                 installed.set(true)
             }

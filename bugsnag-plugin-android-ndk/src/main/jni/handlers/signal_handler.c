@@ -14,6 +14,7 @@
 #include "../utils/crash_info.h"
 #include "../utils/serializer.h"
 #include "../utils/string.h"
+#include "../utils/threads.h"
 #define BSG_HANDLED_SIGNAL_COUNT 6
 
 /**
@@ -184,6 +185,13 @@ void bsg_handle_signal(int signum, siginfo_t *info,
   bsg_global_env->next_event.error.frame_count = bsg_unwind_stack(
       bsg_global_env->signal_unwind_style,
       bsg_global_env->next_event.error.stacktrace, info, user_context);
+
+  if (bsg_global_env->send_threads != SEND_THREADS_NEVER) {
+    bsg_global_env->next_event.thread_count = bsg_capture_thread_states(
+        bsg_global_env->next_event.threads, BUGSNAG_THREADS_MAX);
+  } else {
+    bsg_global_env->next_event.thread_count = 0;
+  }
 
   for (int i = 0; i < BSG_HANDLED_SIGNAL_COUNT; i++) {
     const int signal = bsg_native_signals[i];

@@ -43,6 +43,7 @@ void bsg_serialize_stackframe(bugsnag_stackframe *stackframe, bool is_pc,
 void bsg_serialize_error(bsg_error exc, JSON_Object *exception,
                          JSON_Array *stacktrace);
 void bsg_serialize_breadcrumbs(const bugsnag_event *event, JSON_Array *crumbs);
+void bsg_serialize_threads(const bugsnag_event *event, JSON_Array *threads);
 char *bsg_serialize_event_to_json_string(bugsnag_event *event);
 
 int bsg_calculate_total_crumbs(int old_count);
