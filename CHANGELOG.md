@@ -5,6 +5,9 @@
 * Capture and report Thread.state for Android Runtime threads
   [#1367](https://github.com/bugsnag/bugsnag-android/pull/1367)
 
+* Capture and report thread id, name and state for native threads in an NDK crash
+  [#1390](https://github.com/bugsnag/bugsnag-android/pull/1390)
+
 ## 5.13.0 (2021-09-22)
 
 * Capture breadcrumbs for OkHttp network requests
