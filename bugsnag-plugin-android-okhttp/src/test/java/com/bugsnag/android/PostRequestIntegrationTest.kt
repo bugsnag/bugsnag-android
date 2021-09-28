@@ -10,6 +10,7 @@ import okhttp3.mockwebserver.MockResponse
 import okio.Buffer
 import okio.BufferedSink
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -68,7 +69,7 @@ class PostRequestIntegrationTest {
             assertEquals(49L, get("requestContentLength"))
             assertEquals(0L, get("responseContentLength"))
             assertTrue(get("duration") is Long)
-            assertEquals(emptyMap<String, Any>(), get("urlParams"))
+            assertNull(get("urlParams"))
             assertEquals(url, get("url"))
         }
     }
@@ -96,7 +97,7 @@ class PostRequestIntegrationTest {
             assertEquals(11L, get("requestContentLength"))
             assertEquals(0L, get("responseContentLength"))
             assertTrue(get("duration") is Long)
-            assertEquals(emptyMap<String, Any>(), get("urlParams"))
+            assertNull(get("urlParams"))
             assertEquals(url, get("url"))
         }
     }
@@ -133,7 +134,7 @@ class PostRequestIntegrationTest {
             assertEquals(11890L, get("requestContentLength"))
             assertEquals(0L, get("responseContentLength"))
             assertTrue(get("duration") is Long)
-            assertEquals(emptyMap<String, Any>(), get("urlParams"))
+            assertNull(get("urlParams"))
             assertEquals(url, get("url"))
         }
     }
@@ -164,7 +165,7 @@ class PostRequestIntegrationTest {
             assertEquals(303L, get("requestContentLength"))
             assertEquals(0L, get("responseContentLength"))
             assertTrue(get("duration") is Long)
-            assertEquals(emptyMap<String, Any>(), get("urlParams"))
+            assertNull(get("urlParams"))
             assertEquals(url, get("url"))
         }
     }
@@ -195,7 +196,7 @@ class PostRequestIntegrationTest {
             assertEquals(49L, get("requestContentLength"))
             assertEquals(0L, get("responseContentLength"))
             assertTrue(get("duration") is Long)
-            assertEquals(emptyMap<String, Any>(), get("urlParams"))
+            assertNull(get("urlParams"))
             assertEquals(url, get("url"))
         }
     }
@@ -226,7 +227,7 @@ class PostRequestIntegrationTest {
             assertEquals(49L, get("requestContentLength"))
             assertEquals(0L, get("responseContentLength"))
             assertTrue(get("duration") is Long)
-            assertEquals(emptyMap<String, Any>(), get("urlParams"))
+            assertNull(get("urlParams"))
             assertEquals(url, get("url"))
         }
     }
@@ -251,7 +252,7 @@ class PostRequestIntegrationTest {
             assertEquals(0L, get("requestContentLength"))
             assertEquals(0L, get("responseContentLength"))
             assertTrue(get("duration") is Long)
-            assertEquals(emptyMap<String, Any>(), get("urlParams"))
+            assertNull(get("urlParams"))
             assertEquals(url, get("url"))
         }
     }

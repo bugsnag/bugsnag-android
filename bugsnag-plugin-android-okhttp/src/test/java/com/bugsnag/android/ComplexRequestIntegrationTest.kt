@@ -22,7 +22,6 @@ import org.mockito.Mockito
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
-import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 @RunWith(MockitoJUnitRunner::class)
@@ -63,7 +62,7 @@ class ComplexRequestIntegrationTest {
             assertEquals("GET", get("method"))
             assertEquals(0L, get("requestContentLength"))
             assertTrue(get("duration") is Long)
-            assertEquals(emptyMap<String, Any>(), get("urlParams"))
+            assertNull(get("urlParams"))
             assertEquals(url, get("url"))
             assertNull(get("status"))
             assertNull(get("responseContentLength"))
@@ -89,51 +88,8 @@ class ComplexRequestIntegrationTest {
             assertEquals("GET", get("method"))
             assertEquals(0L, get("requestContentLength"))
             assertTrue(get("duration") is Long)
-            assertEquals(emptyMap<String, Any>(), get("urlParams"))
+            assertNull(get("urlParams"))
             assertEquals(url, get("url"))
-            assertNull(get("status"))
-            assertNull(get("responseContentLength"))
-        }
-    }
-
-    /**
-     * Performs a GET request but manually cancel it before it can complete
-     */
-    @Test
-    fun cancelledRequest() {
-        val server = MockWebServer().apply { start() }
-        val url = server.url("/test")
-        val request = Request.Builder().url(url).build()
-        val plugin = BugsnagOkHttpPlugin().apply { load(client) }
-
-        // make a request but then cancel it on another thread before completion
-        val okHttpClient = OkHttpClient.Builder().eventListener(plugin).build()
-        val call = okHttpClient.newCall(request)
-
-        Executors.newSingleThreadScheduledExecutor().schedule(
-            {
-                call.cancel()
-            },
-            100, TimeUnit.MILLISECONDS
-        )
-
-        runCatching {
-            call.execute().close()
-        }
-        server.shutdown()
-
-        // verify breadcrumb received
-        verify(client, times(1)).leaveBreadcrumb(
-            eq("OkHttp call error"),
-            mapCaptor.capture(),
-            eq(BreadcrumbType.REQUEST)
-        )
-        with(mapCaptor.value) {
-            assertEquals("GET", get("method"))
-            assertEquals(0L, get("requestContentLength"))
-            assertTrue(get("duration") is Long)
-            assertEquals(emptyMap<String, Any>(), get("urlParams"))
-            assertEquals(url.toString(), get("url"))
             assertNull(get("status"))
             assertNull(get("responseContentLength"))
         }
@@ -172,7 +128,7 @@ class ComplexRequestIntegrationTest {
             assertEquals(0L, get("requestContentLength"))
             assertEquals(0L, get("responseContentLength"))
             assertTrue(get("duration") is Long)
-            assertEquals(emptyMap<String, Any>(), get("urlParams"))
+            assertNull(get("urlParams"))
             assertEquals(url.toString(), get("url"))
         }
     }

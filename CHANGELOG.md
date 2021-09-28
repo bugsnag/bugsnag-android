@@ -2,16 +2,28 @@
 
 ## TBD
 
+* Capture and report Thread.state for Android Runtime threads
+  [#1367](https://github.com/bugsnag/bugsnag-android/pull/1367)
+
+## 5.13.0 (2021-09-22)
+
 * Capture breadcrumbs for OkHttp network requests
   [#1358](https://github.com/bugsnag/bugsnag-android/pull/1358)
   [#1361](https://github.com/bugsnag/bugsnag-android/pull/1361)
   [#1363](https://github.com/bugsnag/bugsnag-android/pull/1363)
+  [#1379](https://github.com/bugsnag/bugsnag-android/pull/1379)
 
 * Update project to build using Gradle/AGP 7
   [#1354](https://github.com/bugsnag/bugsnag-android/pull/1354)
 
 * Increased default breadcrumb collection limit to 50
   [#1366](https://github.com/bugsnag/bugsnag-android/pull/1366)
+
+* Support integer values in buildUuid
+  [#1375](https://github.com/bugsnag/bugsnag-android/pull/1375)
+
+* Use SystemClock.elapsedRealtime to track `app.durationInForeground`
+  [#1378](https://github.com/bugsnag/bugsnag-android/pull/1378)
 
 ## 5.12.0 (2021-08-26)
 
@@ -23,6 +35,9 @@
 
 * Added `STATE` Breadcrumbs for `onTrimMemory` events
   [#1345](https://github.com/bugsnag/bugsnag-android/pull/1345)
+
+* The `device.totalMemory` and `device.freeMemory` values report device-level memory, and `app.memoryUsage`, `app.totalMemory`, `app.app.freeMemory`, and `app.memoryLimit` report VM level memory status
+  [#1346](https://github.com/bugsnag/bugsnag-android/pull/1346)
 
 ## 5.11.0 (2021-08-05)
 
