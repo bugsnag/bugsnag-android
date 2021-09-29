@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 5.14.0 (2021-09-29)
 
 * Capture and report Thread.state for Android Runtime threads
   [#1367](https://github.com/bugsnag/bugsnag-android/pull/1367)
