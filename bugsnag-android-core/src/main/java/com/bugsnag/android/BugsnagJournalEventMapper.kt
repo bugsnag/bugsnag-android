@@ -1,10 +1,8 @@
-package com.bugsnag.android.internal.journal
+package com.bugsnag.android
 
-import com.bugsnag.android.BugsnagJournal
-import com.bugsnag.android.EventInternal
-import com.bugsnag.android.Logger
-import com.bugsnag.android.User
+import com.bugsnag.android.internal.DateUtils
 import java.io.File
+import java.util.Locale
 
 /**
  * Converts a Bugsnag journal entry into an Event.
@@ -41,7 +39,7 @@ internal class BugsnagJournalEventMapper(
         val event = EventInternal(apiKey)
 
         // populate user
-        val userMap: Map<String, String?> = map.readJournalEntry("user")
+        val userMap: Map<String, String> = map.readJournalEntry("user")
         event.userImpl = User(userMap)
 
         // populate metadata
@@ -49,7 +47,30 @@ internal class BugsnagJournalEventMapper(
         metadataMap.forEach { (key, value) ->
             event.addMetadata(key, value)
         }
+
+        // populate breadcrumbs
+        val breadcrumbList: List<MutableMap<String, Any?>> = map.readJournalEntry("breadcrumbs")
+        val crumbs = breadcrumbList
+            .map(this::sanitizeBreadcrumbMap)
+            .map { Breadcrumb(BreadcrumbInternal(it), logger) }
+        event.breadcrumbs.addAll(crumbs)
         return event
+    }
+
+    private fun sanitizeBreadcrumbMap(src: Map<String, Any?>): MutableMap<String, Any?> {
+        val map = src.toMutableMap()
+        map["message"] = map["name"]
+        map.remove("name")
+
+        val type = map["type"] as String
+        map["type"] = BreadcrumbType.valueOf(type.toUpperCase(Locale.US))
+
+        val date = map["timestamp"] as String
+        map["timestamp"] = DateUtils.fromIso8601(date)
+
+        map["metadata"] = map["metaData"]
+        map.remove("metaData")
+        return map
     }
 
     /**
