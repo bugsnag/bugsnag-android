@@ -43,6 +43,12 @@ internal class BugsnagJournalEventMapper(
         // populate user
         val userMap: Map<String, String?> = map.readJournalEntry("user")
         event.userImpl = User(userMap)
+
+        // populate metadata
+        val metadataMap: Map<String, Map<String, Any?>> = map.readJournalEntry("metaData")
+        metadataMap.forEach { (key, value) ->
+            event.addMetadata(key, value)
+        }
         return event
     }
 
