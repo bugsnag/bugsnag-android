@@ -19,6 +19,7 @@ bool bsg_event_write(bsg_report_header *header, bugsnag_event *event, int fd);
 
 bugsnag_event *bsg_event_read(int fd);
 bsg_report_header *bsg_report_header_read(int fd);
+bugsnag_event *bsg_map_v6_to_report(bugsnag_report_v6 *report_v6);
 bugsnag_event *bsg_map_v5_to_report(bugsnag_report_v5 *report_v5);
 bugsnag_event *bsg_map_v4_to_report(bugsnag_report_v4 *report_v4);
 bugsnag_event *bsg_map_v3_to_report(bugsnag_report_v3 *report_v3);
@@ -130,7 +131,19 @@ bugsnag_report_v5 *bsg_report_v5_read(int fd) {
   return event;
 }
 
-bugsnag_event *bsg_report_v6_read(int fd) {
+bugsnag_report_v6 *bsg_report_v6_read(int fd) {
+  size_t event_size = sizeof(bugsnag_report_v6);
+  bugsnag_report_v6 *event = calloc(1, event_size);
+
+  ssize_t len = read(fd, event, event_size);
+  if (len != event_size) {
+    free(event);
+    return NULL;
+  }
+  return event;
+}
+
+bugsnag_event *bsg_report_v7_read(int fd) {
   size_t event_size = sizeof(bugsnag_event);
   bugsnag_event *event = calloc(1, event_size);
 
@@ -178,7 +191,23 @@ bugsnag_event *bsg_event_read(int fd) {
     bugsnag_report_v5 *report_v5 = bsg_report_v5_read(fd);
     event = bsg_map_v5_to_report(report_v5);
   } else if (event_version == 6) {
-    event = bsg_report_v6_read(fd);
+    bugsnag_report_v6 *report_v6 = bsg_report_v6_read(fd);
+    event = bsg_map_v6_to_report(report_v6);
+  } else if (event_version == 7) {
+    event = bsg_report_v7_read(fd);
+  }
+  return event;
+}
+
+bugsnag_event *bsg_map_v6_to_report(bugsnag_report_v6 *report_v6) {
+  if (report_v6 == NULL) {
+    return NULL;
+  }
+  bugsnag_event *event = calloc(1, sizeof(bugsnag_event));
+
+  if (event != NULL) {
+    memcpy(event, report_v6, sizeof(bugsnag_report_v6));
+    free(report_v6);
   }
   return event;
 }
@@ -821,6 +850,24 @@ void bsg_serialize_breadcrumbs(const bugsnag_event *event, JSON_Array *crumbs) {
   }
 }
 
+void bsg_serialize_threads(const bugsnag_event *event, JSON_Array *threads) {
+  if (event->thread_count <= 0) {
+    return;
+  }
+
+  for (int index = 0; index < event->thread_count; index++) {
+    JSON_Value *thread_val = json_value_init_object();
+    JSON_Object *json_thread = json_value_get_object(thread_val);
+    json_array_append_value(threads, thread_val);
+
+    const bsg_thread *thread = &event->threads[index];
+    json_object_set_number(json_thread, "id", (double)thread->id);
+    json_object_set_string(json_thread, "name", thread->name);
+    json_object_set_string(json_thread, "state", thread->state);
+    json_object_set_string(json_thread, "type", "c");
+  }
+}
+
 char *bsg_serialize_event_to_json_string(bugsnag_event *event) {
   JSON_Value *event_val = json_value_init_object();
   JSON_Object *event_obj = json_value_get_object(event_val);
@@ -830,10 +877,13 @@ char *bsg_serialize_event_to_json_string(bugsnag_event *event) {
   JSON_Array *exceptions = json_value_get_array(exceptions_val);
   JSON_Value *ex_val = json_value_init_object();
   JSON_Object *exception = json_value_get_object(ex_val);
+  JSON_Value *threads_val = json_value_init_array();
+  JSON_Array *threads = json_value_get_array(threads_val);
   JSON_Value *stack_val = json_value_init_array();
   JSON_Array *stacktrace = json_value_get_array(stack_val);
   json_object_set_value(event_obj, "exceptions", exceptions_val);
   json_object_set_value(event_obj, "breadcrumbs", crumbs_val);
+  json_object_set_value(event_obj, "threads", threads_val);
   json_object_set_value(exception, "stacktrace", stack_val);
   json_array_append_value(exceptions, ex_val);
   char *serialized_string = NULL;
@@ -850,6 +900,7 @@ char *bsg_serialize_event_to_json_string(bugsnag_event *event) {
     bsg_serialize_session(event, event_obj);
     bsg_serialize_error(event->error, exception, stacktrace);
     bsg_serialize_breadcrumbs(event, crumbs);
+    bsg_serialize_threads(event, threads);
 
     serialized_string = json_serialize_to_string(event_val);
     json_value_free(event_val);

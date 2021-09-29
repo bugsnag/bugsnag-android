@@ -177,6 +177,14 @@ bugsnag_stackframe *loadStackframeTestCase() {
     return data;
 }
 
+void loadThreadTestCase(bugsnag_event *event) {
+    event->thread_count = 1;
+    bsg_thread *thread = &event->threads[0];
+    strcpy(thread->name, "Binder 1");
+    strcpy(thread->state, "Running");
+    thread->id = 1234;
+}
+
 void loadExceptionTestCase(bugsnag_event *event) {
     bsg_error *data = &event->error;
     strcpy(data->errorClass, "signal");

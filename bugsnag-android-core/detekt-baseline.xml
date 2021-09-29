@@ -14,13 +14,15 @@
     <ID>LongParameterList:DeviceWithState.kt$DeviceWithState$( buildInfo: DeviceBuildInfo, jailbroken: Boolean?, id: String?, locale: String?, totalMemory: Long?, runtimeVersions: MutableMap&lt;String, Any>, /** * The number of free bytes of storage available on the device */ var freeDisk: Long?, /** * The number of free bytes of memory available on the device */ var freeMemory: Long?, /** * The orientation of the device when the event occurred: either portrait or landscape */ var orientation: String?, /** * The timestamp on the device when the event occurred */ var time: Date? )</ID>
     <ID>LongParameterList:EventFilenameInfo.kt$EventFilenameInfo.Companion$( obj: Any, uuid: String = UUID.randomUUID().toString(), apiKey: String?, timestamp: Long = System.currentTimeMillis(), config: ImmutableConfig, isLaunching: Boolean? = null )</ID>
     <ID>LongParameterList:EventStorageModule.kt$EventStorageModule$( contextModule: ContextModule, configModule: ConfigModule, dataCollectionModule: DataCollectionModule, bgTaskService: BackgroundTaskService, trackerModule: TrackerModule, systemServiceModule: SystemServiceModule, notifier: Notifier )</ID>
-    <ID>LongParameterList:StateEvent.kt$StateEvent.Install$( @JvmField val apiKey: String, @JvmField val autoDetectNdkCrashes: Boolean, @JvmField val appVersion: String?, @JvmField val buildUuid: String?, @JvmField val releaseStage: String?, @JvmField val lastRunInfoPath: String, @JvmField val consecutiveLaunchCrashes: Int )</ID>
+    <ID>LongParameterList:StateEvent.kt$StateEvent.Install$( @JvmField val apiKey: String, @JvmField val autoDetectNdkCrashes: Boolean, @JvmField val appVersion: String?, @JvmField val buildUuid: String?, @JvmField val releaseStage: String?, @JvmField val lastRunInfoPath: String, @JvmField val consecutiveLaunchCrashes: Int, @JvmField val sendThreads: ThreadSendPolicy )</ID>
     <ID>LongParameterList:ThreadState.kt$ThreadState$( stackTraces: MutableMap&lt;java.lang.Thread, Array&lt;StackTraceElement>>, currentThread: java.lang.Thread, exc: Throwable?, isUnhandled: Boolean, projectPackages: Collection&lt;String>, logger: Logger )</ID>
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$299</ID>
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$429</ID>
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$499</ID>
     <ID>MagicNumber:LastRunInfoStore.kt$LastRunInfoStore$3</ID>
+    <ID>MaxLineLength:EventSerializationTest.kt$EventSerializationTest.Companion$it.threads.add(Thread(5, "main", ThreadType.ANDROID, true, Thread.State.RUNNABLE, stacktrace, NoopLogger))</ID>
     <ID>MaxLineLength:LastRunInfo.kt$LastRunInfo$return "LastRunInfo(consecutiveLaunchCrashes=$consecutiveLaunchCrashes, crashed=$crashed, crashedDuringLaunch=$crashedDuringLaunch)"</ID>
+    <ID>MaxLineLength:ThreadState.kt$ThreadState$Thread(thread.id, thread.name, ThreadType.ANDROID, errorThread, Thread.State.forThread(thread), stacktrace, logger)</ID>
     <ID>ProtectedMemberInFinalClass:ConfigInternal.kt$ConfigInternal$protected val plugins = HashSet&lt;Plugin>()</ID>
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun isAnr(event: Event): Boolean</ID>
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun shouldDiscardClass(): Boolean</ID>
