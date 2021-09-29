@@ -1,81 +1,176 @@
-<HTML>
-<HEAD>
-<meta charset="UTF-8">
-<title>Breadcrumb - bugsnag-android-core</title>
-<link rel="stylesheet" href="../../../style.css">
-</HEAD>
-<BODY>
-<a href="../../index.html">bugsnag-android-core</a>&nbsp;/&nbsp;<a href="../index.html">com.bugsnag.android</a>&nbsp;/&nbsp;<a href="./index.html">Breadcrumb</a><br/>
-<br/>
-<h1>Breadcrumb</h1>
-<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">Breadcrumb</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Streamable</span></code>
-<h3>Functions</h3>
-<table>
-<tbody>
-<tr>
-<td>
-<h4><a href="get-message.html">getMessage</a></h4>
-</td>
-<td>
-<p>Gets the description of the breadcrumb</p>
-<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getMessage</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="get-metadata.html">getMetadata</a></h4>
-</td>
-<td>
-<p>Gets diagnostic data relating to the breadcrumb</p>
-<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getMetadata</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/index.html"><span class="identifier">MutableMap</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">!</span><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">!</span><span class="symbol">&gt;</span><span class="symbol">?</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="get-timestamp.html">getTimestamp</a></h4>
-</td>
-<td>
-<p>The timestamp that the breadcrumb was left</p>
-<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getTimestamp</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://docs.oracle.com/javase/6/docs/api/java/util/Date.html"><span class="identifier">Date</span></a></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="get-type.html">getType</a></h4>
-</td>
-<td>
-<p>Gets the type of breadcrumb left - one of those enabled in <code><a href="../-configuration/get-enabled-breadcrumb-types.html">Configuration#getEnabledBreadcrumbTypes()</a></code></p>
-<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getType</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-breadcrumb-type/index.html"><span class="identifier">BreadcrumbType</span></a></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="set-message.html">setMessage</a></h4>
-</td>
-<td>
-<p>Sets the description of the breadcrumb</p>
-<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setMessage</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Breadcrumb$setMessage(kotlin.String)/message">message</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="set-metadata.html">setMetadata</a></h4>
-</td>
-<td>
-<p>Sets diagnostic data relating to the breadcrumb</p>
-<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setMetadata</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Breadcrumb$setMetadata(kotlin.collections.MutableMap((kotlin.String, kotlin.Any)))/metadata">metadata</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/index.html"><span class="identifier">MutableMap</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">!</span><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">!</span><span class="symbol">&gt;</span><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="set-type.html">setType</a></h4>
-</td>
-<td>
-<p>Sets the type of breadcrumb left - one of those enabled in <code><a href="../-configuration/get-enabled-breadcrumb-types.html">Configuration#getEnabledBreadcrumbTypes()</a></code></p>
-<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">setType</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Breadcrumb$setType(com.bugsnag.android.BreadcrumbType)/type">type</span><span class="symbol">:</span>&nbsp;<a href="../-breadcrumb-type/index.html"><span class="identifier">BreadcrumbType</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="to-stream.html">toStream</a></h4>
-</td>
-<td>
-<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">toStream</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Breadcrumb$toStream(com.bugsnag.android.JsonStream)/stream">stream</span><span class="symbol">:</span>&nbsp;<a href="../-json-stream/index.html"><span class="identifier">JsonStream</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
-</tr>
-</tbody>
-</table>
-</BODY>
-</HTML>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>Breadcrumb</title>
+<link href="../../../../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script><script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script><link href="../../../styles/style.css" rel="Stylesheet"><link href="../../../styles/logo-styles.css" rel="Stylesheet"><link href="../../../styles/jetbrains-mono.css" rel="Stylesheet"><link href="../../../styles/main.css" rel="Stylesheet"><script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script><script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script><script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script><script type="text/javascript" src="../../../scripts/main.js" async="async"></script>  </head>
+  <body>
+    <div id="container">
+      <div id="leftColumn"><a href="../../../index.html">
+          <div id="logo"></div>
+        </a>
+        <div id="paneSearch"></div>
+        <div id="sideMenu"></div>
+      </div>
+      <div id="main">
+        <div id="leftToggler"><span class="icon-toggler"></span></div>
+<script type="text/javascript" src="../../../scripts/main.js"></script>        <div class="main-content" id="content" pageIds="bugsnag-android-core::com.bugsnag.android/Breadcrumb///PointingToDeclaration//-1317841657">
+          <div class="navigation-wrapper" id="navigation-wrapper">
+            <div class="breadcrumbs"><a href="../../../index.html">bugsnag-android-core</a>/<a href="../index.html">com.bugsnag.android</a>/<a href="index.html">Breadcrumb</a></div>
+            <div class="pull-right d-flex">
+              <div id="searchBar"></div>
+            </div>
+          </div>
+          <div class="cover ">
+            <h1 class="cover"><span>Breadcrumb</span></h1>
+            <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open class <a href="index.html">Breadcrumb</a> : <a href="../-json-stream/-streamable/index.html">JsonStream.Streamable</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+          </div>
+          <div class="tabbedcontent">
+            <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="Functions">Functions</button></div>
+            <div class="tabs-section-body">
+              <h2 class="">Functions</h2>
+              <div class="table" data-togglable="Functions"><a data-name="-259051354%2FFunctions%2F-1317841657" anchor-label="getMessage" id="-259051354%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="get-message.html">getMessage</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-259051354%2FFunctions%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block">@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>()</div></div>open fun <a href="get-message.html">getMessage</a>(): <a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-259051354%2FFunctions%2F-1317841657" anchor-label="getMessage" id="-259051354%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="-259051354%2FFunctions%2F-1317841657" anchor-label="getMessage" id="-259051354%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Gets the description of the breadcrumb</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1728551330%2FFunctions%2F-1317841657" anchor-label="getMetadata" id="-1728551330%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="get-metadata.html">getMetadata</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1728551330%2FFunctions%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block">@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html">Nullable</a>()</div></div>open fun <a href="get-metadata.html">getMetadata</a>(): <a href="https://developer.android.com/reference/kotlin/java/util/Map.html">Map</a>&lt;<a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a>, <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a>&gt;<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-1728551330%2FFunctions%2F-1317841657" anchor-label="getMetadata" id="-1728551330%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="-1728551330%2FFunctions%2F-1317841657" anchor-label="getMetadata" id="-1728551330%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Gets diagnostic data relating to the breadcrumb</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="113738359%2FFunctions%2F-1317841657" anchor-label="getTimestamp" id="113738359%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="get-timestamp.html">getTimestamp</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="113738359%2FFunctions%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block">@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>()</div></div>open fun <a href="get-timestamp.html">getTimestamp</a>(): <a href="https://developer.android.com/reference/kotlin/java/util/Date.html">Date</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="113738359%2FFunctions%2F-1317841657" anchor-label="getTimestamp" id="113738359%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="113738359%2FFunctions%2F-1317841657" anchor-label="getTimestamp" id="113738359%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>The timestamp that the breadcrumb was left</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1866947763%2FFunctions%2F-1317841657" anchor-label="getType" id="1866947763%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="get-type.html">getType</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1866947763%2FFunctions%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block">@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>()</div></div>open fun <a href="get-type.html">getType</a>(): <a href="../-breadcrumb-type/index.html">BreadcrumbType</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="1866947763%2FFunctions%2F-1317841657" anchor-label="getType" id="1866947763%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="1866947763%2FFunctions%2F-1317841657" anchor-label="getType" id="1866947763%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Gets the type of breadcrumb left - one of those enabled in <a href="../-configuration/get-enabled-breadcrumb-types.html">getEnabledBreadcrumbTypes</a></div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1380266925%2FFunctions%2F-1317841657" anchor-label="setMessage" id="1380266925%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="set-message.html">setMessage</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1380266925%2FFunctions%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open fun <a href="set-message.html">setMessage</a>(<span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>() </span>message: <a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a>)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="1380266925%2FFunctions%2F-1317841657" anchor-label="setMessage" id="1380266925%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="1380266925%2FFunctions%2F-1317841657" anchor-label="setMessage" id="1380266925%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Sets the description of the breadcrumb</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1582070098%2FFunctions%2F-1317841657" anchor-label="setMetadata" id="-1582070098%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="set-metadata.html">setMetadata</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1582070098%2FFunctions%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open fun <a href="set-metadata.html">setMetadata</a>(<span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html">Nullable</a>() </span>metadata: <a href="https://developer.android.com/reference/kotlin/java/util/Map.html">Map</a>&lt;<a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a>, <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a>&gt;)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-1582070098%2FFunctions%2F-1317841657" anchor-label="setMetadata" id="-1582070098%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="-1582070098%2FFunctions%2F-1317841657" anchor-label="setMetadata" id="-1582070098%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Sets diagnostic data relating to the breadcrumb</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1911727067%2FFunctions%2F-1317841657" anchor-label="setType" id="-1911727067%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="set-type.html">setType</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1911727067%2FFunctions%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open fun <a href="set-type.html">setType</a>(<span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>() </span>type: <a href="../-breadcrumb-type/index.html">BreadcrumbType</a>)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-1911727067%2FFunctions%2F-1317841657" anchor-label="setType" id="-1911727067%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="-1911727067%2FFunctions%2F-1317841657" anchor-label="setType" id="-1911727067%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Sets the type of breadcrumb left - one of those enabled in <a href="../-configuration/get-enabled-breadcrumb-types.html">getEnabledBreadcrumbTypes</a></div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="145620495%2FFunctions%2F-1317841657" anchor-label="toStream" id="145620495%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="to-stream.html">toStream</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="145620495%2FFunctions%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open fun <a href="to-stream.html">toStream</a>(<span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>() </span>stream: <a href="../-json-stream/index.html">JsonStream</a>)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer"><span class="go-to-top-icon"><a href="#content"></a></span><span>© 2021 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span></div>
+      </div>
+    </div>
+  </body>
+</html>
+

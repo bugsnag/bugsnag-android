@@ -1,90 +1,158 @@
-<HTML>
-<HEAD>
-<meta charset="UTF-8">
-<title>Session - bugsnag-android-core</title>
-<link rel="stylesheet" href="../../../style.css">
-</HEAD>
-<BODY>
-<a href="../../index.html">bugsnag-android-core</a>&nbsp;/&nbsp;<a href="../index.html">com.bugsnag.android</a>&nbsp;/&nbsp;<a href="./index.html">Session</a><br/>
-<br/>
-<h1>Session</h1>
-<code><span class="keyword">class </span><span class="identifier">Session</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Streamable</span><span class="symbol">, </span><span class="identifier">UserAware</span></code>
-<p>Represents a contiguous session in an application.</p>
-<h3>Functions</h3>
-<table>
-<tbody>
-<tr>
-<td>
-<h4><a href="get-app.html">getApp</a></h4>
-</td>
-<td>
-<p>Information set by the notifier about your app can be found in this field. These values can be accessed and amended if necessary.</p>
-<code><span class="keyword">fun </span><span class="identifier">getApp</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-app/index.html"><span class="identifier">App</span></a></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="get-device.html">getDevice</a></h4>
-</td>
-<td>
-<p>Information set by the notifier about your device can be found in this field. These values can be accessed and amended if necessary.</p>
-<code><span class="keyword">fun </span><span class="identifier">getDevice</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-device/index.html"><span class="identifier">Device</span></a></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="get-id.html">getId</a></h4>
-</td>
-<td>
-<p>Retrieves the session ID. This must be a unique value across all of your sessions.</p>
-<code><span class="keyword">fun </span><span class="identifier">getId</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="get-started-at.html">getStartedAt</a></h4>
-</td>
-<td>
-<p>Gets the session start time.</p>
-<code><span class="keyword">fun </span><span class="identifier">getStartedAt</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://docs.oracle.com/javase/6/docs/api/java/util/Date.html"><span class="identifier">Date</span></a></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="get-user.html">getUser</a></h4>
-</td>
-<td>
-<p>Returns the currently set User information.</p>
-<code><span class="keyword">fun </span><span class="identifier">getUser</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-user/index.html"><span class="identifier">User</span></a></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="set-id.html">setId</a></h4>
-</td>
-<td>
-<p>Sets the session ID. This must be a unique value across all of your sessions.</p>
-<code><span class="keyword">fun </span><span class="identifier">setId</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Session$setId(kotlin.String)/id">id</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="set-started-at.html">setStartedAt</a></h4>
-</td>
-<td>
-<p>Sets the session start time.</p>
-<code><span class="keyword">fun </span><span class="identifier">setStartedAt</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Session$setStartedAt(java.util.Date)/startedAt">startedAt</span><span class="symbol">:</span>&nbsp;<a href="https://docs.oracle.com/javase/6/docs/api/java/util/Date.html"><span class="identifier">Date</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="set-user.html">setUser</a></h4>
-</td>
-<td>
-<p>Sets the user associated with the session.</p>
-<code><span class="keyword">fun </span><span class="identifier">setUser</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Session$setUser(kotlin.String, kotlin.String, kotlin.String)/id">id</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.bugsnag.android.Session$setUser(kotlin.String, kotlin.String, kotlin.String)/email">email</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.bugsnag.android.Session$setUser(kotlin.String, kotlin.String, kotlin.String)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="to-stream.html">toStream</a></h4>
-</td>
-<td>
-<code><span class="keyword">fun </span><span class="identifier">toStream</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Session$toStream(com.bugsnag.android.JsonStream)/writer">writer</span><span class="symbol">:</span>&nbsp;<a href="../-json-stream/index.html"><span class="identifier">JsonStream</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
-</tr>
-</tbody>
-</table>
-</BODY>
-</HTML>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>Session</title>
+<link href="../../../../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script><script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script><link href="../../../styles/style.css" rel="Stylesheet"><link href="../../../styles/logo-styles.css" rel="Stylesheet"><link href="../../../styles/jetbrains-mono.css" rel="Stylesheet"><link href="../../../styles/main.css" rel="Stylesheet"><script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script><script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script><script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script><script type="text/javascript" src="../../../scripts/main.js" async="async"></script>  </head>
+  <body>
+    <div id="container">
+      <div id="leftColumn"><a href="../../../index.html">
+          <div id="logo"></div>
+        </a>
+        <div id="paneSearch"></div>
+        <div id="sideMenu"></div>
+      </div>
+      <div id="main">
+        <div id="leftToggler"><span class="icon-toggler"></span></div>
+<script type="text/javascript" src="../../../scripts/main.js"></script>        <div class="main-content" id="content" pageIds="bugsnag-android-core::com.bugsnag.android/Session///PointingToDeclaration//-1317841657">
+          <div class="navigation-wrapper" id="navigation-wrapper">
+            <div class="breadcrumbs"><a href="../../../index.html">bugsnag-android-core</a>/<a href="../index.html">com.bugsnag.android</a>/<a href="index.html">Session</a></div>
+            <div class="pull-right d-flex">
+              <div id="searchBar"></div>
+            </div>
+          </div>
+          <div class="cover ">
+            <h1 class="cover"><span>Session</span></h1>
+            <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">class <a href="index.html">Session</a> : <a href="../-json-stream/-streamable/index.html">JsonStream.Streamable</a>, <span data-unresolved-link="com.bugsnag.android/UserAware///PointingToDeclaration/">UserAware</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><p class="paragraph">Represents a contiguous session in an application.</p></div></div>
+          </div>
+          <div class="tabbedcontent">
+            <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="Functions">Functions</button><button class="section-tab" data-togglable="Properties">Properties</button></div>
+            <div class="tabs-section-body">
+              <h2 class="">Functions</h2>
+              <div class="table" data-togglable="Functions"><a data-name="181250686%2FFunctions%2F-1317841657" anchor-label="getUser" id="181250686%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="index.html#181250686%2FFunctions%2F-1317841657">getUser</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="181250686%2FFunctions%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">abstract fun <a href="index.html#181250686%2FFunctions%2F-1317841657">getUser</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-null/index.html">Null</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1845346379%2FFunctions%2F-1317841657" anchor-label="setUser" id="1845346379%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="index.html#1845346379%2FFunctions%2F-1317841657">setUser</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1845346379%2FFunctions%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">abstract fun <a href="index.html#1845346379%2FFunctions%2F-1317841657">setUser</a>(id: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-null/index.html">Null</a>, email: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-null/index.html">Null</a>, name: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-null/index.html">Null</a>)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1752414954%2FFunctions%2F-1317841657" anchor-label="toStream" id="-1752414954%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="to-stream.html">toStream</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1752414954%2FFunctions%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open fun <a href="to-stream.html">toStream</a>(<span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>() </span>writer: <a href="../-json-stream/index.html">JsonStream</a>)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <h2 class="">Properties</h2>
+              <div class="table" data-togglable="Properties"><a data-name="1562255547%2FProperties%2F-1317841657" anchor-label="app" id="1562255547%2FProperties%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="app.html">app</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1562255547%2FProperties%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><a data-name="1562255547%2FProperties%2F-1317841657" anchor-label="app" id="1562255547%2FProperties%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="symbol monospace">private open var <a href="app.html">app</a>: <a href="../-app/index.html">App</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1805958600%2FProperties%2F-1317841657" anchor-label="device" id="1805958600%2FProperties%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="device.html">device</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1805958600%2FProperties%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><a data-name="1805958600%2FProperties%2F-1317841657" anchor-label="device" id="1805958600%2FProperties%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="symbol monospace">private open var <a href="device.html">device</a>: <a href="../-device/index.html">Device</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="950370083%2FProperties%2F-1317841657" anchor-label="id" id="950370083%2FProperties%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="id.html">id</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="950370083%2FProperties%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><a data-name="950370083%2FProperties%2F-1317841657" anchor-label="id" id="950370083%2FProperties%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="symbol monospace">private open var <a href="id.html">id</a>: <a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-89601432%2FProperties%2F-1317841657" anchor-label="startedAt" id="-89601432%2FProperties%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="started-at.html">startedAt</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-89601432%2FProperties%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><a data-name="-89601432%2FProperties%2F-1317841657" anchor-label="startedAt" id="-89601432%2FProperties%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="symbol monospace">private open var <a href="started-at.html">startedAt</a>: <a href="https://developer.android.com/reference/kotlin/java/util/Date.html">Date</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="945619507%2FProperties%2F-1317841657" anchor-label="user" id="945619507%2FProperties%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="user.html">user</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="945619507%2FProperties%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><a data-name="945619507%2FProperties%2F-1317841657" anchor-label="user" id="945619507%2FProperties%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="symbol monospace">private open var <a href="user.html">user</a>: <a href="../-user/index.html">User</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer"><span class="go-to-top-icon"><a href="#content"></a></span><span>© 2021 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span></div>
+      </div>
+    </div>
+  </body>
+</html>
+

@@ -1,101 +1,165 @@
-<HTML>
-<HEAD>
-<meta charset="UTF-8">
-<title>Stackframe - bugsnag-android-core</title>
-<link rel="stylesheet" href="../../../style.css">
-</HEAD>
-<BODY>
-<a href="../../index.html">bugsnag-android-core</a>&nbsp;/&nbsp;<a href="../index.html">com.bugsnag.android</a>&nbsp;/&nbsp;<a href="./index.html">Stackframe</a><br/>
-<br/>
-<h1>Stackframe</h1>
-<code><span class="keyword">class </span><span class="identifier">Stackframe</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Streamable</span></code>
-<p>Represents a single stackframe from a <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-throwable/index.html">Throwable</a></p>
-<h3>Constructors</h3>
-<table>
-<tbody>
-<tr>
-<td>
-<h4><a href="-init-.html">&lt;init&gt;</a></h4>
-</td>
-<td>
-<code><span class="identifier">Stackframe</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Stackframe$<init>(com.bugsnag.android.NativeStackframe)/nativeFrame">nativeFrame</span><span class="symbol">:</span>&nbsp;<a href="../-native-stackframe/index.html"><span class="identifier">NativeStackframe</span></a><span class="symbol">)</span></code></td>
-</tr>
-</tbody>
-</table>
-<h3>Properties</h3>
-<table>
-<tbody>
-<tr>
-<td>
-<h4><a href="code.html">code</a></h4>
-</td>
-<td>
-<p>Lines of the code surrounding the frame, where the lineNumber is the key (React Native only)</p>
-<code><span class="keyword">var </span><span class="identifier">code</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html"><span class="identifier">Map</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">&gt;</span><span class="symbol">?</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="column-number.html">columnNumber</a></h4>
-</td>
-<td>
-<p>The column number of the frame (React Native only)</p>
-<code><span class="keyword">var </span><span class="identifier">columnNumber</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-number/index.html"><span class="identifier">Number</span></a><span class="symbol">?</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="file.html">file</a></h4>
-</td>
-<td>
-<p>The location of the source file</p>
-<code><span class="keyword">var </span><span class="identifier">file</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="in-project.html">inProject</a></h4>
-</td>
-<td>
-<p>Whether the package is considered to be in your project for the purposes of grouping and
-readability on the Bugsnag dashboard. Project package names can be set in
-<a href="#">Configuration.projectPackages</a></p>
-<code><span class="keyword">var </span><span class="identifier">inProject</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">?</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="line-number.html">lineNumber</a></h4>
-</td>
-<td>
-<p>The line number within the source file this stackframe refers to</p>
-<code><span class="keyword">var </span><span class="identifier">lineNumber</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-number/index.html"><span class="identifier">Number</span></a><span class="symbol">?</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="method.html">method</a></h4>
-</td>
-<td>
-<p>The name of the method that was being executed</p>
-<code><span class="keyword">var </span><span class="identifier">method</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="type.html">type</a></h4>
-</td>
-<td>
-<p>The type of the error</p>
-<code><span class="keyword">var </span><span class="identifier">type</span><span class="symbol">: </span><a href="../-error-type/index.html"><span class="identifier">ErrorType</span></a><span class="symbol">?</span></code></td>
-</tr>
-</tbody>
-</table>
-<h3>Functions</h3>
-<table>
-<tbody>
-<tr>
-<td>
-<h4><a href="to-stream.html">toStream</a></h4>
-</td>
-<td>
-<code><span class="keyword">fun </span><span class="identifier">toStream</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Stackframe$toStream(com.bugsnag.android.JsonStream)/writer">writer</span><span class="symbol">:</span>&nbsp;<a href="../-json-stream/index.html"><span class="identifier">JsonStream</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
-</tr>
-</tbody>
-</table>
-</BODY>
-</HTML>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>Stackframe</title>
+<link href="../../../../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script><script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script><link href="../../../styles/style.css" rel="Stylesheet"><link href="../../../styles/logo-styles.css" rel="Stylesheet"><link href="../../../styles/jetbrains-mono.css" rel="Stylesheet"><link href="../../../styles/main.css" rel="Stylesheet"><script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script><script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script><script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script><script type="text/javascript" src="../../../scripts/main.js" async="async"></script>  </head>
+  <body>
+    <div id="container">
+      <div id="leftColumn"><a href="../../../index.html">
+          <div id="logo"></div>
+        </a>
+        <div id="paneSearch"></div>
+        <div id="sideMenu"></div>
+      </div>
+      <div id="main">
+        <div id="leftToggler"><span class="icon-toggler"></span></div>
+<script type="text/javascript" src="../../../scripts/main.js"></script>        <div class="main-content" id="content" pageIds="bugsnag-android-core::com.bugsnag.android/Stackframe///PointingToDeclaration//-1317841657">
+          <div class="navigation-wrapper" id="navigation-wrapper">
+            <div class="breadcrumbs"><a href="../../../index.html">bugsnag-android-core</a>/<a href="../index.html">com.bugsnag.android</a>/<a href="index.html">Stackframe</a></div>
+            <div class="pull-right d-flex">
+              <div id="searchBar"></div>
+            </div>
+          </div>
+          <div class="cover ">
+            <h1 class="cover"><span>Stackframe</span></h1>
+            <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">class <a href="index.html">Stackframe</a> : <a href="../-json-stream/-streamable/index.html">JsonStream.Streamable</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><p class="paragraph">Represents a single stackframe from a <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-throwable/index.html">Throwable</a></p></div></div>
+          </div>
+          <div class="tabbedcontent">
+            <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="Constructors">Constructors</button><button class="section-tab" data-togglable="Functions">Functions</button><button class="section-tab" data-togglable="Properties">Properties</button></div>
+            <div class="tabs-section-body">
+              <h2 class="tabbedcontent">Constructors</h2>
+              <div class="table" data-togglable="Constructors"><a data-name="381864883%2FConstructors%2F-1317841657" anchor-label="Stackframe" id="381864883%2FConstructors%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue TabbedContent">
+                    <div class=""><span class="inline-flex"><a href="-stackframe.html">Stackframe</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="381864883%2FConstructors%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">fun <a href="-stackframe.html">Stackframe</a>(nativeFrame: <a href="../-native-stackframe/index.html">NativeStackframe</a>)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <h2 class="">Functions</h2>
+              <div class="table" data-togglable="Functions"><a data-name="900397553%2FFunctions%2F-1317841657" anchor-label="toStream" id="900397553%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="to-stream.html">toStream</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="900397553%2FFunctions%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open override fun <a href="to-stream.html">toStream</a>(writer: <a href="../-json-stream/index.html">JsonStream</a>)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <h2 class="">Properties</h2>
+              <div class="table" data-togglable="Properties"><a data-name="-2028345876%2FProperties%2F-1317841657" anchor-label="code" id="-2028345876%2FProperties%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="code.html">code</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2028345876%2FProperties%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><a data-name="-2028345876%2FProperties%2F-1317841657" anchor-label="code" id="-2028345876%2FProperties%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="symbol monospace">var <a href="code.html">code</a>: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html">Map</a>&lt;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>, <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>?&gt;?<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="-2028345876%2FProperties%2F-1317841657" anchor-label="code" id="-2028345876%2FProperties%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Lines of the code surrounding the frame, where the lineNumber is the key (React Native only)</div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="155465178%2FProperties%2F-1317841657" anchor-label="columnNumber" id="155465178%2FProperties%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="column-number.html">columnNumber</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="155465178%2FProperties%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><a data-name="155465178%2FProperties%2F-1317841657" anchor-label="columnNumber" id="155465178%2FProperties%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="symbol monospace">var <a href="column-number.html">columnNumber</a>: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-number/index.html">Number</a>?<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="155465178%2FProperties%2F-1317841657" anchor-label="columnNumber" id="155465178%2FProperties%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>The column number of the frame (React Native only)</div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="682356029%2FProperties%2F-1317841657" anchor-label="file" id="682356029%2FProperties%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="file.html">file</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="682356029%2FProperties%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><a data-name="682356029%2FProperties%2F-1317841657" anchor-label="file" id="682356029%2FProperties%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="symbol monospace">var <a href="file.html">file</a>: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>?<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="682356029%2FProperties%2F-1317841657" anchor-label="file" id="682356029%2FProperties%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>The location of the source file</div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-334199283%2FProperties%2F-1317841657" anchor-label="inProject" id="-334199283%2FProperties%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="in-project.html">inProject</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-334199283%2FProperties%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><a data-name="-334199283%2FProperties%2F-1317841657" anchor-label="inProject" id="-334199283%2FProperties%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="symbol monospace">var <a href="in-project.html">inProject</a>: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a>?<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="-334199283%2FProperties%2F-1317841657" anchor-label="inProject" id="-334199283%2FProperties%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Whether the package is considered to be in your project for the purposes of grouping and readability on the Bugsnag dashboard.</div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="487978108%2FProperties%2F-1317841657" anchor-label="lineNumber" id="487978108%2FProperties%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="line-number.html">lineNumber</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="487978108%2FProperties%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><a data-name="487978108%2FProperties%2F-1317841657" anchor-label="lineNumber" id="487978108%2FProperties%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="symbol monospace">var <a href="line-number.html">lineNumber</a>: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-number/index.html">Number</a>?<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="487978108%2FProperties%2F-1317841657" anchor-label="lineNumber" id="487978108%2FProperties%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>The line number within the source file this stackframe refers to</div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="73879160%2FProperties%2F-1317841657" anchor-label="method" id="73879160%2FProperties%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="method.html">method</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="73879160%2FProperties%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><a data-name="73879160%2FProperties%2F-1317841657" anchor-label="method" id="73879160%2FProperties%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="symbol monospace">var <a href="method.html">method</a>: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>?<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="73879160%2FProperties%2F-1317841657" anchor-label="method" id="73879160%2FProperties%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>The name of the method that was being executed</div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1566516543%2FProperties%2F-1317841657" anchor-label="type" id="1566516543%2FProperties%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="type.html">type</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1566516543%2FProperties%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><a data-name="1566516543%2FProperties%2F-1317841657" anchor-label="type" id="1566516543%2FProperties%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="symbol monospace">var <a href="type.html">type</a>: <a href="../-error-type/index.html">ErrorType</a>? = null<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="1566516543%2FProperties%2F-1317841657" anchor-label="type" id="1566516543%2FProperties%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>The type of the error</div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer"><span class="go-to-top-icon"><a href="#content"></a></span><span>© 2021 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span></div>
+      </div>
+    </div>
+  </body>
+</html>
+
