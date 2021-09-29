@@ -131,6 +131,7 @@ public class ClientFacadeTest {
 
         // required fields for generating an event
         when(metadataState.getMetadata()).thenReturn(new Metadata());
+        when(immutableConfig.getApiKey()).thenReturn("api-key");
         when(immutableConfig.getLogger()).thenReturn(logger);
         when(immutableConfig.getSendThreads()).thenReturn(ThreadSendPolicy.ALWAYS);
 
