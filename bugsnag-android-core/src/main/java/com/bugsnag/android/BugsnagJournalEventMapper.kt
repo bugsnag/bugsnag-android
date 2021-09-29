@@ -54,6 +54,9 @@ internal class BugsnagJournalEventMapper(
             .map(this::sanitizeBreadcrumbMap)
             .map { Breadcrumb(BreadcrumbInternal(it), logger) }
         event.breadcrumbs.addAll(crumbs)
+
+        // populate context
+        event.context = map["context"] as? String
         return event
     }
 

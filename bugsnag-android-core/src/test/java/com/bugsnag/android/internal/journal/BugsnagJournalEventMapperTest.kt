@@ -2,6 +2,7 @@ package com.bugsnag.android.internal.journal
 
 import com.bugsnag.android.BreadcrumbType
 import com.bugsnag.android.BugsnagJournalEventMapper
+import com.bugsnag.android.EventInternal
 import com.bugsnag.android.NoopLogger
 import com.bugsnag.android.internal.DateUtils
 import org.junit.Assert.assertEquals
@@ -13,6 +14,7 @@ import org.junit.Test
 class BugsnagJournalEventMapperTest {
 
     private lateinit var journalMap: Map<String, Any?>
+    private lateinit var minimalJournalMap: Map<String, Any?>
     private lateinit var fooSection: Map<String, Any?>
     private lateinit var appSection: Map<String, Any?>
 
@@ -48,7 +50,7 @@ class BugsnagJournalEventMapperTest {
                 "timestamp" to "2021-09-28T10:31:10.856Z"
             )
         )
-        journalMap = mapOf(
+        minimalJournalMap = mapOf(
             "apiKey" to "my-api-key",
             "user" to mapOf(
                 "id" to "123",
@@ -61,6 +63,7 @@ class BugsnagJournalEventMapperTest {
             ),
             "breadcrumbs" to breadcrumbs
         )
+        journalMap = minimalJournalMap + ("context" to "ExampleActivity")
     }
 
     @Test
@@ -69,12 +72,38 @@ class BugsnagJournalEventMapperTest {
         assertNull(mapper.convertToEvent(emptyMap()))
     }
 
+    /**
+     * Validates that an event that omits non-mandatory fields such as
+     * context/session is deserialized.
+     */
+    @Test
+    fun populatedMinimalEvent() {
+        val mapper = BugsnagJournalEventMapper(NoopLogger)
+        val event = mapper.convertToEvent(minimalJournalMap)
+        checkNotNull(event)
+        validateMandatoryEventFields(event)
+
+        // context/session
+        assertNull(event.context)
+        assertNull(event.session)
+    }
+
+    /**
+     * Validates that an event containing non-mandatory fields such as
+     * context/session is deserialized.
+     */
     @Test
     fun populatedEvent() {
         val mapper = BugsnagJournalEventMapper(NoopLogger)
         val event = mapper.convertToEvent(journalMap)
         checkNotNull(event)
+        validateMandatoryEventFields(event)
 
+        // context
+        assertEquals("ExampleActivity", event.context)
+    }
+
+    private fun validateMandatoryEventFields(event: EventInternal) {
         // user
         val user = event.getUser()
         assertNotNull(user)
