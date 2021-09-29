@@ -64,6 +64,12 @@ internal class BugsnagJournalEventMapper(
         // populate device
         val deviceMap: MutableMap<String, Any?> = map.readJournalEntry("device")
         event.device = DeviceWithState(deviceMap)
+
+        // populate session
+        val sessionMap = map["session"] as? Map<String, Any?>
+        sessionMap?.let {
+            event.session = Session(it, logger)
+        }
         return event
     }
 

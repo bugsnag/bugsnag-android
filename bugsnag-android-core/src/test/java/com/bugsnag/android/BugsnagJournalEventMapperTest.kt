@@ -1,9 +1,5 @@
-package com.bugsnag.android.internal.journal
+package com.bugsnag.android
 
-import com.bugsnag.android.BreadcrumbType
-import com.bugsnag.android.BugsnagJournalEventMapper
-import com.bugsnag.android.EventInternal
-import com.bugsnag.android.NoopLogger
 import com.bugsnag.android.internal.DateUtils
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
@@ -97,7 +93,17 @@ class BugsnagJournalEventMapperTest {
             "app" to app,
             "device" to device
         )
-        journalMap = minimalJournalMap + ("context" to "ExampleActivity")
+        journalMap = minimalJournalMap + mapOf(
+            "context" to "ExampleActivity",
+            "session" to mapOf(
+                "startedAt" to "2021-09-28T10:31:09.620Z",
+                "id" to "b4a03b1b-e0dc-4bed-81e8-cb9e9f2ed825",
+                "events" to mapOf(
+                    "unhandled" to 1,
+                    "handled" to 2
+                )
+            )
+        )
     }
 
     @Test
@@ -135,6 +141,13 @@ class BugsnagJournalEventMapperTest {
 
         // context
         assertEquals("ExampleActivity", event.context)
+
+        // session
+        val session = checkNotNull(event.session)
+        assertEquals("b4a03b1b-e0dc-4bed-81e8-cb9e9f2ed825", session.id)
+        assertEquals(DateUtils.fromIso8601("2021-09-28T10:31:09.620Z"), session.startedAt)
+        assertEquals(1, session.unhandledCount)
+        assertEquals(2, session.handledCount)
     }
 
     private fun validateMandatoryEventFields(event: EventInternal) {

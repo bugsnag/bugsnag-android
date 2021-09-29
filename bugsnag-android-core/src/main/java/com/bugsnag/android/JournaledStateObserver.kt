@@ -98,13 +98,14 @@ internal class JournaledStateObserver(val client: Client, val journal: BugsnagJo
         val appData = appDataCollector.generateAppWithState()
         val deviceDataCollector = client.getDeviceDataCollector()
         val deviceData = deviceDataCollector.generateDeviceWithState(Date().time)
+        val device = deviceData.toJournalSection().filter { it.key != "time" }
 
         journal.addCommands(
             Pair(JournalKeys.pathApiKey, event.apiKey),
             Pair(JournalKeys.pathContext, client.context),
             Pair(JournalKeys.pathApp, appData.toJournalSection()),
             Pair(JournalKeys.pathMetadataApp, appDataCollector.getAppDataMetadata()),
-            Pair(JournalKeys.pathDevice, deviceData.toJournalSection()),
+            Pair(JournalKeys.pathDevice, device),
             Pair(JournalKeys.pathMetadataDevice, deviceDataCollector.getDeviceMetadata()),
             Pair(JournalKeys.pathUser, client.getUser().toJournalSection())
         )
