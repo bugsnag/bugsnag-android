@@ -2,10 +2,10 @@
 
 ## 5.14.0 (2021-09-29)
 
-* Capture and report Thread.state for Android Runtime threads
-  [#1367](https://github.com/bugsnag/bugsnag-android/pull/1367)
+### Enhancements 
 
-* Capture and report thread id, name and state for native threads in an NDK crash
+* Capture and report thread state (running, sleeping, etc.) for Android Runtime and Native threads
+  [#1367](https://github.com/bugsnag/bugsnag-android/pull/1367)
   [#1390](https://github.com/bugsnag/bugsnag-android/pull/1390)
 
 ## 5.13.0 (2021-09-22)
