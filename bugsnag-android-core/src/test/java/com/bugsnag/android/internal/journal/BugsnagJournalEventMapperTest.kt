@@ -5,9 +5,11 @@ import com.bugsnag.android.BugsnagJournalEventMapper
 import com.bugsnag.android.EventInternal
 import com.bugsnag.android.NoopLogger
 import com.bugsnag.android.internal.DateUtils
+import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -50,6 +52,21 @@ class BugsnagJournalEventMapperTest {
                 "timestamp" to "2021-09-28T10:31:10.856Z"
             )
         )
+        val device = mapOf(
+            "orientation" to "portrait",
+            "jailbroken" to true,
+            "locale" to "en_US",
+            "osName" to "android",
+            "manufacturer" to "Google",
+            "cpuAbi" to arrayOf("x86"),
+            "osVersion" to "8.0.0",
+            "model" to "Android SDK built for x86",
+            "id" to "8b105fd3-88bc-4a31-8982-b725d1162d86",
+            "runtimeVersions" to mapOf(
+                "osBuild" to "sdk_gphone_x86-userdebug 8.0.0 OSR1.180418.026 6741039 dev-keys",
+                "androidApiLevel" to 26
+            )
+        )
         minimalJournalMap = mapOf(
             "apiKey" to "my-api-key",
             "user" to mapOf(
@@ -61,7 +78,8 @@ class BugsnagJournalEventMapperTest {
                 "app" to appSection,
                 "foo" to fooSection
             ),
-            "breadcrumbs" to breadcrumbs
+            "breadcrumbs" to breadcrumbs,
+            "device" to device
         )
         journalMap = minimalJournalMap + ("context" to "ExampleActivity")
     }
@@ -135,5 +153,22 @@ class BugsnagJournalEventMapperTest {
             )
             assertEquals(expectedMetadata, metadata)
         }
+
+        // device
+        val device = checkNotNull(event.device)
+        assertEquals("portrait", device.orientation)
+        assertTrue(device.jailbroken as Boolean)
+        assertEquals(
+            "sdk_gphone_x86-userdebug 8.0.0 OSR1.180418.026 6741039 dev-keys",
+            device.runtimeVersions?.get("osBuild") as String
+        )
+        assertEquals(26, device.runtimeVersions?.get("androidApiLevel") as Int)
+        assertEquals("en_US", device.locale)
+        assertEquals("android", device.osName)
+        assertEquals("Google", device.manufacturer)
+        assertArrayEquals(arrayOf("x86"), device.cpuAbi)
+        assertEquals("8.0.0", device.osVersion)
+        assertEquals("Android SDK built for x86", device.model)
+        assertEquals("8b105fd3-88bc-4a31-8982-b725d1162d86", device.id)
     }
 }
