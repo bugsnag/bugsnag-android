@@ -7,6 +7,7 @@ import com.bugsnag.android.NoopLogger
 import com.bugsnag.android.internal.DateUtils
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -52,6 +53,20 @@ class BugsnagJournalEventMapperTest {
                 "timestamp" to "2021-09-28T10:31:10.856Z"
             )
         )
+        val app = mapOf(
+            "duration" to 28,
+            "durationInForeground" to 5,
+            "inForeground" to true,
+            "isLaunching" to false,
+            "releaseStage" to "development",
+            "binaryArch" to "x86",
+            "id" to "com.example.foo",
+            "type" to "android",
+            "version" to "1.0",
+            "versionCode" to 1,
+            "buildUuid" to "123",
+            "codeBundleId" to "456"
+        )
         val device = mapOf(
             "orientation" to "portrait",
             "jailbroken" to true,
@@ -79,6 +94,7 @@ class BugsnagJournalEventMapperTest {
                 "foo" to fooSection
             ),
             "breadcrumbs" to breadcrumbs,
+            "app" to app,
             "device" to device
         )
         journalMap = minimalJournalMap + ("context" to "ExampleActivity")
@@ -153,6 +169,21 @@ class BugsnagJournalEventMapperTest {
             )
             assertEquals(expectedMetadata, metadata)
         }
+
+        // app
+        val app = checkNotNull(event.app)
+        assertEquals("x86", app.binaryArch)
+        assertEquals("com.example.foo", app.id)
+        assertEquals("development", app.releaseStage)
+        assertEquals("1.0", app.version)
+        assertEquals("456", app.codeBundleId)
+        assertEquals("123", app.buildUuid)
+        assertEquals("android", app.type)
+        assertEquals(1, app.versionCode)
+        assertEquals(28, app.duration)
+        assertEquals(5, app.durationInForeground)
+        assertTrue(app.inForeground as Boolean)
+        assertFalse(app.isLaunching as Boolean)
 
         // device
         val device = checkNotNull(event.device)

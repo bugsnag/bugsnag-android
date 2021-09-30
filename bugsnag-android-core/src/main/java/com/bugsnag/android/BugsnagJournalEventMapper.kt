@@ -58,6 +58,9 @@ internal class BugsnagJournalEventMapper(
         // populate context
         event.context = map["context"] as? String
 
+        // populate app
+        val appMap: MutableMap<String, Any?> = map.readJournalEntry("app")
+        event.app = AppWithState(appMap)
         // populate device
         val deviceMap: MutableMap<String, Any?> = map.readJournalEntry("device")
         event.device = DeviceWithState(deviceMap)

@@ -1,10 +1,10 @@
 {
   "binaryArch": "x86",
-  "codeBundleId": "foo-99",
   "id": "com.example.foo",
   "releaseStage": "test-stage",
-  "type": "ReactNative",
   "version": "1.2.3",
+  "codeBundleId": "foo-99",
+  "type": "ReactNative",
   "versionCode": 55,
   "duration": 0,
   "durationInForeground": 0,
