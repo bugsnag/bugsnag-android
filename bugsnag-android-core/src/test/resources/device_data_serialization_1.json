@@ -2,9 +2,6 @@
   "cpuAbi": [
     "armeabi-v7a"
   ],
-  "jailbroken": false,
-  "id": "123",
-  "locale": "en_GB",
   "manufacturer": "samsung",
   "model": "s7",
   "osName": "android",
@@ -14,6 +11,9 @@
     "osBuild": "bulldog"
   },
   "totalMemory": 502934020442,
+  "locale": "en_GB",
+  "id": "123",
+  "jailbroken": false,
   "freeDisk": 120935100007,
   "freeMemory": 2234092234234,
   "orientation": "landscape",
