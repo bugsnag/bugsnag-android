@@ -9,17 +9,35 @@ import java.util.Date
  * attached to a crash to help diagnose what events lead to the error.
  */
 internal class BreadcrumbInternal internal constructor(
-    @JvmField var message: String,
-    @JvmField var type: BreadcrumbType,
-    @JvmField var metadata: MutableMap<String, Any?>?,
-    @JvmField val timestamp: Date = Date()
+    data: MutableMap<String, Any?> = mutableMapOf()
 ) : JsonStream.Streamable { // JvmField allows direct field access optimizations
+
+    private val map: MutableMap<String, Any?> = data.withDefault { null }
+
+    val timestamp: Date by map
+    var metadata: MutableMap<String, Any?>? by map
+    var type: BreadcrumbType by map
+    var message: String by map
 
     internal constructor(message: String) : this(
         message,
         BreadcrumbType.MANUAL,
         mutableMapOf(),
         Date()
+    )
+
+    internal constructor(
+        message: String,
+        type: BreadcrumbType,
+        metadata: MutableMap<String, Any?>?,
+        timestamp: Date = Date()
+    ) : this(
+        mutableMapOf(
+            "message" to message,
+            "type" to type,
+            "timestamp" to timestamp,
+            "metadata" to metadata
+        )
     )
 
     @Throws(IOException::class)

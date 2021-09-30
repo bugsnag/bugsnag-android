@@ -7,7 +7,6 @@ import com.bugsnag.android.internal.StateObserver;
 import com.bugsnag.android.internal.dag.ConfigModule;
 import com.bugsnag.android.internal.dag.ContextModule;
 import com.bugsnag.android.internal.dag.SystemServiceModule;
-import com.bugsnag.android.internal.journal.BugsnagJournalEventMapper;
 
 import android.app.Application;
 import android.content.Context;

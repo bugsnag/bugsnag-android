@@ -16,9 +16,13 @@ public class Breadcrumb implements JsonStream.Streamable {
     final BreadcrumbInternal impl;
     private final Logger logger;
 
-    Breadcrumb(@NonNull String message, @NonNull Logger logger) {
-        this.impl = new BreadcrumbInternal(message);
+    Breadcrumb(@NonNull BreadcrumbInternal impl, @NonNull Logger logger) {
+        this.impl = impl;
         this.logger = logger;
+    }
+
+    Breadcrumb(@NonNull String message, @NonNull Logger logger) {
+        this(new BreadcrumbInternal(message), logger);
     }
 
     Breadcrumb(@NonNull String message,
@@ -26,8 +30,7 @@ public class Breadcrumb implements JsonStream.Streamable {
                @Nullable Map<String, Object> metadata,
                @NonNull Date timestamp,
                @NonNull Logger logger) {
-        this.impl = new BreadcrumbInternal(message, type, metadata, timestamp);
-        this.logger = logger;
+        this(new BreadcrumbInternal(message, type, metadata, timestamp), logger);
     }
 
     private void logNull(String property) {
@@ -39,7 +42,7 @@ public class Breadcrumb implements JsonStream.Streamable {
      */
     public void setMessage(@NonNull String message) {
         if (message != null) {
-            impl.message = message;
+            impl.setMessage(message);
         } else {
             logNull("message");
         }
@@ -50,7 +53,7 @@ public class Breadcrumb implements JsonStream.Streamable {
      */
     @NonNull
     public String getMessage() {
-        return impl.message;
+        return impl.getMessage();
     }
 
     /**
@@ -59,7 +62,7 @@ public class Breadcrumb implements JsonStream.Streamable {
      */
     public void setType(@NonNull BreadcrumbType type) {
         if (type != null) {
-            impl.type = type;
+            impl.setType(type);
         } else {
             logNull("type");
         }
@@ -71,14 +74,14 @@ public class Breadcrumb implements JsonStream.Streamable {
      */
     @NonNull
     public BreadcrumbType getType() {
-        return impl.type;
+        return impl.getType();
     }
 
     /**
      * Sets diagnostic data relating to the breadcrumb
      */
     public void setMetadata(@Nullable Map<String, Object> metadata) {
-        impl.metadata = metadata;
+        impl.setMetadata(metadata);
     }
 
     /**
@@ -86,7 +89,7 @@ public class Breadcrumb implements JsonStream.Streamable {
      */
     @Nullable
     public Map<String, Object> getMetadata() {
-        return impl.metadata;
+        return impl.getMetadata();
     }
 
     /**
@@ -94,12 +97,12 @@ public class Breadcrumb implements JsonStream.Streamable {
      */
     @NonNull
     public Date getTimestamp() {
-        return impl.timestamp;
+        return impl.getTimestamp();
     }
 
     @NonNull
     String getStringTimestamp() {
-        return DateUtils.toIso8601(impl.timestamp);
+        return DateUtils.toIso8601(impl.getTimestamp());
     }
 
     @Override
