@@ -1,315 +1,702 @@
-<HTML>
-<HEAD>
-<meta charset="UTF-8">
-<title>com.bugsnag.android - bugsnag-android-core</title>
-<link rel="stylesheet" href="../../style.css">
-</HEAD>
-<BODY>
-<a href="../index.html">bugsnag-android-core</a>&nbsp;/&nbsp;<a href="./index.html">com.bugsnag.android</a><br/>
-<br/>
-<h2>Package com.bugsnag.android</h2>
-<h3>Types</h3>
-<table>
-<tbody>
-<tr>
-<td>
-<h4><a href="-app/index.html">App</a></h4>
-</td>
-<td>
-<p>Stateless information set by the notifier about your app can be found on this class. These values
-can be accessed and amended if necessary.</p>
-<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">App</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Streamable</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-app-with-state/index.html">AppWithState</a></h4>
-</td>
-<td>
-<p>Stateful information set by the notifier about your app can be found on this class. These values
-can be accessed and amended if necessary.</p>
-<code><span class="keyword">class </span><span class="identifier">AppWithState</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-app/index.html"><span class="identifier">App</span></a></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-breadcrumb/index.html">Breadcrumb</a></h4>
-</td>
-<td>
-<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">Breadcrumb</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Streamable</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-breadcrumb-type/index.html">BreadcrumbType</a></h4>
-</td>
-<td>
-<p>Recognized types of breadcrumbs</p>
-<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">BreadcrumbType</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-bugsnag/index.html">Bugsnag</a></h4>
-</td>
-<td>
-<p>Static access to a Bugsnag Client, the easiest way to use Bugsnag in your Android app. For example: </p>
-<code><span class="keyword">class </span><span class="identifier">Bugsnag</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-client/index.html">Client</a></h4>
-</td>
-<td>
-<p>A Bugsnag Client instance allows you to use Bugsnag in your Android app. Typically you'd instead use the static access provided in the Bugsnag class. </p>
-<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">Client</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">MetadataAware</span><span class="symbol">, </span><span class="identifier">CallbackAware</span><span class="symbol">, </span><span class="identifier">UserAware</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-configuration/index.html">Configuration</a></h4>
-</td>
-<td>
-<p>User-specified configuration storage object, contains information specified at the client level, api-key and endpoint configuration.</p>
-<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">Configuration</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">CallbackAware</span><span class="symbol">, </span><span class="identifier">MetadataAware</span><span class="symbol">, </span><span class="identifier">UserAware</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-delivery/index.html">Delivery</a></h4>
-</td>
-<td>
-<p>Implementations of this interface deliver Error Reports and Sessions captured to the Bugsnag API.</p>
-<code><span class="keyword">interface </span><span class="identifier">Delivery</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-delivery-params/index.html">DeliveryParams</a></h4>
-</td>
-<td>
-<p>The parameters which should be used to deliver an Event/Session.</p>
-<code><span class="keyword">class </span><span class="identifier">DeliveryParams</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-delivery-status/index.html">DeliveryStatus</a></h4>
-</td>
-<td>
-<p>Return value for the status of a payload delivery.</p>
-<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">DeliveryStatus</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-device/index.html">Device</a></h4>
-</td>
-<td>
-<p>Stateless information set by the notifier about the device on which the event occurred can be
-found on this class. These values can be accessed and amended if necessary.</p>
-<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">Device</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Streamable</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-device-with-state/index.html">DeviceWithState</a></h4>
-</td>
-<td>
-<p>Stateful information set by the notifier about the device on which the event occurred can be
-found on this class. These values can be accessed and amended if necessary.</p>
-<code><span class="keyword">class </span><span class="identifier">DeviceWithState</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-device/index.html"><span class="identifier">Device</span></a></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-endpoint-configuration/index.html">EndpointConfiguration</a></h4>
-</td>
-<td>
-<p>Set the endpoints to send data to. By default we'll send error reports to
-https://notify.bugsnag.com, and sessions to https://sessions.bugsnag.com, but you can
-override this if you are using Bugsnag Enterprise to point to your own Bugsnag endpoints.</p>
-<code><span class="keyword">class </span><span class="identifier">EndpointConfiguration</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-error/index.html">Error</a></h4>
-</td>
-<td>
-<p>An Error represents information extracted from a <code><a href="https://docs.oracle.com/javase/6/docs/api/java/lang/Throwable.html">Throwable</a></code>.</p>
-<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">Error</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Streamable</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-error-type/index.html">ErrorType</a></h4>
-</td>
-<td>
-<p>Represents the type of error captured</p>
-<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">ErrorType</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-error-types/index.html">ErrorTypes</a></h4>
-</td>
-<td>
-<code><span class="keyword">class </span><span class="identifier">ErrorTypes</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-event/index.html">Event</a></h4>
-</td>
-<td>
-<p>An Event object represents a Throwable captured by Bugsnag and is available as a parameter on an <code><a href="-on-error-callback/index.html">OnErrorCallback</a></code>, where individual properties can be mutated before an error report is sent to Bugsnag's API.</p>
-<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">Event</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Streamable</span><span class="symbol">, </span><span class="identifier">MetadataAware</span><span class="symbol">, </span><span class="identifier">UserAware</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-event-payload/index.html">EventPayload</a></h4>
-</td>
-<td>
-<p>An error report payload.</p>
-<code><span class="keyword">class </span><span class="identifier">EventPayload</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Streamable</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-json-stream/index.html">JsonStream</a></h4>
-</td>
-<td>
-<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">JsonStream</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">JsonWriter</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-last-run-info/index.html">LastRunInfo</a></h4>
-</td>
-<td>
-<p>Provides information about the last launch of the application, if there was one.</p>
-<code><span class="keyword">class </span><span class="identifier">LastRunInfo</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-logger/index.html">Logger</a></h4>
-</td>
-<td>
-<p>Logs internal messages from within the bugsnag notifier.</p>
-<code><span class="keyword">interface </span><span class="identifier">Logger</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-native-interface/index.html">NativeInterface</a></h4>
-</td>
-<td>
-<p>Used as the entry point for native code to allow proguard to obfuscate other areas if needed</p>
-<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">NativeInterface</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-native-stackframe/index.html">NativeStackframe</a></h4>
-</td>
-<td>
-<p>Represents a single native stackframe</p>
-<code><span class="keyword">class </span><span class="identifier">NativeStackframe</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Streamable</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-notifier/index.html">Notifier</a></h4>
-</td>
-<td>
-<p>Information about this library, including name and version.</p>
-<code><span class="keyword">class </span><span class="identifier">Notifier</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Streamable</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-on-breadcrumb-callback/index.html">OnBreadcrumbCallback</a></h4>
-</td>
-<td>
-<p>Add a "on breadcrumb" callback, to execute code before every breadcrumb captured by Bugsnag. </p>
-<code><span class="keyword">interface </span><span class="identifier">OnBreadcrumbCallback</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-on-error-callback/index.html">OnErrorCallback</a></h4>
-</td>
-<td>
-<p>A callback to be run before error reports are sent to Bugsnag. </p>
-<code><span class="keyword">interface </span><span class="identifier">OnErrorCallback</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-on-session-callback/index.html">OnSessionCallback</a></h4>
-</td>
-<td>
-<p>A callback to be run before sessions are sent to Bugsnag. </p>
-<code><span class="keyword">interface </span><span class="identifier">OnSessionCallback</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-plugin/index.html">Plugin</a></h4>
-</td>
-<td>
-<p>A plugin allows for additional functionality to be added to the Bugsnag SDK.</p>
-<code><span class="keyword">interface </span><span class="identifier">Plugin</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-session/index.html">Session</a></h4>
-</td>
-<td>
-<p>Represents a contiguous session in an application.</p>
-<code><span class="keyword">class </span><span class="identifier">Session</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Streamable</span><span class="symbol">, </span><span class="identifier">UserAware</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-severity/index.html">Severity</a></h4>
-</td>
-<td>
-<p>The severity of an Event, one of "error", "warning" or "info".</p>
-<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">Severity</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Streamable</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-stackframe/index.html">Stackframe</a></h4>
-</td>
-<td>
-<p>Represents a single stackframe from a <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-throwable/index.html">Throwable</a></p>
-<code><span class="keyword">class </span><span class="identifier">Stackframe</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Streamable</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-state-event/index.html">StateEvent</a></h4>
-</td>
-<td>
-<code><span class="keyword">sealed</span> <span class="keyword">class </span><span class="identifier">StateEvent</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-thread/index.html">Thread</a></h4>
-</td>
-<td>
-<p>A representation of a thread recorded in an <code><a href="-event/index.html">Event</a></code></p>
-<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">Thread</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Streamable</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-thread-internal/index.html">ThreadInternal</a></h4>
-</td>
-<td>
-<code><span class="keyword">class </span><span class="identifier">ThreadInternal</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Streamable</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-thread-send-policy/index.html">ThreadSendPolicy</a></h4>
-</td>
-<td>
-<p>Controls whether we should capture and serialize the state of all threads at the time
-of an error.</p>
-<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">ThreadSendPolicy</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-thread-type/index.html">ThreadType</a></h4>
-</td>
-<td>
-<p>Represents the type of thread captured</p>
-<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">ThreadType</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-user/index.html">User</a></h4>
-</td>
-<td>
-<p>Information about the current user of your application.</p>
-<code><span class="keyword">class </span><span class="identifier">User</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Streamable</span></code></td>
-</tr>
-</tbody>
-</table>
-</BODY>
-</HTML>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>com.bugsnag.android</title>
+<link href="../../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../";</script><script type="text/javascript" src="../../scripts/sourceset_dependencies.js" async="async"></script><link href="../../styles/style.css" rel="Stylesheet"><link href="../../styles/logo-styles.css" rel="Stylesheet"><link href="../../styles/jetbrains-mono.css" rel="Stylesheet"><link href="../../styles/main.css" rel="Stylesheet"><script type="text/javascript" src="../../scripts/clipboard.js" async="async"></script><script type="text/javascript" src="../../scripts/navigation-loader.js" async="async"></script><script type="text/javascript" src="../../scripts/platform-content-handler.js" async="async"></script><script type="text/javascript" src="../../scripts/main.js" async="async"></script>  </head>
+  <body>
+    <div id="container">
+      <div id="leftColumn"><a href="../../index.html">
+          <div id="logo"></div>
+        </a>
+        <div id="paneSearch"></div>
+        <div id="sideMenu"></div>
+      </div>
+      <div id="main">
+        <div id="leftToggler"><span class="icon-toggler"></span></div>
+<script type="text/javascript" src="../../scripts/main.js"></script>        <div class="main-content" id="content" pageIds="bugsnag-android-core::com.bugsnag.android////PointingToDeclaration//-1317841657">
+          <div class="navigation-wrapper" id="navigation-wrapper">
+            <div class="breadcrumbs"><a href="../../index.html">bugsnag-android-core</a>/<a href="index.html">com.bugsnag.android</a></div>
+            <div class="pull-right d-flex">
+              <div id="searchBar"></div>
+            </div>
+          </div>
+          <div class="cover ">
+            <h1 class="cover"><span>Package com.</span><wbr></wbr><span>bugsnag.</span><wbr></wbr><span>android</span></h1>
+          </div>
+          <div class="tabbedcontent">
+            <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="Types">Types</button></div>
+            <div class="tabs-section-body">
+              <h2 class="">Types</h2>
+              <div class="table" data-togglable="Types"><a data-name="-1200678826%2FClasslikes%2F-1317841657" anchor-label="App" id="-1200678826%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-app/index.html">App</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1200678826%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open class <a href="-app/index.html">App</a> : <a href="-json-stream/-streamable/index.html">JsonStream.Streamable</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-1200678826%2FClasslikes%2F-1317841657" anchor-label="App" id="-1200678826%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="-1200678826%2FClasslikes%2F-1317841657" anchor-label="App" id="-1200678826%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Stateless information set by the notifier about your app can be found on this class.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="818911425%2FClasslikes%2F-1317841657" anchor-label="AppWithState" id="818911425%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-app-with-state/index.html">AppWithState</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="818911425%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">class <a href="-app-with-state/index.html">AppWithState</a>(binaryArch: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>?, id: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>?, releaseStage: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>?, version: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>?, codeBundleId: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>?, buildUuid: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>?, type: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>?, versionCode: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-number/index.html">Number</a>?, duration: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-number/index.html">Number</a>?, durationInForeground: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-number/index.html">Number</a>?, inForeground: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a>?, isLaunching: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a>?) : <a href="-app/index.html">App</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="818911425%2FClasslikes%2F-1317841657" anchor-label="AppWithState" id="818911425%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="818911425%2FClasslikes%2F-1317841657" anchor-label="AppWithState" id="818911425%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Stateful information set by the notifier about your app can be found on this class.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-921377880%2FClasslikes%2F-1317841657" anchor-label="Breadcrumb" id="-921377880%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-breadcrumb/index.html">Breadcrumb</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-921377880%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open class <a href="-breadcrumb/index.html">Breadcrumb</a> : <a href="-json-stream/-streamable/index.html">JsonStream.Streamable</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="483124750%2FClasslikes%2F-1317841657" anchor-label="BreadcrumbType" id="483124750%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-breadcrumb-type/index.html">BreadcrumbType</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="483124750%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">enum <a href="-breadcrumb-type/index.html">BreadcrumbType</a> : <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-enum/index.html">Enum</a>&lt;<a href="-breadcrumb-type/index.html">BreadcrumbType</a>&gt; <span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="483124750%2FClasslikes%2F-1317841657" anchor-label="BreadcrumbType" id="483124750%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="483124750%2FClasslikes%2F-1317841657" anchor-label="BreadcrumbType" id="483124750%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Recognized types of breadcrumbs</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-271697470%2FClasslikes%2F-1317841657" anchor-label="Bugsnag" id="-271697470%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-bugsnag/index.html">Bugsnag</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-271697470%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">class <a href="-bugsnag/index.html">Bugsnag</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-271697470%2FClasslikes%2F-1317841657" anchor-label="Bugsnag" id="-271697470%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="-271697470%2FClasslikes%2F-1317841657" anchor-label="Bugsnag" id="-271697470%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Static access to a Bugsnag Client, the easiest way to use Bugsnag in your Android app.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-2082519439%2FClasslikes%2F-1317841657" anchor-label="BugsnagThreadViolationListener" id="-2082519439%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-bugsnag-thread-violation-listener/index.html">BugsnagThreadViolationListener</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2082519439%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open class <a href="-bugsnag-thread-violation-listener/index.html">BugsnagThreadViolationListener</a> : <a href="https://developer.android.com/reference/kotlin/android/os/StrictMode.OnThreadViolationListener.html">StrictMode.OnThreadViolationListener</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-2082519439%2FClasslikes%2F-1317841657" anchor-label="BugsnagThreadViolationListener" id="-2082519439%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="-2082519439%2FClasslikes%2F-1317841657" anchor-label="BugsnagThreadViolationListener" id="-2082519439%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Sends an error report to Bugsnag for each StrictMode thread policy violation that occurs in your app.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1709977182%2FClasslikes%2F-1317841657" anchor-label="BugsnagVmViolationListener" id="1709977182%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-bugsnag-vm-violation-listener/index.html">BugsnagVmViolationListener</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1709977182%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open class <a href="-bugsnag-vm-violation-listener/index.html">BugsnagVmViolationListener</a> : <a href="https://developer.android.com/reference/kotlin/android/os/StrictMode.OnVmViolationListener.html">StrictMode.OnVmViolationListener</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="1709977182%2FClasslikes%2F-1317841657" anchor-label="BugsnagVmViolationListener" id="1709977182%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="1709977182%2FClasslikes%2F-1317841657" anchor-label="BugsnagVmViolationListener" id="1709977182%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Sends an error report to Bugsnag for each StrictMode VM policy violation that occurs in your app.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-992113184%2FClasslikes%2F-1317841657" anchor-label="Client" id="-992113184%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-client/index.html">Client</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-992113184%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open class <a href="-client/index.html">Client</a> : <span data-unresolved-link="com.bugsnag.android/MetadataAware///PointingToDeclaration/">MetadataAware</span>, <span data-unresolved-link="com.bugsnag.android/CallbackAware///PointingToDeclaration/">CallbackAware</span>, <span data-unresolved-link="com.bugsnag.android/UserAware///PointingToDeclaration/">UserAware</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-992113184%2FClasslikes%2F-1317841657" anchor-label="Client" id="-992113184%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="-992113184%2FClasslikes%2F-1317841657" anchor-label="Client" id="-992113184%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>A Bugsnag Client instance allows you to use Bugsnag in your Android app.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1623404639%2FClasslikes%2F-1317841657" anchor-label="Configuration" id="-1623404639%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-configuration/index.html">Configuration</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1623404639%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open class <a href="-configuration/index.html">Configuration</a> : <span data-unresolved-link="com.bugsnag.android/CallbackAware///PointingToDeclaration/">CallbackAware</span>, <span data-unresolved-link="com.bugsnag.android/MetadataAware///PointingToDeclaration/">MetadataAware</span>, <span data-unresolved-link="com.bugsnag.android/UserAware///PointingToDeclaration/">UserAware</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-1623404639%2FClasslikes%2F-1317841657" anchor-label="Configuration" id="-1623404639%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="-1623404639%2FClasslikes%2F-1317841657" anchor-label="Configuration" id="-1623404639%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>User-specified configuration storage object, contains information specified at the client level, api-key and endpoint configuration.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1861408599%2FClasslikes%2F-1317841657" anchor-label="Delivery" id="1861408599%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-delivery/index.html">Delivery</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1861408599%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">interface <a href="-delivery/index.html">Delivery</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="1861408599%2FClasslikes%2F-1317841657" anchor-label="Delivery" id="1861408599%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="1861408599%2FClasslikes%2F-1317841657" anchor-label="Delivery" id="1861408599%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Implementations of this interface deliver Error Reports and Sessions captured to the Bugsnag API.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="303203313%2FClasslikes%2F-1317841657" anchor-label="DeliveryParams" id="303203313%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-delivery-params/index.html">DeliveryParams</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="303203313%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">class <a href="-delivery-params/index.html">DeliveryParams</a>(endpoint: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>, headers: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html">Map</a>&lt;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>, <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>?&gt;)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="303203313%2FClasslikes%2F-1317841657" anchor-label="DeliveryParams" id="303203313%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="303203313%2FClasslikes%2F-1317841657" anchor-label="DeliveryParams" id="303203313%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>The parameters which should be used to deliver an Event/Session.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1230733061%2FClasslikes%2F-1317841657" anchor-label="DeliveryStatus" id="1230733061%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-delivery-status/index.html">DeliveryStatus</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1230733061%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">enum <a href="-delivery-status/index.html">DeliveryStatus</a> : <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-enum/index.html">Enum</a>&lt;<a href="-delivery-status/index.html">DeliveryStatus</a>&gt; <span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="1230733061%2FClasslikes%2F-1317841657" anchor-label="DeliveryStatus" id="1230733061%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="1230733061%2FClasslikes%2F-1317841657" anchor-label="DeliveryStatus" id="1230733061%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Return value for the status of a payload delivery.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="522765749%2FClasslikes%2F-1317841657" anchor-label="Device" id="522765749%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-device/index.html">Device</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="522765749%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open class <a href="-device/index.html">Device</a> : <a href="-json-stream/-streamable/index.html">JsonStream.Streamable</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="522765749%2FClasslikes%2F-1317841657" anchor-label="Device" id="522765749%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="522765749%2FClasslikes%2F-1317841657" anchor-label="Device" id="522765749%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Stateless information set by the notifier about the device on which the event occurred can be found on this class.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1830189502%2FClasslikes%2F-1317841657" anchor-label="DeviceWithState" id="-1830189502%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-device-with-state/index.html">DeviceWithState</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1830189502%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">class <a href="-device-with-state/index.html">DeviceWithState</a> : <a href="-device/index.html">Device</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-1830189502%2FClasslikes%2F-1317841657" anchor-label="DeviceWithState" id="-1830189502%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="-1830189502%2FClasslikes%2F-1317841657" anchor-label="DeviceWithState" id="-1830189502%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Stateful information set by the notifier about the device on which the event occurred can be found on this class.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1233484694%2FClasslikes%2F-1317841657" anchor-label="EndpointConfiguration" id="1233484694%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-endpoint-configuration/index.html">EndpointConfiguration</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1233484694%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">class <a href="-endpoint-configuration/index.html">EndpointConfiguration</a>(notify: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>, sessions: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="1233484694%2FClasslikes%2F-1317841657" anchor-label="EndpointConfiguration" id="1233484694%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="1233484694%2FClasslikes%2F-1317841657" anchor-label="EndpointConfiguration" id="1233484694%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Set the endpoints to send data to.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="237564111%2FClasslikes%2F-1317841657" anchor-label="Error" id="237564111%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-error/index.html">Error</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="237564111%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open class <a href="-error/index.html">Error</a> : <a href="-json-stream/-streamable/index.html">JsonStream.Streamable</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="237564111%2FClasslikes%2F-1317841657" anchor-label="Error" id="237564111%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="237564111%2FClasslikes%2F-1317841657" anchor-label="Error" id="237564111%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>An Error represents information extracted from a <a href="https://developer.android.com/reference/kotlin/java/lang/Throwable.html">Throwable</a>.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1899431861%2FClasslikes%2F-1317841657" anchor-label="ErrorType" id="1899431861%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-error-type/index.html">ErrorType</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1899431861%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">enum <a href="-error-type/index.html">ErrorType</a> : <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-enum/index.html">Enum</a>&lt;<a href="-error-type/index.html">ErrorType</a>&gt; <span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="1899431861%2FClasslikes%2F-1317841657" anchor-label="ErrorType" id="1899431861%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="1899431861%2FClasslikes%2F-1317841657" anchor-label="ErrorType" id="1899431861%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Represents the type of error captured</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1328272358%2FClasslikes%2F-1317841657" anchor-label="ErrorTypes" id="-1328272358%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-error-types/index.html">ErrorTypes</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1328272358%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">class <a href="-error-types/index.html">ErrorTypes</a>(anrs: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a>, ndkCrashes: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a>, unhandledExceptions: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a>, unhandledRejections: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a>)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1127004285%2FClasslikes%2F-1317841657" anchor-label="Event" id="1127004285%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-event/index.html">Event</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1127004285%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open class <a href="-event/index.html">Event</a> : <a href="-json-stream/-streamable/index.html">JsonStream.Streamable</a>, <span data-unresolved-link="com.bugsnag.android/MetadataAware///PointingToDeclaration/">MetadataAware</span>, <span data-unresolved-link="com.bugsnag.android/UserAware///PointingToDeclaration/">UserAware</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="1127004285%2FClasslikes%2F-1317841657" anchor-label="Event" id="1127004285%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="1127004285%2FClasslikes%2F-1317841657" anchor-label="Event" id="1127004285%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>An Event object represents a Throwable captured by Bugsnag and is available as a parameter on an <a href="-on-error-callback/index.html">OnErrorCallback</a>, where individual properties can be mutated before an error report is sent to Bugsnag's API.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1304009545%2FClasslikes%2F-1317841657" anchor-label="EventPayload" id="-1304009545%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-event-payload/index.html">EventPayload</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1304009545%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">class <a href="-event-payload/index.html">EventPayload</a> : <a href="-json-stream/-streamable/index.html">JsonStream.Streamable</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-1304009545%2FClasslikes%2F-1317841657" anchor-label="EventPayload" id="-1304009545%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="-1304009545%2FClasslikes%2F-1317841657" anchor-label="EventPayload" id="-1304009545%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>An error report payload.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="290891971%2FClasslikes%2F-1317841657" anchor-label="JsonStream" id="290891971%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-json-stream/index.html">JsonStream</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="290891971%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open class <a href="-json-stream/index.html">JsonStream</a> : <span data-unresolved-link="com.bugsnag.android/JsonWriter///PointingToDeclaration/">JsonWriter</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1354798164%2FClasslikes%2F-1317841657" anchor-label="LastRunInfo" id="1354798164%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-last-run-info/index.html">LastRunInfo</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1354798164%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">class <a href="-last-run-info/index.html">LastRunInfo</a>(consecutiveLaunchCrashes: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a>, crashed: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a>, crashedDuringLaunch: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a>)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="1354798164%2FClasslikes%2F-1317841657" anchor-label="LastRunInfo" id="1354798164%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="1354798164%2FClasslikes%2F-1317841657" anchor-label="LastRunInfo" id="1354798164%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Provides information about the last launch of the application, if there was one.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="176726971%2FClasslikes%2F-1317841657" anchor-label="Logger" id="176726971%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-logger/index.html">Logger</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="176726971%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">interface <a href="-logger/index.html">Logger</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="176726971%2FClasslikes%2F-1317841657" anchor-label="Logger" id="176726971%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="176726971%2FClasslikes%2F-1317841657" anchor-label="Logger" id="176726971%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Logs internal messages from within the bugsnag notifier.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1761292875%2FClasslikes%2F-1317841657" anchor-label="NativeInterface" id="-1761292875%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-native-interface/index.html">NativeInterface</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1761292875%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open class <a href="-native-interface/index.html">NativeInterface</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-1761292875%2FClasslikes%2F-1317841657" anchor-label="NativeInterface" id="-1761292875%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="-1761292875%2FClasslikes%2F-1317841657" anchor-label="NativeInterface" id="-1761292875%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Used as the entry point for native code to allow proguard to obfuscate other areas if needed</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1267099375%2FClasslikes%2F-1317841657" anchor-label="NativeStackframe" id="1267099375%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-native-stackframe/index.html">NativeStackframe</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1267099375%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">class <a href="-native-stackframe/index.html">NativeStackframe</a> : <a href="-json-stream/-streamable/index.html">JsonStream.Streamable</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="1267099375%2FClasslikes%2F-1317841657" anchor-label="NativeStackframe" id="1267099375%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="1267099375%2FClasslikes%2F-1317841657" anchor-label="NativeStackframe" id="1267099375%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Represents a single native stackframe</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1967151643%2FClasslikes%2F-1317841657" anchor-label="Notifier" id="-1967151643%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-notifier/index.html">Notifier</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1967151643%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">class <a href="-notifier/index.html">Notifier</a> <span>@<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-overloads/index.html">JvmOverloads</a>() </span>constructor(name: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>, version: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>, url: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>) : <a href="-json-stream/-streamable/index.html">JsonStream.Streamable</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-1967151643%2FClasslikes%2F-1317841657" anchor-label="Notifier" id="-1967151643%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="-1967151643%2FClasslikes%2F-1317841657" anchor-label="Notifier" id="-1967151643%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Information about this library, including name and version.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1582098948%2FClasslikes%2F-1317841657" anchor-label="OnBreadcrumbCallback" id="1582098948%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-on-breadcrumb-callback/index.html">OnBreadcrumbCallback</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1582098948%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">interface <a href="-on-breadcrumb-callback/index.html">OnBreadcrumbCallback</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="1582098948%2FClasslikes%2F-1317841657" anchor-label="OnBreadcrumbCallback" id="1582098948%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="1582098948%2FClasslikes%2F-1317841657" anchor-label="OnBreadcrumbCallback" id="1582098948%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Add a &quot;on breadcrumb&quot; callback, to execute code before every breadcrumb captured by Bugsnag.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1462467767%2FClasslikes%2F-1317841657" anchor-label="OnErrorCallback" id="-1462467767%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-on-error-callback/index.html">OnErrorCallback</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1462467767%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">interface <a href="-on-error-callback/index.html">OnErrorCallback</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-1462467767%2FClasslikes%2F-1317841657" anchor-label="OnErrorCallback" id="-1462467767%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="-1462467767%2FClasslikes%2F-1317841657" anchor-label="OnErrorCallback" id="-1462467767%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>A callback to be run before error reports are sent to Bugsnag.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1128040645%2FClasslikes%2F-1317841657" anchor-label="OnSessionCallback" id="-1128040645%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-on-session-callback/index.html">OnSessionCallback</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1128040645%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">interface <a href="-on-session-callback/index.html">OnSessionCallback</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-1128040645%2FClasslikes%2F-1317841657" anchor-label="OnSessionCallback" id="-1128040645%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="-1128040645%2FClasslikes%2F-1317841657" anchor-label="OnSessionCallback" id="-1128040645%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>A callback to be run before sessions are sent to Bugsnag.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="2086877048%2FClasslikes%2F-1317841657" anchor-label="Plugin" id="2086877048%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-plugin/index.html">Plugin</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2086877048%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">interface <a href="-plugin/index.html">Plugin</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="2086877048%2FClasslikes%2F-1317841657" anchor-label="Plugin" id="2086877048%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="2086877048%2FClasslikes%2F-1317841657" anchor-label="Plugin" id="2086877048%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>A plugin allows for additional functionality to be added to the Bugsnag SDK.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="802753153%2FClasslikes%2F-1317841657" anchor-label="Session" id="802753153%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-session/index.html">Session</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="802753153%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">class <a href="-session/index.html">Session</a> : <a href="-json-stream/-streamable/index.html">JsonStream.Streamable</a>, <span data-unresolved-link="com.bugsnag.android/UserAware///PointingToDeclaration/">UserAware</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="802753153%2FClasslikes%2F-1317841657" anchor-label="Session" id="802753153%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="802753153%2FClasslikes%2F-1317841657" anchor-label="Session" id="802753153%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Represents a contiguous session in an application.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="765635694%2FClasslikes%2F-1317841657" anchor-label="Severity" id="765635694%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-severity/index.html">Severity</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="765635694%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">enum <a href="-severity/index.html">Severity</a> : <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-enum/index.html">Enum</a>&lt;<a href="-severity/index.html">Severity</a>&gt; , <a href="-json-stream/-streamable/index.html">JsonStream.Streamable</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="765635694%2FClasslikes%2F-1317841657" anchor-label="Severity" id="765635694%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="765635694%2FClasslikes%2F-1317841657" anchor-label="Severity" id="765635694%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>The severity of an Event, one of &quot;error&quot;, &quot;warning&quot; or &quot;info&quot;.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-95053306%2FClasslikes%2F-1317841657" anchor-label="Stackframe" id="-95053306%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-stackframe/index.html">Stackframe</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-95053306%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">class <a href="-stackframe/index.html">Stackframe</a> : <a href="-json-stream/-streamable/index.html">JsonStream.Streamable</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-95053306%2FClasslikes%2F-1317841657" anchor-label="Stackframe" id="-95053306%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="-95053306%2FClasslikes%2F-1317841657" anchor-label="Stackframe" id="-95053306%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Represents a single stackframe from a <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-throwable/index.html">Throwable</a></div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="795059682%2FClasslikes%2F-1317841657" anchor-label="StateEvent" id="795059682%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-state-event/index.html">StateEvent</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="795059682%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">sealed class <a href="-state-event/index.html">StateEvent</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1833162623%2FClasslikes%2F-1317841657" anchor-label="Thread" id="-1833162623%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-thread/index.html">Thread</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1833162623%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open class <a href="-thread/index.html">Thread</a> : <a href="-json-stream/-streamable/index.html">JsonStream.Streamable</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-1833162623%2FClasslikes%2F-1317841657" anchor-label="Thread" id="-1833162623%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="-1833162623%2FClasslikes%2F-1317841657" anchor-label="Thread" id="-1833162623%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>A representation of a thread recorded in an <a href="-event/index.html">Event</a></div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="768782404%2FClasslikes%2F-1317841657" anchor-label="ThreadInternal" id="768782404%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-thread-internal/index.html">ThreadInternal</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="768782404%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">class <a href="-thread-internal/index.html">ThreadInternal</a> : <a href="-json-stream/-streamable/index.html">JsonStream.Streamable</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1880029895%2FClasslikes%2F-1317841657" anchor-label="ThreadSendPolicy" id="1880029895%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-thread-send-policy/index.html">ThreadSendPolicy</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1880029895%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">enum <a href="-thread-send-policy/index.html">ThreadSendPolicy</a> : <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-enum/index.html">Enum</a>&lt;<a href="-thread-send-policy/index.html">ThreadSendPolicy</a>&gt; <span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="1880029895%2FClasslikes%2F-1317841657" anchor-label="ThreadSendPolicy" id="1880029895%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="1880029895%2FClasslikes%2F-1317841657" anchor-label="ThreadSendPolicy" id="1880029895%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Controls whether we should capture and serialize the state of all threads at the time of an error.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-2061298073%2FClasslikes%2F-1317841657" anchor-label="ThreadType" id="-2061298073%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-thread-type/index.html">ThreadType</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2061298073%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">enum <a href="-thread-type/index.html">ThreadType</a> : <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-enum/index.html">Enum</a>&lt;<a href="-thread-type/index.html">ThreadType</a>&gt; <span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-2061298073%2FClasslikes%2F-1317841657" anchor-label="ThreadType" id="-2061298073%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="-2061298073%2FClasslikes%2F-1317841657" anchor-label="ThreadType" id="-2061298073%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Represents the type of thread captured</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-453372832%2FClasslikes%2F-1317841657" anchor-label="User" id="-453372832%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-user/index.html">User</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-453372832%2FClasslikes%2F-1317841657"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">class <a href="-user/index.html">User</a> : <a href="-json-stream/-streamable/index.html">JsonStream.Streamable</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-453372832%2FClasslikes%2F-1317841657" anchor-label="User" id="-453372832%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="-453372832%2FClasslikes%2F-1317841657" anchor-label="User" id="-453372832%2FClasslikes%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Information about the current user of your application.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer"><span class="go-to-top-icon"><a href="#content"></a></span><span>© 2021 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span></div>
+      </div>
+    </div>
+  </body>
+</html>
+
