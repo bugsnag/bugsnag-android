@@ -99,8 +99,7 @@ open class App internal constructor(
 
     override fun toJournalSection(): Map<String, Any?> {
         val copy = map.toMutableMap()
-        copy["buildUUID"] = copy["buildUuid"]
-        copy.remove("buildUuid")
+        copy["buildUUID"] = copy.remove("buildUuid")
         return copy
     }
 }
