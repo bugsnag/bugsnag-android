@@ -1,39 +1,104 @@
-<HTML>
-<HEAD>
-<meta charset="UTF-8">
-<title>Delivery - bugsnag-android-core</title>
-<link rel="stylesheet" href="../../../style.css">
-</HEAD>
-<BODY>
-<a href="../../index.html">bugsnag-android-core</a>&nbsp;/&nbsp;<a href="../index.html">com.bugsnag.android</a>&nbsp;/&nbsp;<a href="./index.html">Delivery</a><br/>
-<br/>
-<h1>Delivery</h1>
-<code><span class="keyword">interface </span><span class="identifier">Delivery</span></code>
-<p>Implementations of this interface deliver Error Reports and Sessions captured to the Bugsnag API.</p>
-<p>A default <a href="./index.html">Delivery</a> implementation is provided as part of Bugsnag initialization,
-but you may wish to use your own implementation if you have requirements such
-as pinning SSL certificates, for example.</p>
-<p>Any custom implementation must be capable of sending
-<a href="https://docs.bugsnag.com/api/error-reporting/">Error Reports</a>
-and <a href="https://docs.bugsnag.com/api/sessions/">Sessions</a> as
-documented at <a href="https://docs.bugsnag.com/api/">https://docs.bugsnag.com/api/</a></p>
-<p><strong>See Also</strong><br/>
-<p><a href="#">DefaultDelivery</a></p>
-</p>
-<h3>Functions</h3>
-<table>
-<tbody>
-<tr>
-<td>
-<h4><a href="deliver.html">deliver</a></h4>
-</td>
-<td>
-<p>Posts an array of sessions to the Bugsnag Session Tracking API.</p>
-<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">deliver</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Delivery$deliver(com.bugsnag.android.Session, com.bugsnag.android.DeliveryParams)/payload">payload</span><span class="symbol">:</span>&nbsp;<a href="../-session/index.html"><span class="identifier">Session</span></a><span class="symbol">, </span><span class="identifier" id="com.bugsnag.android.Delivery$deliver(com.bugsnag.android.Session, com.bugsnag.android.DeliveryParams)/deliveryParams">deliveryParams</span><span class="symbol">:</span>&nbsp;<a href="../-delivery-params/index.html"><span class="identifier">DeliveryParams</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-delivery-status/index.html"><span class="identifier">DeliveryStatus</span></a></code>
-<p>Posts an Error Report to the Bugsnag Error Reporting API.</p>
-<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">deliver</span><span class="symbol">(</span><span class="identifier" id="com.bugsnag.android.Delivery$deliver(com.bugsnag.android.EventPayload, com.bugsnag.android.DeliveryParams)/payload">payload</span><span class="symbol">:</span>&nbsp;<a href="../-event-payload/index.html"><span class="identifier">EventPayload</span></a><span class="symbol">, </span><span class="identifier" id="com.bugsnag.android.Delivery$deliver(com.bugsnag.android.EventPayload, com.bugsnag.android.DeliveryParams)/deliveryParams">deliveryParams</span><span class="symbol">:</span>&nbsp;<a href="../-delivery-params/index.html"><span class="identifier">DeliveryParams</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-delivery-status/index.html"><span class="identifier">DeliveryStatus</span></a></code></td>
-</tr>
-</tbody>
-</table>
-</BODY>
-</HTML>
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>Delivery</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+                    <a class="library-name--link" href="../../../index.html">
+                            bugsnag-android-core
+                    </a>
+            </div>
+            <div class="library-version">
+6.3.0            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":bugsnag-android-core:dokkaHtml/release">androidJvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="bugsnag-android-core::com.bugsnag.android/Delivery///PointingToDeclaration//-1317841657">
+  <div class="breadcrumbs"><a href="../../../index.html">bugsnag-android-core</a><span class="delimiter">/</span><a href="../index.html">com.bugsnag.android</a><span class="delimiter">/</span><span class="current">Delivery</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Delivery</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">interface </span><a href="index.html">Delivery</a></div><p class="paragraph">Implementations of this interface deliver Error Reports and Sessions captured to the Bugsnag API.</p><p class="paragraph">A default <a href="index.html">Delivery</a> implementation is provided as part of Bugsnag initialization, but you may wish to use your own implementation if you have requirements such as pinning SSL certificates, for example.</p><p class="paragraph">Any custom implementation must be capable of sending <a href="https://docs.bugsnag.com/api/error-reporting/">Error Reports</a> and <a href="https://docs.bugsnag.com/api/sessions/">Sessions</a> as documented at <a href="https://docs.bugsnag.com/api/">https://docs.bugsnag.com/api/</a></p><h4 class="">See also</h4><div class="table"><div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><span data-unresolved-link="com.bugsnag.android/DefaultDelivery///PointingToDeclaration/"><span>Default</span><wbr></wbr><span><span>Delivery</span></span></span></div></span></div><div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="-457901156%2FFunctions%2F-1317841657" anchor-label="deliver" id="-457901156%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="deliver.html"><span><span>deliver</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-457901156%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="deliver.html"><span class="token function">deliver</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">payload<span class="token operator">: </span><a href="../-event-payload/index.html">EventPayload</a><span class="token punctuation">, </span></span><span class="parameter ">deliveryParams<span class="token operator">: </span><a href="../-delivery-params/index.html">DeliveryParams</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-delivery-status/index.html">DeliveryStatus</a></div><div class="brief "><p class="paragraph">Posts an Error Report to the Bugsnag Error Reporting API.</p></div><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="deliver.html"><span class="token function">deliver</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">payload<span class="token operator">: </span><a href="../-session/index.html">Session</a><span class="token punctuation">, </span></span><span class="parameter ">deliveryParams<span class="token operator">: </span><a href="../-delivery-params/index.html">DeliveryParams</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-delivery-status/index.html">DeliveryStatus</a></div><div class="brief "><p class="paragraph">Posts an array of sessions to the Bugsnag Session Tracking API.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Copyright</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

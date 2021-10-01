@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>Settings</title>
+    <link href="../../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../../styles/style.css" rel="Stylesheet">
+<link href="../../../../styles/main.css" rel="Stylesheet">
+<link href="../../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+                    <a class="library-name--link" href="../../../../index.html">
+                            bugsnag-android-core
+                    </a>
+            </div>
+            <div class="library-version">
+6.3.0            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":bugsnag-android-core:dokkaHtml/release">androidJvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="bugsnag-android-core::com.bugsnag.android.repackaged.dslplatform.json/DslJson.Settings///PointingToDeclaration//-1317841657">
+  <div class="breadcrumbs"><a href="../../../../index.html">bugsnag-android-core</a><span class="delimiter">/</span><a href="../../index.html">com.bugsnag.android.repackaged.dslplatform.json</a><span class="delimiter">/</span><a href="../index.html">DslJson</a><span class="delimiter">/</span><span class="current">Settings</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Settings</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="index.html">Settings</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="index.html">TContext</a><span class="token operator">&gt;</span></div><p class="paragraph">Configuration for DslJson options. By default key cache is enabled. Everything else is not configured. To load `META-INF/services` call `includeServiceLoader()`</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="1412884264%2FConstructors%2F-1317841657" anchor-label="Settings" id="1412884264%2FConstructors%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-settings.html"><span><span>Settings</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1412884264%2FConstructors%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="-1885629866%2FFunctions%2F-1317841657" anchor-label="allowArrayFormat" id="-1885629866%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="allow-array-format.html"><span>allow</span><wbr></wbr><span>Array</span><wbr></wbr><span><span>Format</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1885629866%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="allow-array-format.html"><span class="token function">allowArrayFormat</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">allowArrayFormat<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DslJson.Settings</a><span class="token operator">&lt;</span><a href="index.html">TContext</a><span class="token operator">&gt;</span></div><div class="brief ">Some encoders/decoders support writing objects in array format.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1905442208%2FFunctions%2F-1317841657" anchor-label="creatorMarker" id="-1905442208%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="creator-marker.html"><span>creator</span><wbr></wbr><span><span>Marker</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1905442208%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="creator-marker.html"><span class="token function">creatorMarker</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">marker<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/Class.html">Class</a><span class="token operator">&lt;</span><span class="token keyword">out </span><a href="https://developer.android.com/reference/kotlin/java/lang/annotation/Annotation.html">Annotation</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">expandVisibility<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DslJson.Settings</a><span class="token operator">&lt;</span><a href="index.html">TContext</a><span class="token operator">&gt;</span></div><div class="brief ">When there are multiple constructors, pick the one marked with annotation.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1124050600%2FFunctions%2F-1317841657" anchor-label="doublePrecision" id="1124050600%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="double-precision.html"><span>double</span><wbr></wbr><span><span>Precision</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1124050600%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="double-precision.html"><span class="token function">doublePrecision</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">precision<span class="token operator">: </span><a href="../../-json-reader/-double-precision/index.html">JsonReader.DoublePrecision</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DslJson.Settings</a><span class="token operator">&lt;</span><a href="index.html">TContext</a><span class="token operator">&gt;</span></div><div class="brief ">By default doubles are not deserialized into an exact value in some rare edge cases.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1950990506%2FFunctions%2F-1317841657" anchor-label="errorInfo" id="-1950990506%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="error-info.html"><span>error</span><wbr></wbr><span><span>Info</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1950990506%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="error-info.html"><span class="token function">errorInfo</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">errorInfo<span class="token operator">: </span><a href="../../-json-reader/-error-info/index.html">JsonReader.ErrorInfo</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DslJson.Settings</a><span class="token operator">&lt;</span><a href="index.html">TContext</a><span class="token operator">&gt;</span></div><div class="brief ">By default doubles are not deserialized into an exact value in some rare edge cases.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="10891948%2FFunctions%2F-1317841657" anchor-label="fallbackTo" id="10891948%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="fallback-to.html"><span>fallback</span><wbr></wbr><span><span>To</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="10891948%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="fallback-to.html"><span class="token function"><strike>fallbackTo</strike></span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a> </span>fallback<span class="token operator">: </span><a href="../-fallback/index.html">DslJson.Fallback</a><span class="token operator">&lt;</span><a href="index.html">TContext</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DslJson.Settings</a><span class="token operator">&lt;</span><a href="index.html">TContext</a><span class="token operator">&gt;</span></div><div class="brief ">Will be eventually replaced with writer/reader factories.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1985278399%2FFunctions%2F-1317841657" anchor-label="includeServiceLoader" id="-1985278399%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="include-service-loader.html"><span>include</span><wbr></wbr><span>Service</span><wbr></wbr><span><span>Loader</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1985278399%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="include-service-loader.html"><span class="token function">includeServiceLoader</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DslJson.Settings</a><span class="token operator">&lt;</span><a href="index.html">TContext</a><span class="token operator">&gt;</span></div><div class="brief ">Load converters using thread local ClassLoader.</div><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="include-service-loader.html"><span class="token function">includeServiceLoader</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">loader<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/ClassLoader.html">ClassLoader</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DslJson.Settings</a><span class="token operator">&lt;</span><a href="index.html">TContext</a><span class="token operator">&gt;</span></div><div class="brief ">Load converters using provided `ClassLoader` instance Will scan through `META-INF/services/com.bugsnag.dslplatform.json.Configuration` file and register implementation during startup.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1798053371%2FFunctions%2F-1317841657" anchor-label="limitDigitsBuffer" id="-1798053371%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="limit-digits-buffer.html"><span>limit</span><wbr></wbr><span>Digits</span><wbr></wbr><span><span>Buffer</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1798053371%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="limit-digits-buffer.html"><span class="token function">limitDigitsBuffer</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">size<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DslJson.Settings</a><span class="token operator">&lt;</span><a href="index.html">TContext</a><span class="token operator">&gt;</span></div><div class="brief ">Specify maximum allowed size for digits buffer.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-175633808%2FFunctions%2F-1317841657" anchor-label="limitStringBuffer" id="-175633808%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="limit-string-buffer.html"><span>limit</span><wbr></wbr><span>String</span><wbr></wbr><span><span>Buffer</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-175633808%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="limit-string-buffer.html"><span class="token function">limitStringBuffer</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">size<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DslJson.Settings</a><span class="token operator">&lt;</span><a href="index.html">TContext</a><span class="token operator">&gt;</span></div><div class="brief ">Specify maximum allowed size for string buffer.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="8212153%2FFunctions%2F-1317841657" anchor-label="resolveBinder" id="8212153%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="resolve-binder.html"><span>resolve</span><wbr></wbr><span><span>Binder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="8212153%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="resolve-binder.html"><span class="token function">resolveBinder</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">binder<span class="token operator">: </span><a href="../-converter-factory/index.html">DslJson.ConverterFactory</a><span class="token operator">&lt;</span><span class="token keyword">out </span><a href="../../-json-reader/-bind-object/index.html">JsonReader.BindObject</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DslJson.Settings</a><span class="token operator">&lt;</span><a href="index.html">TContext</a><span class="token operator">&gt;</span></div><div class="brief ">DslJson will iterate over converter factories when requested type is unknown.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1200569643%2FFunctions%2F-1317841657" anchor-label="resolveReader" id="1200569643%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="resolve-reader.html"><span>resolve</span><wbr></wbr><span><span>Reader</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1200569643%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="resolve-reader.html"><span class="token function">resolveReader</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">reader<span class="token operator">: </span><a href="../-converter-factory/index.html">DslJson.ConverterFactory</a><span class="token operator">&lt;</span><span class="token keyword">out </span><a href="../../-json-reader/-read-object/index.html">JsonReader.ReadObject</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DslJson.Settings</a><span class="token operator">&lt;</span><a href="index.html">TContext</a><span class="token operator">&gt;</span></div><div class="brief ">DslJson will iterate over converter factories when requested type is unknown.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-921960242%2FFunctions%2F-1317841657" anchor-label="resolveWriter" id="-921960242%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="resolve-writer.html"><span>resolve</span><wbr></wbr><span><span>Writer</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-921960242%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="resolve-writer.html"><span class="token function">resolveWriter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">writer<span class="token operator">: </span><a href="../-converter-factory/index.html">DslJson.ConverterFactory</a><span class="token operator">&lt;</span><span class="token keyword">out </span><a href="../../-json-writer/-write-object/index.html">JsonWriter.WriteObject</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DslJson.Settings</a><span class="token operator">&lt;</span><a href="index.html">TContext</a><span class="token operator">&gt;</span></div><div class="brief ">DslJson will iterate over converter factories when requested type is unknown.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1880552561%2FFunctions%2F-1317841657" anchor-label="skipDefaultValues" id="-1880552561%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="skip-default-values.html"><span>skip</span><wbr></wbr><span>Default</span><wbr></wbr><span><span>Values</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1880552561%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="skip-default-values.html"><span class="token function">skipDefaultValues</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">omitDefaults<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DslJson.Settings</a><span class="token operator">&lt;</span><a href="index.html">TContext</a><span class="token operator">&gt;</span></div><div class="brief ">DslJson can exclude some properties from resulting JSON which it can reconstruct fully from schema information.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1540364455%2FFunctions%2F-1317841657" anchor-label="unknownNumbers" id="1540364455%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="unknown-numbers.html"><span>unknown</span><wbr></wbr><span><span>Numbers</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1540364455%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="unknown-numbers.html"><span class="token function">unknownNumbers</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">unknownNumbers<span class="token operator">: </span><a href="../../-json-reader/-unknown-number-parsing/index.html">JsonReader.UnknownNumberParsing</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DslJson.Settings</a><span class="token operator">&lt;</span><a href="index.html">TContext</a><span class="token operator">&gt;</span></div><div class="brief ">When processing JSON without a schema numbers can be deserialized in various ways: - as longs and decimals - as longs and doubles - as decimals only - as doubles only Default is as long and BigDecimal</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1323278780%2FFunctions%2F-1317841657" anchor-label="useKeyCache" id="1323278780%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="use-key-cache.html"><span>use</span><wbr></wbr><span>Key</span><wbr></wbr><span><span>Cache</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1323278780%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="use-key-cache.html"><span class="token function">useKeyCache</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a> </span>keyCache<span class="token operator">: </span><a href="../../-string-cache/index.html">StringCache</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DslJson.Settings</a><span class="token operator">&lt;</span><a href="index.html">TContext</a><span class="token operator">&gt;</span></div><div class="brief ">Use specific key cache implementation.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-19066946%2FFunctions%2F-1317841657" anchor-label="useStringValuesCache" id="-19066946%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="use-string-values-cache.html"><span>use</span><wbr></wbr><span>String</span><wbr></wbr><span>Values</span><wbr></wbr><span><span>Cache</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-19066946%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="use-string-values-cache.html"><span class="token function">useStringValuesCache</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a> </span>valuesCache<span class="token operator">: </span><a href="../../-string-cache/index.html">StringCache</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DslJson.Settings</a><span class="token operator">&lt;</span><a href="index.html">TContext</a><span class="token operator">&gt;</span></div><div class="brief ">Use specific string values cache implementation.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="954840567%2FFunctions%2F-1317841657" anchor-label="with" id="954840567%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="with.html"><span><span>with</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="954840567%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="with.html"><span class="token function">with</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">conf<span class="token operator">: </span><a href="../../-configuration/index.html">Configuration</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DslJson.Settings</a><span class="token operator">&lt;</span><a href="index.html">TContext</a><span class="token operator">&gt;</span></div><div class="brief ">Configure DslJson with custom Configuration during startup.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1321607851%2FFunctions%2F-1317841657" anchor-label="withContext" id="1321607851%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="with-context.html"><span>with</span><wbr></wbr><span><span>Context</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1321607851%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="with-context.html"><span class="token function">withContext</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a> </span>context<span class="token operator">: </span><a href="index.html">TContext</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DslJson.Settings</a><span class="token operator">&lt;</span><a href="index.html">TContext</a><span class="token operator">&gt;</span></div><div class="brief ">Pass in context for DslJson.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1928107478%2FFunctions%2F-1317841657" anchor-label="withJavaConverters" id="-1928107478%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="with-java-converters.html"><span>with</span><wbr></wbr><span>Java</span><wbr></wbr><span><span>Converters</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1928107478%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="with-java-converters.html"><span class="token function">withJavaConverters</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">javaSpecifics<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DslJson.Settings</a><span class="token operator">&lt;</span><a href="index.html">TContext</a><span class="token operator">&gt;</span></div><div class="brief ">Enable converters for Java specific types (Graphics API) not available on Android.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Copyright</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
