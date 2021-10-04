@@ -1,5 +1,13 @@
 # Changelog
 
+## 5.14.0 (2021-09-29)
+
+### Enhancements 
+
+* Capture and report thread state (running, sleeping, etc.) for Android Runtime and Native threads
+  [#1367](https://github.com/bugsnag/bugsnag-android/pull/1367)
+  [#1390](https://github.com/bugsnag/bugsnag-android/pull/1390)
+
 ## 5.13.0 (2021-09-22)
 
 * Capture breadcrumbs for OkHttp network requests

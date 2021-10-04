@@ -41,6 +41,7 @@ internal object JournalKeys {
     internal const val keyRuntimeVersions = "runtimeVersions"
     internal const val keyStackTrace = "stacktrace"
     internal const val keyStartedAt = "startedAt"
+    internal const val keyState = "state"
     internal const val keySymbolAddress = "symbolAddress"
     internal const val keyTime = "time"
     internal const val keyTimestamp = "timestamp"

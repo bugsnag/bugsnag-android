@@ -9,6 +9,7 @@ class ThreadInternal internal constructor(
     var name: String,
     var type: ThreadType,
     val isErrorReportingThread: Boolean,
+    var state: Thread.State,
     stacktrace: Stacktrace
 ) : JsonStream.Streamable, Journalable {
 
@@ -22,6 +23,7 @@ class ThreadInternal internal constructor(
             JournalKeys.keyId to id,
             JournalKeys.keyName to name,
             JournalKeys.keyType to type.desc,
+            JournalKeys.keyState to state.descriptor,
             JournalKeys.keyStackTrace to stacktrace.map { it.toJournalSection() }
         )
 

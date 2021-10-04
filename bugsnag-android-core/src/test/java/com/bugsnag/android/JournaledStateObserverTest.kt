@@ -75,7 +75,7 @@ internal class JournaledStateObserverTest {
 
         val journal = emptyJournal()
         val observer = JournaledStateObserver(client, journal)
-        observer.onStateChange(StateEvent.Install("myapikey", true, "myversion", "myuuid", "myrelease", "/somepath", 0))
+        observer.onStateChange(StateEvent.Install("myapikey", true, "myversion", "myuuid", "myrelease", "/somepath", 0, ThreadSendPolicy.ALWAYS))
 
         val doc = journal.document
         Assert.assertNotNull(doc["app"])

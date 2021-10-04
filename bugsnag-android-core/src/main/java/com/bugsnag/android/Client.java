@@ -249,7 +249,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             DeliveryDelegate deliveryDelegate,
             LastRunInfoStore lastRunInfoStore,
             LaunchCrashTracker launchCrashTracker,
-            ExceptionHandler exceptionHandler
+            ExceptionHandler exceptionHandler,
+            Notifier notifier
     ) {
         this.immutableConfig = immutableConfig;
         this.metadataState = metadataState;

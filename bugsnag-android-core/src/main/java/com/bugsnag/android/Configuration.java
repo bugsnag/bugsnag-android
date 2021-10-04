@@ -981,4 +981,8 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
     Set<Plugin> getPlugins() {
         return impl.getPlugins();
     }
+
+    Notifier getNotifier() {
+        return impl.getNotifier();
+    }
 }
