@@ -165,7 +165,7 @@ steps:
           run: android-ci
     env:
       SINGLE_RUNNER: "true"
-      INSTRUMENTATION_DEVICES: '["Google Pixel-7.1"]'
+      INSTRUMENTATION_DEVICES: '["Google Pixel 2-8.0"]'
       TEST_APK_LOCATION: 'bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk'
     concurrency: 9
     concurrency_group: 'browserstack-app'
@@ -181,7 +181,7 @@ steps:
           run: android-ci
     env:
       SINGLE_RUNNER: "true"
-      INSTRUMENTATION_DEVICES: '["Google Pixel-7.1"]'
+      INSTRUMENTATION_DEVICES: '["Google Pixel 2-8.0"]'
       TEST_APK_LOCATION: 'bugsnag-plugin-android-ndk/build/outputs/apk/androidTest/debug/bugsnag-plugin-android-ndk-debug-androidTest.apk'
     concurrency: 9
     concurrency_group: 'browserstack-app'
@@ -197,7 +197,7 @@ steps:
           run: android-ci
     env:
       SINGLE_RUNNER: "false"
-      INSTRUMENTATION_DEVICES: '["Google Pixel-7.1"]'
+      INSTRUMENTATION_DEVICES: '["Google Pixel 2-8.0"]'
       TEST_APK_LOCATION: 'bugsnag-benchmarks/build/outputs/apk/androidTest/release/bugsnag-benchmarks-release-androidTest.apk'
     concurrency: 9
     concurrency_group: 'browserstack-app'
