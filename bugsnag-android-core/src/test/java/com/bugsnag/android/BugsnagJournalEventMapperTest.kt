@@ -91,7 +91,8 @@ class BugsnagJournalEventMapperTest {
             ),
             "breadcrumbs" to breadcrumbs,
             "app" to app,
-            "device" to device
+            "device" to device,
+            "projectPackages" to listOf("com.example.bar")
         )
         journalMap = minimalJournalMap + mapOf(
             "context" to "ExampleActivity",
@@ -214,5 +215,8 @@ class BugsnagJournalEventMapperTest {
         assertEquals("8.0.0", device.osVersion)
         assertEquals("Android SDK built for x86", device.model)
         assertEquals("8b105fd3-88bc-4a31-8982-b725d1162d86", device.id)
+
+        // projectPackages
+        assertEquals(listOf("com.example.bar"), event.projectPackages)
     }
 }

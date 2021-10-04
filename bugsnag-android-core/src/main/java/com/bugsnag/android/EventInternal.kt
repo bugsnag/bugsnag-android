@@ -56,7 +56,7 @@ internal class EventInternal : JsonStream.Streamable, MetadataAware, UserAware {
 
     val metadata: Metadata
     private val discardClasses: Set<String>
-    private val projectPackages: Collection<String>
+    internal var projectPackages: Collection<String>
 
     @JvmField
     internal var session: Session? = null

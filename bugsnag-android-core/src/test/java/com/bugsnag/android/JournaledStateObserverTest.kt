@@ -2,15 +2,16 @@ package com.bugsnag.android
 
 import android.content.Context
 import com.bugsnag.android.internal.ImmutableConfig
-import org.junit.Assert
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.ClassRule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.Mock
-import org.mockito.Mockito
+import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
 import java.io.File
 
@@ -35,7 +36,7 @@ internal class JournaledStateObserverTest {
     }
 
     private fun emptyJournal(): BugsnagJournal {
-        return journalContaining(mapOf<String, Any>())
+        return journalContaining(mapOf())
     }
 
     @Mock
@@ -57,20 +58,22 @@ internal class JournaledStateObserverTest {
     fun setUp() {
         NativeInterface.setClient(client)
 
-        Mockito.`when`(client.getAppDataCollector()).thenReturn(appDataCollector)
-        Mockito.`when`(client.getDeviceDataCollector()).thenReturn(deviceDataCollector)
-        Mockito.`when`(client.getUser()).thenReturn(User("123", "tod@example.com", "Tod"))
+        `when`(client.getAppDataCollector()).thenReturn(appDataCollector)
+        `when`(client.getDeviceDataCollector()).thenReturn(deviceDataCollector)
+        `when`(client.getUser()).thenReturn(User("123", "tod@example.com", "Tod"))
+        `when`(client.config).thenReturn(immutableConfig)
+        `when`(immutableConfig.projectPackages).thenReturn(listOf("com.example.foo"))
     }
 
     @Test
     fun testInstall() {
-        Mockito.`when`(appDataCollector.generateAppWithState())
+        `when`(appDataCollector.generateAppWithState())
             .thenReturn(BugsnagTestUtils.generateAppWithState())
-        Mockito.`when`(appDataCollector.getAppDataMetadata())
+        `when`(appDataCollector.getAppDataMetadata())
             .thenReturn(mutableMapOf(Pair("metadata", true)))
-        Mockito.`when`(deviceDataCollector.generateDeviceWithState(ArgumentMatchers.anyLong()))
+        `when`(deviceDataCollector.generateDeviceWithState(anyLong()))
             .thenReturn(BugsnagTestUtils.generateDeviceWithState())
-        Mockito.`when`(deviceDataCollector.getDeviceMetadata())
+        `when`(deviceDataCollector.getDeviceMetadata())
             .thenReturn(mapOf(Pair("metadata", true)))
 
         val journal = emptyJournal()
@@ -78,9 +81,10 @@ internal class JournaledStateObserverTest {
         observer.onStateChange(StateEvent.Install("myapikey", true, "myversion", "myuuid", "myrelease", "/somepath", 0, ThreadSendPolicy.ALWAYS))
 
         val doc = journal.document
-        Assert.assertNotNull(doc["app"])
-        Assert.assertEquals("myapikey", doc["apiKey"])
-        Assert.assertNotNull(doc["device"])
+        assertNotNull(doc["app"])
+        assertEquals("myapikey", doc["apiKey"])
+        assertEquals(listOf("com.example.foo"), doc["projectPackages"])
+        assertNotNull(doc["device"])
 
         BugsnagTestUtils.assertNormalizedEquals(
             mapOf(

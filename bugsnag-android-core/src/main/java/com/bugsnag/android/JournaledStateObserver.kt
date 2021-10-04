@@ -110,7 +110,8 @@ internal class JournaledStateObserver(val client: Client, val journal: BugsnagJo
             Pair(JournalKeys.pathMetadataApp, appDataCollector.getAppDataMetadata()),
             Pair(JournalKeys.pathDevice, device),
             Pair(JournalKeys.pathMetadataDevice, deviceDataCollector.getDeviceMetadata()),
-            Pair(JournalKeys.pathUser, client.getUser().toJournalSection())
+            Pair(JournalKeys.pathUser, client.getUser().toJournalSection()),
+            Pair(JournalKeys.pathProjectPackages, client.config.projectPackages)
         )
     }
 }

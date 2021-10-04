@@ -70,6 +70,9 @@ internal class BugsnagJournalEventMapper(
         sessionMap?.let {
             event.session = Session(it, logger)
         }
+
+        // populate projectPackages
+        event.projectPackages = map.readJournalEntry("projectPackages")
         return event
     }
 
