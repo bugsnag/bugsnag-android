@@ -48,7 +48,7 @@ class NativeStackframe internal constructor(
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) = writer.value(toJournalSection())
 
-    override fun toJournalSection(): Map<String, Any?> = mapOf(
+    override fun toJournalSection(): Map<String, Any?> = mapOf<String, Any?>(
         JournalKeys.keyMethod to method,
         JournalKeys.keyFile to file,
         JournalKeys.keyLineNumber to lineNumber,
@@ -56,5 +56,5 @@ class NativeStackframe internal constructor(
         JournalKeys.keySymbolAddress to symbolAddress,
         JournalKeys.keyLoadAddress to loadAddress,
         JournalKeys.keyType to type?.desc
-    )
+    ).filterValues { it != null }
 }

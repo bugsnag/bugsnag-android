@@ -103,5 +103,5 @@ class Stackframe : JsonStream.Streamable, Journalable {
             JournalKeys.keyColumnNumber to columnNumber,
             JournalKeys.keyCode to code,
             JournalKeys.keyType to type?.desc
-        )
+        ).filterValues { it != null }
 }
