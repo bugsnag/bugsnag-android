@@ -7,6 +7,7 @@ import com.bugsnag.android.internal.StateObserver;
 import com.bugsnag.android.internal.dag.ConfigModule;
 import com.bugsnag.android.internal.dag.ContextModule;
 import com.bugsnag.android.internal.dag.SystemServiceModule;
+import com.bugsnag.android.internal.journal.JournalKeys;
 
 import android.app.Application;
 import android.content.Context;
@@ -128,6 +129,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                     eventStore.flushAsync();
                     sessionTracker.flushAsync();
                 }
+                journal.addCommand(JournalKeys.pathMetadataAppNetworkAccess, networkState);
                 return null;
             }
         });

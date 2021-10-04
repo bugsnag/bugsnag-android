@@ -365,7 +365,8 @@ internal class JournaledStateObserverTest {
             mapOf(
                 "metaData" to mapOf(
                     "app" to mapOf(
-                        "lowMemory" to true
+                        "lowMemory" to true,
+                        "memoryTrimLevel" to "None"
                     )
                 )
             )

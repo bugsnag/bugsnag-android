@@ -6,6 +6,7 @@
     <ID>ImplicitDefaultLocale:DeliveryHeaders.kt$String.format("%02x", byte)</ID>
     <ID>LongMethod:BugsnagJournalEventMapperTest.kt$BugsnagJournalEventMapperTest$@Before fun setUp()</ID>
     <ID>LongMethod:JournaledDocumentTest.kt$JournaledDocumentTest$@Test fun testHighWater()</ID>
+    <ID>LongMethod:JournaledStateObserver.kt$JournaledStateObserver$override fun onStateChange(event: StateEvent)</ID>
     <ID>LongParameterList:App.kt$App$( binaryArch: String?, id: String?, releaseStage: String?, version: String?, codeBundleId: String?, buildUuid: String?, type: String?, versionCode: Number? )</ID>
     <ID>LongParameterList:AppDataCollector.kt$AppDataCollector$( appContext: Context, private val packageManager: PackageManager?, private val config: ImmutableConfig, private val sessionTracker: SessionTracker, private val activityManager: ActivityManager?, private val launchCrashTracker: LaunchCrashTracker, private val memoryTrimState: MemoryTrimState )</ID>
     <ID>LongParameterList:AppWithState.kt$AppWithState$( binaryArch: String?, id: String?, releaseStage: String?, version: String?, codeBundleId: String?, buildUuid: String?, type: String?, versionCode: Number?, duration: Number?, durationInForeground: Number?, inForeground: Boolean?, isLaunching: Boolean? )</ID>
