@@ -22,7 +22,7 @@ internal class NdkPlugin : Plugin {
     private var client: Client? = null
 
     private fun initNativeBridge(client: Client): NativeBridge {
-        val nativeBridge = NativeBridge()
+        val nativeBridge = NativeBridge(client.immutableConfig.journalBasePath)
         client.addObserver(nativeBridge)
         client.setupNdkPlugin()
         return nativeBridge

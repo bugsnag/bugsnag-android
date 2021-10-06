@@ -56,6 +56,8 @@ data class ImmutableConfig(
     val redactedKeys: Collection<String>
 ) {
 
+    val journalBasePath = File(persistenceDirectory.value, "bugsnag-journal")
+
     @JvmName("getErrorApiDeliveryParams")
     internal fun getErrorApiDeliveryParams(payload: EventPayload) =
         DeliveryParams(endpoints.notify, errorApiHeaders(payload))

@@ -205,6 +205,10 @@ constructor(
             return File(basePath.path + ".journal")
         }
 
+        internal fun getCrashtimeJournalPath(basePath: File): File {
+            return File(basePath.path + ".journal.crashtime")
+        }
+
         /**
          * Check if a journal-backed document exists at this base path.
          *
@@ -231,34 +235,38 @@ constructor(
          */
         fun loadDocumentContents(baseDocumentPath: File): MutableMap<in String, out Any>? {
             val journalPath = getJournalPath(baseDocumentPath)
+            val crashtimeJournalPath = getCrashtimeJournalPath(baseDocumentPath)
             val snapshotPath = getSnapshotPath(baseDocumentPath)
             val newSnapshotPath = getNewSnapshotPath(baseDocumentPath)
 
-            // The "new" snapshot might exist but also might be invalid.
+            // The "new" snapshot might exist but might be corrupt.
             try {
-                return JsonHelper.deserialize(newSnapshotPath)
+                // Apply only the crashtime journal to a "new" snapshot.
+                return applyJournal(crashtimeJournalPath, JsonHelper.deserialize(newSnapshotPath))
             } catch (ex: IOException) {
-                // Ignored - there is no new snapshot or it's invalid
+                // Ignored - there is no "new" snapshot or it's corrupt
             }
 
-            // The base snapshot must be valid if it exists.
+            // There will always be a base snapshot if any such journaled document exists.
             val document = try {
                 JsonHelper.deserialize(snapshotPath)
             } catch (ex: FileNotFoundException) {
+                // If we don't even have a base snapshot, we have nothing.
                 return null
             }
 
-            // The journal file might exist and might be valid.
-            val journal: Journal
+            // The journal files might exist and be valid. Apply both to a regular snapshot.
+            return applyJournal(crashtimeJournalPath, applyJournal(journalPath, document))
+        }
+
+        private fun applyJournal(journalPath: File, document: MutableMap<in String, out Any>):
+            MutableMap<in String, out Any> {
             try {
-                journal = Journal.deserialize(journalPath)
+                return Journal.deserialize(journalPath).applyTo(document)
             } catch (ex: IOException) {
-                // The journal is corrupt; just return the document.
+                // The journal file is missing or corrupt, so we won't use it
                 return document
             }
-
-            // A valid journal must run without error.
-            return journal.applyTo(document)
         }
 
         internal fun convertDocumentToConcurrent(document: Map<String, Any>): MutableMap<String, Any> {

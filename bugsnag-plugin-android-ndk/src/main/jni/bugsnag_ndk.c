@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "bugsnag_crashtime_journal.h"
 #include "event.h"
 #include "handlers/cpp_handler.h"
 #include "handlers/signal_handler.h"
@@ -133,9 +134,9 @@ void bsg_update_next_run_info(bsg_environment *env) {
 
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
     JNIEnv *env, jobject _this, jstring _api_key, jstring _event_path,
-    jstring _last_run_info_path, jint consecutive_launch_crashes,
-    jboolean auto_detect_ndk_crashes, jint _api_level, jboolean is32bit,
-    jint send_threads) {
+    jstring _last_run_info_path, jstring _journal_base_path,
+    jint consecutive_launch_crashes, jboolean auto_detect_ndk_crashes,
+    jint _api_level, jboolean is32bit, jint send_threads) {
   bsg_environment *bugsnag_env = calloc(1, sizeof(bsg_environment));
   bsg_set_unwind_types((int)_api_level, (bool)is32bit,
                        &bugsnag_env->signal_unwind_style,
@@ -153,6 +154,17 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   }
   sprintf(bugsnag_env->next_event_path, "%s", event_path);
   bsg_safe_release_string_utf_chars(env, _event_path, event_path);
+
+  const char *journal_base_path =
+      bsg_safe_get_string_utf_chars(env, _journal_base_path);
+  if (journal_base_path == NULL) {
+    return;
+  }
+  char journal_path[PATH_MAX];
+  snprintf(journal_path, sizeof(journal_path), "%s.journal.crashtime",
+           journal_base_path);
+  bsg_safe_release_string_utf_chars(env, _journal_base_path, journal_base_path);
+  bsg_crashtime_journal_init(journal_path);
 
   // copy last run info path to env struct
   const char *last_run_info_path =

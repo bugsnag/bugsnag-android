@@ -44,14 +44,14 @@ internal class JsonHelper private constructor() {
             return document as MutableMap<String, Any>
         }
 
-        fun deserialize(stream: InputStream): MutableMap<String, Any> {
+        fun deserialize(stream: InputStream): MutableMap<in String, out Any> {
             val document = dslJson.deserialize(MutableMap::class.java, stream)
             requireNotNull(document) { "JSON document is invalid" }
             @Suppress("UNCHECKED_CAST")
             return document as MutableMap<String, Any>
         }
 
-        fun deserialize(file: File): MutableMap<String, Any> {
+        fun deserialize(file: File): MutableMap<in String, out Any> {
             try {
                 FileInputStream(file).use { stream -> return deserialize(stream) }
             } catch (ex: FileNotFoundException) {

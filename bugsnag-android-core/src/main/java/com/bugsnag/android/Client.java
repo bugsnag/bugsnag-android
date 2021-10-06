@@ -140,12 +140,10 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         logger = immutableConfig.getLogger();
         warnIfNotAppContext(androidContext);
 
-        File journalDir = immutableConfig.getPersistenceDirectory().getValue();
-        File baseDocumentPath = new File(journalDir, "bugsnag-journal");
-
+        File journalBasePath = immutableConfig.getJournalBasePath();
         BugsnagJournalEventMapper eventMapper = new BugsnagJournalEventMapper(logger);
-        eventMapper.convertToEvent(baseDocumentPath);
-        journal = new BugsnagJournal(logger, baseDocumentPath);
+        eventMapper.convertToEvent(journalBasePath);
+        journal = new BugsnagJournal(logger, journalBasePath);
 
         // setup storage as soon as possible
         final StorageModule storageModule = new StorageModule(appContext,
