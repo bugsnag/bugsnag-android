@@ -278,174 +278,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         this.exceptionHandler = exceptionHandler;
     }
 
-    void registerLifecycleCallbacks() {
-        if (appContext instanceof Application) {
-            Application application = (Application) appContext;
-            SessionLifecycleCallback sessionCb = new SessionLifecycleCallback(sessionTracker);
-            application.registerActivityLifecycleCallbacks(sessionCb);
-
-            if (!immutableConfig.shouldDiscardBreadcrumb(BreadcrumbType.STATE)) {
-                ActivityBreadcrumbCollector activityCb = new ActivityBreadcrumbCollector(
-                        new Function2<String, Map<String, ? extends Object>, Unit>() {
-                            @SuppressWarnings("unchecked")
-                            @Override
-                            public Unit invoke(String activity, Map<String, ?> metadata) {
-                                leaveBreadcrumb(activity, (Map<String, Object>) metadata,
-                                        BreadcrumbType.STATE);
-                                return null;
-                            }
-                        }
-                );
-                application.registerActivityLifecycleCallbacks(activityCb);
-            }
-        }
-    }
-
-    /**
-     * Registers listeners for system events in the background. This offloads work from the main
-     * thread that collects useful information from callbacks, but that don't need to be done
-     * immediately on client construction.
-     */
-    void registerListenersInBackground() {
-        try {
-            bgTaskService.submitTask(TaskType.DEFAULT, new Runnable() {
-                @Override
-                public void run() {
-                    connectivity.registerForNetworkChanges();
-                    SystemBroadcastReceiver.register(appContext, systemBroadcastReceiver, logger);
-                }
-            });
-        } catch (RejectedExecutionException ex) {
-            logger.w("Failed to register for system events", ex);
-        }
-    }
-
-
-    /**
-     * Load information about the last run, and reset the persisted information to the defaults.
-     */
-    private void persistRunInfo(final LastRunInfo runInfo) {
-        try {
-            bgTaskService.submitTask(TaskType.IO, new Runnable() {
-                @Override
-                public void run() {
-                    lastRunInfoStore.persist(runInfo);
-                }
-            });
-        } catch (RejectedExecutionException exc) {
-            logger.w("Failed to persist last run info", exc);
-        }
-    }
-
-    private void loadPlugins(@NonNull final Configuration configuration) {
-        NativeInterface.setClient(Client.this);
-        Set<Plugin> userPlugins = configuration.getPlugins();
-        pluginClient = new PluginClient(userPlugins, immutableConfig, logger);
-        pluginClient.loadPlugins(Client.this);
-    }
-
-    private void logNull(String property) {
-        logger.e("Invalid null value supplied to client." + property + ", ignoring");
-    }
-
-    private void registerComponentCallbacks() {
-        appContext.registerComponentCallbacks(new ClientComponentCallbacks(
-                deviceDataCollector,
-                new Function2<String, String, Unit>() {
-                    @Override
-                    public Unit invoke(String oldOrientation, String newOrientation) {
-                        Map<String, Object> data = new HashMap<>();
-                        data.put("from", oldOrientation);
-                        data.put("to", newOrientation);
-                        leaveAutoBreadcrumb("Orientation changed", BreadcrumbType.STATE, data);
-                        clientObservable.postOrientationChange(newOrientation);
-                        return null;
-                    }
-                }, new Function2<Boolean, Integer, Unit>() {
-                    @Override
-                    public Unit invoke(Boolean isLowMemory, Integer memoryTrimLevel) {
-                        memoryTrimState.setLowMemory(Boolean.TRUE.equals(isLowMemory));
-                        if (memoryTrimState.updateMemoryTrimLevel(memoryTrimLevel)) {
-                            leaveAutoBreadcrumb(
-                                    "Trim Memory",
-                                    BreadcrumbType.STATE,
-                                    Collections.<String, Object>singletonMap(
-                                            "trimLevel", memoryTrimState.getTrimLevelDescription()
-                                    )
-                            );
-                        }
-
-                        memoryTrimState.emitObservableEvent();
-                        return null;
-                    }
-                }
-        ));
-    }
-
-    void setupNdkPlugin() {
-        if (!setupNdkDirectory()) {
-            logger.w("Failed to setup NDK directory.");
-            return;
-        }
-
-        String lastRunInfoPath = lastRunInfoStore.getFile().getAbsolutePath();
-        int crashes = (lastRunInfo != null) ? lastRunInfo.getConsecutiveLaunchCrashes() : 0;
-        clientObservable.postNdkInstall(immutableConfig, lastRunInfoPath, crashes);
-        syncInitialState();
-        clientObservable.postNdkDeliverPending();
-    }
-
-    private boolean setupNdkDirectory() {
-        try {
-            return bgTaskService.submitTask(TaskType.IO, new Callable<Boolean>() {
-                @Override
-                public Boolean call() {
-                    File outFile = new File(NativeInterface.getNativeReportPath());
-                    return outFile.exists() || outFile.mkdirs();
-                }
-            }).get();
-        } catch (Throwable exc) {
-            return false;
-        }
-    }
-
-    void addObserver(StateObserver observer) {
-        metadataState.addObserver(observer);
-        breadcrumbState.addObserver(observer);
-        sessionTracker.addObserver(observer);
-        clientObservable.addObserver(observer);
-        userState.addObserver(observer);
-        contextState.addObserver(observer);
-        deliveryDelegate.addObserver(observer);
-        launchCrashTracker.addObserver(observer);
-        memoryTrimState.addObserver(observer);
-        notifierState.addObserver(observer);
-    }
-
-    void removeObserver(StateObserver observer) {
-        metadataState.removeObserver(observer);
-        breadcrumbState.removeObserver(observer);
-        sessionTracker.removeObserver(observer);
-        clientObservable.removeObserver(observer);
-        userState.removeObserver(observer);
-        contextState.removeObserver(observer);
-        deliveryDelegate.removeObserver(observer);
-        launchCrashTracker.removeObserver(observer);
-        memoryTrimState.removeObserver(observer);
-        notifierState.removeObserver(observer);
-    }
-
-    /**
-     * Sends initial state values for Metadata/User/Context to any registered observers.
-     */
-    void syncInitialState() {
-        metadataState.emitObservableEvent();
-        contextState.emitObservableEvent();
-        userState.emitObservableEvent();
-        memoryTrimState.emitObservableEvent();
-        notifierState.emitObservableEvent();
-    }
-
     /**
      * Starts tracking a new session. You should disable automatic session tracking via
      * {@link Configuration#setAutoTrackSessions(boolean)} if you call this method.
@@ -705,84 +537,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     }
 
     /**
-     * Caches an error then attempts to notify.
-     *
-     * Should only ever be called from the {@link ExceptionHandler}.
-     */
-    void notifyUnhandledException(@NonNull Throwable exc, Metadata metadata,
-                                  @SeverityReason.SeverityReasonType String severityReason,
-                                  @Nullable String attributeValue) {
-        SeverityReason handledState
-                = SeverityReason.newInstance(severityReason, Severity.ERROR, attributeValue);
-        Metadata data = Metadata.Companion.merge(metadataState.getMetadata(), metadata);
-        Event event = new Event(exc, immutableConfig, handledState, data, logger);
-        populateAndNotifyAndroidEvent(event, null);
-
-        // persist LastRunInfo so that on relaunch users can check the app crashed
-        int consecutiveLaunchCrashes = lastRunInfo == null ? 0
-                : lastRunInfo.getConsecutiveLaunchCrashes();
-        boolean launching = launchCrashTracker.isLaunching();
-        if (launching) {
-            consecutiveLaunchCrashes += 1;
-        }
-        LastRunInfo runInfo = new LastRunInfo(consecutiveLaunchCrashes, true, launching);
-        persistRunInfo(runInfo);
-
-        // suspend execution of any further background tasks, waiting for previously
-        // submitted ones to complete.
-        bgTaskService.shutdown();
-    }
-
-    void populateAndNotifyAndroidEvent(@NonNull Event event,
-                                       @Nullable OnErrorCallback onError) {
-        // Capture the state of the app and device and attach diagnostics to the event
-        event.setDevice(deviceDataCollector.generateDeviceWithState(new Date().getTime()));
-        event.addMetadata("device", deviceDataCollector.getDeviceMetadata());
-
-        // add additional info that belongs in metadata
-        // generate new object each time, as this can be mutated by end-users
-        event.setApp(appDataCollector.generateAppWithState());
-        event.addMetadata("app", appDataCollector.getAppDataMetadata());
-
-        // Attach breadcrumbState to the event
-        event.setBreadcrumbs(breadcrumbState.copy());
-
-        // Attach user info to the event
-        User user = userState.getUser();
-        event.setUser(user.getId(), user.getEmail(), user.getName());
-
-        // Attach context to the event
-        event.setContext(contextState.getContext());
-        notifyInternal(event, onError);
-    }
-
-    void notifyInternal(@NonNull Event event,
-                        @Nullable OnErrorCallback onError) {
-        // set the redacted keys on the event as this
-        // will not have been set for RN/Unity events
-        Set<String> redactedKeys = metadataState.getMetadata().getRedactedKeys();
-        Metadata eventMetadata = event.getImpl().getMetadata();
-        eventMetadata.setRedactedKeys(redactedKeys);
-
-        // get session for event
-        Session currentSession = sessionTracker.getCurrentSession();
-
-        if (currentSession != null
-                && (immutableConfig.getAutoTrackSessions() || !currentSession.isAutoCaptured())) {
-            event.setSession(currentSession);
-        }
-
-        // Run on error tasks, don't notify if any return false
-        if (!callbackState.runOnErrorTasks(event, logger)
-                || (onError != null && !onError.onError(event))) {
-            logger.d("Skipping notification - onError task returned false");
-            return;
-        }
-
-        deliveryDelegate.deliver(event);
-    }
-
-    /**
      * Returns the current buffer of breadcrumbs that will be sent with captured events. This
      * ordered list represents the most recent breadcrumbs to be captured up to the limit
      * set in {@link Configuration#getMaxBreadcrumbs()}.
@@ -799,15 +553,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         return breadcrumbState.copy();
     }
 
-    @NonNull
-    AppDataCollector getAppDataCollector() {
-        return appDataCollector;
-    }
-
-    @NonNull
-    DeviceDataCollector getDeviceDataCollector() {
-        return deviceDataCollector;
-    }
 
     /**
      * Adds a map of multiple metadata key-value pairs to the specified section.
@@ -887,14 +632,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         }
     }
 
-    // cast map to retain original signature until next major version bump, as this
-    // method signature is used by Unity/React native
-    @NonNull
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    Map<String, Object> getMetadata() {
-        return (Map) metadataState.getMetadata().toMap();
-    }
-
     /**
      * Leave a "breadcrumb" log message, representing an action that occurred
      * in your app, to aid with debugging.
@@ -927,22 +664,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
     }
 
     /**
-     * Intended for internal use only - leaves a breadcrumb if the type is enabled for automatic
-     * breadcrumbs.
-     *
-     * @param message  A short label
-     * @param type     A category for the breadcrumb
-     * @param metadata Additional diagnostic information about the app environment
-     */
-    void leaveAutoBreadcrumb(@NonNull String message,
-                             @NonNull BreadcrumbType type,
-                             @NonNull Map<String, Object> metadata) {
-        if (!immutableConfig.shouldDiscardBreadcrumb(type)) {
-            breadcrumbState.add(new Breadcrumb(message, type, metadata, new Date(), logger));
-        }
-    }
-
-    /**
      * Retrieves information about the last launch of the application, if it has been run before.
      *
      * For example, this allows checking whether the app crashed on its last launch, which could
@@ -965,6 +686,280 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      */
     public void markLaunchCompleted() {
         launchCrashTracker.markLaunchCompleted();
+    }
+
+
+    /*
+     *
+     * Start non-public APIs (in the next major version these should be moved)
+     *
+     *
+     */
+
+
+    void registerLifecycleCallbacks() {
+        if (appContext instanceof Application) {
+            Application application = (Application) appContext;
+            SessionLifecycleCallback sessionCb = new SessionLifecycleCallback(sessionTracker);
+            application.registerActivityLifecycleCallbacks(sessionCb);
+
+            if (!immutableConfig.shouldDiscardBreadcrumb(BreadcrumbType.STATE)) {
+                ActivityBreadcrumbCollector activityCb = new ActivityBreadcrumbCollector(
+                        new Function2<String, Map<String, ? extends Object>, Unit>() {
+                            @SuppressWarnings("unchecked")
+                            @Override
+                            public Unit invoke(String activity, Map<String, ?> metadata) {
+                                leaveBreadcrumb(activity, (Map<String, Object>) metadata,
+                                        BreadcrumbType.STATE);
+                                return null;
+                            }
+                        }
+                );
+                application.registerActivityLifecycleCallbacks(activityCb);
+            }
+        }
+    }
+
+    /**
+     * Registers listeners for system events in the background. This offloads work from the main
+     * thread that collects useful information from callbacks, but that don't need to be done
+     * immediately on client construction.
+     */
+    void registerListenersInBackground() {
+        try {
+            bgTaskService.submitTask(TaskType.DEFAULT, new Runnable() {
+                @Override
+                public void run() {
+                    connectivity.registerForNetworkChanges();
+                    SystemBroadcastReceiver.register(appContext, systemBroadcastReceiver, logger);
+                }
+            });
+        } catch (RejectedExecutionException ex) {
+            logger.w("Failed to register for system events", ex);
+        }
+    }
+
+
+    /**
+     * Load information about the last run, and reset the persisted information to the defaults.
+     */
+    private void persistRunInfo(final LastRunInfo runInfo) {
+        try {
+            bgTaskService.submitTask(TaskType.IO, new Runnable() {
+                @Override
+                public void run() {
+                    lastRunInfoStore.persist(runInfo);
+                }
+            });
+        } catch (RejectedExecutionException exc) {
+            logger.w("Failed to persist last run info", exc);
+        }
+    }
+
+    private void loadPlugins(@NonNull final Configuration configuration) {
+        NativeInterface.setClient(Client.this);
+        Set<Plugin> userPlugins = configuration.getPlugins();
+        pluginClient = new PluginClient(userPlugins, immutableConfig, logger);
+        pluginClient.loadPlugins(Client.this);
+    }
+
+    private void logNull(String property) {
+        logger.e("Invalid null value supplied to client." + property + ", ignoring");
+    }
+
+    private void registerComponentCallbacks() {
+        appContext.registerComponentCallbacks(new ClientComponentCallbacks(
+                deviceDataCollector, new Function2<String, String, Unit>() {
+                    @Override
+                    public Unit invoke(String oldOrientation, String newOrientation) {
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("from", oldOrientation);
+                        data.put("to", newOrientation);
+                        leaveAutoBreadcrumb("Orientation changed", BreadcrumbType.STATE, data);
+                        clientObservable.postOrientationChange(newOrientation);
+                        return null;
+                    }
+                },
+                new Function2<Boolean, Integer, Unit>() {
+                    @Override
+                    public Unit invoke(Boolean isLowMemory, Integer memoryTrimLevel) {
+                        memoryTrimState.setLowMemory(Boolean.TRUE.equals(isLowMemory));
+                        if (memoryTrimState.updateMemoryTrimLevel(memoryTrimLevel)) {
+                            leaveAutoBreadcrumb(
+                                    "Trim Memory",
+                                    BreadcrumbType.STATE,
+                                    Collections.<String, Object>singletonMap(
+                                            "trimLevel", memoryTrimState.getTrimLevelDescription()
+                                    )
+                            );
+                        }
+
+                        memoryTrimState.emitObservableEvent();
+                        return null;
+                    }
+                }
+        ));
+    }
+
+    void setupNdkPlugin() {
+        if (!setupNdkDirectory()) {
+            logger.w("Failed to setup NDK directory.");
+            return;
+        }
+
+        String lastRunInfoPath = lastRunInfoStore.getFile().getAbsolutePath();
+        int crashes = (lastRunInfo != null) ? lastRunInfo.getConsecutiveLaunchCrashes() : 0;
+        clientObservable.postNdkInstall(immutableConfig, lastRunInfoPath, crashes);
+        syncInitialState();
+        clientObservable.postNdkDeliverPending();
+    }
+
+    private boolean setupNdkDirectory() {
+        try {
+            return bgTaskService.submitTask(TaskType.IO, new Callable<Boolean>() {
+                @Override
+                public Boolean call() {
+                    File outFile = new File(NativeInterface.getNativeReportPath());
+                    return outFile.exists() || outFile.mkdirs();
+                }
+            }).get();
+        } catch (Throwable exc) {
+            return false;
+        }
+    }
+
+    void addObserver(StateObserver observer) {
+        metadataState.addObserver(observer);
+        breadcrumbState.addObserver(observer);
+        sessionTracker.addObserver(observer);
+        clientObservable.addObserver(observer);
+        userState.addObserver(observer);
+        contextState.addObserver(observer);
+        deliveryDelegate.addObserver(observer);
+        launchCrashTracker.addObserver(observer);
+        memoryTrimState.addObserver(observer);
+        notifierState.addObserver(observer);
+    }
+
+    void removeObserver(StateObserver observer) {
+        metadataState.removeObserver(observer);
+        breadcrumbState.removeObserver(observer);
+        sessionTracker.removeObserver(observer);
+        clientObservable.removeObserver(observer);
+        userState.removeObserver(observer);
+        contextState.removeObserver(observer);
+        deliveryDelegate.removeObserver(observer);
+        launchCrashTracker.removeObserver(observer);
+        memoryTrimState.removeObserver(observer);
+        notifierState.removeObserver(observer);
+    }
+
+    /**
+     * Sends initial state values for Metadata/User/Context to any registered observers.
+     */
+    void syncInitialState() {
+        metadataState.emitObservableEvent();
+        contextState.emitObservableEvent();
+        userState.emitObservableEvent();
+        memoryTrimState.emitObservableEvent();
+        notifierState.emitObservableEvent();
+    }
+
+
+    /**
+     * Caches an error then attempts to notify.
+     *
+     * Should only ever be called from the {@link ExceptionHandler}.
+     */
+    void notifyUnhandledException(@NonNull Throwable exc, Metadata metadata,
+                                  @SeverityReason.SeverityReasonType String severityReason,
+                                  @Nullable String attributeValue) {
+        SeverityReason handledState
+                = SeverityReason.newInstance(severityReason, Severity.ERROR, attributeValue);
+        Metadata data = Metadata.Companion.merge(metadataState.getMetadata(), metadata);
+        Event event = new Event(exc, immutableConfig, handledState, data, logger);
+        populateAndNotifyAndroidEvent(event, null);
+
+        // persist LastRunInfo so that on relaunch users can check the app crashed
+        int consecutiveLaunchCrashes = lastRunInfo == null ? 0
+                : lastRunInfo.getConsecutiveLaunchCrashes();
+        boolean launching = launchCrashTracker.isLaunching();
+        if (launching) {
+            consecutiveLaunchCrashes += 1;
+        }
+        LastRunInfo runInfo = new LastRunInfo(consecutiveLaunchCrashes, true, launching);
+        persistRunInfo(runInfo);
+
+        // suspend execution of any further background tasks, waiting for previously
+        // submitted ones to complete.
+        bgTaskService.shutdown();
+    }
+
+    void populateAndNotifyAndroidEvent(@NonNull Event event,
+                                       @Nullable OnErrorCallback onError) {
+        // Capture the state of the app and device and attach diagnostics to the event
+        event.setDevice(deviceDataCollector.generateDeviceWithState(new Date().getTime()));
+        event.addMetadata("device", deviceDataCollector.getDeviceMetadata());
+
+        // add additional info that belongs in metadata
+        // generate new object each time, as this can be mutated by end-users
+        event.setApp(appDataCollector.generateAppWithState());
+        event.addMetadata("app", appDataCollector.getAppDataMetadata());
+
+        // Attach breadcrumbState to the event
+        event.setBreadcrumbs(breadcrumbState.copy());
+
+        // Attach user info to the event
+        User user = userState.getUser();
+        event.setUser(user.getId(), user.getEmail(), user.getName());
+
+        // Attach context to the event
+        event.setContext(contextState.getContext());
+        notifyInternal(event, onError);
+    }
+
+    void notifyInternal(@NonNull Event event,
+                        @Nullable OnErrorCallback onError) {
+        // set the redacted keys on the event as this
+        // will not have been set for RN/Unity events
+        Set<String> redactedKeys = metadataState.getMetadata().getRedactedKeys();
+        Metadata eventMetadata = event.getImpl().getMetadata();
+        eventMetadata.setRedactedKeys(redactedKeys);
+
+        // get session for event
+        Session currentSession = sessionTracker.getCurrentSession();
+
+        if (currentSession != null
+                && (immutableConfig.getAutoTrackSessions() || !currentSession.isAutoCaptured())) {
+            event.setSession(currentSession);
+        }
+
+        // Run on error tasks, don't notify if any return false
+        if (!callbackState.runOnErrorTasks(event, logger)
+                || (onError != null && !onError.onError(event))) {
+            logger.d("Skipping notification - onError task returned false");
+            return;
+        }
+
+        deliveryDelegate.deliver(event);
+    }
+
+    @NonNull
+    AppDataCollector getAppDataCollector() {
+        return appDataCollector;
+    }
+
+    @NonNull
+    DeviceDataCollector getDeviceDataCollector() {
+        return deviceDataCollector;
+    }
+
+    // cast map to retain original signature until next major version bump, as this
+    // method signature is used by Unity/React native
+    @NonNull
+    @SuppressWarnings({"unchecked", "rawtypes", "OverloadMethodsDeclarationOrder"})
+    Map<String, Object> getMetadata() {
+        return (Map) metadataState.getMetadata().toMap();
     }
 
     SessionTracker getSessionTracker() {
@@ -998,6 +993,22 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         if (!(androidContext instanceof Application)) {
             logger.w("Warning - Non-Application context detected! Please ensure that you are "
                 + "initializing Bugsnag from a custom Application class.");
+        }
+    }
+
+    /**
+     * Intended for internal use only - leaves a breadcrumb if the type is enabled for automatic
+     * breadcrumbs.
+     *
+     * @param message  A short label
+     * @param type     A category for the breadcrumb
+     * @param metadata Additional diagnostic information about the app environment
+     */
+    void leaveAutoBreadcrumb(@NonNull String message,
+                             @NonNull BreadcrumbType type,
+                             @NonNull Map<String, Object> metadata) {
+        if (!immutableConfig.shouldDiscardBreadcrumb(type)) {
+            breadcrumbState.add(new Breadcrumb(message, type, metadata, new Date(), logger));
         }
     }
 
