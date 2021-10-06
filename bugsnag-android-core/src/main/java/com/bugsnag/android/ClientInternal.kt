@@ -83,9 +83,8 @@ internal class ClientInternal constructor(
 
         // setup journal
         journal = lazy {
-            val journalDir = config.persistenceDirectory.value
-            journalDir.mkdirs()
-            val baseDocumentPath = File(journalDir, "bugsnag-journal")
+            val baseDocumentPath = config.journalBasePath
+            baseDocumentPath.parentFile!!.mkdirs()
             val eventMapper = BugsnagJournalEventMapper(logger)
             eventMapper.convertToEvent(baseDocumentPath)
             BugsnagJournal(logger, baseDocumentPath)
