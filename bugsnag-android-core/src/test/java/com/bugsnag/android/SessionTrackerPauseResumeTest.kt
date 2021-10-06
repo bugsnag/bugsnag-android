@@ -66,7 +66,8 @@ internal class SessionTrackerPauseResumeTest {
             client,
             sessionStore,
             NoopLogger,
-            BackgroundTaskService()
+            BackgroundTaskService(),
+            ForegroundDetector(client.getAppContext())
         )
     }
 

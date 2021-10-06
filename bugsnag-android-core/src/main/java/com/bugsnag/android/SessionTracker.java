@@ -48,9 +48,10 @@ class SessionTracker extends BaseObservable {
                    Client client,
                    SessionStore sessionStore,
                    Logger logger,
-                   BackgroundTaskService backgroundTaskService) {
+                   BackgroundTaskService backgroundTaskService,
+                   ForegroundDetector foregroundDetector) {
         this(configuration, callbackState, client, DEFAULT_TIMEOUT_MS,
-                sessionStore, logger, backgroundTaskService);
+                sessionStore, logger, backgroundTaskService, foregroundDetector);
     }
 
     SessionTracker(ImmutableConfig configuration,
@@ -59,13 +60,14 @@ class SessionTracker extends BaseObservable {
                    long timeoutMs,
                    SessionStore sessionStore,
                    Logger logger,
-                   BackgroundTaskService backgroundTaskService) {
+                   BackgroundTaskService backgroundTaskService,
+                   ForegroundDetector foregroundDetector) {
         this.configuration = configuration;
         this.callbackState = callbackState;
         this.client = client;
         this.timeoutMs = timeoutMs;
         this.sessionStore = sessionStore;
-        this.foregroundDetector = new ForegroundDetector(client.getAppContext());
+        this.foregroundDetector = foregroundDetector;
         this.backgroundTaskService = backgroundTaskService;
         this.logger = logger;
         notifyNdkInForeground();

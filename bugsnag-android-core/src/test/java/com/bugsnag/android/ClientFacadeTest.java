@@ -1,16 +1,13 @@
 package com.bugsnag.android;
 
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.bugsnag.android.internal.ImmutableConfig;
 import com.bugsnag.android.internal.StateObserver;
-
-import android.content.Context;
 
 import androidx.annotation.NonNull;
 
@@ -18,10 +15,10 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,73 +28,7 @@ import java.util.Map;
 public class ClientFacadeTest {
 
     @Mock
-    ImmutableConfig immutableConfig;
-
-    @Mock
-    MetadataState metadataState;
-
-    @Mock
-    ContextState contextState;
-
-    @Mock
-    CallbackState callbackState;
-
-    @Mock
-    UserState userState;
-
-    @Mock
-    NotifierState notifierState;
-
-    @Mock
-    ClientObservable clientObservable;
-
-    @Mock
-    Context appContext;
-
-    @Mock
-    DeviceDataCollector deviceDataCollector;
-
-    @Mock
-    AppDataCollector appDataCollector;
-
-    @Mock
-    BreadcrumbState breadcrumbState;
-
-    @Mock
-    EventStore eventStore;
-
-    @Mock
-    SystemBroadcastReceiver systemBroadcastReceiver;
-
-    @Mock
-    SessionTracker sessionTracker;
-
-    @Mock
-    Connectivity connectivity;
-
-    @Mock
-    BugsnagJournal journal;
-
-    @Mock
-    DeliveryDelegate deliveryDelegate;
-
-    @Mock
-    AppWithState app;
-
-    @Mock
-    DeviceWithState device;
-
-    @Mock
-    LastRunInfoStore lastRunInfoStore;
-
-    @Mock
-    LaunchCrashTracker launchCrashTracker;
-
-    @Mock
-    ExceptionHandler exceptionHandler;
-
-    @Mock
-    Notifier notifier;
+    ClientInternal clientInternal;
 
     private Client client;
     private InterceptingLogger logger;
@@ -108,82 +39,43 @@ public class ClientFacadeTest {
     @Before
     public void setUp() {
         logger = new InterceptingLogger();
-        client = new Client(
-                immutableConfig,
-                metadataState,
-                contextState,
-                callbackState,
-                userState,
-                notifierState,
-                clientObservable,
-                appContext,
-                deviceDataCollector,
-                appDataCollector,
-                breadcrumbState,
-                eventStore,
-                systemBroadcastReceiver,
-                sessionTracker,
-                connectivity,
-                logger,
-                journal,
-                deliveryDelegate,
-                lastRunInfoStore,
-                launchCrashTracker,
-                exceptionHandler,
-                notifier
-        );
-
-        // required fields for generating an event
-        when(metadataState.getMetadata()).thenReturn(new Metadata());
-        when(immutableConfig.getApiKey()).thenReturn("api-key");
-        when(immutableConfig.getLogger()).thenReturn(logger);
-        when(immutableConfig.getSendThreads()).thenReturn(ThreadSendPolicy.ALWAYS);
-
-        when(deviceDataCollector.generateDeviceWithState(anyLong())).thenReturn(device);
-        when(deviceDataCollector.getDeviceMetadata()).thenReturn(new HashMap<String, Object>());
-        when(appDataCollector.generateAppWithState()).thenReturn(app);
-        when(appDataCollector.getAppDataMetadata()).thenReturn(new HashMap<String, Object>());
-
-        when(breadcrumbState.copy()).thenReturn(new ArrayList<Breadcrumb>());
-        when(userState.getUser()).thenReturn(new User());
-        when(callbackState.runOnErrorTasks(any(Event.class), any(Logger.class))).thenReturn(true);
+        when(clientInternal.getLogger()).thenReturn(logger);
+        client = new Client(clientInternal);
     }
 
     @Test
     public void startSessionValid() {
         client.startSession();
-        verify(sessionTracker, times(1)).startSession(false);
+        verify(clientInternal, times(1)).startSession();
     }
 
     @Test
     public void pauseSessionValid() {
         client.pauseSession();
-        verify(sessionTracker, times(1)).pauseSession();
+        verify(clientInternal, times(1)).pauseSession();
     }
 
     @Test
     public void resumeSessionValid() {
         client.resumeSession();
-        verify(sessionTracker, times(1)).resumeSession();
+        verify(clientInternal, times(1)).resumeSession();
     }
 
     @Test
     public void setContextValid() {
         client.setContext("foo");
-        verify(contextState, times(1)).setManualContext("foo");
+        verify(clientInternal, times(1)).setContext("foo");
         client.setContext(null);
-        verify(contextState, times(1)).setManualContext(null);
+        verify(clientInternal, times(1)).setContext(null);
     }
 
     @Test
     public void setUserValid() {
         client.setUser("123", "joe@example.com", "Joe");
-        User joe = new User("123", "joe@example.com", "Joe");
-        verify(userState, times(1)).setUser(joe);
+        verify(clientInternal, times(1)).setUser("123", "joe@example.com", "Joe");
 
         client.setUser(null, null, null);
-        User emptyUser = new User(null, null, null);
-        verify(userState, times(1)).setUser(emptyUser);
+        verify(clientInternal, times(1)).setUser(null, null, null);
     }
 
     @Test
@@ -195,13 +87,13 @@ public class ClientFacadeTest {
             }
         };
         client.addOnError(cb);
-        verify(callbackState, times(1)).addOnError(cb);
+        verify(clientInternal, times(1)).addOnError(cb);
     }
 
     @Test
     public void addOnErrorInvalid() {
         client.addOnError(null);
-        verify(callbackState, times(0)).addOnError(null);
+        verify(clientInternal, times(0)).addOnError(null);
         assertNotNull(logger.getMsg());
     }
 
@@ -214,13 +106,13 @@ public class ClientFacadeTest {
             }
         };
         client.removeOnError(cb);
-        verify(callbackState, times(1)).removeOnError(cb);
+        verify(clientInternal, times(1)).removeOnError(cb);
     }
 
     @Test
     public void removeOnErrorInvalid() {
         client.removeOnError(null);
-        verify(callbackState, times(0)).removeOnError(null);
+        verify(clientInternal, times(0)).removeOnError(null);
         assertNotNull(logger.getMsg());
     }
 
@@ -233,13 +125,13 @@ public class ClientFacadeTest {
             }
         };
         client.addOnBreadcrumb(cb);
-        verify(callbackState, times(1)).addOnBreadcrumb(cb);
+        verify(clientInternal, times(1)).addOnBreadcrumb(cb);
     }
 
     @Test
     public void addOnBreadcrumbInvalid() {
         client.addOnBreadcrumb(null);
-        verify(callbackState, times(0)).addOnBreadcrumb(null);
+        verify(clientInternal, times(0)).addOnBreadcrumb(null);
         assertNotNull(logger.getMsg());
     }
 
@@ -252,13 +144,13 @@ public class ClientFacadeTest {
             }
         };
         client.removeOnBreadcrumb(cb);
-        verify(callbackState, times(1)).removeOnBreadcrumb(cb);
+        verify(clientInternal, times(1)).removeOnBreadcrumb(cb);
     }
 
     @Test
     public void removeOnBreadcrumbInvalid() {
         client.removeOnBreadcrumb(null);
-        verify(callbackState, times(0)).removeOnBreadcrumb(null);
+        verify(clientInternal, times(0)).removeOnBreadcrumb(null);
         assertNotNull(logger.getMsg());
     }
 
@@ -271,13 +163,13 @@ public class ClientFacadeTest {
             }
         };
         client.addOnSession(cb);
-        verify(callbackState, times(1)).addOnSession(cb);
+        verify(clientInternal, times(1)).addOnSession(cb);
     }
 
     @Test
     public void addOnSessionInvalid() {
         client.addOnSession(null);
-        verify(callbackState, times(0)).addOnSession(null);
+        verify(clientInternal, times(0)).addOnSession(null);
         assertNotNull(logger.getMsg());
     }
 
@@ -290,13 +182,13 @@ public class ClientFacadeTest {
             }
         };
         client.removeOnSession(cb);
-        verify(callbackState, times(1)).removeOnSession(cb);
+        verify(clientInternal, times(1)).removeOnSession(cb);
     }
 
     @Test
     public void removeOnSessionInvalid() {
         client.removeOnSession(null);
-        verify(callbackState, times(0)).removeOnSession(null);
+        verify(clientInternal, times(0)).removeOnSession(null);
         assertNotNull(logger.getMsg());
     }
 
@@ -304,13 +196,13 @@ public class ClientFacadeTest {
     public void notifyValid() {
         RuntimeException exc = new RuntimeException();
         client.notify(exc);
-        verify(deliveryDelegate, times(1)).deliver(any(Event.class));
+        verify(clientInternal, times(1)).notify(exc, null);
     }
 
     @Test
     public void notifyInvalid() {
         client.notify(null);
-        verify(deliveryDelegate, times(0)).deliver(any(Event.class));
+        verify(clientInternal, times(0)).notify(any(Throwable.class), any(OnErrorCallback.class));
         assertNotNull(logger.getMsg());
     }
 
@@ -318,13 +210,13 @@ public class ClientFacadeTest {
     public void notifyCallbackValid() {
         RuntimeException exc = new RuntimeException();
         client.notify(exc, null);
-        verify(deliveryDelegate, times(1)).deliver(any(Event.class));
+        verify(clientInternal, times(1)).notify(exc, null);
     }
 
     @Test
     public void notifyCallbackInvalid() {
         client.notify(null, null);
-        verify(deliveryDelegate, times(0)).deliver(any(Event.class));
+        verify(clientInternal, times(0)).notify(any(Throwable.class), any(OnErrorCallback.class));
         assertNotNull(logger.getMsg());
     }
 
@@ -332,33 +224,33 @@ public class ClientFacadeTest {
     public void addMetadataValid() {
         Map<String, Boolean> map = Collections.singletonMap("test", true);
         client.addMetadata("foo", map);
-        verify(metadataState, times(1)).addMetadata("foo", map);
+        verify(clientInternal, times(1)).addMetadata("foo", map);
     }
 
     @Test
     public void addMetadataInvalid1() {
         client.addMetadata("foo", null);
-        verify(metadataState, times(0)).addMetadata("foo", null);
+        verify(clientInternal, times(0)).addMetadata("foo", null);
         assertNotNull(logger.getMsg());
     }
 
     @Test
     public void addMetadataValueValid() {
         client.addMetadata("foo", "test", true);
-        verify(metadataState, times(1)).addMetadata("foo", "test", true);
+        verify(clientInternal, times(1)).addMetadata("foo", "test", true);
     }
 
     @Test
     public void addMetadataValueInvalid1() {
         client.addMetadata(null, "test", true);
-        verify(metadataState, times(0)).addMetadata(null, "test", true);
+        verify(clientInternal, times(0)).addMetadata(null, "test", true);
         assertNotNull(logger.getMsg());
     }
 
     @Test
     public void addMetadataValueInvalid2() {
         client.addMetadata("foo", null, true);
-        verify(metadataState, times(0)).addMetadata("foo", null, true);
+        verify(clientInternal, times(0)).addMetadata("foo", null, true);
         assertNotNull(logger.getMsg());
     }
 
@@ -366,13 +258,13 @@ public class ClientFacadeTest {
     public void clearMetadataValid() {
         client.addMetadata("foo", "test", true);
         client.clearMetadata("foo");
-        verify(metadataState, times(1)).clearMetadata("foo");
+        verify(clientInternal, times(1)).clearMetadata("foo");
     }
 
     @Test
     public void clearMetadataInvalid() {
         client.clearMetadata(null);
-        verify(metadataState, times(0)).clearMetadata(null);
+        verify(clientInternal, times(0)).clearMetadata(null);
         assertNotNull(logger.getMsg());
     }
 
@@ -380,14 +272,14 @@ public class ClientFacadeTest {
     public void clearMetadataValueValid() {
         client.addMetadata("foo", "test", true);
         client.clearMetadata("foo", "test");
-        verify(metadataState, times(1)).clearMetadata("foo", "test");
+        verify(clientInternal, times(1)).clearMetadata("foo", "test");
     }
 
     @Test
     public void clearMetadataValueInvalid1() {
         client.addMetadata("foo", "test", true);
         client.clearMetadata(null, "test");
-        verify(metadataState, times(0)).clearMetadata(null, "test");
+        verify(clientInternal, times(0)).clearMetadata(null, "test");
         assertNotNull(logger.getMsg());
     }
 
@@ -395,14 +287,14 @@ public class ClientFacadeTest {
     public void clearMetadataValueInvalid2() {
         client.addMetadata("foo", "test", true);
         client.clearMetadata("foo", null);
-        verify(metadataState, times(0)).clearMetadata("foo", null);
+        verify(clientInternal, times(0)).clearMetadata("foo", null);
         assertNotNull(logger.getMsg());
     }
 
     @Test
     public void getMetadataValid() {
         client.getMetadata("foo", "test");
-        verify(metadataState, times(1)).getMetadata("foo", "test");
+        verify(clientInternal, times(1)).getMetadata("foo", "test");
     }
 
     @Test
@@ -415,14 +307,14 @@ public class ClientFacadeTest {
     public void getMetadataValueValid() {
         client.addMetadata("foo", "test", true);
         client.getMetadata("foo", "test");
-        verify(metadataState, times(1)).getMetadata("foo", "test");
+        verify(clientInternal, times(1)).getMetadata("foo", "test");
     }
 
     @Test
     public void getMetadataValueInvalid1() {
         client.addMetadata("foo", "test", true);
         client.getMetadata(null, "test");
-        verify(metadataState, times(0)).getMetadata(null, "test");
+        verify(clientInternal, times(0)).getMetadata(null, "test");
         assertNotNull(logger.getMsg());
     }
 
@@ -430,20 +322,20 @@ public class ClientFacadeTest {
     public void getMetadataValueInvalid2() {
         client.addMetadata("foo", "test", true);
         client.getMetadata("foo", null);
-        verify(metadataState, times(0)).getMetadata("foo", null);
+        verify(clientInternal, times(0)).getMetadata("foo", null);
         assertNotNull(logger.getMsg());
     }
 
     @Test
     public void leaveBreadcrumbValid() {
         client.leaveBreadcrumb("foo");
-        verify(breadcrumbState, times(1)).add(any(Breadcrumb.class));
+        verify(clientInternal, times(1)).leaveBreadcrumb("foo");
     }
 
     @Test
     public void leaveBreadcrumbInvalid() {
         client.leaveBreadcrumb(null);
-        verify(breadcrumbState, times(0)).add(any(Breadcrumb.class));
+        verify(clientInternal, times(0)).leaveBreadcrumb(null);
         assertNotNull(logger.getMsg());
     }
 
@@ -451,41 +343,41 @@ public class ClientFacadeTest {
     public void leaveComplexBreadcrumbValid() {
         HashMap<String, Object> metadata = new HashMap<>();
         client.leaveBreadcrumb("foo", metadata, BreadcrumbType.NAVIGATION);
-        verify(breadcrumbState, times(1)).add(any(Breadcrumb.class));
+        verify(clientInternal, times(1))
+                .leaveBreadcrumb("foo", metadata, BreadcrumbType.NAVIGATION);
     }
 
     @Test
     public void leaveComplexBreadcrumbInvalid1() {
         HashMap<String, Object> metadata = new HashMap<>();
         client.leaveBreadcrumb(null, metadata, BreadcrumbType.NAVIGATION);
-        verify(breadcrumbState, times(0)).add(any(Breadcrumb.class));
+        verify(clientInternal, times(0)).leaveBreadcrumb(null, metadata, BreadcrumbType.NAVIGATION);
     }
 
     @Test
     public void leaveComplexBreadcrumbInvalid2() {
         HashMap<String, Object> metadata = new HashMap<>();
         client.leaveBreadcrumb("foo", metadata, null);
-        verify(breadcrumbState, times(0)).add(any(Breadcrumb.class));
+        verify(clientInternal, times(0)).leaveBreadcrumb("foo", metadata, null);
     }
 
     @Test
     public void leaveComplexBreadcrumbInvalid3() {
         client.leaveBreadcrumb("foo", null, BreadcrumbType.NAVIGATION);
-        verify(breadcrumbState, times(0)).add(any(Breadcrumb.class));
+        verify(clientInternal, times(0)).leaveBreadcrumb("foo", null, BreadcrumbType.NAVIGATION);
     }
 
     @Test
     public void addRuntimeVersionInfo() {
         client.addRuntimeVersionInfo("foo", "bar");
-        verify(deviceDataCollector, times(1)).addRuntimeVersionInfo("foo", "bar");
+        verify(clientInternal, times(1)).addRuntimeVersionInfo("foo", "bar");
     }
 
     @Test
     public void markLaunchCompleted() {
         client.markLaunchCompleted();
-        verify(launchCrashTracker, times(1)).markLaunchCompleted();
+        verify(clientInternal, times(1)).markLaunchCompleted();
     }
-
 
     @Test
     public void registerObserver() {
@@ -495,16 +387,7 @@ public class ClientFacadeTest {
             }
         };
         client.addObserver(observer);
-
-        verify(metadataState, times(1)).addObserver(observer);
-        verify(breadcrumbState, times(1)).addObserver(observer);
-        verify(sessionTracker, times(1)).addObserver(observer);
-        verify(clientObservable, times(1)).addObserver(observer);
-        verify(userState, times(1)).addObserver(observer);
-        verify(contextState, times(1)).addObserver(observer);
-        verify(deliveryDelegate, times(1)).addObserver(observer);
-        verify(launchCrashTracker, times(1)).addObserver(observer);
-        verify(notifierState, times(1)).addObserver(observer);
+        verify(clientInternal, times(1)).addObserver(observer);
     }
 
     @Test
@@ -515,16 +398,7 @@ public class ClientFacadeTest {
             }
         };
         client.removeObserver(observer);
-
-        verify(metadataState, times(1)).removeObserver(observer);
-        verify(breadcrumbState, times(1)).removeObserver(observer);
-        verify(sessionTracker, times(1)).removeObserver(observer);
-        verify(clientObservable, times(1)).removeObserver(observer);
-        verify(userState, times(1)).removeObserver(observer);
-        verify(contextState, times(1)).removeObserver(observer);
-        verify(deliveryDelegate, times(1)).removeObserver(observer);
-        verify(launchCrashTracker, times(1)).removeObserver(observer);
-        verify(notifierState, times(1)).removeObserver(observer);
+        verify(clientInternal, times(1)).removeObserver(observer);
     }
 
 }

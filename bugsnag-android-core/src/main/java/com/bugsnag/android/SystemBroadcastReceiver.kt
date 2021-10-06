@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import com.bugsnag.android.internal.ImmutableConfig
 import java.util.HashMap
 
 /**
@@ -14,6 +15,7 @@ import java.util.HashMap
  */
 internal class SystemBroadcastReceiver(
     private val client: Client,
+    private val config: ImmutableConfig,
     private val logger: Logger
 ) : BroadcastReceiver() {
 
@@ -84,7 +86,6 @@ internal class SystemBroadcastReceiver(
      */
     private fun buildActions(): Map<String, BreadcrumbType> {
         val actions: MutableMap<String, BreadcrumbType> = HashMap()
-        val config = client.config
 
         if (!config.shouldDiscardBreadcrumb(BreadcrumbType.USER)) {
             actions["android.appwidget.action.APPWIDGET_DELETED"] = BreadcrumbType.USER

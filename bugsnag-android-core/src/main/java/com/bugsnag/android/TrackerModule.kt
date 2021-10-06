@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import com.bugsnag.android.internal.dag.ConfigModule
+import com.bugsnag.android.internal.dag.ContextModule
 import com.bugsnag.android.internal.dag.DependencyModule
 
 /**
@@ -8,6 +9,7 @@ import com.bugsnag.android.internal.dag.DependencyModule
  * in Bugsnag.
  */
 internal class TrackerModule(
+    contextModule: ContextModule,
     configModule: ConfigModule,
     storageModule: StorageModule,
     client: Client,
@@ -25,6 +27,7 @@ internal class TrackerModule(
         client,
         storageModule.sessionStore,
         config.logger,
-        bgTaskService
+        bgTaskService,
+        ForegroundDetector(contextModule.ctx)
     )
 }
