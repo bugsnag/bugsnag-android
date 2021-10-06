@@ -402,7 +402,7 @@ public class NativeInterface {
                                     @NonNull Client client,
                                     @NonNull SeverityReason severityReason) {
         Metadata metadata = client.getMetadataState().getMetadata();
-        return new Event(exc, client.getConfig(), severityReason, metadata, client.logger);
+        return new Event(exc, client.getConfig(), severityReason, metadata, client.getLogger());
     }
 
     @NonNull
@@ -444,7 +444,7 @@ public class NativeInterface {
 
     @Nullable
     public static Session getCurrentSession() {
-        return getClient().sessionTracker.getCurrentSession();
+        return getClient().getSessionTracker().getCurrentSession();
     }
 
     /**

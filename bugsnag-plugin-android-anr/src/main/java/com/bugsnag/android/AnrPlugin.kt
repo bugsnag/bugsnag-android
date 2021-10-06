@@ -99,7 +99,7 @@ internal class AnrPlugin : Plugin {
      */
     private fun notifyAnrDetected(nativeTrace: List<NativeStackframe>) {
         try {
-            if (client.immutableConfig.shouldDiscardError(ANR_ERROR_CLASS)) {
+            if (client.config.shouldDiscardError(ANR_ERROR_CLASS)) {
                 return
             }
             // generate a full report as soon as possible, then wait for extra process error info

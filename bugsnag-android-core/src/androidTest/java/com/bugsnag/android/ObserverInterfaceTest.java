@@ -150,7 +150,7 @@ public class ObserverInterfaceTest {
 
     @Test
     public void testRegisterSessionSendsMessage() {
-        client.sessionTracker.registerExistingSession(null, null, null, 0, 1);
+        client.getSessionTracker().registerExistingSession(null, null, null, 0, 1);
         assertNotNull(findMessageInQueue(StateEvent.PauseSession.class));
     }
 
@@ -180,16 +180,6 @@ public class ObserverInterfaceTest {
     @Test
     public void testLeaveStringBreadcrumbSendsMessage() {
         client.leaveBreadcrumb("Drift 4 units left");
-        StateEvent.AddBreadcrumb crumb = findMessageInQueue(StateEvent.AddBreadcrumb.class);
-        assertEquals(BreadcrumbType.MANUAL, crumb.type);
-        assertEquals("Drift 4 units left", crumb.message);
-        assertTrue(crumb.metadata.isEmpty());
-    }
-
-    @Test
-    public void testLeaveStringBreadcrumbDirectlySendsMessage() {
-        Breadcrumb obj = new Breadcrumb("Drift 4 units left", NoopLogger.INSTANCE);
-        client.breadcrumbState.add(obj);
         StateEvent.AddBreadcrumb crumb = findMessageInQueue(StateEvent.AddBreadcrumb.class);
         assertEquals(BreadcrumbType.MANUAL, crumb.type);
         assertEquals("Drift 4 units left", crumb.message);

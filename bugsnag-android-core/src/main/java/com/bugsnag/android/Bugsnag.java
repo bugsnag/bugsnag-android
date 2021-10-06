@@ -6,7 +6,6 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -71,7 +70,7 @@ public final class Bugsnag {
     }
 
     private static void logClientInitWarning() {
-        getClient().logger.w("Multiple Bugsnag.start calls detected. Ignoring.");
+        getClient().getLogger().w("Multiple Bugsnag.start calls detected. Ignoring.");
     }
 
     /**

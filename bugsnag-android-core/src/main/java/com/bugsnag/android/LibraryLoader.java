@@ -20,7 +20,7 @@ class LibraryLoader {
      */
     boolean loadLibrary(final String name, final Client client, final OnErrorCallback callback) {
         try {
-            client.bgTaskService.submitTask(TaskType.IO, new Runnable() {
+            client.getBgTaskService().submitTask(TaskType.IO, new Runnable() {
                 @Override
                 public void run() {
                     loadLibInternal(name, client, callback);

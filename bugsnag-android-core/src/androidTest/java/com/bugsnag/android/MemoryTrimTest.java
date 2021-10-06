@@ -37,7 +37,7 @@ public class MemoryTrimTest {
         Client client = new Client(context, BugsnagTestUtils.generateConfiguration());
 
         // block until observer is registered
-        client.bgTaskService.shutdown();
+        client.getBgTaskService().shutdown();
 
         // capture the registered ComponentCallbacks
         verify(context, times(1)).registerComponentCallbacks(componentCallbacksCaptor.capture());
