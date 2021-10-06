@@ -28,7 +28,7 @@ internal class ClientInternal constructor(
     val appContext: Context
     val bgTaskService: BackgroundTaskService
     val config: ImmutableConfig
-    private val journal: BugsnagJournal
+    private val journal: Lazy<BugsnagJournal>
 
     // logger
     val logger: Logger
@@ -64,6 +64,10 @@ internal class ClientInternal constructor(
     private val pluginClient: PluginClient
     private val observables: List<BaseObservable>
 
+    /**
+     * Constructs all the objects required for error reporting. Performing operations
+     * in this constructor should be avoided unless absolutely necessary.
+     */
     init {
         bgTaskService = BackgroundTaskService()
         memoryTrimState = MemoryTrimState()
@@ -78,12 +82,14 @@ internal class ClientInternal constructor(
         warnIfNotAppContext(androidContext)
 
         // setup journal
-        val journalDir = config.persistenceDirectory.value
-        journalDir.mkdirs()
-        val baseDocumentPath = File(journalDir, "bugsnag-journal")
-        val eventMapper = BugsnagJournalEventMapper(logger)
-        eventMapper.convertToEvent(baseDocumentPath)
-        journal = BugsnagJournal(logger, baseDocumentPath)
+        journal = lazy {
+            val journalDir = config.persistenceDirectory.value
+            journalDir.mkdirs()
+            val baseDocumentPath = File(journalDir, "bugsnag-journal")
+            val eventMapper = BugsnagJournalEventMapper(logger)
+            eventMapper.convertToEvent(baseDocumentPath)
+            BugsnagJournal(logger, baseDocumentPath)
+        }
 
         // setup storage as soon as possible
         val storageModule = StorageModule(
@@ -126,7 +132,6 @@ internal class ClientInternal constructor(
         // load the device + user information
         userState = storageModule.userStore.load(configuration.getUser())
         storageModule.sharedPrefMigrator.deleteLegacyPrefs()
-        registerLifecycleCallbacks()
 
         val notifier = notifierState.notifier
         val eventStorageModule = EventStorageModule(
@@ -143,13 +148,15 @@ internal class ClientInternal constructor(
 
         // Install a default exception handler with this client
         exceptionHandler = ExceptionHandler(client, logger)
-        if (config.enabledErrorTypes.unhandledExceptions) {
-            exceptionHandler.install()
-        }
 
         // load last run info
         lastRunInfoStore = storageModule.lastRunInfoStore
         lastRunInfo = storageModule.lastRunInfo
+
+        // initialise plugins before attempting to flush any errors
+        val userPlugins = configuration.plugins
+        pluginClient = PluginClient(userPlugins, config, logger)
+        systemBroadcastReceiver = SystemBroadcastReceiver(client, config, logger)
 
         // add observer before syncing initial state
         observables = listOf(
@@ -164,31 +171,80 @@ internal class ClientInternal constructor(
             memoryTrimState,
             notifierState
         )
-        addObserver(JournaledStateObserver(client, journal))
-        NativeInterface.setClient(client)
-
-        // initialise plugins before attempting to flush any errors
-        val userPlugins = configuration.plugins
-        pluginClient = PluginClient(userPlugins, config, logger)
-        systemBroadcastReceiver = SystemBroadcastReceiver(client, config, logger)
     }
 
+    /**
+     * Initializes Bugsnag. This is achieved in several steps to ensure that errors can be
+     * captured as early as possible:
+     *
+     * 1. Create an empty BugsnagJournal
+     * 2. Install exception, signal, and ANR handlers
+     * 3. Populate the journal with initial entries
+     * 4. Start collection of automatic data (such as lifecycle breadcrumbs)
+     * 5. Flush any cached payloads
+     * 6. Log a breadcrumb that Bugsnag finished loading
+     */
     fun start() {
+        createBugsnagJournal()
+        installErrorHandlers()
+        addInitialJournalEntries()
+        installDataCollectors()
+        flushCachedPayloads()
+        leaveBugsnagLoadedCrumb()
+    }
+
+    /**
+     * Creates an empty Bugsnag Journal which can be used for recording errors and system state.
+     */
+    private fun createBugsnagJournal() {
+        journal.value
+    }
+
+    /**
+     * Installs any exception/ANR/signal handlers.
+     */
+    private fun installErrorHandlers() {
+        if (config.enabledErrorTypes.unhandledExceptions) {
+            exceptionHandler.install()
+        }
+
+        NativeInterface.setClient(client)
         pluginClient.loadNdkPlugin(client)
         pluginClient.loadAnrPlugin(client)
         pluginClient.loadReactNativePlugin(client)
-        pluginClient.loadUserPlugins(client)
+    }
 
-        // Flush any on-disk errors and sessions
+    /**
+     * Populates the Bugsnag Journal with some initial state.
+     */
+    private fun addInitialJournalEntries() {
+        addObserver(JournaledStateObserver(client, journal.value))
+        syncInitialState()
+    }
+
+    /**
+     * Installs callbacks/broadcast receivers which are used to collect automatic data.
+     */
+    private fun installDataCollectors() {
+        registerLifecycleCallbacks()
+        registerComponentCallbacks()
+        registerListenersInBackground()
+        pluginClient.loadUserPlugins(client)
+    }
+
+    /**
+     * Flushes any payloads which are cached on disk.
+     */
+    private fun flushCachedPayloads() {
         eventStore.flushOnLaunch()
         eventStore.flushAsync()
         sessionTracker.flushAsync()
+    }
 
-        // register listeners for system events in the background.
-        registerComponentCallbacks()
-        registerListenersInBackground()
-
-        // leave auto breadcrumb
+    /**
+     * Leaves a breadcrumb that Bugsnag has loaded.
+     */
+    private fun leaveBugsnagLoadedCrumb() {
         leaveAutoBreadcrumb("Bugsnag loaded", BreadcrumbType.STATE, emptyMap())
         logger.d("Bugsnag loaded")
     }
@@ -206,7 +262,7 @@ internal class ClientInternal constructor(
             eventStore.flushAsync()
             sessionTracker.flushAsync()
         }
-        journal.addCommand(JournalKeys.pathMetadataAppNetworkAccess, networkState)
+        journal.value.addCommand(JournalKeys.pathMetadataAppNetworkAccess, networkState)
     }
 
     private fun registerLifecycleCallbacks() {
