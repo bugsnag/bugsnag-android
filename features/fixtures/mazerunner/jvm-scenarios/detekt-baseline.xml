@@ -9,6 +9,7 @@
     <ID>MagicNumber:BugsnagInitScenario.kt$BugsnagInitScenario$25</ID>
     <ID>MagicNumber:HandledKotlinSmokeScenario.kt$HandledKotlinSmokeScenario$999</ID>
     <ID>MagicNumber:JvmAnrSleepScenario.kt$JvmAnrSleepScenario$100000</ID>
+    <ID>MagicNumber:JvmLargePayloadScenario.kt$JvmLargePayloadScenario$1000</ID>
     <ID>MagicNumber:LoadConfigurationKotlinScenario.kt$LoadConfigurationKotlinScenario$10000</ID>
     <ID>MagicNumber:LoadConfigurationKotlinScenario.kt$LoadConfigurationKotlinScenario$98</ID>
     <ID>MagicNumber:ManualSessionSmokeScenario.kt$ManualSessionSmokeScenario$3</ID>
