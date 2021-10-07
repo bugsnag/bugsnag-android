@@ -37,7 +37,7 @@ internal class ClientInternal constructor(
     val breadcrumbState: BreadcrumbState
     val contextState: ContextState
     private val callbackState: CallbackState
-    internal val memoryTrimState: MemoryTrimState
+    val memoryTrimState: MemoryTrimState
     val metadataState: MetadataState
     val notifierState: NotifierState
     private val userState: UserState
@@ -52,7 +52,7 @@ internal class ClientInternal constructor(
     val eventStore: EventStore
     val lastRunInfo: LastRunInfo?
     private val lastRunInfoStore: LastRunInfoStore
-    internal val launchCrashTracker: LaunchCrashTracker
+    val launchCrashTracker: LaunchCrashTracker
     val sessionTracker: SessionTracker
 
     // error delivery
@@ -106,6 +106,7 @@ internal class ClientInternal constructor(
 
         // setup further state trackers and data collection
         val trackerModule = TrackerModule(
+            contextModule,
             configModule,
             storageModule, client, bgTaskService, callbackState
         )
@@ -155,6 +156,10 @@ internal class ClientInternal constructor(
         // initialise plugins before attempting to flush any errors
         val userPlugins = configuration.plugins
         pluginClient = PluginClient(userPlugins, config, logger)
+        systemBroadcastReceiver = SystemBroadcastReceiver(client, config, logger)
+    }
+
+    fun start() {
         pluginClient.loadPlugins(client)
 
         // Flush any on-disk errors and sessions
@@ -163,7 +168,6 @@ internal class ClientInternal constructor(
         sessionTracker.flushAsync()
 
         // register listeners for system events in the background.
-        systemBroadcastReceiver = SystemBroadcastReceiver(client, logger)
         registerComponentCallbacks()
         registerListenersInBackground()
 
@@ -171,6 +175,7 @@ internal class ClientInternal constructor(
         leaveAutoBreadcrumb("Bugsnag loaded", BreadcrumbType.STATE, emptyMap())
         logger.d("Bugsnag loaded")
     }
+
     private fun onConnectivityChange(hasConnection: Boolean, networkState: String?) {
         leaveAutoBreadcrumb(
             "Connectivity changed", BreadcrumbType.STATE,

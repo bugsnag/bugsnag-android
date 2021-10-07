@@ -31,10 +31,10 @@ class SystemBroadcastReceiverTest {
 
     @Test
     fun testBasicReceive() {
-        `when`(client.config).thenReturn(getConfig(emptySet()))
+        val config = getConfig(emptySet())
         `when`(intent.action).thenReturn("android.intent.action.AIRPLANE_MODE")
 
-        val receiver = SystemBroadcastReceiver(client, NoopLogger)
+        val receiver = SystemBroadcastReceiver(client, config, NoopLogger)
         receiver.onReceive(context, intent)
 
         val metadata = mapOf(Pair("Intent Action", "android.intent.action.AIRPLANE_MODE"))
@@ -43,13 +43,13 @@ class SystemBroadcastReceiverTest {
 
     @Test
     fun testMetadataReceive() {
-        `when`(client.config).thenReturn(getConfig(emptySet()))
+        val config = getConfig(emptySet())
         `when`(intent.action).thenReturn("SomeTitle")
         `when`(intent.extras).thenReturn(bundle)
         `when`(bundle.keySet()).thenReturn(setOf("foo"))
         `when`(bundle.get("foo")).thenReturn(setOf("bar"))
 
-        val receiver = SystemBroadcastReceiver(client, NoopLogger)
+        val receiver = SystemBroadcastReceiver(client, config, NoopLogger)
         receiver.onReceive(context, intent)
 
         val metadata = mapOf(Pair("Intent Action", "SomeTitle"), Pair("foo", "[bar]"))
@@ -58,22 +58,22 @@ class SystemBroadcastReceiverTest {
 
     @Test
     fun testBreadcrumbTypesUser() {
-        `when`(client.config).thenReturn(getConfig(setOf(BreadcrumbType.USER)))
-        val receiver = SystemBroadcastReceiver(client, NoopLogger)
+        val config = getConfig(setOf(BreadcrumbType.USER))
+        val receiver = SystemBroadcastReceiver(client, config, NoopLogger)
         assertEquals(6, receiver.actions.size)
     }
 
     @Test
     fun testBreadcrumbTypesState() {
-        `when`(client.config).thenReturn(getConfig(setOf(BreadcrumbType.STATE)))
-        val receiver = SystemBroadcastReceiver(client, NoopLogger)
+        val config = getConfig(setOf(BreadcrumbType.STATE))
+        val receiver = SystemBroadcastReceiver(client, config, NoopLogger)
         assertEquals(25, receiver.actions.size)
     }
 
     @Test
     fun testBreadcrumbTypesNavigation() {
-        `when`(client.config).thenReturn(getConfig(setOf(BreadcrumbType.NAVIGATION)))
-        val receiver = SystemBroadcastReceiver(client, NoopLogger)
+        val config = getConfig(setOf(BreadcrumbType.NAVIGATION))
+        val receiver = SystemBroadcastReceiver(client, config, NoopLogger)
         assertEquals(2, receiver.actions.size)
     }
 

@@ -79,7 +79,7 @@ public class SessionTrackerTest {
         immutableConfig = BugsnagTestUtils.generateImmutableConfig();
         sessionTracker = new SessionTracker(immutableConfig,
                 configuration.impl.callbackState, client, sessionStore, NoopLogger.INSTANCE,
-                bgTaskService);
+                bgTaskService, new ForegroundDetector(client.getAppContext()));
         configuration.setAutoTrackSessions(true);
         user = new User(null, null, null);
     }
@@ -171,7 +171,8 @@ public class SessionTrackerTest {
     public void testZeroSessionTimeout() {
         CallbackState callbackState = configuration.impl.callbackState;
         sessionTracker = new SessionTracker(immutableConfig, callbackState, client,
-            0, sessionStore, NoopLogger.INSTANCE, bgTaskService);
+            0, sessionStore, NoopLogger.INSTANCE, bgTaskService,
+                new ForegroundDetector(client.getAppContext()));
 
         long now = System.currentTimeMillis();
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now);
@@ -187,7 +188,8 @@ public class SessionTrackerTest {
     public void testSessionTimeout() {
         CallbackState callbackState = configuration.impl.callbackState;
         sessionTracker = new SessionTracker(immutableConfig, callbackState, client,
-            100, sessionStore, NoopLogger.INSTANCE, bgTaskService);
+            100, sessionStore, NoopLogger.INSTANCE, bgTaskService,
+                new ForegroundDetector(client.getAppContext()));
 
         long now = System.currentTimeMillis();
         sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now);
