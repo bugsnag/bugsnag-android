@@ -16,7 +16,7 @@
  * Journal writing functions end writing just after the opening quote whenever
  * strings are involved. So for example, a function that leads up to writing a
  * map key will end just after the '"', not before. The same goes for higher
- * level string writing functions (not including write_string, write_raw_string,
+ * level string writing functions (not including add_string, write_raw_string,
  * write_raw_bytes, and write_raw_literal).
  *
  * There are two versions of some functions to handle the requirement to close a

@@ -23,6 +23,7 @@ SUITE(suite_struct_migration);
 SUITE(suite_ctjournal);
 SUITE(suite_buffered_writer);
 SUITE(suite_number_to_string);
+SUITE(suite_path_builder);
 
 GREATEST_MAIN_DEFS();
 
@@ -251,6 +252,11 @@ JNIEXPORT jint JNICALL Java_com_bugsnag_android_ndk_NativeBufferedWriterTest_run
 JNIEXPORT jint JNICALL
 Java_com_bugsnag_android_ndk_NativeNumberToStringTest_run(JNIEnv *env, jobject thiz) {
     return run_test_suite(suite_number_to_string);
+}
+
+JNIEXPORT jint JNICALL
+Java_com_bugsnag_android_ndk_NativePathBuilderTest_run(JNIEnv *env, jobject thiz) {
+    return run_test_suite(suite_path_builder);
 }
 
 JNIEXPORT jstring JNICALL

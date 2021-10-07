@@ -8,6 +8,7 @@ add_library(bugsnag-ndk-test SHARED
     cpp/main.c
     cpp/test_utils_buffered_writer.c
     cpp/test_utils_number_to_string.c
+    cpp/test_utils_path_builder.c
     cpp/test_utils_string.c
     cpp/test_utils_serialize.c
     cpp/test_serializer.c
