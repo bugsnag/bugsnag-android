@@ -174,7 +174,10 @@ internal class ClientInternal constructor(
     }
 
     fun start() {
-        pluginClient.loadPlugins(client)
+        pluginClient.loadNdkPlugin(client)
+        pluginClient.loadAnrPlugin(client)
+        pluginClient.loadReactNativePlugin(client)
+        pluginClient.loadUserPlugins(client)
 
         // Flush any on-disk errors and sessions
         eventStore.flushOnLaunch()

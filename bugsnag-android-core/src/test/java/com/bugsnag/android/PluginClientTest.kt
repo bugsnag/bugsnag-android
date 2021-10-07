@@ -23,7 +23,7 @@ class PluginClientTest {
     @Test
     fun loadCustomPlugin() {
         val pluginClient = PluginClient(setOf(plugin), config, NoopLogger)
-        pluginClient.loadPlugins(client)
+        pluginClient.loadUserPlugins(client)
         Mockito.verify(plugin, times(1)).load(client)
     }
 

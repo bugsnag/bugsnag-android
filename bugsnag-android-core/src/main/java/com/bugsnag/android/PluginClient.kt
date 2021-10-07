@@ -14,23 +14,12 @@ internal class PluginClient(
         private const val RN_PLUGIN = "com.bugsnag.android.BugsnagReactNativePlugin"
     }
 
-    private val plugins: Set<Plugin>
-
     private val ndkPlugin = instantiatePlugin(NDK_PLUGIN)
     private val anrPlugin = instantiatePlugin(ANR_PLUGIN)
     private val rnPlugin = instantiatePlugin(RN_PLUGIN)
 
-    init {
-        val set = mutableSetOf<Plugin>()
-        set.addAll(userPlugins)
-
-        // instantiate ANR + NDK plugins by reflection as bugsnag-android-core has no
-        // direct dependency on the artefacts
-        ndkPlugin?.let(set::add)
-        anrPlugin?.let(set::add)
-        rnPlugin?.let(set::add)
-        plugins = set.toSet()
-    }
+    private val plugins: Set<Plugin> = userPlugins.toSet()
+    private val internalPlugins = setOf(ndkPlugin, anrPlugin, rnPlugin)
 
     private fun instantiatePlugin(clz: String): Plugin? {
         return try {
@@ -45,13 +34,39 @@ internal class PluginClient(
         }
     }
 
-    fun loadPlugins(client: Client) {
-        plugins.forEach { plugin ->
-            try {
-                loadPluginInternal(plugin, client)
-            } catch (exc: Throwable) {
-                logger.e("Failed to load plugin $plugin, continuing with initialisation.", exc)
-            }
+    /**
+     * Loads the ANR plugin
+     */
+    fun loadAnrPlugin(client: Client) {
+        anrPlugin?.let {
+            loadPluginInternal(it, client)
+        }
+    }
+
+    /**
+     * Loads the NDK plugin
+     */
+    fun loadNdkPlugin(client: Client) {
+        ndkPlugin?.let {
+            loadPluginInternal(it, client)
+        }
+    }
+
+    /**
+     * Loads the React Native plugin
+     */
+    fun loadReactNativePlugin(client: Client) {
+        rnPlugin?.let {
+            loadPluginInternal(it, client)
+        }
+    }
+
+    /**
+     * Loads any plugins added by the user
+     */
+    fun loadUserPlugins(client: Client) {
+        plugins.forEach {
+            loadPluginInternal(it, client)
         }
     }
 
@@ -73,23 +88,30 @@ internal class PluginClient(
         }
     }
 
-    fun findPlugin(clz: Class<*>): Plugin? = plugins.find { it.javaClass == clz }
+    fun findPlugin(clz: Class<*>): Plugin? {
+        val objs = plugins.plus(internalPlugins).filterNotNull()
+        return objs.find { it.javaClass == clz }
+    }
 
     private fun loadPluginInternal(plugin: Plugin, client: Client) {
-        val name = plugin.javaClass.name
-        val errorTypes = immutableConfig.enabledErrorTypes
+        try {
+            val name = plugin.javaClass.name
+            val errorTypes = immutableConfig.enabledErrorTypes
 
-        // only initialize NDK/ANR plugins if automatic detection enabled
-        if (name == NDK_PLUGIN) {
-            if (errorTypes.ndkCrashes) {
+            // only initialize NDK/ANR plugins if automatic detection enabled
+            if (name == NDK_PLUGIN) {
+                if (errorTypes.ndkCrashes) {
+                    plugin.load(client)
+                }
+            } else if (name == ANR_PLUGIN) {
+                if (errorTypes.anrs) {
+                    plugin.load(client)
+                }
+            } else {
                 plugin.load(client)
             }
-        } else if (name == ANR_PLUGIN) {
-            if (errorTypes.anrs) {
-                plugin.load(client)
-            }
-        } else {
-            plugin.load(client)
+        } catch (exc: Throwable) {
+            logger.e("Failed to load plugin $plugin, continuing with initialisation.", exc)
         }
     }
 }
