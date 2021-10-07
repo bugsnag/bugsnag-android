@@ -16,7 +16,7 @@
  * Journal writing functions end writing just after the opening quote whenever
  * strings are involved. So for example, a function that leads up to writing a
  * map key will end just after the '"', not before. The same goes for higher
- * level string writing functions (not including write_string, write_raw_string,
+ * level string writing functions (not including add_string, write_raw_string,
  * write_raw_bytes, and write_raw_literal).
  *
  * There are two versions of some functions to handle the requirement to close a
@@ -296,6 +296,30 @@ bool bsg_ctjournal_set_string(const char *path, const char *value) {
   RETURN_ON_FALSE(write_journal_begin_string(path));
   RETURN_ON_FALSE(write_string(value));
   RETURN_ON_FALSE(write_journal_end_string());
+
+  return flush_writer();
+}
+
+bool bsg_ctjournal_set_list(const char *path) {
+  if (path == NULL) {
+    return false;
+  }
+
+  RETURN_ON_FALSE(write_journal_begin_nonstring(path));
+  RETURN_ON_FALSE(write_raw_literal("[]"));
+  RETURN_ON_FALSE(write_journal_end_nonstring());
+
+  return flush_writer();
+}
+
+bool bsg_ctjournal_set_map(const char *path) {
+  if (path == NULL) {
+    return false;
+  }
+
+  RETURN_ON_FALSE(write_journal_begin_nonstring(path));
+  RETURN_ON_FALSE(write_raw_literal("{}"));
+  RETURN_ON_FALSE(write_journal_end_nonstring());
 
   return flush_writer();
 }

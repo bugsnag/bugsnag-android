@@ -11,6 +11,8 @@
 #ifndef BUGSNAG_ANDROID_PATH_BUILDER_H
 #define BUGSNAG_ANDROID_PATH_BUILDER_H
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -22,17 +24,28 @@ void bsg_pb_reset(void);
 
 /**
  * Stack a string (object) level to the current path.
+ * Stacking too deep (>100 levels) or building a path that's too long (>500
+ * bytes) will cause this function to no-op.
  *
- * @param value The string to use as the map key for the new path level.
+ * @param key The map key for the new path level.
  */
-void bsg_pb_stack_string(const char *value);
+void bsg_pb_stack_map_key(const char *key);
 
 /**
- * Stack an integer (array) level to the current path.
+ * Stack an integer (list) level to the current path.
+ * Stacking too deep (>100 levels) or building a path that's too long (>500
+ * bytes) will cause this function to no-op.
  *
- * @param value The integer to use as the array index for the new path level.
+ * @param index The list index for the new path level.
  */
-void bsg_pb_stack_int(int value);
+void bsg_pb_stack_list_index(int64_t index);
+
+/**
+ * Stack a new list entry to the current path (such that the path ends in a
+ * dot). Stacking too deep (>100 levels) or building a path that's too long
+ * (>500 bytes) will cause this function to no-op.
+ */
+void bsg_pb_stack_new_list_entry(void);
 
 /**
  * Unstack the current subpath level, returning to the next higher subpath

@@ -44,6 +44,20 @@ bool bsg_ctjournal_set_boolean(const char *path, bool value);
 bool bsg_ctjournal_set_string(const char *path, const char *value);
 
 /**
+ * Set an empty list at path.
+ * @param path The path to set.
+ * @return True on success
+ */
+bool bsg_ctjournal_set_list(const char *path);
+
+/**
+ * Set an empty map at path.
+ * @param path The path to set.
+ * @return True on success
+ */
+bool bsg_ctjournal_set_map(const char *path);
+
+/**
  * Clear an entire metadata section.
  * @param section The section to clear.
  * @return True on success

@@ -28,7 +28,7 @@ import java.util.concurrent.locks.ReentrantLock
  * Observes changes in the Bugsnag environment, propagating them to the native layer
  */
 class NativeBridge(
-    val journalBasePath: File
+    val crashtimeJournalPath: File
 ) : StateObserver {
 
     private val lock = ReentrantLock()
@@ -45,7 +45,7 @@ class NativeBridge(
     external fun install(
         apiKey: String,
         reportingDirectory: String,
-        journalBasePath: String,
+        crashtimeJournalPath: String,
         lastRunInfoPath: String,
         consecutiveLaunchCrashes: Int,
         autoDetectNdkCrashes: Boolean,
@@ -168,7 +168,7 @@ class NativeBridge(
                 install(
                     makeSafe(arg.apiKey),
                     reportPath,
-                    journalBasePath.toString(),
+                    crashtimeJournalPath.absolutePath,
                     makeSafe(arg.lastRunInfoPath),
                     arg.consecutiveLaunchCrashes,
                     arg.autoDetectNdkCrashes,

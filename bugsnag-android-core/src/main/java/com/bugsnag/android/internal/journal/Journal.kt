@@ -100,6 +100,10 @@ class Journal(val type: String, val version: Int) {
             JsonHelper.serialize(mutableMapOf(path to value), out)
             out.write(0)
         }
+
+        override fun toString(): String {
+            return "Command(path='$path', value=$value, documentPath=$documentPath)"
+        }
     }
 
     companion object {

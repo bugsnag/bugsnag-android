@@ -22,65 +22,76 @@
 #define KEY_SYMBOL_ADDRESS "symbolAddress"
 #define KEY_TYPE "type"
 
-static void write_string(const char *name, const char *value) {
-  bsg_pb_stack_string(name);
+static void add_string(const char *name, const char *value) {
+  bsg_pb_stack_map_key(name);
   bsg_ctjournal_set_string(bsg_pb_path(), value);
   bsg_pb_unstack();
 }
 
-static void write_double(const char *name, double value) {
-  bsg_pb_stack_string(name);
+static void add_hex(const char *name, uint64_t value) {
+  char buff[20] = "0x";
+  bsg_hex64_to_string(value, buff + 2);
+  add_string(name, buff);
+}
+
+static void add_double(const char *name, double value) {
+  bsg_pb_stack_map_key(name);
   bsg_ctjournal_set_double(bsg_pb_path(), value);
   bsg_pb_unstack();
 }
 
-static void write_boolean(const char *name, bool value) {
-  bsg_pb_stack_string(name);
+static void add_boolean(const char *name, bool value) {
+  bsg_pb_stack_map_key(name);
   bsg_ctjournal_set_boolean(bsg_pb_path(), value);
   bsg_pb_unstack();
 }
 
-static void write_stack_frame(const bugsnag_stackframe *frame, bool is_pc) {
-  write_double(KEY_FRAME_ADDRESS, frame->frame_address);
-  write_double(KEY_SYMBOL_ADDRESS, frame->symbol_address);
-  write_double(KEY_LOAD_ADDRESS, frame->load_address);
-  write_double(KEY_LINE_NUMBER, frame->line_number);
-  if (is_pc) {
-    write_boolean(KEY_IS_PC, true);
-  }
-  if (frame->filename[0] != 0) {
-    write_string(KEY_FILE, frame->filename);
-  }
-  if (frame->method[0] != 0) {
-    write_string(KEY_METHOD, frame->method);
-  } else {
-    char buff[20] = "0x";
-    bsg_hex64_to_string(frame->frame_address, buff + 2);
-    write_string(KEY_METHOD, buff);
-  }
+static void stack_next_map_entry() {
+  bsg_pb_stack_new_list_entry();
+  bsg_ctjournal_set_map(bsg_pb_path());
+  bsg_pb_unstack();
+  bsg_pb_stack_list_index(-1);
 }
 
-static void write_exception(const bugsnag_event *event) {
+static void add_stack_frame(const bugsnag_stackframe *frame, bool is_pc) {
+  stack_next_map_entry();
+  add_hex(KEY_FRAME_ADDRESS, frame->frame_address);
+  add_hex(KEY_SYMBOL_ADDRESS, frame->symbol_address);
+  add_hex(KEY_LOAD_ADDRESS, frame->load_address);
+  add_double(KEY_LINE_NUMBER, frame->line_number);
+  if (is_pc) {
+    add_boolean(KEY_IS_PC, true);
+  }
+  if (frame->filename[0] != 0) {
+    add_string(KEY_FILE, frame->filename);
+  }
+  if (frame->method[0] != 0) {
+    add_string(KEY_METHOD, frame->method);
+  } else {
+    add_hex(KEY_METHOD, frame->frame_address);
+  }
+  bsg_pb_unstack();
+}
+
+static void add_exception(const bugsnag_event *event) {
   const bsg_error *exc = &event->error;
-  bsg_pb_stack_string(KEY_EXCEPTIONS);
-  bsg_pb_stack_int(0);
+  bsg_pb_stack_map_key(KEY_EXCEPTIONS);
+  stack_next_map_entry();
 
-  write_string(KEY_ERROR_CLASS, exc->errorClass);
-  write_string(KEY_MESSAGE, exc->errorMessage);
-  write_string(KEY_TYPE, "c");
+  add_string(KEY_ERROR_CLASS, exc->errorClass);
+  add_string(KEY_MESSAGE, exc->errorMessage);
+  add_string(KEY_TYPE, "c");
 
-  bsg_pb_stack_string(KEY_STACKTRACE);
+  bsg_pb_stack_map_key(KEY_STACKTRACE);
   // assuming that the initial frame is the program counter. This logic will
   // need to be revisited if (for example) we add more intelligent processing
   // for stack overflow-type errors, like discarding the top frames, which
   // would mean no stored frame is the program counter.
   if (exc->frame_count > 0) {
-    write_stack_frame(&exc->stacktrace[0], true);
+    add_stack_frame(&exc->stacktrace[0], true);
   }
   for (int iFrame = 1; iFrame < exc->frame_count; iFrame++) {
-    bsg_pb_stack_int(iFrame);
-    write_stack_frame(&exc->stacktrace[iFrame], false);
-    bsg_pb_unstack();
+    add_stack_frame(&exc->stacktrace[iFrame], false);
   }
 
   bsg_pb_unstack();
@@ -94,6 +105,6 @@ bool bsg_crashtime_journal_init(const char *journal_path) {
 
 bool bsg_crashtime_journal_store_event(const bugsnag_event *event) {
   bsg_pb_reset();
-  write_exception(event);
+  add_exception(event);
   return true;
 }
