@@ -11,6 +11,7 @@
     <ID>LongParameterList:AppDataCollector.kt$AppDataCollector$( appContext: Context, private val packageManager: PackageManager?, private val config: ImmutableConfig, private val sessionTracker: SessionTracker, private val activityManager: ActivityManager?, private val launchCrashTracker: LaunchCrashTracker, private val memoryTrimState: MemoryTrimState )</ID>
     <ID>LongParameterList:AppWithState.kt$AppWithState$( binaryArch: String?, id: String?, releaseStage: String?, version: String?, codeBundleId: String?, buildUuid: String?, type: String?, versionCode: Number?, duration: Number?, durationInForeground: Number?, inForeground: Boolean?, isLaunching: Boolean? )</ID>
     <ID>LongParameterList:AppWithState.kt$AppWithState$( config: ImmutableConfig, binaryArch: String?, id: String?, releaseStage: String?, version: String?, codeBundleId: String?, duration: Number?, durationInForeground: Number?, inForeground: Boolean?, isLaunching: Boolean? )</ID>
+    <ID>LongParameterList:ClientInternal.kt$ClientInternal$( immutableConfig: ImmutableConfig, metadataState: MetadataState, contextState: ContextState, callbackState: CallbackState, userState: UserState, notifierState: NotifierState, clientObservable: ClientObservable, appContext: Context, deviceDataCollector: DeviceDataCollector, appDataCollector: AppDataCollector, breadcrumbState: BreadcrumbState, eventStore: EventStore, systemBroadcastReceiver: SystemBroadcastReceiver, sessionTracker: SessionTracker, connectivity: Connectivity, logger: Logger, journal: BugsnagJournal, deliveryDelegate: DeliveryDelegate, lastRunInfoStore: LastRunInfoStore, launchCrashTracker: LaunchCrashTracker, exceptionHandler: ExceptionHandler, bgTaskService: BackgroundTaskService, memoryTrimState: MemoryTrimState, pluginClient: PluginClient, client: Client )</ID>
     <ID>LongParameterList:DataCollectionModule.kt$DataCollectionModule$( contextModule: ContextModule, configModule: ConfigModule, systemServiceModule: SystemServiceModule, trackerModule: TrackerModule, bgTaskService: BackgroundTaskService, connectivity: Connectivity, deviceId: String?, memoryTrimState: MemoryTrimState )</ID>
     <ID>LongParameterList:Device.kt$Device$( buildInfo: DeviceBuildInfo, cpuAbi: Array&lt;String>?, jailbroken: Boolean?, id: String?, locale: String?, totalMemory: Long?, runtimeVersions: MutableMap&lt;String, Any>? )</ID>
     <ID>LongParameterList:DeviceBuildInfo.kt$DeviceBuildInfo$( val manufacturer: String?, val model: String?, val osVersion: String?, val apiLevel: Int?, val osBuild: String?, val fingerprint: String?, val tags: String?, val brand: String?, val cpuAbis: Array&lt;String>? )</ID>
@@ -36,6 +37,8 @@
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun updateSeverityReason(@SeverityReason.SeverityReasonType reason: String)</ID>
     <ID>RethrowCaughtException:JsonHelper.kt$JsonHelper.Companion$throw ex</ID>
     <ID>ReturnCount:DefaultDelivery.kt$DefaultDelivery$fun deliver( urlString: String, streamable: JsonStream.Streamable, headers: Map&lt;String, String?> ): DeliveryStatus</ID>
+    <ID>SwallowedException:ClientInternal.kt$ClientInternal$catch (exc: Throwable) { false }</ID>
+    <ID>SwallowedException:ClientInternal.kt$ClientInternal$catch (exception: IllegalArgumentException) { logger.w("Receiver not registered") }</ID>
     <ID>SwallowedException:ConnectivityCompat.kt$ConnectivityLegacy$catch (e: NullPointerException) { // in some rare cases we get a remote NullPointerException via Parcel.readException null }</ID>
     <ID>SwallowedException:ContextExtensions.kt$catch (exc: RuntimeException) { null }</ID>
     <ID>SwallowedException:DeviceDataCollector.kt$DeviceDataCollector$catch (exc: Exception) { false }</ID>
@@ -47,6 +50,7 @@
     <ID>SwallowedException:JournaledDocument.kt$JournaledDocument.Companion$catch (ex: IOException) { // Ignored - there is no new snapshot or it's invalid }</ID>
     <ID>SwallowedException:JournaledDocument.kt$JournaledDocument.Companion$catch (ex: IOException) { // The journal is corrupt; just return the document. return document }</ID>
     <ID>SwallowedException:PluginClient.kt$PluginClient$catch (exc: ClassNotFoundException) { logger.d("Plugin '$clz' is not on the classpath - functionality will not be enabled.") null }</ID>
+    <ID>TooManyFunctions:ClientInternal.kt$ClientInternal : CallbackAwareMetadataAwareUserAware</ID>
     <ID>UnnecessaryAbstractClass:DependencyModule.kt$DependencyModule</ID>
     <ID>UnusedPrivateMember:ThreadStateTest.kt$ThreadStateTest$private val configuration = generateImmutableConfig()</ID>
   </CurrentIssues>
