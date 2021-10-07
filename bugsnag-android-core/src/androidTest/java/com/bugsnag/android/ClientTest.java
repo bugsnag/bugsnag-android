@@ -76,14 +76,14 @@ public class ClientTest {
         config.setEnabledBreadcrumbTypes(new HashSet<>(breadcrumbTypes));
         config.setMaxBreadcrumbs(2);
         client = generateClient(config);
-        assertEquals(0, client.breadcrumbState.copy().size());
+        assertEquals(0, client.getBreadcrumbState().copy().size());
 
         client.leaveBreadcrumb("test");
         client.leaveBreadcrumb("another");
         client.leaveBreadcrumb("yet another");
-        assertEquals(2, client.breadcrumbState.copy().size());
+        assertEquals(2, client.getBreadcrumbState().copy().size());
 
-        Breadcrumb poll = client.breadcrumbState.copy().get(0);
+        Breadcrumb poll = client.getBreadcrumbState().copy().get(0);
         assertEquals(BreadcrumbType.MANUAL, poll.getType());
         assertEquals("another", poll.getMessage());
     }
@@ -131,7 +131,7 @@ public class ClientTest {
         client = generateClient(config);
         client.leaveBreadcrumb("Hello World");
         List<Breadcrumb> breadcrumbs = client.getBreadcrumbs();
-        List<Breadcrumb> store = new ArrayList<>(client.breadcrumbState.copy());
+        List<Breadcrumb> store = new ArrayList<>(client.getBreadcrumbState().copy());
         assertEquals(store, breadcrumbs);
         assertNotSame(store, breadcrumbs);
     }
@@ -155,8 +155,9 @@ public class ClientTest {
 
         breadcrumbs.clear(); // only the copy should be cleared
         assertTrue(breadcrumbs.isEmpty());
-        assertEquals(1, client.breadcrumbState.copy().size());
-        assertEquals("Manual breadcrumb", client.breadcrumbState.copy().get(0).getMessage());
+        List<Breadcrumb> crumbs = client.getBreadcrumbState().copy();
+        assertEquals(1, crumbs.size());
+        assertEquals("Manual breadcrumb", crumbs.get(0).getMessage());
     }
 
     @Test
@@ -210,11 +211,11 @@ public class ClientTest {
         client.addMetadata("test_section", "second", "another value");
 
         // metadata state should be deep copied
-        assertNotSame(config.impl.metadataState, client.metadataState);
+        assertNotSame(config.impl.metadataState, client.getMetadataState());
 
         // metadata object should be deep copied
         Metadata configData = config.impl.metadataState.getMetadata();
-        Metadata clientData = client.metadataState.getMetadata();
+        Metadata clientData = client.getMetadataState().getMetadata();
         assertNotSame(configData, clientData);
 
         // metadata backing map should be deep copied

@@ -44,11 +44,11 @@ class AppDataCollectorTest {
         val collector = AppDataCollector(
             context,
             context.packageManager,
-            client.immutableConfig,
+            client.config,
             client.sessionTracker,
             am,
-            client.launchCrashTracker,
-            client.memoryTrimState
+            client.getLaunchCrashTracker(),
+            client.getMemoryTrimState()
         )
         val app = collector.getAppDataMetadata()
         assertNull(app["backgroundWorkRestricted"])
@@ -64,11 +64,11 @@ class AppDataCollectorTest {
         val collector = AppDataCollector(
             context,
             context.packageManager,
-            client.immutableConfig,
+            client.config,
             client.sessionTracker,
             am,
-            client.launchCrashTracker,
-            client.memoryTrimState
+            client.getLaunchCrashTracker(),
+            client.getMemoryTrimState()
         )
         client.context = "Some Custom Context"
         client.sessionTracker.updateForegroundTracker("MyActivity", true, 0L)
@@ -87,11 +87,11 @@ class AppDataCollectorTest {
         val collector = AppDataCollector(
             context,
             context.packageManager,
-            client.immutableConfig,
+            client.config,
             client.sessionTracker,
             am,
-            client.launchCrashTracker,
-            client.memoryTrimState
+            client.getLaunchCrashTracker(),
+            client.getMemoryTrimState()
         )
         val app = collector.getAppDataMetadata()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {

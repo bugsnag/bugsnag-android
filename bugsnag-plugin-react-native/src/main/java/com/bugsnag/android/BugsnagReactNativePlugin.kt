@@ -147,7 +147,7 @@ class BugsnagReactNativePlugin : Plugin {
             return
         }
         val errorClass = event.errors[0].errorClass
-        if (client.immutableConfig.shouldDiscardError(errorClass)) {
+        if (client.config.shouldDiscardError(errorClass)) {
             return
         }
         client.notifyInternal(event, null)

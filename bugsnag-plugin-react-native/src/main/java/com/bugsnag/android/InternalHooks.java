@@ -16,19 +16,19 @@ class InternalHooks {
     }
 
     public AppWithState getAppWithState() {
-        return client.appDataCollector.generateAppWithState();
+        return client.getAppDataCollector().generateAppWithState();
     }
 
     public Map<String,Object> getAppMetadata() {
-        return client.appDataCollector.getAppDataMetadata();
+        return client.getAppDataCollector().getAppDataMetadata();
     }
 
     public Map<String,Object> getDeviceMetadata() {
-        return client.deviceDataCollector.getDeviceMetadata();
+        return client.getDeviceDataCollector().getDeviceMetadata();
     }
 
     public DeviceWithState getDeviceWithState() {
-        return client.deviceDataCollector.generateDeviceWithState(new Date().getTime());
+        return client.getDeviceDataCollector().generateDeviceWithState(new Date().getTime());
     }
 
     public List<Thread> getThreads(boolean unhandled) {

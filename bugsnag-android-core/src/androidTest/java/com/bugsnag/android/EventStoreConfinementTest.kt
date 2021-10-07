@@ -75,7 +75,7 @@ internal class EventStoreConfinementTest {
         assertEquals(EVENT_CONFINEMENT_ATTEMPTS, filenames.toSet().size)
 
         retainingDelivery.files.forEachIndexed { index, file ->
-            val eventInfo = EventFilenameInfo.fromFile(file, client.immutableConfig)
+            val eventInfo = EventFilenameInfo.fromFile(file, client.config)
             assertEquals("$index", eventInfo.apiKey)
         }
     }

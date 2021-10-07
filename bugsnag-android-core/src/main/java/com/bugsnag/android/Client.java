@@ -1078,6 +1078,22 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         return contextState;
     }
 
+    BackgroundTaskService getBgTaskService() {
+        return bgTaskService;
+    }
+
+    LaunchCrashTracker getLaunchCrashTracker() {
+        return launchCrashTracker;
+    }
+
+    MemoryTrimState getMemoryTrimState() {
+        return memoryTrimState;
+    }
+
+    BreadcrumbState getBreadcrumbState() {
+        return breadcrumbState;
+    }
+
     void setAutoNotify(boolean autoNotify) {
         pluginClient.setAutoNotify(this, autoNotify);
 

@@ -34,7 +34,7 @@ public class OnBreadcrumbCallbackStateTest {
         breadcrumbTypes.add(BreadcrumbType.USER);
         configuration.setEnabledBreadcrumbTypes(breadcrumbTypes);
         client = generateClient(configuration);
-        assertEquals(0, client.breadcrumbState.copy().size());
+        assertEquals(0, client.getBreadcrumbState().copy().size());
     }
 
     @After
@@ -45,7 +45,7 @@ public class OnBreadcrumbCallbackStateTest {
     @Test
     public void noCallback() {
         client.leaveBreadcrumb("Hello");
-        assertEquals(1, client.breadcrumbState.copy().size());
+        assertEquals(1, client.getBreadcrumbState().copy().size());
     }
 
     @Test
@@ -57,7 +57,7 @@ public class OnBreadcrumbCallbackStateTest {
             }
         });
         client.leaveBreadcrumb("Hello");
-        assertEquals(0, client.breadcrumbState.copy().size());
+        assertEquals(0, client.getBreadcrumbState().copy().size());
     }
 
     @Test
@@ -69,7 +69,7 @@ public class OnBreadcrumbCallbackStateTest {
             }
         });
         client.leaveBreadcrumb("Hello");
-        assertEquals(1, client.breadcrumbState.copy().size());
+        assertEquals(1, client.getBreadcrumbState().copy().size());
     }
 
     @Test
@@ -87,7 +87,7 @@ public class OnBreadcrumbCallbackStateTest {
             }
         });
         client.leaveBreadcrumb("Hello");
-        assertEquals(0, client.breadcrumbState.copy().size());
+        assertEquals(0, client.getBreadcrumbState().copy().size());
     }
 
     @Test
@@ -161,7 +161,7 @@ public class OnBreadcrumbCallbackStateTest {
         client.leaveBreadcrumb("Hello");
         client.removeOnBreadcrumb(cb);
         client.leaveBreadcrumb("Hello");
-        assertEquals(1, client.breadcrumbState.copy().size());
+        assertEquals(1, client.getBreadcrumbState().copy().size());
     }
 
 }
