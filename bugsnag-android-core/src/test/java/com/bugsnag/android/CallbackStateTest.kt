@@ -10,7 +10,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
-import java.lang.IllegalArgumentException
 
 @RunWith(MockitoJUnitRunner::class)
 class CallbackStateTest {
@@ -27,7 +26,8 @@ class CallbackStateTest {
     private val handledState = SeverityReason.newInstance(
         SeverityReason.REASON_HANDLED_EXCEPTION
     )
-    private val event = Event(RuntimeException(), generateImmutableConfig(), handledState, NoopLogger)
+    private val event =
+        Event(RuntimeException(), generateImmutableConfig(), handledState, NoopLogger)
     private val breadcrumb = Breadcrumb("", NoopLogger)
 
     @Test
@@ -36,11 +36,13 @@ class CallbackStateTest {
         state.addOnError(OnErrorCallback { true })
         state.addOnBreadcrumb(OnBreadcrumbCallback { true })
         state.addOnSession(OnSessionCallback { true })
+        state.addOnSend(OnSendCallback { true })
 
         val copy = state.copy()
         assertEquals(1, copy.onErrorTasks.size)
         assertEquals(1, copy.onBreadcrumbTasks.size)
         assertEquals(1, copy.onSessionTasks.size)
+        assertEquals(1, copy.onSendTasks.size)
     }
 
     @Test
@@ -121,6 +123,33 @@ class CallbackStateTest {
             }
         )
         assertFalse(state.runOnBreadcrumbTasks(breadcrumb, NoopLogger))
+        assertEquals(0, count)
+    }
+
+    @Test
+    fun onSendExcThrown() {
+        val state = CallbackState()
+        state.addOnSend(OnSendCallback { true })
+        state.addOnSend(OnSendCallback { throw IllegalArgumentException() })
+
+        val logger = InterceptingLogger()
+        assertNull(logger.msg)
+        assertTrue(state.runOnSendTasks({ event }, logger))
+        assertNotNull(logger.msg)
+    }
+
+    @Test
+    fun onSendFalseReturned() {
+        val state = CallbackState()
+        var count = 0
+        state.addOnSend(OnSendCallback { false })
+        state.addOnSend(
+            OnSendCallback {
+                count = 1
+                true
+            }
+        )
+        assertFalse(state.runOnSendTasks({ event }, NoopLogger))
         assertEquals(0, count)
     }
 }
