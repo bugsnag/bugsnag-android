@@ -285,7 +285,6 @@ internal class ClientInternal constructor(
         val lastRunInfoPath = lastRunInfoStore.file.absolutePath
         val crashes = lastRunInfo?.consecutiveLaunchCrashes ?: 0
         clientObservable.postNdkInstall(config, lastRunInfoPath, crashes)
-        syncInitialState()
         clientObservable.postNdkDeliverPending()
     }
 
