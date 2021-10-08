@@ -89,7 +89,7 @@ internal class PluginClient(
     }
 
     fun findPlugin(clz: Class<*>): Plugin? {
-        val objs = plugins.plus(internalPlugins).filterNotNull()
+        val objs = (plugins + internalPlugins).filterNotNull()
         return objs.find { it.javaClass == clz }
     }
 
