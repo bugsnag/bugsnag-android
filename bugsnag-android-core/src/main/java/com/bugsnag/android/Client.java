@@ -333,9 +333,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
      */
     @NonNull
     public List<Breadcrumb> getBreadcrumbs() {
-        return getBreadcrumbState().copy();
+        return impl.getBreadcrumbs();
     }
-
 
     /**
      * Adds a map of multiple metadata key-value pairs to the specified section.

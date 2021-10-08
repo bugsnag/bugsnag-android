@@ -62,6 +62,7 @@ internal class ClientInternal constructor(
     // observers + plugins
     private val clientObservable: ClientObservable
     private val pluginClient: PluginClient
+    private val observables: List<BaseObservable>
 
     init {
         bgTaskService = BackgroundTaskService()
@@ -78,6 +79,7 @@ internal class ClientInternal constructor(
 
         // setup journal
         val journalDir = config.persistenceDirectory.value
+        journalDir.mkdirs()
         val baseDocumentPath = File(journalDir, "bugsnag-journal")
         val eventMapper = BugsnagJournalEventMapper(logger)
         eventMapper.convertToEvent(baseDocumentPath)
@@ -150,6 +152,18 @@ internal class ClientInternal constructor(
         lastRunInfo = storageModule.lastRunInfo
 
         // add observer before syncing initial state
+        observables = listOf(
+            metadataState,
+            breadcrumbState,
+            sessionTracker,
+            clientObservable,
+            userState,
+            contextState,
+            deliveryDelegate,
+            launchCrashTracker,
+            memoryTrimState,
+            notifierState
+        )
         addObserver(JournaledStateObserver(client, journal))
         NativeInterface.setClient(client)
 
@@ -284,39 +298,15 @@ internal class ClientInternal constructor(
         }
     }
 
-    fun addObserver(observer: StateObserver) {
-        metadataState.addObserver(observer)
-        breadcrumbState.addObserver(observer)
-        sessionTracker.addObserver(observer)
-        clientObservable.addObserver(observer)
-        userState.addObserver(observer)
-        contextState.addObserver(observer)
-        deliveryDelegate.addObserver(observer)
-        launchCrashTracker.addObserver(observer)
-        memoryTrimState.addObserver(observer)
-        notifierState.addObserver(observer)
+    fun addObserver(observer: StateObserver) = observables.forEach {
+        it.addObserver(observer)
     }
 
-    fun removeObserver(observer: StateObserver) {
-        metadataState.removeObserver(observer)
-        breadcrumbState.removeObserver(observer)
-        sessionTracker.removeObserver(observer)
-        clientObservable.removeObserver(observer)
-        userState.removeObserver(observer)
-        contextState.removeObserver(observer)
-        deliveryDelegate.removeObserver(observer)
-        launchCrashTracker.removeObserver(observer)
-        memoryTrimState.removeObserver(observer)
-        notifierState.removeObserver(observer)
+    fun removeObserver(observer: StateObserver) = observables.forEach {
+        it.removeObserver(observer)
     }
 
-    fun syncInitialState() {
-        metadataState.emitObservableEvent()
-        contextState.emitObservableEvent()
-        userState.emitObservableEvent()
-        memoryTrimState.emitObservableEvent()
-        notifierState.emitObservableEvent()
-    }
+    fun syncInitialState() = observables.forEach(BaseObservable::emitObservableEvent)
 
     // session tracking
     fun startSession(): Session = sessionTracker.startSession(false)
