@@ -1,10 +1,10 @@
 #include <bugsnag.h>
 #include <jni.h>
 #include <stdlib.h>
+#include <cstring>
 #include <stdexcept>
 
 extern "C" {
-
 
 bool on_err_true(void *event_ptr) {
   bugsnag_event_set_context(event_ptr, (char *) "Some custom context");
@@ -14,6 +14,65 @@ bool on_err_true(void *event_ptr) {
 bool on_err_false(void *event_ptr) {
   printf("Received Bugsnag error report, logging callback!");
   return false;
+}
+
+/**
+ * Alters most fields that can be altered in an on_error callback.
+ */
+bool complex_on_err(void *event_ptr) {
+    bugsnag_event_set_api_key(event_ptr, "custom-api-key");
+
+    // app
+    bugsnag_app_set_binary_arch(event_ptr, "custom_binary_arch");
+    bugsnag_app_set_build_uuid(event_ptr, "custom_build_uuid");
+    bugsnag_app_set_duration(event_ptr,100);
+    bugsnag_app_set_duration_in_foreground(event_ptr,200);
+    bugsnag_app_set_id(event_ptr, "custom_app_id");
+    bugsnag_app_set_in_foreground(event_ptr, false);
+    bugsnag_app_set_is_launching(event_ptr, false);
+    bugsnag_app_set_release_stage(event_ptr, "custom_release_stage");
+    bugsnag_app_set_type(event_ptr, "custom_type");
+    bugsnag_app_set_version(event_ptr, "custom_version");
+    bugsnag_app_set_version_code(event_ptr, 56);
+
+    // device
+    bugsnag_device_set_jailbroken(event_ptr, true);
+    bugsnag_device_set_id(event_ptr, "custom_device_id");
+    bugsnag_device_set_locale(event_ptr, "zh_HK");
+    bugsnag_device_set_manufacturer(event_ptr, "custom_manufacturer");
+    bugsnag_device_set_model(event_ptr, "custom_model");
+    bugsnag_device_set_os_version(event_ptr, "custom_os_version");
+    bugsnag_device_set_total_memory(event_ptr, 99999999);
+    bugsnag_device_set_orientation(event_ptr, "custom_orientation");
+    bugsnag_device_set_time(event_ptr, 15000);
+    bugsnag_device_set_os_name(event_ptr, "custom_os_name");
+
+    // error
+    bugsnag_error_set_error_class(event_ptr, "custom_error_class");
+    bugsnag_error_set_error_message(event_ptr, "custom_error_message");
+
+    // user
+    bugsnag_event_set_user(event_ptr, "custom_id", "custom_email", "custom_name");
+
+    // metadata
+    bugsnag_event_add_metadata_double(event_ptr, "custom","double", 5.0f);
+    bugsnag_event_add_metadata_string(event_ptr, "custom2","string", "some_value");
+    bugsnag_event_add_metadata_bool(event_ptr, "custom3", "bool", false);
+
+    // stacktrace
+    bugsnag_stackframe *stackframe = bugsnag_event_get_stackframe(event_ptr, 0);
+    stackframe->frame_address = 20;
+    stackframe->load_address = 40;
+    stackframe->symbol_address = 60;
+    stackframe->line_number = 28;
+    strncpy(stackframe->filename, "foo.cpp", sizeof(stackframe->filename));
+    strncpy(stackframe->method, "bar()", sizeof(stackframe->method));
+
+    // misc
+    bugsnag_event_set_severity(event_ptr, BSG_SEVERITY_INFO);
+    bugsnag_event_set_unhandled(event_ptr, false);
+    bugsnag_event_set_grouping_hash(event_ptr, "custom_grouping_hash");
+    return true;
 }
 
 bool __attribute__((noinline)) f_run_away(bool value) {
@@ -116,6 +175,14 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXSignalOnErrorFalseScenario_cras
   if (x > 0)
     __builtin_trap();
   return 12633;
+}
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXSignalOnErrorTrueScenario_crash(
+        JNIEnv *env,
+        jobject instance) {
+    bugsnag_add_on_error(&complex_on_err);
+    abort();
 }
 
 JNIEXPORT int JNICALL
