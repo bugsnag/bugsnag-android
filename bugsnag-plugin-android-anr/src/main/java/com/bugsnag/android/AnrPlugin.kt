@@ -2,6 +2,8 @@ package com.bugsnag.android
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
+import com.unity3d.player.UnityPlayer
 import java.util.concurrent.atomic.AtomicBoolean
 
 internal class AnrPlugin : Plugin {
@@ -102,6 +104,10 @@ internal class AnrPlugin : Plugin {
             if (client.immutableConfig.shouldDiscardError(ANR_ERROR_CLASS)) {
                 return
             }
+            // notify unity so that custom code can upload extra information
+            Log.i(ANR_ERROR_CLASS, "bsg hello notifyAnrDetected")
+            UnityPlayer.UnitySendMessage("NativePluginListener", "NotifyAnrDetected", "")
+
             // generate a full report as soon as possible, then wait for extra process error info
             val stackTrace = Looper.getMainLooper().thread.stackTrace
             val hasNativeComponent = doesJavaTraceLeadToNativeTrace(stackTrace)
