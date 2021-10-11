@@ -97,13 +97,13 @@ internal class BugsnagJournalEventMapper(
      * throws useful error messages if the expected type is not there.
      */
     private inline fun <reified T> Map<*, *>.readJournalEntry(key: String): T {
-        check(containsKey(key)) {
-            "Journal does not contain entry for '$key'"
+        when (val value = get(key)) {
+            is T -> return value
+            null -> throw IllegalStateException("Journal does not contain entry for '$key'")
+            else -> throw IllegalArgumentException(
+                "Journal entry for '$key' not " +
+                    "of expected type, found ${value.javaClass.name}"
+            )
         }
-        val value = requireNotNull(get(key))
-        check(value is T) {
-            "Journal entry for '$key' not of expected type, found ${value.javaClass.name}"
-        }
-        return value
     }
 }
