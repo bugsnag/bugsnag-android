@@ -9,6 +9,17 @@ internal class ErrorInternal @JvmOverloads internal constructor(
 
     val stacktrace: List<Stackframe> = stacktrace.trace
 
+    @Suppress("UNCHECKED_CAST")
+    internal constructor(json: Map<String, Any?>) : this(
+        errorClass = json["errorClass"] as String,
+        errorMessage = json["message"] as? String,
+        type = (json["type"] as? String)?.let { ErrorType.fromDescriptor(it) } ?: ErrorType.ANDROID,
+        stacktrace = Stacktrace(
+            (json["stacktrace"] as? List<Map<String, Any?>>)?.map { Stackframe(it) }
+                ?: emptyList()
+        )
+    )
+
     internal companion object {
         fun createError(exc: Throwable, projectPackages: Collection<String>, logger: Logger): MutableList<Error> {
             return exc.safeUnrollCauses()

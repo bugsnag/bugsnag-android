@@ -1,9 +1,13 @@
-package com.bugsnag.android.internal
+package com.bugsnag.android
 
-import com.bugsnag.android.Event
+import com.bugsnag.android.internal.journal.JsonHelper
 import java.io.File
 
-internal class MarshalledEventSource(private val eventFile: File) : () -> Event {
+internal class MarshalledEventSource(
+    private val apiKey: String,
+    private val eventFile: File,
+    private val logger: Logger
+) : () -> Event {
 
     /**
      * The parsed and possibly processed event. This field remains `null` if the `EventSource`
@@ -29,6 +33,8 @@ internal class MarshalledEventSource(private val eventFile: File) : () -> Event 
 
     private fun unmarshall(): Event {
         val json = JsonHelper.deserialize(eventFile)
-        TODO("Not yet implemented")
+        val eventInternal = BugsnagJournalEventMapper(logger).convertToEventImpl(json, apiKey)
+        requireNotNull(eventInternal)
+        return Event(eventInternal, logger)
     }
 }

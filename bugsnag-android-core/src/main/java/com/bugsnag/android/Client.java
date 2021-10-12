@@ -297,7 +297,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
     void addOnSend(@NonNull OnSendCallback onSend) {
         if (onSend != null) {
-            callbackState.addOnSend(onSend);
+            impl.addOnSend(onSend);
         } else {
             logNull("addOnSend");
         }
@@ -305,7 +305,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
     void removeOnSend(@NonNull OnSendCallback onSend) {
         if (onSend != null) {
-            callbackState.removeOnSend(onSend);
+            impl.removeOnSend(onSend);
         } else {
             logNull("removeOnSend");
         }

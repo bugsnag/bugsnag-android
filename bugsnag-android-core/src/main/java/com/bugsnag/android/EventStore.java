@@ -1,10 +1,9 @@
 package com.bugsnag.android;
 
+import com.bugsnag.android.internal.ImmutableConfig;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import com.bugsnag.android.internal.MarshalledEventSource;
-import com.bugsnag.android.internal.ImmutableConfig;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -204,7 +203,7 @@ class EventStore extends FileStore {
 
     @Nullable
     private EventPayload createEventPayload(File eventFile, String apiKey) {
-        MarshalledEventSource eventSource = new MarshalledEventSource(eventFile);
+        MarshalledEventSource eventSource = new MarshalledEventSource(apiKey, eventFile, logger);
 
         try {
             if (!callbackState.runOnSendTasks(eventSource, logger)) {

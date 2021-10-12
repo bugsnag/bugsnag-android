@@ -91,6 +91,30 @@ class Stackframe : JsonStream.Streamable, Journalable {
         this.type = nativeFrame.type
     }
 
+    constructor(json: Map<String, Any?>) {
+        // does the value look like a native frame?
+        if (json.containsKey(JournalKeys.keyFrameAddress) ||
+            json.containsKey(JournalKeys.keySymbolAddress) ||
+            json.containsKey(JournalKeys.keyLoadAddress)
+        ) {
+            method = null
+            file = null
+            lineNumber = null
+            inProject = null
+            columnNumber = null
+            code = null
+            nativeFrame = NativeStackframe(json)
+        } else {
+            method = json[JournalKeys.keyMethod] as? String
+            file = json[JournalKeys.keyFile] as? String
+            lineNumber = json[JournalKeys.keyLineNumber] as? Number
+            inProject = json[JournalKeys.keyInProject] as? Boolean
+            columnNumber = json[JournalKeys.keyColumnNumber] as? Number
+            @Suppress("UNCHECKED_CAST")
+            code = json[JournalKeys.keyCode] as? Map<String, String?>
+        }
+    }
+
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) = writer.value(toJournalSection())
 

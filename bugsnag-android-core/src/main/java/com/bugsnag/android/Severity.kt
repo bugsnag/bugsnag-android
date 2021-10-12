@@ -8,7 +8,7 @@ import java.io.IOException
  * By default, unhandled exceptions will be Severity.ERROR and handled
  * exceptions sent with bugsnag.notify will be Severity.WARNING.
  */
-enum class Severity(private val str: String) : JsonStream.Streamable {
+enum class Severity(internal val str: String) : JsonStream.Streamable {
     ERROR("error"),
     WARNING("warning"),
     INFO("info");

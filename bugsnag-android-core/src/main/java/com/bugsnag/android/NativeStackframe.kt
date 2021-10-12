@@ -40,6 +40,14 @@ class NativeStackframe internal constructor(
     var loadAddress: Long?
 ) : JsonStream.Streamable, Journalable {
 
+    constructor(json: Map<String, Any?>) : this(
+        json[JournalKeys.keyMethod] as? String,
+        json[JournalKeys.keyFile] as? String,
+        json[JournalKeys.keyLineNumber] as? Number,
+        json[JournalKeys.keyFrameAddress] as? Long,
+        json[JournalKeys.keySymbolAddress] as? Long,
+        json[JournalKeys.keyLoadAddress] as? Long
+    )
     /**
      * The type of the error
      */
