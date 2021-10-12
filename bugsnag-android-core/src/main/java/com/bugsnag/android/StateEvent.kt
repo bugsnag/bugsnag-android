@@ -70,4 +70,6 @@ sealed class StateEvent { // JvmField allows direct field access optimizations
         @JvmField val memoryTrimLevel: Int? = null,
         @JvmField val memoryTrimLevelDescription: String = "None"
     ) : StateEvent()
+
+    class JournalSetup(@JvmField val apiKey: String) : StateEvent()
 }
