@@ -7,8 +7,8 @@ import java.util.Date
 internal class JournaledStateObserver(val client: Client, val journal: BugsnagJournal) : StateObserver {
     override fun onStateChange(event: StateEvent) {
         when (event) {
-            is StateEvent.Install -> {
-                handleInstallEvent(event)
+            is StateEvent.JournalSetup -> {
+                handleJournalSetup(event)
             }
             StateEvent.DeliverPending -> {
                 // Nothing for us to do
@@ -96,10 +96,10 @@ internal class JournaledStateObserver(val client: Client, val journal: BugsnagJo
         )
     }
 
-    private fun handleInstallEvent(event: StateEvent.Install) {
-        val appDataCollector = client.getAppDataCollector()
+    private fun handleJournalSetup(event: StateEvent.JournalSetup) {
+        val appDataCollector = client.appDataCollector
         val appData = appDataCollector.generateAppWithState()
-        val deviceDataCollector = client.getDeviceDataCollector()
+        val deviceDataCollector = client.deviceDataCollector
         val deviceData = deviceDataCollector.generateDeviceWithState(Date().time)
         val device = deviceData.toJournalSection().filter { it.key != "time" }
 

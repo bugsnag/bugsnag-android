@@ -218,7 +218,9 @@ internal class ClientInternal constructor(
      * Populates the Bugsnag Journal with some initial state.
      */
     private fun addInitialJournalEntries() {
-        addObserver(JournaledStateObserver(client, journal.value))
+        val observer = JournaledStateObserver(client, journal.value)
+        observer.onStateChange(StateEvent.JournalSetup(config.apiKey))
+        addObserver(observer)
         syncInitialState()
     }
 
