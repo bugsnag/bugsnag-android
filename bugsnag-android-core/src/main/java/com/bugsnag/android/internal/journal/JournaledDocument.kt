@@ -45,7 +45,7 @@ constructor(
     private val highWater: Long,
     initialDocument: Map<String, Any>
 ) : Map<String, Any>, Closeable {
-    private val journalPath = getJournalPath(baseDocumentPath)
+    private val journalPath = getRuntimeJournalPath(baseDocumentPath)
     private val snapshotPath = getSnapshotPath(baseDocumentPath)
     private val newSnapshotPath = getNewSnapshotPath(baseDocumentPath)
 
@@ -201,8 +201,12 @@ constructor(
             return File(basePath.path + ".snapshot.new")
         }
 
-        internal fun getJournalPath(basePath: File): File {
+        internal fun getRuntimeJournalPath(basePath: File): File {
             return File(basePath.path + ".journal")
+        }
+
+        internal fun getCrashtimeJournalPath(basePath: File): File {
+            return File(basePath.path + ".journal.crashtime")
         }
 
         /**
@@ -230,34 +234,49 @@ constructor(
          * @return The document, or null if no journal files exist at the path.
          */
         fun loadDocumentContents(baseDocumentPath: File): MutableMap<in String, out Any>? {
-            val journalPath = getJournalPath(baseDocumentPath)
+            val runtimeJournalPath = getRuntimeJournalPath(baseDocumentPath)
+            val crashtimeJournalPath = getCrashtimeJournalPath(baseDocumentPath)
             val snapshotPath = getSnapshotPath(baseDocumentPath)
             val newSnapshotPath = getNewSnapshotPath(baseDocumentPath)
 
-            // The "new" snapshot might exist but also might be invalid.
+            // If mydoc.snapshot.new exists, it means we were in the middle of writing a new
+            // snapshot when the app terminated, so:
+            //  * mydoc.journal doesn't contain newer information than mydoc.snapshot.new.
+            //  * mydoc.journal.crashtime will contain newer info if we crashed.
+            //  * mydoc.snapshot.new may be corrupt if we crashed mid-snapshot.
             try {
-                return JsonHelper.deserialize(newSnapshotPath)
+                return applyJournal(crashtimeJournalPath, JsonHelper.deserialize(newSnapshotPath))
             } catch (ex: IOException) {
-                // Ignored - there is no new snapshot or it's invalid
+                // mydoc.snapshot.new doesn't exist, or it's corrupt.
+                // Either way, we must fall back to using mydoc.snapshot and mydoc.journal
             }
 
-            // The base snapshot must be valid if it exists.
+            // At this point:
+            //  * If mydoc.snapshot doesn't exist, we didn't even initialize. Return null.
+            //  * If mydoc.snapshot exists, it must be valid.
+            //  * mydoc.journal might exist.
+            //  * mydoc.journal.crashtime might exist.
+
             val document = try {
                 JsonHelper.deserialize(snapshotPath)
             } catch (ex: FileNotFoundException) {
+                // If we don't even have a base snapshot, we have nothing at all.
                 return null
             }
 
-            // The journal file might exist and might be valid.
-            val journal: Journal
-            try {
-                journal = Journal.deserialize(journalPath)
-            } catch (ex: IOException) {
-                // The journal is corrupt; just return the document.
+            // The journal files might exist and be valid. Apply both to the regular snapshot.
+            return applyJournal(crashtimeJournalPath, applyJournal(runtimeJournalPath, document))
+        }
+
+        private fun applyJournal(journalPath: File, document: MutableMap<in String, out Any>):
+            MutableMap<in String, out Any> {
+            val journal = try {
+                Journal.deserialize(journalPath)
+            } catch (ex: Exception) {
+                // The journal file is missing or corrupt, so we won't use it
                 return document
             }
 
-            // A valid journal must run without error.
             return journal.applyTo(document)
         }
 

@@ -26,6 +26,14 @@ size_t bsg_uint64_to_string(uint64_t value, char *dst);
 size_t bsg_int64_to_string(int64_t value, char *dst);
 
 /**
+ * Convert an unsigned integer to a hex string.
+ * This will write a maximum of 17 characters (including the NUL) to dst.
+ *
+ * Returns the length of the string written to dst (not including the NUL).
+ */
+size_t bsg_hex64_to_string(uint64_t value, char *dst);
+
+/**
  * Convert a double to a string, allowing up to max_sig_digits. See
  * positive_double_to_string() for important information about how this
  * algorithm differs from sprintf.

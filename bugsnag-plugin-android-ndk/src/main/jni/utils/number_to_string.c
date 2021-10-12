@@ -8,6 +8,30 @@
 // Max uint64 is 18446744073709551615
 #define MAX_UINT64_DIGITS 20
 
+size_t bsg_hex64_to_string(uint64_t value, char *dst) {
+  if (value == 0) {
+    dst[0] = '0';
+    dst[1] = 0;
+    return 1;
+  }
+
+  char buff[MAX_UINT64_DIGITS + 1];
+  buff[sizeof(buff) - 1] = 0;
+  size_t index = sizeof(buff) - 2;
+  for (;;) {
+    buff[index] = (value & 15) + '0';
+    value >>= 4;
+    if (value == 0) {
+      break;
+    }
+    index--;
+  }
+
+  size_t length = sizeof(buff) - index;
+  memcpy(dst, buff + index, length);
+  return length - 1;
+}
+
 size_t bsg_uint64_to_string(uint64_t value, char *dst) {
   if (value == 0) {
     dst[0] = '0';

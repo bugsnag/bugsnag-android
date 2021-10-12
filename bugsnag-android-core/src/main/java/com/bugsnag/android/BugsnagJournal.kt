@@ -113,6 +113,10 @@ internal class BugsnagJournal @JvmOverloads internal constructor (
         housekeepingThreadShouldKeepRunning = false
     }
 
+    override fun toString(): String {
+        return "BugsnagJournal(journal=$journal)"
+    }
+
     companion object {
         // The "type" of the main journal. This will probably never change.
         internal const val journalType = "Bugsnag Android"

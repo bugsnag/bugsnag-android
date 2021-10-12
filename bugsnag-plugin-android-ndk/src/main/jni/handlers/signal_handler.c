@@ -11,6 +11,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "../bugsnag_crashtime_journal.h"
 #include "../utils/crash_info.h"
 #include "../utils/serializer.h"
 #include "../utils/string.h"
@@ -205,6 +206,7 @@ void bsg_handle_signal(int signum, siginfo_t *info,
   }
   if (bsg_run_on_error()) {
     bsg_increment_unhandled_count(&bsg_global_env->next_event);
+    bsg_crashtime_journal_store_event(&bsg_global_env->next_event);
     bsg_serialize_event_to_file(bsg_global_env);
     bsg_serialize_last_run_info_to_file(bsg_global_env);
   }

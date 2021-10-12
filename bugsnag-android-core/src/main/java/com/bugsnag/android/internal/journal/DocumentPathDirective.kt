@@ -70,6 +70,10 @@ internal interface DocumentPathDirective<C> {
                 container[key] = concurrentValue
             }
         }
+
+        override fun toString(): String {
+            return "MapKeyDirective(key='$key')"
+        }
     }
 
     class MapKeyAddDirective(private val key: String) : MapKeyDirective(key) {
@@ -82,6 +86,10 @@ internal interface DocumentPathDirective<C> {
                 require(oldValue is Number, { "Existing value to an add directive must be a number (got $oldValue)" })
                 container[key] = addNumbers(oldValue, value)
             }
+        }
+
+        override fun toString(): String {
+            return "MapKeyAddDirective(key='$key')"
         }
     }
 
@@ -106,6 +114,10 @@ internal interface DocumentPathDirective<C> {
                 container.add(index, concurrentValue)
             }
         }
+
+        override fun toString(): String {
+            return "ListIndexDirective(index=$index)"
+        }
     }
 
     open class ListIndexAddDirective(private val index: Int) : ListIndexDirective(index) {
@@ -118,6 +130,10 @@ internal interface DocumentPathDirective<C> {
                 require(oldValue is Number, { "Existing value to an add directive must be a number (got $oldValue)" })
                 container[index] = addNumbers(oldValue, value)
             }
+        }
+
+        override fun toString(): String {
+            return "ListIndexAddDirective(index=$index)"
         }
     }
 
@@ -139,6 +155,10 @@ internal interface DocumentPathDirective<C> {
             if (concurrentValue != null) {
                 container.add(concurrentValue)
             }
+        }
+
+        override fun toString(): String {
+            return "ListLastIndexDirective()"
         }
     }
 
@@ -163,6 +183,10 @@ internal interface DocumentPathDirective<C> {
                 }
             }
         }
+
+        override fun toString(): String {
+            return "ListLastIndexAddDirective()"
+        }
     }
 
     /**
@@ -179,6 +203,10 @@ internal interface DocumentPathDirective<C> {
             val concurrentValue = value.asConcurrent()
             requireNotNull(concurrentValue) { "Cannot use null for last path insert value" }
             container.add(concurrentValue)
+        }
+
+        override fun toString(): String {
+            return "ListInsertDirective()"
         }
     }
 }

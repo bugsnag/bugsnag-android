@@ -134,6 +134,10 @@ class DocumentPath(path: String) {
         directive.setInContainer(currentContainer, value)
     }
 
+    override fun toString(): String {
+        return "DocumentPath(directives=$directives)"
+    }
+
     companion object {
 
         private const val ESCAPE_CHAR = '\\'

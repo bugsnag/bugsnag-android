@@ -3,7 +3,7 @@
   <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>ComplexMethod:NativeBridge.kt$NativeBridge$override fun onStateChange(event: StateEvent)</ID>
-    <ID>LongParameterList:NativeBridge.kt$NativeBridge$( apiKey: String, reportingDirectory: String, lastRunInfoPath: String, consecutiveLaunchCrashes: Int, autoDetectNdkCrashes: Boolean, apiLevel: Int, is32bit: Boolean, threadSendPolicy: Int )</ID>
+    <ID>LongParameterList:NativeBridge.kt$NativeBridge$( apiKey: String, reportingDirectory: String, crashtimeJournalPath: String, lastRunInfoPath: String, consecutiveLaunchCrashes: Int, autoDetectNdkCrashes: Boolean, apiLevel: Int, is32bit: Boolean, threadSendPolicy: Int )</ID>
     <ID>NestedBlockDepth:NativeBridge.kt$NativeBridge$private fun deliverPendingReports()</ID>
     <ID>TooManyFunctions:NativeBridge.kt$NativeBridge : StateObserver</ID>
   </CurrentIssues>
