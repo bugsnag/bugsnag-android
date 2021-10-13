@@ -78,6 +78,10 @@ internal class BugsnagJournalEventMapper(
 
         // populate projectPackages
         event.projectPackages = map.readEntry("projectPackages")
+
+        // populate exceptions
+        val exceptions: List<MutableMap<String, Any?>> = map.readEntry("exceptions")
+        exceptions.mapTo(event.errors) { Error(convertErrorInternal(it), this.logger) }
         return event
     }
 
@@ -122,6 +126,29 @@ internal class BugsnagJournalEventMapper(
             src.readEntry("state"),
             stacktrace
         )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun convertErrorInternal(src: Map<String, Any?>): ErrorInternal {
+        val map = src.toMutableMap()
+        map["stacktrace"] =
+            (src["stacktrace"] as List<Map<String, Any>>).map(this::convertStacktraceInternal)
+        return ErrorInternal(map)
+    }
+
+    private fun convertStacktraceInternal(frame: Map<String, Any>): MutableMap<String, Any?> {
+        val copy: MutableMap<String, Any?> = frame.toMutableMap()
+        val lineNumber = frame["lineNumber"] as? Number
+        copy["lineNumber"] = lineNumber?.toLong()
+
+        (frame["frameAddress"] as? String)?.let {
+            copy["frameAddress"] = java.lang.Long.decode(it)
+        }
+
+        (frame["symbolAddress"] as? String)?.let {
+            copy["symbolAddress"] = java.lang.Long.decode(it)
+        }
+        return copy
     }
 
     /**
