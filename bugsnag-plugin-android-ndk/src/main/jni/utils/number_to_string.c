@@ -9,8 +9,8 @@
 #define MAX_UINT64_DIGITS 20
 
 size_t bsg_hex64_to_string(uint64_t value, char *dst) {
-  if (value == 0) {
-    dst[0] = '0';
+  if (value < 10) {
+    dst[0] = '0' + value;
     dst[1] = 0;
     return 1;
   }
@@ -19,7 +19,12 @@ size_t bsg_hex64_to_string(uint64_t value, char *dst) {
   buff[sizeof(buff) - 1] = 0;
   size_t index = sizeof(buff) - 2;
   for (;;) {
-    buff[index] = (value & 15) + '0';
+    uint64_t digit = (value & 15);
+    if (digit <= 9) {
+      buff[index] = '0' + digit;
+    } else {
+      buff[index] = 'a' + digit - 10;
+    }
     value >>= 4;
     if (value == 0) {
       break;

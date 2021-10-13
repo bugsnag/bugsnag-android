@@ -35,6 +35,38 @@ TEST test_int_to_string(void) {
     PASS();
 }
 
+TEST test_hex_to_string(void) {
+    char buff[100];
+
+    for (unsigned i = 0; i < 0x10; i++) {
+        char expected[10];
+        sprintf(expected, "%x", i);
+        ASSERT_EQ(1, bsg_hex64_to_string(i, buff));
+        ASSERT_STR_EQ(expected, buff);
+    }
+
+    for (unsigned i = 0x10; i < 0x100; i++) {
+        char expected[10];
+        sprintf(expected, "%x", i);
+        ASSERT_EQ(2, bsg_hex64_to_string(i, buff));
+        ASSERT_STR_EQ(expected, buff);
+    }
+
+    ASSERT_EQ(8, bsg_hex64_to_string(0x8fedcba9, buff));
+    ASSERT_STR_EQ("8fedcba9", buff);
+
+    ASSERT_EQ(8, bsg_hex64_to_string(0xffffffff, buff));
+    ASSERT_STR_EQ("ffffffff", buff);
+
+    ASSERT_EQ(16, bsg_hex64_to_string(0xfedcba9876543210, buff));
+    ASSERT_STR_EQ("fedcba9876543210", buff);
+
+    ASSERT_EQ(16, bsg_hex64_to_string(0xffffffffffffffff, buff));
+    ASSERT_STR_EQ("ffffffffffffffff", buff);
+
+    PASS();
+}
+
 TEST test_double_to_string(void) {
     char buff[100];
 
@@ -65,5 +97,6 @@ TEST test_double_to_string(void) {
 SUITE(suite_number_to_string) {
     RUN_TEST(test_uint_to_string);
     RUN_TEST(test_int_to_string);
+    RUN_TEST(test_hex_to_string);
     RUN_TEST(test_double_to_string);
 }
