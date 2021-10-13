@@ -136,7 +136,7 @@ internal class ClientInternal constructor(
         val eventStorageModule = EventStorageModule(
             contextModule, configModule,
             dataCollectionModule, bgTaskService, trackerModule, systemServiceModule,
-            notifier
+            notifier, callbackState
         )
         eventStorageModule.resolveDependencies(bgTaskService, TaskType.IO)
         eventStore = eventStorageModule.eventStore
@@ -573,5 +573,13 @@ internal class ClientInternal constructor(
 
     fun setAutoDetectAnrs(autoDetectAnrs: Boolean) {
         pluginClient.setAutoDetectAnrs(client, autoDetectAnrs)
+    }
+
+    fun addOnSend(onSend: OnSendCallback) {
+        callbackState.addOnSend(onSend)
+    }
+
+    fun removeOnSend(onSend: OnSendCallback) {
+        callbackState.removeOnSend(onSend)
     }
 }

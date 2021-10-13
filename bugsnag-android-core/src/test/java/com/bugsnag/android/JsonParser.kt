@@ -5,7 +5,9 @@ import java.io.StringWriter
 internal class JsonParser {
 
     fun read(resourceName: String): String {
-        return JsonParser::class.java.classLoader!!.getResource(resourceName).readText()
+        val resource = JsonParser::class.java.classLoader!!.getResource(resourceName)
+            ?: throw NullPointerException("cannot read resource: '$resourceName'")
+        return resource.readText()
     }
 
     fun toJsonString(streamable: JsonStream.Streamable): String {

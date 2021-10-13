@@ -295,6 +295,22 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         }
     }
 
+    void addOnSend(@NonNull OnSendCallback onSend) {
+        if (onSend != null) {
+            impl.addOnSend(onSend);
+        } else {
+            logNull("addOnSend");
+        }
+    }
+
+    void removeOnSend(@NonNull OnSendCallback onSend) {
+        if (onSend != null) {
+            impl.removeOnSend(onSend);
+        } else {
+            logNull("removeOnSend");
+        }
+    }
+
     /**
      * Notify Bugsnag of a handled exception
      *

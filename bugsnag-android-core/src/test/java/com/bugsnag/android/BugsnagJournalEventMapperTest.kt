@@ -69,7 +69,7 @@ class BugsnagJournalEventMapperTest {
             "locale" to "en_US",
             "osName" to "android",
             "manufacturer" to "Google",
-            "cpuAbi" to arrayOf("x86"),
+            "cpuAbi" to listOf("x86"),
             "osVersion" to "8.0.0",
             "model" to "Android SDK built for x86",
             "id" to "8b105fd3-88bc-4a31-8982-b725d1162d86",
