@@ -81,7 +81,7 @@ internal class BugsnagJournalEventMapper(
 
         // populate exceptions
         val exceptions: List<MutableMap<String, Any?>> = map.readEntry("exceptions")
-        exceptions.mapTo(event.errrors) { Error(convertErrorInternal(it), this.logger) )
+        exceptions.mapTo(event.errors) { Error(convertErrorInternal(it), this.logger) }
         return event
     }
 
