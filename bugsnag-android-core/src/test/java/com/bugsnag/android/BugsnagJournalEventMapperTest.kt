@@ -9,6 +9,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import java.math.BigDecimal
 
 class BugsnagJournalEventMapperTest {
 
@@ -78,6 +79,30 @@ class BugsnagJournalEventMapperTest {
                 "androidApiLevel" to 26
             )
         )
+
+        val stacktrace = listOf(
+            mapOf(
+                "frameAddress" to "0x82545948",
+                "symbolAddress" to "0x82545000",
+                "lineNumber" to BigDecimal.valueOf(273),
+                "isPC" to true,
+                "file" to "/data/app/com.example.bugsnag.android-EPFji4GE4IHgwGM2GoOXvQ==/lib/x86/libentrypoint.so",
+                "method" to "crash_write_read_only"
+            ),
+            mapOf(
+                "frameAddress" to "0x900040923",
+                "symbolAddress" to "0x900010000",
+                "lineNumber" to BigDecimal.valueOf(509),
+                "file" to "/data/app/com.example.bugsnag.android-EPFji4GE4IHgwGM2GoOXvQ==/oat/x86/base.odex",
+                "method" to "Java_com_example_bugsnag_android_BaseCrashyActivity_crashFromCXX"
+            )
+        )
+        val exception = mapOf(
+            "errorClass" to "SIGSEGV",
+            "message" to "Segmentation violation (invalid memory reference)",
+            "type" to "c",
+            "stacktrace" to stacktrace
+        )
         minimalJournalMap = mapOf(
             "apiKey" to "my-api-key",
             "user" to mapOf(
@@ -92,7 +117,8 @@ class BugsnagJournalEventMapperTest {
             "breadcrumbs" to breadcrumbs,
             "app" to app,
             "device" to device,
-            "projectPackages" to listOf("com.example.bar")
+            "projectPackages" to listOf("com.example.bar"),
+            "exceptions" to listOf(exception)
         )
         journalMap = minimalJournalMap + mapOf(
             "context" to "ExampleActivity",
@@ -218,5 +244,38 @@ class BugsnagJournalEventMapperTest {
 
         // projectPackages
         assertEquals(listOf("com.example.bar"), event.projectPackages)
+
+        // exception
+        val err = event.errors.single()
+        assertEquals("SIGSEGV", err.errorClass)
+        assertEquals("Segmentation violation (invalid memory reference)", err.errorMessage)
+        assertEquals(ErrorType.C, err.type)
+
+        val trace = err.stacktrace
+        assertEquals(2, trace.size)
+
+        // first stackframe
+        val firstFrame = trace[0].toJournalSection()
+        assertEquals(273L, firstFrame["lineNumber"])
+        assertEquals(0x82545948, firstFrame["frameAddress"])
+        assertEquals(0x82545000, firstFrame["symbolAddress"])
+        assertEquals(
+            "/data/app/com.example.bugsnag.android-" +
+                "EPFji4GE4IHgwGM2GoOXvQ==/lib/x86/libentrypoint.so",
+            firstFrame["file"]
+        )
+        assertEquals("crash_write_read_only", firstFrame["method"])
+
+        // second stackframe
+        val secondFrame = trace[1].toJournalSection()
+        assertEquals(509L, secondFrame["lineNumber"])
+        assertEquals(0x900040923, secondFrame["frameAddress"])
+        assertEquals(0x900010000, secondFrame["symbolAddress"])
+        assertEquals(
+            "/data/app/com.example.bugsnag.android-" +
+                "EPFji4GE4IHgwGM2GoOXvQ==/oat/x86/base.odex",
+            secondFrame["file"]
+        )
+        assertEquals("Java_com_example_bugsnag_android_BaseCrashyActivity_crashFromCXX", secondFrame["method"])
     }
 }
