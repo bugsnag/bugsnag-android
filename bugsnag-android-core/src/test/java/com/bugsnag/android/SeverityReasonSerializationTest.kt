@@ -28,7 +28,8 @@ internal class SeverityReasonSerializationTest {
                 SeverityReason.newInstance(SeverityReason.REASON_PROMISE_REJECTION),
                 SeverityReason.newInstance(SeverityReason.REASON_LOG, Severity.WARNING, "warning"),
                 SeverityReason.newInstance(SeverityReason.REASON_ANR),
-                override
+                override,
+                SeverityReason.newInstance(SeverityReason.REASON_HANDLED_ERROR)
             )
         }
     }
