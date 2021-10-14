@@ -109,8 +109,7 @@ Scenario: Signal raised with overwritten config
     And the event "unhandled" is true
     And the event "severity" equals "error"
     And the event "severityReason.type" equals "signal"
-    And the event "severityReason.attributes.signalType" equals "SIGSEGV"
-    And the event "severityReason.type" equals "signal"
+#TODO
     And the event "severityReason.attributes.signalType" equals "SIGSEGV"
     And the event "severityReason.unhandledOverridden" is false
     And the event "session.events.handled" equals 0
@@ -173,13 +172,14 @@ Scenario: Signal raised with overwritten config
     And the event has a "request" breadcrumb named "Substandard nacho error"
 
     # Native context override
+#    TODO this will fail until the crashtime journal persists this info.
     And the event "context" equals "Some custom context"
 
     # Metadata
-    And the event "metaData.Riker Ipsum.examples" equals "I'll be sure to note that in my log. You enjoyed that. They wer"
     And the event "metaData.fruit.apple" equals "gala"
     And the event "metaData.fruit.ripe" is true
     And the event "metaData.fruit.counters" equals 47
+    And the event "metaData.Riker Ipsum.examples" equals "I'll be sure to note that in my log. You enjoyed that. They were just sucked into space. How long can two people talk about nothing? I've had twelve years to think about it. And if I had it to do over again, I would have grabbed the phaser and pointed it at you instead of them."
 
 Scenario: C++ exception thrown with overwritten config
     When I run "CXXExceptionSmokeScenario" and relaunch the app

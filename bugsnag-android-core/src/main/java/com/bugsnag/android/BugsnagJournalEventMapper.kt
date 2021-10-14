@@ -104,13 +104,20 @@ internal class BugsnagJournalEventMapper(
         val severityReason: Map<String, Any> = map.readEntry(JournalKeys.pathSeverityReason)
         val unhandledOverridden: Boolean = severityReason.readEntry(JournalKeys.keyUnhandledOverridden)
         val type: String = severityReason.readEntry(JournalKeys.keyType)
+        val attrMap: Map<String, String>? = severityReason.readEntry(JournalKeys.keyAttributes)
 
+        // TODO add me to attr value
+        logger.d("Attr map: $attrMap")
         val originalUnhandled = when {
             unhandledOverridden -> !unhandled
             else -> unhandled
         }
         val reason = SeverityReason(type, severity, unhandled, originalUnhandled, null)
         event.updateSeverityReasonInternal(reason)
+
+// TODO
+//        "severityReason.attributes"
+//        thread states
         return event
     }
 

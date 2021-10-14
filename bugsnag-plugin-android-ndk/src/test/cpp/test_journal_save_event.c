@@ -14,12 +14,12 @@ static bool init_test() {
     return bsg_crashtime_journal_init(crashtime_journal_filename);
 }
 
-
 TEST test_write_event(void) {
     ASSERT(init_test());
     bugsnag_event event;
     event.severity = BSG_SEVERITY_ERR;
     event.unhandled = true;
+    event.unhandled_events = 1;
     event.device.time = 150000000;
 
     // error

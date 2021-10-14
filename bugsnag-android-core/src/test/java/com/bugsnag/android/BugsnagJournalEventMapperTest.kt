@@ -307,6 +307,7 @@ class BugsnagJournalEventMapperTest {
             assertTrue(isOriginalUnhandled)
             assertEquals(Severity.ERROR, currentSeverity)
             assertEquals("signal", severityReasonType)
+//            assertEquals("SIGSEGV", attributeValue) TODO enable
         }
     }
 }

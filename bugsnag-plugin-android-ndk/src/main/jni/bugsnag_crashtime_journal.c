@@ -12,6 +12,7 @@
 #define KEY_DEVICE "device"
 #define KEY_ERROR_CLASS "errorClass"
 #define KEY_EXCEPTIONS "exceptions"
+#define KEY_EVENTS "events"
 #define KEY_FILE "file"
 #define KEY_FRAME_ADDRESS "frameAddress"
 #define KEY_ID "id"
@@ -21,6 +22,7 @@
 #define KEY_MESSAGE "message"
 #define KEY_METHOD "method"
 #define KEY_NAME "name"
+#define KEY_SESSION "session"
 #define KEY_SEVERITY "severity"
 #define KEY_SEVERITY_REASON "severityReason"
 #define KEY_SIGNAL_TYPE "signalType"
@@ -37,16 +39,20 @@ static void add_string(const char *name, const char *value) {
   bsg_pb_unstack();
 }
 
-static void add_hex(const char *name, uint64_t value) {
-  char buff[20] = "0x";
-  bsg_hex64_to_string(value, buff + 2);
-  add_string(name, buff);
-}
-
 static void add_double(const char *name, double value) {
   bsg_pb_stack_map_key(name);
   bsg_ctjournal_set_double(bsg_pb_path(), value);
   bsg_pb_unstack();
+}
+
+static void add_int(const char *name, int64_t value) {
+  add_double(name, value);
+}
+
+static void add_hex(const char *name, uint64_t value) {
+  char buff[20] = "0x";
+  bsg_hex64_to_string(value, buff + 2);
+  add_string(name, buff);
 }
 
 static void add_boolean(const char *name, bool value) {
@@ -151,6 +157,16 @@ static void add_device_time(const bugsnag_event *event) {
   bsg_pb_unstack();
 }
 
+static void add_session(const bugsnag_event *event) {
+  if (bugsnag_event_has_session(event)) {
+    bsg_pb_stack_map_key(KEY_SESSION);
+    bsg_pb_stack_map_key(KEY_EVENTS);
+    add_int(KEY_UNHANDLED, event->unhandled_events);
+    bsg_pb_unstack();
+    bsg_pb_unstack();
+  }
+}
+
 bool bsg_crashtime_journal_init(const char *journal_path) {
   return bsg_ctjournal_init(journal_path);
 }
@@ -160,5 +176,6 @@ bool bsg_crashtime_journal_store_event(const bugsnag_event *event) {
   add_exception(event);
   add_severity_reason(event);
   add_device_time(event);
+  add_session(event);
   return true;
 }

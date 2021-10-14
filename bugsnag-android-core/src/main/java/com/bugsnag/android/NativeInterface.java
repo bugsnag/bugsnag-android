@@ -316,26 +316,7 @@ public class NativeInterface {
                                      @NonNull byte[] payloadBytes,
                                      @NonNull String apiKey,
                                      boolean isLaunching) {
-        if (payloadBytes == null) {
-            return;
-        }
-        String payload = new String(payloadBytes, UTF8Charset);
-        String releaseStage = releaseStageBytes == null
-                ? null
-                : new String(releaseStageBytes, UTF8Charset);
-        Client client = getClient();
-        ImmutableConfig config = client.getConfig();
-        if (releaseStage == null
-                || releaseStage.length() == 0
-                || !config.shouldDiscardByReleaseStage()) {
-            EventStore eventStore = client.getEventStore();
-
-            String filename = eventStore.getNdkFilename(payload, apiKey);
-            if (isLaunching) {
-                filename = filename.replace(".json", "startupcrash.json");
-            }
-            eventStore.enqueueContentForDelivery(payload, filename);
-        }
+        // TODO remove me
     }
 
     /**

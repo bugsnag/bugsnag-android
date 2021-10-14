@@ -103,6 +103,13 @@ public class NativeJournalSaveEventTest {
         HashMap<String, Object> deviceMap = new HashMap<>();
         deviceMap.put("time", "1974-10-03T02:40:00Z");
         root.put("device", deviceMap);
+
+        // session
+        HashMap<String, Object> sessionMap = new HashMap<>();
+        HashMap<String, Object> eventsMap = new HashMap<>();
+        root.put("session", sessionMap);
+        sessionMap.put("events", eventsMap);
+        eventsMap.put("unhandled", 1);
         return root;
     }
 }
