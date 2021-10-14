@@ -59,8 +59,12 @@ internal object JournalKeys {
     internal const val pathBreadcrumbs = "breadcrumbs"
     internal const val pathContext = "context"
     internal const val pathDevice = keyDevice
+    internal const val pathExceptions = "exceptions"
+    internal const val pathGroupingHash = "groupingHash"
     internal const val pathMetadata = keyMetadata
     internal const val pathSession = "session"
+    internal const val pathSeverity = "severity"
+    internal const val pathThreads = "threads"
     internal const val pathUser = "user"
     internal const val pathNotifier = "notifier"
     internal const val pathProjectPackages = "projectPackages"
