@@ -1,0 +1,105 @@
+{
+  "context": "SampleData",
+  "metaData": {
+    "app": {
+      "memoryTrimLevel": "None",
+      "processName": "com.example.bugsnag.android",
+      "activeScreen": "ExampleActivity",
+      "name": "Bugsnag",
+      "memoryLimit": 536870912,
+      "lowMemory": false
+    },
+    "Native": {
+      "field": true
+    },
+    "device": {
+      "locationStatus": "allowed",
+      "emulator": true,
+      "networkAccess": "wifi",
+      "screenDensity": 2.75,
+      "dpi": 440,
+      "screenResolution": "2088x1080",
+      "brand": "google"
+    },
+    "user": {
+      "age": 31
+    }
+  },
+  "severity": "warning",
+  "severityReason": {
+    "type": "handledException",
+    "unhandledOverridden": false
+  },
+  "unhandled": false,
+  "exceptions": [],
+  "user": {},
+  "app": {
+    "version": "1.0",
+    "id": "com.example.bugsnag.android",
+    "type": "android",
+    "releaseStage": "development",
+    "versionCode": 1,
+    "binaryArch": "x86",
+    "duration": 5496998,
+    "durationInForeground": 5490000,
+    "inForeground": true,
+    "isLaunching": true
+  },
+  "device": {
+    "osName": "android",
+    "id": "22943cb8-bd36-457c-b302-4c211d0e1f24",
+    "locale": "en_US",
+    "osVersion": "10",
+    "manufacturer": "Google",
+    "model": "Android SDK built for x86",
+    "orientation": "portrait",
+    "runtimeVersions": {
+      "androidApiLevel": 29,
+      "osBuild": "QSR1.190920.001"
+    },
+    "cpuAbi": [
+      "x86"
+    ],
+    "totalMemory": 2091245568,
+    "jailbroken": false,
+    "time": "1970-01-01T00:00:00Z"
+  },
+  "breadcrumbs": [
+    {
+      "timestamp": "1970-01-01T00:00:00.000Z",
+      "name": "Connectivity changed",
+      "type": "state",
+      "metaData": {
+        "hasConnection": true,
+        "networkState": "wifi"
+      }
+    },
+    {
+      "timestamp": "1970-01-01T00:00:00.000Z",
+      "name": "Bugsnag loaded",
+      "type": "state"
+    }
+  ],
+  "threads": [
+    {
+      "id": 20948,
+      "name": "bugsnag.android",
+      "type": "c",
+      "state": "running"
+    },
+    {
+      "id": 20954,
+      "name": "Jit thread pool",
+      "type": "c",
+      "state": "sleeping"
+    }
+  ],
+  "session": {
+    "id": "e83a6f98-120c-4a23-940c-abf8cc87",
+    "startedAt": "1970-01-01T00:00:00.000Z",
+    "events": {
+      "handled": 0,
+      "unhandled": 1
+    }
+  }
+}

@@ -36,6 +36,7 @@
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun updateSeverityReason(@SeverityReason.SeverityReasonType reason: String)</ID>
     <ID>RethrowCaughtException:JsonHelper.kt$JsonHelper.Companion$throw ex</ID>
     <ID>ReturnCount:DefaultDelivery.kt$DefaultDelivery$fun deliver( urlString: String, streamable: JsonStream.Streamable, headers: Map&lt;String, String?> ): DeliveryStatus</ID>
+    <ID>SwallowedException:BugsnagJournalEventMapper.kt$BugsnagJournalEventMapper$catch (pe: IllegalArgumentException) { ndkDateFormatHolder.get()!!.parse(this) ?: throw IllegalArgumentException("cannot parse date $this") }</ID>
     <ID>SwallowedException:ClientInternal.kt$ClientInternal$catch (exc: Throwable) { false }</ID>
     <ID>SwallowedException:ClientInternal.kt$ClientInternal$catch (exception: IllegalArgumentException) { logger.w("Receiver not registered") }</ID>
     <ID>SwallowedException:ConnectivityCompat.kt$ConnectivityLegacy$catch (e: NullPointerException) { // in some rare cases we get a remote NullPointerException via Parcel.readException null }</ID>

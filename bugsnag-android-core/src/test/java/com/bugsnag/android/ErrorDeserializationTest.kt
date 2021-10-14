@@ -12,19 +12,22 @@ internal class ErrorDeserializationTest {
     companion object {
         @JvmStatic
         @Parameters
-        fun testCases() = (0..0).map { "event_deserialization_$it.json" }
+        fun testCases() = (0..1).map {
+            "event_deserialization_$it.json" to "event_deserialization_expected_$it.json"
+        }
     }
 
     @Parameter
-    lateinit var resourceName: String
+    lateinit var resource: Pair<String, String>
 
     @Test
     fun testJsonSerialisation() {
-        val jsonContent = JsonParser().read(resourceName)
+        val (inputResource, expectedResource) = resource
+        val jsonContent = JsonParser().read(inputResource)
         val map = JsonHelper.deserialize(jsonContent.toByteArray())
         val eventInternal = BugsnagJournalEventMapper(NoopLogger).convertToEventImpl(map, "api-key")
         val event = Event(eventInternal, NoopLogger)
 
-        verifyJsonMatches(event, resourceName)
+        verifyJsonMatches(event, expectedResource)
     }
 }

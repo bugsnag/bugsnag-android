@@ -2,7 +2,11 @@ package com.bugsnag.android
 
 import com.bugsnag.android.internal.DateUtils
 import java.io.File
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 /**
  * Converts a Bugsnag journal entry into an Event.
@@ -77,7 +81,10 @@ internal class BugsnagJournalEventMapper(
         threads?.mapTo(event.threads) { Thread(convertThreadInternal(it), logger) }
 
         // populate projectPackages
-        event.projectPackages = map.readEntry("projectPackages")
+        val projectPackages = map["projectPackages"] as? List<String>
+        projectPackages?.let {
+            event.projectPackages = projectPackages
+        }
 
         // populate exceptions
         val exceptions: List<MutableMap<String, Any?>> = map.readEntry("exceptions")
@@ -93,8 +100,7 @@ internal class BugsnagJournalEventMapper(
         val type = map["type"] as String
         map["type"] = BreadcrumbType.valueOf(type.toUpperCase(Locale.US))
 
-        val date = map["timestamp"] as String
-        map["timestamp"] = DateUtils.fromIso8601(date)
+        map["timestamp"] = (map["timestamp"] as String).toDate()
 
         map["metadata"] = map["metaData"]
         map.remove("metaData")
@@ -105,7 +111,7 @@ internal class BugsnagJournalEventMapper(
     private fun convertDeviceWithState(src: Map<String, Any?>): DeviceWithState {
         val map = src.toMutableMap()
         map["cpuAbi"] = (map["cpuAbi"] as? List<String>)?.toTypedArray()
-        map["time"] = (map["time"] as? String)?.let { DateUtils.fromIso8601(it) }
+        map["time"] = (map["time"] as? String)?.toDate()
         return DeviceWithState(map)
     }
 
@@ -163,6 +169,24 @@ internal class BugsnagJournalEventMapper(
                 "Journal entry for '$key' not " +
                     "of expected type, found ${value.javaClass.name}"
             )
+        }
+    }
+
+    // SimpleDateFormat isn't thread safe, cache one instance per thread as needed.
+    private val ndkDateFormatHolder = object : ThreadLocal<DateFormat>() {
+        override fun initialValue(): DateFormat {
+            return SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US).apply {
+                timeZone = TimeZone.getTimeZone("UTC")
+            }
+        }
+    }
+
+    private fun String.toDate(): Date {
+        return try {
+            DateUtils.fromIso8601(this)
+        } catch (pe: IllegalArgumentException) {
+            ndkDateFormatHolder.get()!!.parse(this)
+                ?: throw IllegalArgumentException("cannot parse date $this")
         }
     }
 }
