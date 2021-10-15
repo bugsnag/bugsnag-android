@@ -220,7 +220,7 @@ void bugsnag_event_clear_breadcrumbs(bugsnag_event *event) {
   event->crumb_first_index = 0;
 }
 
-bool bugsnag_event_has_session(bugsnag_event *event) {
+bool bugsnag_event_has_session(const bugsnag_event *event) {
   return strlen(event->session_id) > 0;
 }
 

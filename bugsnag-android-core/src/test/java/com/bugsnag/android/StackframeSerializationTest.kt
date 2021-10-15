@@ -18,9 +18,9 @@ internal class StackframeSerializationTest {
             return generateSerializationTestCases(
                 "stackframe",
                 frame,
-                Stackframe(NativeStackframe("aMethod", "aFile", 1, 2, 3, 4)),
-                Stackframe(NativeStackframe("aMethod", "aFile", 1, null, null, null)),
-                Stackframe(NativeStackframe(null, null, null, null, null, null))
+                Stackframe(NativeStackframe("aMethod", "aFile", 1, 2, 3, 4, null)),
+                Stackframe(NativeStackframe("aMethod", "aFile", 1, null, null, null, null)),
+                Stackframe(NativeStackframe(null, null, null, null, null, null, null))
             )
         }
     }

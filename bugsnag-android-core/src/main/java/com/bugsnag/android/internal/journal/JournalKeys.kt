@@ -3,6 +3,7 @@ package com.bugsnag.android.internal.journal
 internal object JournalKeys {
     // Keys
     internal const val keyApp = "app"
+    internal const val keyAttributes = "attributes"
     internal const val keyBinaryArch = "binaryArch"
     internal const val keyBuildUUID = "buildUUID"
     internal const val keyCode = "code"
@@ -25,6 +26,7 @@ internal object JournalKeys {
     internal const val keyInForeground = "inForeground"
     internal const val keyInProject = "inProject"
     internal const val keyIsLaunching = "isLaunching"
+    internal const val keyIsPC = "isPC"
     internal const val keyJailbroken = "jailbroken"
     internal const val keyLineNumber = "lineNumber"
     internal const val keyLoadAddress = "loadAddress"
@@ -48,6 +50,7 @@ internal object JournalKeys {
     internal const val keyTotalMemory = "totalMemory"
     internal const val keyType = "type"
     internal const val keyUnhandled = "unhandled"
+    internal const val keyUnhandledOverridden = "unhandledOverridden"
     internal const val keyUrl = "url"
     internal const val keyVersion = "version"
     internal const val keyVersionCode = "versionCode"
@@ -64,6 +67,7 @@ internal object JournalKeys {
     internal const val pathMetadata = keyMetadata
     internal const val pathSession = "session"
     internal const val pathSeverity = "severity"
+    internal const val pathSeverityReason = "severityReason"
     internal const val pathThreads = "threads"
     internal const val pathUser = "user"
     internal const val pathNotifier = "notifier"

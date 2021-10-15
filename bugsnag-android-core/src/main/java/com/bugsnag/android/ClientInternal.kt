@@ -85,8 +85,7 @@ internal class ClientInternal constructor(
         journal = lazy {
             val baseDocumentPath = config.journalBasePath
             baseDocumentPath.parentFile!!.mkdirs()
-            val eventMapper = BugsnagJournalEventMapper(logger)
-            eventMapper.convertToEvent(baseDocumentPath)
+            convertJournalToEvent(baseDocumentPath)
             BugsnagJournal(logger, baseDocumentPath)
         }
 
@@ -170,6 +169,17 @@ internal class ClientInternal constructor(
             memoryTrimState,
             notifierState
         )
+    }
+
+    private fun convertJournalToEvent(baseDocumentPath: File) {
+        val eventMapper = BugsnagJournalEventMapper(logger)
+        val event = eventMapper.convertToEvent(baseDocumentPath)
+        val sendJournalEvents = false // TODO this is disabled to pass CI but allow testing locally
+
+        if (sendJournalEvents && event != null && event.errors.isNotEmpty()) {
+            // TODO future: use the correct filename to support launch crashes
+            eventStore.write(event)
+        }
     }
 
     /**

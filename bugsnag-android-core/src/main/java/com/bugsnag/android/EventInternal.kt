@@ -52,7 +52,7 @@ internal class EventInternal : JsonStream.Streamable, MetadataAware, UserAware {
     }
 
     val originalError: Throwable?
-    private var severityReason: SeverityReason
+    internal var severityReason: SeverityReason
 
     val metadata: Metadata
     private val discardClasses: Set<String>
@@ -168,12 +168,18 @@ internal class EventInternal : JsonStream.Streamable, MetadataAware, UserAware {
         return errorTypes.plus(frameOverrideTypes)
     }
 
+    internal fun updateSeverityReasonInternal(severityReason: SeverityReason) {
+        this.severityReason = severityReason
+    }
+
     protected fun updateSeverityInternal(severity: Severity) {
         severityReason = SeverityReason(
             severityReason.severityReasonType,
             severity,
             severityReason.unhandled,
-            severityReason.attributeValue
+            severityReason.unhandledOverridden,
+            severityReason.attributeValue,
+            severityReason.attributeKey
         )
     }
 
@@ -182,7 +188,9 @@ internal class EventInternal : JsonStream.Streamable, MetadataAware, UserAware {
             reason,
             severityReason.currentSeverity,
             severityReason.unhandled,
-            severityReason.attributeValue
+            severityReason.unhandledOverridden,
+            severityReason.attributeValue,
+            severityReason.attributeKey
         )
     }
 

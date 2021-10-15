@@ -95,7 +95,7 @@ static bool configure_anr_jni_impl(JNIEnv *env) {
   frame_init = safe_get_method_id(
       env, frame_class, "<init>",
       "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Number;Ljava/lang/"
-      "Long;Ljava/lang/Long;Ljava/lang/Long;)V");
+      "Long;Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Boolean;)V");
   return true;
 }
 
@@ -182,7 +182,7 @@ static void notify_anr_detected() {
         safe_new_object(env, long_class, long_init, (jlong)frame->load_address);
     jobject jframe = safe_new_object(env, frame_class, frame_init, jmethod,
                                      jfilename, jline_number, jframe_address,
-                                     jsymbol_address, jload_address);
+                                     jsymbol_address, jload_address, NULL);
     if (jlist != NULL && list_add != NULL && jframe != NULL) {
       (*env)->CallBooleanMethod(env, jlist, list_add, jframe);
       check_and_clear_exc(env);
