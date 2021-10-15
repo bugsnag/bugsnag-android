@@ -322,4 +322,10 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXCaptureThreadsNotifyScenario_ac
     (char *)"CXXCaptureThreadStatesNotifyScenario", BSG_SEVERITY_ERR);
 }
 
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXConfiguredContextScenario_crash(JNIEnv *env,
+                                                                                 jobject instance) {
+  abort();
+}
+
 }
