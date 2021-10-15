@@ -13,12 +13,12 @@ internal class NativeStackframeSerializationTest {
         @JvmStatic
         @Parameters
         fun testCases(): Collection<Pair<NativeStackframe, String>> {
-            val last = NativeStackframe(null, null, null, null, null, null)
+            val last = NativeStackframe(null, null, null, null, null, null, null)
             last.type = ErrorType.ANDROID
             return generateSerializationTestCases(
                 "native_stackframe",
-                NativeStackframe("aMethod", "aFile", 1, 2, 3, 4),
-                NativeStackframe("aMethod", "aFile", 1, null, null, null),
+                NativeStackframe("aMethod", "aFile", 1, 2, 3, 4, true),
+                NativeStackframe("aMethod", "aFile", 1, null, null, null, null),
                 last
             )
         }

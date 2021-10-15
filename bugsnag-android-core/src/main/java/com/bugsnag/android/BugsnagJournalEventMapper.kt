@@ -95,6 +95,13 @@ internal class BugsnagJournalEventMapper(
         // populate exceptions
         val exceptions: List<MutableMap<String, Any?>> = map.readEntry(JournalKeys.pathExceptions)
         exceptions.mapTo(event.errors) { Error(convertErrorInternal(it), this.logger) }
+
+        // populate severity
+        val severityStr: String = map.readEntry(JournalKeys.pathSeverity)
+        val severity = Severity.fromDescriptor(severityStr)
+        val unhandled: Boolean = map.readEntry(JournalKeys.keyUnhandled)
+        val reason = deserializeSeverityReason(map, unhandled, severity)
+        event.updateSeverityReasonInternal(reason)
         return event
     }
 
@@ -171,7 +178,37 @@ internal class BugsnagJournalEventMapper(
         (frame[JournalKeys.keyLoadAddress] as? String)?.let {
             copy[JournalKeys.keyLoadAddress] = java.lang.Long.decode(it)
         }
+
+        (frame[JournalKeys.keyIsPC] as? Boolean)?.let {
+            copy[JournalKeys.keyIsPC] = it
+        }
         return copy
+    }
+
+    private fun deserializeSeverityReason(
+        map: Map<in String, Any?>,
+        unhandled: Boolean,
+        severity: Severity
+    ): SeverityReason {
+        val severityReason: Map<String, Any> = map.readEntry(JournalKeys.pathSeverityReason)
+        val unhandledOverridden: Boolean =
+            severityReason.readEntry(JournalKeys.keyUnhandledOverridden)
+        val type: String = severityReason.readEntry(JournalKeys.keyType)
+        val originalUnhandled = when {
+            unhandledOverridden -> !unhandled
+            else -> unhandled
+        }
+
+        val attrMap: Map<String, String>? = severityReason.readEntry(JournalKeys.keyAttributes)
+        val entry = attrMap?.entries?.singleOrNull()
+        return SeverityReason(
+            type,
+            severity,
+            unhandled,
+            originalUnhandled,
+            entry?.value,
+            entry?.key
+        )
     }
 
     /**

@@ -110,8 +110,6 @@ Scenario: Signal raised with overwritten config
     And the event "severity" equals "error"
     And the event "severityReason.type" equals "signal"
     And the event "severityReason.attributes.signalType" equals "SIGSEGV"
-    And the event "severityReason.type" equals "signal"
-    And the event "severityReason.attributes.signalType" equals "SIGSEGV"
     And the event "severityReason.unhandledOverridden" is false
     And the event "session.events.handled" equals 0
     And the event "session.events.unhandled" equals 1

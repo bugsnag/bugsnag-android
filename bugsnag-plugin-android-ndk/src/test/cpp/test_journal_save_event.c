@@ -14,14 +14,19 @@ static bool init_test() {
     return bsg_crashtime_journal_init(crashtime_journal_filename);
 }
 
-
 TEST test_write_event(void) {
     ASSERT(init_test());
     bugsnag_event event;
+    event.severity = BSG_SEVERITY_ERR;
+    event.unhandled = true;
+    event.unhandled_events = 1;
+    event.device.time = 150000000;
+
+    // error
     bsg_error *error = &event.error;
     strcpy(error->errorMessage, "test message");
-    strcpy(error->errorClass, "test");
-    strcpy(error->type, "test");
+    strcpy(error->errorClass, "SIGSEGV");
+    strcpy(error->type, "c");
     error->frame_count = 2;
     for (int i = 0; i < error->frame_count; i++) {
         bugsnag_stackframe *frame = &error->stacktrace[i];

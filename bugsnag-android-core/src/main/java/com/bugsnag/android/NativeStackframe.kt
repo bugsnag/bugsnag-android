@@ -37,7 +37,12 @@ class NativeStackframe internal constructor(
     /**
      * The address of the library where the event occurred.
      */
-    var loadAddress: Long?
+    var loadAddress: Long?,
+
+    /**
+     * Whether this frame identifies the program counter
+     */
+    var isPC: Boolean?
 ) : JsonStream.Streamable, Journalable {
 
     constructor(json: Map<String, Any?>) : this(
@@ -46,7 +51,8 @@ class NativeStackframe internal constructor(
         json[JournalKeys.keyLineNumber] as? Number,
         json[JournalKeys.keyFrameAddress] as? Long,
         json[JournalKeys.keySymbolAddress] as? Long,
-        json[JournalKeys.keyLoadAddress] as? Long
+        json[JournalKeys.keyLoadAddress] as? Long,
+        json[JournalKeys.keyIsPC] as? Boolean
     )
     /**
      * The type of the error
@@ -63,6 +69,7 @@ class NativeStackframe internal constructor(
         JournalKeys.keyFrameAddress to frameAddress,
         JournalKeys.keySymbolAddress to symbolAddress,
         JournalKeys.keyLoadAddress to loadAddress,
-        JournalKeys.keyType to type?.desc
+        JournalKeys.keyType to type?.desc,
+        JournalKeys.keyIsPC to isPC
     ).filterValues { it != null }
 }
