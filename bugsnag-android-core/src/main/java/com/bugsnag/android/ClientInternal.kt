@@ -177,6 +177,14 @@ internal class ClientInternal constructor(
         val sendJournalEvents = false // TODO this is disabled to pass CI but allow testing locally
 
         if (sendJournalEvents && event != null && event.errors.isNotEmpty()) {
+            // remove some fields which are in the journal but not relevant to NDK events
+            event.device.freeDisk = null
+            event.device.freeMemory = null
+            event.metadata.clearMetadata("app", "freeMemory")
+            event.metadata.clearMetadata("app", "memoryUsage")
+            event.metadata.clearMetadata("device", "freeMemory")
+            event.metadata.clearMetadata("device", "totalMemory")
+
             // TODO future: use the correct filename to support launch crashes
             eventStore.write(event)
         }
@@ -213,6 +221,9 @@ internal class ClientInternal constructor(
      * Installs any exception/ANR/signal handlers.
      */
     private fun installErrorHandlers() {
+        if (config.shouldDiscardByReleaseStage()) {
+            return
+        }
         if (config.enabledErrorTypes.unhandledExceptions) {
             exceptionHandler.install()
         }

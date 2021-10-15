@@ -119,10 +119,12 @@ Scenario: Signal raised with overwritten config
     And the event stacktrace identifies the program counter
     And the event "exceptions.0.stacktrace.0.method" is not null
     And the event "exceptions.0.stacktrace.0.file" is not null
+    And the event "exceptions.0.type" equals "c"
     And the error payload field "events.0.exceptions.0.stacktrace.0.frameAddress" is greater than 0
     And the error payload field "events.0.exceptions.0.stacktrace.0.symbolAddress" is greater than 0
     And the error payload field "events.0.exceptions.0.stacktrace.0.loadAddress" is greater than 0
     And the error payload field "events.0.exceptions.0.stacktrace.0.lineNumber" is greater than 0
+    And the error payload field "events.0.exceptions.0.stacktrace.0.type" is null
 
     # App data
     And the event binary arch field is valid
@@ -169,6 +171,14 @@ Scenario: Signal raised with overwritten config
     # Breadcrumbs
     And the event has a "manual" breadcrumb named "CXXSignalSmokeScenario"
     And the event has a "request" breadcrumb named "Substandard nacho error"
+
+    # Disallowed fields (present in the journal but are inaccurate for NDK events)
+    And the event "device.freeDisk" is null
+    And the event "device.freeMemory" is null
+    And the event "metaData.app.freeMemory" is null
+    And the event "metaData.app.memoryUsage" is null
+    And the event "metaData.device.freeMemory" is null
+    And the event "metaData.device.totalMemory" is null
 
     # Native context override
     And the event "context" equals "Some custom context"
