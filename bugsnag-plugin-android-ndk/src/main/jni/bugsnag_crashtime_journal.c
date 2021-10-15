@@ -6,7 +6,10 @@
 #include "ctjournal.h"
 #include "utils/number_to_string.h"
 #include "utils/path_builder.h"
+#include <time.h>
 
+#define KEY_ATTRIBUTES "attributes"
+#define KEY_DEVICE "device"
 #define KEY_ERROR_CLASS "errorClass"
 #define KEY_EXCEPTIONS "exceptions"
 #define KEY_FILE "file"
@@ -18,9 +21,15 @@
 #define KEY_MESSAGE "message"
 #define KEY_METHOD "method"
 #define KEY_NAME "name"
+#define KEY_SEVERITY "severity"
+#define KEY_SEVERITY_REASON "severityReason"
+#define KEY_SIGNAL_TYPE "signalType"
 #define KEY_STACKTRACE "stacktrace"
 #define KEY_SYMBOL_ADDRESS "symbolAddress"
+#define KEY_TIME "time"
 #define KEY_TYPE "type"
+#define KEY_UNHANDLED "unhandled"
+#define KEY_UNHANDLED_OVERRIDDEN "unhandledOverridden"
 
 static void add_string(const char *name, const char *value) {
   bsg_pb_stack_map_key(name);
@@ -99,6 +108,49 @@ static void add_exception(const bugsnag_event *event) {
   bsg_pb_unstack();
 }
 
+const char *bsg_severity_string(bugsnag_severity type);
+
+static void add_severity_reason_attrs(const bugsnag_event *event) {
+  bsg_pb_stack_map_key(KEY_ATTRIBUTES);
+  add_string(KEY_SIGNAL_TYPE, event->error.errorClass);
+  bsg_pb_unstack();
+}
+
+static void add_severity_reason_obj(const bugsnag_event *event) {
+  bsg_pb_stack_map_key(KEY_SEVERITY_REASON);
+
+  // unhandled == false always means that the state has been overridden by the
+  // user, as this codepath is only executed for unhandled native errors
+  add_boolean(KEY_UNHANDLED_OVERRIDDEN, !event->unhandled);
+
+  // FUTURE(dm): severityReason/unhandled attributes are currently
+  // over-optimized for signal handling. in the future we may want to handle
+  // C++ exceptions, etc as well.
+  add_string(KEY_TYPE, "signal");
+  add_severity_reason_attrs(event);
+  bsg_pb_unstack();
+}
+
+static void add_severity_reason(const bugsnag_event *event) {
+  const char *value = bsg_severity_string(event->severity);
+  add_string(KEY_SEVERITY, value);
+  add_boolean(KEY_UNHANDLED, event->unhandled);
+  add_severity_reason_obj(event);
+}
+
+static void add_device_time(const bugsnag_event *event) {
+  bsg_pb_stack_map_key(KEY_DEVICE);
+
+  char event_time[sizeof("2018-10-08T12:07:09Z")];
+  time_t now = event->device.time;
+  if (now > 0) {
+    strftime(event_time, sizeof(event_time), "%FT%TZ", gmtime(&now));
+  }
+
+  add_string(KEY_TIME, event_time);
+  bsg_pb_unstack();
+}
+
 bool bsg_crashtime_journal_init(const char *journal_path) {
   return bsg_ctjournal_init(journal_path);
 }
@@ -106,5 +158,7 @@ bool bsg_crashtime_journal_init(const char *journal_path) {
 bool bsg_crashtime_journal_store_event(const bugsnag_event *event) {
   bsg_pb_reset();
   add_exception(event);
+  add_severity_reason(event);
+  add_device_time(event);
   return true;
 }

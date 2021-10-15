@@ -74,6 +74,7 @@ class BugsnagJournalEventMapperTest {
             "osVersion" to "8.0.0",
             "model" to "Android SDK built for x86",
             "id" to "8b105fd3-88bc-4a31-8982-b725d1162d86",
+            "time" to "2011-05-29T05:20:51Z",
             "runtimeVersions" to mapOf(
                 "osBuild" to "sdk_gphone_x86-userdebug 8.0.0 OSR1.180418.026 6741039 dev-keys",
                 "androidApiLevel" to 26
@@ -105,6 +106,13 @@ class BugsnagJournalEventMapperTest {
             "type" to "c",
             "stacktrace" to stacktrace
         )
+        val severityReason = mapOf(
+            "type" to "signal",
+            "unhandledOverridden" to false,
+            "attributes" to mapOf(
+                "signalType" to "SIGSEGV"
+            )
+        )
         minimalJournalMap = mapOf(
             "apiKey" to "my-api-key",
             "user" to mapOf(
@@ -120,7 +128,10 @@ class BugsnagJournalEventMapperTest {
             "app" to app,
             "device" to device,
             "projectPackages" to listOf("com.example.bar"),
-            "exceptions" to listOf(exception)
+            "exceptions" to listOf(exception),
+            "unhandled" to true,
+            "severity" to "error",
+            "severityReason" to severityReason
         )
         journalMap = minimalJournalMap + mapOf(
             "context" to "ExampleActivity",
@@ -265,6 +276,7 @@ class BugsnagJournalEventMapperTest {
         assertEquals(0x82545948, firstFrame["frameAddress"])
         assertEquals(0x82545000, firstFrame["symbolAddress"])
         assertEquals(0x90000000, firstFrame["loadAddress"])
+        assertTrue(firstFrame["isPC"] as Boolean)
         assertEquals(
             "/data/app/com.example.bugsnag.android-" +
                 "EPFji4GE4IHgwGM2GoOXvQ==/lib/x86/libentrypoint.so",
@@ -278,11 +290,23 @@ class BugsnagJournalEventMapperTest {
         assertEquals(0x900040923, secondFrame["frameAddress"])
         assertEquals(0x900010000, secondFrame["symbolAddress"])
         assertEquals(0x00001000L, secondFrame["loadAddress"])
+        assertNull(secondFrame["isPC"])
         assertEquals(
             "/data/app/com.example.bugsnag.android-" +
                 "EPFji4GE4IHgwGM2GoOXvQ==/oat/x86/base.odex",
             secondFrame["file"]
         )
         assertEquals("Java_com_example_bugsnag_android_BaseCrashyActivity_crashFromCXX", secondFrame["method"])
+
+        // severity/handledness
+        assertEquals(Severity.ERROR, event.severity)
+
+        with(event.severityReason) {
+            assertTrue(unhandled)
+            assertFalse(unhandledOverridden)
+            assertTrue(isOriginalUnhandled)
+            assertEquals(Severity.ERROR, currentSeverity)
+            assertEquals("signal", severityReasonType)
+        }
     }
 }

@@ -11,6 +11,7 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,22 +36,36 @@ public class NativeJournalSaveEventTest {
         journal.snapshot();
         verifyNativeRun(run(folderPath.toString()));
 
-        // This is what is expected to be written by test_journal_save_event.c: test_write_event()
-        Map<? super String, Object> expected = new HashMap<>();
+        Map<? super String, ?> document = BugsnagJournal.loadPreviousDocument(journalPath);
+        folder.delete();
 
+        // This is what is expected to be written by test_journal_save_event.c: test_write_event()
+        Map<? super String, Object> expected = getExpectedContents();
+        Assert.assertEquals(
+                BugsnagTestUtils.normalized(expected),
+                BugsnagTestUtils.normalized(document)
+        );
+    }
+
+    private Map<? super String, Object> getExpectedContents() {
+        Map<? super String, Object> root = new HashMap<>();
+
+        // version info
         Map<? super String, Object> versionInfo = new HashMap<>();
-        expected.put("version-info", versionInfo);
+        root.put("version-info", versionInfo);
         versionInfo.put("type", "Bugsnag Android");
         versionInfo.put("version", 1);
 
+        // exceptions
         List<Object> exceptions = new LinkedList<>();
-        expected.put("exceptions", exceptions);
+        root.put("exceptions", exceptions);
         Map<? super String, Object> exception = new HashMap<>();
         exceptions.add(exception);
         exception.put("message", "test message");
         exception.put("type", "c");
-        exception.put("errorClass", "test");
+        exception.put("errorClass", "SIGSEGV");
 
+        // stacktrace
         List<Object> stackTrace = new LinkedList<>();
         exception.put("stacktrace", stackTrace);
         Map<? super String, Object> traceEntry = new HashMap<>();
@@ -72,12 +87,22 @@ public class NativeJournalSaveEventTest {
         traceEntry.put("method", "method_1");
         traceEntry.put("lineNumber", new BigDecimal("101"));
 
-        Map<? super String, ?> document = BugsnagJournal.loadPreviousDocument(journalPath);
-        folder.delete();
+        // severity reason
+        root.put("severity", "error");
+        root.put("unhandled", true);
 
-        Assert.assertEquals(
-                BugsnagTestUtils.normalized(expected),
-                BugsnagTestUtils.normalized(document)
-        );
+        Map<String, Object> severityReason = new HashMap<>();
+        root.put("severityReason", severityReason);
+        severityReason.put("unhandledOverridden", false);
+        severityReason.put("type", "signal");
+        severityReason.put("attributes", Collections.singletonMap(
+                "signalType", "SIGSEGV"
+        ));
+
+        // device time
+        HashMap<String, Object> deviceMap = new HashMap<>();
+        deviceMap.put("time", "1974-10-03T02:40:00Z");
+        root.put("device", deviceMap);
+        return root;
     }
 }
