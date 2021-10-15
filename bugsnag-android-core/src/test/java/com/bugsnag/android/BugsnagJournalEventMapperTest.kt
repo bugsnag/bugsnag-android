@@ -61,7 +61,7 @@ class BugsnagJournalEventMapperTest {
             "type" to "android",
             "version" to "1.0",
             "versionCode" to 1,
-            "buildUuid" to "123",
+            "buildUUID" to "123",
             "codeBundleId" to "456"
         )
         val device = mapOf(
@@ -84,6 +84,7 @@ class BugsnagJournalEventMapperTest {
             mapOf(
                 "frameAddress" to "0x82545948",
                 "symbolAddress" to "0x82545000",
+                "loadAddress" to "0x90000000",
                 "lineNumber" to BigDecimal.valueOf(273),
                 "isPC" to true,
                 "file" to "/data/app/com.example.bugsnag.android-EPFji4GE4IHgwGM2GoOXvQ==/lib/x86/libentrypoint.so",
@@ -92,6 +93,7 @@ class BugsnagJournalEventMapperTest {
             mapOf(
                 "frameAddress" to "0x900040923",
                 "symbolAddress" to "0x900010000",
+                "loadAddress" to "0x00001000",
                 "lineNumber" to BigDecimal.valueOf(509),
                 "file" to "/data/app/com.example.bugsnag.android-EPFji4GE4IHgwGM2GoOXvQ==/oat/x86/base.odex",
                 "method" to "Java_com_example_bugsnag_android_BaseCrashyActivity_crashFromCXX"
@@ -122,6 +124,7 @@ class BugsnagJournalEventMapperTest {
         )
         journalMap = minimalJournalMap + mapOf(
             "context" to "ExampleActivity",
+            "groupingHash" to "hash-123",
             "session" to mapOf(
                 "startedAt" to "2021-09-28T10:31:09.620Z",
                 "id" to "b4a03b1b-e0dc-4bed-81e8-cb9e9f2ed825",
@@ -153,6 +156,7 @@ class BugsnagJournalEventMapperTest {
         // context/session
         assertNull(event.context)
         assertNull(event.session)
+        assertNull(event.groupingHash)
     }
 
     /**
@@ -168,6 +172,7 @@ class BugsnagJournalEventMapperTest {
 
         // context
         assertEquals("ExampleActivity", event.context)
+        assertEquals("hash-123", event.groupingHash)
 
         // session
         val session = checkNotNull(event.session)
@@ -259,6 +264,7 @@ class BugsnagJournalEventMapperTest {
         assertEquals(273L, firstFrame["lineNumber"])
         assertEquals(0x82545948, firstFrame["frameAddress"])
         assertEquals(0x82545000, firstFrame["symbolAddress"])
+        assertEquals(0x90000000, firstFrame["loadAddress"])
         assertEquals(
             "/data/app/com.example.bugsnag.android-" +
                 "EPFji4GE4IHgwGM2GoOXvQ==/lib/x86/libentrypoint.so",
@@ -271,6 +277,7 @@ class BugsnagJournalEventMapperTest {
         assertEquals(509L, secondFrame["lineNumber"])
         assertEquals(0x900040923, secondFrame["frameAddress"])
         assertEquals(0x900010000, secondFrame["symbolAddress"])
+        assertEquals(0x00001000L, secondFrame["loadAddress"])
         assertEquals(
             "/data/app/com.example.bugsnag.android-" +
                 "EPFji4GE4IHgwGM2GoOXvQ==/oat/x86/base.odex",
