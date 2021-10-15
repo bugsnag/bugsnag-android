@@ -83,6 +83,7 @@ internal class BugsnagJournalEventMapper(
             event.session = Session(it, logger)
         }
 
+        // populate threads
         val threads = map[JournalKeys.pathThreads] as? List<Map<String, Any?>>
         threads?.mapTo(event.threads) { Thread(convertThreadInternal(it), logger) }
 
@@ -143,7 +144,7 @@ internal class BugsnagJournalEventMapper(
         )
 
         return ThreadInternal(
-            src.readEntry(JournalKeys.keyId),
+            src.readEntry<Number>(JournalKeys.keyId).toLong(),
             src.readEntry(JournalKeys.keyName),
             src.readEntry<String>(JournalKeys.keyType)
                 .let { type -> ThreadType.values().find { it.desc == type } }

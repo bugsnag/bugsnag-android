@@ -27,7 +27,9 @@
 #define KEY_SEVERITY_REASON "severityReason"
 #define KEY_SIGNAL_TYPE "signalType"
 #define KEY_STACKTRACE "stacktrace"
+#define KEY_STATE "state"
 #define KEY_SYMBOL_ADDRESS "symbolAddress"
+#define KEY_THREADS "threads"
 #define KEY_TIME "time"
 #define KEY_TYPE "type"
 #define KEY_UNHANDLED "unhandled"
@@ -167,6 +169,27 @@ static void add_session(const bugsnag_event *event) {
   }
 }
 
+static void add_thread(const bsg_thread *thread) {
+  stack_next_map_entry();
+  add_int(KEY_ID, thread->id);
+  add_string(KEY_NAME, thread->name);
+  add_string(KEY_STATE, thread->state);
+  add_string(KEY_TYPE, "c");
+  bsg_pb_unstack();
+}
+
+static void add_threads(const bugsnag_event *event) {
+  if (event->thread_count <= 0) {
+    return;
+  }
+  bsg_pb_stack_map_key(KEY_THREADS);
+
+  for (int index = 0; index < event->thread_count; index++) {
+    add_thread(&event->threads[index]);
+  }
+  bsg_pb_unstack();
+}
+
 bool bsg_crashtime_journal_init(const char *journal_path) {
   return bsg_ctjournal_init(journal_path);
 }
@@ -177,5 +200,6 @@ bool bsg_crashtime_journal_store_event(const bugsnag_event *event) {
   add_severity_reason(event);
   add_device_time(event);
   add_session(event);
+  add_threads(event);
   return true;
 }
