@@ -14,8 +14,8 @@ import java.lang.annotation.RetentionPolicy;
 final class SeverityReason implements JsonStream.Streamable {
 
     @StringDef({REASON_UNHANDLED_EXCEPTION, REASON_STRICT_MODE, REASON_HANDLED_EXCEPTION,
-            REASON_USER_SPECIFIED, REASON_CALLBACK_SPECIFIED, REASON_PROMISE_REJECTION,
-            REASON_LOG, REASON_SIGNAL, REASON_ANR})
+        REASON_HANDLED_ERROR, REASON_USER_SPECIFIED, REASON_CALLBACK_SPECIFIED,
+        REASON_PROMISE_REJECTION, REASON_LOG, REASON_SIGNAL, REASON_ANR })
     @Retention(RetentionPolicy.SOURCE)
     @interface SeverityReasonType {
     }
@@ -23,6 +23,7 @@ final class SeverityReason implements JsonStream.Streamable {
     static final String REASON_UNHANDLED_EXCEPTION = "unhandledException";
     static final String REASON_STRICT_MODE = "strictMode";
     static final String REASON_HANDLED_EXCEPTION = "handledException";
+    static final String REASON_HANDLED_ERROR = "handledError";
     static final String REASON_USER_SPECIFIED = "userSpecifiedSeverity";
     static final String REASON_CALLBACK_SPECIFIED = "userCallbackSetSeverity";
     static final String REASON_PROMISE_REJECTION = "unhandledPromiseRejection";
@@ -67,6 +68,7 @@ final class SeverityReason implements JsonStream.Streamable {
                 return new SeverityReason(reason, ERROR, true, true, null, null);
             case REASON_STRICT_MODE:
                 return new SeverityReason(reason, WARNING, true, true, attrVal, "violationType");
+            case REASON_HANDLED_ERROR:
             case REASON_HANDLED_EXCEPTION:
                 return new SeverityReason(reason, WARNING, false, false, null, null);
             case REASON_USER_SPECIFIED:

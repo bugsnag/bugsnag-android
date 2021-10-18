@@ -39,10 +39,6 @@ Before('@skip_android_10') do |scenario|
   skip_this_scenario("Skipping scenario") if Maze.config.os_version == 10
 end
 
-Before('@skip_android_11') do |scenario|
-  skip_this_scenario("Skipping scenario") if Maze.config.os_version == 11
-end
-
 Before('@skip_samsung') do |scenario|
   skip_this_scenario("Skipping scenario") if Maze.driver.capabilities['device']&.downcase&.include? 'samsung'
 end
