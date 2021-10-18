@@ -11,6 +11,7 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -110,6 +111,19 @@ public class NativeJournalSaveEventTest {
         root.put("session", sessionMap);
         sessionMap.put("events", eventsMap);
         eventsMap.put("unhandled", 1);
+
+        // threads
+        Map<String, Object> firstThread = new HashMap<>();
+        firstThread.put("id", BigDecimal.valueOf(29695));
+        firstThread.put("name", "ConnectivityThr");
+        firstThread.put("state", "running");
+        firstThread.put("type", "c");
+        Map<String, Object> secondThread = new HashMap<>();
+        secondThread.put("id", BigDecimal.valueOf(29698));
+        secondThread.put("name", "Binder:29227_3");
+        secondThread.put("state", "sleeping");
+        secondThread.put("type", "c");
+        root.put("threads", Arrays.asList(firstThread, secondThread));
         return root;
     }
 }

@@ -113,6 +113,23 @@ class BugsnagJournalEventMapperTest {
                 "signalType" to "SIGSEGV"
             )
         )
+
+        // threads
+        val threads = listOf(
+            mapOf(
+                "id" to BigDecimal.valueOf(29695),
+                "name" to "ConnectivityThr",
+                "state" to "running",
+                "type" to "c"
+
+            ),
+            mapOf(
+                "id" to BigDecimal.valueOf(29698),
+                "name" to "Binder:29227_3",
+                "state" to "sleeping",
+                "type" to "c"
+            )
+        )
         minimalJournalMap = mapOf(
             "apiKey" to "my-api-key",
             "user" to mapOf(
@@ -131,7 +148,8 @@ class BugsnagJournalEventMapperTest {
             "exceptions" to listOf(exception),
             "unhandled" to true,
             "severity" to "error",
-            "severityReason" to severityReason
+            "severityReason" to severityReason,
+            "threads" to threads
         )
         journalMap = minimalJournalMap + mapOf(
             "context" to "ExampleActivity",
@@ -296,7 +314,10 @@ class BugsnagJournalEventMapperTest {
                 "EPFji4GE4IHgwGM2GoOXvQ==/oat/x86/base.odex",
             secondFrame["file"]
         )
-        assertEquals("Java_com_example_bugsnag_android_BaseCrashyActivity_crashFromCXX", secondFrame["method"])
+        assertEquals(
+            "Java_com_example_bugsnag_android_BaseCrashyActivity_crashFromCXX",
+            secondFrame["method"]
+        )
 
         // severity/handledness
         assertEquals(Severity.ERROR, event.severity)
@@ -308,6 +329,21 @@ class BugsnagJournalEventMapperTest {
             assertEquals(Severity.ERROR, currentSeverity)
             assertEquals("signal", severityReasonType)
             assertEquals("SIGSEGV", attributeValue)
+        }
+
+        // threads
+        assertEquals(2, event.threads.size)
+        with(event.threads[0]) {
+            assertEquals(29695L, id)
+            assertEquals("ConnectivityThr", name)
+            assertEquals("running", impl.state)
+            assertEquals(ThreadType.C, type)
+        }
+        with(event.threads[1]) {
+            assertEquals(29698, id)
+            assertEquals("Binder:29227_3", name)
+            assertEquals("sleeping", impl.state)
+            assertEquals(ThreadType.C, type)
         }
     }
 }
