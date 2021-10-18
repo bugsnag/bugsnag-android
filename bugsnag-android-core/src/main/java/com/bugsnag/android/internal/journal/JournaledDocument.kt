@@ -6,7 +6,6 @@ import com.bugsnag.android.internal.MemoryMappedOutputStream
 import com.bugsnag.android.internal.asConcurrent
 import java.io.Closeable
 import java.io.File
-import java.io.FileNotFoundException
 import java.io.IOException
 import java.nio.BufferOverflowException
 import java.util.function.BiConsumer
@@ -45,6 +44,7 @@ constructor(
     private val highWater: Long,
     initialDocument: Map<String, Any>
 ) : Map<String, Any>, Closeable {
+
     private val journalPath = getRuntimeJournalPath(baseDocumentPath)
     private val snapshotPath = getSnapshotPath(baseDocumentPath)
     private val newSnapshotPath = getNewSnapshotPath(baseDocumentPath)
@@ -259,7 +259,7 @@ constructor(
 
             val document = try {
                 JsonHelper.deserialize(snapshotPath)
-            } catch (ex: FileNotFoundException) {
+            } catch (ex: IOException) {
                 // If we don't even have a base snapshot, we have nothing at all.
                 return null
             }

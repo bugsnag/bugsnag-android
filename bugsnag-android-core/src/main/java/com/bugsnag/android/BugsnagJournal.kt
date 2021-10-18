@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import android.os.SystemClock
 import com.bugsnag.android.internal.journal.JournalKeys
 import com.bugsnag.android.internal.journal.JournaledDocument
 import java.io.Closeable
@@ -16,22 +17,46 @@ import kotlin.concurrent.thread
  * The single instance to be used in Bugsnag is "instance", and startInstance() must be called before
  * using it.
  */
-internal class BugsnagJournal @JvmOverloads internal constructor (
+internal class BugsnagJournal @JvmOverloads internal constructor(
     private val logger: Logger,
-    baseDocumentPath: File,
-    initialDocument: Map<String, Any> = mapOf()
+    private val baseDocumentPath: File,
+    private val initialDocument: Map<String, Any> = mapOf(),
+    private val retryIntervalMs: Long = DEFAULT_RETRY_INTERVAL_MS
 ) : Closeable {
-    internal val journal = JournaledDocument(
-        baseDocumentPath,
-        journalType,
-        journalVersion,
-        mmapBufferSize,
-        highWater,
-        withInitialDocumentContents(initialDocument)
-    )
 
     init {
         beginSnapshotHousekeepingThread()
+    }
+
+    private var lastAttemptMs: Long = SystemClock.elapsedRealtime()
+
+    internal var journal: JournaledDocument? = createNewJournal(baseDocumentPath, initialDocument)
+        get() {
+            if (field == null) {
+                if (retryIntervalMs == 0L || SystemClock.elapsedRealtime() - lastAttemptMs >= retryIntervalMs) {
+                    field = createNewJournal(baseDocumentPath, initialDocument)
+                }
+            }
+            return field
+        }
+
+    private fun createNewJournal(
+        baseDocumentPath: File,
+        initialDocument: Map<String, Any>
+    ): JournaledDocument? {
+        return try {
+            JournaledDocument(
+                baseDocumentPath,
+                journalType,
+                journalVersion,
+                mmapBufferSize,
+                highWater,
+                withInitialDocumentContents(initialDocument)
+            )
+        } catch (exc: IOException) {
+            logger.e("Failed to create journal", exc)
+            null
+        }
     }
 
     /**
@@ -39,7 +64,7 @@ internal class BugsnagJournal @JvmOverloads internal constructor (
      * Do NOT modify any of the document's contents directly; information will be lost if you do.
      * Use addCommand() instead to modify the document.
      */
-    val document: Map<String, Any> get() = journal
+    val document: Map<String, Any> get() = journal ?: emptyMap()
 
     private var housekeepingThreadShouldKeepRunning = false
 
@@ -56,7 +81,7 @@ internal class BugsnagJournal @JvmOverloads internal constructor (
             return
         }
         try {
-            return journal.addCommand(documentPath, value)
+            journal?.addCommand(documentPath, value)
         } catch (exc: IOException) {
             logger.e("Could not add journal command", exc)
         }
@@ -76,7 +101,7 @@ internal class BugsnagJournal @JvmOverloads internal constructor (
         }
 
         try {
-            return journal.addCommands(*commands)
+            journal?.addCommands(*commands)
         } catch (exc: IOException) {
             logger.e("Could not add journal commands", exc)
         }
@@ -88,7 +113,7 @@ internal class BugsnagJournal @JvmOverloads internal constructor (
      */
     fun snapshot() {
         try {
-            journal.snapshot()
+            journal?.snapshot()
         } catch (exc: IOException) {
             logger.e("Could not write journal snapshot", exc)
         }
@@ -99,9 +124,12 @@ internal class BugsnagJournal @JvmOverloads internal constructor (
         thread {
             while (housekeepingThreadShouldKeepRunning) {
                 try {
-                    journal.snapshotIfHighWater()
+                    journal?.snapshotIfHighWater()
                 } catch (exc: IOException) {
-                    logger.e("Could not write journal snapshot; exiting housekeeping thread...", exc)
+                    logger.e(
+                        "Could not write journal snapshot; exiting housekeeping thread...",
+                        exc
+                    )
                     break
                 }
                 Thread.sleep(highWaterPollingIntervalMS)
@@ -118,6 +146,8 @@ internal class BugsnagJournal @JvmOverloads internal constructor (
     }
 
     companion object {
+        private const val DEFAULT_RETRY_INTERVAL_MS = 1000L
+
         // The "type" of the main journal. This will probably never change.
         internal const val journalType = "Bugsnag Android"
 
