@@ -224,6 +224,12 @@ internal class ClientInternal constructor(
         if (config.shouldDiscardByReleaseStage()) {
             return
         }
+        // this will be used to determine whether events from the journal should be sent
+        // as a synchronous event
+        val crashedDuringLastLaunch = launchCrashTracker.crashedDuringLastLaunch()
+        logger.d("Temp: crashedDuringLastLaunch=$crashedDuringLastLaunch")
+
+        launchCrashTracker.startAutoTracking(config)
         if (config.enabledErrorTypes.unhandledExceptions) {
             exceptionHandler.install()
         }
