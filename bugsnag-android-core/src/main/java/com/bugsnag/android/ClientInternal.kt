@@ -11,7 +11,9 @@ import com.bugsnag.android.internal.StateObserver
 import com.bugsnag.android.internal.dag.ConfigModule
 import com.bugsnag.android.internal.dag.ContextModule
 import com.bugsnag.android.internal.dag.SystemServiceModule
+import com.bugsnag.android.internal.journal.BugsnagJournalStore
 import com.bugsnag.android.internal.journal.JournalKeys
+import com.bugsnag.android.internal.journal.JournaledDocument
 import java.io.File
 import java.lang.IllegalArgumentException
 import java.util.Date
@@ -29,6 +31,7 @@ internal class ClientInternal constructor(
     val bgTaskService: BackgroundTaskService
     val config: ImmutableConfig
     private val journal: Lazy<BugsnagJournal>
+    private val journalStore: BugsnagJournalStore
 
     // logger
     val logger: Logger
@@ -82,11 +85,9 @@ internal class ClientInternal constructor(
         warnIfNotAppContext(androidContext)
 
         // setup journal
+        journalStore = BugsnagJournalStore(config.journalBasePath, logger)
         journal = lazy {
-            val baseDocumentPath = config.journalBasePath
-            baseDocumentPath.parentFile!!.mkdirs()
-            convertJournalToEvent(baseDocumentPath)
-            BugsnagJournal(logger, baseDocumentPath)
+            journalStore.createNewJournal()
         }
 
         // setup storage as soon as possible
@@ -171,25 +172,6 @@ internal class ClientInternal constructor(
         )
     }
 
-    private fun convertJournalToEvent(baseDocumentPath: File) {
-        val eventMapper = BugsnagJournalEventMapper(logger)
-        val event = eventMapper.convertToEvent(baseDocumentPath)
-        val sendJournalEvents = false // TODO this is disabled to pass CI but allow testing locally
-
-        if (sendJournalEvents && event != null && event.errors.isNotEmpty()) {
-            // remove some fields which are in the journal but not relevant to NDK events
-            event.device.freeDisk = null
-            event.device.freeMemory = null
-            event.metadata.clearMetadata("app", "freeMemory")
-            event.metadata.clearMetadata("app", "memoryUsage")
-            event.metadata.clearMetadata("device", "freeMemory")
-            event.metadata.clearMetadata("device", "totalMemory")
-
-            // TODO future: use the correct filename to support launch crashes
-            eventStore.write(event)
-        }
-    }
-
     /**
      * Initializes Bugsnag. This is achieved in several steps to ensure that errors can be
      * captured as early as possible:
@@ -264,6 +246,9 @@ internal class ClientInternal constructor(
      * Flushes any payloads which are cached on disk.
      */
     private fun flushCachedPayloads() {
+        journalStore.processPreviousJournals { event ->
+            sanitizeJournalEvent(event)
+        }
         eventStore.flushOnLaunch()
         eventStore.flushAsync()
         sessionTracker.flushAsync()
@@ -275,6 +260,23 @@ internal class ClientInternal constructor(
     private fun leaveBugsnagLoadedCrumb() {
         leaveAutoBreadcrumb("Bugsnag loaded", BreadcrumbType.STATE, emptyMap())
         logger.d("Bugsnag loaded")
+    }
+
+    private fun sanitizeJournalEvent(event: EventInternal) {
+        val sendJournalEvents = false // TODO this is disabled to pass CI but allow testing locally
+
+        if (sendJournalEvents) {
+            // remove some fields which are in the journal but not relevant to NDK events
+            event.device.freeDisk = null
+            event.device.freeMemory = null
+            event.metadata.clearMetadata("app", "freeMemory")
+            event.metadata.clearMetadata("app", "memoryUsage")
+            event.metadata.clearMetadata("device", "freeMemory")
+            event.metadata.clearMetadata("device", "totalMemory")
+
+            // TODO future: use the correct filename to support launch crashes
+            eventStore.write(event)
+        }
     }
 
     private fun onConnectivityChange(hasConnection: Boolean, networkState: String?) {
@@ -568,6 +570,8 @@ internal class ClientInternal constructor(
 
     fun addRuntimeVersionInfo(key: String, value: String) =
         deviceDataCollector.addRuntimeVersionInfo(key, value)
+
+    val crashtimeJournalPath = JournaledDocument.getCrashtimeJournalPath(journalStore.currentBasePath)
 
     @VisibleForTesting
     fun close() {

@@ -45,6 +45,7 @@ internal class BugsnagJournal @JvmOverloads internal constructor(
         initialDocument: Map<String, Any>
     ): JournaledDocument? {
         return try {
+            baseDocumentPath.parentFile?.mkdirs()
             JournaledDocument(
                 baseDocumentPath,
                 journalType,

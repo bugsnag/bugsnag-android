@@ -30,7 +30,10 @@ internal class BugsnagJournalEventMapper(
 
     fun convertToEvent(map: Map<in String, Any?>): EventInternal? {
         return try {
-            convertToEventImpl(map)
+            when {
+                map[JournalKeys.pathExceptions] != null -> convertToEventImpl(map)
+                else -> null
+            }
         } catch (exc: Throwable) {
             logger.e("Failed to deserialize journal, skipping event", exc)
             null

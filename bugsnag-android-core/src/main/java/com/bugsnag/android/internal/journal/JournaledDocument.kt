@@ -209,6 +209,10 @@ constructor(
             return File(basePath.path + ".journal.crashtime")
         }
 
+        internal fun getBaseDocumentPath(runtimeJournalPath: File): File {
+            return File(runtimeJournalPath.parentFile, runtimeJournalPath.nameWithoutExtension)
+        }
+
         /**
          * Check if a journal-backed document exists at this base path.
          *
