@@ -169,6 +169,9 @@ steps:
       TEST_APK_LOCATION: 'bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk'
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    # TODO remove when PLAT-7453 is complete
+    soft_fail:
+      - exit_status: "*"
 
   - label: ':android: NDK Instrumentation tests'
     key: 'ndk-instrumentation-tests'
@@ -185,6 +188,9 @@ steps:
       TEST_APK_LOCATION: 'bugsnag-plugin-android-ndk/build/outputs/apk/androidTest/debug/bugsnag-plugin-android-ndk-debug-androidTest.apk'
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    # TODO remove when PLAT-7453 is complete
+    soft_fail:
+      - exit_status: "*"
 
   - label: ':android: Performance benchmarks'
     key: 'perf-benchmarks'
@@ -201,6 +207,9 @@ steps:
       TEST_APK_LOCATION: 'bugsnag-benchmarks/build/outputs/apk/androidTest/release/bugsnag-benchmarks-release-androidTest.apk'
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    # TODO remove when PLAT-7453 is complete
+    soft_fail:
+      - exit_status: "*"
 
   - label: ':android: Android 4.4 NDK r16 smoke tests'
     key: 'android-4-4-smoke'
