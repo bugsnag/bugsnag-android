@@ -15,10 +15,12 @@ internal class StackframeSerializationTest {
         fun testCases(): Collection<Pair<Stackframe, String>> {
             val frame = Stackframe("foo", "Bar", 55, true)
             frame.type = ErrorType.ANDROID
+            val nativeFrame = NativeStackframe("aMethod", "aFile", 1, 2, 3, 4, null)
+            nativeFrame.type = ErrorType.C
             return generateSerializationTestCases(
                 "stackframe",
                 frame,
-                Stackframe(NativeStackframe("aMethod", "aFile", 1, 2, 3, 4, null)),
+                Stackframe(nativeFrame),
                 Stackframe(NativeStackframe("aMethod", "aFile", 1, null, null, null, null)),
                 Stackframe(NativeStackframe(null, null, null, null, null, null, null))
             )
