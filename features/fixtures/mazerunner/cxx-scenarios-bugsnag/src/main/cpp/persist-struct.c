@@ -78,8 +78,8 @@ void populate_event(bugsnag_event *event) {
     crumb->type = BSG_CRUMB_STATE;
     strcpy(crumb->name, "decrease torque");
     strcpy(crumb->timestamp, "2018-08-29T21:41:39Z");
-    bsg_add_metadata_value_str(&crumb->metadata, "metaData", "message", "Moving laterally 26º");
-    bugsnag_event_add_breadcrumb(event, crumb);
+    bsg_cache_add_metadata_value_string(&crumb->metadata, "metaData", "message", "Moving laterally 26º");
+    bsg_cache_add_breadcrumb(event, crumb);
 }
 
 /**

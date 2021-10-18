@@ -5,7 +5,7 @@ import static com.bugsnag.android.ndk.VerifyUtilsKt.verifyNativeRun;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-public class NativeCrashtimeJournalTest {
+public class NativeCrashtimeJournalPrimitivesTest {
 
     static {
         System.loadLibrary("bugsnag-ndk");

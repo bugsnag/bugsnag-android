@@ -2,6 +2,7 @@
 #include <utils/serializer.h>
 #include <stdlib.h>
 #include <utils/migrate.h>
+#include "event_cache.h"
 
 #define SERIALIZE_TEST_FILE "/data/data/com.bugsnag.android.ndk.test/cache/foo.crash"
 
@@ -126,10 +127,10 @@ void generate_basic_report(bugsnag_event *event) {
   event->crumb_count = 0;
   event->crumb_first_index = 0;
   bugsnag_breadcrumb *crumb1 = init_breadcrumb("decrease torque", "Moving laterally 26º", BSG_CRUMB_STATE);
-  bugsnag_event_add_breadcrumb(event, crumb1);
+    bsg_cache_add_breadcrumb(event, crumb1);
 
   bugsnag_breadcrumb *crumb2 = init_breadcrumb("enable blasters", "this is a drill.", BSG_CRUMB_USER);
-  bugsnag_event_add_breadcrumb(event, crumb2);
+    bsg_cache_add_breadcrumb(event, crumb2);
 
   event->handled_events = 1;
   event->unhandled_events = 1;
@@ -391,11 +392,11 @@ bugsnag_event *bsg_generate_event(void) {
   report->crumb_first_index = 0;
   bugsnag_breadcrumb *crumb1 = init_breadcrumb("decrease torque", "Moving laterally 26º",
                                                BSG_CRUMB_STATE);
-  bugsnag_event_add_breadcrumb(report, crumb1);
+    bsg_cache_add_breadcrumb(report, crumb1);
 
   bugsnag_breadcrumb *crumb2 = init_breadcrumb("enable blasters", "this is a drill.",
                                                BSG_CRUMB_USER);
-  bugsnag_event_add_breadcrumb(report, crumb2);
+    bsg_cache_add_breadcrumb(report, crumb2);
 
   report->handled_events = 1;
   report->unhandled_events = 1;

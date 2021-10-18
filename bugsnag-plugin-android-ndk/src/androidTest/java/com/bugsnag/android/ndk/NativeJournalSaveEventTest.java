@@ -57,9 +57,17 @@ public class NativeJournalSaveEventTest {
         versionInfo.put("type", "Bugsnag Android");
         versionInfo.put("version", 1);
 
+        // events
+        List<Object> events = new LinkedList<>();
+        root.put("events", events);
+
+        // event
+        Map<? super String, Object> event = new HashMap<>();
+        events.add(event);
+
         // exceptions
         List<Object> exceptions = new LinkedList<>();
-        root.put("exceptions", exceptions);
+        event.put("exceptions", exceptions);
         Map<? super String, Object> exception = new HashMap<>();
         exceptions.add(exception);
         exception.put("message", "test message");
@@ -89,11 +97,11 @@ public class NativeJournalSaveEventTest {
         traceEntry.put("lineNumber", new BigDecimal("101"));
 
         // severity reason
-        root.put("severity", "error");
-        root.put("unhandled", true);
+        event.put("severity", "error");
+        event.put("unhandled", true);
 
         Map<String, Object> severityReason = new HashMap<>();
-        root.put("severityReason", severityReason);
+        event.put("severityReason", severityReason);
         severityReason.put("unhandledOverridden", false);
         severityReason.put("type", "signal");
         severityReason.put("attributes", Collections.singletonMap(
@@ -102,13 +110,14 @@ public class NativeJournalSaveEventTest {
 
         // device time
         HashMap<String, Object> deviceMap = new HashMap<>();
-        deviceMap.put("time", "1974-10-03T02:40:00Z");
-        root.put("device", deviceMap);
+        // TODO: deviceMap.put("time", "1974-10-03T02:40:00Z");
+        deviceMap.put("timeUnixTimestamp", new BigDecimal("1.5E+8"));
+        event.put("device", deviceMap);
 
         // session
         HashMap<String, Object> sessionMap = new HashMap<>();
         HashMap<String, Object> eventsMap = new HashMap<>();
-        root.put("session", sessionMap);
+        event.put("session", sessionMap);
         sessionMap.put("events", eventsMap);
         eventsMap.put("unhandled", 1);
 
@@ -123,7 +132,8 @@ public class NativeJournalSaveEventTest {
         secondThread.put("name", "Binder:29227_3");
         secondThread.put("state", "sleeping");
         secondThread.put("type", "c");
-        root.put("threads", Arrays.asList(firstThread, secondThread));
+        event.put("threads", Arrays.asList(firstThread, secondThread));
+
         return root;
     }
 }

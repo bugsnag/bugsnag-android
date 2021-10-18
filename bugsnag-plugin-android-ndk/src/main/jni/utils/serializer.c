@@ -1,4 +1,5 @@
 #include "serializer.h"
+#include "event_cache.h"
 #include "string.h"
 
 #include <event.h>
@@ -409,8 +410,8 @@ void migrate_breadcrumb_v1(bugsnag_report_v2 *report_v2,
       bsg_char_metadata_pair pair = old_crumb->metadata[j];
 
       if (strlen(pair.value) > 0 && strlen(pair.key) > 0) {
-        bsg_add_metadata_value_str(&new_crumb->metadata, "metaData", pair.key,
-                                   pair.value);
+        bsg_cache_add_metadata_value_string(&new_crumb->metadata, "metaData",
+                                            pair.key, pair.value);
       }
     }
 
@@ -485,7 +486,7 @@ void migrate_app_v2(bugsnag_report_v4 *report_v4, bugsnag_event *event) {
 
 void migrate_device_v1(bugsnag_report_v2 *report_v2, bugsnag_report_v3 *event) {
   bsg_strcpy(event->device.os_name,
-             bsg_os_name()); // os_name was not a field in v2
+             bsg_default_os_name()); // os_name was not a field in v2
   event->device.api_level = report_v2->device.api_level;
   event->device.cpu_abi_count = report_v2->device.cpu_abi_count;
   event->device.time = report_v2->device.time;
@@ -771,7 +772,7 @@ void bsg_serialize_user(const bugsnag_user user, JSON_Object *event_obj) {
 }
 
 void bsg_serialize_session(bugsnag_event *event, JSON_Object *event_obj) {
-  if (bugsnag_event_has_session(event)) {
+  if (bsg_cache_has_session(event)) {
     json_object_dotset_string(event_obj, "session.startedAt",
                               event->session_start);
     json_object_dotset_string(event_obj, "session.id", event->session_id);

@@ -41,6 +41,15 @@ void bsg_pb_stack_map_key(const char *key);
 void bsg_pb_stack_list_index(int64_t index);
 
 /**
+ * Stack the last list entry of the current list to the current path.
+ * Stacking too deep (>100 levels) or building a path that's too long (>500
+ * bytes) will cause this function to no-op.
+ *
+ * @param index The list index for the new path level.
+ */
+void bsg_pb_stack_last_list_index();
+
+/**
  * Stack a new list entry to the current path (such that the path ends in a
  * dot). Stacking too deep (>100 levels) or building a path that's too long
  * (>500 bytes) will cause this function to no-op.

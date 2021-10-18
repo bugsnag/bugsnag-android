@@ -6,8 +6,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "bugsnag_crashtime_journal.h"
-#include "event.h"
+#include "crashtime_journal.h"
+#include "crashtime_journal_primitives.h"
+#include "event_cache.h"
 #include "handlers/cpp_handler.h"
 #include "handlers/signal_handler.h"
 #include "metadata.h"
@@ -160,7 +161,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   if (crashtime_journal_path == NULL) {
     return;
   }
-  bsg_crashtime_journal_init(crashtime_journal_path);
+  bsg_ctj_init(crashtime_journal_path);
   bsg_safe_release_string_utf_chars(env, _crashtime_journal_path,
                                     crashtime_journal_path);
 
@@ -296,7 +297,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_addHandledEvent(JNIEnv *env,
   bsg_request_env_write_lock();
   bugsnag_event *event = &bsg_global_env->next_event;
 
-  if (bugsnag_event_has_session(event)) {
+  if (bsg_cache_has_session(event)) {
     event->handled_events++;
   }
   bsg_release_env_write_lock();
@@ -311,7 +312,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_addUnhandledEvent(JNIEnv *env,
   bsg_request_env_write_lock();
   bugsnag_event *event = &bsg_global_env->next_event;
 
-  if (bugsnag_event_has_session(event)) {
+  if (bsg_cache_has_session(event)) {
     event->unhandled_events++;
   }
   bsg_release_env_write_lock();
@@ -327,8 +328,8 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_startedSession(
   char *started_at = (char *)bsg_safe_get_string_utf_chars(env, start_date_);
   if (session_id != NULL && started_at != NULL) {
     bsg_request_env_write_lock();
-    bugsnag_event_start_session(&bsg_global_env->next_event, session_id,
-                                started_at, handled_count, unhandled_count);
+    bsg_cache_start_session(&bsg_global_env->next_event, session_id, started_at,
+                            handled_count, unhandled_count);
     bsg_release_env_write_lock();
   }
   bsg_safe_release_string_utf_chars(env, session_id_, session_id);
@@ -383,7 +384,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_addBreadcrumb(
 
     bsg_populate_crumb_metadata(env, crumb, metadata);
     bsg_request_env_write_lock();
-    bugsnag_event_add_breadcrumb(&bsg_global_env->next_event, crumb);
+    bsg_cache_add_breadcrumb(&bsg_global_env->next_event, crumb);
     bsg_release_env_write_lock();
 
     free(crumb);
@@ -405,7 +406,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateAppVersion(JNIEnv *env,
     return;
   }
   bsg_request_env_write_lock();
-  bugsnag_app_set_version(&bsg_global_env->next_event, value);
+  bsg_cache_set_app_version(&bsg_global_env->next_event, value);
   bsg_release_env_write_lock();
   bsg_safe_release_string_utf_chars(env, new_value, value);
 }
@@ -422,7 +423,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateBuildUUID(JNIEnv *env,
     return;
   }
   bsg_request_env_write_lock();
-  bugsnag_app_set_build_uuid(&bsg_global_env->next_event, value);
+  bsg_cache_set_build_uuid(&bsg_global_env->next_event, value);
   bsg_release_env_write_lock();
   bsg_safe_release_string_utf_chars(env, new_value, value);
 }
@@ -437,7 +438,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateContext(
     return;
   }
   bsg_request_env_write_lock();
-  bugsnag_event_set_context(&bsg_global_env->next_event, value);
+  bsg_cache_set_context(&bsg_global_env->next_event, value);
   bsg_release_env_write_lock();
   if (new_value != NULL) {
     bsg_safe_release_string_utf_chars(env, new_value, value);
@@ -477,7 +478,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateIsLaunching(
     return;
   }
   bsg_request_env_write_lock();
-  bugsnag_app_set_is_launching(&bsg_global_env->next_event, new_value);
+  bsg_cache_set_app_is_launching(&bsg_global_env->next_event, new_value);
   bsg_update_next_run_info(bsg_global_env);
   bsg_release_env_write_lock();
 }
@@ -498,10 +499,11 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateLowMemory(
   }
 
   bsg_request_env_write_lock();
-  bugsnag_event_add_metadata_bool(&bsg_global_env->next_event, "app",
-                                  "lowMemory", (bool)low_memory);
-  bugsnag_event_add_metadata_string(&bsg_global_env->next_event, "app",
-                                    "memoryTrimLevel", memory_trim_level);
+  bsg_cache_add_metadata_value_bool(&bsg_global_env->next_event.metadata, "app",
+                                    "lowMemory", (bool)low_memory);
+  bsg_cache_add_metadata_value_string(&bsg_global_env->next_event.metadata,
+                                      "app", "memoryTrimLevel",
+                                      memory_trim_level);
   bsg_release_env_write_lock();
   if (memory_trim_level_description != NULL) {
     bsg_safe_release_string_utf_chars(env, memory_trim_level_description,
@@ -522,7 +524,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateOrientation(JNIEnv *env,
     return;
   }
   bsg_request_env_write_lock();
-  bugsnag_device_set_orientation(&bsg_global_env->next_event, value);
+  bsg_cache_set_orientation(&bsg_global_env->next_event, value);
   bsg_release_env_write_lock();
   if (new_value != NULL) {
     bsg_safe_release_string_utf_chars(env, new_value, value);
@@ -540,7 +542,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateReleaseStage(
     return;
   }
   bsg_request_env_write_lock();
-  bugsnag_app_set_release_stage(&bsg_global_env->next_event, value);
+  bsg_cache_set_app_release_stage(&bsg_global_env->next_event, value);
   bsg_release_env_write_lock();
   if (new_value != NULL) {
     bsg_safe_release_string_utf_chars(env, new_value, value);
@@ -558,8 +560,8 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateUserId(
   }
   bsg_request_env_write_lock();
   bugsnag_event *event = &bsg_global_env->next_event;
-  bugsnag_user user = bugsnag_event_get_user(event);
-  bugsnag_event_set_user(event, value, user.email, user.name);
+  bugsnag_user user = bsg_cache_get_user(event);
+  bsg_cache_set_user(event, value, user.email, user.name);
   bsg_release_env_write_lock();
   if (new_value != NULL) {
     bsg_safe_release_string_utf_chars(env, new_value, value);
@@ -577,8 +579,8 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateUserName(
   }
   bsg_request_env_write_lock();
   bugsnag_event *event = &bsg_global_env->next_event;
-  bugsnag_user user = bugsnag_event_get_user(event);
-  bugsnag_event_set_user(event, user.id, user.email, value);
+  bugsnag_user user = bsg_cache_get_user(event);
+  bsg_cache_set_user(event, user.id, user.email, value);
   bsg_release_env_write_lock();
   if (new_value != NULL) {
     bsg_safe_release_string_utf_chars(env, new_value, value);
@@ -598,8 +600,8 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateUserEmail(JNIEnv *env,
   }
   bsg_request_env_write_lock();
   bugsnag_event *event = &bsg_global_env->next_event;
-  bugsnag_user user = bugsnag_event_get_user(event);
-  bugsnag_event_set_user(event, user.id, value, user.name);
+  bugsnag_user user = bsg_cache_get_user(event);
+  bsg_cache_set_user(event, user.id, value, user.name);
   bsg_release_env_write_lock();
   if (new_value != NULL) {
     bsg_safe_release_string_utf_chars(env, new_value, value);
@@ -618,8 +620,8 @@ Java_com_bugsnag_android_ndk_NativeBridge_addMetadataString(
 
   if (tab != NULL && key != NULL && value != NULL) {
     bsg_request_env_write_lock();
-    bugsnag_event_add_metadata_string(&bsg_global_env->next_event, tab, key,
-                                      value);
+    bsg_cache_add_metadata_value_string(&bsg_global_env->next_event.metadata,
+                                        tab, key, value);
     bsg_release_env_write_lock();
   }
   bsg_safe_release_string_utf_chars(env, tab_, tab);
@@ -637,8 +639,8 @@ Java_com_bugsnag_android_ndk_NativeBridge_addMetadataDouble(
   char *key = (char *)bsg_safe_get_string_utf_chars(env, key_);
   if (tab != NULL && key != NULL) {
     bsg_request_env_write_lock();
-    bugsnag_event_add_metadata_double(&bsg_global_env->next_event, tab, key,
-                                      (double)value_);
+    bsg_cache_add_metadata_value_double(&bsg_global_env->next_event.metadata,
+                                        tab, key, (double)value_);
   }
   bsg_release_env_write_lock();
   bsg_safe_release_string_utf_chars(env, tab_, tab);
@@ -655,8 +657,8 @@ Java_com_bugsnag_android_ndk_NativeBridge_addMetadataBoolean(
   char *key = (char *)bsg_safe_get_string_utf_chars(env, key_);
   if (tab != NULL && key != NULL) {
     bsg_request_env_write_lock();
-    bugsnag_event_add_metadata_bool(&bsg_global_env->next_event, tab, key,
-                                    (bool)value_);
+    bsg_cache_add_metadata_value_bool(&bsg_global_env->next_event.metadata, tab,
+                                      key, (bool)value_);
     bsg_release_env_write_lock();
   }
   bsg_safe_release_string_utf_chars(env, tab_, tab);
@@ -675,7 +677,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_clearMetadataTab(JNIEnv *env,
     return;
   }
   bsg_request_env_write_lock();
-  bugsnag_event_clear_metadata_section(&bsg_global_env->next_event, tab);
+  bsg_cache_clear_metadata_section(&bsg_global_env->next_event, tab);
   bsg_release_env_write_lock();
   bsg_safe_release_string_utf_chars(env, tab_, tab);
 }
@@ -690,7 +692,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_removeMetadata(
 
   if (tab != NULL && key != NULL) {
     bsg_request_env_write_lock();
-    bugsnag_event_clear_metadata(&bsg_global_env->next_event, tab, key);
+    bsg_cache_clear_metadata(&bsg_global_env->next_event, tab, key);
     bsg_release_env_write_lock();
   }
 

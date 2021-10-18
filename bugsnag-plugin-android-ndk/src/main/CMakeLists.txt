@@ -8,13 +8,14 @@ add_library( # Specifies the name of the library.
              # Provides a relative path to your source file(s).
     jni/bugsnag_ndk.c
     jni/bugsnag.c
+    jni/event_cache.c
     jni/metadata.c
     jni/safejni.c
     jni/event.c
     jni/handlers/signal_handler.c
     jni/handlers/cpp_handler.cpp
-    jni/bugsnag_crashtime_journal.c
-    jni/ctjournal.c
+    jni/crashtime_journal.c
+    jni/crashtime_journal_primitives.c
     jni/utils/buffered_writer.c
     jni/utils/crash_info.c
     jni/utils/number_to_string.c

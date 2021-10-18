@@ -1,17 +1,18 @@
 #include <greatest/greatest.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include "bugsnag_crashtime_journal.h"
+#include "crashtime_journal.h"
+#include "crashtime_journal_primitives.h"
 #include "test_helpers.h"
 #include "bugsnag_ndk.h"
 
-void bsg_ctjournal_test_reset();
+void bsg_ctj_test_reset();
 static char crashtime_journal_filename[PATH_MAX];
 
 static bool init_test() {
     sprintf(crashtime_journal_filename, "%s/bsg-ct-event-test.journal.crashtime", test_temporary_folder_path);
-    bsg_ctjournal_test_reset();
-    return bsg_crashtime_journal_init(crashtime_journal_filename);
+    bsg_ctj_test_reset();
+    return bsg_ctj_init(crashtime_journal_filename);
 }
 
 TEST test_write_event(void) {
@@ -47,7 +48,7 @@ TEST test_write_event(void) {
     strcpy(event.threads[1].name, "Binder:29227_3");
     event.threads[1].id = 29698;
     strcpy(event.threads[1].state, "sleeping");
-    bsg_crashtime_journal_store_event(&event);
+    bsg_ctj_store_event(&event);
     PASS();
 }
 

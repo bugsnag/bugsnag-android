@@ -23,7 +23,7 @@ import java.util.function.BiConsumer
  * Changes to the document must me made only via journal commands. Do not modify the document or any
  * of its sub-components directly!
  */
-internal class JournaledDocument
+class JournaledDocument
 /**
  * Constructor.
  * Upon construction, this document will have associated snapshot and journal files.
