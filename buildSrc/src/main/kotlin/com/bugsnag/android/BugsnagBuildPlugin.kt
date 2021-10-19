@@ -1,8 +1,12 @@
 package com.bugsnag.android
 
 import com.android.build.gradle.BaseExtension
+import com.android.build.api.dsl.UnitTestOptions
+import org.gradle.kotlin.dsl.delegateClosureOf
+import org.gradle.kotlin.dsl.KotlinClosure1
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.dependencies
 import java.io.File
@@ -42,7 +46,7 @@ class BugsnagBuildPlugin : Plugin<Project> {
         android.apply {
             configureDefaults()
             configureAndroidLint(project)
-            configureTests()
+            project.apply(from = project.file("../gradle/tests.gradle"))
             configureAndroidPackagingOptions()
 
             if (bugsnag.usesNdk) {
@@ -113,17 +117,6 @@ class BugsnagBuildPlugin : Plugin<Project> {
             isCheckAllWarnings = true
             baseline(File(project.projectDir, "lint-baseline.xml"))
             disable("GradleDependency", "NewerVersionAvailable")
-        }
-    }
-
-    /**
-     * Configures options for how the unit test target behaves.
-     */
-    private fun BaseExtension.configureTests() {
-        testOptions {
-            unitTests {
-                isReturnDefaultValues = true
-            }
         }
     }
 

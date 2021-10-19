@@ -1,0 +1,17 @@
+
+android {
+    testOptions {
+        unitTests {
+            returnDefaultValues = true
+
+            all {
+                testLogging {
+                    events "failed", "standardError"
+                    showStackTraces = true
+                    showCauses = true
+                    exceptionFormat = "full"
+                }
+            }
+        }
+    }
+}

@@ -48,7 +48,7 @@
     <ID>SwallowedException:DeviceIdStore.kt$DeviceIdStore$catch (exc: OverlappingFileLockException) { Thread.sleep(FILE_LOCK_WAIT_MS) }</ID>
     <ID>SwallowedException:JournaledDocument.kt$JournaledDocument$catch (ex: BufferOverflowException) { snapshot() command.serialize(journalStream) }</ID>
     <ID>SwallowedException:JournaledDocument.kt$JournaledDocument.Companion$catch (ex: Exception) { // The journal file is missing or corrupt, so we won't use it return document }</ID>
-    <ID>SwallowedException:JournaledDocument.kt$JournaledDocument.Companion$catch (ex: FileNotFoundException) { // If we don't even have a base snapshot, we have nothing at all. return null }</ID>
+    <ID>SwallowedException:JournaledDocument.kt$JournaledDocument.Companion$catch (ex: IOException) { // If we don't even have a base snapshot, we have nothing at all. return null }</ID>
     <ID>SwallowedException:JournaledDocument.kt$JournaledDocument.Companion$catch (ex: IOException) { // mydoc.snapshot.new doesn't exist, or it's corrupt. // Either way, we must fall back to using mydoc.snapshot and mydoc.journal }</ID>
     <ID>SwallowedException:PluginClient.kt$PluginClient$catch (exc: ClassNotFoundException) { logger.d("Plugin '$clz' is not on the classpath - functionality will not be enabled.") null }</ID>
     <ID>TooManyFunctions:ClientInternal.kt$ClientInternal : CallbackAwareMetadataAwareUserAware</ID>
