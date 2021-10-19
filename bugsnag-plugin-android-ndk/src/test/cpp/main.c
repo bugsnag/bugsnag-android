@@ -20,7 +20,7 @@ SUITE(suite_event_app_mutators);
 SUITE(suite_event_device_mutators);
 SUITE(suite_struct_to_file);
 SUITE(suite_struct_migration);
-SUITE(suite_ctjournal);
+SUITE(suite_ctj_primitives);
 SUITE(suite_journal_save_event);
 SUITE(suite_buffered_writer);
 SUITE(suite_number_to_string);
@@ -238,10 +238,10 @@ JNIEXPORT jstring JNICALL Java_com_bugsnag_android_ndk_ExceptionSerializationTes
 
 }
 
-JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_NativeCrashtimeJournalTest_run(
+JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_NativeCrashtimeJournalPrimitivesTest_run(
         JNIEnv *_env, jobject _this, jstring _temporary_folder) {
     STOP_ON_FAIL(set_temporary_folder_path(_env, _temporary_folder));
-    return run_test_suite(suite_ctjournal);
+    return run_test_suite(suite_ctj_primitives);
 }
 
 JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_NativeJournalSaveEventTest_run(

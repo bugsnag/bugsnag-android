@@ -2,8 +2,8 @@
 // Created by Karl Stenerud on 06.10.21.
 //
 
-#include "bugsnag_crashtime_journal.h"
-#include "ctjournal.h"
+#include "crashtime_journal.h"
+#include "crashtime_journal_primitives.h"
 #include "utils/number_to_string.h"
 #include "utils/path_builder.h"
 #include <time.h>

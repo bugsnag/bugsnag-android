@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "bugsnag_crashtime_journal.h"
+#include "crashtime_journal.h"
 #include "event.h"
 #include "handlers/cpp_handler.h"
 #include "handlers/signal_handler.h"

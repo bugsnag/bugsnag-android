@@ -9,7 +9,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 
-internal class JsonHelper private constructor() {
+class JsonHelper private constructor() {
     companion object {
         // Only one global DslJson is needed, and is thread-safe
         // Note: dsl-json adds about 150k to the final binary size.

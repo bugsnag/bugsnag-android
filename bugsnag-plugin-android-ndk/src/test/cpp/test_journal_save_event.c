@@ -1,7 +1,7 @@
 #include <greatest/greatest.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include "bugsnag_crashtime_journal.h"
+#include "crashtime_journal.h"
 #include "test_helpers.h"
 #include "bugsnag_ndk.h"
 
