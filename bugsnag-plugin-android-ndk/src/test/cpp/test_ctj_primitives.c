@@ -2,7 +2,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdbool.h>
-#include "ctjournal.h"
+#include "crashtime_journal_primitives.h"
 #include <ftw.h>
 #include <bugsnag_ndk.h>
 #include "test_helpers.h"
@@ -258,7 +258,7 @@ TEST test_add_breadcrumb_escaped(void) {
     PASS();
 }
 
-SUITE(suite_ctjournal) {
+SUITE(suite_ctj_primitives) {
     RUN_TEST(test_ctjournal_init);
     RUN_TEST(test_ctjournal_clear_value);
     RUN_TEST(test_ctjournal_clear_value_escaped);

@@ -8,6 +8,8 @@ import org.junit.Assert;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -185,7 +187,21 @@ final class BugsnagTestUtils {
             return ((Integer)obj).longValue();
         }
         if (obj instanceof Float) {
-            return ((Float)obj).doubleValue();
+            Float value = ((Float)obj);
+            if (value.doubleValue() - value.longValue() == 0) {
+                return value.longValue();
+            }
+            return value.doubleValue();
+        }
+        if (obj instanceof BigInteger) {
+            return ((BigInteger)obj).longValue();
+        }
+        if (obj instanceof BigDecimal) {
+            BigDecimal value = ((BigDecimal)obj);
+            if (value.doubleValue() - value.longValue() == 0) {
+                return value.longValue();
+            }
+            return value.doubleValue();
         }
         if (obj instanceof Map) {
             return normalizedMap((Map<Object, Object>)obj);

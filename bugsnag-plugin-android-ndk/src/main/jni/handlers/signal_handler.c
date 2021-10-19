@@ -11,7 +11,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "../bugsnag_crashtime_journal.h"
+#include "../crashtime_journal.h"
 #include "../utils/crash_info.h"
 #include "../utils/serializer.h"
 #include "../utils/string.h"
