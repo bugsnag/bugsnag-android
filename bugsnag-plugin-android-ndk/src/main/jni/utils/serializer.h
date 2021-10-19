@@ -50,6 +50,8 @@ int bsg_calculate_total_crumbs(int old_count);
 int bsg_calculate_v1_start_index(int old_count);
 int bsg_calculate_v1_crumb_index(int crumb_pos, int first_index);
 
+const char *bsg_severity_string(bugsnag_severity type);
+
 #ifdef __cplusplus
 }
 #endif
