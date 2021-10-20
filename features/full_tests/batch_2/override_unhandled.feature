@@ -33,7 +33,6 @@ Scenario: CXX error overridden to handled
     When I run "CXXHandledOverrideScenario" and relaunch the app
     And I configure Bugsnag for "CXXHandledOverrideScenario"
     And I wait to receive an error
-    And I wait to receive a session
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "errorClass" equals "SIGABRT"
     And the exception "message" equals "Abort program"

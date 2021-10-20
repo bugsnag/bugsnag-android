@@ -2,6 +2,7 @@ package com.bugsnag.android
 
 import com.bugsnag.android.internal.DateUtils
 import com.bugsnag.android.internal.journal.JournalKeys
+import com.bugsnag.android.internal.journal.normalized
 import java.io.File
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -45,12 +46,17 @@ internal class BugsnagJournalEventMapper(
         logger.d("Read previous journal, contents=$map")
         val event = EventInternal(apiKey)
 
+        // populate exceptions. check this early to avoid unnecessary serialization if
+        // no stacktrace was gathered.
+        val exceptions: List<MutableMap<String, Any?>> = map.readEntry(JournalKeys.pathExceptions)
+        exceptions.mapTo(event.errors) { Error(convertErrorInternal(it), this.logger) }
+
         // populate user
         val userMap: Map<String, String> = map.readEntry(JournalKeys.pathUser)
         event.userImpl = User(userMap)
 
         // populate metadata
-        val metadataMap: Map<String, Map<String, Any?>> = map.readEntry(JournalKeys.pathMetadata)
+        val metadataMap: Map<String, Map<String, Any?>> = normalized(map.readEntry(JournalKeys.pathMetadata))
         metadataMap.forEach { (key, value) ->
             event.addMetadata(key, value)
         }
@@ -93,10 +99,6 @@ internal class BugsnagJournalEventMapper(
             event.projectPackages = projectPackages
         }
 
-        // populate exceptions
-        val exceptions: List<MutableMap<String, Any?>> = map.readEntry(JournalKeys.pathExceptions)
-        exceptions.mapTo(event.errors) { Error(convertErrorInternal(it), this.logger) }
-
         // populate severity
         val severityStr: String = map.readEntry(JournalKeys.pathSeverity)
         val severity = Severity.fromDescriptor(severityStr)
@@ -133,9 +135,16 @@ internal class BugsnagJournalEventMapper(
     private fun convertDeviceWithState(src: Map<String, Any?>): DeviceWithState {
         val map = src.toMutableMap()
         map[JournalKeys.keyCpuAbi] = (map[JournalKeys.keyCpuAbi] as? List<String>)?.toTypedArray()
-        val number: Number = map.readEntry(JournalKeys.keyTime)
-        map[JournalKeys.keyTime] = Date(number.toLong())
+        map[JournalKeys.keyTime] = convertDeviceTime(map)
         return DeviceWithState(map)
+    }
+
+    private fun convertDeviceTime(map: MutableMap<String, Any?>): Date? {
+        return when (val time = map[JournalKeys.keyTime]) {
+            is String -> time.toDate()
+            is Number -> Date(time.toLong())
+            else -> null
+        }
     }
 
     @Suppress("UNCHECKED_CAST")

@@ -21,6 +21,7 @@ internal class BugsnagJournalStore(
      * Creates a new journal which will be used by the current process to record entries.
      */
     fun createNewJournal(): BugsnagJournal {
+        logger.d("Creating new bugsnag journal at ${currentBasePath.path}")
         return BugsnagJournal(logger, currentBasePath)
     }
 
@@ -32,6 +33,7 @@ internal class BugsnagJournalStore(
      */
     fun processPreviousJournals(action: (EventInternal) -> Unit) {
         findOldJournalFiles().forEach { file ->
+            logger.d("Processing journal file ${file.path}")
             processJournalFile(file, action)
         }
 
@@ -46,8 +48,9 @@ internal class BugsnagJournalStore(
      * processed.
      */
     fun processMostRecentJournal(action: (EventInternal) -> Unit) {
-        findOldJournalFiles().firstOrNull()?.let {
-            processJournalFile(it, action)
+        findOldJournalFiles().firstOrNull()?.let { file ->
+            logger.d("Processing most recent journal file ${file.path}")
+            processJournalFile(file, action)
         }
     }
 
@@ -56,7 +59,10 @@ internal class BugsnagJournalStore(
         val event = eventMapper.convertToEvent(baseDocumentPath)
 
         if (event != null) {
+            logger.d("Converted journal file to event")
             action(event)
+        } else {
+            logger.d("Journal did not contain a valid event")
         }
         deleteFile(file)
     }

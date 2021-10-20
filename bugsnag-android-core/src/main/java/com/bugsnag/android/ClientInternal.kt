@@ -46,6 +46,7 @@ internal class ClientInternal constructor(
     val notifierState: NotifierState
     private val userState: UserState
     private val crashedLastLaunch = AtomicBoolean(false)
+    private val initialized = AtomicBoolean(false)
 
     // data collection
     val appDataCollector: AppDataCollector
@@ -263,7 +264,7 @@ internal class ClientInternal constructor(
         if (crashedLastLaunch.get()) {
             journalStore.processMostRecentJournal { event ->
                 sanitizeJournalEvent(event)
-                persistJournalEvent(event)
+                eventStore.write(event, crashedLastLaunch.get())
             }
         }
     }
@@ -275,7 +276,7 @@ internal class ClientInternal constructor(
                 Runnable {
                     journalStore.processPreviousJournals { event ->
                         sanitizeJournalEvent(event)
-                        persistJournalEvent(event)
+                        eventStore.write(event, crashedLastLaunch.get())
                     }
                     eventStore.flushAsync()
                 }
@@ -289,6 +290,7 @@ internal class ClientInternal constructor(
      * Leaves a breadcrumb that Bugsnag has loaded.
      */
     private fun leaveBugsnagLoadedCrumb() {
+        initialized.set(true)
         leaveAutoBreadcrumb("Bugsnag loaded", BreadcrumbType.STATE, emptyMap())
         logger.d("Bugsnag loaded")
     }
@@ -303,14 +305,6 @@ internal class ClientInternal constructor(
         event.metadata.clearMetadata("device", "totalMemory")
     }
 
-    private fun persistJournalEvent(event: EventInternal) {
-        val sendJournalEvents = false // TODO this is disabled to pass CI but allow testing locally
-
-        if (sendJournalEvents) {
-            eventStore.write(event, crashedLastLaunch.get())
-        }
-    }
-
     private fun onConnectivityChange(hasConnection: Boolean, networkState: String?) {
         leaveAutoBreadcrumb(
             "Connectivity changed", BreadcrumbType.STATE,
@@ -320,7 +314,8 @@ internal class ClientInternal constructor(
             )
         )
 
-        if (hasConnection) {
+        // if not initialized or connected then we should not attempt to flush payloads
+        if (hasConnection && initialized.get()) {
             eventStore.flushAsync()
             sessionTracker.flushAsync()
         }

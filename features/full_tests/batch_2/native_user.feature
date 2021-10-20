@@ -9,7 +9,7 @@ Feature: Native User API
             | SIGILL |
             | SIGTRAP |
         And the event "severity" equals "error"
-        And the event "user.name" equals "Strulyegha  Ghaumon  Rabelban  Snefkal  Angengtai  Samperris  D"
+        And the event "user.name" equals "Strulyegha  Ghaumon  Rabelban  Snefkal  Angengtai  Samperris  Dreperwar Raygariss  Haytther  Ackworkin  Turdrakin  Clardon"
         And the event "user.id" equals "9816734"
         And the event "user.email" equals "j@example.com"
         And the event "unhandled" is true
