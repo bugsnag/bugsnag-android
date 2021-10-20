@@ -35,7 +35,11 @@ class NativeCrashTimeJournalTest {
 
         private val allExpected = jsonToMap(loadJson("native_crashtime_journal_test.json"))
 
-        private fun runJournalTest(initialDocument: Map<String, Any>, expectedKey: String, testCode: (journalPath: String) -> Int) {
+        private fun runJournalTest(
+            initialDocument: Map<String, Any>,
+            expectedKey: String,
+            testCode: (journalPath: String) -> Int
+        ) {
             val standardType = "Bugsnag state"
             val standardVersion = 1
             val bufferSize = 100L
@@ -409,7 +413,6 @@ class NativeCrashTimeJournalTest {
             nativeClearMetadataSection(it, "my-section")
         }
     }
-
 
     // bsg_ctj_store_event
     private external fun nativeStoreEvent(ctjPath: String): Int
