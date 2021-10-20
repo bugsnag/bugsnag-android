@@ -106,6 +106,11 @@ abstract class FileStore {
 
     @Nullable
     String write(@NonNull JsonStream.Streamable streamable) {
+        String name = getFilename(streamable);
+        return write(streamable, name);
+    }
+
+    String write(JsonStream.Streamable streamable, String name) {
         if (!isStorageDirValid(storageDir)) {
             return null;
         }
@@ -113,22 +118,22 @@ abstract class FileStore {
             return null;
         }
         discardOldestFileIfNeeded();
-        String filename = new File(storageDir, getFilename(streamable)).getAbsolutePath();
+        String path = new File(storageDir, name).getAbsolutePath();
 
         JsonStream stream = null;
         lock.lock();
 
         try {
-            FileOutputStream fos = new FileOutputStream(filename);
+            FileOutputStream fos = new FileOutputStream(path);
             Writer out = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
             stream = new JsonStream(out);
             stream.value(streamable);
-            logger.i("Saved unsent payload to disk: '" + filename + '\'');
-            return filename;
+            logger.i("Saved unsent payload to disk: '" + path + '\'');
+            return path;
         } catch (FileNotFoundException exc) {
             logger.w("Ignoring FileNotFoundException - unable to create file", exc);
         } catch (Exception exc) {
-            File eventFile = new File(filename);
+            File eventFile = new File(path);
 
             if (delegate != null) {
                 delegate.onErrorIOFailure(exc, eventFile, "Crash report serialization");

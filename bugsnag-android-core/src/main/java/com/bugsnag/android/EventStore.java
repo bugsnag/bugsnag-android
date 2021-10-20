@@ -237,9 +237,14 @@ class EventStore extends FileStore {
         return eventInfo.encode();
     }
 
-    String getNdkFilename(Object object, String apiKey) {
+    String getNdkFilename(Object object, String apiKey, boolean isLaunching) {
         EventFilenameInfo eventInfo
-                = EventFilenameInfo.Companion.fromEvent(object, apiKey, config);
+                = EventFilenameInfo.Companion.fromEvent(object, apiKey, config, isLaunching);
         return eventInfo.encode();
+    }
+
+    @Nullable
+    String write(@NonNull EventInternal event, boolean isLaunching) {
+        return write(event, getNdkFilename(event, event.getApiKey(), isLaunching));
     }
 }

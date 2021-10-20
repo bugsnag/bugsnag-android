@@ -19,6 +19,7 @@ import java.lang.IllegalArgumentException
 import java.util.Date
 import java.util.concurrent.Callable
 import java.util.concurrent.RejectedExecutionException
+import java.util.concurrent.atomic.AtomicBoolean
 
 internal class ClientInternal constructor(
     androidContext: Context,
@@ -44,6 +45,7 @@ internal class ClientInternal constructor(
     val metadataState: MetadataState
     val notifierState: NotifierState
     private val userState: UserState
+    private val crashedLastLaunch = AtomicBoolean(false)
 
     // data collection
     val appDataCollector: AppDataCollector
@@ -208,10 +210,9 @@ internal class ClientInternal constructor(
         }
         // this will be used to determine whether events from the journal should be sent
         // as a synchronous event
-        val crashedDuringLastLaunch = launchCrashTracker.crashedDuringLastLaunch()
-        logger.d("Temp: crashedDuringLastLaunch=$crashedDuringLastLaunch")
-
+        crashedLastLaunch.set(launchCrashTracker.crashedDuringLastLaunch())
         launchCrashTracker.startAutoTracking(config)
+
         if (config.enabledErrorTypes.unhandledExceptions) {
             exceptionHandler.install()
         }
@@ -246,12 +247,42 @@ internal class ClientInternal constructor(
      * Flushes any payloads which are cached on disk.
      */
     private fun flushCachedPayloads() {
-        journalStore.processPreviousJournals { event ->
-            sanitizeJournalEvent(event)
-        }
+        // process launch crashes immediately
+        processJournalLaunchCrash()
+
+        // this flushes any launch crashes immediately
         eventStore.flushOnLaunch()
+
+        // all other requests are sent in the background
         eventStore.flushAsync()
+        processJournalsInBg()
         sessionTracker.flushAsync()
+    }
+
+    private fun processJournalLaunchCrash() {
+        if (crashedLastLaunch.get()) {
+            journalStore.processMostRecentJournal { event ->
+                sanitizeJournalEvent(event)
+                persistJournalEvent(event)
+            }
+        }
+    }
+
+    private fun processJournalsInBg() {
+        try {
+            bgTaskService.submitTask(
+                TaskType.IO,
+                Runnable {
+                    journalStore.processPreviousJournals { event ->
+                        sanitizeJournalEvent(event)
+                        persistJournalEvent(event)
+                    }
+                    eventStore.flushAsync()
+                }
+            )
+        } catch (exc: RejectedExecutionException) {
+            logger.w("Failed to process journal files", exc)
+        }
     }
 
     /**
@@ -263,19 +294,20 @@ internal class ClientInternal constructor(
     }
 
     private fun sanitizeJournalEvent(event: EventInternal) {
+        // remove some fields which are in the journal but not relevant to NDK events
+        event.device.freeDisk = null
+        event.device.freeMemory = null
+        event.metadata.clearMetadata("app", "freeMemory")
+        event.metadata.clearMetadata("app", "memoryUsage")
+        event.metadata.clearMetadata("device", "freeMemory")
+        event.metadata.clearMetadata("device", "totalMemory")
+    }
+
+    private fun persistJournalEvent(event: EventInternal) {
         val sendJournalEvents = false // TODO this is disabled to pass CI but allow testing locally
 
         if (sendJournalEvents) {
-            // remove some fields which are in the journal but not relevant to NDK events
-            event.device.freeDisk = null
-            event.device.freeMemory = null
-            event.metadata.clearMetadata("app", "freeMemory")
-            event.metadata.clearMetadata("app", "memoryUsage")
-            event.metadata.clearMetadata("device", "freeMemory")
-            event.metadata.clearMetadata("device", "totalMemory")
-
-            // TODO future: use the correct filename to support launch crashes
-            eventStore.write(event)
+            eventStore.write(event, crashedLastLaunch.get())
         }
     }
 
@@ -571,7 +603,8 @@ internal class ClientInternal constructor(
     fun addRuntimeVersionInfo(key: String, value: String) =
         deviceDataCollector.addRuntimeVersionInfo(key, value)
 
-    val crashtimeJournalPath = JournaledDocument.getCrashtimeJournalPath(journalStore.currentBasePath)
+    val crashtimeJournalPath =
+        JournaledDocument.getCrashtimeJournalPath(journalStore.currentBasePath)
 
     @VisibleForTesting
     fun close() {
