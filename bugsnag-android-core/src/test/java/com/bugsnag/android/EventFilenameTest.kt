@@ -140,10 +140,10 @@ internal class EventFilenameTest {
     fun regularJvmEventName() {
         val filename = EventFilenameInfo.fromEvent(
             event,
-            "my-uuid-123",
             null,
-            1504255147933,
-            config
+            config,
+            uuid = "my-uuid-123",
+            timestamp = 1504255147933
         ).encode()
         assertEquals(
             "1504255147933_0000111122223333aaaabbbbcccc9999_android_my-uuid-123_.json",
@@ -160,10 +160,10 @@ internal class EventFilenameTest {
 
         val filename = EventFilenameInfo.fromEvent(
             event,
-            "my-uuid-123",
             null,
-            1504255147933,
-            config
+            config,
+            uuid = "my-uuid-123",
+            timestamp = 1504255147933
         ).encode()
         assertEquals(
             "1504255147933_0000111122223333aaaabbbbcccc9999_" +
@@ -180,10 +180,10 @@ internal class EventFilenameTest {
         event.app.isLaunching = false
         val filename = EventFilenameInfo.fromEvent(
             event,
-            "my-uuid-123",
             null,
-            1504255147933,
-            config
+            config,
+            uuid = "my-uuid-123",
+            timestamp = 1504255147933
         ).encode()
 
         assertEquals(
@@ -196,10 +196,10 @@ internal class EventFilenameTest {
     fun ndkEventName() {
         val filename = EventFilenameInfo.fromEvent(
             "{}",
-            "my-uuid-123",
             "0000111122223333aaaabbbbcccc9999",
-            1504255147933,
-            config
+            config,
+            uuid = "my-uuid-123",
+            timestamp = 1504255147933
         ).encode()
         assertEquals(
             "1504255147933_0000111122223333aaaabbbbcccc9999_c_my-uuid-123_.json",
@@ -211,10 +211,10 @@ internal class EventFilenameTest {
     fun ndkEventNameNoApiKey() {
         val filename = EventFilenameInfo.fromEvent(
             "{}",
-            "my-uuid-123",
             "",
-            1504255147933,
-            config
+            config,
+            uuid = "my-uuid-123",
+            timestamp = 1504255147933
         ).encode()
         assertEquals(
             "1504255147933_5d1ec5bd39a74caa1267142706a7fb21_c_my-uuid-123_.json",

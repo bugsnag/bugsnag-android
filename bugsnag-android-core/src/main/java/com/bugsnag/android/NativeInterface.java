@@ -334,10 +334,7 @@ public class NativeInterface {
                 || !config.shouldDiscardByReleaseStage()) {
             EventStore eventStore = client.getEventStore();
 
-            String filename = eventStore.getNdkFilename(payload, apiKey);
-            if (isLaunching) {
-                filename = filename.replace(".json", "startupcrash.json");
-            }
+            String filename = eventStore.getNdkFilename(payload, apiKey, isLaunching);
             eventStore.enqueueContentForDelivery(payload, filename);
         }
     }

@@ -39,11 +39,11 @@ internal data class EventFilenameInfo(
         @JvmOverloads
         fun fromEvent(
             obj: Any,
-            uuid: String = UUID.randomUUID().toString(),
             apiKey: String?,
-            timestamp: Long = System.currentTimeMillis(),
             config: ImmutableConfig,
-            isLaunching: Boolean? = null
+            isLaunching: Boolean? = null,
+            uuid: String = UUID.randomUUID().toString(),
+            timestamp: Long = System.currentTimeMillis()
         ): EventFilenameInfo {
             val sanitizedApiKey = when {
                 obj is Event -> obj.apiKey
