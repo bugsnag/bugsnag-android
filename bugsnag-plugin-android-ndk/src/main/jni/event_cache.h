@@ -29,10 +29,6 @@ void bsg_cache_clear_metadata(void *event_ptr, const char *section,
 
 void bsg_cache_clear_metadata_section(void *event_ptr, const char *section);
 
-bsg_metadata_value bsg_cache_get_metadata_value(void *event_ptr,
-                                                const char *section,
-                                                const char *name);
-
 bugsnag_metadata_type
 bsg_cache_has_metadata(void *event_ptr, const char *section, const char *name);
 
