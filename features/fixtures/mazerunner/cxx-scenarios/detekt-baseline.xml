@@ -2,6 +2,14 @@
 <SmellBaseline>
   <ManuallySuppressedIssues></ManuallySuppressedIssues>
   <CurrentIssues>
+    <ID>MagicNumber:CXXComplexMetadataScenario.kt$CXXComplexMetadataScenario$1000</ID>
+    <ID>MagicNumber:CXXComplexMetadataScenario.kt$CXXComplexMetadataScenario$1509234098234L</ID>
+    <ID>MagicNumber:CXXComplexMetadataScenario.kt$CXXComplexMetadataScenario$1635770803</ID>
+    <ID>MagicNumber:CXXComplexMetadataScenario.kt$CXXComplexMetadataScenario$19.3f</ID>
+    <ID>MagicNumber:CXXComplexMetadataScenario.kt$CXXComplexMetadataScenario$29</ID>
+    <ID>MagicNumber:CXXComplexMetadataScenario.kt$CXXComplexMetadataScenario$5</ID>
+    <ID>MagicNumber:CXXComplexMetadataScenario.kt$CXXComplexMetadataScenario$5.0f</ID>
+    <ID>MagicNumber:CXXComplexMetadataScenario.kt$CXXComplexMetadataScenario$5.623f</ID>
     <ID>MagicNumber:CXXDelayedCrashScenario.kt$CXXDelayedCrashScenario$405</ID>
     <ID>MagicNumber:CXXLargePayloadScenario.kt$CXXLargePayloadScenario$300</ID>
     <ID>MagicNumber:CXXSessionInfoCrashScenario.kt$CXXSessionInfoCrashScenario$3</ID>

@@ -20,11 +20,11 @@ private fun <K, V> normalizedMap(map: Map<K, V>): Map<K, V> {
     val newMap: MutableMap<K, V> = HashMap(map.size)
     map.entries.forEach { entry ->
         var key = entry.key
-        val normalizedKey = normalized(key as Any) as K
+        val normalizedKey = normalized(key as Any?) as K
         if (key != normalizedKey) {
             key = normalizedKey
         }
-        newMap[key] = normalized(entry.value as Any) as V
+        newMap[key] = normalized(entry.value as Any?) as V
     }
     return newMap
 }
@@ -41,7 +41,7 @@ private fun <K, V> normalizedMap(map: Map<K, V>): Map<K, V> {
 </T> */
 @Suppress("UNCHECKED_CAST")
 private fun <T> normalizedList(list: List<T>): List<T> = list.map { entry ->
-    normalized(entry as Any) as T
+    normalized(entry as Any?) as T
 }
 
 /**
@@ -56,7 +56,7 @@ private fun <T> normalizedList(list: List<T>): List<T> = list.map { entry ->
  * @return The normalized object (may be the same object passed in)
  */
 @Suppress("UNCHECKED_CAST")
-fun <T> normalized(obj: Any): T {
+fun <T> normalized(obj: Any?): T {
     return when (obj) {
         is Byte -> obj.toLong()
         is Short -> obj.toLong()

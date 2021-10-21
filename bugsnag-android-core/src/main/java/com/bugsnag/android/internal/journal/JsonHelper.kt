@@ -1,6 +1,8 @@
 package com.bugsnag.android.internal.journal
 
+import com.bugsnag.android.internal.DateUtils
 import com.dslplatform.json.DslJson
+import com.dslplatform.json.JsonWriter
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -8,12 +10,23 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
+import java.util.Date
 
 class JsonHelper private constructor() {
     companion object {
+
+        // ignore deprecation warnings as there is no other API that allows
+        // serializing a placeholder for a type and all its subtypes
+        @Suppress("deprecation")
+        private val settings = DslJson.Settings<MutableMap<String, Any>>().fallbackTo(FallbackWriter())
+
         // Only one global DslJson is needed, and is thread-safe
         // Note: dsl-json adds about 150k to the final binary size.
-        val dslJson = DslJson<MutableMap<String, Any>>()
+        private val dslJson = DslJson(settings)
+
+        init {
+            dslJson.registerWriter(Date::class.java, ::serializeDate)
+        }
 
         fun serialize(value: Any, stream: OutputStream) {
             dslJson.serialize(value, stream)
@@ -58,6 +71,13 @@ class JsonHelper private constructor() {
                 throw ex
             } catch (ex: IOException) {
                 throw IOException("Could not deserialize from $file", ex)
+            }
+        }
+
+        private fun serializeDate(writer: JsonWriter, value: Date?) {
+            value?.let {
+                val timestamp = DateUtils.toIso8601(value)
+                writer.writeString(timestamp)
             }
         }
     }

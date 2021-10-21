@@ -131,6 +131,11 @@ class BugsnagJournalEventMapperTest {
                 "type" to "c"
             )
         )
+
+        val metadata = mapOf(
+            "app" to appSection,
+            "foo" to fooSection
+        )
         minimalJournalMap = mapOf(
             "apiKey" to "my-api-key",
             "user" to mapOf(
@@ -138,10 +143,7 @@ class BugsnagJournalEventMapperTest {
                 "name" to "Boog Snoog",
                 "email" to "hello@example.com"
             ),
-            "metaData" to mapOf(
-                "app" to appSection,
-                "foo" to fooSection
-            ),
+            "metaData" to metadata,
             "breadcrumbs" to breadcrumbs,
             "app" to app,
             "device" to device,
@@ -161,6 +163,19 @@ class BugsnagJournalEventMapperTest {
                 "events" to mapOf(
                     "unhandled" to 1,
                     "handled" to 2
+                )
+            ),
+            "metaData" to metadata.plus(
+                "test" to mapOf(
+                    "string" to "foo",
+                    "bool" to true,
+                    "int" to 509,
+                    "long" to 1509234098234L,
+                    "map" to mapOf("a" to "z"),
+                    "list" to listOf("whoops"),
+                    "array" to arrayOf("uh oh"),
+                    "null" to null,
+                    "date" to "2021-09-28T10:31:09.620Z"
                 )
             )
         )
@@ -220,6 +235,18 @@ class BugsnagJournalEventMapperTest {
         assertEquals(DateUtils.fromIso8601("2021-09-28T10:31:09.620Z"), session.startedAt)
         assertEquals(1, session.unhandledCount)
         assertEquals(2, session.handledCount)
+
+        // extra metadata
+        val metadata = checkNotNull(event.getMetadata("test"))
+        assertNull(metadata["null"])
+        assertEquals("foo", metadata["string"])
+        assertTrue(metadata["bool"] as Boolean)
+        assertEquals(1509234098234L, metadata["long"])
+        assertEquals(mapOf("a" to "z"), metadata["map"])
+        assertEquals(listOf("whoops"), metadata["list"])
+        assertArrayEquals(arrayOf("uh oh"), metadata["array"] as Array<*>)
+        assertEquals(509L, metadata["int"])
+        assertEquals("2021-09-28T10:31:09.620Z", metadata["date"])
     }
 
     private fun validateMandatoryEventFields(event: EventInternal) {
