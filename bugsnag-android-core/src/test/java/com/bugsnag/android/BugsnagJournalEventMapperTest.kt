@@ -97,13 +97,14 @@ class BugsnagJournalEventMapperTest {
                 "loadAddress" to "0x00001000",
                 "lineNumber" to BigDecimal.valueOf(509),
                 "file" to "/data/app/com.example.bugsnag.android-EPFji4GE4IHgwGM2GoOXvQ==/oat/x86/base.odex",
-                "method" to "Java_com_example_bugsnag_android_BaseCrashyActivity_crashFromCXX"
+                "method" to "Java_com_example_bugsnag_android_BaseCrashyActivity_crashFromCXX",
+                "type" to "c"
             )
         )
         val exception = mapOf(
             "errorClass" to "SIGSEGV",
             "message" to "Segmentation violation (invalid memory reference)",
-            "type" to "c",
+            "type" to "android",
             "stacktrace" to stacktrace
         )
         val severityReason = mapOf(
@@ -293,7 +294,7 @@ class BugsnagJournalEventMapperTest {
         val err = event.errors.single()
         assertEquals("SIGSEGV", err.errorClass)
         assertEquals("Segmentation violation (invalid memory reference)", err.errorMessage)
-        assertEquals(ErrorType.C, err.type)
+        assertEquals(ErrorType.ANDROID, err.type)
 
         val trace = err.stacktrace
         assertEquals(2, trace.size)
@@ -311,6 +312,7 @@ class BugsnagJournalEventMapperTest {
             firstFrame["file"]
         )
         assertEquals("crash_write_read_only", firstFrame["method"])
+        assertNull(firstFrame["type"])
 
         // second stackframe
         val secondFrame = trace[1].toJournalSection()
@@ -328,6 +330,7 @@ class BugsnagJournalEventMapperTest {
             "Java_com_example_bugsnag_android_BaseCrashyActivity_crashFromCXX",
             secondFrame["method"]
         )
+        assertEquals(ErrorType.C.desc, secondFrame["type"])
 
         // severity/handledness
         assertEquals(Severity.ERROR, event.severity)

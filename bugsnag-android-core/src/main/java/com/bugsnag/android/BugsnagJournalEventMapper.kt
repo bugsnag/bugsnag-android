@@ -106,6 +106,7 @@ internal class BugsnagJournalEventMapper(
         val unhandled: Boolean = map.readEntry(JournalKeys.keyUnhandled)
         val reason = deserializeSeverityReason(map, unhandled, severity)
         event.updateSeverityReasonInternal(reason)
+        event.normalizeStackframeErrorTypes()
         return event
     }
 

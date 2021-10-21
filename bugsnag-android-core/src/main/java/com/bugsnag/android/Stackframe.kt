@@ -56,6 +56,9 @@ class Stackframe : JsonStream.Streamable, Journalable {
      * The type of the error
      */
     var type: ErrorType? = null
+        get() {
+            return nativeFrame?.type ?: field
+        }
         set(value) {
             nativeFrame?.type = value
             field = value
