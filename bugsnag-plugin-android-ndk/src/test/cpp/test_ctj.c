@@ -307,6 +307,8 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_NativeCrashTimeJournalTest_na
     event.unhandled = true;
     event.unhandled_events = 1;
     event.handled_events = 5;
+    strcpy(event.session_id, "123");
+    strcpy(event.session_start, "2018-08-07T10:16:34.564Z");
     event.device.time = 1500000000;
 
     // error
