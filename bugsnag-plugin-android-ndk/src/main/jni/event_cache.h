@@ -1,6 +1,7 @@
-//
-// Created by Karl Stenerud on 13.10.21.
-//
+// This code handles caching of data so that it can still be retrieved from a
+// crashed C context. We can't fetch from the journal under async-safe
+// conditions, so we keep any data that can be retrieved using public C APIs in
+// here.
 
 #ifndef BUGSNAG_ANDROID_EVENT_CACHE_H
 #define BUGSNAG_ANDROID_EVENT_CACHE_H
@@ -60,8 +61,6 @@ void bsg_cache_set_event_user(void *event_ptr, const char *id,
                               const char *email, const char *name);
 
 void bsg_cache_add_breadcrumb(bugsnag_event *event, bugsnag_breadcrumb *crumb);
-
-void bsg_cache_clear_breadcrumbs(bugsnag_event *event);
 
 bool bsg_cache_has_session(const bugsnag_event *event);
 

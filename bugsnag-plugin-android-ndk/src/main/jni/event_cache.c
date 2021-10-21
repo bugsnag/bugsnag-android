@@ -1,3 +1,9 @@
+// Note: This code used to be used to fill out structs that would be persisted
+// to disk and then read back on relaunch. It has now been re-purposed as a
+// cache, and as a result there will likely be some leftover cruft here and
+// there, as well as things that could be better optimised in future after
+// enough time has passed to migrate older on-disk reports out in the field.
+
 #include "event_cache.h"
 #include "utils/string.h"
 #include <memory.h>
@@ -203,11 +209,6 @@ void bsg_cache_add_breadcrumb(bugsnag_event *event, bugsnag_breadcrumb *crumb) {
         (event->crumb_first_index + 1) % BUGSNAG_CRUMBS_MAX;
   }
   memcpy(&event->breadcrumbs[crumb_index], crumb, sizeof(bugsnag_breadcrumb));
-}
-
-void bsg_cache_clear_breadcrumbs(bugsnag_event *event) {
-  event->crumb_count = 0;
-  event->crumb_first_index = 0;
 }
 
 bool bsg_cache_has_session(const bugsnag_event *event) {

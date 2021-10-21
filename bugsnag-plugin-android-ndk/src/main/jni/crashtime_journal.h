@@ -95,10 +95,6 @@ bool bsg_ctj_clear_metadata(const char *section, const char *name);
 
 bool bsg_ctj_clear_metadata_section(const char *section);
 
-bool bsg_ctj_add_breadcrumb(bugsnag_breadcrumb *crumb);
-
-bool bsg_ctj_clear_breadcrumbs();
-
 #ifdef __cplusplus
 }
 #endif

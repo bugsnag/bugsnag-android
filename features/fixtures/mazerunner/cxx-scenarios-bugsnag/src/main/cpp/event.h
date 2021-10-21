@@ -231,15 +231,6 @@ typedef struct {
   bsg_thread threads[BUGSNAG_THREADS_MAX];
 } bugsnag_event;
 
-void bsg_cache_start_session(bugsnag_event *event, char *session_id,
-                             char *started_at, int handled_count,
-                             int unhandled_count);
-void bsg_cache_set_metadata_string(bugsnag_metadata *metadata,
-                                  const char *section, const char *name,
-                                  const char *value);
-void bugsnag_event_add_breadcrumb(bugsnag_event *event,
-                                  bugsnag_breadcrumb *crumb);
-
 /*********************************
  * (end) NDK-SPECIFIC BITS
  *********************************/

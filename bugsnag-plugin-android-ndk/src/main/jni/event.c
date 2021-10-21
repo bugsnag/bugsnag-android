@@ -37,12 +37,6 @@ void bugsnag_event_clear_metadata_section(void *event_ptr,
   bsg_cache_clear_metadata_section(event_ptr, section);
 }
 
-bsg_metadata_value bugsnag_get_metadata_value(void *event_ptr,
-                                              const char *section,
-                                              const char *name) {
-  return bsg_cache_get_metadata_value(event_ptr, section, name);
-}
-
 bugsnag_metadata_type bugsnag_event_has_metadata(void *event_ptr,
                                                  const char *section,
                                                  const char *name) {
@@ -86,21 +80,6 @@ void bugsnag_event_set_user(void *event_ptr, const char *id, const char *email,
                             const char *name) {
   bsg_ctj_set_event_user(id, email, name);
   bsg_cache_set_event_user(event_ptr, id, email, name);
-}
-
-void bugsnag_event_add_breadcrumb(bugsnag_event *event,
-                                  bugsnag_breadcrumb *crumb) {
-  bsg_ctj_add_breadcrumb(crumb);
-  bsg_cache_add_breadcrumb(event, crumb);
-}
-
-void bugsnag_event_clear_breadcrumbs(bugsnag_event *event) {
-  bsg_ctj_clear_breadcrumbs();
-  bsg_cache_clear_breadcrumbs(event);
-}
-
-bool bugsnag_event_has_session(const bugsnag_event *event) {
-  return bsg_cache_has_session(event);
 }
 
 /* Accessors for event.app */

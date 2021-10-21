@@ -64,6 +64,7 @@
 #define KEY_SYMBOL_ADDRESS "symbolAddress"
 #define KEY_THREADS "threads"
 #define KEY_TIME_UNIX "timeUnixTimestamp"
+#define KEY_TIMESTAMP "timestamp"
 #define KEY_TOTAL_MEMORY "totalMemory"
 #define KEY_TYPE "type"
 #define KEY_UNHANDLED "unhandled"
@@ -83,6 +84,33 @@ static const char *g_severities[] = {
 };
 static const int g_severities_count =
     sizeof(g_severities) / sizeof(*g_severities);
+
+const char *get_severity(bugsnag_severity severity) {
+  if (severity >= g_severities_count) {
+    return "unknown";
+  }
+  return g_severities[severity];
+}
+
+static const char *g_breadcrumb_types[] = {
+    "manual",     // BSG_CRUMB_MANUAL
+    "error",      // BSG_CRUMB_ERROR
+    "log",        // BSG_CRUMB_LOG
+    "navigation", // BSG_CRUMB_NAVIGATION
+    "procss",     // BSG_CRUMB_PROCESS
+    "request",    // BSG_CRUMB_REQUEST
+    "state",      // BSG_CRUMB_STATE
+    "user",       // BSG_CRUMB_USER
+};
+static const int g_breadcrumb_types_count =
+    sizeof(g_breadcrumb_types) / sizeof(*g_breadcrumb_types);
+
+const char *get_breadcrumb_type(bugsnag_breadcrumb_type type) {
+  if (type >= g_breadcrumb_types_count) {
+    return "unknown";
+  }
+  return g_breadcrumb_types[type];
+}
 
 /**
  * Convenience macro to stop the current function and return false if a call
@@ -141,6 +169,13 @@ static bool add_double(const char *name, double value) {
 static bool add_boolean(const char *name, bool value) {
   bsg_pb_stack_map_key(name);
   RETURN_ON_FALSE(bsg_ctj_set_boolean(bsg_pb_path(), value));
+  bsg_pb_unstack();
+  return true;
+}
+
+static bool clear_value(const char *name) {
+  bsg_pb_stack_map_key(name);
+  RETURN_ON_FALSE(bsg_ctj_clear_value(bsg_pb_path()));
   bsg_pb_unstack();
   return true;
 }
@@ -782,12 +817,7 @@ bool bsg_ctj_set_event_severity(bugsnag_severity value) {
   //   ]
   // }
 
-  if (value >= g_severities_count) {
-    // Invalid severity
-    return false;
-  }
-
-  return set_event_string(KEY_SEVERITY, g_severities[value]);
+  return set_event_string(KEY_SEVERITY, get_severity(value));
 }
 
 bool bsg_ctj_set_event_unhandled(bool value) {
@@ -899,20 +929,6 @@ bool bsg_ctj_clear_metadata_section(const char *section) {
   stack_current_event();
   bsg_pb_stack_map_key(KEY_METADATA);
   bsg_pb_stack_map_key(section);
-  RETURN_ON_FALSE(bsg_ctj_clear_value(bsg_pb_path()));
-  bsg_pb_reset();
-  return bsg_ctj_flush();
-}
-
-bool bsg_ctj_add_breadcrumb(bugsnag_breadcrumb *crumb) {
-  // TODO
-  return true;
-}
-
-bool bsg_ctj_clear_breadcrumbs() {
-  bsg_pb_reset();
-  stack_current_event();
-  bsg_pb_stack_map_key(KEY_BREADCRUMBS);
   RETURN_ON_FALSE(bsg_ctj_clear_value(bsg_pb_path()));
   bsg_pb_reset();
   return bsg_ctj_flush();
