@@ -172,6 +172,16 @@ class BugsnagJournalEventMapperTest {
     }
 
     /**
+     * Validates that an event without a stacktrace is ignored.
+     */
+    @Test
+    fun eventWithoutExceptionsIgnored() {
+        val mapper = BugsnagJournalEventMapper(NoopLogger)
+        val event = mapper.convertToEvent(minimalJournalMap.minus("exceptions"))
+        assertNull(event)
+    }
+
+    /**
      * Validates that an event that omits non-mandatory fields such as
      * context/session is deserialized.
      */

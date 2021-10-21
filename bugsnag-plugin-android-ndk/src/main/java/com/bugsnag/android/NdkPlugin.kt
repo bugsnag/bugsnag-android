@@ -1,7 +1,6 @@
 package com.bugsnag.android
 
 import com.bugsnag.android.ndk.NativeBridge
-import java.io.File
 import java.util.concurrent.atomic.AtomicBoolean
 
 internal class NdkPlugin : Plugin {
@@ -23,7 +22,7 @@ internal class NdkPlugin : Plugin {
     private var client: Client? = null
 
     private fun initNativeBridge(client: Client): NativeBridge {
-        val crashtimeJournalPath = File(client.config.journalBasePath.absolutePath + ".journal.crashtime")
+        val crashtimeJournalPath = client.crashtimeJournalPath
         val nativeBridge = NativeBridge(crashtimeJournalPath)
         client.addObserver(nativeBridge)
         client.setupNdkPlugin()

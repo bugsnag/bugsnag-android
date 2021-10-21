@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -659,6 +660,10 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
     BreadcrumbState getBreadcrumbState() {
         return impl.getBreadcrumbState();
+    }
+
+    File getCrashtimeJournalPath() {
+        return impl.getCrashtimeJournalPath();
     }
 
     void setAutoNotify(boolean autoNotify) {
