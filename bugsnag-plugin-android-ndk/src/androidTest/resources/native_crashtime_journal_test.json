@@ -1,0 +1,422 @@
+{
+	"testSetApiKey": {
+		"apiKey": "my-key"
+	},
+	"testSetContext": {
+		"events": [
+			{
+				"context": "my-context"
+			}
+		]
+	},
+	"testSetUser": {
+		"events": [
+			{
+				"user": {
+					"name": "my-name",
+					"id": "my-id",
+					"email": "my-user@nowhere.com"
+				}
+			}
+		]
+	},
+	"testSetBinaryArch": {
+		"events": [
+			{
+				"app": {
+					"binaryArch": "my-arch"
+				}
+			}
+		]
+	},
+	"testSetBuildUuid": {
+		"events": [
+			{
+				"app": {
+					"buildUUID": "123e4567-e89b-12d3-a456-426614174000"
+				}
+			}
+		]
+	},
+	"testSetAppId": {
+		"events": [
+			{
+				"app": {
+					"id": "my-id"
+				}
+			}
+		]
+	},
+	"testSetAppReleaseStage": {
+		"events": [
+			{
+				"app": {
+					"releaseStage": "my-stage"
+				}
+			}
+		]
+	},
+	"testSetAppType": {
+		"events": [
+			{
+				"app": {
+					"type": "my-type"
+				}
+			}
+		]
+	},
+	"testSetAppVersion": {
+		"events": [
+			{
+				"app": {
+					"version": "my-version"
+				}
+			}
+		]
+	},
+	"testSetAppVersionCode": {
+		"events": [
+			{
+				"app": {
+					"versionCode": 100
+				}
+			}
+		]
+	},
+	"testSetAppDuration": {
+		"events": [
+			{
+				"app": {
+					"duration": 100
+				}
+			}
+		]
+	},
+	"testSetAppDurationInForeground": {
+		"events": [
+			{
+				"app": {
+					"durationInForeground": 100
+				}
+			}
+		]
+	},
+	"testSetAppInForeground": {
+		"events": [
+			{
+				"app": {
+					"inForeground": true
+				}
+			}
+		]
+	},
+	"testSetAppIsLaunching": {
+		"events": [
+			{
+				"app": {
+					"isLaunching": true
+				}
+			}
+		]
+	},
+	"testSetJailbroken": {
+		"events": [
+			{
+				"device": {
+					"jailbroken": false
+				}
+			}
+		]
+	},
+	"testSetDeviceId": {
+		"events": [
+			{
+				"device": {
+					"id": "my-id"
+				}
+			}
+		]
+	},
+	"testSetLocale": {
+		"events": [
+			{
+				"device": {
+					"locale": "my-locale"
+				}
+			}
+		]
+	},
+	"testSetManufacturer": {
+		"events": [
+			{
+				"device": {
+					"manufacturer": "my-manufacturer"
+				}
+			}
+		]
+	},
+	"testSetDeviceModel": {
+		"events": [
+			{
+				"device": {
+					"model": "my-model"
+				}
+			}
+		]
+	},
+	"testSetOsVersion": {
+		"events": [
+			{
+				"device": {
+					"osVersion": "my-version"
+				}
+			}
+		]
+	},
+	"testSetTotalMemory": {
+		"events": [
+			{
+				"device": {
+					"totalMemory": 1000000000
+				}
+			}
+		]
+	},
+	"testSetOrientation": {
+		"events": [
+			{
+				"device": {
+					"orientation": "my-orientation"
+				}
+			}
+		]
+	},
+	"testSetDeviceTime": {
+		"events": [
+			{
+				"device": {
+					"timeUnixTimestamp": 1000000000
+				}
+			}
+		]
+	},
+	"testSetOsName": {
+		"events": [
+			{
+				"device": {
+					"osName": "my-name"
+				}
+			}
+		]
+	},
+	"testSetErrorClass": {
+		"events": [
+			{
+				"exceptions": [
+					{
+						"errorClass": "my-class"
+					}
+				]
+			}
+		]
+	},
+	"testSetErrorMessage": {
+		"events": [
+			{
+				"exceptions": [
+					{
+						"message": "my-message"
+					}
+				]
+			}
+		]
+	},
+	"testSetErrorType": {
+		"events": [
+			{
+				"exceptions": [
+					{
+						"type": "my-type"
+					}
+				]
+			}
+		]
+	},
+	"testSetEventSeverity": {
+		"events": [
+			{
+				"severity": "warning"
+			}
+		]
+	},
+	"testSetEventUnhandled": {
+		"events": [
+			{
+				"unhandled": true
+			}
+		]
+	},
+	"testSetGroupingHash": {
+		"events": [
+			{
+				"groupingHash": "my-hash"
+			}
+		]
+	},
+	"testAddMetadataDouble": {
+		"events": [
+			{
+				"metaData": {
+					"my-section": {
+						"my-name": 1.5
+					}
+				}
+			}
+		]
+	},
+	"testAddMetadataBool": {
+		"events": [
+			{
+				"metaData": {
+					"my-section": {
+						"my-name": true
+					}
+				}
+			}
+		]
+	},
+	"testAddMetadataString": {
+		"events": [
+			{
+				"metaData": {
+					"my-section": {
+						"my-name": "my-value"
+					}
+				}
+			}
+		]
+	},
+	"testClearMetadataInitial": {
+		"events": [
+			{
+				"metaData": {
+					"my-section": {
+						"my-name": true,
+						"my-other-name": 100
+					},
+					"my-other-section": {
+						"a": true,
+						"b": 100
+					}
+				}
+			}
+		]
+	},
+	"testClearMetadataFinal": {
+		"events": [
+			{
+				"metaData": {
+					"my-section": {
+						"my-other-name": 100
+					},
+					"my-other-section": {
+						"a": true,
+						"b": 100
+					}
+				}
+			}
+		]
+	},
+	"testClearMetadataSectionInitial": {
+		"events": [
+			{
+				"metaData": {
+					"my-section": {
+						"my-name": true,
+						"my-other-name": 100
+					},
+					"my-other-section": {
+						"a": true,
+						"b": 100
+					}
+				}
+			}
+		]
+	},
+	"testClearMetadataSectionFinal": {
+		"events": [
+			{
+				"metaData": {
+					"my-other-section": {
+						"a": true,
+						"b": 100
+					}
+				}
+			}
+		]
+	},
+	"testStoreEvent": {
+		"events": [
+			{
+				"exceptions": [
+					{
+						"message": "test message",
+						"type": "c",
+						"errorClass": "SIGSEGV",
+						"stackTrace": [
+							{
+								"frameAddress": "0x0",
+								"loadAddress": "0x1000",
+								"symbolAddress": "0x2000",
+								"file": "file_0.c",
+								"method": "method_0",
+								"lineNumber": 100,
+								"isPC": true
+							},
+							{
+								"frameAddress": "0x1",
+								"loadAddress": "0x1001",
+								"symbolAddress": "0x2001",
+								"file": "file_1.c",
+								"method": "method_1",
+								"lineNumber": 101
+							}
+						]
+					}
+				],
+				"unhandled": true,
+				"severity": "error",
+				"severityReason": {
+					"unhandledOverridden": false,
+					"type": "signal",
+					"attributes": {
+						"signalType": "SIGSEGV"
+					}
+				},
+				"device": {
+					"timeUnixTimestamp": 1500000000
+				},
+				"session": {
+					"events": {
+						"handled": 5,
+						"unhandled": 1
+					}
+				},
+				"threads": [
+					{
+						"id": 29695,
+						"name": "ConnectivityThr",
+						"state": "running",
+						"type": "c"
+					},
+					{
+						"id": 29698,
+						"name": "Binder:29227_3",
+						"state": "sleeping",
+						"type": "c"
+					}
+				]
+			}
+		]
+	}
+}

@@ -16,15 +16,6 @@ static JNIEnv *bsg_global_jni_env = NULL;
 
 void bugsnag_start(JNIEnv *env) { bsg_global_jni_env = env; }
 
-void bugsnag_notify_env(JNIEnv *env, const char *name, const char *message,
-                        bugsnag_severity severity);
-
-void bugsnag_set_user_env(JNIEnv *env, const char *id, const char *email,
-                          const char *name);
-
-void bugsnag_leave_breadcrumb_env(JNIEnv *env, const char *message,
-                                  bugsnag_breadcrumb_type type);
-
 void bugsnag_notify(const char *name, const char *message,
                     bugsnag_severity severity) {
   if (bsg_global_jni_env != NULL) {

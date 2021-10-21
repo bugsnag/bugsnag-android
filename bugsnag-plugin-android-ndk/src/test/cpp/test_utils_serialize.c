@@ -2,6 +2,7 @@
 #include <utils/serializer.h>
 #include <stdlib.h>
 #include <utils/migrate.h>
+#include "event_cache.h"
 
 #define SERIALIZE_TEST_FILE "/data/data/com.bugsnag.android.ndk.test/cache/foo.crash"
 
@@ -29,11 +30,11 @@ bool bsg_report_v2_write(bsg_report_header *header, bugsnag_report_v2 *report,
 
 bool bsg_report_v3_write(bsg_report_header *header, bugsnag_report_v3 *report,
                          int fd) {
-    if (!bsg_report_header_write(header, fd)) {
-        return false;
-    }
-    ssize_t len = write(fd, report, sizeof(bugsnag_report_v3));
-    return len == sizeof(bugsnag_report_v3);
+  if (!bsg_report_header_write(header, fd)) {
+    return false;
+  }
+  ssize_t len = write(fd, report, sizeof(bugsnag_report_v3));
+  return len == sizeof(bugsnag_report_v3);
 }
 
 bool bsg_report_v4_write(bsg_report_header *header, bugsnag_report_v4 *report,
@@ -71,11 +72,11 @@ bool bsg_serialize_report_v2_to_file(bsg_environment *env, bugsnag_report_v2 *re
 }
 
 bool bsg_serialize_report_v3_to_file(bsg_environment *env, bugsnag_report_v3 *report) {
-    int fd = open(env->next_event_path, O_WRONLY | O_CREAT, 0644);
-    if (fd == -1) {
-        return false;
-    }
-    return bsg_report_v3_write(&env->report_header, report, fd);
+  int fd = open(env->next_event_path, O_WRONLY | O_CREAT, 0644);
+  if (fd == -1) {
+    return false;
+  }
+  return bsg_report_v3_write(&env->report_header, report, fd);
 }
 
 bool bsg_serialize_report_v4_to_file(bsg_environment *env, bugsnag_report_v4 *report) {
@@ -126,10 +127,10 @@ void generate_basic_report(bugsnag_event *event) {
   event->crumb_count = 0;
   event->crumb_first_index = 0;
   bugsnag_breadcrumb *crumb1 = init_breadcrumb("decrease torque", "Moving laterally 26º", BSG_CRUMB_STATE);
-  bugsnag_event_add_breadcrumb(event, crumb1);
+  bsg_cache_add_breadcrumb(event, crumb1);
 
   bugsnag_breadcrumb *crumb2 = init_breadcrumb("enable blasters", "this is a drill.", BSG_CRUMB_USER);
-  bugsnag_event_add_breadcrumb(event, crumb2);
+  bsg_cache_add_breadcrumb(event, crumb2);
 
   event->handled_events = 1;
   event->unhandled_events = 1;
@@ -391,11 +392,11 @@ bugsnag_event *bsg_generate_event(void) {
   report->crumb_first_index = 0;
   bugsnag_breadcrumb *crumb1 = init_breadcrumb("decrease torque", "Moving laterally 26º",
                                                BSG_CRUMB_STATE);
-  bugsnag_event_add_breadcrumb(report, crumb1);
+  bsg_cache_add_breadcrumb(report, crumb1);
 
   bugsnag_breadcrumb *crumb2 = init_breadcrumb("enable blasters", "this is a drill.",
                                                BSG_CRUMB_USER);
-  bugsnag_event_add_breadcrumb(report, crumb2);
+  bsg_cache_add_breadcrumb(report, crumb2);
 
   report->handled_events = 1;
   report->unhandled_events = 1;
@@ -423,7 +424,7 @@ char *test_read_last_run_info(const bsg_environment *env) {
 TEST test_last_run_info_serialization(void) {
   bsg_environment *env = calloc(1, sizeof(bsg_environment));
   strcpy(env->last_run_info_path, SERIALIZE_TEST_FILE);
-  
+
   // update LastRunInfo with defaults
   env->next_event.app.is_launching = false;
   env->consecutive_launch_crashes = 1;

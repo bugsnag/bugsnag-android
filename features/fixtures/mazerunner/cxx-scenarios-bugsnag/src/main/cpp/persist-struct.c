@@ -7,6 +7,11 @@
 
 bool bsg_serialize_event_to_file(bsg_environment *env);
 
+void bsg_cache_set_metadata_string(bugsnag_metadata *metadata,
+                                   const char *section, const char *name,
+                                   const char *value);
+void bsg_cache_add_breadcrumb(bugsnag_event *event, bugsnag_breadcrumb *crumb);
+
 void populate_event(bugsnag_event *event) {
     strcpy(event->api_key, "5d1e5fbd39a74caa1200142706a90b20");
     strcpy(event->context, "SomeActivity");
@@ -78,8 +83,8 @@ void populate_event(bugsnag_event *event) {
     crumb->type = BSG_CRUMB_STATE;
     strcpy(crumb->name, "decrease torque");
     strcpy(crumb->timestamp, "2018-08-29T21:41:39Z");
-    bsg_add_metadata_value_str(&crumb->metadata, "metaData", "message", "Moving laterally 26º");
-    bugsnag_event_add_breadcrumb(event, crumb);
+    bsg_cache_set_metadata_string(&crumb->metadata, "metaData", "message", "Moving laterally 26º");
+    bsg_cache_add_breadcrumb(event, crumb);
 }
 
 /**

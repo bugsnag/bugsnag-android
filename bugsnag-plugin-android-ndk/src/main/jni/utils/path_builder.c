@@ -71,6 +71,8 @@ void bsg_pb_stack_list_index(int64_t index) {
   subpath_end(subpath);
 }
 
+void bsg_pb_stack_last_list_index() { bsg_pb_stack_list_index(-1); }
+
 void bsg_pb_stack_new_list_entry() {
   char *subpath = subpath_begin();
   if (subpath == NULL) {

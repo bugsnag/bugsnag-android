@@ -8,6 +8,7 @@ add_library( # Specifies the name of the library.
              # Provides a relative path to your source file(s).
     jni/bugsnag_ndk.c
     jni/bugsnag.c
+    jni/event_cache.c
     jni/metadata.c
     jni/safejni.c
     jni/event.c

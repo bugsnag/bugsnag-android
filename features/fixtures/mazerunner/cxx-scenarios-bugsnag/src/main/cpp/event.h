@@ -231,23 +231,6 @@ typedef struct {
   bsg_thread threads[BUGSNAG_THREADS_MAX];
 } bugsnag_event;
 
-void bugsnag_event_add_breadcrumb(bugsnag_event *event,
-                                  bugsnag_breadcrumb *crumb);
-void bugsnag_event_clear_breadcrumbs(bugsnag_event *event);
-void bugsnag_event_start_session(bugsnag_event *event, char *session_id,
-                                 char *started_at, int handled_count,
-                                 int unhandled_count);
-bool bugsnag_event_has_session(bugsnag_event *event);
-
-void bsg_add_metadata_value_double(bugsnag_metadata *metadata,
-                                   const char *section, const char *name,
-                                   double value);
-void bsg_add_metadata_value_str(bugsnag_metadata *metadata, const char *section,
-                                const char *name, const char *value);
-void bsg_add_metadata_value_bool(bugsnag_metadata *metadata,
-                                 const char *section, const char *name,
-                                 bool value);
-
 /*********************************
  * (end) NDK-SPECIFIC BITS
  *********************************/
