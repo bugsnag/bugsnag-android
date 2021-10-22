@@ -30,10 +30,7 @@ internal class BugsnagJournalEventMapper(
 
     fun convertToEvent(map: Map<in String, Any?>): EventInternal? {
         return try {
-            when {
-                map[JournalKeys.pathExceptions] != null -> convertToEventImpl(map)
-                else -> null
-            }
+            convertToEventImpl(map)
         } catch (exc: Throwable) {
             logger.e("Failed to deserialize journal, skipping event", exc)
             null
@@ -136,7 +133,8 @@ internal class BugsnagJournalEventMapper(
     private fun convertDeviceWithState(src: Map<String, Any?>): DeviceWithState {
         val map = src.toMutableMap()
         map[JournalKeys.keyCpuAbi] = (map[JournalKeys.keyCpuAbi] as? List<String>)?.toTypedArray()
-        map[JournalKeys.keyTime] = (map[JournalKeys.keyTime] as? String)?.toDate()
+        val number: Number = map.readEntry(JournalKeys.keyTime)
+        map[JournalKeys.keyTime] = Date(number.toLong())
         return DeviceWithState(map)
     }
 
@@ -162,8 +160,8 @@ internal class BugsnagJournalEventMapper(
     @Suppress("UNCHECKED_CAST")
     private fun convertErrorInternal(src: Map<String, Any?>): ErrorInternal {
         val map = src.toMutableMap()
-        map[JournalKeys.keyStackTrace] =
-            (src[JournalKeys.keyStackTrace] as List<Map<String, Any>>).map(this::convertStacktraceInternal)
+        val list: List<Map<String, Any>> = src.readEntry(JournalKeys.keyStackTrace)
+        map[JournalKeys.keyStackTrace] = list.map(this::convertStacktraceInternal)
         return ErrorInternal(map)
     }
 

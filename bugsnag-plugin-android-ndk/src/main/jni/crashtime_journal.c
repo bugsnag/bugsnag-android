@@ -56,14 +56,15 @@
 #define KEY_OS_VERSION "osVersion"
 #define KEY_RELEASE_STAGE "releaseStage"
 #define KEY_SESSION "session"
+#define KEY_SESSION_STARTED_AT "startedAt"
 #define KEY_SEVERITY "severity"
 #define KEY_SEVERITY_REASON "severityReason"
 #define KEY_SIGNAL_TYPE "signalType"
-#define KEY_STACKTRACE "stackTrace"
+#define KEY_STACKTRACE "stacktrace"
 #define KEY_STATE "state"
 #define KEY_SYMBOL_ADDRESS "symbolAddress"
 #define KEY_THREADS "threads"
-#define KEY_TIME_UNIX "timeUnixTimestamp"
+#define KEY_TIME_UNIX "time"
 #define KEY_TIMESTAMP "timestamp"
 #define KEY_TOTAL_MEMORY "totalMemory"
 #define KEY_TYPE "type"
@@ -131,15 +132,9 @@ static bool stack_new_map_in_list() {
   return true;
 }
 
-static void stack_current_event() {
-  bsg_pb_stack_map_key(KEY_EVENTS);
-  bsg_pb_stack_last_list_index();
-}
-
 static void stack_current_exception() {
-  stack_current_event();
   bsg_pb_stack_map_key(KEY_EXCEPTIONS);
-  bsg_pb_stack_last_list_index();
+  bsg_pb_stack_list_index(-1);
 }
 
 // Low-level helpers. These fill out objects at the current path level. They
@@ -196,6 +191,8 @@ static bool add_stack_frame(const bugsnag_stackframe *frame, bool is_pc) {
   RETURN_ON_FALSE(add_hex(KEY_SYMBOL_ADDRESS, frame->symbol_address));
   RETURN_ON_FALSE(add_hex(KEY_LOAD_ADDRESS, frame->load_address));
   RETURN_ON_FALSE(add_double(KEY_LINE_NUMBER, frame->line_number));
+  RETURN_ON_FALSE(add_string(KEY_TYPE, "c"));
+
   if (is_pc) {
     RETURN_ON_FALSE(add_boolean(KEY_IS_PC, true));
   }
@@ -207,6 +204,7 @@ static bool add_stack_frame(const bugsnag_stackframe *frame, bool is_pc) {
   } else {
     RETURN_ON_FALSE(add_hex(KEY_METHOD, frame->frame_address));
   }
+
   bsg_pb_unstack();
   return true;
 }
@@ -286,12 +284,17 @@ static bool add_severity_reason(const bugsnag_event *event) {
 
 static bool add_session(const bugsnag_event *event) {
   //  "session": {
+  //    "id": "123",
+  //    "startedAt": "2018-08-07T10:16:34.564Z",
   //    "events": {
+  //      "handled": 2,
   //      "unhandled": 1
   //    }
   //  }
 
   bsg_pb_stack_map_key(KEY_SESSION);
+  RETURN_ON_FALSE(add_string(KEY_ID, event->session_id));
+  RETURN_ON_FALSE(add_string(KEY_SESSION_STARTED_AT, event->session_start));
   bsg_pb_stack_map_key(KEY_EVENTS);
   RETURN_ON_FALSE(add_double(KEY_UNHANDLED, event->unhandled_events));
   RETURN_ON_FALSE(add_double(KEY_HANDLED, event->handled_events));
@@ -335,7 +338,6 @@ static bool set_top_level_string(const char *key, const char *value) {
 
 static bool set_event_string(const char *key, const char *value) {
   bsg_pb_reset();
-  stack_current_event();
   RETURN_ON_FALSE(add_string(key, value));
   bsg_pb_reset();
   return bsg_ctj_flush();
@@ -343,7 +345,6 @@ static bool set_event_string(const char *key, const char *value) {
 
 static bool set_event_boolean(const char *key, bool value) {
   bsg_pb_reset();
-  stack_current_event();
   RETURN_ON_FALSE(add_boolean(key, value));
   bsg_pb_reset();
   return bsg_ctj_flush();
@@ -353,7 +354,6 @@ static bool set_event_subobject_string(const char *event_key,
                                        const char *object_key,
                                        const char *value) {
   bsg_pb_reset();
-  stack_current_event();
   bsg_pb_stack_map_key(event_key);
   RETURN_ON_FALSE(add_string(object_key, value));
   bsg_pb_reset();
@@ -363,7 +363,6 @@ static bool set_event_subobject_string(const char *event_key,
 static bool set_event_subobject_double(const char *event_key,
                                        const char *object_key, double value) {
   bsg_pb_reset();
-  stack_current_event();
   bsg_pb_stack_map_key(event_key);
   RETURN_ON_FALSE(add_double(object_key, value));
   bsg_pb_reset();
@@ -373,7 +372,6 @@ static bool set_event_subobject_double(const char *event_key,
 static bool set_event_subobject_boolean(const char *event_key,
                                         const char *object_key, bool value) {
   bsg_pb_reset();
-  stack_current_event();
   bsg_pb_stack_map_key(event_key);
   RETURN_ON_FALSE(add_boolean(object_key, value));
   bsg_pb_reset();
@@ -396,7 +394,6 @@ bool bsg_ctj_store_event(const bugsnag_event *event) {
   // document.
 
   bsg_pb_reset();
-  stack_current_event();
 
   RETURN_ON_FALSE(add_exception(&event->error));
   if (bsg_cache_has_session(event)) {
@@ -407,11 +404,6 @@ bool bsg_ctj_store_event(const bugsnag_event *event) {
   RETURN_ON_FALSE(
       add_string(KEY_SEVERITY, bsg_severity_string(event->severity)));
   RETURN_ON_FALSE(add_boolean(KEY_UNHANDLED, event->unhandled));
-
-  bsg_pb_stack_map_key(KEY_SESSION);
-  bsg_pb_stack_map_key(KEY_EVENTS);
-  RETURN_ON_FALSE(add_double(KEY_UNHANDLED, event->unhandled_events));
-  RETURN_ON_FALSE(add_double(KEY_HANDLED, event->handled_events));
 
   bsg_pb_reset();
 
@@ -430,11 +422,7 @@ bool bsg_ctj_set_api_key(const char *api_key) {
 
 bool bsg_ctj_set_event_context(const char *context) {
   // {
-  //   "events": [
-  //     {
-  //       "context": "auth/session#create"
-  //     }
-  //   ]
+  //   "context": "auth/session#create"
   // }
 
   return set_event_string(KEY_CONTEXT, context);
@@ -443,19 +431,15 @@ bool bsg_ctj_set_event_context(const char *context) {
 bool bsg_ctj_set_event_user(const char *id, const char *email,
                             const char *name) {
   // {
-  //   "events": [
-  //     {
-  //       "user": {
+  //    "user": {
   //         "id": "19",
   //         "name": "Robert Hawkins",
   //         "email": "bob@example.com"
   //       }
   //     }
-  //   ]
   // }
 
   bsg_pb_reset();
-  stack_current_event();
   bsg_pb_stack_map_key(KEY_USER);
   RETURN_ON_FALSE(add_string(KEY_ID, id));
   RETURN_ON_FALSE(add_string(KEY_EMAIL, email));
@@ -466,13 +450,9 @@ bool bsg_ctj_set_event_user(const char *id, const char *email,
 
 bool bsg_ctj_set_app_binary_arch(const char *arch) {
   // {
-  //   "events": [
-  //     {
   //       "app": {
   //         "binaryArch": "x86_64"
   //       }
-  //     }
-  //   ]
   // }
 
   return set_event_subobject_string(KEY_APP, KEY_BINARY_ARCH, arch);
@@ -480,13 +460,9 @@ bool bsg_ctj_set_app_binary_arch(const char *arch) {
 
 bool bsg_ctj_set_app_build_uuid(const char *uuid) {
   // {
-  //   "events": [
-  //     {
   //       "app": {
   //         "buildUUID": "BE5BA3D0-971C-4418-9ECF-E2D1ABCB66BE"
   //       }
-  //     }
-  //   ]
   // }
 
   return set_event_subobject_string(KEY_APP, KEY_BUILD_UUID, uuid);
@@ -494,13 +470,9 @@ bool bsg_ctj_set_app_build_uuid(const char *uuid) {
 
 bool bsg_ctj_set_app_id(const char *id) {
   // {
-  //   "events": [
-  //     {
   //       "app": {
   //         "id": "com.bugsnag.android.example.debug"
   //       }
-  //     }
-  //   ]
   // }
 
   return set_event_subobject_string(KEY_APP, KEY_ID, id);
@@ -508,13 +480,9 @@ bool bsg_ctj_set_app_id(const char *id) {
 
 bool bsg_ctj_set_app_release_stage(const char *value) {
   // {
-  //   "events": [
-  //     {
   //       "app": {
   //         "releaseStage": "staging"
   //       }
-  //     }
-  //   ]
   // }
 
   return set_event_subobject_string(KEY_APP, KEY_RELEASE_STAGE, value);
@@ -522,13 +490,9 @@ bool bsg_ctj_set_app_release_stage(const char *value) {
 
 bool bsg_ctj_set_app_type(const char *value) {
   // {
-  //   "events": [
-  //     {
   //       "app": {
   //         "type": "c"
   //       }
-  //     }
-  //   ]
   // }
 
   return set_event_subobject_string(KEY_APP, KEY_TYPE, value);
@@ -536,13 +500,9 @@ bool bsg_ctj_set_app_type(const char *value) {
 
 bool bsg_ctj_set_app_version(const char *value) {
   // {
-  //   "events": [
-  //     {
   //       "app": {
   //         "version": "1.1.3"
   //       }
-  //     }
-  //   ]
   // }
 
   return set_event_subobject_string(KEY_APP, KEY_VERSION, value);
@@ -550,13 +510,9 @@ bool bsg_ctj_set_app_version(const char *value) {
 
 bool bsg_ctj_set_app_version_code(int value) {
   // {
-  //   "events": [
-  //     {
   //       "app": {
   //         "versionCode": 12
   //       }
-  //     }
-  //   ]
   // }
 
   return set_event_subobject_double(KEY_APP, KEY_VERSION_CODE, value);
@@ -564,13 +520,9 @@ bool bsg_ctj_set_app_version_code(int value) {
 
 bool bsg_ctj_set_app_duration(time_t value) {
   // {
-  //   "events": [
-  //     {
   //       "app": {
   //         "duration": 1275
   //       }
-  //     }
-  //   ]
   // }
 
   return set_event_subobject_double(KEY_APP, KEY_DURATION, value);
@@ -578,13 +530,9 @@ bool bsg_ctj_set_app_duration(time_t value) {
 
 bool bsg_ctj_set_app_duration_in_foreground(time_t value) {
   // {
-  //   "events": [
-  //     {
   //       "app": {
   //         "duration": 983
   //       }
-  //     }
-  //   ]
   // }
 
   return set_event_subobject_double(KEY_APP, KEY_DURATION_IN_FG, value);
@@ -592,13 +540,9 @@ bool bsg_ctj_set_app_duration_in_foreground(time_t value) {
 
 bool bsg_ctj_set_app_in_foreground(bool value) {
   // {
-  //   "events": [
-  //     {
   //       "app": {
   //         "inForeground": true
   //       }
-  //     }
-  //   ]
   // }
 
   return set_event_subobject_boolean(KEY_APP, KEY_IN_FG, value);
@@ -606,13 +550,9 @@ bool bsg_ctj_set_app_in_foreground(bool value) {
 
 bool bsg_ctj_set_app_is_launching(bool value) {
   // {
-  //   "events": [
-  //     {
   //       "app": {
   //         "isLaunching": true
   //       }
-  //     }
-  //   ]
   // }
 
   return set_event_subobject_boolean(KEY_APP, KEY_IS_LAUNCHING, value);
@@ -620,13 +560,9 @@ bool bsg_ctj_set_app_is_launching(bool value) {
 
 bool bsg_ctj_set_device_jailbroken(bool value) {
   // {
-  //   "events": [
-  //     {
   //       "device": {
   //         "jailbroken": false
   //       }
-  //     }
-  //   ]
   // }
 
   return set_event_subobject_boolean(KEY_DEVICE, KEY_JAILBROKEN, value);
@@ -634,13 +570,9 @@ bool bsg_ctj_set_device_jailbroken(bool value) {
 
 bool bsg_ctj_set_device_id(const char *value) {
   // {
-  //   "events": [
-  //     {
   //       "device": {
   //         "id": "fd124e87760c4281aef"
   //       }
-  //     }
-  //   ]
   // }
 
   return set_event_subobject_string(KEY_DEVICE, KEY_ID, value);
@@ -648,13 +580,9 @@ bool bsg_ctj_set_device_id(const char *value) {
 
 bool bsg_ctj_set_device_locale(const char *value) {
   // {
-  //   "events": [
-  //     {
   //       "device": {
   //         "locale": "en_US"
   //       }
-  //     }
-  //   ]
   // }
 
   return set_event_subobject_string(KEY_DEVICE, KEY_LOCALE, value);
@@ -662,13 +590,9 @@ bool bsg_ctj_set_device_locale(const char *value) {
 
 bool bsg_ctj_set_device_manufacturer(const char *value) {
   // {
-  //   "events": [
-  //     {
   //       "device": {
   //         "manufacturer": "LGE"
   //       }
-  //     }
-  //   ]
   // }
 
   return set_event_subobject_string(KEY_DEVICE, KEY_MANUFACTURER, value);
@@ -676,13 +600,9 @@ bool bsg_ctj_set_device_manufacturer(const char *value) {
 
 bool bsg_ctj_set_device_model(const char *value) {
   // {
-  //   "events": [
-  //     {
   //       "device": {
   //         "model": "Nexus 6P"
   //       }
-  //     }
-  //   ]
   // }
 
   return set_event_subobject_string(KEY_DEVICE, KEY_MODEL, value);
@@ -690,13 +610,9 @@ bool bsg_ctj_set_device_model(const char *value) {
 
 bool bsg_ctj_set_device_os_version(const char *value) {
   // {
-  //   "events": [
-  //     {
   //       "device": {
   //         "osVersion": "8.0.1"
   //       }
-  //     }
-  //   ]
   // }
 
   return set_event_subobject_string(KEY_DEVICE, KEY_OS_VERSION, value);
@@ -704,13 +620,9 @@ bool bsg_ctj_set_device_os_version(const char *value) {
 
 bool bsg_ctj_set_device_total_memory(long value) {
   // {
-  //   "events": [
-  //     {
   //       "device": {
   //         "totalMemory": 201326592
   //       }
-  //     }
-  //   ]
   // }
 
   return set_event_subobject_double(KEY_DEVICE, KEY_TOTAL_MEMORY, value);
@@ -718,13 +630,9 @@ bool bsg_ctj_set_device_total_memory(long value) {
 
 bool bsg_ctj_set_device_orientation(const char *value) {
   // {
-  //   "events": [
-  //     {
   //       "device": {
   //         "orientation": "portrait"
   //       }
-  //     }
-  //   ]
   // }
 
   return set_event_subobject_string(KEY_DEVICE, KEY_ORIENTATION, value);
@@ -732,13 +640,9 @@ bool bsg_ctj_set_device_orientation(const char *value) {
 
 bool bsg_ctj_set_device_time(time_t value) {
   // {
-  //   "events": [
-  //     {
   //       "device": {
   //         "time": "2018-08-07T10:16:34.564Z"
   //       }
-  //     }
-  //   ]
   // }
 
   // IMPORTANT: This value MUST be converted to an RFC 3339 timestamp and stored
@@ -748,13 +652,9 @@ bool bsg_ctj_set_device_time(time_t value) {
 
 bool bsg_ctj_set_device_os_name(const char *value) {
   // {
-  //   "events": [
-  //     {
   //       "device": {
   //         "osName": "android"
   //       }
-  //     }
-  //   ]
   // }
 
   return set_event_subobject_string(KEY_DEVICE, KEY_OS_NAME, value);
@@ -762,15 +662,11 @@ bool bsg_ctj_set_device_os_name(const char *value) {
 
 bool bsg_ctj_set_error_class(const char *value) {
   // {
-  //   "events": [
-  //     {
   //       "exceptions": [
   //         {
   //           "errorClass": "NoMethodError"
   //         }
   //       ]
-  //     }
-  //   ]
   // }
 
   return set_exception_string(KEY_ERROR_CLASS, value);
@@ -778,15 +674,11 @@ bool bsg_ctj_set_error_class(const char *value) {
 
 bool bsg_ctj_set_error_message(const char *value) {
   // {
-  //   "events": [
-  //     {
   //       "exceptions": [
   //         {
   //           "message": "Unable to connect to database"
   //         }
   //       ]
-  //     }
-  //   ]
   // }
 
   return set_exception_string(KEY_MESSAGE, value);
@@ -794,15 +686,11 @@ bool bsg_ctj_set_error_message(const char *value) {
 
 bool bsg_ctj_set_error_type(const char *value) {
   // {
-  //   "events": [
-  //     {
   //       "exceptions": [
   //         {
   //           "type": "android"
   //         }
   //       ]
-  //     }
-  //   ]
   // }
 
   return set_exception_string(KEY_TYPE, value);
@@ -810,11 +698,7 @@ bool bsg_ctj_set_error_type(const char *value) {
 
 bool bsg_ctj_set_event_severity(bugsnag_severity value) {
   // {
-  //   "events": [
-  //     {
   //       "severity": "error"
-  //     }
-  //   ]
   // }
 
   return set_event_string(KEY_SEVERITY, get_severity(value));
@@ -822,11 +706,7 @@ bool bsg_ctj_set_event_severity(bugsnag_severity value) {
 
 bool bsg_ctj_set_event_unhandled(bool value) {
   // {
-  //   "events": [
-  //     {
   //       "unhandled": true
-  //     }
-  //   ]
   // }
 
   return set_event_boolean(KEY_UNHANDLED, value);
@@ -834,11 +714,7 @@ bool bsg_ctj_set_event_unhandled(bool value) {
 
 bool bsg_ctj_set_event_grouping_hash(const char *value) {
   // {
-  //   "events": [
-  //     {
   //       "groupingHash": "buggy_file.c"
-  //     }
-  //   ]
   // }
 
   return set_event_string(KEY_GROUPING_HASH, value);
@@ -847,19 +723,14 @@ bool bsg_ctj_set_event_grouping_hash(const char *value) {
 bool bsg_ctj_set_metadata_double(const char *section, const char *name,
                                  double value) {
   // {
-  //   "events": [
-  //     {
   //       "metadata": {
   //         "some_section": {
   //           "some_name": 1.5
   //         }
   //       }
-  //     }
-  //   ]
   // }
 
   bsg_pb_reset();
-  stack_current_event();
   bsg_pb_stack_map_key(KEY_METADATA);
   bsg_pb_stack_map_key(section);
   RETURN_ON_FALSE(add_double(name, value));
@@ -870,19 +741,14 @@ bool bsg_ctj_set_metadata_double(const char *section, const char *name,
 bool bsg_ctj_set_metadata_string(const char *section, const char *name,
                                  const char *value) {
   // {
-  //   "events": [
-  //     {
   //       "metadata": {
   //         "some_section": {
   //           "some_name": "value"
   //         }
   //       }
-  //     }
-  //   ]
   // }
 
   bsg_pb_reset();
-  stack_current_event();
   bsg_pb_stack_map_key(KEY_METADATA);
   bsg_pb_stack_map_key(section);
   RETURN_ON_FALSE(add_string(name, value));
@@ -893,19 +759,14 @@ bool bsg_ctj_set_metadata_string(const char *section, const char *name,
 bool bsg_ctj_set_metadata_bool(const char *section, const char *name,
                                bool value) {
   // {
-  //   "events": [
-  //     {
   //       "metadata": {
   //         "some_section": {
   //           "some_name": false
   //         }
   //       }
-  //     }
-  //   ]
   // }
 
   bsg_pb_reset();
-  stack_current_event();
   bsg_pb_stack_map_key(KEY_METADATA);
   bsg_pb_stack_map_key(section);
   RETURN_ON_FALSE(add_boolean(name, value));
@@ -915,7 +776,6 @@ bool bsg_ctj_set_metadata_bool(const char *section, const char *name,
 
 bool bsg_ctj_clear_metadata(const char *section, const char *name) {
   bsg_pb_reset();
-  stack_current_event();
   bsg_pb_stack_map_key(KEY_METADATA);
   bsg_pb_stack_map_key(section);
   bsg_pb_stack_map_key(name);
@@ -926,7 +786,6 @@ bool bsg_ctj_clear_metadata(const char *section, const char *name) {
 
 bool bsg_ctj_clear_metadata_section(const char *section) {
   bsg_pb_reset();
-  stack_current_event();
   bsg_pb_stack_map_key(KEY_METADATA);
   bsg_pb_stack_map_key(section);
   RETURN_ON_FALSE(bsg_ctj_clear_value(bsg_pb_path()));
