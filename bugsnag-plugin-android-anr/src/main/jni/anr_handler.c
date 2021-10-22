@@ -29,6 +29,7 @@ static JavaVM *bsg_jvm = NULL;
 static jmethodID mthd_notify_anr_detected = NULL;
 static jobject obj_plugin = NULL;
 static jclass frame_class = NULL;
+static jobject error_type = NULL;
 static jmethodID frame_init = NULL;
 
 static bugsnag_stackframe anr_stacktrace[BUGSNAG_FRAMES_MAX];
@@ -73,6 +74,26 @@ static jmethodID safe_get_method_id(JNIEnv *env, jclass clz, const char *name,
   return methodId;
 }
 
+static jfieldID safe_get_static_field_id(JNIEnv *env, jclass clz,
+                                         const char *name, const char *sig) {
+  if (env == NULL || clz == NULL || name == NULL || sig == NULL) {
+    return NULL;
+  }
+  jfieldID fid = (*env)->GetStaticFieldID(env, clz, name, sig);
+  check_and_clear_exc(env);
+  return fid;
+}
+
+static jobject safe_get_static_object_field(JNIEnv *env, jclass clz,
+                                            jfieldID field) {
+  if (env == NULL || clz == NULL) {
+    return NULL;
+  }
+  jobject obj = (*env)->GetStaticObjectField(env, clz, field);
+  check_and_clear_exc(env);
+  return obj;
+}
+
 static bool configure_anr_jni_impl(JNIEnv *env) {
   // get a global reference to the AnrPlugin class
   // https://developer.android.com/training/articles/perf-jni#faq:-why-didnt-findclass-find-my-class
@@ -90,12 +111,26 @@ static bool configure_anr_jni_impl(JNIEnv *env) {
   }
   mthd_notify_anr_detected =
       safe_get_method_id(env, clz, "notifyAnrDetected", "(Ljava/util/List;)V");
+
+  // find ErrorType class
+  jclass error_type_class =
+      safe_find_class(env, "com/bugsnag/android/ErrorType");
+  jfieldID error_type_field = safe_get_static_field_id(
+      env, error_type_class, "C", "Lcom/bugsnag/android/ErrorType;");
+  error_type =
+      safe_get_static_object_field(env, error_type_class, error_type_field);
+  error_type = (*env)->NewGlobalRef(env, error_type);
+
+  // find NativeStackFrame class
   frame_class = safe_find_class(env, "com/bugsnag/android/NativeStackframe");
   frame_class = (*env)->NewGlobalRef(env, frame_class);
+
+  // find NativeStackframe ctor
   frame_init = safe_get_method_id(
       env, frame_class, "<init>",
       "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Number;Ljava/lang/"
-      "Long;Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Boolean;)V");
+      "Long;Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Boolean;Lcom/bugsnag/"
+      "android/ErrorType;)V");
   return true;
 }
 
@@ -180,9 +215,9 @@ static void notify_anr_detected() {
                                               (jlong)frame->symbol_address);
     jobject jload_address =
         safe_new_object(env, long_class, long_init, (jlong)frame->load_address);
-    jobject jframe = safe_new_object(env, frame_class, frame_init, jmethod,
-                                     jfilename, jline_number, jframe_address,
-                                     jsymbol_address, jload_address, NULL);
+    jobject jframe = safe_new_object(
+        env, frame_class, frame_init, jmethod, jfilename, jline_number,
+        jframe_address, jsymbol_address, jload_address, NULL, error_type);
     if (jlist != NULL && list_add != NULL && jframe != NULL) {
       (*env)->CallBooleanMethod(env, jlist, list_add, jframe);
       check_and_clear_exc(env);

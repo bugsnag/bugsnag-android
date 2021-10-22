@@ -168,6 +168,14 @@ internal class EventInternal : JsonStream.Streamable, MetadataAware, UserAware {
         return errorTypes.plus(frameOverrideTypes)
     }
 
+    internal fun normalizeStackframeErrorTypes() {
+        if (getErrorTypesFromStackframes().size == 1) {
+            errors.flatMap { it.stacktrace }.forEach {
+                it.type = null
+            }
+        }
+    }
+
     internal fun updateSeverityReasonInternal(severityReason: SeverityReason) {
         this.severityReason = severityReason
     }

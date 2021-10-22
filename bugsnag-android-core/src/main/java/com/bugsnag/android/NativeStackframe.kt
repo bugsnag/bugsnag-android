@@ -42,7 +42,12 @@ class NativeStackframe internal constructor(
     /**
      * Whether this frame identifies the program counter
      */
-    var isPC: Boolean?
+    var isPC: Boolean?,
+
+    /**
+     * The type of the error
+     */
+    var type: ErrorType? = null
 ) : JsonStream.Streamable, Journalable {
 
     constructor(json: Map<String, Any?>) : this(
@@ -53,11 +58,11 @@ class NativeStackframe internal constructor(
         json[JournalKeys.keySymbolAddress] as? Long,
         json[JournalKeys.keyLoadAddress] as? Long,
         json[JournalKeys.keyIsPC] as? Boolean
-    )
-    /**
-     * The type of the error
-     */
-    var type: ErrorType? = null
+    ) {
+        (json[JournalKeys.keyType] as? String)?.let {
+            type = ErrorType.fromDescriptor(it)
+        }
+    }
 
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) = writer.value(toJournalSection())
