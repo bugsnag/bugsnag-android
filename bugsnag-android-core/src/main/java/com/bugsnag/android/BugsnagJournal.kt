@@ -184,5 +184,22 @@ internal class BugsnagJournal @JvmOverloads internal constructor(
             )
             return docWithVersionInfo
         }
+
+        private val specialCharsRegex = """([.+\\])""".toRegex()
+        private const val specialCharsReplacement = """\\$1"""
+
+        /**
+         * Force a path component to be interpreted as a map key that's not special in any
+         * way by escaping:
+         * - The first char if the path component can be converted to an integer
+         * - All occurrences of special characters (+ . \)
+         */
+        fun unspecialMapPath(pathComponent: String): String {
+            val index = pathComponent.toIntOrNull()
+            if (index != null) {
+                return "\\" + pathComponent
+            }
+            return pathComponent.replace(specialCharsRegex, specialCharsReplacement)
+        }
     }
 }

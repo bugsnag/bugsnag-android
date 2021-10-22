@@ -134,6 +134,56 @@ internal class JournaledStateObserverTest {
     }
 
     @Test
+    fun testMetadataNumeric() {
+        val journal = emptyJournal()
+        val observer = JournaledStateObserver(client, journal)
+        observer.onStateChange(StateEvent.AddMetadata("0", "-1", "myvalue"))
+        var expected = BugsnagJournal.withInitialDocumentContents(
+            mapOf(
+                "metaData" to mapOf(
+                    "0" to mapOf(
+                        "-1" to "myvalue"
+                    )
+                )
+            )
+        )
+        BugsnagTestUtils.assertNormalizedEquals(expected, journal.document)
+
+        observer.onStateChange(StateEvent.ClearMetadataSection("0"))
+        expected = BugsnagJournal.withInitialDocumentContents(
+            mapOf(
+                "metaData" to mapOf<String, Any>()
+            )
+        )
+        BugsnagTestUtils.assertNormalizedEquals(expected, journal.document)
+    }
+
+    @Test
+    fun testMetadataSpecialChars() {
+        val journal = emptyJournal()
+        val observer = JournaledStateObserver(client, journal)
+        observer.onStateChange(StateEvent.AddMetadata("0\\1.4", "a+", "myvalue"))
+        var expected = BugsnagJournal.withInitialDocumentContents(
+            mapOf(
+                "metaData" to mapOf(
+                    "0\\1.4" to mapOf(
+                        "a+" to "myvalue"
+                    )
+                )
+            )
+        )
+        BugsnagTestUtils.assertNormalizedEquals(expected, journal.document)
+
+        observer.onStateChange(StateEvent.ClearMetadataSection("0\\1.4"))
+        expected = BugsnagJournal.withInitialDocumentContents(
+            mapOf(
+                "metaData" to mapOf<String, Any>()
+            )
+        )
+        BugsnagTestUtils.assertNormalizedEquals(expected, journal.document)
+    }
+
+    @Test
     fun testBreadcrumbs() {
         val journal = emptyJournal()
         val observer = JournaledStateObserver(client, journal)

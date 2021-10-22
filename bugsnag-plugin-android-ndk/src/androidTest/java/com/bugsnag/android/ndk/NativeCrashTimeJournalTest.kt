@@ -372,6 +372,9 @@ class NativeCrashTimeJournalTest {
         runJournalTest(mapOf(), "testAddMetadataDouble") {
             nativeAddMetadataDouble(it, "my-section", "my-name", 1.5)
         }
+        runJournalTest(mapOf(), "testAddMetadataDigitsDouble") {
+            nativeAddMetadataDouble(it, "-1", "0\\.+", 1.5)
+        }
     }
 
     // bsg_ctj_set_metadata_bool
@@ -382,6 +385,9 @@ class NativeCrashTimeJournalTest {
         runJournalTest(mapOf(), "testAddMetadataBool") {
             nativeAddMetadataBool(it, "my-section", "my-name", true)
         }
+        runJournalTest(mapOf(), "testAddMetadataDigitsBool") {
+            nativeAddMetadataBool(it, "1000", "3456\\.+", false)
+        }
     }
 
     // bsg_ctj_set_metadata_string
@@ -391,6 +397,9 @@ class NativeCrashTimeJournalTest {
     fun testAddMetadataString() {
         runJournalTest(mapOf(), "testAddMetadataString") {
             nativeAddMetadataString(it, "my-section", "my-name", "my-value")
+        }
+        runJournalTest(mapOf(), "testAddMetadataDigitsString") {
+            nativeAddMetadataString(it, "9", "9\\.+", "my-value")
         }
     }
 

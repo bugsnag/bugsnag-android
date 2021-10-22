@@ -154,6 +154,13 @@
       }
     }
   },
+  "testAddMetadataDigitsDouble": {
+    "metaData": {
+      "-1": {
+        "0\\.+": 1.5
+      }
+    }
+  },
   "testAddMetadataBool": {
     "metaData": {
       "my-section": {
@@ -161,10 +168,24 @@
       }
     }
   },
+  "testAddMetadataDigitsBool": {
+    "metaData": {
+      "1000": {
+        "3456\\.+": false
+      }
+    }
+  },
   "testAddMetadataString": {
     "metaData": {
       "my-section": {
         "my-name": "my-value"
+      }
+    }
+  },
+  "testAddMetadataDigitsString": {
+    "metaData": {
+      "9": {
+        "9\\.+": "my-value"
       }
     }
   },

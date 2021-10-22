@@ -1,7 +1,7 @@
 package com.bugsnag.android.internal.journal
 
 import com.bugsnag.android.internal.asConcurrent
-import java.lang.IllegalArgumentException
+import java.util.LinkedList
 
 /**
  * DocumentPath records a path into a hierarchical acyclic document, and can be used to modify
@@ -70,7 +70,10 @@ class DocumentPath(path: String) {
      * @param value    The value to modify with.
      * @return The modified document (may not be the same document that was passed in).
      */
-    fun modifyDocument(document: MutableMap<in String, out Any>, value: Any?): MutableMap<String, Any> {
+    fun modifyDocument(
+        document: MutableMap<in String, out Any>,
+        value: Any?
+    ): MutableMap<String, Any> {
         if (directives.isEmpty()) {
             val concurrentValue = value.asConcurrent()
             require(concurrentValue is MutableMap<*, *>) { "Value replacing document must be a map" }
@@ -144,153 +147,118 @@ class DocumentPath(path: String) {
         private const val PATH_SEPARATOR = '.'
         private const val ADD_OPERATOR = '+'
 
-        private enum class PathType {
-            PATH_TYPE_NORMAL,
-            PATH_TYPE_LIST_INSERT,
-            PATH_TYPE_ADD,
+        private fun containsEscapeSequence(str: String): Boolean {
+            for (c in str) {
+                if (c == ESCAPE_CHAR) {
+                    return true
+                }
+            }
+            return false
+        }
+
+        private fun unescape(str: String): String {
+            if (!containsEscapeSequence(str)) {
+                return str
+            }
+
+            val buff = StringBuilder(str.length)
+            var escapeIsInitiated = false
+            for (c in str) {
+                if (escapeIsInitiated) {
+                    buff.append(c)
+                    escapeIsInitiated = false
+                } else if (c == ESCAPE_CHAR) {
+                    escapeIsInitiated = true
+                } else {
+                    buff.append(c)
+                }
+            }
+
+            require(!escapeIsInitiated) { "Path cannot end on an escape char" }
+
+            return buff.toString()
         }
 
         /**
          * Generate path directives from a path string.
+         * The path cannot have empty components (e.g. "a..b" is invalid).
          */
         internal fun toPathDirectives(path: String): List<DocumentPathDirective<Any>> {
             if (path.isEmpty()) {
                 return emptyList()
             }
-            val pathType = getPathType(path)
-            val trimmedPath = trimPath(path, pathType)
-            val directives = ArrayList<DocumentPathDirective<*>>()
-            var requiresEscaping = false
-            var strBegin = 0
+            val directives = LinkedList<DocumentPathDirective<*>>()
+            val buff = StringBuilder(path.length)
+            var escapeIsInitiated = false
 
-            val buildPathComponent = fun(endIndex: Int): String {
-                return when {
-                    requiresEscaping -> unescape(trimmedPath, strBegin, endIndex)
-                    else -> trimmedPath.substring(strBegin, endIndex)
-                }
-            }
-
-            var i = 0
-            while (i < trimmedPath.length) {
-                when (trimmedPath[i]) {
-                    ESCAPE_CHAR -> {
-                        requiresEscaping = true
-                        i++
+            for (c in path) {
+                if (escapeIsInitiated) {
+                    if (c != PATH_SEPARATOR) {
+                        buff.append(ESCAPE_CHAR)
                     }
-                    PATH_SEPARATOR -> {
-                        directives.add(makeDirectiveFromPathComponent(buildPathComponent(i)))
-                        strBegin = i + 1
-                        requiresEscaping = false
-                    }
-                    else -> {
+                    buff.append(c)
+                    escapeIsInitiated = false
+                } else {
+                    when (c) {
+                        ESCAPE_CHAR -> escapeIsInitiated = true
+                        PATH_SEPARATOR -> {
+                            require(!buff.isEmpty()) { "Path component cannot be empty" }
+                            directives += toPathDirective(buff.toString())
+                            buff.delete(0, buff.length)
+                        }
+                        else -> buff.append(c)
                     }
                 }
-                i++
-            }
-            if (strBegin < trimmedPath.length) {
-                val pathComponent = buildPathComponent(trimmedPath.length)
-                val directive = when (pathType) {
-                    PathType.PATH_TYPE_ADD -> makeAddDirectiveFromPathComponent(pathComponent)
-                    else -> makeDirectiveFromPathComponent(pathComponent)
-                }
-                directives.add(directive)
             }
 
-            if (pathType == PathType.PATH_TYPE_LIST_INSERT) {
-                directives.add(DocumentPathDirective.ListInsertDirective())
-            }
+            require(!escapeIsInitiated) { "Path cannot end on an escape character" }
+            val isLastCharEscaped = (path.length > 1 && path[path.lastIndex - 1] == ESCAPE_CHAR)
+            directives.add(toLastPathDirective(buff.toString(), isLastCharEscaped))
 
             @Suppress("UNCHECKED_CAST")
             return directives as MutableList<DocumentPathDirective<Any>>
         }
 
-        /**
-         * Unescape a string.
-         */
-        private fun unescape(str: String, startOffset: Int, endOffset: Int): String {
-            val buff = StringBuilder(endOffset - startOffset)
-            var i = startOffset
-            while (i < endOffset) {
-                val ch = str[i]
-                if (ch == ESCAPE_CHAR) {
-                    i++
-                    require(i < endOffset) { "Path cannot end on an escape char '\\'" }
-                    buff.append(str[i])
-                } else {
-                    buff.append(ch)
-                }
-                i++
-            }
-            return buff.toString()
-        }
-
-        private fun getPathType(path: String): PathType {
-            if (path.length == 0) {
-                return PathType.PATH_TYPE_NORMAL
-            }
-
-            if (path.length > 1 && path[path.lastIndex - 1] == ESCAPE_CHAR) {
-                return PathType.PATH_TYPE_NORMAL
-            }
-
-            return when (path[path.lastIndex]) {
-                PATH_SEPARATOR -> PathType.PATH_TYPE_LIST_INSERT
-                ADD_OPERATOR -> PathType.PATH_TYPE_ADD
-                else -> PathType.PATH_TYPE_NORMAL
-            }
-        }
-
-        private fun trimPath(path: String, pathType: PathType): String {
-            val trimmedPath = when (pathType) {
-                PathType.PATH_TYPE_ADD -> path.substring(0, path.lastIndex)
-                else -> path
-            }
-            if (path.length != trimmedPath.length) {
-                if (trimmedPath.isEmpty()) {
-                    throw IllegalArgumentException("Path component cannot consist solely of an operator")
-                }
-                if (trimmedPath[trimmedPath.lastIndex] == PATH_SEPARATOR) {
-                    if (!(trimmedPath.length > 1 && trimmedPath[trimmedPath.lastIndex - 1] == ESCAPE_CHAR)) {
-                        throw IllegalArgumentException("Path component cannot consist solely of an operator")
-                    }
-                }
-            }
-            return trimmedPath
-        }
-
-        /**
-         * Generate a path directive based on the data type in a path component:
-         *
-         * - String: Map key directive
-         * - Integer: List index directive
-         * - Value -1: Last list index directive
-         */
-        private fun makeDirectiveFromPathComponent(pathComponent: String): DocumentPathDirective<out Any> {
-            require(pathComponent.isNotEmpty(), { "Path component cannot be empty" })
-
+        internal fun toPathDirective(pathComponent: String): DocumentPathDirective<out Any> {
             val index = pathComponent.toIntOrNull()
             if (index != null) {
+                require(index >= -1) { "List path index $index is invalid" }
                 return if (index == -1) {
                     DocumentPathDirective.ListLastIndexDirective()
                 } else {
                     DocumentPathDirective.ListIndexDirective(index)
                 }
             }
-            return DocumentPathDirective.MapKeyDirective(pathComponent)
+
+            return DocumentPathDirective.MapKeyDirective(unescape(pathComponent))
         }
 
-        private fun makeAddDirectiveFromPathComponent(pathComponent: String): DocumentPathDirective<out Any> {
-            require(pathComponent.isNotEmpty(), { "Path component cannot be empty" })
-
-            val index = pathComponent.toIntOrNull()
-            if (index != null) {
-                return if (index == -1) {
-                    DocumentPathDirective.ListLastIndexAddDirective()
-                } else {
-                    DocumentPathDirective.ListIndexAddDirective(index)
-                }
+        internal fun toLastPathDirective(
+            pathComponent: String,
+            isLastCharEscaped: Boolean
+        ): DocumentPathDirective<out Any> {
+            if (pathComponent.isEmpty()) {
+                // The original path ended in a dot
+                return DocumentPathDirective.ListInsertDirective()
             }
-            return DocumentPathDirective.MapKeyAddDirective(pathComponent)
+
+            if (!isLastCharEscaped && pathComponent.last() == ADD_OPERATOR) {
+                val subComponent = pathComponent.substring(0, pathComponent.lastIndex)
+                require(!subComponent.isEmpty()) { "Path subcomponent cannot be empty" }
+
+                val index = subComponent.toIntOrNull()
+                if (index != null) {
+                    require(index >= -1) { "List path index $index is invalid" }
+                    return if (index == -1) {
+                        DocumentPathDirective.ListLastIndexAddDirective()
+                    } else {
+                        DocumentPathDirective.ListIndexAddDirective(index)
+                    }
+                }
+                return DocumentPathDirective.MapKeyAddDirective(unescape(subComponent))
+            }
+
+            return toPathDirective(pathComponent)
         }
     }
 }
