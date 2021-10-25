@@ -53,6 +53,15 @@ TEST test_general_use(void) {
     PASS();
 }
 
+TEST test_auto_escape(void) {
+    bsg_pb_reset();
+    ASSERT_STR_EQ("", bsg_pb_path());
+    bsg_pb_stack_map_key("foo");
+    ASSERT_STR_EQ("foo", bsg_pb_path());
+    bsg_pb_stack_map_key("0");
+    ASSERT_STR_EQ("foo.\\0", bsg_pb_path());
+}
+
 TEST test_unstack_too_far(void) {
     bsg_pb_reset();
     ASSERT_STR_EQ("", bsg_pb_path());
@@ -101,6 +110,7 @@ TEST test_path_too_long(void) {
 SUITE(suite_path_builder) {
     RUN_TEST(test_reset);
     RUN_TEST(test_general_use);
+    RUN_TEST(test_auto_escape);
     RUN_TEST(test_unstack_too_far);
     RUN_TEST(test_stack_too_far);
     RUN_TEST(test_path_too_long);

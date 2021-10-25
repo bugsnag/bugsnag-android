@@ -184,4 +184,34 @@ class BugsnagJournalTest {
             BugsnagTestUtils.normalized(observedDocument)
         )
     }
+
+    @Test
+    fun testUnspecialMapPath() {
+        Assert.assertEquals("""""", BugsnagJournal.unspecialMapPath(""""""))
+        Assert.assertEquals("""a""", BugsnagJournal.unspecialMapPath("""a"""))
+        Assert.assertEquals("""\0""", BugsnagJournal.unspecialMapPath("""0"""))
+        Assert.assertEquals("""\1234""", BugsnagJournal.unspecialMapPath("""1234"""))
+        Assert.assertEquals("""a\\\.\+""", BugsnagJournal.unspecialMapPath("""a\.+"""))
+    }
+
+    @Test
+    fun testJournalEntryUnspecialMapPath() {
+        val journalPath = newBaseDocumentPath()
+        val journal = BugsnagJournal(NoopLogger, journalPath, mapOf())
+        journal.addCommand(BugsnagJournal.unspecialMapPath("""a\.+"""), 100)
+        journal.snapshot()
+
+        val observedDocument = BugsnagJournal.loadPreviousDocument(journalPath)
+        val expectedDocument = HashMap(BugsnagJournal.withInitialDocumentContents(mapOf()))
+        expectedDocument["""a\.+"""] = 100
+
+        Assert.assertEquals(
+            BugsnagTestUtils.normalized(expectedDocument),
+            BugsnagTestUtils.normalized(observedDocument)
+        )
+        Assert.assertEquals(
+            BugsnagTestUtils.normalized(expectedDocument),
+            BugsnagTestUtils.normalized(journal.document)
+        )
+    }
 }

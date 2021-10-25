@@ -317,6 +317,28 @@ class DocumentPathTest {
         BugsnagTestUtils.assertNormalizedEquals(expected, observed)
     }
 
+    @Test
+    fun testEscapedNumerals() {
+        val document = mutableMapOf<String, Any>()
+        val docpath = DocumentPath("\\0.\\-1")
+        val value = 1
+        val expected = mapOf<String, Any>("0" to mapOf("-1" to 1))
+
+        val observed = docpath.modifyDocument(document, value)
+        BugsnagTestUtils.assertNormalizedEquals(expected, observed)
+    }
+
+    @Test
+    fun testEscapedSpecials() {
+        val document = mutableMapOf<String, Any>()
+        val docpath = DocumentPath("""x.a\\\.\+""")
+        val value = 1
+        val expected = mapOf<String, Any>("x" to mapOf("""a\.+""" to 1))
+
+        val observed = docpath.modifyDocument(document, value)
+        BugsnagTestUtils.assertNormalizedEquals(expected, observed)
+    }
+
     @Test(expected = IllegalArgumentException::class)
     fun testLastDotNull() {
         val document = mutableMapOf<String, Any>()

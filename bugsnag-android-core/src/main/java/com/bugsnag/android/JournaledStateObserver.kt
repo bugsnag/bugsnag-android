@@ -14,13 +14,27 @@ internal class JournaledStateObserver(val client: Client, val journal: BugsnagJo
                 // Nothing for us to do
             }
             is StateEvent.AddMetadata -> {
-                journal.addCommand("${JournalKeys.pathMetadata}.${event.section}.${event.key}", event.value)
+                journal.addCommand(
+                    "${JournalKeys.pathMetadata}." +
+                        "${BugsnagJournal.unspecialMapPath(event.section)}." +
+                        BugsnagJournal.unspecialMapPath(event.key!!),
+                    event.value
+                )
             }
             is StateEvent.ClearMetadataSection -> {
-                journal.addCommand("${JournalKeys.pathMetadata}.${event.section}", null)
+                journal.addCommand(
+                    "${JournalKeys.pathMetadata}." +
+                        BugsnagJournal.unspecialMapPath(event.section),
+                    null
+                )
             }
             is StateEvent.ClearMetadataValue -> {
-                journal.addCommand("${JournalKeys.pathMetadata}.${event.section}.${event.key}", null)
+                journal.addCommand(
+                    "${JournalKeys.pathMetadata}." +
+                        "${BugsnagJournal.unspecialMapPath(event.section)}." +
+                        BugsnagJournal.unspecialMapPath(event.key!!),
+                    null
+                )
             }
             is StateEvent.AddBreadcrumb -> {
                 handleAddBreadcrumbEvent(event)
@@ -70,11 +84,28 @@ internal class JournaledStateObserver(val client: Client, val journal: BugsnagJo
         }
     }
 
+    private fun makeMetadataJournalSafe(metadata: Map<String, Any?>): MutableMap<String, Any?> {
+        val result = mutableMapOf<String, Any?>()
+        metadata.forEach { entry ->
+            result[BugsnagJournal.unspecialMapPath(entry.key)] = if (entry.value is Map<*, *>) {
+                (entry.value as Map<*, *>).mapKeys {
+                    if (it.key is String) {
+                        BugsnagJournal.unspecialMapPath(it.key as String)
+                    } else {
+                        it.key
+                    }
+                }
+            } else {
+                entry.value
+            }
+        }
+        return result
+    }
     private fun handleAddBreadcrumbEvent(event: StateEvent.AddBreadcrumb) {
         journal.addCommand(
             "${JournalKeys.pathBreadcrumbs}.",
             mapOf(
-                JournalKeys.keyMetadata to event.metadata,
+                JournalKeys.keyMetadata to makeMetadataJournalSafe(event.metadata),
                 JournalKeys.keyName to event.message,
                 JournalKeys.keyTimestamp to event.timestamp,
                 JournalKeys.keyType to event.type.toString()
