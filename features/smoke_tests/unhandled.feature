@@ -184,7 +184,7 @@ Scenario: Signal raised with overwritten config
     And the event "context" equals "Some custom context"
 
     # Metadata
-    And the event "metaData.Riker Ipsum.examples" equals "I'll be sure to note that in my log. You enjoyed that. They wer"
+    And the event "metaData.Riker Ipsum.examples" equals "I'll be sure to note that in my log. You enjoyed that. They were just sucked into space. How long can two people talk about nothing? I've had twelve years to think about it. And if I had it to do over again, I would have grabbed the phaser and pointed it at you instead of them."
     And the event "metaData.fruit.apple" equals "gala"
     And the event "metaData.fruit.ripe" is true
     And the event "metaData.fruit.counters" equals 47

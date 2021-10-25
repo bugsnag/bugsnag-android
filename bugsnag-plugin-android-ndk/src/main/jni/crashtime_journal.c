@@ -229,8 +229,7 @@ static bool add_exception(const bsg_error *exc) {
   //    }
   //  ],
 
-  bsg_pb_stack_map_key(KEY_EXCEPTIONS);
-  stack_new_map_in_list();
+  stack_current_exception();
 
   RETURN_ON_FALSE(add_string(KEY_ERROR_CLASS, exc->errorClass));
   RETURN_ON_FALSE(add_string(KEY_MESSAGE, exc->errorMessage));

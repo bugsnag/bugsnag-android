@@ -273,14 +273,32 @@ Then("the event stacktrace identifies the program counter") do
 end
 
 # EventStore flushes multiple times on launch with access controlled via a semaphore,
-# which results in multiple similar log messages
+# which results in multiple similar log messages. The number of log messages can also vary
+# depending on whether the connection changes (this triggers a flush of stored payloads).
+# This step therefore only asserts that the first 2 messages are logged out.
 Then("Bugsnag confirms it has no errors to send") do
   steps %Q{
-    And I wait to receive 3 logs
+    And I wait to receive 2 Android startup logs
     Then the "debug" level log message equals "No startupcrash events to flush to Bugsnag."
     And I discard the oldest log
     Then the "debug" level log message equals "No regular events to flush to Bugsnag."
-    And I discard the oldest log
-    Then the "debug" level log message equals "No regular events to flush to Bugsnag."
   }
+end
+
+Then('I wait to receive {int} Android startup logs') do |request_count|
+  list = Maze::Server.list_for("logs")
+  assert_received_startup_logs request_count, list
+  list.sort_by_sent_at! request_count
+end
+
+def assert_received_startup_logs(request_count, list)
+  timeout = Maze.config.receive_requests_wait
+  wait = Maze::Wait.new(timeout: timeout)
+  received = wait.until { list.size >= request_count }
+
+  unless received
+    raise <<-MESSAGE
+    Expected #{request_count} logs but received #{list.size} within the #{timeout}s timeout.
+    MESSAGE
+  end
 end

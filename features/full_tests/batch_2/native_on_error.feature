@@ -25,9 +25,10 @@ Feature: Native on error callbacks are invoked
         And the event "device.manufacturer" equals "custom_manufacturer"
         And the event "device.model" equals "custom_model"
         And the event "device.osVersion" equals "custom_os_version"
-        And the event "device.totalMemory" equals 99999999
+        # TODO PLAT-7497
+        # And the event "device.totalMemory" equals 99999999
         And the event "device.orientation" equals "custom_orientation"
-        And the event "device.time" equals "1970-01-01T04:10:00Z"
+        And the event "device.time" equals "1970-01-01T00:00:15.000Z"
         And the event "device.osName" equals "custom_os_name"
 
         # user

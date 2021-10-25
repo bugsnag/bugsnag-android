@@ -8,8 +8,8 @@ Feature: Native API
         And the exception "errorClass" equals one of:
           | SIGILL |
           | SIGTRAP |
-        And the event "app.version" equals "22.312.749.78.300.810.24.167.32"
-        And the event "context" equals "ObservableSessionInitializerStringParserStringSessionProxyGloba"
+        And the event "app.version" equals "22.312.749.78.300.810.24.167.321.505.337.177.970.655.513.768.209.616.429.5.654.552.117.275.422.698.110.941.6.611.737.439.489.121.879.119.207.999.721.827.22.312.749.78.300.810.24.167.321.505.337.177.970.655.513.768.209.616.429.5.654.552.117.275.422.698.110.941.6.611.737.439.489.121.879.119.207.999.721.827"
+        And the event "context" equals "ObservableSessionInitializerStringParserStringSessionProxyGlobalServletUtilStringGlobalManagementObjectActivity"
         And the event "unhandled" is true
 
     Scenario: Use the NDK methods without "env" after calling "bugsnag_start"

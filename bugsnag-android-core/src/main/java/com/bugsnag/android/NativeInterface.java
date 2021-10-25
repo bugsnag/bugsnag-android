@@ -316,10 +316,6 @@ public class NativeInterface {
                                      @NonNull byte[] payloadBytes,
                                      @NonNull String apiKey,
                                      boolean isLaunching) {
-        boolean sendLegacyEvents = true; // TODO: temporary disable to pass on CI
-        if (!sendLegacyEvents) {
-            return;
-        }
         if (payloadBytes == null) {
             return;
         }
