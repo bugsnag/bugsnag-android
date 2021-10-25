@@ -86,15 +86,13 @@
       "id": 20948,
       "name": "bugsnag.android",
       "type": "c",
-      "state": "running",
-      "stacktrace": []
+      "state": "running"
     },
     {
       "id": 20954,
       "name": "Jit thread pool",
       "type": "c",
-      "state": "sleeping",
-      "stacktrace": []
+      "state": "sleeping"
     }
   ],
   "session": {

@@ -170,7 +170,9 @@ internal class BugsnagJournalEventMapper(
     private fun convertErrorInternal(src: Map<String, Any?>): ErrorInternal {
         val map = src.toMutableMap()
         val list: List<Map<String, Any>> = src.readEntry(JournalKeys.keyStackTrace)
-        map[JournalKeys.keyStackTrace] = list.map(this::convertStacktraceInternal)
+        if (list.isNotEmpty()) {
+            map[JournalKeys.keyStackTrace] = list.map(this::convertStacktraceInternal)
+        }
         return ErrorInternal(map)
     }
 
