@@ -19,19 +19,20 @@ class ThreadInternal internal constructor(
     override fun toStream(writer: JsonStream) = writer.value(toJournalSection())
 
     override fun toJournalSection(): Map<String, Any?> {
-        val data = mapOf(
+        val data = mutableMapOf(
             JournalKeys.keyId to id,
             JournalKeys.keyName to name,
             JournalKeys.keyType to type.desc,
-            JournalKeys.keyState to state,
-            JournalKeys.keyStackTrace to stacktrace.map { it.toJournalSection() }
+            JournalKeys.keyState to state
         )
 
-        return when {
-            isErrorReportingThread -> data.plus(
-                Pair(JournalKeys.keyErrorReportingThread, isErrorReportingThread)
-            )
-            else -> data
+        if (stacktrace.isNotEmpty()) {
+            data[JournalKeys.keyStackTrace] = stacktrace.map { it.toJournalSection() }
         }
+        if (isErrorReportingThread) {
+            data[JournalKeys.keyErrorReportingThread] = isErrorReportingThread
+        }
+
+        return data
     }
 }
