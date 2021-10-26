@@ -368,6 +368,15 @@ static bool set_event_subobject_double(const char *event_key,
   return bsg_ctj_flush();
 }
 
+static bool set_event_subobject_hex(const char *event_key,
+                                    const char *object_key, uint64_t value) {
+  bsg_pb_reset();
+  bsg_pb_stack_map_key(event_key);
+  RETURN_ON_FALSE(add_hex(object_key, value));
+  bsg_pb_reset();
+  return bsg_ctj_flush();
+}
+
 static bool set_event_subobject_boolean(const char *event_key,
                                         const char *object_key, bool value) {
   bsg_pb_reset();
@@ -646,7 +655,7 @@ bool bsg_ctj_set_device_time(time_t value) {
 
   // IMPORTANT: This value MUST be converted to an RFC 3339 timestamp and stored
   // under "time" upon reloading the journal!
-  return set_event_subobject_double(KEY_DEVICE, KEY_TIME_UNIX, value);
+  return set_event_subobject_hex(KEY_DEVICE, KEY_TIME_UNIX, value);
 }
 
 bool bsg_ctj_set_device_os_name(const char *value) {

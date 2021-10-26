@@ -74,7 +74,7 @@ class BugsnagJournalEventMapperTest {
             "osVersion" to "8.0.0",
             "model" to "Android SDK built for x86",
             "id" to "8b105fd3-88bc-4a31-8982-b725d1162d86",
-            "time" to 1509234098592L,
+            "time" to "0x59F515B2",
             "runtimeVersions" to mapOf(
                 "osBuild" to "sdk_gphone_x86-userdebug 8.0.0 OSR1.180418.026 6741039 dev-keys",
                 "androidApiLevel" to 26
@@ -286,7 +286,7 @@ class BugsnagJournalEventMapperTest {
         assertEquals("8.0.0", device.osVersion)
         assertEquals("Android SDK built for x86", device.model)
         assertEquals("8b105fd3-88bc-4a31-8982-b725d1162d86", device.id)
-        assertEquals("2017-10-28T23:41:38.592Z", DateUtils.toIso8601(checkNotNull(device.time)))
+        assertEquals("2017-10-28T23:41:38.000Z", DateUtils.toIso8601(checkNotNull(device.time)))
 
         // projectPackages
         assertEquals(listOf("com.example.bar"), event.projectPackages)
