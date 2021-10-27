@@ -1,8 +1,5 @@
-# Configure app environment
-# Set this explicitly
-$api_key = "a35a2a72bd230ac0aa0f52715bbdc6aa"
-
-AfterConfiguration do |_config|
+BeforeAll do
+  $api_key = "a35a2a72bd230ac0aa0f52715bbdc6aa"
   Maze.config.receive_no_requests_wait = 10
   Maze.config.receive_requests_wait = 60
 end

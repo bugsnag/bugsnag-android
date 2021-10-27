@@ -7,7 +7,8 @@ import com.bugsnag.android.internal.journal.Journalable
  * found on this class. These values can be accessed and amended if necessary.
  */
 open class Device internal constructor(
-    data: MutableMap<String, Any?> = mutableMapOf()
+    data: MutableMap<String, Any?> = mutableMapOf(),
+    runtimeVersions: MutableMap<String, Any>?
 ) : JsonStream.Streamable, Journalable {
 
     protected val map: MutableMap<String, Any?> = data.withDefault { null }
@@ -32,14 +33,18 @@ open class Device internal constructor(
             "locale" to locale,
             "id" to id,
             "jailbroken" to jailbroken
-        )
+        ),
+        runtimeVersions
     )
 
     /**
      * A collection of names and their versions of the primary languages, frameworks or
      * runtimes that the application is running on
      */
-    var runtimeVersions: MutableMap<String, Any>? by map
+    var runtimeVersions: MutableMap<String, Any>? = sanitizeRuntimeVersions(runtimeVersions)
+        set(value) {
+            field = sanitizeRuntimeVersions(value)
+        }
 
     /**
      * The total number of bytes of memory on the device
@@ -91,6 +96,10 @@ open class Device internal constructor(
     override fun toJournalSection(): Map<String, Any?> {
         val copy = map.toMutableMap()
         copy["cpuAbi"] = cpuAbi?.toList()
+        copy["runtimeVersions"] = runtimeVersions
         return copy
     }
+
+    private fun sanitizeRuntimeVersions(value: MutableMap<String, Any>?): MutableMap<String, Any>? =
+        value?.mapValuesTo(mutableMapOf()) { (_, value) -> value.toString() }
 }

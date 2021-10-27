@@ -33,7 +33,7 @@ class DeviceDeserializerTest {
         map["brand"] = "pixel"
         map["osVersion"] = "8.1"
         map["apiLevel"] = 27
-        map["runtimeVersions"] = mapOf(Pair("androidApiLevel", 27), Pair("osBuild", "bulldog"))
+        map["runtimeVersions"] = mapOf(Pair("androidApiLevel", "27"), Pair("osBuild", "bulldog"))
         map["freeDisk"] = 4092340985
         map["freeMemory"] = 50923422234
         map["orientation"] = "portrait"
@@ -52,7 +52,7 @@ class DeviceDeserializerTest {
         assertEquals("pixel 3a", device.model)
         assertEquals("android", device.osName)
         assertEquals("8.1", device.osVersion)
-        assertEquals(mapOf(Pair("androidApiLevel", 27), Pair("osBuild", "bulldog")), device.runtimeVersions)
+        assertEquals(mapOf(Pair("androidApiLevel", "27"), Pair("osBuild", "bulldog")), device.runtimeVersions)
         assertEquals(4092340985, device.freeDisk)
         assertEquals(50923422234, device.freeMemory)
         assertEquals("portrait", device.orientation)

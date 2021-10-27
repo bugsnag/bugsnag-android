@@ -136,7 +136,7 @@ internal class BugsnagJournalEventMapper(
         val map = src.toMutableMap()
         map[JournalKeys.keyCpuAbi] = (map[JournalKeys.keyCpuAbi] as? List<String>)?.toTypedArray()
         map[JournalKeys.keyTime] = convertDeviceTime(map)
-        return DeviceWithState(map)
+        return DeviceWithState(map, map.readEntry(JournalKeys.keyRuntimeVersions))
     }
 
     private fun convertDeviceTime(map: MutableMap<String, Any?>): Date? {

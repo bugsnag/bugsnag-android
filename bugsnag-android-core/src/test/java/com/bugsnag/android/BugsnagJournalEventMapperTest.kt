@@ -278,7 +278,7 @@ class BugsnagJournalEventMapperTest {
             "sdk_gphone_x86-userdebug 8.0.0 OSR1.180418.026 6741039 dev-keys",
             device.runtimeVersions?.get("osBuild") as String
         )
-        assertEquals(26, device.runtimeVersions?.get("androidApiLevel") as Int)
+        assertEquals("26", device.runtimeVersions?.get("androidApiLevel") as String)
         assertEquals("en_US", device.locale)
         assertEquals("android", device.osName)
         assertEquals("Google", device.manufacturer)

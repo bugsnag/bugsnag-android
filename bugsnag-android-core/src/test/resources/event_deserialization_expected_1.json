@@ -55,7 +55,7 @@
     "model": "Android SDK built for x86",
     "orientation": "portrait",
     "runtimeVersions": {
-      "androidApiLevel": 29,
+      "androidApiLevel": "29",
       "osBuild": "QSR1.190920.001"
     },
     "cpuAbi": [

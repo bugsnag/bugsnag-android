@@ -9,8 +9,9 @@ import java.util.Date
  * found on this class. These values can be accessed and amended if necessary.
  */
 class DeviceWithState internal constructor(
-    data: MutableMap<String, Any?> = mutableMapOf()
-) : Device(data) {
+    data: MutableMap<String, Any?> = mutableMapOf(),
+    runtimeVersions: MutableMap<String, Any>?
+) : Device(data, runtimeVersions) {
 
     internal constructor(
         buildInfo: DeviceBuildInfo,
@@ -39,7 +40,8 @@ class DeviceWithState internal constructor(
             "freeMemory" to freeMemory,
             "orientation" to orientation,
             "time" to time
-        )
+        ),
+        runtimeVersions
     )
 
     /**

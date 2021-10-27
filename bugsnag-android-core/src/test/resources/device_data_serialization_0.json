@@ -7,7 +7,7 @@
   "osName": "android",
   "osVersion": "7.1",
   "runtimeVersions": {
-    "androidApiLevel": 24,
+    "androidApiLevel": "24",
     "osBuild": "bulldog"
   },
   "totalMemory": 502934020442,
