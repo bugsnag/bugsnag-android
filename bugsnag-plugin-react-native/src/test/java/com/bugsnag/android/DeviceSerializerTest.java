@@ -73,7 +73,7 @@ public class DeviceSerializerTest {
         assertEquals("1970-01-01T00:00:00.000Z", map.get("time"));
 
         Map<String, Object> runtimeVersions = new HashMap<>();
-        runtimeVersions.put("androidApiLevel", "27");
+        runtimeVersions.put("androidApiLevel", 27);
         runtimeVersions.put("osBuild", "bulldog");
         assertEquals(runtimeVersions, map.get("runtimeVersions"));
 

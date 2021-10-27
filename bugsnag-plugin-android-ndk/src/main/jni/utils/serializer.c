@@ -683,10 +683,8 @@ void bsg_serialize_device(const bsg_device_info device,
   json_object_dotset_string(event_obj, "device.model", device.model);
   json_object_dotset_string(event_obj, "device.orientation",
                             device.orientation);
-  char android_api_level[sizeof "1234"];
-  snprintf(android_api_level, 4, "%d", device.api_level);
-  json_object_dotset_string(event_obj, "device.runtimeVersions.androidApiLevel",
-                            android_api_level);
+  json_object_dotset_number(event_obj, "device.runtimeVersions.androidApiLevel",
+                            device.api_level);
   json_object_dotset_string(event_obj, "device.runtimeVersions.osBuild",
                             device.os_build);
 

@@ -69,9 +69,6 @@ steps:
       TEST_APK_LOCATION: 'bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk'
     concurrency: 9
     concurrency_group: 'browserstack-app'
-    # TODO remove when PLAT-7453 is complete
-    soft_fail:
-      - exit_status: "*"
 
   - label: ':android: Android 5 NDK r16 end-to-end tests - batch 1'
     depends_on:
