@@ -1,8 +1,5 @@
-# Configure app environment
-# Set this explicitly
-$api_key = "a35a2a72bd230ac0aa0f52715bbdc6aa"
-
-AfterConfiguration do |_config|
+BeforeAll do
+  $api_key = "a35a2a72bd230ac0aa0f52715bbdc6aa"
   Maze.config.receive_no_requests_wait = 10
   Maze.config.receive_requests_wait = 60
 end
@@ -37,10 +34,6 @@ end
 
 Before('@skip_android_10') do |scenario|
   skip_this_scenario("Skipping scenario") if Maze.config.os_version == 10
-end
-
-Before('@skip_android_11') do |scenario|
-  skip_this_scenario("Skipping scenario") if Maze.config.os_version == 11
 end
 
 Before('@skip_samsung') do |scenario|

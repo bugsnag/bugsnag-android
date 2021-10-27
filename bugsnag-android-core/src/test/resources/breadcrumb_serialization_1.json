@@ -3,6 +3,7 @@
   "name": "metadata",
   "type": "process",
   "metaData": {
-    "foo": true
+    "foo": true,
+    "password":  "[REDACTED]"
   }
 }
