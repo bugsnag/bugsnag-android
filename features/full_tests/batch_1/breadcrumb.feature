@@ -11,7 +11,6 @@ Scenario: Manually added breadcrumbs are sent in report
     And the event "breadcrumbs.1.name" equals "Another Breadcrumb"
     And the event "breadcrumbs.1.type" equals "user"
     And the event "breadcrumbs.1.metaData.Foo" equals "Bar"
-    And the event "breadcrumbs.1.metaData.password" equals "[REDACTED]"
 
     And the event "breadcrumbs.0.timestamp" is not null
     And the event "breadcrumbs.0.name" equals "Hello Breadcrumb!"

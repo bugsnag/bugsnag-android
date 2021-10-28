@@ -4,6 +4,7 @@ import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.OnErrorCallback
+import com.bugsnag.android.OnSessionCallback
 
 /**
  * Generates an unhandled exception that is overridden so that unhandled is false.
@@ -21,6 +22,7 @@ internal class OverrideToHandledExceptionScenario(
                 true
             }
         )
+        config.addOnSession(OnSessionCallback { false })
     }
 
     override fun startScenario() {

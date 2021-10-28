@@ -87,19 +87,4 @@ internal class MetadataStateTest {
         assertEquals(setOf("foo"), sections)
         assertEquals(setOf("key1", "key2", "key3"), keys)
     }
-
-    @Test
-    fun observableMessageWithMap() {
-        val events = mutableListOf<StateEvent.AddMetadata>()
-        state.addObserver(
-            StateObserver {
-                events.add(it as StateEvent.AddMetadata)
-            }
-        )
-
-        state.addMetadata("fruit", mapOf<String, Any?>("apple" to "gala"))
-        assertEquals("fruit", events[0].section)
-        assertEquals("apple", events[0].key)
-        assertEquals("gala", events[0].value)
-    }
 }

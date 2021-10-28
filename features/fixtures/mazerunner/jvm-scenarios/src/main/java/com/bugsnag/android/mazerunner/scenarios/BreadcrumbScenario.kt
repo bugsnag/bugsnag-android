@@ -4,6 +4,7 @@ import android.content.Context
 import com.bugsnag.android.BreadcrumbType
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
+import java.util.Collections
 
 /**
  * Sends a handled exception to Bugsnag, which includes manual breadcrumbs.
@@ -21,10 +22,7 @@ internal class BreadcrumbScenario(
     override fun startScenario() {
         super.startScenario()
         Bugsnag.leaveBreadcrumb("Hello Breadcrumb!")
-        val data = mapOf<String, Any?>(
-            "Foo" to "Bar",
-            "password" to "my password"
-        )
+        val data = Collections.singletonMap("Foo", "Bar" as Any)
         Bugsnag.leaveBreadcrumb("Another Breadcrumb", data, BreadcrumbType.USER)
         Bugsnag.notify(generateException())
     }
