@@ -26,7 +26,7 @@ final class BugsnagTestUtils {
 
     static {
         runtimeVersions.put("osBuild", "bulldog");
-        runtimeVersions.put("androidApiLevel", 24);
+        runtimeVersions.put("androidApiLevel", "24");
     }
 
     private static String streamableToString(JsonStream.Streamable streamable) throws IOException {
