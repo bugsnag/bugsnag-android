@@ -500,8 +500,8 @@ static void populate_device_data(JNIEnv *env, bsg_jni_cache *jni_cache,
                           event->device.os_build,
                           sizeof(event->device.os_build));
 
-    event->device.api_level =
-        get_map_value_int(env, jni_cache, _runtime_versions, "androidApiLevel");
+//    event->device.api_level =
+//        get_map_value_int(env, jni_cache, _runtime_versions, "androidApiLevel");
     bsg_safe_delete_local_ref(env, _runtime_versions);
   }
   event->device.total_memory =
