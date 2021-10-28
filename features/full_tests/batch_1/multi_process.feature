@@ -79,7 +79,7 @@ Scenario: Handled NDK error
     And the error payload field "events.0.device.id" equals the stored value "first_device_id"
     And the error payload field "events.0.user.id" equals the stored value "first_device_id"
 
-# TODO PLAT-7501
+# TODO PLAT-7537
 @skip_android_6
 Scenario: Unhandled NDK error
     And I configure the app to run in the "main-activity" state

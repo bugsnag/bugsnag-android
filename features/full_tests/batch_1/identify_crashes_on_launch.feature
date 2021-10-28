@@ -75,7 +75,7 @@ Feature: Identifying crashes on launch
         And the event "metaData.LastRunInfo.crashedDuringLaunch" is true
         And the event "metaData.LastRunInfo.consecutiveLaunchCrashes" equals 2
 
-    # TODO PLAT-7501
+    # TODO PLAT-7537
     @skip_android_6
     Scenario: Escaping from a crash loop by reading LastRunInfo in an NDK error
         When I run "CXXCrashLoopScenario" and relaunch the app
