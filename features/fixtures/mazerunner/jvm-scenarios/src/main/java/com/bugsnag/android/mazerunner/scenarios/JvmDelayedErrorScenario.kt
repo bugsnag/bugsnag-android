@@ -16,8 +16,7 @@ internal class JvmDelayedErrorScenario(
 ) : Scenario(config, context, eventMetadata) {
 
     companion object {
-        private const val CRASH_DELAY_MS = 2000L
-        private const val NOTIFY_DELAY_MS = CRASH_DELAY_MS * 2
+        private const val CRASH_DELAY_MS = 250L
     }
 
     init {
@@ -34,7 +33,7 @@ internal class JvmDelayedErrorScenario(
             {
                 Bugsnag.notify(generateException())
             },
-            NOTIFY_DELAY_MS
+            CRASH_DELAY_MS * 2
         )
     }
 }

@@ -13,8 +13,6 @@ import java.util.List;
 
 class ForegroundDetector {
 
-    private static final int IMPORTANCE_FOREGROUND_SERVICE = 125;
-
     @Nullable
     private final ActivityManager activityManager;
 
@@ -38,7 +36,8 @@ class ForegroundDetector {
             ActivityManager.RunningAppProcessInfo info = getProcessInfo();
 
             if (info != null) {
-                return info.importance <= IMPORTANCE_FOREGROUND_SERVICE;
+                return info.importance
+                        <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
             } else {
                 return null;
             }

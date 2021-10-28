@@ -38,7 +38,7 @@ class SessionTracker extends BaseObservable {
 
     // The first Activity in this 'session' was started at this time.
     private final AtomicLong lastEnteredForegroundMs = new AtomicLong(0);
-    private volatile Session currentSession = null;
+    private final AtomicReference<Session> currentSession = new AtomicReference<>();
     private final ForegroundDetector foregroundDetector;
     final BackgroundTaskService backgroundTaskService;
     final Logger logger;
@@ -89,11 +89,9 @@ class SessionTracker extends BaseObservable {
         }
         String id = UUID.randomUUID().toString();
         Session session = new Session(id, date, user, autoCaptured, client.getNotifier(), logger);
-        if (trackSessionIfNeeded(session)) {
-            return session;
-        } else {
-            return null;
-        }
+        currentSession.set(session);
+        trackSessionIfNeeded(session);
+        return session;
     }
 
     Session startSession(boolean autoCaptured) {
@@ -104,7 +102,7 @@ class SessionTracker extends BaseObservable {
     }
 
     void pauseSession() {
-        Session session = currentSession;
+        Session session = currentSession.get();
 
         if (session != null) {
             session.isPaused.set(true);
@@ -113,7 +111,7 @@ class SessionTracker extends BaseObservable {
     }
 
     boolean resumeSession() {
-        Session session = currentSession;
+        Session session = currentSession.get();
         boolean resumed;
 
         if (session == null) {
@@ -161,7 +159,7 @@ class SessionTracker extends BaseObservable {
         } else {
             updateState(StateEvent.PauseSession.INSTANCE);
         }
-        currentSession = session;
+        currentSession.set(session);
         return session;
     }
 
@@ -170,29 +168,23 @@ class SessionTracker extends BaseObservable {
      * stored and sent to the Bugsnag API, otherwise no action will occur in this method.
      *
      * @param session the session
-     * @return true if the Session should be tracked
      */
-    private boolean trackSessionIfNeeded(final Session session) {
+    private void trackSessionIfNeeded(final Session session) {
         logger.d("SessionTracker#trackSessionIfNeeded() - session captured by Client");
         session.setApp(client.getAppDataCollector().generateApp());
         session.setDevice(client.getDeviceDataCollector().generateDevice());
         boolean deliverSession = callbackState.runOnSessionTasks(session, logger);
 
         if (deliverSession && session.isTracked().compareAndSet(false, true)) {
-            currentSession = session;
             notifySessionStartObserver(session);
             flushAsync();
             flushInMemorySession(session);
-
-            return true;
         }
-
-        return false;
     }
 
     @Nullable
     Session getCurrentSession() {
-        Session session = currentSession;
+        Session session = currentSession.get();
 
         if (session != null && !session.isPaused.get()) {
             return session;
