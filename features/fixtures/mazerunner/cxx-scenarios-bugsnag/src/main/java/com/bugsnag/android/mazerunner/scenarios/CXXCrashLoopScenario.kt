@@ -20,6 +20,11 @@ internal class CXXCrashLoopScenario(
 
     external fun crash()
 
+    override fun startBugsnag(startBugsnagOnly: Boolean) {
+        config.launchDurationMillis = 0
+        super.startBugsnag(startBugsnagOnly)
+    }
+
     override fun startScenario() {
         super.startScenario()
         val lastRunInfo = Bugsnag.getLastRunInfo()
