@@ -109,7 +109,7 @@
   },
   "testSetDeviceTime": {
     "device": {
-      "time": 1000000000
+      "time": "0x3b9aca00"
     }
   },
   "testSetOsName": {
@@ -271,7 +271,7 @@
       }
     },
     "device": {
-      "time": 1500000000
+      "time": "0x59682f00"
     },
     "session": {
       "id": "123",

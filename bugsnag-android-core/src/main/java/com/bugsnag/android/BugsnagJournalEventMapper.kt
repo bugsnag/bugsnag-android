@@ -140,9 +140,17 @@ internal class BugsnagJournalEventMapper(
     }
 
     private fun convertDeviceTime(map: MutableMap<String, Any?>): Date? {
+        val offset0x = 2
+        val base16 = 16
+        val secsToMs = 1000
         return when (val time = map[JournalKeys.keyTime]) {
-            is String -> time.toDate()
-            is Number -> Date(time.toLong())
+            is String -> {
+                if (time.startsWith("0x")) {
+                    Date(time.substring(offset0x).toLong(base16) * secsToMs)
+                } else {
+                    time.toDate()
+                }
+            }
             else -> null
         }
     }
