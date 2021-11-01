@@ -154,57 +154,6 @@ steps:
           run: android-ci
     command: './gradlew test'
 
-  - label: ':android: Android 7 Instrumentation tests'
-    key: 'core-instrumentation-tests'
-    depends_on:
-      - "android-ci"
-    timeout_in_minutes: 60
-    command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    env:
-      SINGLE_RUNNER: "true"
-      INSTRUMENTATION_DEVICES: '["Google Pixel 2-8.0"]'
-      TEST_APK_LOCATION: 'bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk'
-    concurrency: 9
-    concurrency_group: 'browserstack-app'
-    concurrency_method: eager
-
-  - label: ':android: NDK Instrumentation tests'
-    key: 'ndk-instrumentation-tests'
-    depends_on:
-      - "android-ci"
-    timeout_in_minutes: 60
-    command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    env:
-      SINGLE_RUNNER: "true"
-      INSTRUMENTATION_DEVICES: '["Google Pixel 2-8.0"]'
-      TEST_APK_LOCATION: 'bugsnag-plugin-android-ndk/build/outputs/apk/androidTest/debug/bugsnag-plugin-android-ndk-debug-androidTest.apk'
-    concurrency: 9
-    concurrency_group: 'browserstack-app'
-    concurrency_method: eager
-
-  - label: ':android: Performance benchmarks'
-    key: 'perf-benchmarks'
-    depends_on:
-      - "android-ci"
-    timeout_in_minutes: 60
-    command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    env:
-      SINGLE_RUNNER: "false"
-      INSTRUMENTATION_DEVICES: '["Google Pixel 2-8.0"]'
-      TEST_APK_LOCATION: 'bugsnag-benchmarks/build/outputs/apk/androidTest/release/bugsnag-benchmarks-release-androidTest.apk'
-    concurrency: 9
-    concurrency_group: 'browserstack-app'
-    concurrency_method: eager
-
   - label: ':android: Android 4.4 NDK r16 smoke tests'
     key: 'android-4-4-smoke'
     depends_on: "fixture-r16"
