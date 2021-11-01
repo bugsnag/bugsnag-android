@@ -16,7 +16,7 @@ import java.util.Set;
  * specified at the client level, api-key and endpoint configuration.
  */
 @SuppressWarnings("ConstantConditions") // suppress warning about making redundant null checks
-public class Configuration implements CallbackAware, MetadataAware, UserAware {
+public class Configuration implements CallbackAware, MetadataAware, UserAware, FeatureFlagAware {
 
     private static final int MIN_BREADCRUMBS = 0;
     private static final int MAX_BREADCRUMBS = 100;
@@ -948,6 +948,62 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
             logNull("getMetadata");
             return null;
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addFeatureFlag(@NonNull String name) {
+        if (name != null) {
+            impl.addFeatureFlag(name);
+        } else {
+            logNull("addFeatureFlag");
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addFeatureFlag(@NonNull String name, @Nullable String variant) {
+        if (name != null) {
+            impl.addFeatureFlag(name, variant);
+        } else {
+            logNull("addFeatureFlag");
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addFeatureFlags(@NonNull Iterable<FeatureFlag> featureFlags) {
+        if (featureFlags != null) {
+            impl.addFeatureFlags(featureFlags);
+        } else {
+            logNull("addFeatureFlags");
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void clearFeatureFlag(@NonNull String name) {
+        if (name != null) {
+            impl.clearFeatureFlag(name);
+        } else {
+            logNull("clearFeatureFlag");
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void clearFeatureFlags() {
+        impl.clearFeatureFlags();
     }
 
     /**

@@ -237,7 +237,7 @@ public class ClientTest {
     @Test
     public void testClientMultiNotify() throws InterruptedException {
         // concurrently call notify()
-        client =  BugsnagTestUtils.generateClient();
+        client = BugsnagTestUtils.generateClient();
         Executor executor = Executors.newSingleThreadExecutor();
         int count = 200;
         final CountDownLatch latch = new CountDownLatch(count);
@@ -256,5 +256,31 @@ public class ClientTest {
         }
         // wait for all events to be delivered
         assertTrue(latch.await(5, TimeUnit.SECONDS));
+    }
+
+    @Test
+    public void testFeatureFlagsCloned() {
+        config.addFeatureFlag("sample_group", "a");
+        client = new Client(context, config);
+        client.addFeatureFlag("demo_mode");
+
+        assertNotSame(config.impl.featureFlagState, client.featureFlagState);
+
+        FeatureFlagState configFlags = config.impl.featureFlagState;
+        FeatureFlagState clientFlags = client.featureFlagState;
+        assertNotSame(configFlags, clientFlags);
+
+        List<FeatureFlag> configExpected = Collections.singletonList(new FeatureFlag("sample_group", "a"));
+        assertEquals(configExpected, config.impl.featureFlagState.toList());
+
+        List<FeatureFlag> clientExpected = Arrays.asList(
+                new FeatureFlag("demo_mode"),
+                new FeatureFlag("sample_group", "a")
+        );
+
+        List<FeatureFlag> clientActual = client.featureFlagState.toList();
+        Collections.sort(clientActual, BugsnagTestUtils.featureFlagComparator());
+
+        assertEquals(clientExpected, clientActual);
     }
 }

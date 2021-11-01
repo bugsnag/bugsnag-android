@@ -38,4 +38,5 @@ internal data class FeatureFlagState(
     }
 
     fun toList(): List<FeatureFlag> = featureFlags.toList()
+    fun copy() = FeatureFlagState(featureFlags.copy())
 }
