@@ -66,7 +66,7 @@ bool bsg_ctj_set_device_total_memory(long value);
 
 bool bsg_ctj_set_device_orientation(const char *value);
 
-bool bsg_ctj_set_device_time(time_t value);
+bool bsg_ctj_set_device_time_seconds(time_t value);
 
 bool bsg_ctj_set_device_os_name(const char *value);
 
@@ -94,6 +94,8 @@ bool bsg_ctj_set_metadata_bool(const char *section, const char *name,
 bool bsg_ctj_clear_metadata(const char *section, const char *name);
 
 bool bsg_ctj_clear_metadata_section(const char *section);
+
+bool bsg_ctj_record_current_time(void);
 
 #ifdef __cplusplus
 }

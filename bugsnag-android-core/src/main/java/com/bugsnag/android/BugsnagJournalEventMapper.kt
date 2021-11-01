@@ -77,6 +77,8 @@ internal class BugsnagJournalEventMapper(
 
         // populate app
         val appMap: MutableMap<String, Any?> = map.readEntry(JournalKeys.pathApp)
+        appMap[JournalKeys.keyDuration] = getDuration(map)
+        appMap[JournalKeys.keyDurationInFG] = getDurationInFG(map)
         event.app = convertAppWithState(appMap)
 
         // populate device
@@ -124,6 +126,91 @@ internal class BugsnagJournalEventMapper(
         return map
     }
 
+    private fun convertHexToLongSafe(hex: String): Long {
+        val base16 = 16
+        val hexMaxChars = 16
+        val shiftToHighByte = 56
+
+        return try {
+            hex.toLong(base16)
+        } catch (e: NumberFormatException) {
+            if (hex.length != hexMaxChars) {
+                // NumberFormatException wasn't caused by high bit being set
+                throw e
+            }
+            // Value is > max signed long, so overflow it to negative.
+            val highByte = hex.substring(0, 2).toLong(base16) shl shiftToHighByte
+            if (highByte >= 0) {
+                // NumberFormatException wasn't caused by high bit being set
+                throw e
+            }
+            highByte + hex.substring(2).toLong(base16)
+        }
+    }
+
+    private fun convertFieldToLong(value: Any?): Long {
+        val offset0x = 2
+        return when (value) {
+            is String -> {
+                if (value.startsWith("0x")) {
+                    return convertHexToLongSafe(value.substring(offset0x))
+                } else {
+                    0
+                }
+            }
+            is Long -> value
+            is Int -> value.toLong()
+            is Date -> value.time
+            else -> 0
+        }
+    }
+
+    private fun convertFieldToDate(value: Any?): Date? {
+        return when (value) {
+            is String -> {
+                if (value.startsWith("0x")) {
+                    Date(convertFieldToLong(value))
+                } else {
+                    value.toDate()
+                }
+            }
+            else -> null
+        }
+    }
+
+    private fun getLaunchedTime(journal: Map<in String, Any?>): Date? {
+        val runtime = journal.readEntry<Map<String, Any?>>(JournalKeys.pathRuntime)
+        return convertFieldToDate(runtime[JournalKeys.keyTimeLaunched])
+    }
+
+    private fun getEventTime(journal: Map<in String, Any?>): Date? {
+        val runtime = journal.readEntry<Map<String, Any?>>(JournalKeys.pathRuntime)
+        return convertFieldToDate(runtime[JournalKeys.keyTimeNow])
+    }
+
+    private fun getEnteredFGTime(journal: Map<in String, Any?>): Date? {
+        val runtime = journal.readEntry<Map<String, Any?>>(JournalKeys.pathRuntime)
+        return convertFieldToDate(runtime[JournalKeys.keyTimeEnteredForeground])
+    }
+
+    private fun getDuration(journal: Map<in String, Any?>): Long {
+        val launchTime = getLaunchedTime(journal)
+        val eventTime = getEventTime(journal)
+        if (eventTime == null || launchTime == null) {
+            return 0
+        }
+        return eventTime.time - launchTime.time
+    }
+
+    private fun getDurationInFG(journal: Map<in String, Any?>): Long {
+        val enteredFGTime = getEnteredFGTime(journal)
+        val eventTime = getEventTime(journal)
+        if (eventTime == null || enteredFGTime == null) {
+            return 0
+        }
+        return eventTime.time - enteredFGTime.time
+    }
+
     @Suppress("UNCHECKED_CAST")
     private fun convertAppWithState(src: Map<String, Any?>): AppWithState {
         val map = src.toMutableMap()
@@ -135,24 +222,8 @@ internal class BugsnagJournalEventMapper(
     private fun convertDeviceWithState(src: Map<String, Any?>): DeviceWithState {
         val map = src.toMutableMap()
         map[JournalKeys.keyCpuAbi] = (map[JournalKeys.keyCpuAbi] as? List<String>)?.toTypedArray()
-        map[JournalKeys.keyTime] = convertDeviceTime(map)
+        map[JournalKeys.keyTime] = convertFieldToDate(map[JournalKeys.keyTime])
         return DeviceWithState(map, map.readEntry(JournalKeys.keyRuntimeVersions))
-    }
-
-    private fun convertDeviceTime(map: MutableMap<String, Any?>): Date? {
-        val offset0x = 2
-        val base16 = 16
-        val secsToMs = 1000
-        return when (val time = map[JournalKeys.keyTime]) {
-            is String -> {
-                if (time.startsWith("0x")) {
-                    Date(time.substring(offset0x).toLong(base16) * secsToMs)
-                } else {
-                    time.toDate()
-                }
-            }
-            else -> null
-        }
     }
 
     @Suppress("UNCHECKED_CAST")

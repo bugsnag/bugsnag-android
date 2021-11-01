@@ -64,6 +64,11 @@ class BugsnagJournalEventMapperTest {
             "buildUUID" to "123",
             "codeBundleId" to "456"
         )
+        val runtime = mapOf(
+            "timeLaunched" to "2021-09-28T10:31:00.620Z",
+            "timeEnteredForeground" to "2021-09-28T10:31:05.620Z",
+            "timeNow" to "2021-09-28T10:32:00.620Z"
+        )
         val device = mapOf(
             "orientation" to "portrait",
             "jailbroken" to true,
@@ -74,7 +79,7 @@ class BugsnagJournalEventMapperTest {
             "osVersion" to "8.0.0",
             "model" to "Android SDK built for x86",
             "id" to "8b105fd3-88bc-4a31-8982-b725d1162d86",
-            "time" to "0x59F515B2",
+            "time" to "0x15F655CBF50",
             "runtimeVersions" to mapOf(
                 "osBuild" to "sdk_gphone_x86-userdebug 8.0.0 OSR1.180418.026 6741039 dev-keys",
                 "androidApiLevel" to 26
@@ -150,7 +155,8 @@ class BugsnagJournalEventMapperTest {
             "unhandled" to true,
             "severity" to "error",
             "severityReason" to severityReason,
-            "threads" to threads
+            "threads" to threads,
+            "runtime" to runtime
         )
         journalMap = minimalJournalMap + mapOf(
             "context" to "ExampleActivity",
@@ -265,8 +271,8 @@ class BugsnagJournalEventMapperTest {
         assertEquals("123", app.buildUuid)
         assertEquals("android", app.type)
         assertEquals(1, app.versionCode)
-        assertEquals(28, app.duration)
-        assertEquals(5, app.durationInForeground)
+        assertEquals(60000L, app.duration)
+        assertEquals(55000L, app.durationInForeground)
         assertTrue(app.inForeground as Boolean)
         assertFalse(app.isLaunching as Boolean)
 

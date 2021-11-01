@@ -262,8 +262,8 @@ time_t bugsnag_device_get_time(void *event_ptr) {
 }
 
 void bugsnag_device_set_time(void *event_ptr, time_t value) {
-  bsg_ctj_set_device_time(value);
-  bsg_cache_set_device_time(event_ptr, value);
+  bsg_ctj_set_device_time_seconds(value);
+  bsg_cache_set_device_time_seconds(event_ptr, value);
 }
 
 char *bugsnag_device_get_os_name(void *event_ptr) {

@@ -196,7 +196,7 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_NativeCrashTimeJournalTest_na
 JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_NativeCrashTimeJournalTest_nativeSetDeviceTime(
         JNIEnv *_env, jobject _this, jstring _crashtimeJournalPath, jlong _value) {
     STOP_ON_FAIL(init_journal_test(_env, _crashtimeJournalPath));
-    ASSERT_EQ(true, bsg_ctj_set_device_time(_value));
+    ASSERT_EQ(true, bsg_ctj_set_device_time_seconds(_value));
     PASS();
 }
 

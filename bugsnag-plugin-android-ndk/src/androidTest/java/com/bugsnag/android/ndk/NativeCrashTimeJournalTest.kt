@@ -35,6 +35,23 @@ class NativeCrashTimeJournalTest {
 
         private val allExpected = jsonToMap(loadJson("native_crashtime_journal_test.json"))
 
+        private const val redactMarker = "<redact-me>"
+
+        @Suppress("UNCHECKED_CAST")
+        private fun performRedactions(redactions: Map<String, Any>, map: Map<String, Any>): Map<String, Any> {
+            return map.mapValues {
+                val value = it.value
+                when (value) {
+                    is String -> if (redactMarker.equals(redactions[it.key])) redactMarker else value
+                    is Map<*, *> -> performRedactions(
+                        redactions[it.key] as Map<String, Any>,
+                        map[it.key] as Map<String, Any>
+                    )
+                    else -> value
+                }
+            }
+        }
+
         private fun runJournalTest(
             initialDocument: Map<String, Any>,
             expectedKey: String,
@@ -60,7 +77,9 @@ class NativeCrashTimeJournalTest {
             val actual = loadJournalDocument(baseDocumentPath)
             folder.delete()
 
-            Assert.assertEquals(getExpected(expectedKey), actual)
+            val expected = getExpected(expectedKey)
+            val actualRedacted = performRedactions(expected, actual)
+            Assert.assertEquals(getExpected(expectedKey), actualRedacted)
         }
     }
 
@@ -284,7 +303,7 @@ class NativeCrashTimeJournalTest {
         }
     }
 
-    // bsg_ctj_set_device_time
+    // bsg_ctj_set_device_time_seconds
     private external fun nativeSetDeviceTime(ctjPath: String, value: Long): Int
 
     @Test

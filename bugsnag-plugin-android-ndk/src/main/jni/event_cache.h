@@ -138,7 +138,7 @@ void bsg_cache_set_device_orientation(void *event_ptr, const char *value);
 
 time_t bsg_cache_get_device_time(void *event_ptr);
 
-void bsg_cache_set_device_time(void *event_ptr, time_t value);
+void bsg_cache_set_device_time_seconds(void *event_ptr, time_t value);
 
 char *bsg_cache_get_device_os_name(void *event_ptr);
 

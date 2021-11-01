@@ -41,8 +41,8 @@
     "releaseStage": "development",
     "versionCode": 1,
     "binaryArch": "x86",
-    "duration": 5496998,
-    "durationInForeground": 5490000,
+    "duration": 60000,
+    "durationInForeground": 55000,
     "inForeground": true,
     "isLaunching": true
   },
