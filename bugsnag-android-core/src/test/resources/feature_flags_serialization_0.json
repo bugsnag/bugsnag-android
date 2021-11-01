@@ -1,0 +1,13 @@
+[
+  {
+    "featureFlag": "sample_group",
+    "variant": "a"
+  },
+  {
+    "featureFlag": "view_mode",
+    "variant": "modern"
+  },
+  {
+    "featureFlag": "demo_mode"
+  }
+]
