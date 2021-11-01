@@ -47,6 +47,7 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
 
   - label: ':android: Android size reporting'
     depends_on: "android-ci"
@@ -69,6 +70,7 @@ steps:
       TEST_APK_LOCATION: 'bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk'
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
 
   - label: ':android: Android 5 NDK r16 end-to-end tests - batch 1'
     depends_on:
@@ -90,6 +92,7 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
     soft_fail:
       - exit_status: "*"
 
@@ -113,6 +116,7 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
     soft_fail:
       - exit_status: "*"
 
@@ -136,6 +140,7 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
 
   - label: ':android: Android 6 NDK r16 end-to-end tests - batch 2'
     depends_on:
@@ -157,6 +162,7 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
 
   - label: ':android: Android 7 NDK r19 end-to-end tests - batch 1'
     depends_on:
@@ -178,6 +184,7 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
 
   - label: ':android: Android 7 NDK r19 end-to-end tests - batch 2'
     depends_on:
@@ -199,6 +206,7 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
 
   - label: ':android: Android 8.1 NDK r19 end-to-end tests - batch 1'
     depends_on:
@@ -220,6 +228,7 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
 
   - label: ':android: Android 8.1 NDK r19 end-to-end tests - batch 2'
     depends_on:
@@ -241,6 +250,7 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
 
   - label: ':android: Android 10 NDK r21 end-to-end tests - batch 1'
     depends_on:
@@ -262,6 +272,7 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
 
   - label: ':android: Android 10 NDK r21 end-to-end tests - batch 2'
     depends_on:
@@ -283,6 +294,7 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
 
   # Android 11+ devices have the GWP-ASAN tool enabled which randomly samples native memory to
   # to detect misuse (such as use-after-free, buffer overflow). If a failure is detected then
@@ -308,6 +320,7 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
 
   - label: ':android: Android 11 NDK r21 end-to-end tests - batch 2'
     depends_on:
@@ -329,6 +342,7 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
 
   # If there is a tag present activate a manual publishing step
 
