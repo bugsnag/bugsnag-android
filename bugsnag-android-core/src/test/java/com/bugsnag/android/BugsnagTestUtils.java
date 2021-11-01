@@ -25,7 +25,7 @@ final class BugsnagTestUtils {
 
     static {
         runtimeVersions.put("osBuild", "bulldog");
-        runtimeVersions.put("androidApiLevel", 24);
+        runtimeVersions.put("androidApiLevel", "24");
     }
 
     static Configuration generateConfiguration() {
