@@ -28,7 +28,7 @@ Feature: Native on error callbacks are invoked
         # TODO PLAT-7497
         # And the event "device.totalMemory" equals 99999999
         And the event "device.orientation" equals "custom_orientation"
-        And the event "device.time" equals "1970-01-01T00:00:15.000Z"
+        And the event "device.time" is a timestamp
         And the event "device.osName" equals "custom_os_name"
 
         # user

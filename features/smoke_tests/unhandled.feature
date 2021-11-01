@@ -177,8 +177,12 @@ Scenario: Signal raised with overwritten config
     And the event "device.freeMemory" is null
     And the event "metaData.app.freeMemory" is null
     And the event "metaData.app.memoryUsage" is null
+    And the event "metaData.app.networkAccess" is null
+    And the event "metaData.app.totalMemory" is null
     And the event "metaData.device.freeMemory" is null
     And the event "metaData.device.totalMemory" is null
+    And the event "metaData.device.batteryLevel" is null
+    And the event "metaData.device.charging" is null
 
     # Native context override
     And the event "context" equals "Some custom context"
