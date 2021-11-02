@@ -43,6 +43,12 @@ internal class CXXComplexMetadataScenario(
 
         Bugsnag.addMetadata("individual_values", map)
         Bugsnag.addMetadata("map_section", "map", map)
+        Bugsnag.addMetadata(
+            "collection_section", "collection",
+            listOf(
+                "a", 5, true
+            )
+        )
 
         if (Bugsnag.getLastRunInfo() != null) {
             log("Triggering handled JVM event")
