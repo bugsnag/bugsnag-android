@@ -18,6 +18,7 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
     soft_fail:
       - exit_status: "*"
 
@@ -40,6 +41,7 @@ steps:
         - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
 
   - label: ':android: Android 7 NDK r19 smoke tests'
     key: 'android-7-smoke'
@@ -60,6 +62,7 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
 
   - label: ':android: Android 8.1 NDK r19 smoke tests'
     key: 'android-8-1-smoke'
@@ -80,6 +83,7 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
 
   - label: ':android: Android 9 NDK r21 smoke tests'
     key: 'android-9-smoke'
@@ -100,6 +104,7 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
 
   - label: ':android: Android 9 NDK r21 end-to-end tests - batch 1'
     depends_on:
@@ -120,6 +125,7 @@ steps:
           - "--device=ANDROID_9_0"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
 
   - label: ':android: Android 9 NDK r21 end-to-end tests - batch 2'
     depends_on:
@@ -140,6 +146,7 @@ steps:
           - "--device=ANDROID_9_0"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
 
   - label: ':android: Android 10 NDK r21 smoke tests'
     key: 'android-10-smoke'
@@ -160,3 +167,4 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
