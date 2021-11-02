@@ -1,8 +1,8 @@
 package com.bugsnag.android.internal.journal
 
 import com.bugsnag.android.internal.DateUtils
-import com.dslplatform.json.DslJson
-import com.dslplatform.json.JsonWriter
+import com.bugsnag.dslplatform.json.DslJson
+import com.bugsnag.dslplatform.json.JsonWriter
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -25,7 +25,12 @@ class JsonHelper private constructor() {
         private val dslJson = DslJson(settings)
 
         init {
-            dslJson.registerWriter(Date::class.java, ::serializeDate)
+            dslJson.registerWriter(Date::class.java) { writer: JsonWriter, value: Date? ->
+                value?.let {
+                    val timestamp = DateUtils.toIso8601(it)
+                    writer.writeString(timestamp)
+                }
+            }
         }
 
         fun serialize(value: Any, stream: OutputStream) {
@@ -71,13 +76,6 @@ class JsonHelper private constructor() {
                 throw ex
             } catch (ex: IOException) {
                 throw IOException("Could not deserialize from $file", ex)
-            }
-        }
-
-        private fun serializeDate(writer: JsonWriter, value: Date?) {
-            value?.let {
-                val timestamp = DateUtils.toIso8601(value)
-                writer.writeString(timestamp)
             }
         }
     }
