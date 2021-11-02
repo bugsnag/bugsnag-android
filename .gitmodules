@@ -1,3 +1,6 @@
 [submodule "bugsnag-plugin-android-ndk/src/main/jni/external/libunwindstack-ndk"]
 	path = bugsnag-plugin-android-ndk/src/main/jni/external/libunwindstack-ndk
 	url = https://github.com/bugsnag/libunwindstack-ndk
+[submodule "bugsnag-android-core/dsl-json"]
+	path = bugsnag-android-core/dsl-json
+	url = https://github.com/bugsnag/dsl-json
