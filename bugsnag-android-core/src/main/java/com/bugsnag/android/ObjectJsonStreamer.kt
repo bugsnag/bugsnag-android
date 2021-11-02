@@ -9,7 +9,7 @@ internal class ObjectJsonStreamer {
 
     companion object {
         private const val REDACTED_PLACEHOLDER = "[REDACTED]"
-        private const val OBJECT_PLACEHOLDER = "[OBJECT]"
+        internal const val OBJECT_PLACEHOLDER = "[OBJECT]"
     }
 
     var redactedKeys = setOf("password")

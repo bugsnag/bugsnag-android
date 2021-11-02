@@ -291,6 +291,54 @@ Then('I wait to receive {int} Android startup logs') do |request_count|
   list.sort_by_sent_at! request_count
 end
 
+Then("the event contains complex metadata") do
+
+  # check individual values
+  steps %Q{
+    And the event "metaData.individual_values" contains complex metadata
+    And the event "metaData.map_section.map" contains complex metadata
+  }
+end
+
+Then("the event {string} contains complex metadata") do |path|
+  steps %Q{
+    And the event "#{path}" is not null
+    And the event "#{path}.int_array.0" equals -5
+    And the event "#{path}.int_array.1" equals 1000
+    And the event "#{path}.int_array.2" equals 29
+    And the event "#{path}.int_array.3" equals 2147483647
+    And the event "#{path}.int_array.4" equals -2147483648
+    And the event "#{path}.string_array.0" equals "a"
+    And the event "#{path}.string_array.1" equals "b"
+    And the event "#{path}.string_array.2" equals "c"
+    And the event "#{path}.bool_array.0" is false
+    And the event "#{path}.bool_array.1" is true
+    And the event "#{path}.large_value" equals "Have you tried turning it off and on again and off and on again and off and on again and off and on again and off and on again and off and on again and on again and off and on again and off and on again and off and on again?"
+    And the event "#{path}.null" is null
+    And the event "#{path}.long" equals 1509234098234
+    And the event "#{path}.date" equals "1970-01-19T22:22:50.803Z"
+    And the event "#{path}.array_with_null.0" equals "x"
+    And the event "#{path}.array_with_null.1" is null
+    And the event "#{path}.float_array.0" equals 5.0
+    And the event "#{path}.float_array.1" equals 19.3
+    And the event "#{path}.float_array.2" equals 5.623
+    And the event "#{path}.unknown_type" equals "[OBJECT]"
+  }
+end
+
+Then("the event {string} equals {float}") do |field, value|
+  steps %Q{
+    the "error" payload field "events.0.#{field}" equals #{value}
+  }
+end
+
+Then('the {word} payload field {string} equals {float}') do |request_type, field_path, float_value|
+  puts("Expecting float field to equal #{float_value}")
+  requests = Maze::Server.list_for(request_type)
+  body = Maze::Helper.read_key_path(requests.current[:body])
+  assert_equal(float_value, body, field_path)
+end
+
 def assert_received_startup_logs(request_count, list)
   timeout = Maze.config.receive_requests_wait
   wait = Maze::Wait.new(timeout: timeout)
