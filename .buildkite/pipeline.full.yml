@@ -56,22 +56,6 @@ steps:
       - docker-compose#v3.7.0:
           run: android-sizer
 
-  - label: ':android: Android 9 Instrumentation tests'
-    depends_on:
-      - "android-ci"
-    timeout_in_minutes: 60
-    command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    env:
-      SINGLE_RUNNER: "true"
-      INSTRUMENTATION_DEVICES: '["Google Pixel 3-9.0"]'
-      TEST_APK_LOCATION: 'bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk'
-    concurrency: 9
-    concurrency_group: 'browserstack-app'
-    concurrency_method: eager
-
   - label: ':android: Android 5 NDK r16 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r16"
