@@ -270,7 +270,8 @@ public class ClientTest {
         FeatureFlagState clientFlags = client.featureFlagState;
         assertNotSame(configFlags, clientFlags);
 
-        List<FeatureFlag> configExpected = Collections.singletonList(new FeatureFlag("sample_group", "a"));
+        List<FeatureFlag> configExpected = Collections.singletonList(
+                new FeatureFlag("sample_group", "a"));
         assertEquals(configExpected, config.impl.featureFlagState.toList());
 
         List<FeatureFlag> clientExpected = Arrays.asList(

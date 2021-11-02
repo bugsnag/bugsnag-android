@@ -46,6 +46,9 @@ public class ClientFacadeTest {
     UserState userState;
 
     @Mock
+    FeatureFlagState featureFlagState;
+
+    @Mock
     ClientObservable clientObservable;
 
     @Mock
@@ -108,6 +111,7 @@ public class ClientFacadeTest {
                 contextState,
                 callbackState,
                 userState,
+                featureFlagState,
                 clientObservable,
                 appContext,
                 deviceDataCollector,
