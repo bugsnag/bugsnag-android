@@ -3,7 +3,7 @@ name: instrumentation_tests
 on: [push, pull_request]
 
 env:
-  GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g -Dorg.gradle.daemon=false -Dkotlin.incremental=false"
+  GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g -Dorg.gradle.daemon=false -Dkotlin.incremental=false -Dorg.gradle.parallel=true"
 
 jobs:
   android:
