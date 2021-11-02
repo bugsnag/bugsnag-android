@@ -42,7 +42,7 @@ Feature: Legacy struct is converted to an error payload
         And the event "device.jailbroken" is true
         And the event "device.time" equals "2017-10-27T13:00:34Z"
         And the event "device.cpuAbi.0" equals "x86"
-        And the event "device.runtimeVersions.androidApiLevel" equals 27
+        And the event "device.runtimeVersions.androidApiLevel" equals "27"
         And the event "device.runtimeVersions.osBuild" equals "custom_build"
 
         # user

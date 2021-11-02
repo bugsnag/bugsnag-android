@@ -301,6 +301,10 @@ internal class ClientInternal constructor(
         event.device.freeMemory = null
         event.metadata.clearMetadata("app", "freeMemory")
         event.metadata.clearMetadata("app", "memoryUsage")
+        event.metadata.clearMetadata("app", "networkAccess")
+        event.metadata.clearMetadata("app", "totalMemory")
+        event.metadata.clearMetadata("device", "batteryLevel")
+        event.metadata.clearMetadata("device", "charging")
         event.metadata.clearMetadata("device", "freeMemory")
         event.metadata.clearMetadata("device", "totalMemory")
     }
