@@ -41,11 +41,12 @@ import java.util.concurrent.RejectedExecutionException;
  * @see Bugsnag
  */
 @SuppressWarnings({"checkstyle:JavadocTagContinuationIndentation", "ConstantConditions"})
-public class Client implements MetadataAware, CallbackAware, UserAware {
+public class Client implements MetadataAware, CallbackAware, UserAware, FeatureFlagAware {
 
     final ImmutableConfig immutableConfig;
 
     final MetadataState metadataState;
+    final FeatureFlagState featureFlagState;
 
     private final ContextState contextState;
     private final CallbackState callbackState;
@@ -152,6 +153,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         breadcrumbState = bugsnagStateModule.getBreadcrumbState();
         contextState = bugsnagStateModule.getContextState();
         metadataState = bugsnagStateModule.getMetadataState();
+        featureFlagState = bugsnagStateModule.getFeatureFlagState();
 
         // lookup system services
         final SystemServiceModule systemServiceModule = new SystemServiceModule(contextModule);
@@ -222,6 +224,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             ContextState contextState,
             CallbackState callbackState,
             UserState userState,
+            FeatureFlagState featureFlagState,
             ClientObservable clientObservable,
             Context appContext,
             @NonNull DeviceDataCollector deviceDataCollector,
@@ -243,6 +246,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         this.contextState = contextState;
         this.callbackState = callbackState;
         this.userState = userState;
+        this.featureFlagState = featureFlagState;
         this.clientObservable = clientObservable;
         this.appContext = appContext;
         this.deviceDataCollector = deviceDataCollector;
@@ -920,6 +924,62 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         if (!immutableConfig.shouldDiscardBreadcrumb(type)) {
             breadcrumbState.add(new Breadcrumb(message, type, metadata, new Date(), logger));
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addFeatureFlag(@NonNull String name) {
+        if (name != null) {
+            featureFlagState.addFeatureFlag(name);
+        } else {
+            logNull("addFeatureFlag");
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addFeatureFlag(@NonNull String name, @Nullable String variant) {
+        if (name != null) {
+            featureFlagState.addFeatureFlag(name, variant);
+        } else {
+            logNull("addFeatureFlag");
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addFeatureFlags(@NonNull Iterable<FeatureFlag> featureFlags) {
+        if (featureFlags != null) {
+            featureFlagState.addFeatureFlags(featureFlags);
+        } else {
+            logNull("addFeatureFlags");
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void clearFeatureFlag(@NonNull String name) {
+        if (name != null) {
+            featureFlagState.clearFeatureFlag(name);
+        } else {
+            logNull("clearFeatureFlag");
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void clearFeatureFlags() {
+        featureFlagState.clearFeatureFlags();
     }
 
     /**
