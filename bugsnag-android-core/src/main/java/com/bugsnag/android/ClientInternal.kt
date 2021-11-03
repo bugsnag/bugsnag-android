@@ -92,9 +92,9 @@ internal class ClientInternal constructor(
         // setup journal
         journalStore = BugsnagJournalStore(config.journalBasePath, logger)
         journal = lazy {
-            val jrn = journalStore.createNewJournal()
-            jrn.addCommand(JournalKeys.pathRuntimeLaunchTime, DateUtils.toIso8601(launchTime))
-            jrn
+            journalStore.createNewJournal().apply {
+                addCommand(JournalKeys.pathRuntimeLaunchTime, DateUtils.toIso8601(launchTime))
+            }
         }
 
         // setup storage as soon as possible
