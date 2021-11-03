@@ -63,6 +63,7 @@ steps:
       TEST_FIXTURE_NDK_VERSION: "17.2.4988734"
       TEST_FIXTURE_NAME: "fixture-r16.apk"
       USE_LEGACY_OKHTTP: "true"
+      BUILD_TASK: "assembleRelease"
 
   - label: ':android: Build fixture APK r19'
     key: "fixture-r19"
@@ -76,6 +77,7 @@ steps:
       MAVEN_VERSION: "3.6.1"
       TEST_FIXTURE_NDK_VERSION: "19.2.5345600"
       TEST_FIXTURE_NAME: "fixture-r19.apk"
+      BUILD_TASK: "assembleRelease"
 
   - label: ':android: Build fixture APK r21'
     key: "fixture-r21"
@@ -89,6 +91,7 @@ steps:
       MAVEN_VERSION: "3.6.1"
       TEST_FIXTURE_NDK_VERSION: "21.3.6528147"
       TEST_FIXTURE_NAME: "fixture-r21.apk"
+      BUILD_TASK: "assembleRelease"
 
   - label: ':android: Lint'
     depends_on: "android-ci"
