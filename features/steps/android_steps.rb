@@ -297,6 +297,9 @@ Then("the event contains complex metadata") do
   steps %Q{
     And the event "metaData.individual_values" contains complex metadata
     And the event "metaData.map_section.map" contains complex metadata
+    And the event "metaData.collection_section.collection.0" equals "a"
+    And the event "metaData.collection_section.collection.1" equals 5
+    And the event "metaData.collection_section.collection.2" is true
   }
 end
 
