@@ -1,8 +1,8 @@
 package com.bugsnag.android.internal.journal
 
 import com.bugsnag.android.internal.DateUtils
-import com.bugsnag.dslplatform.json.DslJson
-import com.bugsnag.dslplatform.json.JsonWriter
+import com.bugsnag.android.repackaged.dslplatform.json.DslJson
+import com.bugsnag.android.repackaged.dslplatform.json.JsonWriter
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
