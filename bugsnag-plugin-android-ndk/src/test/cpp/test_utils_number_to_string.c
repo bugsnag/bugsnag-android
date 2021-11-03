@@ -55,6 +55,9 @@ TEST test_hex_to_string(void) {
     ASSERT_EQ(8, bsg_hex64_to_string(0x8fedcba9, buff));
     ASSERT_STR_EQ("8fedcba9", buff);
 
+    ASSERT_EQ(8, bsg_hex64_to_string(0xdab864d0, buff));
+    ASSERT_STR_EQ("dab864d0", buff);
+
     ASSERT_EQ(8, bsg_hex64_to_string(0xffffffff, buff));
     ASSERT_STR_EQ("ffffffff", buff);
 

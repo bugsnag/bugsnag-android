@@ -18,6 +18,7 @@
 #include "utils/number_to_string.h"
 #include "utils/path_builder.h"
 #include "utils/serializer.h"
+#include <time.h>
 
 #define KEY_API_KEY "apiKey"
 #define KEY_APP "app"
@@ -55,6 +56,7 @@
 #define KEY_OS_NAME "osName"
 #define KEY_OS_VERSION "osVersion"
 #define KEY_RELEASE_STAGE "releaseStage"
+#define KEY_RUNTIME "runtime"
 #define KEY_SESSION "session"
 #define KEY_SESSION_STARTED_AT "startedAt"
 #define KEY_SEVERITY "severity"
@@ -65,7 +67,7 @@
 #define KEY_SYMBOL_ADDRESS "symbolAddress"
 #define KEY_THREADS "threads"
 #define KEY_TIME_UNIX "time"
-#define KEY_TIMESTAMP "timestamp"
+#define KEY_TIME_NOW "timeNow"
 #define KEY_TOTAL_MEMORY "totalMemory"
 #define KEY_TYPE "type"
 #define KEY_UNHANDLED "unhandled"
@@ -403,6 +405,8 @@ bool bsg_ctj_store_event(const bugsnag_event *event) {
 
   bsg_pb_reset();
 
+  RETURN_ON_FALSE(bsg_ctj_record_current_time());
+
   RETURN_ON_FALSE(add_exception(&event->error));
   if (bsg_cache_has_session(event)) {
     RETURN_ON_FALSE(add_session(event));
@@ -415,7 +419,7 @@ bool bsg_ctj_store_event(const bugsnag_event *event) {
 
   bsg_pb_reset();
 
-  RETURN_ON_FALSE(bsg_ctj_set_device_time(event->device.time));
+  RETURN_ON_FALSE(bsg_ctj_set_device_time_seconds(event->device.time));
 
   return bsg_ctj_flush();
 }
@@ -646,16 +650,35 @@ bool bsg_ctj_set_device_orientation(const char *value) {
   return set_event_subobject_string(KEY_DEVICE, KEY_ORIENTATION, value);
 }
 
-bool bsg_ctj_set_device_time(time_t value) {
+bool bsg_ctj_set_device_time_seconds(time_t value) {
   // {
   //       "device": {
-  //         "time": "2018-08-07T10:16:34.564Z"
+  //         "time": "0x123456789abc"
   //       }
   // }
 
   // IMPORTANT: This value MUST be converted to an RFC 3339 timestamp and stored
   // under "time" upon reloading the journal!
-  return set_event_subobject_hex(KEY_DEVICE, KEY_TIME_UNIX, value);
+  // Note: We convert to milliseconds because we will eventually want to reach
+  // this level of precision in future.
+  return set_event_subobject_hex(KEY_DEVICE, KEY_TIME_UNIX,
+                                 (uint64_t)value * 1000);
+}
+
+bool bsg_ctj_record_current_time() {
+  // {
+  //       "runtime": {
+  //         "timeNow": "0x123456789abc"
+  //       }
+  // }
+
+  // IMPORTANT: This value MUST be converted to an RFC 3339 timestamp and stored
+  // under "time" upon reloading the journal!
+  // Note: We convert to milliseconds because we will eventually want to reach
+  // this level of precision in future.
+  time_t now = time(NULL);
+  return set_event_subobject_hex(KEY_RUNTIME, KEY_TIME_NOW,
+                                 (uint64_t)now * 1000);
 }
 
 bool bsg_ctj_set_device_os_name(const char *value) {

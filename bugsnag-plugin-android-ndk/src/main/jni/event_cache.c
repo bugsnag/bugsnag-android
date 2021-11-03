@@ -412,7 +412,7 @@ time_t bsg_cache_get_device_time(void *event_ptr) {
   return event->device.time;
 }
 
-void bsg_cache_set_device_time(void *event_ptr, time_t value) {
+void bsg_cache_set_device_time_seconds(void *event_ptr, time_t value) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
   event->device.time = value;
 }

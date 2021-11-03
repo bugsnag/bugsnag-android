@@ -1,10 +1,13 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.internal.DateUtils
 import com.bugsnag.android.internal.StateObserver
 import com.bugsnag.android.internal.journal.JournalKeys
 import java.util.Date
 
 internal class JournaledStateObserver(val client: Client, val journal: BugsnagJournal) : StateObserver {
+    private var inForeground = false
+
     override fun onStateChange(event: StateEvent) {
         when (event) {
             is StateEvent.JournalSetup -> {
@@ -57,8 +60,17 @@ internal class JournaledStateObserver(val client: Client, val journal: BugsnagJo
             is StateEvent.UpdateInForeground -> {
                 journal.addCommands(
                     Pair(JournalKeys.pathAppInForeground, event.inForeground),
-                    Pair(JournalKeys.pathMetadataAppActiveScreen, event.contextActivity)
+                    Pair(JournalKeys.pathMetadataAppActiveScreen, event.contextActivity),
+                    Pair(
+                        JournalKeys.pathRuntimeEnteredForegroundTime,
+                        if (
+                            event.inForeground && !inForeground
+                        ) {
+                            DateUtils.toIso8601(Date())
+                        } else null
+                    )
                 )
+                inForeground = event.inForeground
             }
             is StateEvent.UpdateLastRunInfo -> {
                 // This event doesn't seem to actually be used.
@@ -127,6 +139,12 @@ internal class JournaledStateObserver(val client: Client, val journal: BugsnagJo
         )
     }
 
+    @Suppress("UNCHECKED_CAST")
+    private fun getMap(journal: BugsnagJournal, key: String): Map<String, Any?> {
+        val map = journal.document[key] as Map<String, Any?>?
+        return if (map != null) map else mapOf()
+    }
+
     private fun handleJournalSetup(event: StateEvent.JournalSetup) {
         val appDataCollector = client.appDataCollector
         val appData = appDataCollector.generateAppWithState()
@@ -137,11 +155,17 @@ internal class JournaledStateObserver(val client: Client, val journal: BugsnagJo
         journal.addCommands(
             Pair(JournalKeys.pathApiKey, event.apiKey),
             Pair(JournalKeys.pathContext, client.context),
-            Pair(JournalKeys.pathApp, appData.toJournalSection()),
-            Pair(JournalKeys.pathMetadataApp, appDataCollector.getAppDataMetadata()),
+            Pair(JournalKeys.pathApp, getMap(journal, JournalKeys.pathApp) + appData.toJournalSection()),
+            Pair(
+                JournalKeys.pathMetadataApp,
+                getMap(journal, JournalKeys.pathMetadataApp) + appDataCollector.getAppDataMetadata()
+            ),
             Pair(JournalKeys.pathDevice, device),
-            Pair(JournalKeys.pathMetadataDevice, deviceDataCollector.getDeviceMetadata()),
-            Pair(JournalKeys.pathUser, client.getUser().toJournalSection()),
+            Pair(
+                JournalKeys.pathMetadataDevice,
+                getMap(journal, JournalKeys.pathMetadataDevice) + deviceDataCollector.getDeviceMetadata()
+            ),
+            Pair(JournalKeys.pathUser, getMap(journal, JournalKeys.pathUser) + client.getUser().toJournalSection()),
             Pair(JournalKeys.pathProjectPackages, client.config.projectPackages)
         )
     }

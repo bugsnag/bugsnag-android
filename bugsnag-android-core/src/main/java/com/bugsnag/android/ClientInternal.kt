@@ -6,6 +6,7 @@ import androidx.annotation.VisibleForTesting
 import com.bugsnag.android.Metadata.Companion.merge
 import com.bugsnag.android.SeverityReason.SeverityReasonType
 import com.bugsnag.android.SystemBroadcastReceiver.Companion.register
+import com.bugsnag.android.internal.DateUtils
 import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.StateObserver
 import com.bugsnag.android.internal.dag.ConfigModule
@@ -75,6 +76,7 @@ internal class ClientInternal constructor(
      * in this constructor should be avoided unless absolutely necessary.
      */
     init {
+        val launchTime = Date()
         bgTaskService = BackgroundTaskService()
         memoryTrimState = MemoryTrimState()
         val contextModule = ContextModule(androidContext)
@@ -90,7 +92,9 @@ internal class ClientInternal constructor(
         // setup journal
         journalStore = BugsnagJournalStore(config.journalBasePath, logger)
         journal = lazy {
-            journalStore.createNewJournal()
+            journalStore.createNewJournal().apply {
+                addCommand(JournalKeys.pathRuntimeLaunchTime, DateUtils.toIso8601(launchTime))
+            }
         }
 
         // setup storage as soon as possible

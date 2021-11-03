@@ -350,7 +350,8 @@ internal class JournaledStateObserverTest {
                 )
             )
         )
-        BugsnagTestUtils.assertNormalizedEquals(expected, journal.document)
+        val actual = journal.document.filterKeys { it == "version-info" || it == "app" || it == "metaData" }
+        BugsnagTestUtils.assertNormalizedEquals(expected, actual)
     }
 
     @Test

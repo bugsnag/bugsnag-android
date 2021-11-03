@@ -109,7 +109,7 @@
   },
   "testSetDeviceTime": {
     "device": {
-      "time": "0x3b9aca00"
+      "time": "0xe8d4a51000"
     }
   },
   "testSetOsName": {
@@ -271,7 +271,7 @@
       }
     },
     "device": {
-      "time": "0x59682f00"
+      "time": "0x15d3ef79800"
     },
     "session": {
       "id": "123",
@@ -280,6 +280,9 @@
         "handled": 5,
         "unhandled": 1
       }
+    },
+    "runtime": {
+      "timeNow": "<redact-me>"
     },
     "threads": [
       {
