@@ -1,7 +1,7 @@
 package com.bugsnag.android.internal.journal
 
 import com.bugsnag.android.ObjectJsonStreamer
-import com.bugsnag.dslplatform.json.DslJson
+import com.bugsnag.android.repackaged.dslplatform.json.DslJson
 import java.io.InputStream
 import java.io.OutputStream
 import java.lang.reflect.Type
