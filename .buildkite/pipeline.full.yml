@@ -324,6 +324,7 @@ steps:
   - label: ':android: Android 11 NDK r21 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r21"
+      - "android-11-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -345,6 +346,7 @@ steps:
   - label: ':android: Android 11 NDK r21 end-to-end tests - batch 2'
     depends_on:
       - "fixture-r21"
+      - "android-11-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
