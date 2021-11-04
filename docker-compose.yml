@@ -30,6 +30,7 @@ services:
       TEST_FIXTURE_NDK_VERSION:
       TEST_FIXTURE_NAME:
       USE_LEGACY_OKHTTP:
+      BUILD_TASK:
     volumes:
       - ./build:/app/build
 

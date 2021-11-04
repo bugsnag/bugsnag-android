@@ -12,6 +12,7 @@ steps:
       MINIMAL_FIXTURE: true
       TEST_FIXTURE_NDK_VERSION: "17.2.4988734"
       TEST_FIXTURE_NAME: "fixture-minimal.apk"
+      BUILD_TASK: "assembleRelease"
 
   - label: ':android: Build Example App'
     depends_on: "android-ci"
@@ -20,6 +21,21 @@ steps:
     plugins:
       docker-compose#v3.7.0:
         run: android-ci
+
+  - label: ':android: Build debug fixture APK'
+    key: "fixture-debug"
+    depends_on: "android-ci"
+    timeout_in_minutes: 30
+    artifact_paths: build/debug/fixture-debug.apk
+    plugins:
+      - docker-compose#v3.7.0:
+          run: android-builder
+    env:
+      MAVEN_VERSION: "3.6.1"
+      MINIMAL_FIXTURE: false
+      TEST_FIXTURE_NDK_VERSION: "17.2.4988734"
+      TEST_FIXTURE_NAME: "fixture-debug.apk"
+      BUILD_TASK: "assembleDebug"
 
   - label: ':android: Build Scan'
     depends_on: "android-ci"
@@ -47,6 +63,28 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
+
+  - label: ':android: Debug fixture smoke tests'
+    depends_on: "fixture-debug"
+    timeout_in_minutes: 30
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/debug/fixture-debug.apk"
+        upload: "maze_output/failed/**/*"
+      docker-compose#v3.7.0:
+        pull: android-maze-runner
+        run: android-maze-runner
+        command:
+          - "features/smoke_tests"
+          - "--tags=debug-safe"
+          - "--app=/app/build/debug/fixture-debug.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_9_0"
+          - "--fail-fast"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+    concurrency_method: eager
 
   - label: ':android: Android size reporting'
     depends_on: "android-ci"
@@ -54,24 +92,6 @@ steps:
     plugins:
       - docker-compose#v3.7.0:
           run: android-sizer
-
-  - label: ':android: Android 9 Instrumentation tests'
-    depends_on:
-      - "android-ci"
-    timeout_in_minutes: 60
-    command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    env:
-      SINGLE_RUNNER: "true"
-      INSTRUMENTATION_DEVICES: '["Google Pixel 3-9.0"]'
-      TEST_APK_LOCATION: 'bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk'
-    concurrency: 9
-    concurrency_group: 'browserstack-app'
-    # TODO remove when PLAT-7453 is complete
-    soft_fail:
-      - exit_status: "*"
 
   - label: ':android: Android 5 NDK r16 end-to-end tests - batch 1'
     depends_on:
@@ -93,6 +113,7 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
     soft_fail:
       - exit_status: "*"
 
@@ -116,6 +137,7 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
     soft_fail:
       - exit_status: "*"
 
@@ -139,6 +161,7 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
 
   - label: ':android: Android 6 NDK r16 end-to-end tests - batch 2'
     depends_on:
@@ -160,6 +183,7 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
 
   - label: ':android: Android 7 NDK r19 end-to-end tests - batch 1'
     depends_on:
@@ -181,6 +205,7 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
 
   - label: ':android: Android 7 NDK r19 end-to-end tests - batch 2'
     depends_on:
@@ -202,6 +227,7 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
 
   - label: ':android: Android 8.1 NDK r19 end-to-end tests - batch 1'
     depends_on:
@@ -223,6 +249,7 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
 
   - label: ':android: Android 8.1 NDK r19 end-to-end tests - batch 2'
     depends_on:
@@ -244,6 +271,7 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
 
   - label: ':android: Android 10 NDK r21 end-to-end tests - batch 1'
     depends_on:
@@ -265,6 +293,7 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
 
   - label: ':android: Android 10 NDK r21 end-to-end tests - batch 2'
     depends_on:
@@ -286,6 +315,7 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
 
   # Android 11+ devices have the GWP-ASAN tool enabled which randomly samples native memory to
   # to detect misuse (such as use-after-free, buffer overflow). If a failure is detected then
@@ -311,6 +341,7 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
 
   - label: ':android: Android 11 NDK r21 end-to-end tests - batch 2'
     depends_on:
@@ -332,6 +363,7 @@ steps:
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
+    concurrency_method: eager
 
   # If there is a tag present activate a manual publishing step
 
