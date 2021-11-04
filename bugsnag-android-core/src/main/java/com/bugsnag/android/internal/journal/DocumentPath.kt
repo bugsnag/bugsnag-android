@@ -1,6 +1,5 @@
 package com.bugsnag.android.internal.journal
 
-import com.bugsnag.android.internal.asConcurrent
 import java.util.LinkedList
 
 /**
@@ -75,10 +74,9 @@ class DocumentPath(path: String) {
         value: Any?
     ): MutableMap<String, Any> {
         if (directives.isEmpty()) {
-            val concurrentValue = value.asConcurrent()
-            require(concurrentValue is MutableMap<*, *>) { "Value replacing document must be a map" }
+            require(value is Map<*, *>) { "Value replacing document must be a map" }
             @Suppress("UNCHECKED_CAST")
-            return concurrentValue as MutableMap<String, Any>
+            return (value as Map<String, Any>).toMutableMap()
         }
         val filledInDocument = fillInMissingContainers(document, 0)
         require(filledInDocument is MutableMap<*, *>) { "Document path must result in a top level map" }
