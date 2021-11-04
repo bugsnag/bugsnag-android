@@ -44,7 +44,7 @@ Scenario: Unhandled Java Exception with loaded configuration
     And the event "app.isLaunching" is true
     And the error payload field "events.0.metaData.app.memoryUsage" is greater than 0
     And the error payload field "events.0.metaData.app.totalMemory" is greater than 0
-    And the error payload field "events.0.metaData.app.freeMemory" is greater than 0
+    And the error payload field "events.0.metaData.app.freeMemory" is an integer
     And the error payload field "events.0.metaData.app.memoryLimit" is greater than 0
 
     # Metadata
@@ -181,6 +181,7 @@ Scenario: Signal raised with overwritten config
     And the event "metaData.fruit.ripe" is true
     And the event "metaData.fruit.counters" equals 47
 
+@debug-safe
 Scenario: C++ exception thrown with overwritten config
     When I run "CXXExceptionSmokeScenario" and relaunch the app
     And I configure Bugsnag for "CXXExceptionSmokeScenario"

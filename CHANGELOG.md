@@ -1,5 +1,18 @@
 # Changelog
 
+## 5.15.0 (2021-11-04)
+
+### Bug fixes
+
+* Avoid reporting false-positive background ANRs with improved foreground detection
+  [#1429](https://github.com/bugsnag/bugsnag-android/pull/1429)
+
+* Prevent events being attached to phantom sessions when they are blocked by an `OnSessionCallback`
+  [#1434](https://github.com/bugsnag/bugsnag-android/pull/1434)
+
+* Plugins will correctly mirror metadata added using `addMetadata(String, Map)`
+  [#1454](https://github.com/bugsnag/bugsnag-android/pull/1454)
+
 ## 5.14.0 (2021-09-29)
 
 ### Enhancements 

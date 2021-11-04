@@ -21,7 +21,10 @@ internal class BreadcrumbSerializationTest {
                 Breadcrumb(
                     "metadata",
                     BreadcrumbType.PROCESS,
-                    mutableMapOf<String, Any?>(Pair("foo", true)),
+                    mutableMapOf<String, Any?>(
+                        "foo" to true,
+                        "password" to "super secret"
+                    ),
                     timestamp,
                     NoopLogger
                 )

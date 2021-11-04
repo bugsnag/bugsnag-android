@@ -12,6 +12,8 @@ import com.bugsnag.android.internal.ImmutableConfig;
 import android.app.ActivityManager;
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -220,5 +222,20 @@ public class SessionTrackerTest {
         assertNull(sessionTracker.getCurrentSession());
         sessionTracker.startNewSession(new Date(), user, false);
         assertNotNull(sessionTracker.getCurrentSession());
+    }
+
+    @Test
+    public void blockSessionInCallback() {
+        CallbackState callbackState = configuration.impl.callbackState;
+        callbackState.addOnSession(new OnSessionCallback() {
+            @Override
+            public boolean onSession(@NonNull Session session) {
+                return false;
+            }
+        });
+
+        Date date = new Date();
+        sessionTracker.startNewSession(date, user, false);
+        assertNull(sessionTracker.getCurrentSession());
     }
 }

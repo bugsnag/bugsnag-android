@@ -30,6 +30,7 @@ services:
       TEST_FIXTURE_NDK_VERSION:
       TEST_FIXTURE_NAME:
       USE_LEGACY_OKHTTP:
+      BUILD_TASK:
     volumes:
       - ./build:/app/build
 
@@ -58,7 +59,7 @@ services:
       BUILDKITE_REPO:
 
   android-maze-runner:
-    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner-releases:latest-v5-cli
+    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner-releases:latest-v6-cli
     environment:
       DEBUG:
       BUILDKITE:
