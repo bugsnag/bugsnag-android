@@ -4,6 +4,7 @@ import androidx.annotation.VisibleForTesting
 import com.bugsnag.android.BreadcrumbType
 import com.bugsnag.android.Client
 import com.bugsnag.android.Plugin
+import com.bugsnag.android.redactMap
 import com.bugsnag.android.shouldDiscardNetworkBreadcrumb
 import okhttp3.Call
 import okhttp3.EventListener
@@ -107,7 +108,7 @@ class BugsnagOkHttpPlugin @JvmOverloads constructor(
     /**
      * Constructs a map of query parameters, redacting any sensitive values.
      */
-    private fun buildQueryParams(request: Request): Map<String, Any?> {
+    private fun Client.buildQueryParams(request: Request): Map<String, Any?> {
         val url = request.url
         val params = mutableMapOf<String, Any?>()
 
@@ -118,7 +119,7 @@ class BugsnagOkHttpPlugin @JvmOverloads constructor(
                 else -> params[name] = url.queryParameterValues(name)
             }
         }
-        return params
+        return redactMap(params)
     }
 
     /**
