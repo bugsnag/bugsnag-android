@@ -116,7 +116,7 @@ internal class JournaledStateObserver(val client: Client, val journal: BugsnagJo
     private fun handleAddBreadcrumbEvent(event: StateEvent.AddBreadcrumb) {
         journal.addCommand(
             "${JournalKeys.pathBreadcrumbs}.",
-            mapOf(
+            mutableMapOf(
                 JournalKeys.keyMetadata to makeMetadataJournalSafe(event.metadata),
                 JournalKeys.keyName to event.message,
                 JournalKeys.keyTimestamp to event.timestamp,
@@ -128,10 +128,10 @@ internal class JournaledStateObserver(val client: Client, val journal: BugsnagJo
     private fun handleStartSessionEvent(event: StateEvent.StartSession) {
         journal.addCommand(
             JournalKeys.pathSession,
-            mapOf(
+            mutableMapOf(
                 JournalKeys.keyId to event.id,
                 JournalKeys.keyStartedAt to event.startedAt,
-                JournalKeys.keyEvents to mapOf(
+                JournalKeys.keyEvents to mutableMapOf(
                     JournalKeys.keyHandled to event.handledCount,
                     JournalKeys.keyUnhandled to event.unhandledCount
                 )
@@ -142,7 +142,7 @@ internal class JournaledStateObserver(val client: Client, val journal: BugsnagJo
     @Suppress("UNCHECKED_CAST")
     private fun getMap(journal: BugsnagJournal, key: String): Map<String, Any?> {
         val map = journal.document[key] as Map<String, Any?>?
-        return if (map != null) map else mapOf()
+        return if (map != null) map else mutableMapOf()
     }
 
     private fun handleJournalSetup(event: StateEvent.JournalSetup) {
