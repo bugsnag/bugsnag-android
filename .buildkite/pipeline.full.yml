@@ -96,7 +96,6 @@ steps:
   - label: ':android: Android 5 NDK r16 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r16"
-      - "android-5-smoke"
     timeout_in_minutes: 90
     plugins:
       artifacts#v1.2.0:
@@ -106,6 +105,7 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
+          - "features/smoke_tests"
           - "features/full_tests"
           - "--exclude=features/[n-z].*.feature"
           - "--app=/app/build/release/fixture-r16.apk"
@@ -121,7 +121,6 @@ steps:
   - label: ':android: Android 5 NDK r16 end-to-end tests - batch 2'
     depends_on:
       - "fixture-r16"
-      - "android-5-smoke"
     timeout_in_minutes: 90
     plugins:
       artifacts#v1.2.0:
@@ -146,7 +145,6 @@ steps:
   - label: ':android: Android 6 NDK r16 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r16"
-      - "android-6-smoke"
     timeout_in_minutes: 90
     plugins:
       artifacts#v1.2.0:
@@ -156,6 +154,7 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
+          - "features/smoke_tests"
           - "features/full_tests"
           - "--exclude=features/[n-z].*.feature"
           - "--app=/app/build/release/fixture-r16.apk"
@@ -169,7 +168,6 @@ steps:
   - label: ':android: Android 6 NDK r16 end-to-end tests - batch 2'
     depends_on:
       - "fixture-r16"
-      - "android-6-smoke"
     timeout_in_minutes: 90
     plugins:
       artifacts#v1.2.0:
@@ -192,7 +190,6 @@ steps:
   - label: ':android: Android 7 NDK r19 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r19"
-      - "android-7-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -202,6 +199,7 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
+          - "features/smoke_tests"
           - "features/full_tests"
           - "--exclude=features/[n-z].*.feature"
           - "--app=/app/build/release/fixture-r19.apk"
@@ -215,7 +213,6 @@ steps:
   - label: ':android: Android 7 NDK r19 end-to-end tests - batch 2'
     depends_on:
       - "fixture-r19"
-      - "android-7-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -238,7 +235,6 @@ steps:
   - label: ':android: Android 8.1 NDK r19 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r19"
-      - "android-8-1-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -248,6 +244,7 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
+          - "features/smoke_tests"
           - "features/full_tests"
           - "--exclude=features/[n-z].*.feature"
           - "--app=/app/build/release/fixture-r19.apk"
@@ -261,7 +258,6 @@ steps:
   - label: ':android: Android 8.1 NDK r19 end-to-end tests - batch 2'
     depends_on:
       - "fixture-r19"
-      - "android-8-1-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -284,7 +280,6 @@ steps:
   - label: ':android: Android 10 NDK r21 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r21"
-      - "android-10-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -294,6 +289,7 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
+          - "features/smoke_tests"
           - "features/full_tests"
           - "--exclude=features/[n-z].*.feature"
           - "--app=/app/build/release/fixture-r21.apk"
@@ -307,7 +303,6 @@ steps:
   - label: ':android: Android 10 NDK r21 end-to-end tests - batch 2'
     depends_on:
       - "fixture-r21"
-      - "android-10-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -317,6 +312,7 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
+          - "features/smoke_tests"
           - "features/full_tests"
           - "--exclude=features/[a-m].*.feature"
           - "--app=/app/build/release/fixture-r21.apk"
@@ -334,7 +330,6 @@ steps:
   - label: ':android: Android 11 NDK r21 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r21"
-      - "android-11-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -344,6 +339,7 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
+          - "features/smoke_tests"
           - "features/full_tests"
           - "--exclude=features/[n-z].*.feature"
           - "--app=/app/build/release/fixture-r21.apk"
@@ -357,7 +353,6 @@ steps:
   - label: ':android: Android 11 NDK r21 end-to-end tests - batch 2'
     depends_on:
       - "fixture-r21"
-      - "android-11-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -367,6 +362,7 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
+          - "features/smoke_tests"
           - "features/full_tests"
           - "--exclude=features/[a-m].*.feature"
           - "--app=/app/build/release/fixture-r21.apk"
@@ -384,7 +380,6 @@ steps:
   - label: ':android: Android 12 NDK r21 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r21"
-      - "android-12-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -394,6 +389,7 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
+          - "features/smoke_tests"
           - "features/full_tests"
           - "--exclude=features/[n-z].*.feature"
           - "--app=/app/build/release/fixture-r21.apk"
@@ -407,7 +403,6 @@ steps:
   - label: ':android: Android 12 NDK r21 end-to-end tests - batch 2'
     depends_on:
       - "fixture-r21"
-      - "android-12-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
