@@ -63,7 +63,7 @@ class GetRequestIntegrationTest {
     fun getRequest404() {
         val request = Request.Builder()
         val mockResponse = MockResponse().setResponseCode(404).setBody("Resource not found")
-        val path = "/a/9?lang=en&darkMode=true&count=5&password=apple123"
+        val path = "/a/9?lang=en&darkMode=true&count=5"
         val url = makeNetworkBreadcrumbRequest(client, request, mockResponse, path)
 
         verify(client, times(1)).leaveBreadcrumb(
@@ -81,8 +81,7 @@ class GetRequestIntegrationTest {
                 mapOf(
                     "lang" to "en",
                     "darkMode" to "true",
-                    "count" to "5",
-                    "password" to "[REDACTED]"
+                    "count" to "5"
                 ),
                 get("urlParams")
             )

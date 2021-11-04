@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import com.bugsnag.android.SeverityReason.REASON_CALLBACK_SPECIFIED
+import com.bugsnag.android.SeverityReason.REASON_HANDLED_ERROR
 import com.bugsnag.android.SeverityReason.REASON_HANDLED_EXCEPTION
 import com.bugsnag.android.SeverityReason.REASON_LOG
 import com.bugsnag.android.SeverityReason.REASON_PROMISE_REJECTION
@@ -19,6 +20,15 @@ class SeverityReasonTest {
     @Test
     fun testHandled() {
         val handled = newInstance(REASON_HANDLED_EXCEPTION)
+        assertNotNull(handled)
+        assertFalse(handled.unhandled)
+        assertEquals(Severity.WARNING, handled.currentSeverity)
+        assertFalse(handled.unhandledOverridden)
+    }
+
+    @Test
+    fun testHandledError() {
+        val handled = newInstance(REASON_HANDLED_ERROR)
         assertNotNull(handled)
         assertFalse(handled.unhandled)
         assertEquals(Severity.WARNING, handled.currentSeverity)
