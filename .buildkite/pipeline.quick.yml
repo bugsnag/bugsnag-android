@@ -119,7 +119,8 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
-          - "features/full_tests/batch_1"
+          - "features/full_tests"
+          - "--exclude=features/[n-z].*.feature"
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_9_0"
@@ -140,7 +141,8 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
-          - "features/full_tests/batch_2"
+          - "features/full_tests"
+          - "--exclude=features/[a-m].*.feature"
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_9_0"
