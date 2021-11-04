@@ -3,7 +3,7 @@ package com.bugsnag.android.internal.journal
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.bugsnag.android.internal.MemoryMappedOutputStream
-import com.bugsnag.android.internal.asConcurrent
+import com.bugsnag.android.internal.bsgToMutableContainersDeep
 import java.io.Closeable
 import java.io.File
 import java.io.IOException
@@ -49,7 +49,7 @@ constructor(
     private val snapshotPath = getSnapshotPath(baseDocumentPath)
     private val newSnapshotPath = getNewSnapshotPath(baseDocumentPath)
 
-    private var document = convertDocumentToConcurrent(initialDocument)
+    private var document = convertDocumentToMutable(initialDocument)
     private val journal = Journal(journalType, version)
     private val journalStream = MemoryMappedOutputStream(journalPath, bufferSize, clearedByteValue)
     private var isOpen = true
@@ -284,9 +284,9 @@ constructor(
             return journal.applyTo(document)
         }
 
-        internal fun convertDocumentToConcurrent(document: Map<String, Any>): MutableMap<String, Any> {
+        internal fun convertDocumentToMutable(document: Map<String, Any>): MutableMap<String, Any> {
             @Suppress("UNCHECKED_CAST")
-            return document.asConcurrent() as MutableMap<String, Any>
+            return document.bsgToMutableContainersDeep() as MutableMap<String, Any>
         }
     }
 }
