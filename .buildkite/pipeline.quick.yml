@@ -97,12 +97,12 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
-          - "features/smoke_tests"
           - "features/full_tests"
-          - "--exclude=features/[n-z].*.feature"
+          - "--exclude=features/full_tests/[^a-m].*.feature"
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_9_0"
+          - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
@@ -120,10 +120,36 @@ steps:
         run: android-maze-runner
         command:
           - "features/full_tests"
-          - "--exclude=features/[a-m].*.feature"
+          - "--exclude=features/full_tests/[^n].*.feature"
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_9_0"
+          - "--fail-fast"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+    concurrency_method: eager
+
+  # Note that the smoke tests are included in this batch to even up
+  # the time for each batch.
+  - label: ':android: Android 9 NDK r21 end-to-end tests - batch 3'
+    depends_on:
+      - "fixture-r21"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/release/fixture-r21.apk"
+        upload: "maze_output/failed/**/*"
+      docker-compose#v3.7.0:
+        pull: android-maze-runner
+        run: android-maze-runner
+        command:
+          - "features/smoke_tests"
+          - "features/full_tests"
+          - "--exclude=features/full_tests/[^o-z].*.feature"
+          - "--app=/app/build/release/fixture-r21.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_9_0"
+          - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
