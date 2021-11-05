@@ -60,7 +60,7 @@ steps:
           - "--app=/app/build/release/fixture-minimal.apk"
           - "--farm=bs"
           - "--device=ANDROID_9_0"
-          - "--fail-fast"
+          # TODO Reinstate - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
@@ -81,7 +81,7 @@ steps:
           - "--app=/app/build/debug/fixture-debug.apk"
           - "--farm=bs"
           - "--device=ANDROID_9_0"
-          - "--fail-fast"
+          # TODO Reinstate - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
@@ -111,7 +111,7 @@ steps:
           - "--app=/app/build/release/fixture-r16.apk"
           - "--farm=bs"
           - "--device=ANDROID_5_0"
-          - "--fail-fast"
+          # TODO Reinstate - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
@@ -135,7 +135,7 @@ steps:
           - "--app=/app/build/release/fixture-r16.apk"
           - "--farm=bs"
           - "--device=ANDROID_5_0"
-          - "--fail-fast"
+          # TODO Reinstate - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
@@ -160,7 +160,7 @@ steps:
           - "--app=/app/build/release/fixture-r16.apk"
           - "--farm=bs"
           - "--device=ANDROID_6_0"
-          - "--fail-fast"
+          # TODO Reinstate - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
@@ -182,7 +182,7 @@ steps:
           - "--app=/app/build/release/fixture-r16.apk"
           - "--farm=bs"
           - "--device=ANDROID_6_0"
-          - "--fail-fast"
+          # TODO Reinstate - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
@@ -205,7 +205,7 @@ steps:
           - "--app=/app/build/release/fixture-r19.apk"
           - "--farm=bs"
           - "--device=ANDROID_7_1_SAMSUNG_GALAXY_NOTE_8"
-          - "--fail-fast"
+          # TODO Reinstate - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
@@ -227,7 +227,7 @@ steps:
           - "--app=/app/build/release/fixture-r19.apk"
           - "--farm=bs"
           - "--device=ANDROID_7_1_SAMSUNG_GALAXY_NOTE_8"
-          - "--fail-fast"
+          # TODO Reinstate - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
@@ -250,7 +250,7 @@ steps:
           - "--app=/app/build/release/fixture-r19.apk"
           - "--farm=bs"
           - "--device=ANDROID_8_1"
-          - "--fail-fast"
+          # TODO Reinstate - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
@@ -272,7 +272,7 @@ steps:
           - "--app=/app/build/release/fixture-r19.apk"
           - "--farm=bs"
           - "--device=ANDROID_8_1"
-          - "--fail-fast"
+          # TODO Reinstate - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
@@ -295,7 +295,7 @@ steps:
           - "--exclude=features/full_tests/[^a-m].*.feature"
           - "features/smoke_tests"
           - "features/full_tests"
-          - "--fail-fast"
+          # TODO Reinstate - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
@@ -317,7 +317,7 @@ steps:
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_9_0"
-          - "--fail-fast"
+          # TODO Reinstate - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
@@ -340,7 +340,7 @@ steps:
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_10_0"
-          - "--fail-fast"
+          # TODO Reinstate - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
@@ -363,7 +363,7 @@ steps:
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_10_0"
-          - "--fail-fast"
+          # TODO Reinstate - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
@@ -390,7 +390,7 @@ steps:
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_11_0"
-          - "--fail-fast"
+          # TODO Reinstate - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
@@ -413,7 +413,7 @@ steps:
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_11_0"
-          - "--fail-fast"
+          # TODO Reinstate - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
@@ -440,7 +440,7 @@ steps:
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_12_0"
-          - "--fail-fast"
+          # TODO Reinstate - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
@@ -462,7 +462,7 @@ steps:
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_12_0"
-          - "--fail-fast"
+          # TODO Reinstate - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager

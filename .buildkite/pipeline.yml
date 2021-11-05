@@ -173,7 +173,7 @@ steps:
           - "--app=/app/build/release/fixture-r16.apk"
           - "--farm=bs"
           - "--device=ANDROID_4_4"
-          - "--fail-fast"
+          # TODO Reinstate - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
@@ -200,7 +200,7 @@ steps:
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_12_0"
-          - "--fail-fast"
+          # TODO Reinstate - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
