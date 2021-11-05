@@ -63,6 +63,7 @@ steps:
       TEST_FIXTURE_NDK_VERSION: "17.2.4988734"
       TEST_FIXTURE_NAME: "fixture-r16.apk"
       USE_LEGACY_OKHTTP: "true"
+      BUILD_TASK: "assembleRelease"
 
   - label: ':android: Build fixture APK r19'
     key: "fixture-r19"
@@ -76,6 +77,7 @@ steps:
       MAVEN_VERSION: "3.6.1"
       TEST_FIXTURE_NDK_VERSION: "19.2.5345600"
       TEST_FIXTURE_NAME: "fixture-r19.apk"
+      BUILD_TASK: "assembleRelease"
 
   - label: ':android: Build fixture APK r21'
     key: "fixture-r21"
@@ -89,6 +91,7 @@ steps:
       MAVEN_VERSION: "3.6.1"
       TEST_FIXTURE_NDK_VERSION: "21.3.6528147"
       TEST_FIXTURE_NAME: "fixture-r21.apk"
+      BUILD_TASK: "assembleRelease"
 
   - label: ':android: Lint'
     depends_on: "android-ci"
@@ -154,57 +157,6 @@ steps:
           run: android-ci
     command: './gradlew test'
 
-  - label: ':android: Android 7 Instrumentation tests'
-    key: 'core-instrumentation-tests'
-    depends_on:
-      - "android-ci"
-    timeout_in_minutes: 60
-    command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    env:
-      SINGLE_RUNNER: "true"
-      INSTRUMENTATION_DEVICES: '["Google Pixel 2-8.0"]'
-      TEST_APK_LOCATION: 'bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk'
-    concurrency: 9
-    concurrency_group: 'browserstack-app'
-    concurrency_method: eager
-
-  - label: ':android: NDK Instrumentation tests'
-    key: 'ndk-instrumentation-tests'
-    depends_on:
-      - "android-ci"
-    timeout_in_minutes: 60
-    command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    env:
-      SINGLE_RUNNER: "true"
-      INSTRUMENTATION_DEVICES: '["Google Pixel 2-8.0"]'
-      TEST_APK_LOCATION: 'bugsnag-plugin-android-ndk/build/outputs/apk/androidTest/debug/bugsnag-plugin-android-ndk-debug-androidTest.apk'
-    concurrency: 9
-    concurrency_group: 'browserstack-app'
-    concurrency_method: eager
-
-  - label: ':android: Performance benchmarks'
-    key: 'perf-benchmarks'
-    depends_on:
-      - "android-ci"
-    timeout_in_minutes: 60
-    command: ./scripts/build-instrumentation-tests.sh && ./scripts/run-instrumentation-test.sh
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    env:
-      SINGLE_RUNNER: "false"
-      INSTRUMENTATION_DEVICES: '["Google Pixel 2-8.0"]'
-      TEST_APK_LOCATION: 'bugsnag-benchmarks/build/outputs/apk/androidTest/release/bugsnag-benchmarks-release-androidTest.apk'
-    concurrency: 9
-    concurrency_group: 'browserstack-app'
-    concurrency_method: eager
-
   - label: ':android: Android 4.4 NDK r16 smoke tests'
     key: 'android-4-4-smoke'
     depends_on: "fixture-r16"
@@ -230,8 +182,8 @@ steps:
   # to detect misuse (such as use-after-free, buffer overflow). If a failure is detected then
   # the device will raise a SIGABRT mentioning GWP-ASAN - this can be investigated further
   # by inspecting the devices logs.
-  - label: ':android: Android 11 NDK r21 smoke tests'
-    key: 'android-11-smoke'
+  - label: ':android: Android 12 NDK r21 smoke tests'
+    key: 'android-12-smoke'
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
@@ -247,7 +199,7 @@ steps:
           - "features/smoke_tests"
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
-          - "--device=ANDROID_11_0"
+          - "--device=ANDROID_12_0"
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'

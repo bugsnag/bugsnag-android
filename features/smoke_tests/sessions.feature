@@ -1,5 +1,6 @@
 Feature: Session functionality smoke tests
 
+@debug-safe
 Scenario: Automated sessions send
     When I run "AutoSessionSmokeScenario"
     And I wait to receive a session
@@ -51,6 +52,7 @@ Scenario: Automated sessions send
     And the event "session.events.unhandled" equals 0
     And the event "severityReason.unhandledOverridden" is false
 
+@debug-safe
 Scenario: Manual session control works
     When I run "ManualSessionSmokeScenario" and relaunch the app
     And I configure Bugsnag for "ManualSessionSmokeScenario"

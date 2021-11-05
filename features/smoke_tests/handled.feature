@@ -165,6 +165,7 @@ Scenario: Notify Kotlin exception with overwritten configuration
     And the event "threads.0.stacktrace.0.file" is not null
     And the event "threads.0.stacktrace.0.lineNumber" is not null
 
+@debug-safe
 Scenario: Handled C functionality
     When I run "CXXNotifySmokeScenario"
     And I wait to receive an error
