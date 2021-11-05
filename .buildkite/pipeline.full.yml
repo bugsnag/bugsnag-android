@@ -357,7 +357,6 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
-          - "features/smoke_tests"
           - "features/full_tests"
           - "--exclude=features/full_tests/[^n-z].*.feature"
           - "--app=/app/build/release/fixture-r21.apk"
@@ -407,9 +406,8 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
-          - "features/smoke_tests"
           - "features/full_tests"
-          - "--exclude=features/full_tests/[n-z].*.feature"
+          - "--exclude=features/full_tests/[^n-z].*.feature"
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_11_0"
