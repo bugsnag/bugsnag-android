@@ -44,9 +44,6 @@ class JournaledDocumentStressTest {
         val maxI = entryCount / 10
 
         while (modifyThread.state != Thread.State.TERMINATED) {
-            document.forEach { _ ->
-                // Just cycle through all entries
-            }
             value = document["a$i"]
             i = (i + 1) % maxI
         }
@@ -101,9 +98,6 @@ class JournaledDocumentStressTest {
         val maxI = entryCount / 10
 
         while (modifyThread.state != Thread.State.TERMINATED) {
-            document.forEach { _ ->
-                // Just cycle through all entries
-            }
             value = document["a$i"]
             i = (i + 1) % maxI
         }

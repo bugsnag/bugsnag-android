@@ -1,6 +1,6 @@
 package com.bugsnag.android.internal.journal
 
-import com.bugsnag.android.internal.asConcurrent
+import com.bugsnag.android.internal.bsgToMutableContainersDeep
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -63,7 +63,7 @@ internal interface DocumentPathDirective<C> {
         }
 
         override fun setInContainer(container: MutableMap<String, in Any>, value: Any?) {
-            val concurrentValue = value.asConcurrent()
+            val concurrentValue = value.bsgToMutableContainersDeep()
             if (concurrentValue == null) {
                 container.remove(key)
             } else {
@@ -108,7 +108,7 @@ internal interface DocumentPathDirective<C> {
         }
 
         override fun setInContainer(container: MutableList<in Any>, value: Any?) {
-            val concurrentValue = value.asConcurrent()
+            val concurrentValue = value.bsgToMutableContainersDeep()
             container.removeAt(index)
             if (concurrentValue != null) {
                 container.add(index, concurrentValue)
@@ -148,7 +148,7 @@ internal interface DocumentPathDirective<C> {
         }
 
         override fun setInContainer(container: MutableList<in Any>, value: Any?) {
-            val concurrentValue = value.asConcurrent()
+            val concurrentValue = value.bsgToMutableContainersDeep()
             if (container.isNotEmpty()) {
                 container.removeAt(container.lastIndex)
             }
@@ -200,7 +200,7 @@ internal interface DocumentPathDirective<C> {
         }
 
         override fun setInContainer(container: MutableList<in Any>, value: Any?) {
-            val concurrentValue = value.asConcurrent()
+            val concurrentValue = value.bsgToMutableContainersDeep()
             requireNotNull(concurrentValue) { "Cannot use null for last path insert value" }
             container.add(concurrentValue)
         }
