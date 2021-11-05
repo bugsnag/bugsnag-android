@@ -19,7 +19,6 @@ elif [[ "$BUILDKITE_MESSAGE" == *"[full ci]"* ||
   echo "All end-to-end tests will be run on all supported Android versions"
   # Add files in reverse as BK insert them in place - leading to them reversing in the resulting pipeline
   buildkite-agent pipeline upload .buildkite/pipeline.full.yml
-  buildkite-agent pipeline upload .buildkite/pipeline.quick.yml
 elif [[ "$BUILDKITE_MESSAGE" == *"[gated-full ci]"* ||
   "$BUILDKITE_PULL_REQUEST_BASE_BRANCH" == "next" ||
   "$BUILDKITE_PULL_REQUEST_BASE_BRANCH" == "master" ]]; then

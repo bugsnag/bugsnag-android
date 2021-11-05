@@ -96,7 +96,6 @@ steps:
   - label: ':android: Android 5 NDK r16 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r16"
-      - "android-5-smoke"
     timeout_in_minutes: 90
     plugins:
       artifacts#v1.2.0:
@@ -106,7 +105,9 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
-          - "features/full_tests/batch_1"
+          - "features/smoke_tests"
+          - "features/full_tests"
+          - "--exclude=features/full_tests/[^a-m].*.feature"
           - "--app=/app/build/release/fixture-r16.apk"
           - "--farm=bs"
           - "--device=ANDROID_5_0"
@@ -120,7 +121,6 @@ steps:
   - label: ':android: Android 5 NDK r16 end-to-end tests - batch 2'
     depends_on:
       - "fixture-r16"
-      - "android-5-smoke"
     timeout_in_minutes: 90
     plugins:
       artifacts#v1.2.0:
@@ -130,7 +130,8 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
-          - "features/full_tests/batch_2"
+          - "features/full_tests"
+          - "--exclude=features/full_tests/[^n-z].*.feature"
           - "--app=/app/build/release/fixture-r16.apk"
           - "--farm=bs"
           - "--device=ANDROID_5_0"
@@ -144,7 +145,6 @@ steps:
   - label: ':android: Android 6 NDK r16 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r16"
-      - "android-6-smoke"
     timeout_in_minutes: 90
     plugins:
       artifacts#v1.2.0:
@@ -154,7 +154,9 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
-          - "features/full_tests/batch_1"
+          - "features/smoke_tests"
+          - "features/full_tests"
+          - "--exclude=features/full_tests/[^a-m].*.feature"
           - "--app=/app/build/release/fixture-r16.apk"
           - "--farm=bs"
           - "--device=ANDROID_6_0"
@@ -166,7 +168,6 @@ steps:
   - label: ':android: Android 6 NDK r16 end-to-end tests - batch 2'
     depends_on:
       - "fixture-r16"
-      - "android-6-smoke"
     timeout_in_minutes: 90
     plugins:
       artifacts#v1.2.0:
@@ -176,7 +177,8 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
-          - "features/full_tests/batch_2"
+          - "features/full_tests"
+          - "--exclude=features/full_tests/[^n-z].*.feature"
           - "--app=/app/build/release/fixture-r16.apk"
           - "--farm=bs"
           - "--device=ANDROID_6_0"
@@ -188,7 +190,6 @@ steps:
   - label: ':android: Android 7 NDK r19 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r19"
-      - "android-7-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -198,7 +199,9 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
-          - "features/full_tests/batch_1"
+          - "features/smoke_tests"
+          - "features/full_tests"
+          - "--exclude=features/full_tests/[^a-m].*.feature"
           - "--app=/app/build/release/fixture-r19.apk"
           - "--farm=bs"
           - "--device=ANDROID_7_1_SAMSUNG_GALAXY_NOTE_8"
@@ -210,7 +213,6 @@ steps:
   - label: ':android: Android 7 NDK r19 end-to-end tests - batch 2'
     depends_on:
       - "fixture-r19"
-      - "android-7-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -220,7 +222,8 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
-          - "features/full_tests/batch_2"
+          - "features/full_tests"
+          - "--exclude=features/full_tests/[^n-z].*.feature"
           - "--app=/app/build/release/fixture-r19.apk"
           - "--farm=bs"
           - "--device=ANDROID_7_1_SAMSUNG_GALAXY_NOTE_8"
@@ -232,7 +235,6 @@ steps:
   - label: ':android: Android 8.1 NDK r19 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r19"
-      - "android-8-1-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -242,7 +244,9 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
-          - "features/full_tests/batch_1"
+          - "features/smoke_tests"
+          - "features/full_tests"
+          - "--exclude=features/full_tests/[^a-m].*.feature"
           - "--app=/app/build/release/fixture-r19.apk"
           - "--farm=bs"
           - "--device=ANDROID_8_1"
@@ -254,7 +258,6 @@ steps:
   - label: ':android: Android 8.1 NDK r19 end-to-end tests - batch 2'
     depends_on:
       - "fixture-r19"
-      - "android-8-1-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -264,7 +267,8 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
-          - "features/full_tests/batch_2"
+          - "features/full_tests"
+          - "--exclude=features/full_tests/[^n-z].*.feature"
           - "--app=/app/build/release/fixture-r19.apk"
           - "--farm=bs"
           - "--device=ANDROID_8_1"
@@ -273,10 +277,9 @@ steps:
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
-  - label: ':android: Android 10 NDK r21 end-to-end tests - batch 1'
+  - label: ':android: Android 9 NDK r21 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r21"
-      - "android-10-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -286,7 +289,54 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
-          - "features/full_tests/batch_1"
+          - "--app=/app/build/release/fixture-r21.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_9_0"
+          - "--exclude=features/full_tests/[^a-m].*.feature"
+          - "features/smoke_tests"
+          - "features/full_tests"
+          - "--fail-fast"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+    concurrency_method: eager
+
+  - label: ':android: Android 9 NDK r21 end-to-end tests - batch 2'
+    depends_on:
+      - "fixture-r21"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/release/fixture-r21.apk"
+        upload: "maze_output/failed/**/*"
+      docker-compose#v3.7.0:
+        pull: android-maze-runner
+        run: android-maze-runner
+        command:
+          - "features/full_tests"
+          - "--exclude=features/full_tests/[^n-z].*.feature"
+          - "--app=/app/build/release/fixture-r21.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_9_0"
+          - "--fail-fast"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+    concurrency_method: eager
+
+  - label: ':android: Android 10 NDK r21 end-to-end tests - batch 1'
+    depends_on:
+      - "fixture-r21"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download: "build/release/fixture-r21.apk"
+        upload: "maze_output/failed/**/*"
+      docker-compose#v3.7.0:
+        pull: android-maze-runner
+        run: android-maze-runner
+        command:
+          - "features/smoke_tests"
+          - "features/full_tests"
+          - "--exclude=features/full_tests/[^a-m].*.feature"
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_10_0"
@@ -298,7 +348,6 @@ steps:
   - label: ':android: Android 10 NDK r21 end-to-end tests - batch 2'
     depends_on:
       - "fixture-r21"
-      - "android-10-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -308,7 +357,9 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
-          - "features/full_tests/batch_2"
+          - "features/smoke_tests"
+          - "features/full_tests"
+          - "--exclude=features/full_tests/[^n-z].*.feature"
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_10_0"
@@ -324,7 +375,6 @@ steps:
   - label: ':android: Android 11 NDK r21 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r21"
-      - "android-11-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -334,7 +384,9 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
-          - "features/full_tests/batch_1"
+          - "features/smoke_tests"
+          - "features/full_tests"
+          - "--exclude=features/full_tests/[^a-m].*.feature"
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_11_0"
@@ -346,7 +398,6 @@ steps:
   - label: ':android: Android 11 NDK r21 end-to-end tests - batch 2'
     depends_on:
       - "fixture-r21"
-      - "android-11-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -356,7 +407,9 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
-          - "features/full_tests/batch_2"
+          - "features/smoke_tests"
+          - "features/full_tests"
+          - "--exclude=features/full_tests/[n-z].*.feature"
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_11_0"
@@ -372,7 +425,6 @@ steps:
   - label: ':android: Android 12 NDK r21 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r21"
-      - "android-12-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -382,7 +434,9 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
-          - "features/full_tests/batch_1"
+          - "features/smoke_tests"
+          - "features/full_tests"
+          - "--exclude=features/full_tests/[^a-m].*.feature"
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_12_0"
@@ -394,7 +448,6 @@ steps:
   - label: ':android: Android 12 NDK r21 end-to-end tests - batch 2'
     depends_on:
       - "fixture-r21"
-      - "android-12-smoke"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -404,7 +457,8 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
-          - "features/full_tests/batch_2"
+          - "features/full_tests"
+          - "--exclude=features/full_tests/[^n-z].*.feature"
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_12_0"
