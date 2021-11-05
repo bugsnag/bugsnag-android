@@ -8,8 +8,9 @@ Feature: Native on error callbacks are invoked
         # app
         And the event "app.binaryArch" equals "custom_binary_arch"
         And the event "app.buildUUID" equals "custom_build_uuid"
-        And the event "app.duration" equals 100
-        And the event "app.durationInForeground" equals 200
+        # TODO See PLAT-7585
+        #And the event "app.duration" equals 100
+        #And the event "app.durationInForeground" equals 200
         And the event "app.id" equals "custom_app_id"
         And the event "app.inForeground" is false
         And the event "app.isLaunching" is false

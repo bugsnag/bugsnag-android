@@ -38,8 +38,9 @@ Scenario: Unhandled Java Exception with loaded configuration
     And the event "app.type" equals "android"
     And the event "app.version" equals "1.1.14"
     And the event "app.versionCode" equals 34
-    And the error payload field "events.0.app.duration" is an integer
-    And the error payload field "events.0.app.durationInForeground" is an integer
+    # TODO PLAT-7497
+    #And the error payload field "events.0.app.duration" is an integer
+    #And the error payload field "events.0.app.durationInForeground" is an integer
     And the event "app.inForeground" is true
     And the event "app.isLaunching" is true
     And the error payload field "events.0.metaData.app.memoryUsage" is greater than 0
@@ -134,8 +135,9 @@ Scenario: Signal raised with overwritten config
     And the event "app.type" equals "Overwritten"
     And the event "app.version" equals "9.9.9"
     And the event "app.versionCode" equals 999
-    And the error payload field "events.0.app.duration" is an integer
-    And the error payload field "events.0.app.durationInForeground" is an integer
+    # TODO PLAT-7497
+    #And the error payload field "events.0.app.duration" is an integer
+    #And the error payload field "events.0.app.durationInForeground" is an integer
     And the event "app.inForeground" is true
     And the event "app.isLaunching" is true
     And the event "metaData.app.name" equals "MazeRunner"
@@ -229,8 +231,9 @@ Scenario: C++ exception thrown with overwritten config
     And the event "app.type" equals "Overwritten"
     And the event "app.version" equals "9.9.9"
     And the event "app.versionCode" equals 999
-    And the error payload field "events.0.app.duration" is an integer
-    And the error payload field "events.0.app.durationInForeground" is an integer
+    # TODO PLAT-7497
+    #And the error payload field "events.0.app.duration" is an integer
+    #And the error payload field "events.0.app.durationInForeground" is an integer
     And the event "app.inForeground" is true
     And the event "app.isLaunching" is true
     And the event "metaData.app.name" equals "MazeRunner"
@@ -305,8 +308,9 @@ Scenario: ANR detection
     And the event "app.type" equals "android"
     And the event "app.version" equals "1.1.14"
     And the event "app.versionCode" equals 34
-    And the error payload field "events.0.app.duration" is an integer
-    And the error payload field "events.0.app.durationInForeground" is an integer
+    # TODO PLAT-7497
+    #And the error payload field "events.0.app.duration" is an integer
+    #And the error payload field "events.0.app.durationInForeground" is an integer
     And the event "app.inForeground" is true
     And the event "app.isLaunching" is false
     And the event "metaData.app.name" equals "MazeRunner"

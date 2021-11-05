@@ -127,14 +127,16 @@ Then("the first significant stack frame methods and files should match:") do |ex
 end
 
 Then("the report contains the required fields") do
+  # TODO PLAT-7497 Reinstate these checks below
+  # And the error payload field "events.0.app.duration" is not null
+  # And the error payload field "events.0.app.durationInForeground" is not null
+
   steps %Q{
     And the error payload field "notifier.name" is not null
     And the error payload field "notifier.url" is not null
     And the error payload field "notifier.version" is not null
     And the error payload field "events" is a non-empty array
     And the error payload field "events.0.unhandled" is not null
-    And the error payload field "events.0.app.duration" is not null
-    And the error payload field "events.0.app.durationInForeground" is not null
     And the error payload field "events.0.app.id" equals "com.bugsnag.android.mazerunner"
     And the error payload field "events.0.app.inForeground" is not null
     And the error payload field "events.0.app.releaseStage" is not null
