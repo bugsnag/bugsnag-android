@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import com.bugsnag.android.internal.DateUtils;
+import com.bugsnag.android.internal.journal.JsonHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -53,10 +54,10 @@ public final class Session implements JsonStream.Streamable, UserAware {
         @SuppressWarnings("unchecked")
         Map<String, Object> events = (Map<String, Object>) map.get("events");
 
-        Number handled = (Number) events.get("handled");
+        Number handled = JsonHelper.Companion.readNumber(events, "handled");
         handledCount.set(handled.intValue());
 
-        Number unhandled = (Number) events.get("unhandled");
+        Number unhandled = JsonHelper.Companion.readNumber(events, "unhandled");
         unhandledCount.set(unhandled.intValue());
     }
 

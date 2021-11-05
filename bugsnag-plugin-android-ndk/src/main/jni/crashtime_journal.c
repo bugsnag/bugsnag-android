@@ -149,7 +149,7 @@ static bool add_string(const char *name, const char *value) {
   return true;
 }
 
-static bool add_hex(const char *name, uint64_t value) {
+static bool add_uint(const char *name, uint64_t value) {
   char buff[20] = "0x";
   RETURN_ON_FALSE(bsg_hex64_to_string(value, buff + 2));
   add_string(name, buff);
@@ -189,10 +189,10 @@ static bool add_stack_frame(const bugsnag_stackframe *frame, bool is_pc) {
   //  }
 
   stack_new_map_in_list();
-  RETURN_ON_FALSE(add_hex(KEY_FRAME_ADDRESS, frame->frame_address));
-  RETURN_ON_FALSE(add_hex(KEY_SYMBOL_ADDRESS, frame->symbol_address));
-  RETURN_ON_FALSE(add_hex(KEY_LOAD_ADDRESS, frame->load_address));
-  RETURN_ON_FALSE(add_double(KEY_LINE_NUMBER, frame->line_number));
+  RETURN_ON_FALSE(add_uint(KEY_FRAME_ADDRESS, frame->frame_address));
+  RETURN_ON_FALSE(add_uint(KEY_SYMBOL_ADDRESS, frame->symbol_address));
+  RETURN_ON_FALSE(add_uint(KEY_LOAD_ADDRESS, frame->load_address));
+  RETURN_ON_FALSE(add_uint(KEY_LINE_NUMBER, frame->line_number));
   RETURN_ON_FALSE(add_string(KEY_TYPE, "c"));
 
   if (is_pc) {
@@ -204,7 +204,7 @@ static bool add_stack_frame(const bugsnag_stackframe *frame, bool is_pc) {
   if (frame->method[0] != 0) {
     RETURN_ON_FALSE(add_string(KEY_METHOD, frame->method));
   } else {
-    RETURN_ON_FALSE(add_hex(KEY_METHOD, frame->frame_address));
+    RETURN_ON_FALSE(add_uint(KEY_METHOD, frame->frame_address));
   }
 
   bsg_pb_unstack();
@@ -297,8 +297,8 @@ static bool add_session(const bugsnag_event *event) {
   RETURN_ON_FALSE(add_string(KEY_ID, event->session_id));
   RETURN_ON_FALSE(add_string(KEY_SESSION_STARTED_AT, event->session_start));
   bsg_pb_stack_map_key(KEY_EVENTS);
-  RETURN_ON_FALSE(add_double(KEY_UNHANDLED, event->unhandled_events));
-  RETURN_ON_FALSE(add_double(KEY_HANDLED, event->handled_events));
+  RETURN_ON_FALSE(add_uint(KEY_UNHANDLED, event->unhandled_events));
+  RETURN_ON_FALSE(add_uint(KEY_HANDLED, event->handled_events));
   bsg_pb_unstack();
   bsg_pb_unstack();
   return true;
@@ -306,7 +306,7 @@ static bool add_session(const bugsnag_event *event) {
 
 static bool add_thread(const bsg_thread *thread) {
   stack_new_map_in_list();
-  RETURN_ON_FALSE(add_double(KEY_ID, thread->id));
+  RETURN_ON_FALSE(add_uint(KEY_ID, thread->id));
   RETURN_ON_FALSE(add_string(KEY_NAME, thread->name));
   RETURN_ON_FALSE(add_string(KEY_STATE, thread->state));
   RETURN_ON_FALSE(add_string(KEY_TYPE, "c"));
@@ -370,11 +370,11 @@ static bool set_event_subobject_double(const char *event_key,
   return bsg_ctj_flush();
 }
 
-static bool set_event_subobject_hex(const char *event_key,
-                                    const char *object_key, uint64_t value) {
+static bool set_event_subobject_uint(const char *event_key,
+                                     const char *object_key, uint64_t value) {
   bsg_pb_reset();
   bsg_pb_stack_map_key(event_key);
-  RETURN_ON_FALSE(add_hex(object_key, value));
+  RETURN_ON_FALSE(add_uint(object_key, value));
   bsg_pb_reset();
   return bsg_ctj_flush();
 }
@@ -527,7 +527,7 @@ bool bsg_ctj_set_app_version_code(int value) {
   //       }
   // }
 
-  return set_event_subobject_double(KEY_APP, KEY_VERSION_CODE, value);
+  return set_event_subobject_uint(KEY_APP, KEY_VERSION_CODE, value);
 }
 
 bool bsg_ctj_set_app_duration(time_t value) {
@@ -537,7 +537,7 @@ bool bsg_ctj_set_app_duration(time_t value) {
   //       }
   // }
 
-  return set_event_subobject_double(KEY_APP, KEY_DURATION, value);
+  return set_event_subobject_uint(KEY_APP, KEY_DURATION, value);
 }
 
 bool bsg_ctj_set_app_duration_in_foreground(time_t value) {
@@ -547,7 +547,7 @@ bool bsg_ctj_set_app_duration_in_foreground(time_t value) {
   //       }
   // }
 
-  return set_event_subobject_double(KEY_APP, KEY_DURATION_IN_FG, value);
+  return set_event_subobject_uint(KEY_APP, KEY_DURATION_IN_FG, value);
 }
 
 bool bsg_ctj_set_app_in_foreground(bool value) {
@@ -637,7 +637,7 @@ bool bsg_ctj_set_device_total_memory(long value) {
   //       }
   // }
 
-  return set_event_subobject_double(KEY_DEVICE, KEY_TOTAL_MEMORY, value);
+  return set_event_subobject_uint(KEY_DEVICE, KEY_TOTAL_MEMORY, value);
 }
 
 bool bsg_ctj_set_device_orientation(const char *value) {
@@ -661,8 +661,8 @@ bool bsg_ctj_set_device_time_seconds(time_t value) {
   // under "time" upon reloading the journal!
   // Note: We convert to milliseconds because we will eventually want to reach
   // this level of precision in future.
-  return set_event_subobject_hex(KEY_DEVICE, KEY_TIME_UNIX,
-                                 (uint64_t)value * 1000);
+  return set_event_subobject_uint(KEY_DEVICE, KEY_TIME_UNIX,
+                                  (uint64_t)value * 1000);
 }
 
 bool bsg_ctj_record_current_time() {
@@ -677,8 +677,8 @@ bool bsg_ctj_record_current_time() {
   // Note: We convert to milliseconds because we will eventually want to reach
   // this level of precision in future.
   time_t now = time(NULL);
-  return set_event_subobject_hex(KEY_RUNTIME, KEY_TIME_NOW,
-                                 (uint64_t)now * 1000);
+  return set_event_subobject_uint(KEY_RUNTIME, KEY_TIME_NOW,
+                                  (uint64_t)now * 1000);
 }
 
 bool bsg_ctj_set_device_os_name(const char *value) {

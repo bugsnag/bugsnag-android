@@ -17,7 +17,7 @@ Feature: Native on error callbacks are invoked
         And the event "app.releaseStage" equals "custom_release_stage"
         And the event "app.type" equals "custom_type"
         And the event "app.version" equals "custom_version"
-        And the event "app.versionCode" equals 56
+        And the event "app.versionCode" equals "0x38"
 
         # device
         And the event "device.jailbroken" is true

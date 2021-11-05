@@ -78,5 +78,16 @@ class JsonHelper private constructor() {
                 throw IOException("Could not deserialize from $file", ex)
             }
         }
+
+        fun readNumber(map: Map<*, *>, key: String): Number {
+            return when (val value = map.get(key)) {
+                is Number -> value
+                is String -> java.lang.Long.decode(value)
+                null -> throw IllegalStateException("Journal does not contain entry for '$key'")
+                else -> throw IllegalArgumentException(
+                    "Journal entry for '$key' cannot be converted to a numeric value"
+                )
+            }
+        }
     }
 }

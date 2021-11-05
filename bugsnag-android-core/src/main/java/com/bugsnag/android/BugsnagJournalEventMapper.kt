@@ -2,6 +2,7 @@ package com.bugsnag.android
 
 import com.bugsnag.android.internal.DateUtils
 import com.bugsnag.android.internal.journal.JournalKeys
+import com.bugsnag.android.internal.journal.JsonHelper
 import com.bugsnag.android.internal.journal.normalized
 import java.io.File
 import java.text.DateFormat
@@ -77,9 +78,17 @@ internal class BugsnagJournalEventMapper(
         // populate app
         val appMap: MutableMap<String, Any?> = map.readEntry(JournalKeys.pathApp)
 
-        // if loading from journal, calculate duration from 'runtime' entry
-        if (map[JournalKeys.pathRuntime] != null) {
+        // A nonzero duration indicates that the user overrode it
+        val duration = map.readEntryOrNull<Long>(JournalKeys.keyDuration)
+        if (duration != null) {
+            appMap[JournalKeys.keyDuration] = duration
+        } else {
             appMap[JournalKeys.keyDuration] = getDuration(map)
+        }
+        val durationInForeground = map.readEntryOrNull<Long>(JournalKeys.keyDurationInFG)
+        if (durationInForeground != null) {
+            appMap[JournalKeys.keyDurationInFG] = durationInForeground
+        } else {
             appMap[JournalKeys.keyDurationInFG] = getDurationInFG(map)
         }
         event.app = convertAppWithState(appMap)
@@ -189,17 +198,26 @@ internal class BugsnagJournalEventMapper(
     }
 
     private fun getLaunchedTime(journal: Map<in String, Any?>): Date? {
-        val runtime = journal.readEntry<Map<String, Any?>>(JournalKeys.pathRuntime)
+        val runtime = journal.readEntryOrNull<Map<String, Any?>>(JournalKeys.pathRuntime)
+        if (runtime == null) {
+            return null
+        }
         return convertFieldToDate(runtime[JournalKeys.keyTimeLaunched])
     }
 
     private fun getEventTime(journal: Map<in String, Any?>): Date? {
-        val runtime = journal.readEntry<Map<String, Any?>>(JournalKeys.pathRuntime)
+        val runtime = journal.readEntryOrNull<Map<String, Any?>>(JournalKeys.pathRuntime)
+        if (runtime == null) {
+            return null
+        }
         return convertFieldToDate(runtime[JournalKeys.keyTimeNow])
     }
 
     private fun getEnteredFGTime(journal: Map<in String, Any?>): Date? {
-        val runtime = journal.readEntry<Map<String, Any?>>(JournalKeys.pathRuntime)
+        val runtime = journal.readEntryOrNull<Map<String, Any?>>(JournalKeys.pathRuntime)
+        if (runtime == null) {
+            return null
+        }
         return convertFieldToDate(runtime[JournalKeys.keyTimeEnteredForeground])
     }
 
@@ -233,6 +251,9 @@ internal class BugsnagJournalEventMapper(
         val map = src.toMutableMap()
         map[JournalKeys.keyCpuAbi] = (map[JournalKeys.keyCpuAbi] as? List<String>)?.toTypedArray()
         map[JournalKeys.keyTime] = convertFieldToDate(map[JournalKeys.keyTime])
+        if (map.containsKey(JournalKeys.keyTotalMemory)) {
+            map[JournalKeys.keyTotalMemory] = map.readNumber(JournalKeys.keyTotalMemory).toLong()
+        }
         return DeviceWithState(map, map.readEntry(JournalKeys.keyRuntimeVersions))
     }
 
@@ -244,7 +265,7 @@ internal class BugsnagJournalEventMapper(
         )
 
         return ThreadInternal(
-            src.readEntry<Number>(JournalKeys.keyId).toLong(),
+            src.readNumber(JournalKeys.keyId).toLong(),
             src.readEntry(JournalKeys.keyName),
             src.readEntry<String>(JournalKeys.keyType)
                 .let { type -> ThreadType.values().find { it.desc == type } }
@@ -280,6 +301,10 @@ internal class BugsnagJournalEventMapper(
 
         (frame[JournalKeys.keyLoadAddress] as? String)?.let {
             copy[JournalKeys.keyLoadAddress] = java.lang.Long.decode(it)
+        }
+
+        (frame[JournalKeys.keyLineNumber] as? String)?.let {
+            copy[JournalKeys.keyLineNumber] = java.lang.Long.decode(it)
         }
 
         (frame[JournalKeys.keyIsPC] as? Boolean)?.let {
@@ -327,6 +352,20 @@ internal class BugsnagJournalEventMapper(
                     "of expected type, found ${value.javaClass.name}"
             )
         }
+    }
+    private inline fun <reified T> Map<*, *>.readEntryOrNull(key: String): T? {
+        when (val value = get(key)) {
+            is T -> return value
+            null -> return null
+            else -> throw IllegalArgumentException(
+                "Journal entry for '$key' not " +
+                    "of expected type, found ${value.javaClass.name}"
+            )
+        }
+    }
+
+    private fun Map<*, *>.readNumber(key: String): Number {
+        return JsonHelper.readNumber(this, key)
     }
 
     // SimpleDateFormat isn't thread safe, cache one instance per thread as needed.

@@ -44,17 +44,17 @@
   },
   "testSetAppVersionCode": {
     "app": {
-      "versionCode": 100
+      "versionCode": "0x64"
     }
   },
   "testSetAppDuration": {
     "app": {
-      "duration": 100
+      "duration": "0x64"
     }
   },
   "testSetAppDurationInForeground": {
     "app": {
-      "durationInForeground": 100
+      "durationInForeground": "0x64"
     }
   },
   "testSetAppInForeground": {
@@ -99,7 +99,7 @@
   },
   "testSetTotalMemory": {
     "device": {
-      "totalMemory": 1000000000
+      "totalMemory": "0x3b9aca00"
     }
   },
   "testSetOrientation": {
