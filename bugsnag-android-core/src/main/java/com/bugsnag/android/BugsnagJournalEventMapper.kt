@@ -119,7 +119,8 @@ internal class BugsnagJournalEventMapper(
         val type = map[JournalKeys.keyType] as String
         map[JournalKeys.keyType] = BreadcrumbType.valueOf(type.toUpperCase(Locale.US))
 
-        map[JournalKeys.keyTimestamp] = (map[JournalKeys.keyTimestamp] as String).toDate()
+        val time = map[JournalKeys.keyTimestamp] as Long
+        map[JournalKeys.keyTimestamp] = Date(time)
 
         map["metadata"] = map[JournalKeys.keyMetadata]
         map.remove(JournalKeys.keyMetadata)

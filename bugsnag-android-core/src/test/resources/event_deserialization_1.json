@@ -71,7 +71,7 @@
   },
   "breadcrumbs": [
     {
-      "timestamp": "1970-01-01T00:00:00.000Z",
+      "timestamp": 0,
       "name": "Connectivity changed",
       "type": "state",
       "metaData": {
@@ -80,7 +80,7 @@
       }
     },
     {
-      "timestamp": "1970-01-01T00:00:00.000Z",
+      "timestamp": 0,
       "name": "Bugsnag loaded",
       "type": "state"
     }

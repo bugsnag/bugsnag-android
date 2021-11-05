@@ -97,7 +97,7 @@ class NativeBridge(
             is AddBreadcrumb -> addBreadcrumb(
                 makeSafe(event.message),
                 makeSafe(event.type.toString()),
-                makeSafe(event.timestamp),
+                "", // don't send timestamp to avoid date formatting perf cost
                 event.metadata
             )
             NotifyHandled -> addHandledEvent()

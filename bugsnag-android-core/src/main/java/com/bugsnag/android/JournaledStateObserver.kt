@@ -119,7 +119,7 @@ internal class JournaledStateObserver(val client: Client, val journal: BugsnagJo
             mutableMapOf(
                 JournalKeys.keyMetadata to makeMetadataJournalSafe(event.metadata),
                 JournalKeys.keyName to event.message,
-                JournalKeys.keyTimestamp to event.timestamp,
+                JournalKeys.keyTimestamp to event.timestamp.time,
                 JournalKeys.keyType to event.type.toString()
             )
         )

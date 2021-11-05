@@ -1,5 +1,7 @@
 package com.bugsnag.android
 
+import java.util.Date
+
 sealed class StateEvent { // JvmField allows direct field access optimizations
 
     class Install(
@@ -31,7 +33,7 @@ sealed class StateEvent { // JvmField allows direct field access optimizations
     class AddBreadcrumb(
         @JvmField val message: String,
         @JvmField val type: BreadcrumbType,
-        @JvmField val timestamp: String,
+        @JvmField val timestamp: Date,
         @JvmField val metadata: MutableMap<String, Any?>
     ) : StateEvent()
 
