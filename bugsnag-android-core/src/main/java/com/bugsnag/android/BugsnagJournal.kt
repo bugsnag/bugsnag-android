@@ -156,11 +156,11 @@ internal class BugsnagJournal @JvmOverloads internal constructor(
         internal const val journalVersion = 1
 
         // Size of the on-disk memory-mapped buffer in bytes.
-        private const val mmapBufferSize = 100000L
+        private const val mmapBufferSize = 1000000L
 
         // If the memory-mapped buffer fills beyond this many bytes, it gets auto-snapshotted.
         // Note: The size of mmapBufferSize and highWater have no effect on snapshot runtime cost.
-        private const val highWater = 50000L
+        private const val highWater = 500000L
 
         // Polling interval in milliseconds for the high water check thread.
         private const val highWaterPollingIntervalMS = 200L
