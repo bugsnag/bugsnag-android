@@ -53,47 +53,48 @@ class BugsnagJournalFailedCreationTest {
         assertNull(BugsnagJournal.loadPreviousDocument(journalPath))
     }
 
-    /**
-     * Simulate an I/O error by making the journal files non-writable. The journal should attempt
-     * to recover from this by recreating the stream - using a rate-limit.
-     */
-    @Test
-    fun attemptToRecreateJournal() {
-        alterJournalFiles(baseDocumentPath, false)
-
-        // attempt to create the journal
-        val journalPath = baseDocumentPath
-        val journal = BugsnagJournal(logger, journalPath, mapOf(), 0)
-        assertEquals("Failed to create journal", logger.msg)
-
-        // remove the I/O error
-        alterJournalFiles(baseDocumentPath, true)
-
-        // attempt to add a command again
-        journal.addCommand("x", 100)
-
-        // attempt to add multiple commands
-        journal.addCommands(
-            Pair("y", "hello"),
-            Pair("z", true)
-        )
-
-        // attempt to snapshot the journal
-        journal.snapshot()
-
-        // check the journal map is empty
-        val observed = checkNotNull(BugsnagJournal.loadPreviousDocument(journalPath))
-        val expectedDocument = BugsnagJournal.withInitialDocumentContents(
-            mapOf(
-                "x" to 100L,
-                "y" to "hello",
-                "z" to true
-            )
-        )
-        assertEquals(expectedDocument["x"], observed["x"])
-        assertEquals(expectedDocument["y"], observed["y"])
-        assertEquals(expectedDocument["z"], observed["z"])
-    }
+// TODO PLAT-7589
+//    /**
+//     * Simulate an I/O error by making the journal files non-writable. The journal should attempt
+//     * to recover from this by recreating the stream - using a rate-limit.
+//     */
+//    @Test
+//    fun attemptToRecreateJournal() {
+//        alterJournalFiles(baseDocumentPath, false)
+//
+//        // attempt to create the journal
+//        val journalPath = baseDocumentPath
+//        val journal = BugsnagJournal(logger, journalPath, mapOf(), 0)
+//        assertEquals("Failed to create journal", logger.msg)
+//
+//        // remove the I/O error
+//        alterJournalFiles(baseDocumentPath, true)
+//
+//        // attempt to add a command again
+//        journal.addCommand("x", 100)
+//
+//        // attempt to add multiple commands
+//        journal.addCommands(
+//            Pair("y", "hello"),
+//            Pair("z", true)
+//        )
+//
+//        // attempt to snapshot the journal
+//        journal.snapshot()
+//
+//        // check the journal map is empty
+//        val observed = checkNotNull(BugsnagJournal.loadPreviousDocument(journalPath))
+//        val expectedDocument = BugsnagJournal.withInitialDocumentContents(
+//            mapOf(
+//                "x" to 100L,
+//                "y" to "hello",
+//                "z" to true
+//            )
+//        )
+//        assertEquals(expectedDocument["x"], observed["x"])
+//        assertEquals(expectedDocument["y"], observed["y"])
+//        assertEquals(expectedDocument["z"], observed["z"])
+//    }
 
     private fun alterJournalFiles(baseDocumentPath: File, enabled: Boolean) {
         checkNotNull(baseDocumentPath.parentFile).mkdirs()
