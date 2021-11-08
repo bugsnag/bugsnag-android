@@ -211,6 +211,7 @@ class EventStore extends FileStore {
                 return null;
             }
         } catch (Exception ioe) {
+            logger.e("Failed to run onSend callbacks", ioe);
             eventSource.clear();
         }
 
