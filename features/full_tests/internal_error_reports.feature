@@ -37,8 +37,9 @@ Scenario: If an exception is thrown when sending errors/sessions then internal e
     And the event "app.type" equals "android"
     And the event "app.version" equals "1.1.14"
     And the event "app.versionCode" equals 34
-    And the error payload field "events.0.app.duration" is an integer
-    And the error payload field "events.0.app.durationInForeground" is an integer
+    # TODO See PLAT-7585
+    #And the error payload field "events.0.app.duration" is an integer
+    #And the error payload field "events.0.app.durationInForeground" is an integer
     And the event "app.inForeground" is true
 
     # Device data

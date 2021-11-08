@@ -25,8 +25,9 @@ Feature: Legacy struct is converted to an error payload
         And the event "app.version" equals "2.0.52"
         And the event "app.buildUUID" equals "1234-9876-adfe"
         And the event "app.versionCode" equals 57
-        And the event "app.duration" equals 6502
-        And the event "app.durationInForeground" equals 3822
+        # TODO See PLAT-7585
+        #And the event "app.duration" equals 6502
+        #And the event "app.durationInForeground" equals 3822
         And the event "app.inForeground" is true
         And the event "app.isLaunching" is true
 

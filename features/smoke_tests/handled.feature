@@ -37,8 +37,9 @@ Scenario: Notify caught Java exception with default configuration
     And the event "app.type" equals "android"
     And the event "app.version" equals "1.1.14"
     And the event "app.versionCode" equals 34
-    And the error payload field "events.0.app.duration" is an integer
-    And the error payload field "events.0.app.durationInForeground" is an integer
+    # TODO PLAT-7497
+    #And the error payload field "events.0.app.duration" is an integer
+    #And the error payload field "events.0.app.durationInForeground" is an integer
     And the event "app.inForeground" is true
     And the event "app.isLaunching" is true
     And the error payload field "events.0.metaData.app.memoryUsage" is greater than 0
@@ -192,8 +193,9 @@ Scenario: Handled C functionality
     And the event "app.type" equals "android"
     And the event "app.version" equals "1.1.14"
     And the event "app.versionCode" equals 34
-    And the error payload field "events.0.app.duration" is an integer
-    And the error payload field "events.0.app.durationInForeground" is an integer
+    # TODO PLAT-7497
+    #And the error payload field "events.0.app.duration" is an integer
+    #And the error payload field "events.0.app.durationInForeground" is an integer
     And the event "app.inForeground" is true
     And the event "app.isLaunching" is true
 

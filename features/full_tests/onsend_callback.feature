@@ -1,5 +1,7 @@
 Feature: OnSend Callbacks can alter Events before upload
 
+  # TODO Skip pending PLAT-7586
+  @skip
   Scenario: Handled exception with altered by OnSendCallback
     When I run "OnSendCallbackScenario" and relaunch the app
     And I configure the app to run in the "start-only" state

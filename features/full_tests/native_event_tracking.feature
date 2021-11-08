@@ -5,7 +5,8 @@ Feature: Synchronizing app/device metadata in the native layer
         And I wait to receive an error
         Then the error payload contains a completed handled native report
         And the event "app.inForeground" is true
-        And the event "app.duration" is greater than 0
+        # TODO See PLAT-7585
+        #And the event "app.duration" is greater than 0
         And the event "unhandled" is false
 
     Scenario: Capture foreground state while in the background
@@ -14,8 +15,9 @@ Feature: Synchronizing app/device metadata in the native layer
         And I wait to receive an error
         Then the error payload contains a completed handled native report
         And the event "app.inForeground" is false
-        And the event "app.durationInForeground" equals 0
-        And the event "app.duration" is greater than 0
+        # TODO See PLAT-7585
+        #And the event "app.durationInForeground" equals 0
+        #And the event "app.duration" is greater than 0
         And the event "context" string is empty
         And the event "unhandled" is false
 
@@ -25,8 +27,9 @@ Feature: Synchronizing app/device metadata in the native layer
         And I wait to receive an error
         Then the error payload contains a completed handled native report
         And the event "app.inForeground" is true
-        And the event "app.durationInForeground" is not null
-        And the event "app.duration" is not null
+        # TODO See PLAT-7585
+        #And the event "app.durationInForeground" is not null
+        #And the event "app.duration" is not null
         And the event "unhandled" is true
 
     Scenario: Capture foreground state while in a background crash
@@ -38,6 +41,7 @@ Feature: Synchronizing app/device metadata in the native layer
         And I wait to receive an error
         Then the error payload contains a completed handled native report
         And the event "app.inForeground" is false
-        And the event "app.duration" is greater than 0
+        # TODO See PLAT-7585
+        #And the event "app.duration" is greater than 0
         And the event "context" string is empty
         And the event "unhandled" is true
