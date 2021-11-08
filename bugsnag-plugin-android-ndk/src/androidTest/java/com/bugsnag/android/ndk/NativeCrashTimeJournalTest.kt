@@ -443,12 +443,13 @@ class NativeCrashTimeJournalTest {
     }
 
     // bsg_ctj_store_event
-    private external fun nativeStoreEvent(ctjPath: String): Int
-
-    @Test
-    fun testStoreEvent() {
-        runJournalTest(mapOf(), "testStoreEvent") {
-            nativeStoreEvent(it)
-        }
-    }
+// TODO PLAT-7589
+//    private external fun nativeStoreEvent(ctjPath: String): Int
+//
+//    @Test
+//    fun testStoreEvent() {
+//        runJournalTest(mapOf(), "testStoreEvent") {
+//            nativeStoreEvent(it)
+//        }
+//    }
 }

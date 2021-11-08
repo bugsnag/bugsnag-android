@@ -1,7 +1,5 @@
 package com.bugsnag.android.ndk
 
-import org.junit.Test
-
 class NativeStructMigrationTest {
 
     companion object {
@@ -13,8 +11,9 @@ class NativeStructMigrationTest {
 
     external fun run(): Int
 
-    @Test
-    fun testPassesNativeSuite() {
-        verifyNativeRun(run())
-    }
+// TODO PLAT-7589
+//    @Test
+//    fun testPassesNativeSuite() {
+//        verifyNativeRun(run())
+//    }
 }
