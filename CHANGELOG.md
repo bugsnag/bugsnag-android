@@ -4,6 +4,9 @@
 
 ### Bug fixes
 
+* Increase resilience of NDK stackframe method capture
+  [#1484](https://github.com/bugsnag/bugsnag-android/pull/1484)
+
 * Avoid reporting false-positive background ANRs with improved foreground detection
   [#1429](https://github.com/bugsnag/bugsnag-android/pull/1429)
 
