@@ -10,6 +10,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import java.math.BigDecimal
+import java.util.Date
 
 class BugsnagJournalEventMapperTest {
 
@@ -38,7 +39,7 @@ class BugsnagJournalEventMapperTest {
                 "metaData" to emptyMap<String, Any?>(),
                 "name" to "Bugsnag loaded",
                 "type" to "state",
-                "timestamp" to "2021-09-28T10:31:09.092Z"
+                "timestamp" to 1636127397411L
             ),
             mapOf(
                 "metaData" to mapOf(
@@ -47,7 +48,7 @@ class BugsnagJournalEventMapperTest {
                 ),
                 "name" to "Connectivity changed",
                 "type" to "request",
-                "timestamp" to "2021-09-28T10:31:10.856Z"
+                "timestamp" to 1636127399625L
             )
         )
         val app = mapOf(
@@ -273,14 +274,14 @@ class BugsnagJournalEventMapperTest {
         with(event.breadcrumbs[0]) {
             assertEquals("Bugsnag loaded", message)
             assertEquals(BreadcrumbType.STATE, type)
-            assertEquals(DateUtils.fromIso8601("2021-09-28T10:31:09.092Z"), timestamp)
+            assertEquals(Date(1636127397411L), timestamp)
             assertEquals(emptyMap<String, Any?>(), metadata)
         }
 
         with(event.breadcrumbs[1]) {
             assertEquals("Connectivity changed", message)
             assertEquals(BreadcrumbType.REQUEST, type)
-            assertEquals(DateUtils.fromIso8601("2021-09-28T10:31:10.856Z"), timestamp)
+            assertEquals(Date(1636127399625L), timestamp)
             val expectedMetadata = mapOf(
                 "hasConnection" to true,
                 "networkState" to "wifi"

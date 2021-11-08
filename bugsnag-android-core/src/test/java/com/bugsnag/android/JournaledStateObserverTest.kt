@@ -14,6 +14,7 @@ import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
 import java.io.File
+import java.util.Date
 
 @RunWith(MockitoJUnitRunner::class)
 internal class JournaledStateObserverTest {
@@ -191,7 +192,7 @@ internal class JournaledStateObserverTest {
             StateEvent.AddBreadcrumb(
                 "mymsg",
                 BreadcrumbType.LOG,
-                "mytime",
+                Date(1636127079133),
                 mutableMapOf(
                     "x" to 1,
                     "y" to 2,
@@ -204,7 +205,7 @@ internal class JournaledStateObserverTest {
                 "breadcrumbs" to listOf(
                     mapOf(
                         "name" to "mymsg",
-                        "timestamp" to "mytime",
+                        "timestamp" to 1636127079133L,
                         "type" to "log",
                         "metaData" to mapOf(
                             "x" to 1,
