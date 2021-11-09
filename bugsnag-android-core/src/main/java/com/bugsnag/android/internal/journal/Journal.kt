@@ -97,7 +97,7 @@ class Journal(val type: String, val version: Int) {
          */
         @Throws(IOException::class)
         fun serialize(out: OutputStream) {
-            JsonHelper.serialize(mutableMapOf(path to value), out)
+            JsonHelper.serialize(mapOf(path to value), out)
             out.write(0)
         }
 
