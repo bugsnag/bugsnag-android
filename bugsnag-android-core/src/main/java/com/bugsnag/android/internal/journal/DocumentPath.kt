@@ -146,6 +146,10 @@ class DocumentPath(path: String) {
         private const val PATH_SEPARATOR = '.'
         private const val ADD_OPERATOR = '+'
 
+        // optimization: memoize the results for the path directive
+        @JvmField
+        internal val memo = HashMap<String, List<DocumentPathDirective<Any>>>()
+
         private fun containsEscapeSequence(str: String): Boolean {
             for (c in str) {
                 if (c == ESCAPE_CHAR) {
@@ -183,6 +187,10 @@ class DocumentPath(path: String) {
          * The path cannot have empty components (e.g. "a..b" is invalid).
          */
         internal fun toPathDirectives(path: String): List<DocumentPathDirective<Any>> {
+            return memo.getOrPut(path) { toPathDirectivesImpl(path) }
+        }
+
+        private fun toPathDirectivesImpl(path: String): List<DocumentPathDirective<Any>> {
             if (path.isEmpty()) {
                 return emptyList()
             }
