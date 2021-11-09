@@ -33,7 +33,7 @@ internal class BugsnagJournalEventMapper(
         return try {
             convertToEventImpl(map)
         } catch (exc: Throwable) {
-            logger.e("Failed to deserialize journal, skipping event", exc)
+            logger.e("Failed to deserialize journal, skipping event")
             null
         }
     }
@@ -43,7 +43,6 @@ internal class BugsnagJournalEventMapper(
         map: Map<in String, Any?>,
         apiKey: String = map.readEntry(JournalKeys.pathApiKey)
     ): EventInternal {
-        logger.d("Read previous journal, contents=$map")
         val event = EventInternal(apiKey)
 
         // populate exceptions. check this early to avoid unnecessary serialization if
@@ -77,8 +76,12 @@ internal class BugsnagJournalEventMapper(
 
         // populate app
         val appMap: MutableMap<String, Any?> = map.readEntry(JournalKeys.pathApp)
-        appMap[JournalKeys.keyDuration] = getDuration(map)
-        appMap[JournalKeys.keyDurationInFG] = getDurationInFG(map)
+
+        // if loading from journal, calculate duration from 'runtime' entry
+        if (map[JournalKeys.pathRuntime] != null) {
+            appMap[JournalKeys.keyDuration] = getDuration(map)
+            appMap[JournalKeys.keyDurationInFG] = getDurationInFG(map)
+        }
         event.app = convertAppWithState(appMap)
 
         // populate device
@@ -118,13 +121,19 @@ internal class BugsnagJournalEventMapper(
 
         val type = map[JournalKeys.keyType] as String
         map[JournalKeys.keyType] = BreadcrumbType.valueOf(type.toUpperCase(Locale.US))
-
-        val time = map[JournalKeys.keyTimestamp] as Long
-        map[JournalKeys.keyTimestamp] = Date(time)
+        map[JournalKeys.keyTimestamp] = sanitizeBreadcrumbTimestamp(map)
 
         map["metadata"] = map[JournalKeys.keyMetadata]
         map.remove(JournalKeys.keyMetadata)
         return map
+    }
+
+    private fun sanitizeBreadcrumbTimestamp(map: MutableMap<String, Any?>): Date {
+        return when (val time = map[JournalKeys.keyTimestamp]) {
+            is Long -> Date(time)
+            is String -> time.toDate()
+            else -> throw IllegalStateException("Expected long/string for breadcrumb timestamp")
+        }
     }
 
     private fun convertHexToLongSafe(hex: String): Long {
