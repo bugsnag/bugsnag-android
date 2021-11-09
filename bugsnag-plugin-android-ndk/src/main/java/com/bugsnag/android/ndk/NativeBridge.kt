@@ -3,7 +3,6 @@ package com.bugsnag.android.ndk
 import android.os.Build
 import com.bugsnag.android.NativeInterface
 import com.bugsnag.android.StateEvent
-import com.bugsnag.android.StateEvent.AddBreadcrumb
 import com.bugsnag.android.StateEvent.AddMetadata
 import com.bugsnag.android.StateEvent.ClearMetadataSection
 import com.bugsnag.android.StateEvent.ClearMetadataValue
@@ -62,7 +61,6 @@ class NativeBridge(
     )
 
     external fun deliverReportAtPath(filePath: String)
-    external fun addBreadcrumb(name: String, type: String, timestamp: String, metadata: Any)
     external fun addMetadataString(tab: String, key: String, value: String)
     external fun addMetadataDouble(tab: String, key: String, value: Double)
     external fun addMetadataBoolean(tab: String, key: String, value: Boolean)
@@ -93,12 +91,6 @@ class NativeBridge(
             is ClearMetadataValue -> removeMetadata(
                 makeSafe(event.section),
                 makeSafe(event.key ?: "")
-            )
-            is AddBreadcrumb -> addBreadcrumb(
-                makeSafe(event.message),
-                makeSafe(event.type.toString()),
-                "", // don't send timestamp to avoid date formatting perf cost
-                event.metadata
             )
             NotifyHandled -> addHandledEvent()
             NotifyUnhandled -> addUnhandledEvent()
