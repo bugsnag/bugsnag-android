@@ -1,7 +1,6 @@
 package com.bugsnag.android.internal.journal
 
 import com.bugsnag.android.internal.bsgToMutableContainersDeep
-import java.util.LinkedList
 
 /**
  * DocumentPath records a path into a hierarchical acyclic document, and can be used to modify
@@ -187,7 +186,11 @@ class DocumentPath(path: String) {
             if (path.isEmpty()) {
                 return emptyList()
             }
-            val directives = LinkedList<DocumentPathDirective<*>>()
+
+            // Choose an initial capacity that is unlikely to be exceeded.
+            // Currently the deepest we go is events.0.exceptions.0.stackTrace.0.xyz
+            val optimalArrayLength = 8
+            val directives = ArrayList<DocumentPathDirective<*>>(optimalArrayLength)
             val buff = StringBuilder(path.length)
             var escapeIsInitiated = false
 
