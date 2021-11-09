@@ -35,6 +35,10 @@ final class BugsnagTestUtils {
         return new MetadataState();
     }
 
+    static FeatureFlagState generateFeatureFlagState() {
+        return new FeatureFlagState();
+    }
+
     static ImmutableConfig convert(Configuration config) {
         return ImmutableConfigKt.convertToImmutableConfig(config, null);
     }

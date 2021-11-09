@@ -41,5 +41,6 @@
       "stacktrace": [],
       "errorReportingThread": true
     }
-  ]
+  ],
+  "featureFlags": []
 }
