@@ -34,7 +34,7 @@ class BugsnagJournalFailedCreationTest {
 
         // attempt to create the journal
         val journalPath = baseDocumentPath
-        val journal = BugsnagJournal(logger, journalPath, mapOf())
+        val journal = BugsnagJournal(logger, journalPath, mutableMapOf())
         assertEquals("Failed to create journal", logger.msg)
 
         // attempt to add a command

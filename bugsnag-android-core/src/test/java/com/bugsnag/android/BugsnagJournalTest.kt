@@ -32,7 +32,7 @@ class BugsnagJournalTest {
 
     @Test
     fun testInitialDocumentContents() {
-        val observedDocument = BugsnagJournal.withInitialDocumentContents(mapOf())
+        val observedDocument = BugsnagJournal.withInitialDocumentContents(mutableMapOf())
         val expectedDocument = mapOf<String, Any>(
             JournalKeys.keyVersionInfo to mapOf(
                 JournalKeys.keyType to BugsnagJournal.journalType,
@@ -48,11 +48,11 @@ class BugsnagJournalTest {
     @Test
     fun testEmptyDocument() {
         val journalPath = newBaseDocumentPath()
-        val journal = BugsnagJournal(NoopLogger, journalPath, mapOf())
+        val journal = BugsnagJournal(NoopLogger, journalPath, mutableMapOf())
         journal.snapshot()
 
         val observedDocument = BugsnagJournal.loadPreviousDocument(journalPath)
-        val expectedDocument = BugsnagJournal.withInitialDocumentContents(mapOf())
+        val expectedDocument = BugsnagJournal.withInitialDocumentContents(mutableMapOf())
 
         Assert.assertEquals(
             BugsnagTestUtils.normalized(expectedDocument),
@@ -67,12 +67,12 @@ class BugsnagJournalTest {
     @Test
     fun testJournalEntry() {
         val journalPath = newBaseDocumentPath()
-        val journal = BugsnagJournal(NoopLogger, journalPath, mapOf())
+        val journal = BugsnagJournal(NoopLogger, journalPath, mutableMapOf())
         journal.addCommand("x", 100)
         journal.snapshot()
 
         val observedDocument = BugsnagJournal.loadPreviousDocument(journalPath)
-        val expectedDocument = HashMap(BugsnagJournal.withInitialDocumentContents(mapOf()))
+        val expectedDocument = HashMap(BugsnagJournal.withInitialDocumentContents(mutableMapOf()))
         expectedDocument["x"] = 100
 
         Assert.assertEquals(
@@ -88,16 +88,16 @@ class BugsnagJournalTest {
     @Test
     fun testManyJournalEntries() {
         val journalPath = newBaseDocumentPath()
-        val journal = BugsnagJournal(NoopLogger, journalPath, mapOf())
+        val journal = BugsnagJournal(NoopLogger, journalPath, mutableMapOf())
         journal.addCommand("one hundred", 100)
         journal.addCommand("""three\.four\.five\.slash\\slash.-1""", "x")
-        journal.addCommand("x.-1.x", listOf(1, "foo"))
-        journal.addCommand("x.-1.y", mapOf("a" to "b"))
+        journal.addCommand("x.-1.x", mutableListOf(1, "foo"))
+        journal.addCommand("x.-1.y", mutableMapOf("a" to "b"))
         journal.snapshot()
 
         val observedDocument = BugsnagJournal.loadPreviousDocument(journalPath)
         val expectedDocument = BugsnagJournal.withInitialDocumentContents(
-            mapOf(
+            mutableMapOf(
                 "one hundred" to 100,
                 """three.four.five.slash\slash""" to listOf("x"),
                 "x" to listOf(
@@ -124,18 +124,18 @@ class BugsnagJournalTest {
     @Test
     fun testMultipleJournalEntries() {
         val journalPath = newBaseDocumentPath()
-        val journal = BugsnagJournal(NoopLogger, journalPath, mapOf())
+        val journal = BugsnagJournal(NoopLogger, journalPath, mutableMapOf())
         journal.addCommands(
             Pair("one hundred", 100),
             Pair("""three\.four\.five\.slash\\slash.-1""", "x"),
-            Pair("x.-1.x", listOf(1, "foo")),
-            Pair("x.-1.y", mapOf("a" to "b"))
+            Pair("x.-1.x", mutableListOf(1, "foo")),
+            Pair("x.-1.y", mutableMapOf("a" to "b"))
         )
         journal.snapshot()
 
         val observedDocument = BugsnagJournal.loadPreviousDocument(journalPath)
         val expectedDocument = BugsnagJournal.withInitialDocumentContents(
-            mapOf(
+            mutableMapOf(
                 "one hundred" to 100,
                 """three.four.five.slash\slash""" to listOf("x"),
                 "x" to listOf(
@@ -162,7 +162,7 @@ class BugsnagJournalTest {
     @Test
     fun testCrashtimeJournal() {
         val journalPath = newBaseDocumentPath()
-        val runtimeJournal = BugsnagJournal(NoopLogger, journalPath, mapOf())
+        val runtimeJournal = BugsnagJournal(NoopLogger, journalPath, mutableMapOf())
         runtimeJournal.addCommand("one hundred", 100)
 
         val crashtimeJournal = Journal(BugsnagJournal.journalType, BugsnagJournal.journalVersion)
@@ -172,7 +172,7 @@ class BugsnagJournalTest {
 
         val observedDocument = BugsnagJournal.loadPreviousDocument(journalPath)
         val expectedDocument = BugsnagJournal.withInitialDocumentContents(
-            mapOf(
+            mutableMapOf(
                 "one hundred" to 100,
                 "a" to "a",
                 "b" to 60
@@ -197,12 +197,12 @@ class BugsnagJournalTest {
     @Test
     fun testJournalEntryUnspecialMapPath() {
         val journalPath = newBaseDocumentPath()
-        val journal = BugsnagJournal(NoopLogger, journalPath, mapOf())
+        val journal = BugsnagJournal(NoopLogger, journalPath, mutableMapOf())
         journal.addCommand(BugsnagJournal.unspecialMapPath("""a\.+"""), 100)
         journal.snapshot()
 
         val observedDocument = BugsnagJournal.loadPreviousDocument(journalPath)
-        val expectedDocument = HashMap(BugsnagJournal.withInitialDocumentContents(mapOf()))
+        val expectedDocument = HashMap(BugsnagJournal.withInitialDocumentContents(mutableMapOf()))
         expectedDocument["""a\.+"""] = 100
 
         Assert.assertEquals(

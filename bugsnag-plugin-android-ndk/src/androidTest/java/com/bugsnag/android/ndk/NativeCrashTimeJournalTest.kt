@@ -29,8 +29,8 @@ class NativeCrashTimeJournalTest {
         }
 
         @Suppress("UNCHECKED_CAST")
-        private fun getExpected(expectedKey: String): Map<String, Any> {
-            return allExpected[expectedKey] as Map<String, Any>
+        private fun getExpected(expectedKey: String): MutableMap<String, Any> {
+            return allExpected[expectedKey] as MutableMap<String, Any>
         }
 
         private val allExpected = jsonToMap(loadJson("native_crashtime_journal_test.json"))
@@ -53,7 +53,7 @@ class NativeCrashTimeJournalTest {
         }
 
         private fun runJournalTest(
-            initialDocument: Map<String, Any>,
+            initialDocument: MutableMap<String, Any>,
             expectedKey: String,
             testCode: (journalPath: String) -> Int
         ) {
@@ -88,7 +88,7 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testSetApiKey() {
-        runJournalTest(mapOf(), "testSetApiKey") {
+        runJournalTest(mutableMapOf(), "testSetApiKey") {
             nativeSetApiKey(it, "my-key")
         }
     }
@@ -98,7 +98,7 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testSetContext() {
-        runJournalTest(mapOf(), "testSetContext") {
+        runJournalTest(mutableMapOf(), "testSetContext") {
             nativeSetContext(it, "my-context")
         }
     }
@@ -108,7 +108,7 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testSetUser() {
-        runJournalTest(mapOf(), "testSetUser") {
+        runJournalTest(mutableMapOf(), "testSetUser") {
             nativeSetUser(it, "my-id", "my-user@nowhere.com", "my-name")
         }
     }
@@ -118,7 +118,7 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testSetBinaryArch() {
-        runJournalTest(mapOf(), "testSetBinaryArch") {
+        runJournalTest(mutableMapOf(), "testSetBinaryArch") {
             nativeSetBinaryArch(it, "my-arch")
         }
     }
@@ -128,7 +128,7 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testSetBuildUuid() {
-        runJournalTest(mapOf(), "testSetBuildUuid") {
+        runJournalTest(mutableMapOf(), "testSetBuildUuid") {
             nativeSetBuildUuid(it, "123e4567-e89b-12d3-a456-426614174000")
         }
     }
@@ -138,7 +138,7 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testSetAppId() {
-        runJournalTest(mapOf(), "testSetAppId") {
+        runJournalTest(mutableMapOf(), "testSetAppId") {
             nativeSetAppId(it, "my-id")
         }
     }
@@ -148,7 +148,7 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testSetAppReleaseStage() {
-        runJournalTest(mapOf(), "testSetAppReleaseStage") {
+        runJournalTest(mutableMapOf(), "testSetAppReleaseStage") {
             nativeSetAppReleaseStage(it, "my-stage")
         }
     }
@@ -158,7 +158,7 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testSetAppType() {
-        runJournalTest(mapOf(), "testSetAppType") {
+        runJournalTest(mutableMapOf(), "testSetAppType") {
             nativeSetAppType(it, "my-type")
         }
     }
@@ -168,7 +168,7 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testSetAppVersion() {
-        runJournalTest(mapOf(), "testSetAppVersion") {
+        runJournalTest(mutableMapOf(), "testSetAppVersion") {
             nativeSetAppVersion(it, "my-version")
         }
     }
@@ -178,7 +178,7 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testSetAppVersionCode() {
-        runJournalTest(mapOf(), "testSetAppVersionCode") {
+        runJournalTest(mutableMapOf(), "testSetAppVersionCode") {
             nativeSetAppVersionCode(it, 100)
         }
     }
@@ -188,7 +188,7 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testSetAppDuration() {
-        runJournalTest(mapOf(), "testSetAppDuration") {
+        runJournalTest(mutableMapOf(), "testSetAppDuration") {
             nativeSetAppDuration(it, 100)
         }
     }
@@ -198,7 +198,7 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testSetAppDurationInForeground() {
-        runJournalTest(mapOf(), "testSetAppDurationInForeground") {
+        runJournalTest(mutableMapOf(), "testSetAppDurationInForeground") {
             nativeSetAppDurationInForeground(it, 100)
         }
     }
@@ -208,7 +208,7 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testSetAppInForeground() {
-        runJournalTest(mapOf(), "testSetAppInForeground") {
+        runJournalTest(mutableMapOf(), "testSetAppInForeground") {
             nativeSetAppInForeground(it, true)
         }
     }
@@ -218,7 +218,7 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testSetAppIsLaunching() {
-        runJournalTest(mapOf(), "testSetAppIsLaunching") {
+        runJournalTest(mutableMapOf(), "testSetAppIsLaunching") {
             nativeSetAppIsLaunching(it, true)
         }
     }
@@ -228,7 +228,7 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testSetJailbroken() {
-        runJournalTest(mapOf(), "testSetJailbroken") {
+        runJournalTest(mutableMapOf(), "testSetJailbroken") {
             nativeSetJailbroken(it, false)
         }
     }
@@ -238,7 +238,7 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testSetDeviceId() {
-        runJournalTest(mapOf(), "testSetDeviceId") {
+        runJournalTest(mutableMapOf(), "testSetDeviceId") {
             nativeSetDeviceId(it, "my-id")
         }
     }
@@ -248,7 +248,7 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testSetLocale() {
-        runJournalTest(mapOf(), "testSetLocale") {
+        runJournalTest(mutableMapOf(), "testSetLocale") {
             nativeSetLocale(it, "my-locale")
         }
     }
@@ -258,7 +258,7 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testSetManufacturer() {
-        runJournalTest(mapOf(), "testSetManufacturer") {
+        runJournalTest(mutableMapOf(), "testSetManufacturer") {
             nativeSetManufacturer(it, "my-manufacturer")
         }
     }
@@ -268,7 +268,7 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testSetDeviceModel() {
-        runJournalTest(mapOf(), "testSetDeviceModel") {
+        runJournalTest(mutableMapOf(), "testSetDeviceModel") {
             nativeSetDeviceModel(it, "my-model")
         }
     }
@@ -278,7 +278,7 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testSetOsVersion() {
-        runJournalTest(mapOf(), "testSetOsVersion") {
+        runJournalTest(mutableMapOf(), "testSetOsVersion") {
             nativeSetOsVersion(it, "my-version")
         }
     }
@@ -288,7 +288,7 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testSetTotalMemory() {
-        runJournalTest(mapOf(), "testSetTotalMemory") {
+        runJournalTest(mutableMapOf(), "testSetTotalMemory") {
             nativeSetTotalMemory(it, 1000000000)
         }
     }
@@ -298,7 +298,7 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testSetOrientation() {
-        runJournalTest(mapOf(), "testSetOrientation") {
+        runJournalTest(mutableMapOf(), "testSetOrientation") {
             nativeSetOrientation(it, "my-orientation")
         }
     }
@@ -308,7 +308,7 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testSetDeviceTime() {
-        runJournalTest(mapOf(), "testSetDeviceTime") {
+        runJournalTest(mutableMapOf(), "testSetDeviceTime") {
             nativeSetDeviceTime(it, 1000000000)
         }
     }
@@ -318,7 +318,7 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testSetOsName() {
-        runJournalTest(mapOf(), "testSetOsName") {
+        runJournalTest(mutableMapOf(), "testSetOsName") {
             nativeSetOsName(it, "my-name")
         }
     }
@@ -328,7 +328,7 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testSetErrorClass() {
-        runJournalTest(mapOf(), "testSetErrorClass") {
+        runJournalTest(mutableMapOf(), "testSetErrorClass") {
             nativeSetErrorClass(it, "my-class")
         }
     }
@@ -338,7 +338,7 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testSetErrorMessage() {
-        runJournalTest(mapOf(), "testSetErrorMessage") {
+        runJournalTest(mutableMapOf(), "testSetErrorMessage") {
             nativeSetErrorMessage(it, "my-message")
         }
     }
@@ -348,7 +348,7 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testSetErrorType() {
-        runJournalTest(mapOf(), "testSetErrorType") {
+        runJournalTest(mutableMapOf(), "testSetErrorType") {
             nativeSetErrorType(it, "my-type")
         }
     }
@@ -358,7 +358,7 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testSetEventSeverity() {
-        runJournalTest(mapOf(), "testSetEventSeverity") {
+        runJournalTest(mutableMapOf(), "testSetEventSeverity") {
             nativeSetEventSeverity(it, 1)
         }
     }
@@ -368,7 +368,7 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testSetEventUnhandled() {
-        runJournalTest(mapOf(), "testSetEventUnhandled") {
+        runJournalTest(mutableMapOf(), "testSetEventUnhandled") {
             nativeSetEventUnhandled(it, true)
         }
     }
@@ -378,7 +378,7 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testSetGroupingHash() {
-        runJournalTest(mapOf(), "testSetGroupingHash") {
+        runJournalTest(mutableMapOf(), "testSetGroupingHash") {
             nativeSetGroupingHash(it, "my-hash")
         }
     }
@@ -388,10 +388,10 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testAddMetadataDouble() {
-        runJournalTest(mapOf(), "testAddMetadataDouble") {
+        runJournalTest(mutableMapOf(), "testAddMetadataDouble") {
             nativeAddMetadataDouble(it, "my-section", "my-name", 1.5)
         }
-        runJournalTest(mapOf(), "testAddMetadataDigitsDouble") {
+        runJournalTest(mutableMapOf(), "testAddMetadataDigitsDouble") {
             nativeAddMetadataDouble(it, "-1", "0\\.+", 1.5)
         }
     }
@@ -401,10 +401,10 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testAddMetadataBool() {
-        runJournalTest(mapOf(), "testAddMetadataBool") {
+        runJournalTest(mutableMapOf(), "testAddMetadataBool") {
             nativeAddMetadataBool(it, "my-section", "my-name", true)
         }
-        runJournalTest(mapOf(), "testAddMetadataDigitsBool") {
+        runJournalTest(mutableMapOf(), "testAddMetadataDigitsBool") {
             nativeAddMetadataBool(it, "1000", "3456\\.+", false)
         }
     }
@@ -414,10 +414,10 @@ class NativeCrashTimeJournalTest {
 
     @Test
     fun testAddMetadataString() {
-        runJournalTest(mapOf(), "testAddMetadataString") {
+        runJournalTest(mutableMapOf(), "testAddMetadataString") {
             nativeAddMetadataString(it, "my-section", "my-name", "my-value")
         }
-        runJournalTest(mapOf(), "testAddMetadataDigitsString") {
+        runJournalTest(mutableMapOf(), "testAddMetadataDigitsString") {
             nativeAddMetadataString(it, "9", "9\\.+", "my-value")
         }
     }
@@ -448,7 +448,7 @@ class NativeCrashTimeJournalTest {
 //
 //    @Test
 //    fun testStoreEvent() {
-//        runJournalTest(mapOf(), "testStoreEvent") {
+//        runJournalTest(mutableMapOf(), "testStoreEvent") {
 //            nativeStoreEvent(it)
 //        }
 //    }

@@ -20,7 +20,7 @@ import kotlin.concurrent.thread
 internal class BugsnagJournal @JvmOverloads internal constructor(
     private val logger: Logger,
     private val baseDocumentPath: File,
-    private val initialDocument: Map<String, Any> = mutableMapOf(),
+    private val initialDocument: MutableMap<String, Any> = mutableMapOf(),
     private val retryIntervalMs: Long = DEFAULT_RETRY_INTERVAL_MS
 ) : Closeable {
 
@@ -42,7 +42,7 @@ internal class BugsnagJournal @JvmOverloads internal constructor(
 
     private fun createNewJournal(
         baseDocumentPath: File,
-        initialDocument: Map<String, Any>
+        initialDocument: MutableMap<String, Any>
     ): JournaledDocument? {
         return try {
             baseDocumentPath.parentFile?.mkdirs()
@@ -176,13 +176,12 @@ internal class BugsnagJournal @JvmOverloads internal constructor(
         }
 
         // Internal to keep it accessible to unit tests
-        internal fun withInitialDocumentContents(document: Map<String, Any>): Map<String, Any> {
-            val docWithVersionInfo = document.toMutableMap()
-            docWithVersionInfo[JournalKeys.keyVersionInfo] = mutableMapOf(
+        internal fun withInitialDocumentContents(document: MutableMap<String, Any>): MutableMap<String, Any> {
+            document[JournalKeys.keyVersionInfo] = mutableMapOf(
                 JournalKeys.keyType to journalType,
                 JournalKeys.keyVersion to journalVersion
             )
-            return docWithVersionInfo
+            return document
         }
 
         private val specialCharsRegex = """([.+\\])""".toRegex()
