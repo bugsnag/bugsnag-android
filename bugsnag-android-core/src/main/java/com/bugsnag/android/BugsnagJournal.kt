@@ -20,7 +20,7 @@ import kotlin.concurrent.thread
 internal class BugsnagJournal @JvmOverloads internal constructor(
     private val logger: Logger,
     private val baseDocumentPath: File,
-    private val initialDocument: Map<String, Any> = mapOf(),
+    private val initialDocument: Map<String, Any> = mutableMapOf(),
     private val retryIntervalMs: Long = DEFAULT_RETRY_INTERVAL_MS
 ) : Closeable {
 
@@ -178,7 +178,7 @@ internal class BugsnagJournal @JvmOverloads internal constructor(
         // Internal to keep it accessible to unit tests
         internal fun withInitialDocumentContents(document: Map<String, Any>): Map<String, Any> {
             val docWithVersionInfo = document.toMutableMap()
-            docWithVersionInfo[JournalKeys.keyVersionInfo] = mapOf(
+            docWithVersionInfo[JournalKeys.keyVersionInfo] = mutableMapOf(
                 JournalKeys.keyType to journalType,
                 JournalKeys.keyVersion to journalVersion
             )

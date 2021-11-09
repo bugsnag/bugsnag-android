@@ -27,7 +27,7 @@ internal class BugsnagReactNativeBridge(
             is UpdateUser -> {
                 MessageEvent(
                     "UserUpdate",
-                    mapOf(
+                    mutableMapOf(
                         Pair("id", event.user.id),
                         Pair("email", event.user.email),
                         Pair("name", event.user.name)

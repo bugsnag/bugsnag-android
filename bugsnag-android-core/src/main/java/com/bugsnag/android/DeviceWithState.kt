@@ -65,7 +65,7 @@ class DeviceWithState internal constructor(
     var freeDisk: Long? by map
 
     override fun toJournalSection(): Map<String, Any?> = super.toJournalSection().plus(
-        mapOf(
+        mutableMapOf(
             JournalKeys.keyFreeDisk to freeDisk,
             JournalKeys.keyFreeMemory to freeMemory,
             JournalKeys.keyOrientation to orientation,

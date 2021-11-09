@@ -9,7 +9,7 @@ import java.io.IOException
  * Information about the current user of your application.
  */
 class User internal constructor(
-    data: Map<String, String?> = mapOf()
+    data: Map<String, String?> = mutableMapOf()
 ) : JsonStream.Streamable, Journalable {
 
     private val map: Map<String, String?> = data.withDefault { null }
@@ -30,7 +30,7 @@ class User internal constructor(
     val name: String? by map
 
     internal constructor(id: String?, email: String?, name: String?) : this(
-        mapOf(
+        mutableMapOf(
             JournalKeys.keyId to id,
             JournalKeys.keyEmail to email,
             JournalKeys.keyName to name
