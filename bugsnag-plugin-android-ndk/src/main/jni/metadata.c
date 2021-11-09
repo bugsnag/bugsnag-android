@@ -667,63 +667,6 @@ exit:
   bsg_safe_delete_local_ref(env, keylist);
 }
 
-void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,
-                                 jobject metadata) {
-  bsg_jni_cache *jni_cache = NULL;
-  jobject keyset = NULL;
-  jobject keylist = NULL;
-
-  if (metadata == NULL) {
-    goto exit;
-  }
-  jni_cache = populate_jni_cache(env);
-  if (jni_cache == NULL) {
-    goto exit;
-  }
-
-  // get size of metadata map
-  jint map_size = bsg_safe_call_int_method(env, metadata, jni_cache->map_size);
-  if (map_size == -1) {
-    goto exit;
-  }
-
-  // create a list of metadata keys
-  keyset = bsg_safe_call_object_method(env, metadata, jni_cache->map_key_set);
-  if (keyset == NULL) {
-    goto exit;
-  }
-  keylist = bsg_safe_new_object(env, jni_cache->arraylist,
-                                jni_cache->arraylist_init_with_obj, keyset);
-  if (keylist == NULL) {
-    goto exit;
-  }
-
-  for (int i = 0; i < map_size; i++) {
-    jstring _key = bsg_safe_call_object_method(
-        env, keylist, jni_cache->arraylist_get, (jint)i);
-    jobject _value =
-        bsg_safe_call_object_method(env, metadata, jni_cache->map_get, _key);
-
-    if (_key == NULL || _value == NULL) {
-      bsg_safe_delete_local_ref(env, _key);
-      bsg_safe_delete_local_ref(env, _value);
-    } else {
-      const char *key = bsg_safe_get_string_utf_chars(env, _key);
-      if (key != NULL) {
-        populate_metadata_value(env, &crumb->metadata, jni_cache, "metaData",
-                                key, _value);
-        bsg_safe_release_string_utf_chars(env, _key, key);
-      }
-    }
-  }
-  goto exit;
-
-exit:
-  free(jni_cache);
-  bsg_safe_delete_local_ref(env, keyset);
-  bsg_safe_delete_local_ref(env, keylist);
-}
-
 void bsg_populate_event(JNIEnv *env, bugsnag_event *event) {
   bsg_jni_cache *jni_cache = populate_jni_cache(env);
   if (jni_cache == NULL) {

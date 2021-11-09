@@ -17,10 +17,4 @@ void bsg_populate_event(JNIEnv *env, bugsnag_event *event);
 void bsg_populate_metadata(JNIEnv *env, bugsnag_metadata *dst,
                            jobject metadata);
 
-/**
- * Parse as java.util.Map<String, String> to populate crumb metadata
- */
-void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,
-                                 jobject metadata);
-
 #endif

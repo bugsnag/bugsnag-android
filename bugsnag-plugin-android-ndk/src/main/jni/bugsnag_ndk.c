@@ -350,50 +350,6 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_pausedSession(
   bsg_release_env_write_lock();
 }
 
-JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_addBreadcrumb(
-    JNIEnv *env, jobject _this, jstring name_, jstring crumb_type,
-    jstring timestamp_, jobject metadata) {
-  if (bsg_global_env == NULL) {
-    return;
-  }
-  const char *name = bsg_safe_get_string_utf_chars(env, name_);
-  const char *type = bsg_safe_get_string_utf_chars(env, crumb_type);
-  const char *timestamp = bsg_safe_get_string_utf_chars(env, timestamp_);
-
-  if (name != NULL && type != NULL && timestamp != NULL) {
-    bugsnag_breadcrumb *crumb = calloc(1, sizeof(bugsnag_breadcrumb));
-    bsg_strncpy_safe(crumb->name, name, sizeof(crumb->name));
-    bsg_strncpy_safe(crumb->timestamp, timestamp, sizeof(crumb->timestamp));
-    if (strcmp(type, "user") == 0) {
-      crumb->type = BSG_CRUMB_USER;
-    } else if (strcmp(type, "error") == 0) {
-      crumb->type = BSG_CRUMB_ERROR;
-    } else if (strcmp(type, "log") == 0) {
-      crumb->type = BSG_CRUMB_LOG;
-    } else if (strcmp(type, "navigation") == 0) {
-      crumb->type = BSG_CRUMB_NAVIGATION;
-    } else if (strcmp(type, "request") == 0) {
-      crumb->type = BSG_CRUMB_REQUEST;
-    } else if (strcmp(type, "state") == 0) {
-      crumb->type = BSG_CRUMB_STATE;
-    } else if (strcmp(type, "process") == 0) {
-      crumb->type = BSG_CRUMB_PROCESS;
-    } else {
-      crumb->type = BSG_CRUMB_MANUAL;
-    }
-
-    bsg_populate_crumb_metadata(env, crumb, metadata);
-    bsg_request_env_write_lock();
-    bsg_cache_add_breadcrumb(&bsg_global_env->next_event, crumb);
-    bsg_release_env_write_lock();
-
-    free(crumb);
-  }
-  bsg_safe_release_string_utf_chars(env, name_, name);
-  bsg_safe_release_string_utf_chars(env, crumb_type, type);
-  bsg_safe_release_string_utf_chars(env, timestamp_, timestamp);
-}
-
 JNIEXPORT void JNICALL
 Java_com_bugsnag_android_ndk_NativeBridge_updateAppVersion(JNIEnv *env,
                                                            jobject _this,
