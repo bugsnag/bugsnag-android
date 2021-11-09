@@ -194,6 +194,7 @@ internal class ClientInternal constructor(
         createBugsnagJournal()
         installErrorHandlers()
         addInitialJournalEntries()
+        syncInitialState()
         installDataCollectors()
         flushCachedPayloads()
         leaveBugsnagLoadedCrumb()
@@ -203,6 +204,9 @@ internal class ClientInternal constructor(
      * Creates an empty Bugsnag Journal which can be used for recording errors and system state.
      */
     private fun createBugsnagJournal() {
+        if (isJournalDisabled()) {
+            return
+        }
         journal.value
     }
 
@@ -232,10 +236,12 @@ internal class ClientInternal constructor(
      * Populates the Bugsnag Journal with some initial state.
      */
     private fun addInitialJournalEntries() {
+        if (isJournalDisabled()) {
+            return
+        }
         val observer = JournaledStateObserver(client, journal.value)
         observer.onStateChange(StateEvent.JournalSetup(config.apiKey))
         addObserver(observer)
-        syncInitialState()
     }
 
     /**
@@ -265,6 +271,9 @@ internal class ClientInternal constructor(
     }
 
     private fun processJournalLaunchCrash() {
+        if (isJournalDisabled()) {
+            return
+        }
         if (crashedLastLaunch.get()) {
             journalStore.processMostRecentJournal { event ->
                 sanitizeJournalEvent(event)
@@ -274,6 +283,9 @@ internal class ClientInternal constructor(
     }
 
     private fun processJournalsInBg() {
+        if (isJournalDisabled()) {
+            return
+        }
         try {
             bgTaskService.submitTask(
                 TaskType.IO,
@@ -327,8 +339,18 @@ internal class ClientInternal constructor(
             eventStore.flushAsync()
             sessionTracker.flushAsync()
         }
+
+        if (isJournalDisabled()) {
+            return
+        }
         journal.value.addCommand(JournalKeys.pathMetadataAppNetworkAccess, networkState)
     }
+
+    /**
+     * Checks whether the journal is enabled or not. Disabling the journal improves performance
+     * when NDK errors are not being recorded.
+     */
+    private fun isJournalDisabled() = !config.enabledErrorTypes.ndkCrashes
 
     private fun registerLifecycleCallbacks() {
         if (appContext is Application) {
