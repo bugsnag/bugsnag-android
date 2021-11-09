@@ -96,28 +96,11 @@ internal class JournaledStateObserver(val client: Client, val journal: BugsnagJo
         }
     }
 
-    private fun makeMetadataJournalSafe(metadata: Map<String, Any?>): MutableMap<String, Any?> {
-        val result = mutableMapOf<String, Any?>()
-        metadata.forEach { entry ->
-            result[BugsnagJournal.unspecialMapPath(entry.key)] = if (entry.value is Map<*, *>) {
-                (entry.value as Map<*, *>).mapKeys {
-                    if (it.key is String) {
-                        BugsnagJournal.unspecialMapPath(it.key as String)
-                    } else {
-                        it.key
-                    }
-                }
-            } else {
-                entry.value
-            }
-        }
-        return result
-    }
     private fun handleAddBreadcrumbEvent(event: StateEvent.AddBreadcrumb) {
         journal.addCommand(
             "${JournalKeys.pathBreadcrumbs}.",
             mutableMapOf(
-                JournalKeys.keyMetadata to makeMetadataJournalSafe(event.metadata),
+                JournalKeys.keyMetadata to event.metadata,
                 JournalKeys.keyName to event.message,
                 JournalKeys.keyTimestamp to event.timestamp.time,
                 JournalKeys.keyType to event.type.toString()

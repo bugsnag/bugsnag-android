@@ -1,7 +1,5 @@
 package com.bugsnag.android.internal.journal
 
-import com.bugsnag.android.internal.bsgToMutableContainersDeep
-
 /**
  * DocumentPath records a path into a hierarchical acyclic document, and can be used to modify
  * documents by navigating down the DAG and then applying a modification at that level.
@@ -74,10 +72,9 @@ class DocumentPath(path: String) {
         value: Any?
     ): MutableMap<String, Any> {
         if (directives.isEmpty()) {
-            val mutableMap = value.bsgToMutableContainersDeep()
-            require(mutableMap is MutableMap<*, *>) { "Value replacing document must be a map" }
+            require(value is MutableMap<*, *>) { "Value replacing document must be a map" }
             @Suppress("UNCHECKED_CAST")
-            return mutableMap as MutableMap<String, Any>
+            return value as MutableMap<String, Any>
         }
         val filledInDocument = fillInMissingContainers(document, 0)
         require(filledInDocument is MutableMap<*, *>) { "Document path must result in a top level map" }

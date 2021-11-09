@@ -1,7 +1,5 @@
 package com.bugsnag.android.internal.journal
 
-import com.bugsnag.android.internal.bsgToMutableContainersDeep
-
 /**
  * A directive determines how document path commands are interpreted. Making a container,
  * getting from a container, or setting to a container will require different operations to
@@ -61,11 +59,10 @@ internal interface DocumentPathDirective<C> {
         }
 
         override fun setInContainer(container: MutableMap<String, in Any>, value: Any?) {
-            val concurrentValue = value.bsgToMutableContainersDeep()
-            if (concurrentValue == null) {
+            if (value == null) {
                 container.remove(key)
             } else {
-                container[key] = concurrentValue
+                container[key] = value
             }
         }
 
@@ -106,10 +103,9 @@ internal interface DocumentPathDirective<C> {
         }
 
         override fun setInContainer(container: MutableList<in Any>, value: Any?) {
-            val concurrentValue = value.bsgToMutableContainersDeep()
             container.removeAt(index)
-            if (concurrentValue != null) {
-                container.add(index, concurrentValue)
+            if (value != null) {
+                container.add(index, value)
             }
         }
 
@@ -146,12 +142,11 @@ internal interface DocumentPathDirective<C> {
         }
 
         override fun setInContainer(container: MutableList<in Any>, value: Any?) {
-            val concurrentValue = value.bsgToMutableContainersDeep()
             if (container.isNotEmpty()) {
                 container.removeAt(container.lastIndex)
             }
-            if (concurrentValue != null) {
-                container.add(concurrentValue)
+            if (value != null) {
+                container.add(value)
             }
         }
 
@@ -198,9 +193,8 @@ internal interface DocumentPathDirective<C> {
         }
 
         override fun setInContainer(container: MutableList<in Any>, value: Any?) {
-            val concurrentValue = value.bsgToMutableContainersDeep()
-            requireNotNull(concurrentValue) { "Cannot use null for last path insert value" }
-            container.add(concurrentValue)
+            requireNotNull(value) { "Cannot use null for last path insert value" }
+            container.add(value)
         }
 
         override fun toString(): String {

@@ -357,7 +357,7 @@ class JournaledDocumentTest {
             standardVersion,
             bufferSize,
             bufferSize,
-            mapOf("a" to 1)
+            mutableMapOf("a" to 1)
         )
         document.addCommands(
             Pair("x", 1),

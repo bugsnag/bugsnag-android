@@ -2,7 +2,6 @@ package com.bugsnag.android
 
 import com.bugsnag.android.internal.journal.DocumentPath
 import org.junit.Test
-import java.util.LinkedList
 
 class DocumentPathTest {
     @Test
@@ -73,7 +72,7 @@ class DocumentPathTest {
 
     @Test
     fun testMapAddIntToInt() {
-        val document = mutableMapOf<String, Any>("a" to mapOf("b" to 1))
+        val document = mutableMapOf<String, Any>("a" to mutableMapOf("b" to 1))
         val docpath = DocumentPath("a.b+")
         val value = 10
         val expected = mapOf("a" to mapOf("b" to 11))
@@ -84,7 +83,7 @@ class DocumentPathTest {
 
     @Test
     fun testMapAddIntToFloat() {
-        val document = mutableMapOf<String, Any>("a" to mapOf("b" to 1.5))
+        val document = mutableMapOf<String, Any>("a" to mutableMapOf("b" to 1.5))
         val docpath = DocumentPath("a.b+")
         val value = 10
         val expected = mapOf("a" to mapOf("b" to 11.5))
@@ -95,7 +94,7 @@ class DocumentPathTest {
 
     @Test
     fun testMapAddFloatToInt() {
-        val document = mutableMapOf<String, Any>("a" to mapOf("b" to 5))
+        val document = mutableMapOf<String, Any>("a" to mutableMapOf("b" to 5))
         val docpath = DocumentPath("a.b+")
         val value = 10.9
         val expected = mapOf("a" to mapOf("b" to 15.9))
@@ -106,7 +105,7 @@ class DocumentPathTest {
 
     @Test
     fun testMapAddFloatToFloat() {
-        val document = mutableMapOf<String, Any>("a" to mapOf("b" to 5.5))
+        val document = mutableMapOf<String, Any>("a" to mutableMapOf("b" to 5.5))
         val docpath = DocumentPath("a.b+")
         val value = 10.9
         val expected = mapOf("a" to mapOf("b" to 16.4))
@@ -187,7 +186,7 @@ class DocumentPathTest {
 
     @Test
     fun testListAddAppend() {
-        val document = mutableMapOf<String, Any>("a" to listOf<Any>(1))
+        val document = mutableMapOf<String, Any>("a" to mutableListOf<Any>(1))
         val docpath = DocumentPath("a.-1+")
         val value = 50
         val expected = mapOf<String, Any>("a" to listOf<Any>(51))
@@ -198,7 +197,7 @@ class DocumentPathTest {
 
     @Test
     fun testListDeleteLast() {
-        val document = mutableMapOf<String, Any>("a" to LinkedList<Any>(listOf<Any>(1, 2, 3)))
+        val document = mutableMapOf<String, Any>("a" to mutableListOf<Any>(1, 2, 3))
         val docpath = DocumentPath("a.-1")
         val value = null
         val expected = mapOf<String, Any>("a" to listOf<Any>(1, 2))
@@ -220,7 +219,7 @@ class DocumentPathTest {
 
     @Test
     fun testListReplace() {
-        val document = mutableMapOf<String, Any>("a" to LinkedList<Any>(listOf<Any>(1, 2, 3)))
+        val document = mutableMapOf<String, Any>("a" to mutableListOf<Any>(1, 2, 3))
         val docpath = DocumentPath("a.0")
         val value = 9
         val expected = mapOf<String, Any>("a" to listOf<Any>(9, 2, 3))
@@ -231,7 +230,7 @@ class DocumentPathTest {
 
     @Test
     fun testListAdd() {
-        val document = mutableMapOf<String, Any>("a" to LinkedList<Any>(listOf<Any>(1, 2, 3)))
+        val document = mutableMapOf<String, Any>("a" to mutableListOf<Any>(1, 2, 3))
         val docpath = DocumentPath("a.0+")
         val value = 9
         val expected = mapOf<String, Any>("a" to listOf<Any>(10, 2, 3))
@@ -242,7 +241,7 @@ class DocumentPathTest {
 
     @Test
     fun testListSubtract() {
-        val document = mutableMapOf<String, Any>("a" to LinkedList<Any>(listOf<Any>(1, 2, 3)))
+        val document = mutableMapOf<String, Any>("a" to mutableListOf<Any>(1, 2, 3))
         val docpath = DocumentPath("a.0+")
         val value = -9
         val expected = mapOf<String, Any>("a" to listOf<Any>(-8, 2, 3))
@@ -253,7 +252,7 @@ class DocumentPathTest {
 
     @Test
     fun testListDelete() {
-        val document = mutableMapOf<String, Any>("a" to LinkedList<Any>(listOf<Any>(1, 2, 3)))
+        val document = mutableMapOf<String, Any>("a" to mutableListOf<Any>(1, 2, 3))
         val docpath = DocumentPath("a.0")
         val value = null
         val expected = mapOf<String, Any>("a" to listOf<Any>(2, 3))
@@ -264,7 +263,7 @@ class DocumentPathTest {
 
     @Test
     fun testListReplaceLast() {
-        val document = mutableMapOf<String, Any>("a" to LinkedList<Any>(listOf<Any>(5, 4, 3, 2, 1)))
+        val document = mutableMapOf<String, Any>("a" to mutableListOf<Any>(5, 4, 3, 2, 1))
         val docpath = DocumentPath("a.-1")
         val value = 9
         val expected = mapOf<String, Any>("a" to listOf<Any>(5, 4, 3, 2, 9))
