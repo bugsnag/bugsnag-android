@@ -1,8 +1,6 @@
 package com.bugsnag.android.internal.journal
 
 import com.bugsnag.android.internal.bsgToMutableContainersDeep
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * A directive determines how document path commands are interpreted. Making a container,
@@ -55,7 +53,7 @@ internal interface DocumentPathDirective<C> {
     open class MapKeyDirective(private val key: String) :
         DocumentPathDirective<MutableMap<String, in Any>> {
         override fun newContainer(): MutableMap<String, in Any> {
-            return ConcurrentHashMap()
+            return mutableMapOf()
         }
 
         override fun getFromContainer(container: MutableMap<String, in Any>): Any? {
@@ -100,7 +98,7 @@ internal interface DocumentPathDirective<C> {
     open class ListIndexDirective(private val index: Int) :
         DocumentPathDirective<MutableList<in Any>> {
         override fun newContainer(): MutableList<in Any> {
-            return CopyOnWriteArrayList()
+            return mutableListOf()
         }
 
         override fun getFromContainer(container: MutableList<in Any>): Any? {

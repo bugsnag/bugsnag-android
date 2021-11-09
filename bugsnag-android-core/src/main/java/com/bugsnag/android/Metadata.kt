@@ -2,7 +2,6 @@
 
 package com.bugsnag.android
 
-import com.bugsnag.android.internal.journal.Journalable
 import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
 
@@ -14,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap
  */
 internal data class Metadata @JvmOverloads constructor(
     internal val store: MutableMap<String, MutableMap<String, Any>> = ConcurrentHashMap()
-) : JsonStream.Streamable, MetadataAware, Journalable {
+) : JsonStream.Streamable, MetadataAware {
 
     val jsonStreamer: ObjectJsonStreamer = ObjectJsonStreamer()
 
@@ -26,10 +25,8 @@ internal data class Metadata @JvmOverloads constructor(
 
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) {
-        jsonStreamer.objectToStream(toJournalSection(), writer, true)
+        jsonStreamer.objectToStream(store, writer, true)
     }
-
-    override fun toJournalSection(): Map<String, Any?> = store.toMap()
 
     override fun addMetadata(section: String, value: Map<String, Any?>) {
         value.entries.forEach {

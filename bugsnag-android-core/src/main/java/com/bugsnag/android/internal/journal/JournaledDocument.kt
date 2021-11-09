@@ -15,10 +15,6 @@ import java.util.function.BiConsumer
  * Document snapshots are persisted to files, and journal entries are persisted to a memory-mapped
  * file.
  *
- * This document will always be internally composed of ConcurrentHashMap and CopyOnWriteArrayList.
- * Thus, the document and its children will have the same concurrency protections and requirements
- * of those classes.
- *
  * Changes to the document must me made only via journal commands. Do not modify the document or any
  * of its sub-components directly!
  */

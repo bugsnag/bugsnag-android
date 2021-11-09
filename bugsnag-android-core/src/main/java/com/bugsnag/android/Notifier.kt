@@ -19,7 +19,7 @@ class Notifier @JvmOverloads constructor(
     override fun toStream(writer: JsonStream) = writer.value(toJournalSection())
 
     override fun toJournalSection(): Map<String, Any?> {
-        val data = mapOf(
+        val data = mutableMapOf(
             JournalKeys.keyName to name,
             JournalKeys.keyVersion to version,
             JournalKeys.keyUrl to url

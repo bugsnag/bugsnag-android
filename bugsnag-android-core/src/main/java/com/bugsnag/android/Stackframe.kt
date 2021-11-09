@@ -122,7 +122,7 @@ class Stackframe : JsonStream.Streamable, Journalable {
     override fun toStream(writer: JsonStream) = writer.value(toJournalSection())
 
     override fun toJournalSection(): Map<String, Any?> = nativeFrame?.toJournalSection()
-        ?: mapOf(
+        ?: mutableMapOf(
             JournalKeys.keyMethod to method,
             JournalKeys.keyFile to file,
             JournalKeys.keyLineNumber to lineNumber,

@@ -316,7 +316,7 @@ internal class ClientInternal constructor(
     private fun onConnectivityChange(hasConnection: Boolean, networkState: String?) {
         leaveAutoBreadcrumb(
             "Connectivity changed", BreadcrumbType.STATE,
-            mapOf(
+            mutableMapOf(
                 "hasConnection" to hasConnection,
                 "networkState" to networkState
             )
@@ -377,7 +377,7 @@ internal class ClientInternal constructor(
                 { oldOrientation: String?, newOrientation: String? ->
                     leaveAutoBreadcrumb(
                         "Orientation changed", BreadcrumbType.STATE,
-                        mapOf(
+                        mutableMapOf(
                             "from" to oldOrientation,
                             "to" to newOrientation
                         )
@@ -390,7 +390,7 @@ internal class ClientInternal constructor(
                     leaveAutoBreadcrumb(
                         "Trim Memory",
                         BreadcrumbType.STATE,
-                        mapOf("trimLevel" to memoryTrimState.trimLevelDescription)
+                        mutableMapOf("trimLevel" to memoryTrimState.trimLevelDescription)
                     )
                 }
                 memoryTrimState.emitObservableEvent()
