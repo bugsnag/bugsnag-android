@@ -52,19 +52,11 @@ class NativeBridge(
         threadSendPolicy: Int
     )
 
-    external fun startedSession(
-        sessionID: String,
-        key: String,
-        handledCount: Int,
-        unhandledCount: Int
-    )
-
     external fun addMetadataString(tab: String, key: String, value: String)
     external fun addMetadataDouble(tab: String, key: String, value: Double)
     external fun addMetadataBoolean(tab: String, key: String, value: Boolean)
     external fun clearMetadataTab(tab: String)
     external fun removeMetadata(tab: String, key: String)
-    external fun pausedSession()
     external fun updateContext(context: String)
     external fun updateInForeground(inForeground: Boolean, activityName: String)
     external fun updateIsLaunching(isLaunching: Boolean)
@@ -86,13 +78,6 @@ class NativeBridge(
             is ClearMetadataValue -> removeMetadata(
                 makeSafe(event.section),
                 makeSafe(event.key ?: "")
-            )
-            PauseSession -> pausedSession()
-            is StartSession -> startedSession(
-                makeSafe(event.id),
-                makeSafe(event.startedAt),
-                event.handledCount,
-                event.unhandledCount
             )
             is UpdateContext -> updateContext(makeSafe(event.context ?: ""))
             is UpdateInForeground -> updateInForeground(
