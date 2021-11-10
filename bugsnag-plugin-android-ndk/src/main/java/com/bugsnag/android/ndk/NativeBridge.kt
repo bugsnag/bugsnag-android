@@ -62,8 +62,6 @@ class NativeBridge(
     external fun addMetadataString(tab: String, key: String, value: String)
     external fun addMetadataDouble(tab: String, key: String, value: Double)
     external fun addMetadataBoolean(tab: String, key: String, value: Boolean)
-    external fun addHandledEvent()
-    external fun addUnhandledEvent()
     external fun clearMetadataTab(tab: String)
     external fun removeMetadata(tab: String, key: String)
     external fun pausedSession()
@@ -89,8 +87,6 @@ class NativeBridge(
                 makeSafe(event.section),
                 makeSafe(event.key ?: "")
             )
-            NotifyHandled -> addHandledEvent()
-            NotifyUnhandled -> addUnhandledEvent()
             PauseSession -> pausedSession()
             is StartSession -> startedSession(
                 makeSafe(event.id),

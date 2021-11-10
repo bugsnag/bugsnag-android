@@ -207,36 +207,6 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   BUGSNAG_LOG("Initialization complete!");
 }
 
-JNIEXPORT void JNICALL
-Java_com_bugsnag_android_ndk_NativeBridge_addHandledEvent(JNIEnv *env,
-                                                          jobject _this) {
-  if (bsg_global_env == NULL) {
-    return;
-  }
-  bsg_request_env_write_lock();
-  bugsnag_event *event = &bsg_global_env->next_event;
-
-  if (bsg_cache_has_session(event)) {
-    event->handled_events++;
-  }
-  bsg_release_env_write_lock();
-}
-
-JNIEXPORT void JNICALL
-Java_com_bugsnag_android_ndk_NativeBridge_addUnhandledEvent(JNIEnv *env,
-                                                            jobject _this) {
-  if (bsg_global_env == NULL) {
-    return;
-  }
-  bsg_request_env_write_lock();
-  bugsnag_event *event = &bsg_global_env->next_event;
-
-  if (bsg_cache_has_session(event)) {
-    event->unhandled_events++;
-  }
-  bsg_release_env_write_lock();
-}
-
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_startedSession(
     JNIEnv *env, jobject _this, jstring session_id_, jstring start_date_,
     jint handled_count, jint unhandled_count) {
