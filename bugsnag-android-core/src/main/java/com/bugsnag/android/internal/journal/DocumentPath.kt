@@ -72,12 +72,13 @@ class DocumentPath(path: String) {
         value: Any?
     ): MutableMap<String, Any> {
         if (directives.isEmpty()) {
-            require(value is MutableMap<*, *>) { "Value replacing document must be a map" }
+            // optimization: avoid two type casts in hot path.
             @Suppress("UNCHECKED_CAST")
             return value as MutableMap<String, Any>
         }
         val filledInDocument = fillInMissingContainers(document, 0)
-        require(filledInDocument is MutableMap<*, *>) { "Document path must result in a top level map" }
+
+        // optimization: avoid two type casts in hot path.
         @Suppress("UNCHECKED_CAST")
         val updatedDocument = filledInDocument as MutableMap<String, Any>
 
@@ -123,14 +124,19 @@ class DocumentPath(path: String) {
     private fun applyValueToDocument(value: Any?, document: MutableMap<String, Any>) {
         // Directives 0 through n-1 navigate to where we want to edit the document.
         var currentContainer: Any = document
-        for (i in 0 until directives.size - 1) {
-            val directive = directives[i]
-            currentContainer = directive.getFromContainer(currentContainer)!!
-        }
+        val size = directives.size
+        val last = size - 1
 
-        // Only the last directive does the actual setting.
-        val directive = directives.last()
-        directive.setInContainer(currentContainer, value)
+        // optimization: avoid iterator construction in hot path
+        for (index in 0 until size) {
+            val directive = directives[index]
+            if (index != last) {
+                currentContainer = directive.getFromContainer(currentContainer)!!
+            } else {
+                // Only the last directive does the actual setting.
+                directive.setInContainer(currentContainer, value)
+            }
+        }
     }
 
     override fun toString(): String {
