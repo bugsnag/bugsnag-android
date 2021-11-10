@@ -6,7 +6,6 @@ import com.bugsnag.android.StateEvent
 import com.bugsnag.android.StateEvent.AddMetadata
 import com.bugsnag.android.StateEvent.ClearMetadataSection
 import com.bugsnag.android.StateEvent.ClearMetadataValue
-import com.bugsnag.android.StateEvent.DeliverPending
 import com.bugsnag.android.StateEvent.Install
 import com.bugsnag.android.StateEvent.NotifyHandled
 import com.bugsnag.android.StateEvent.NotifyUnhandled
@@ -60,7 +59,6 @@ class NativeBridge(
         unhandledCount: Int
     )
 
-    external fun deliverReportAtPath(filePath: String)
     external fun addMetadataString(tab: String, key: String, value: String)
     external fun addMetadataDouble(tab: String, key: String, value: Double)
     external fun addMetadataBoolean(tab: String, key: String, value: Boolean)
@@ -85,7 +83,6 @@ class NativeBridge(
 
         when (event) {
             is Install -> handleInstallMessage(event)
-            DeliverPending -> deliverPendingReports()
             is AddMetadata -> handleAddMetadata(event)
             is ClearMetadataSection -> clearMetadataTab(makeSafe(event.section))
             is ClearMetadataValue -> removeMetadata(
@@ -127,27 +124,6 @@ class NativeBridge(
             return true
         }
         return false
-    }
-
-    private fun deliverPendingReports() {
-        lock.lock()
-        try {
-            val outDir = File(reportDirectory)
-            if (outDir.exists()) {
-                val fileList = outDir.listFiles()
-                if (fileList != null) {
-                    for (file in fileList) {
-                        deliverReportAtPath(file.absolutePath)
-                    }
-                }
-            } else {
-                logger.w("Payload directory does not exist, cannot read pending reports")
-            }
-        } catch (ex: Exception) {
-            logger.w("Failed to parse/write pending reports: $ex")
-        } finally {
-            lock.unlock()
-        }
     }
 
     private fun handleInstallMessage(arg: Install) {
