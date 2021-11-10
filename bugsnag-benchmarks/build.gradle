@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion "30.0.3"
 
     compileOptions {
@@ -17,7 +17,7 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 23
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -27,6 +27,19 @@ android {
         // it's not possible to lock the CPU clock without rooting a device, which isn't possible
         // on our CI setup currently.
         testInstrumentationRunnerArgument "androidx.benchmark.suppressErrors", "EMULATOR,LOW_BATTERY,UNLOCKED"
+
+        // must be one of None, Sampled, Method, ConnectedSampled, ConnectedAllocation
+        // see https://developer.android.com/studio/profile/benchmark#profiling
+        testInstrumentationRunnerArgument 'androidx.benchmark.profiling.mode', 'Sampled'
+
+        // TODO this enables output on the target device, but the version of the library doesn't
+        // seem to copy things across. updating to alpha-11 may help but we need to resolve
+        // a clash with the artefact's AAR metadata first.
+        testInstrumentationRunnerArgument 'androidx.benchmark.output.enable', 'true'
+
+        // To grab trace files from the device, call:
+        // adb shell ls /storage/emulated/0/Download
+        // adb pull /storage/emulated/0/Download/<my-file>.trace
     }
 
     testBuildType = "release"
@@ -48,7 +61,7 @@ dependencies {
     androidTestImplementation "androidx.test:runner:1.3.0"
     androidTestImplementation "androidx.test.ext:junit:1.1.2"
     androidTestImplementation "junit:junit:4.13.2"
-    androidTestImplementation "androidx.benchmark:benchmark-junit4:1.0.0"
+    androidTestImplementation "androidx.benchmark:benchmark-junit4:1.1.0-alpha01"
 
     // Add your dependencies here. Note that you cannot benchmark code
     // in an app module this way - you will need to move any code you
