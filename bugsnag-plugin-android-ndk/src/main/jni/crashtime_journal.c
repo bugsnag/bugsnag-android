@@ -71,6 +71,7 @@
 #define KEY_TOTAL_MEMORY "totalMemory"
 #define KEY_TYPE "type"
 #define KEY_UNHANDLED "unhandled"
+#define KEY_UNHANDLED_INCREMENT (KEY_UNHANDLED "+")
 #define KEY_UNHANDLED_OVERRIDDEN "unhandledOverridden"
 #define KEY_USER "user"
 #define KEY_VERSION "version"
@@ -287,18 +288,25 @@ static bool add_session(const bugsnag_event *event) {
   //  "session": {
   //    "id": "123",
   //    "startedAt": "2018-08-07T10:16:34.564Z",
-  //    "events": {
-  //      "handled": 2,
-  //      "unhandled": 1
-  //    }
   //  }
 
   bsg_pb_stack_map_key(KEY_SESSION);
   RETURN_ON_FALSE(add_string(KEY_ID, event->session_id));
   RETURN_ON_FALSE(add_string(KEY_SESSION_STARTED_AT, event->session_start));
+  bsg_pb_unstack();
+  return true;
+}
+
+static bool bsg_ctj_increment_unhandled_count() {
+  //  "session": {
+  //    "events": {
+  //      "unhandled": 1
+  //    }
+  //  }
+
+  bsg_pb_stack_map_key(KEY_SESSION);
   bsg_pb_stack_map_key(KEY_EVENTS);
-  RETURN_ON_FALSE(add_double(KEY_UNHANDLED, event->unhandled_events));
-  RETURN_ON_FALSE(add_double(KEY_HANDLED, event->handled_events));
+  RETURN_ON_FALSE(add_double(KEY_UNHANDLED_INCREMENT, 1));
   bsg_pb_unstack();
   bsg_pb_unstack();
   return true;
@@ -415,7 +423,6 @@ bool bsg_ctj_store_event(const bugsnag_event *event) {
   RETURN_ON_FALSE(add_severity_reason(event));
   RETURN_ON_FALSE(
       add_string(KEY_SEVERITY, bsg_severity_string(event->severity)));
-  RETURN_ON_FALSE(add_boolean(KEY_UNHANDLED, event->unhandled));
 
   bsg_pb_reset();
 
