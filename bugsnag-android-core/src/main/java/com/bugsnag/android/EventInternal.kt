@@ -7,10 +7,12 @@ internal class EventInternal @JvmOverloads internal constructor(
     val originalError: Throwable? = null,
     config: ImmutableConfig,
     private var severityReason: SeverityReason,
-    data: Metadata = Metadata()
-) : JsonStream.Streamable, MetadataAware, UserAware {
+    data: Metadata = Metadata(),
+    featureFlags: FeatureFlags = FeatureFlags()
+) : JsonStream.Streamable, MetadataAware, UserAware, FeatureFlagAware {
 
     val metadata: Metadata = data.copy()
+    val featureFlags: FeatureFlags = featureFlags.copy()
     private val discardClasses: Set<String> = config.discardClasses.toSet()
     private val projectPackages = config.projectPackages
 
@@ -106,6 +108,8 @@ internal class EventInternal @JvmOverloads internal constructor(
         threads.forEach { writer.value(it) }
         writer.endArray()
 
+        writer.name("featureFlags").value(featureFlags)
+
         if (session != null) {
             val copy = Session.copySession(session)
             writer.name("session").beginObject()
@@ -167,4 +171,15 @@ internal class EventInternal @JvmOverloads internal constructor(
     override fun getMetadata(section: String) = metadata.getMetadata(section)
 
     override fun getMetadata(section: String, key: String) = metadata.getMetadata(section, key)
+
+    override fun addFeatureFlag(name: String) = featureFlags.addFeatureFlag(name)
+
+    override fun addFeatureFlag(name: String, variant: String?) = featureFlags.addFeatureFlag(name, variant)
+
+    override fun addFeatureFlags(featureFlags: MutableIterable<FeatureFlag>) =
+        this.featureFlags.addFeatureFlags(featureFlags)
+
+    override fun clearFeatureFlag(name: String) = featureFlags.clearFeatureFlag(name)
+
+    override fun clearFeatureFlags() = featureFlags.clearFeatureFlags()
 }

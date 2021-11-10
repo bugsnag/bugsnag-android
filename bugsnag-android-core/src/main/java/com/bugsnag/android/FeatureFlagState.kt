@@ -1,7 +1,7 @@
 package com.bugsnag.android
 
 internal data class FeatureFlagState(
-    private val featureFlags: FeatureFlags = FeatureFlags()
+    val featureFlags: FeatureFlags = FeatureFlags()
 ) : BaseObservable(), FeatureFlagAware {
     override fun addFeatureFlag(name: String) {
         this.featureFlags.addFeatureFlag(name)

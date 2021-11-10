@@ -65,6 +65,7 @@ class AnrDetailsCollectorTest {
     fun anrDetailsAltered() {
         Mockito.`when`(client.config).thenReturn(BugsnagTestUtils.generateImmutableConfig())
         Mockito.`when`(client.getMetadataState()).thenReturn(BugsnagTestUtils.generateMetadataState())
+        Mockito.`when`(client.getFeatureFlagState()).thenReturn(BugsnagTestUtils.generateFeatureFlagState())
         val event = NativeInterface.createEvent(
             RuntimeException("whoops"),
             client,

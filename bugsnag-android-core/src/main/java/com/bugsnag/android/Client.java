@@ -681,7 +681,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
             }
             SeverityReason severityReason = SeverityReason.newInstance(REASON_HANDLED_EXCEPTION);
             Metadata metadata = metadataState.getMetadata();
-            Event event = new Event(exc, immutableConfig, severityReason, metadata, logger);
+            FeatureFlags featureFlags = featureFlagState.getFeatureFlags();
+            Event event = new Event(exc, immutableConfig, severityReason, metadata, featureFlags,
+                    logger);
             populateAndNotifyAndroidEvent(event, onError);
         } else {
             logNull("notify");
@@ -699,7 +701,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         SeverityReason handledState
                 = SeverityReason.newInstance(severityReason, Severity.ERROR, attributeValue);
         Metadata data = Metadata.Companion.merge(metadataState.getMetadata(), metadata);
-        Event event = new Event(exc, immutableConfig, handledState, data, logger);
+        Event event = new Event(exc, immutableConfig, handledState,
+                data, featureFlagState.getFeatureFlags(), logger);
         populateAndNotifyAndroidEvent(event, null);
 
         // persist LastRunInfo so that on relaunch users can check the app crashed
@@ -1097,6 +1100,10 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
     MetadataState getMetadataState() {
         return metadataState;
+    }
+
+    FeatureFlagState getFeatureFlagState() {
+        return featureFlagState;
     }
 
     ContextState getContextState() {
