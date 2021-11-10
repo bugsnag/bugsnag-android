@@ -7,10 +7,6 @@ import com.bugsnag.android.StateEvent.AddMetadata
 import com.bugsnag.android.StateEvent.ClearMetadataSection
 import com.bugsnag.android.StateEvent.ClearMetadataValue
 import com.bugsnag.android.StateEvent.Install
-import com.bugsnag.android.StateEvent.NotifyHandled
-import com.bugsnag.android.StateEvent.NotifyUnhandled
-import com.bugsnag.android.StateEvent.PauseSession
-import com.bugsnag.android.StateEvent.StartSession
 import com.bugsnag.android.StateEvent.UpdateContext
 import com.bugsnag.android.StateEvent.UpdateInForeground
 import com.bugsnag.android.StateEvent.UpdateOrientation
@@ -60,7 +56,6 @@ class NativeBridge(
     external fun updateContext(context: String)
     external fun updateInForeground(inForeground: Boolean, activityName: String)
     external fun updateIsLaunching(isLaunching: Boolean)
-    external fun updateLastRunInfo(consecutiveLaunchCrashes: Int)
     external fun updateOrientation(orientation: String)
     external fun updateUserId(newValue: String)
     external fun updateUserEmail(newValue: String)
@@ -84,7 +79,6 @@ class NativeBridge(
                 event.inForeground,
                 makeSafe(event.contextActivity ?: "")
             )
-            is StateEvent.UpdateLastRunInfo -> updateLastRunInfo(event.consecutiveLaunchCrashes)
             is StateEvent.UpdateIsLaunching -> updateIsLaunching(event.isLaunching)
             is UpdateOrientation -> updateOrientation(event.orientation ?: "")
             is UpdateUser -> {
