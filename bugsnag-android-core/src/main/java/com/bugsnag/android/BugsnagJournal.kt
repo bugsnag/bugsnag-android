@@ -194,9 +194,19 @@ internal class BugsnagJournal @JvmOverloads internal constructor(
          * - All occurrences of special characters (+ . \)
          */
         fun unspecialMapPath(pathComponent: String): String {
-            val index = pathComponent.toIntOrNull()
-            if (index != null) {
-                return "\\" + pathComponent
+            if (pathComponent.length == 0) {
+                return pathComponent
+            }
+            val firstChar = pathComponent[0]
+            if (firstChar == '-' || (firstChar >= '0' && firstChar <= '9')) {
+                val index = pathComponent.toIntOrNull()
+                if (index != null) {
+                    return "\\" + pathComponent
+                }
+            }
+
+            if (pathComponent.indexOfFirst { it == '.' || it == '+' || it == '\\' } < 0) {
+                return pathComponent
             }
             return pathComponent.replace(specialCharsRegex, specialCharsReplacement)
         }
