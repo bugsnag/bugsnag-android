@@ -157,16 +157,6 @@ bool bsg_cache_get_metadata_bool(void *event_ptr, const char *section,
   return false;
 }
 
-void bsg_cache_start_session(bugsnag_event *event, char *session_id,
-                             char *started_at, int handled_count,
-                             int unhandled_count) {
-  bsg_strncpy_safe(event->session_id, session_id, sizeof(event->session_id));
-  bsg_strncpy_safe(event->session_start, started_at,
-                   sizeof(event->session_start));
-  event->handled_events = handled_count;
-  event->unhandled_events = unhandled_count;
-}
-
 char *bsg_cache_get_api_key(void *event_ptr) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
   return event->api_key;

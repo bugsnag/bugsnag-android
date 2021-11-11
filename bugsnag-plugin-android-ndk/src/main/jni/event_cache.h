@@ -41,10 +41,6 @@ char *bsg_cache_get_metadata_string(void *event_ptr, const char *section,
 bool bsg_cache_get_metadata_bool(void *event_ptr, const char *section,
                                  const char *name);
 
-void bsg_cache_start_session(bugsnag_event *event, char *session_id,
-                             char *started_at, int handled_count,
-                             int unhandled_count);
-
 char *bsg_cache_get_api_key(void *event_ptr);
 
 void bsg_cache_set_api_key(void *event_ptr, const char *value);
