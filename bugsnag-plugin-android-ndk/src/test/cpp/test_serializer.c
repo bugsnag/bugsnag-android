@@ -140,11 +140,11 @@ void loadBreadcrumbsTestCase(bugsnag_event *event) {
     strcpy(data->values[0].name, "bool");
     data->values[0].bool_value = true;
 
-    // third breadcrumb
+    // third breadcrumb - using updated timestamp format
     crumb = &event->breadcrumbs[0];
     crumb->type = BSG_CRUMB_NAVIGATION;
     strcpy(crumb->name, "MainActivity");
-    strcpy(crumb->timestamp, "2018-10-08T12:07:15Z");
+    strcpy(crumb->timestamp, "t1539000435563");
 
     // metadata
     data = &crumb->metadata;
