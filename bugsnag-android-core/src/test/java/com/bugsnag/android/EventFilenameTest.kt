@@ -56,7 +56,8 @@ internal class EventFilenameTest {
             NoopLogger,
             Notifier(),
             BackgroundTaskService(),
-            FileStore.Delegate { _, _, _ -> }
+            FileStore.Delegate { _, _, _ -> },
+            CallbackState()
         )
 
         // no files
@@ -77,7 +78,8 @@ internal class EventFilenameTest {
             NoopLogger,
             Notifier(),
             BackgroundTaskService(),
-            FileStore.Delegate { _, _, _ -> }
+            FileStore.Delegate { _, _, _ -> },
+            CallbackState()
         )
 
         // startup crashes
@@ -92,7 +94,8 @@ internal class EventFilenameTest {
             NoopLogger,
             Notifier(),
             BackgroundTaskService(),
-            FileStore.Delegate { _, _, _ -> }
+            FileStore.Delegate { _, _, _ -> },
+            CallbackState()
         )
 
         // if multiple crashes exist, pick the most recent one

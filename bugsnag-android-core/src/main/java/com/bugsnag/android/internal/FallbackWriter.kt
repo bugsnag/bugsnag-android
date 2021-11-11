@@ -1,4 +1,4 @@
-package com.bugsnag.android.internal.journal
+package com.bugsnag.android.internal
 
 import com.bugsnag.android.ObjectJsonStreamer
 import com.bugsnag.android.repackaged.dslplatform.json.DslJson

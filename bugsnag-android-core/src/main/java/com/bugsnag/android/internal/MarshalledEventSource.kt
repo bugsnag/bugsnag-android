@@ -27,8 +27,8 @@ internal class MarshalledEventSource(private val eventFile: File) : () -> Event 
         event = null
     }
 
+    @Suppress("StopShip")
     private fun unmarshall(): Event {
-        val json = JsonHelper.deserialize(eventFile)
         TODO("Not yet implemented")
     }
 }

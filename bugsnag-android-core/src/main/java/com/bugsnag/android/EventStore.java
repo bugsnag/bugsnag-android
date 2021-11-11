@@ -1,10 +1,10 @@
 package com.bugsnag.android;
 
+import com.bugsnag.android.internal.ImmutableConfig;
+import com.bugsnag.android.internal.MarshalledEventSource;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import com.bugsnag.android.internal.MarshalledEventSource;
-import com.bugsnag.android.internal.ImmutableConfig;
 
 import java.io.File;
 import java.util.ArrayList;
