@@ -97,6 +97,8 @@ bool bsg_ctj_clear_metadata_section(const char *section);
 
 bool bsg_ctj_record_current_time(void);
 
+bool bsg_ctj_increment_unhandled_count(void);
+
 #ifdef __cplusplus
 }
 #endif

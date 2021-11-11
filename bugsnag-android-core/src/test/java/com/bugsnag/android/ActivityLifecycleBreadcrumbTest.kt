@@ -24,7 +24,7 @@ internal class ActivityLifecycleBreadcrumbTest {
     lateinit var bundle: Bundle
 
     var resultActivity: String? = null
-    var resultMetadata: Map<String, Any>? = null
+    var resultMetadata: MutableMap<String, Any?>? = null
 
     @Before
     fun setUp() {

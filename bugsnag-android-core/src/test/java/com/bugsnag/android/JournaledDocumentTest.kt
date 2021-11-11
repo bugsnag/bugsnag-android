@@ -167,6 +167,167 @@ class JournaledDocumentTest {
     }
 
     @Test
+    fun testNonEmptyDocumentIncrement() {
+        val baseDocumentPath = folder.newFile("mydocument")
+        val bufferSize = 100L
+        val document = JournaledDocument(
+            baseDocumentPath,
+            standardType,
+            standardVersion,
+            bufferSize,
+            bufferSize,
+            mutableMapOf("x" to 9)
+        )
+        document.addCommand(Journal.Command("x+", 1))
+        // The in-memory document is updated immediately.
+        Assert.assertEquals(10L, document["x"])
+
+        assertReloadedDocument(
+            baseDocumentPath,
+            mutableMapOf(
+                "x" to 10
+            )
+        )
+        assertJournalContents(
+            baseDocumentPath,
+            bufferSize,
+            "$standardJournalInfoSerialized{\"x+\":1}\u0000".toByteArray(Charsets.UTF_8)
+        )
+        assertSnapshotContents(baseDocumentPath, mutableMapOf("x" to 9))
+
+        // The journal is force-flushed when closed or the app terminates for any reason.
+        document.close()
+
+        assertReloadedDocument(
+            baseDocumentPath,
+            mutableMapOf(
+                "x" to 10
+            )
+        )
+        assertJournalContents(
+            baseDocumentPath,
+            bufferSize,
+            standardJournalInfoSerialized.toByteArray(Charsets.UTF_8)
+        )
+        assertSnapshotContents(
+            baseDocumentPath,
+            mutableMapOf(
+                "x" to 10
+            )
+        )
+    }
+
+    @Test
+    fun testEmptyDocumentIncrement() {
+        val baseDocumentPath = folder.newFile("mydocument")
+        val bufferSize = 100L
+        val document = JournaledDocument(
+            baseDocumentPath,
+            standardType,
+            standardVersion,
+            bufferSize,
+            bufferSize,
+            mutableMapOf()
+        )
+        document.addCommand(Journal.Command("x+", 1))
+        // The in-memory document is updated immediately.
+        Assert.assertEquals(1, document["x"])
+
+        assertReloadedDocument(
+            baseDocumentPath,
+            mutableMapOf(
+                "x" to 1
+            )
+        )
+        assertJournalContents(
+            baseDocumentPath,
+            bufferSize,
+            "$standardJournalInfoSerialized{\"x+\":1}\u0000".toByteArray(Charsets.UTF_8)
+        )
+        assertSnapshotContents(baseDocumentPath, mutableMapOf())
+
+        // The journal is force-flushed when closed or the app terminates for any reason.
+        document.close()
+
+        assertReloadedDocument(
+            baseDocumentPath,
+            mutableMapOf(
+                "x" to 1
+            )
+        )
+        assertJournalContents(
+            baseDocumentPath,
+            bufferSize,
+            standardJournalInfoSerialized.toByteArray(Charsets.UTF_8)
+        )
+        assertSnapshotContents(
+            baseDocumentPath,
+            mutableMapOf(
+                "x" to 1
+            )
+        )
+    }
+
+    @Test
+    fun testIncrementDeep() {
+        val baseDocumentPath = folder.newFile("mydocument")
+        val bufferSize = 100L
+        val document = JournaledDocument(
+            baseDocumentPath,
+            standardType,
+            standardVersion,
+            bufferSize,
+            bufferSize,
+            mutableMapOf()
+        )
+        document.addCommand(Journal.Command("a.x+", 1))
+        // The in-memory document is updated immediately.
+        @Suppress("UNCHECKED_CAST")
+        val a = (document["a"] as Map<String, Any>)
+        Assert.assertEquals(1, a["x"])
+
+        assertReloadedDocument(
+            baseDocumentPath,
+            mutableMapOf(
+                "a" to mutableMapOf(
+                    "x" to 1
+                )
+            )
+        )
+        assertJournalContents(
+            baseDocumentPath,
+            bufferSize,
+            "$standardJournalInfoSerialized{\"a.x+\":1}\u0000".toByteArray(Charsets.UTF_8)
+        )
+        assertSnapshotContents(baseDocumentPath, mutableMapOf())
+
+        // The journal is force-flushed when closed or the app terminates for any reason.
+        document.close()
+
+        assertReloadedDocument(
+            baseDocumentPath,
+            mutableMapOf(
+                "a" to mutableMapOf(
+                    "x" to 1
+                )
+            )
+        )
+        assertJournalContents(
+            baseDocumentPath,
+            bufferSize,
+            standardJournalInfoSerialized.toByteArray(Charsets.UTF_8)
+        )
+        assertSnapshotContents(
+            baseDocumentPath,
+            mutableMapOf(
+                "a" to mutableMapOf(
+                    "x" to 1
+                )
+            )
+        )
+    }
+
+    @Test
     fun testOverflow() {
         val baseDocumentPath = folder.newFile("mydocument")
         val bufferSize = standardJournalInfoSerialized.length + 10L

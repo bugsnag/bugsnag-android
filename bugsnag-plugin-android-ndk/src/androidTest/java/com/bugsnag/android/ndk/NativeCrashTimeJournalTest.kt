@@ -442,6 +442,16 @@ class NativeCrashTimeJournalTest {
         }
     }
 
+    // bsg_ctj_set_app_in_foreground
+    private external fun nativeIncrementUnhandled(ctjPath: String): Int
+
+    @Test
+    fun testIncrementUnhandled() {
+        runJournalTest(mutableMapOf(), "testIncrementUnhandled") {
+            nativeIncrementUnhandled(it)
+        }
+    }
+
     // bsg_ctj_store_event
 // TODO PLAT-7589
 //    private external fun nativeStoreEvent(ctjPath: String): Int

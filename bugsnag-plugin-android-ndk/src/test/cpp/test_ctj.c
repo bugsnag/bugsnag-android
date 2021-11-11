@@ -339,3 +339,11 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_NativeCrashTimeJournalTest_na
     ASSERT_EQ(true, bsg_ctj_store_event(&event));
     PASS();
 }
+
+JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_NativeCrashTimeJournalTest_nativeIncrementUnhandled(
+    JNIEnv *_env, jobject _this, jstring _crashtimeJournalPath) {
+    STOP_ON_FAIL(init_journal_test(_env, _crashtimeJournalPath));
+    ASSERT_EQ(true, bsg_ctj_increment_unhandled_count());
+    PASS();
+}
+

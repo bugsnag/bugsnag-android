@@ -164,6 +164,13 @@ static bool add_double(const char *name, double value) {
   return true;
 }
 
+static bool add_raw_double(const char *name, double value) {
+  bsg_pb_stack_raw_key(name);
+  RETURN_ON_FALSE(bsg_ctj_set_double(bsg_pb_path(), value));
+  bsg_pb_unstack();
+  return true;
+}
+
 static bool add_boolean(const char *name, bool value) {
   bsg_pb_stack_map_key(name);
   RETURN_ON_FALSE(bsg_ctj_set_boolean(bsg_pb_path(), value));
@@ -297,21 +304,6 @@ static bool add_session(const bugsnag_event *event) {
   return true;
 }
 
-static bool bsg_ctj_increment_unhandled_count() {
-  //  "session": {
-  //    "events": {
-  //      "unhandled": 1
-  //    }
-  //  }
-
-  bsg_pb_stack_map_key(KEY_SESSION);
-  bsg_pb_stack_map_key(KEY_EVENTS);
-  RETURN_ON_FALSE(add_double(KEY_UNHANDLED_INCREMENT, 1));
-  bsg_pb_unstack();
-  bsg_pb_unstack();
-  return true;
-}
-
 static bool add_thread(const bsg_thread *thread) {
   stack_new_map_in_list();
   RETURN_ON_FALSE(add_double(KEY_ID, thread->id));
@@ -423,6 +415,8 @@ bool bsg_ctj_store_event(const bugsnag_event *event) {
   RETURN_ON_FALSE(add_severity_reason(event));
   RETURN_ON_FALSE(
       add_string(KEY_SEVERITY, bsg_severity_string(event->severity)));
+  RETURN_ON_FALSE(bsg_ctj_set_event_unhandled(true));
+  RETURN_ON_FALSE(bsg_ctj_increment_unhandled_count());
 
   bsg_pb_reset();
 
@@ -463,6 +457,21 @@ bool bsg_ctj_set_event_user(const char *id, const char *email,
   RETURN_ON_FALSE(add_string(KEY_ID, id));
   RETURN_ON_FALSE(add_string(KEY_EMAIL, email));
   RETURN_ON_FALSE(add_string(KEY_NAME, name));
+  bsg_pb_reset();
+  return bsg_ctj_flush();
+}
+
+bool bsg_ctj_increment_unhandled_count() {
+  //  "session": {
+  //    "events": {
+  //      "unhandled": 1
+  //    }
+  //  }
+
+  bsg_pb_reset();
+  bsg_pb_stack_map_key(KEY_SESSION);
+  bsg_pb_stack_map_key(KEY_EVENTS);
+  RETURN_ON_FALSE(add_raw_double(KEY_UNHANDLED_INCREMENT, 1));
   bsg_pb_reset();
   return bsg_ctj_flush();
 }
