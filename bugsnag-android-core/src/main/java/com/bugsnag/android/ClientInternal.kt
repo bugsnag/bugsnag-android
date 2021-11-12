@@ -307,7 +307,7 @@ internal class ClientInternal constructor(
      */
     private fun leaveBugsnagLoadedCrumb() {
         initialized.set(true)
-        leaveAutoBreadcrumb("Bugsnag loaded", BreadcrumbType.STATE, emptyMap())
+        leaveAutoBreadcrumb("Bugsnag loaded", BreadcrumbType.STATE, mutableMapOf())
         logger.d("Bugsnag loaded")
     }
 
@@ -359,7 +359,7 @@ internal class ClientInternal constructor(
 
             if (!config.shouldDiscardBreadcrumb(BreadcrumbType.STATE)) {
                 val activityCb =
-                    ActivityBreadcrumbCollector { activity: String, metadata: Map<String, Any> ->
+                    ActivityBreadcrumbCollector { activity: String, metadata: MutableMap<String, Any?> ->
                         leaveBreadcrumb(activity, metadata, BreadcrumbType.STATE)
                     }
                 appContext.registerActivityLifecycleCallbacks(activityCb)
@@ -590,11 +590,11 @@ internal class ClientInternal constructor(
         breadcrumbState.add(Breadcrumb(message, logger))
     }
 
-    fun leaveBreadcrumb(message: String, metadata: Map<String, Any?>, type: BreadcrumbType) {
+    fun leaveBreadcrumb(message: String, metadata: MutableMap<String, Any?>, type: BreadcrumbType) {
         breadcrumbState.add(Breadcrumb(message, type, metadata, Date(), logger))
     }
 
-    fun leaveAutoBreadcrumb(message: String, type: BreadcrumbType, metadata: Map<String, Any?>) {
+    fun leaveAutoBreadcrumb(message: String, type: BreadcrumbType, metadata: MutableMap<String, Any?>) {
         if (!config.shouldDiscardBreadcrumb(type)) {
             breadcrumbState.add(Breadcrumb(message, type, metadata, Date(), logger))
         }
@@ -649,7 +649,7 @@ internal class ClientInternal constructor(
         notifierState.notifier = notifier
     }
 
-    fun getMetadata() = metadataState.metadata.toMap()
+    fun getMetadata() = metadataState.metadata.toMutableMap()
 
     fun setAutoNotify(autoNotify: Boolean) {
         pluginClient.setAutoNotify(client, autoNotify)

@@ -28,7 +28,7 @@ public class NativeInterfaceTest {
     public void getMetadata() {
         NativeInterface.setClient(client);
         assertNotSame(
-                client.getMetadataState().getMetadata().toMap(),
+                client.getMetadataState().getMetadata().toMutableMap(),
                 NativeInterface.getMetadata()
         );
     }
