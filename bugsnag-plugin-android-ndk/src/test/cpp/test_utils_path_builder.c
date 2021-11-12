@@ -48,6 +48,9 @@ TEST test_general_use(void) {
     ASSERT_STR_EQ("", bsg_pb_path());
     bsg_pb_stack_map_key("bar");
     ASSERT_STR_EQ("bar", bsg_pb_path());
+    bsg_pb_stack_raw_key("x+");
+    ASSERT_STR_EQ("bar.x+", bsg_pb_path());
+    bsg_pb_unstack();
     bsg_pb_unstack();
     ASSERT_STR_EQ("", bsg_pb_path());
     PASS();

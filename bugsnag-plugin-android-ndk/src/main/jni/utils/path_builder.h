@@ -32,6 +32,15 @@ void bsg_pb_reset(void);
 void bsg_pb_stack_map_key(const char *key);
 
 /**
+ * Stack the raw characters as a key (don't insert escapes).
+ * This is necessary in order to create the special purpose paths that
+ * end in . and +
+ *
+ * @param key The map key for the new path level.
+ */
+void bsg_pb_stack_raw_key(const char *key);
+
+/**
  * Stack an integer (list) level to the current path.
  * Stacking too deep (>100 levels) or building a path that's too long (>500
  * bytes) will cause this function to no-op.
