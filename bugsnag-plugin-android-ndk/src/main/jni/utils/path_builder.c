@@ -64,6 +64,17 @@ static bool contains_special_chars(const char *str, int maxCount) {
   return false;
 }
 
+void bsg_pb_stack_raw_key(const char *key) {
+  char *subpath = subpath_begin();
+  if (subpath == NULL) {
+    return;
+  }
+  int maxCount = available_byte_count(subpath);
+  bsg_strncpy_safe(subpath, key, maxCount);
+  subpath += strlen(subpath);
+  subpath_end(subpath);
+}
+
 void bsg_pb_stack_map_key(const char *key) {
   char *subpath = subpath_begin();
   if (subpath == NULL) {

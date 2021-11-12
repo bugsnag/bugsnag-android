@@ -298,5 +298,12 @@
         "type": "c"
       }
     ]
+  },
+  "testIncrementUnhandled": {
+    "session": {
+      "events": {
+        "unhandled": 1
+      }
+    }
   }
 }
