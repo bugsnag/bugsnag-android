@@ -111,6 +111,14 @@ internal class ThreadSerializationTest {
     @Parameter
     lateinit var testCase: Pair<Thread, String>
 
+    private val eventMapper = BugsnagEventMapper(NoopLogger)
+
     @Test
     fun testJsonSerialisation() = verifyJsonMatches(testCase.first, testCase.second)
+
+    @Test
+    fun testJsonDeserialisation() =
+        verifyJsonParser(testCase.first, testCase.second) {
+            eventMapper.convertThread(it)
+        }
 }

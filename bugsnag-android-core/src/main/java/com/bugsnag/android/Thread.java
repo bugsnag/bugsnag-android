@@ -23,7 +23,8 @@ public class Thread implements JsonStream.Streamable {
             @NonNull Thread.State state,
             @NonNull Stacktrace stacktrace,
             @NonNull Logger logger) {
-        this.impl = new ThreadInternal(id, name, type, errorReportingThread, state, stacktrace);
+        this.impl = new ThreadInternal(
+                id, name, type, errorReportingThread, state.getDescriptor(), stacktrace);
         this.logger = logger;
     }
 
@@ -88,7 +89,7 @@ public class Thread implements JsonStream.Streamable {
      */
     public void setState(@NonNull Thread.State threadState) {
         if (threadState != null) {
-            impl.setState(threadState);
+            impl.setState(threadState.getDescriptor());
         } else {
             logNull("state");
         }
@@ -99,7 +100,7 @@ public class Thread implements JsonStream.Streamable {
      */
     @NonNull
     public Thread.State getState() {
-        return impl.getState();
+        return Thread.State.byDescriptor(impl.getState());
     }
 
     /**
