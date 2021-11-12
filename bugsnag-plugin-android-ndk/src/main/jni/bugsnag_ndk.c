@@ -289,68 +289,6 @@ exit:
 }
 
 JNIEXPORT void JNICALL
-Java_com_bugsnag_android_ndk_NativeBridge_addHandledEvent(JNIEnv *env,
-                                                          jobject _this) {
-  if (bsg_global_env == NULL) {
-    return;
-  }
-  bsg_request_env_write_lock();
-  bugsnag_event *event = &bsg_global_env->next_event;
-
-  if (bsg_cache_has_session(event)) {
-    event->handled_events++;
-  }
-  bsg_release_env_write_lock();
-}
-
-JNIEXPORT void JNICALL
-Java_com_bugsnag_android_ndk_NativeBridge_addUnhandledEvent(JNIEnv *env,
-                                                            jobject _this) {
-  if (bsg_global_env == NULL) {
-    return;
-  }
-  bsg_request_env_write_lock();
-  bugsnag_event *event = &bsg_global_env->next_event;
-
-  if (bsg_cache_has_session(event)) {
-    event->unhandled_events++;
-  }
-  bsg_release_env_write_lock();
-}
-
-JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_startedSession(
-    JNIEnv *env, jobject _this, jstring session_id_, jstring start_date_,
-    jint handled_count, jint unhandled_count) {
-  if (bsg_global_env == NULL || session_id_ == NULL) {
-    return;
-  }
-  char *session_id = (char *)bsg_safe_get_string_utf_chars(env, session_id_);
-  char *started_at = (char *)bsg_safe_get_string_utf_chars(env, start_date_);
-  if (session_id != NULL && started_at != NULL) {
-    bsg_request_env_write_lock();
-    bsg_cache_start_session(&bsg_global_env->next_event, session_id, started_at,
-                            handled_count, unhandled_count);
-    bsg_release_env_write_lock();
-  }
-  bsg_safe_release_string_utf_chars(env, session_id_, session_id);
-  bsg_safe_release_string_utf_chars(env, start_date_, started_at);
-}
-
-JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_pausedSession(
-    JNIEnv *env, jobject _this) {
-  if (bsg_global_env == NULL) {
-    return;
-  }
-  bsg_request_env_write_lock();
-  bugsnag_event *event = &bsg_global_env->next_event;
-  memset(event->session_id, 0, strlen(event->session_id));
-  memset(event->session_start, 0, strlen(event->session_start));
-  event->handled_events = 0;
-  event->unhandled_events = 0;
-  bsg_release_env_write_lock();
-}
-
-JNIEXPORT void JNICALL
 Java_com_bugsnag_android_ndk_NativeBridge_updateAppVersion(JNIEnv *env,
                                                            jobject _this,
                                                            jstring new_value) {

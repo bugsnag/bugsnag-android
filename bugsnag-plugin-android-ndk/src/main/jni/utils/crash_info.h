@@ -14,11 +14,6 @@ extern "C" {
  */
 void bsg_populate_event_as(bsg_environment *env) __asyncsafe;
 
-/**
- * Increment the handled/unhandled count on the bugsnag event.
- */
-void bsg_increment_unhandled_count(bugsnag_event *ptr);
-
 #ifdef __cplusplus
 }
 #endif

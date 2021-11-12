@@ -8,10 +8,6 @@ import com.bugsnag.android.StateEvent.ClearMetadataSection
 import com.bugsnag.android.StateEvent.ClearMetadataValue
 import com.bugsnag.android.StateEvent.DeliverPending
 import com.bugsnag.android.StateEvent.Install
-import com.bugsnag.android.StateEvent.NotifyHandled
-import com.bugsnag.android.StateEvent.NotifyUnhandled
-import com.bugsnag.android.StateEvent.PauseSession
-import com.bugsnag.android.StateEvent.StartSession
 import com.bugsnag.android.StateEvent.UpdateContext
 import com.bugsnag.android.StateEvent.UpdateInForeground
 import com.bugsnag.android.StateEvent.UpdateOrientation
@@ -53,26 +49,15 @@ class NativeBridge(
         threadSendPolicy: Int
     )
 
-    external fun startedSession(
-        sessionID: String,
-        key: String,
-        handledCount: Int,
-        unhandledCount: Int
-    )
-
     external fun deliverReportAtPath(filePath: String)
     external fun addMetadataString(tab: String, key: String, value: String)
     external fun addMetadataDouble(tab: String, key: String, value: Double)
     external fun addMetadataBoolean(tab: String, key: String, value: Boolean)
-    external fun addHandledEvent()
-    external fun addUnhandledEvent()
     external fun clearMetadataTab(tab: String)
     external fun removeMetadata(tab: String, key: String)
-    external fun pausedSession()
     external fun updateContext(context: String)
     external fun updateInForeground(inForeground: Boolean, activityName: String)
     external fun updateIsLaunching(isLaunching: Boolean)
-    external fun updateLastRunInfo(consecutiveLaunchCrashes: Int)
     external fun updateOrientation(orientation: String)
     external fun updateUserId(newValue: String)
     external fun updateUserEmail(newValue: String)
@@ -92,21 +77,11 @@ class NativeBridge(
                 makeSafe(event.section),
                 makeSafe(event.key ?: "")
             )
-            NotifyHandled -> addHandledEvent()
-            NotifyUnhandled -> addUnhandledEvent()
-            PauseSession -> pausedSession()
-            is StartSession -> startedSession(
-                makeSafe(event.id),
-                makeSafe(event.startedAt),
-                event.handledCount,
-                event.unhandledCount
-            )
             is UpdateContext -> updateContext(makeSafe(event.context ?: ""))
             is UpdateInForeground -> updateInForeground(
                 event.inForeground,
                 makeSafe(event.contextActivity ?: "")
             )
-            is StateEvent.UpdateLastRunInfo -> updateLastRunInfo(event.consecutiveLaunchCrashes)
             is StateEvent.UpdateIsLaunching -> updateIsLaunching(event.isLaunching)
             is UpdateOrientation -> updateOrientation(event.orientation ?: "")
             is UpdateUser -> {

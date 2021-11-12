@@ -291,27 +291,6 @@ static bool add_severity_reason(const bugsnag_event *event) {
   return true;
 }
 
-static bool add_session(const bugsnag_event *event) {
-  //  "session": {
-  //    "id": "123",
-  //    "startedAt": "2018-08-07T10:16:34.564Z",
-  //    "events": {
-  //      "handled": 2,
-  //      "unhandled": 1
-  //    }
-  //  }
-
-  bsg_pb_stack_map_key(KEY_SESSION);
-  RETURN_ON_FALSE(add_string(KEY_ID, event->session_id));
-  RETURN_ON_FALSE(add_string(KEY_SESSION_STARTED_AT, event->session_start));
-  bsg_pb_stack_map_key(KEY_EVENTS);
-  RETURN_ON_FALSE(add_double(KEY_UNHANDLED, event->unhandled_events));
-  RETURN_ON_FALSE(add_double(KEY_HANDLED, event->handled_events));
-  bsg_pb_unstack();
-  bsg_pb_unstack();
-  return true;
-}
-
 static bool add_thread(const bsg_thread *thread) {
   stack_new_map_in_list();
   RETURN_ON_FALSE(add_double(KEY_ID, thread->id));
@@ -416,9 +395,6 @@ bool bsg_ctj_store_event(const bugsnag_event *event) {
   RETURN_ON_FALSE(bsg_ctj_record_current_time());
 
   RETURN_ON_FALSE(add_exception(&event->error));
-  if (bsg_cache_has_session(event)) {
-    RETURN_ON_FALSE(add_session(event));
-  }
   RETURN_ON_FALSE(add_threads(event));
   RETURN_ON_FALSE(add_severity_reason(event));
   RETURN_ON_FALSE(
@@ -427,6 +403,9 @@ bool bsg_ctj_store_event(const bugsnag_event *event) {
 
   bsg_pb_reset();
 
+  if (event->unhandled) {
+    RETURN_ON_FALSE(bsg_ctj_increment_unhandled_count());
+  }
   RETURN_ON_FALSE(bsg_ctj_set_device_time_seconds(event->device.time));
 
   return bsg_ctj_flush();

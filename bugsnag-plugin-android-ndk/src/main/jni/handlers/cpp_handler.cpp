@@ -117,7 +117,6 @@ void bsg_handle_cpp_terminate() {
               message_length);
 
   if (bsg_run_on_error()) {
-    bsg_increment_unhandled_count(&bsg_global_env->next_event);
     bsg_ctj_store_event(&bsg_global_env->next_event);
     bsg_serialize_last_run_info_to_file(bsg_global_env);
   }

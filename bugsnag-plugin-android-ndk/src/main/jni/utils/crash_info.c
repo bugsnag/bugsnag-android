@@ -21,14 +21,6 @@ void bsg_populate_event_as(bsg_environment *env) {
   }
 }
 
-void bsg_increment_unhandled_count(bugsnag_event *ptr) {
-  if (ptr->unhandled) {
-    ptr->unhandled_events++;
-  } else {
-    ptr->handled_events++;
-  }
-}
-
 #ifdef __cplusplus
 }
 #endif

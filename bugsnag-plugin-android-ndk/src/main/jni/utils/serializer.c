@@ -774,7 +774,7 @@ void bsg_serialize_user(const bugsnag_user user, JSON_Object *event_obj) {
 }
 
 void bsg_serialize_session(bugsnag_event *event, JSON_Object *event_obj) {
-  if (bsg_cache_has_session(event)) {
+  if (strlen(event->session_id) > 0) {
     json_object_dotset_string(event_obj, "session.startedAt",
                               event->session_start);
     json_object_dotset_string(event_obj, "session.id", event->session_id);

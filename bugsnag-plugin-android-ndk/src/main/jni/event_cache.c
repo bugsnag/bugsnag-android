@@ -157,16 +157,6 @@ bool bsg_cache_get_metadata_bool(void *event_ptr, const char *section,
   return false;
 }
 
-void bsg_cache_start_session(bugsnag_event *event, char *session_id,
-                             char *started_at, int handled_count,
-                             int unhandled_count) {
-  bsg_strncpy_safe(event->session_id, session_id, sizeof(event->session_id));
-  bsg_strncpy_safe(event->session_start, started_at,
-                   sizeof(event->session_start));
-  event->handled_events = handled_count;
-  event->unhandled_events = unhandled_count;
-}
-
 char *bsg_cache_get_api_key(void *event_ptr) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
   return event->api_key;
@@ -206,10 +196,6 @@ void bsg_cache_add_breadcrumb(bugsnag_event *event, bugsnag_breadcrumb *crumb) {
         (event->crumb_first_index + 1) % BUGSNAG_CRUMBS_MAX;
   }
   memcpy(&event->breadcrumbs[crumb_index], crumb, sizeof(bugsnag_breadcrumb));
-}
-
-bool bsg_cache_has_session(const bugsnag_event *event) {
-  return strlen(event->session_id) > 0;
 }
 
 char *bsg_cache_get_app_binary_arch(void *event_ptr) {
