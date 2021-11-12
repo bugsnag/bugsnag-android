@@ -1,7 +1,9 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.internal.JsonHelper
 import org.junit.Assert
 import java.io.StringWriter
+import java.lang.NullPointerException
 
 /**
  * Serializes a [JsonStream.Streamable] object into JSON and compares its equality against a JSON
@@ -24,6 +26,20 @@ internal fun validateJson(resourceName: String, json: String) {
     val rawJson = JsonParser().read(resourceName)
     val expectedJson = rawJson.replace(whitespace, "")
     val generatedJson = json.replace(whitespace, "")
+    Assert.assertEquals(expectedJson, generatedJson)
+}
+
+@Suppress("UNCHECKED_CAST")
+internal fun verifyJsonParser(
+    streamable: JsonStream.Streamable,
+    resourceName: String,
+    parse: (MutableMap<String, Any?>) -> JsonStream.Streamable
+) {
+    val expectedJson = JsonParser().toJsonString(streamable)
+    val resourceStream = JsonParser::class.java.classLoader?.getResourceAsStream(resourceName)
+        ?: throw NullPointerException("cannot find resource: '$resourceName'")
+    val loadedObject = parse(JsonHelper.deserialize(resourceStream) as MutableMap<String, Any?>)
+    val generatedJson = JsonParser().toJsonString(loadedObject)
     Assert.assertEquals(expectedJson, generatedJson)
 }
 

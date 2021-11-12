@@ -35,13 +35,32 @@ class NativeStackframe internal constructor(
     /**
      * The address of the library where the event occurred.
      */
-    var loadAddress: Long?
-) : JsonStream.Streamable {
+    var loadAddress: Long?,
+
+    /**
+     * Whether this frame identifies the program counter
+     */
+    var isPC: Boolean?,
 
     /**
      * The type of the error
      */
-    var type: ErrorType? = ErrorType.C
+    var type: ErrorType? = null
+) : JsonStream.Streamable {
+
+    constructor(json: Map<String, Any?>) : this(
+        json["method"] as? String,
+        json["file"] as? String,
+        json["lineNumber"] as? Number,
+        json["frameAddress"] as? Long,
+        json["symbolAddress"] as? Long,
+        json["loadAddress"] as? Long,
+        json["isPC"] as? Boolean
+    ) {
+        (json["type"] as? String)?.let {
+            type = ErrorType.fromDescriptor(it)
+        }
+    }
 
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) {
@@ -52,6 +71,7 @@ class NativeStackframe internal constructor(
         writer.name("frameAddress").value(frameAddress)
         writer.name("symbolAddress").value(symbolAddress)
         writer.name("loadAddress").value(loadAddress)
+        writer.name("isPC").value(isPC)
 
         type?.let {
             writer.name("type").value(it.desc)

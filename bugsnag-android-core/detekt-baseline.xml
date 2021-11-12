@@ -13,7 +13,9 @@
     <ID>LongParameterList:DeviceDataCollector.kt$DeviceDataCollector$( private val connectivity: Connectivity, private val appContext: Context, resources: Resources, private val deviceId: String?, private val buildInfo: DeviceBuildInfo, private val dataDirectory: File, rootDetector: RootDetector, private val bgTaskService: BackgroundTaskService, private val logger: Logger )</ID>
     <ID>LongParameterList:DeviceWithState.kt$DeviceWithState$( buildInfo: DeviceBuildInfo, jailbroken: Boolean?, id: String?, locale: String?, totalMemory: Long?, runtimeVersions: MutableMap&lt;String, Any>, /** * The number of free bytes of storage available on the device */ var freeDisk: Long?, /** * The number of free bytes of memory available on the device */ var freeMemory: Long?, /** * The orientation of the device when the event occurred: either portrait or landscape */ var orientation: String?, /** * The timestamp on the device when the event occurred */ var time: Date? )</ID>
     <ID>LongParameterList:EventFilenameInfo.kt$EventFilenameInfo.Companion$( obj: Any, uuid: String = UUID.randomUUID().toString(), apiKey: String?, timestamp: Long = System.currentTimeMillis(), config: ImmutableConfig, isLaunching: Boolean? = null )</ID>
+    <ID>LongParameterList:EventInternal.kt$EventInternal$( apiKey: String, breadcrumbs: MutableList&lt;Breadcrumb> = mutableListOf(), discardClasses: Set&lt;String> = setOf(), errors: MutableList&lt;Error> = mutableListOf(), metadata: Metadata = Metadata(), originalError: Throwable? = null, projectPackages: Collection&lt;String> = setOf(), severityReason: SeverityReason = SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION), threads: MutableList&lt;Thread> = mutableListOf(), user: User = User() )</ID>
     <ID>LongParameterList:EventStorageModule.kt$EventStorageModule$( contextModule: ContextModule, configModule: ConfigModule, dataCollectionModule: DataCollectionModule, bgTaskService: BackgroundTaskService, trackerModule: TrackerModule, systemServiceModule: SystemServiceModule, notifier: Notifier, callbackState: CallbackState )</ID>
+    <ID>LongParameterList:NativeStackframe.kt$NativeStackframe$( /** * The name of the method that was being executed */ var method: String?, /** * The location of the source file */ var file: String?, /** * The line number within the source file this stackframe refers to */ var lineNumber: Number?, /** * The address of the instruction where the event occurred. */ var frameAddress: Long?, /** * The address of the function where the event occurred. */ var symbolAddress: Long?, /** * The address of the library where the event occurred. */ var loadAddress: Long?, /** * Whether this frame identifies the program counter */ var isPC: Boolean?, /** * The type of the error */ var type: ErrorType? = null )</ID>
     <ID>LongParameterList:StateEvent.kt$StateEvent.Install$( @JvmField val apiKey: String, @JvmField val autoDetectNdkCrashes: Boolean, @JvmField val appVersion: String?, @JvmField val buildUuid: String?, @JvmField val releaseStage: String?, @JvmField val lastRunInfoPath: String, @JvmField val consecutiveLaunchCrashes: Int, @JvmField val sendThreads: ThreadSendPolicy )</ID>
     <ID>LongParameterList:ThreadState.kt$ThreadState$( stackTraces: MutableMap&lt;java.lang.Thread, Array&lt;StackTraceElement>>, currentThread: java.lang.Thread, exc: Throwable?, isUnhandled: Boolean, projectPackages: Collection&lt;String>, logger: Logger )</ID>
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$299</ID>
@@ -30,6 +32,7 @@
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun updateSeverityReason(@SeverityReason.SeverityReasonType reason: String)</ID>
     <ID>RethrowCaughtException:JsonHelper.kt$JsonHelper$throw ex</ID>
     <ID>ReturnCount:DefaultDelivery.kt$DefaultDelivery$fun deliver( urlString: String, streamable: JsonStream.Streamable, headers: Map&lt;String, String?> ): DeliveryStatus</ID>
+    <ID>SwallowedException:BugsnagEventMapper.kt$BugsnagEventMapper$catch (pe: IllegalArgumentException) { ndkDateFormatHolder.get()!!.parse(this) ?: throw IllegalArgumentException("cannot parse date $this") }</ID>
     <ID>SwallowedException:ConnectivityCompat.kt$ConnectivityLegacy$catch (e: NullPointerException) { // in some rare cases we get a remote NullPointerException via Parcel.readException null }</ID>
     <ID>SwallowedException:ContextExtensions.kt$catch (exc: RuntimeException) { null }</ID>
     <ID>SwallowedException:DeviceDataCollector.kt$DeviceDataCollector$catch (exc: Exception) { false }</ID>
@@ -38,8 +41,9 @@
     <ID>SwallowedException:DeviceIdStore.kt$DeviceIdStore$catch (exc: OverlappingFileLockException) { Thread.sleep(FILE_LOCK_WAIT_MS) }</ID>
     <ID>SwallowedException:PluginClient.kt$PluginClient$catch (exc: ClassNotFoundException) { logger.d("Plugin '$clz' is not on the classpath - functionality will not be enabled.") null }</ID>
     <ID>UnnecessaryAbstractClass:DependencyModule.kt$DependencyModule</ID>
+    <ID>UnusedPrivateMember:BugsnagEventMapper.kt$BugsnagEventMapper$private fun String.toDate(): Date</ID>
+    <ID>UnusedPrivateMember:BugsnagEventMapper.kt$BugsnagEventMapper$private val logger: Logger</ID>
     <ID>UnusedPrivateMember:MarshalledEventSource.kt$MarshalledEventSource$private val eventFile: File</ID>
     <ID>UnusedPrivateMember:ThreadStateTest.kt$ThreadStateTest$private val configuration = generateImmutableConfig()</ID>
-    <ID>VariableNaming:EventInternal.kt$EventInternal$/** * @return user information associated with this Event */ internal var _user = User(null, null, null)</ID>
   </CurrentIssues>
 </SmellBaseline>

@@ -89,6 +89,31 @@ class Stackframe : JsonStream.Streamable {
         this.type = nativeFrame.type
     }
 
+    constructor(json: Map<String, Any?>) {
+        // does the value look like a native frame?
+        if (json.containsKey("frameAddress") ||
+            json.containsKey("symbolAddress") ||
+            json.containsKey("loadAddress")
+        ) {
+            method = null
+            file = null
+            lineNumber = null
+            inProject = null
+            columnNumber = null
+            code = null
+            nativeFrame = NativeStackframe(json)
+        } else {
+            method = json["method"] as? String
+            file = json["file"] as? String
+            lineNumber = json["lineNumber"] as? Number
+            inProject = json["inProject"] as? Boolean
+            columnNumber = json["columnNumber"] as? Number
+            @Suppress("UNCHECKED_CAST")
+            code = json["code"] as? Map<String, String?>
+            type = (json["type"] as? String)?.let { ErrorType.fromDescriptor(it) }
+        }
+    }
+
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) {
         val ndkFrame = nativeFrame
