@@ -14,7 +14,7 @@ internal class MetadataConcurrentModificationTest {
         val executor = Executors.newSingleThreadExecutor()
 
         repeat(100) { count ->
-            assertNotNull(metadata.toMap())
+            assertNotNull(metadata.toMutableMap())
             executor.execute {
                 metadata.store["$count"] = mutableMapOf<String, Any>(Pair("$count", count))
             }

@@ -33,7 +33,7 @@ internal class BugsnagJournalEventMapper(
         return try {
             convertToEventImpl(map)
         } catch (exc: Throwable) {
-            logger.e("Failed to deserialize journal, skipping event")
+            logger.e("Failed to deserialize journal, skipping event", exc)
             null
         }
     }

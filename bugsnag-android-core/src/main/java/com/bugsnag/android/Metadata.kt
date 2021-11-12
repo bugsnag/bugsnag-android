@@ -77,7 +77,7 @@ internal data class Metadata @JvmOverloads constructor(
         return getMetadata(section)?.get(key)
     }
 
-    fun toMap(): MutableMap<String, MutableMap<String, Any>> {
+    fun toMutableMap(): MutableMap<String, MutableMap<String, Any>> {
         val copy = ConcurrentHashMap(store)
 
         // deep copy each section
@@ -89,7 +89,7 @@ internal data class Metadata @JvmOverloads constructor(
 
     companion object {
         fun merge(vararg data: Metadata): Metadata {
-            val stores = data.map { it.toMap() }
+            val stores = data.map { it.toMutableMap() }
             val redactKeys = data.flatMap { it.jsonStreamer.redactedKeys }
             val newMeta = Metadata(mergeMaps(stores) as MutableMap<String, MutableMap<String, Any>>)
             newMeta.redactedKeys = redactKeys.toSet()
@@ -134,7 +134,7 @@ internal data class Metadata @JvmOverloads constructor(
     }
 
     fun copy(): Metadata {
-        return this.copy(store = toMap())
+        return this.copy(store = toMutableMap())
             .also { it.redactedKeys = redactedKeys.toSet() }
     }
 }

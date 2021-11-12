@@ -5,7 +5,7 @@ import android.app.Application
 import android.os.Bundle
 
 internal class ActivityBreadcrumbCollector(
-    private val cb: (message: String, method: Map<String, Any>) -> Unit
+    private val cb: (message: String, method: MutableMap<String, Any?>) -> Unit
 ) : Application.ActivityLifecycleCallbacks {
 
     var prevState: String? = null
@@ -34,7 +34,7 @@ internal class ActivityBreadcrumbCollector(
     private fun getActivityName(activity: Activity) = activity.javaClass.simpleName
 
     private fun leaveBreadcrumb(activityName: String, lifecycleCallback: String, hasBundle: Boolean? = null) {
-        val metadata = mutableMapOf<String, Any>()
+        val metadata = mutableMapOf<String, Any?>()
         if (hasBundle != null) {
             metadata["hasBundle"] = hasBundle
         }
