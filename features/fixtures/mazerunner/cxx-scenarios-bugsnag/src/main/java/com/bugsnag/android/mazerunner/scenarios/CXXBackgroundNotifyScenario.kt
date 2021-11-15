@@ -28,6 +28,8 @@ internal class CXXBackgroundNotifyScenario(
     override fun onActivityStopped(activity: Activity) {
         // debounce so this can only ever occur once
         if (!triggered.getAndSet(true)) {
+            // Leave enough time for the data to settle
+            Thread.sleep(10)
             activate()
         }
     }

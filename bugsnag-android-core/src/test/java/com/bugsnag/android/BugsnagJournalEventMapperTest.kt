@@ -195,13 +195,13 @@ class BugsnagJournalEventMapperTest {
     }
 
     /**
-     * Validates that an event without a stacktrace is ignored.
+     * Validates that an event without a stacktrace is NOT ignored.
      */
     @Test
-    fun eventWithoutExceptionsIgnored() {
+    fun eventWithoutExceptionsNotIgnored() {
         val mapper = BugsnagJournalEventMapper(NoopLogger)
         val event = mapper.convertToEvent(minimalJournalMap.minus("exceptions"))
-        assertNull(event)
+        assertNotNull(event)
     }
 
     /**
