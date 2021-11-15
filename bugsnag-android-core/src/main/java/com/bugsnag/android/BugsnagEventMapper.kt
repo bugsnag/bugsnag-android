@@ -11,6 +11,50 @@ internal class BugsnagEventMapper(
     private val logger: Logger
 ) {
 
+    internal fun convertAppWithState(app: Map<String, Any?>): AppWithState {
+        return AppWithState(
+            app["binaryArch"] as? String,
+            app["id"] as? String,
+            app["releaseStage"] as? String,
+            app["version"] as? String,
+            app["codeBundleId"] as? String,
+            app["buildUUID"] as? String,
+            app["type"] as? String,
+            (app["versionCode"] as? Number)?.toInt(),
+            (app["duration"] as? Number)?.toLong(),
+            (app["durationInForeground"] as? Number)?.toLong(),
+            app["inForeground"] as? Boolean,
+            app["isLaunching"] as? Boolean
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    internal fun convertDeviceWithState(device: Map<String, Any?>): DeviceWithState {
+        return DeviceWithState(
+            DeviceBuildInfo(
+                device["manufacturer"] as? String,
+                device["model"] as? String,
+                device["osVersion"] as? String,
+                null,
+                null,
+                null,
+                null,
+                null,
+                (device["cpuAbi"] as? List<String>)?.toTypedArray()
+            ),
+            device["jailbroken"] as? Boolean,
+            device["id"] as? String,
+            device["locale"] as? String,
+            (device["totalMemory"] as? Number)?.toLong(),
+            (device["runtimeVersions"] as? Map<String, Any>)?.toMutableMap()
+                ?: mutableMapOf(),
+            (device["freeDisk"] as? Number)?.toLong(),
+            (device["freeMemory"] as? Number)?.toLong(),
+            device["orientation"] as? String,
+            (device["time"] as? String)?.toDate()
+        )
+    }
+
     @Suppress("UNCHECKED_CAST")
     internal fun convertBreadcrumbInternal(breadcrumb: Map<String, Any?>): BreadcrumbInternal {
         return BreadcrumbInternal(
