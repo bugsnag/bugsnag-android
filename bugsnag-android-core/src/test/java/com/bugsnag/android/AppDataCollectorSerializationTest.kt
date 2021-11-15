@@ -31,7 +31,7 @@ internal class AppDataCollectorSerializationTest {
             val memoryTrimState = MemoryTrimState()
 
             // populate summary fields
-            config.appType = "React Native"
+            config.appType = "ReactNative"
             config.releaseStage = "test-stage"
             config.appVersion = "1.2.3"
             config.versionCode = 55
@@ -74,8 +74,17 @@ internal class AppDataCollectorSerializationTest {
     @Parameter
     lateinit var testCase: Pair<App, String>
 
+    private val eventMapper = BugsnagEventMapper(NoopLogger)
+
     @Test
     fun testJsonSerialisation() {
         verifyJsonMatches(testCase.first, testCase.second)
+    }
+
+    @Test
+    fun testJsonDeserialization() {
+        verifyJsonParser(testCase.first, testCase.second) {
+            eventMapper.convertAppWithState(it)
+        }
     }
 }
