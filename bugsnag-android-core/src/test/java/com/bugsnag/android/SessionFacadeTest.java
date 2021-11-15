@@ -31,7 +31,7 @@ public class SessionFacadeTest {
     public void invalidId() {
         assertEquals("123", session.getId());
         session.setId(null);
-        assertEquals("123", session.getId());
+        assertEquals("", session.getId());
         assertNotNull(logger.getMsg());
     }
 

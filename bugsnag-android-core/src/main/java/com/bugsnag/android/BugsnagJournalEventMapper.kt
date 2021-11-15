@@ -41,28 +41,29 @@ internal class BugsnagJournalEventMapper(
     @Suppress("UNCHECKED_CAST")
     internal fun convertToEventImpl(
         map: Map<in String, Any?>,
-        apiKey: String = map.readEntry(JournalKeys.pathApiKey)
+        apiKey: String = map.readEntryOrDefault(JournalKeys.pathApiKey, "")
     ): EventInternal {
         val event = EventInternal(apiKey)
 
         // populate exceptions. check this early to avoid unnecessary serialization if
         // no stacktrace was gathered.
-        val exceptions: List<MutableMap<String, Any?>> = map.readEntry(JournalKeys.pathExceptions)
+        val exceptions: List<MutableMap<String, Any?>> = map.readEntryOrDefault(JournalKeys.pathExceptions, listOf())
         exceptions.mapTo(event.errors) { Error(convertErrorInternal(it), this.logger) }
 
         // populate user
-        val userMap: Map<String, String> = map.readEntry(JournalKeys.pathUser)
+        val userMap: Map<String, String> = map.readEntryOrDefault(JournalKeys.pathUser, mapOf())
         event.userImpl = User(userMap)
 
         // populate metadata
-        val metadataMap: Map<String, Map<String, Any?>> = normalized(map.readEntry(JournalKeys.pathMetadata))
+        val metadataMap: Map<String, Map<String, Any?>> =
+            normalized(map.readEntryOrDefault(JournalKeys.pathMetadata, mapOf<String, Map<String, Any?>>()))
         metadataMap.forEach { (key, value) ->
             event.addMetadata(key, value)
         }
 
         // populate breadcrumbs
         val breadcrumbList: List<MutableMap<String, Any?>> =
-            map.readEntry(JournalKeys.pathBreadcrumbs)
+            map.readEntryOrDefault(JournalKeys.pathBreadcrumbs, listOf())
         val crumbs = breadcrumbList
             .map(this::sanitizeBreadcrumbMap)
             .map { Breadcrumb(BreadcrumbInternal(it), logger) }
@@ -75,7 +76,7 @@ internal class BugsnagJournalEventMapper(
         event.groupingHash = map[JournalKeys.pathGroupingHash] as? String
 
         // populate app
-        val appMap: MutableMap<String, Any?> = map.readEntry(JournalKeys.pathApp)
+        val appMap: MutableMap<String, Any?> = map.readEntryOrDefault(JournalKeys.pathApp, mutableMapOf())
 
         // if loading from journal, calculate duration from 'runtime' entry
         if (map[JournalKeys.pathRuntime] != null) {
@@ -85,7 +86,7 @@ internal class BugsnagJournalEventMapper(
         event.app = convertAppWithState(appMap)
 
         // populate device
-        val deviceMap: MutableMap<String, Any?> = map.readEntry(JournalKeys.pathDevice)
+        val deviceMap: MutableMap<String, Any?> = map.readEntryOrDefault(JournalKeys.pathDevice, mutableMapOf())
         event.device = convertDeviceWithState(deviceMap)
 
         // populate session
@@ -105,9 +106,9 @@ internal class BugsnagJournalEventMapper(
         }
 
         // populate severity
-        val severityStr: String = map.readEntry(JournalKeys.pathSeverity)
+        val severityStr: String = map.readEntryOrDefault(JournalKeys.pathSeverity, "")
         val severity = Severity.fromDescriptor(severityStr)
-        val unhandled: Boolean = map.readEntry(JournalKeys.keyUnhandled)
+        val unhandled: Boolean = map.readEntryOrDefault(JournalKeys.keyUnhandled, true)
         val reason = deserializeSeverityReason(map, unhandled, severity)
         event.updateSeverityReasonInternal(reason)
         event.normalizeStackframeErrorTypes()
@@ -189,17 +190,17 @@ internal class BugsnagJournalEventMapper(
     }
 
     private fun getLaunchedTime(journal: Map<in String, Any?>): Date? {
-        val runtime = journal.readEntry<Map<String, Any?>>(JournalKeys.pathRuntime)
+        val runtime = journal.readEntryOrDefault<Map<String, Any?>>(JournalKeys.pathRuntime, mapOf())
         return convertFieldToDate(runtime[JournalKeys.keyTimeLaunched])
     }
 
     private fun getEventTime(journal: Map<in String, Any?>): Date? {
-        val runtime = journal.readEntry<Map<String, Any?>>(JournalKeys.pathRuntime)
+        val runtime = journal.readEntryOrDefault<Map<String, Any?>>(JournalKeys.pathRuntime, mapOf())
         return convertFieldToDate(runtime[JournalKeys.keyTimeNow])
     }
 
     private fun getEnteredFGTime(journal: Map<in String, Any?>): Date? {
-        val runtime = journal.readEntry<Map<String, Any?>>(JournalKeys.pathRuntime)
+        val runtime = journal.readEntryOrDefault<Map<String, Any?>>(JournalKeys.pathRuntime, mapOf())
         return convertFieldToDate(runtime[JournalKeys.keyTimeEnteredForeground])
     }
 
@@ -233,7 +234,7 @@ internal class BugsnagJournalEventMapper(
         val map = src.toMutableMap()
         map[JournalKeys.keyCpuAbi] = (map[JournalKeys.keyCpuAbi] as? List<String>)?.toTypedArray()
         map[JournalKeys.keyTime] = convertFieldToDate(map[JournalKeys.keyTime])
-        return DeviceWithState(map, map.readEntry(JournalKeys.keyRuntimeVersions))
+        return DeviceWithState(map, map.readEntryOrDefault(JournalKeys.keyRuntimeVersions, mutableMapOf()))
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -244,13 +245,13 @@ internal class BugsnagJournalEventMapper(
         )
 
         return ThreadInternal(
-            src.readEntry<Number>(JournalKeys.keyId).toLong(),
-            src.readEntry(JournalKeys.keyName),
-            src.readEntry<String>(JournalKeys.keyType)
+            src.readEntryOrDefault<Number>(JournalKeys.keyId, 0).toLong(),
+            src.readEntryOrDefault(JournalKeys.keyName, ""),
+            src.readEntryOrDefault<String>(JournalKeys.keyType, "")
                 .let { type -> ThreadType.values().find { it.desc == type } }
                 ?: ThreadType.ANDROID,
             src[JournalKeys.keyErrorReportingThread] == true,
-            src.readEntry(JournalKeys.keyState),
+            src.readEntryOrDefault(JournalKeys.keyState, ""),
             stacktrace
         )
     }
@@ -258,7 +259,7 @@ internal class BugsnagJournalEventMapper(
     @Suppress("UNCHECKED_CAST")
     private fun convertErrorInternal(src: Map<String, Any?>): ErrorInternal {
         val map = src.toMutableMap()
-        val list: List<Map<String, Any>> = src.readEntry(JournalKeys.keyStackTrace)
+        val list: List<Map<String, Any>> = src.readEntryOrDefault(JournalKeys.keyStackTrace, listOf())
         if (list.isNotEmpty()) {
             map[JournalKeys.keyStackTrace] = list.map(this::convertStacktraceInternal)
         }
@@ -293,16 +294,16 @@ internal class BugsnagJournalEventMapper(
         unhandled: Boolean,
         severity: Severity
     ): SeverityReason {
-        val severityReason: Map<String, Any> = map.readEntry(JournalKeys.pathSeverityReason)
+        val severityReason: Map<String, Any> = map.readEntryOrDefault(JournalKeys.pathSeverityReason, mapOf())
         val unhandledOverridden: Boolean =
-            severityReason.readEntry(JournalKeys.keyUnhandledOverridden)
-        val type: String = severityReason.readEntry(JournalKeys.keyType)
+            severityReason.readEntryOrDefault(JournalKeys.keyUnhandledOverridden, false)
+        val type: String = severityReason.readEntryOrDefault(JournalKeys.keyType, "")
         val originalUnhandled = when {
             unhandledOverridden -> !unhandled
             else -> unhandled
         }
 
-        val attrMap: Map<String, String>? = severityReason.readEntry(JournalKeys.keyAttributes)
+        val attrMap: Map<String, String>? = severityReason.readEntryOrDefault(JournalKeys.keyAttributes, mapOf())
         val entry = attrMap?.entries?.singleOrNull()
         return SeverityReason(
             type,
@@ -315,13 +316,12 @@ internal class BugsnagJournalEventMapper(
     }
 
     /**
-     * Convenience method for getting an entry from a Map in the expected type, which
-     * throws useful error messages if the expected type is not there.
+     * Convenience method for getting an entry from a Map in the expected type.
      */
-    private inline fun <reified T> Map<*, *>.readEntry(key: String): T {
+    private inline fun <reified T> Map<*, *>.readEntryOrDefault(key: String, defaultValue: T): T {
         when (val value = get(key)) {
             is T -> return value
-            null -> throw IllegalStateException("Journal does not contain entry for '$key'")
+            null -> return defaultValue
             else -> throw IllegalArgumentException(
                 "Journal entry for '$key' not " +
                     "of expected type, found ${value.javaClass.name}"
