@@ -11,6 +11,19 @@ internal class BugsnagEventMapper(
     private val logger: Logger
 ) {
 
+    @Suppress("UNCHECKED_CAST")
+    internal fun convertBreadcrumbInternal(breadcrumb: Map<String, Any?>): BreadcrumbInternal {
+        return BreadcrumbInternal(
+            breadcrumb.readEntry("name"),
+            breadcrumb.readEntry<String>("type").let { type ->
+                BreadcrumbType.fromDescriptor(type)
+                    ?: BreadcrumbType.MANUAL
+            },
+            breadcrumb["metaData"] as? MutableMap<String, Any?>,
+            breadcrumb.readEntry<String>("timestamp").toDate()
+        )
+    }
+
     internal fun convertAppWithState(app: Map<String, Any?>): AppWithState {
         return AppWithState(
             app["binaryArch"] as? String,
