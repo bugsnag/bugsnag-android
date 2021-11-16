@@ -179,7 +179,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         registerLifecycleCallbacks();
 
         EventStorageModule eventStorageModule = new EventStorageModule(contextModule, configModule,
-                dataCollectionModule, bgTaskService, trackerModule, systemServiceModule, notifier);
+                dataCollectionModule, bgTaskService, trackerModule, systemServiceModule, notifier,
+                callbackState);
         eventStorageModule.resolveDependencies(bgTaskService, TaskType.IO);
         eventStore = eventStorageModule.getEventStore();
 
@@ -651,6 +652,22 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             callbackState.removeOnSession(onSession);
         } else {
             logNull("removeOnSession");
+        }
+    }
+
+    void addOnSend(@NonNull OnSendCallback onSend) {
+        if (onSend != null) {
+            callbackState.addOnSend(onSend);
+        } else {
+            logNull("addOnSend");
+        }
+    }
+
+    void removeOnSend(@NonNull OnSendCallback onSend) {
+        if (onSend != null) {
+            callbackState.removeOnSend(onSend);
+        } else {
+            logNull("removeOnSend");
         }
     }
 

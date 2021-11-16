@@ -1,11 +1,12 @@
 package com.bugsnag.android
 
-import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.CopyOnWriteArrayList
 
 internal data class CallbackState(
-    val onErrorTasks: MutableCollection<OnErrorCallback> = ConcurrentLinkedQueue<OnErrorCallback>(),
-    val onBreadcrumbTasks: MutableCollection<OnBreadcrumbCallback> = ConcurrentLinkedQueue<OnBreadcrumbCallback>(),
-    val onSessionTasks: MutableCollection<OnSessionCallback> = ConcurrentLinkedQueue()
+    val onErrorTasks: MutableCollection<OnErrorCallback> = CopyOnWriteArrayList(),
+    val onBreadcrumbTasks: MutableCollection<OnBreadcrumbCallback> = CopyOnWriteArrayList(),
+    val onSessionTasks: MutableCollection<OnSessionCallback> = CopyOnWriteArrayList(),
+    val onSendTasks: MutableCollection<OnSendCallback> = CopyOnWriteArrayList()
 ) : CallbackAware {
 
     override fun addOnError(onError: OnErrorCallback) {
@@ -30,6 +31,14 @@ internal data class CallbackState(
 
     override fun removeOnSession(onSession: OnSessionCallback) {
         onSessionTasks.remove(onSession)
+    }
+
+    fun addOnSend(onSend: OnSendCallback) {
+        onSendTasks.add(onSend)
+    }
+
+    fun removeOnSend(onSend: OnSendCallback) {
+        onSendTasks.remove(onSend)
     }
 
     fun runOnErrorTasks(event: Event, logger: Logger): Boolean {
@@ -83,9 +92,28 @@ internal data class CallbackState(
         return true
     }
 
+    fun runOnSendTasks(eventSource: () -> Event, logger: Logger): Boolean {
+        if (onSendTasks.isEmpty()) {
+            return true
+        }
+
+        val event = eventSource()
+        onSendTasks.forEach {
+            try {
+                if (!it.onSend(event)) {
+                    return false
+                }
+            } catch (ex: Throwable) {
+                logger.w("OnSendCallback threw an Exception", ex)
+            }
+        }
+        return true
+    }
+
     fun copy() = this.copy(
         onErrorTasks = onErrorTasks,
         onBreadcrumbTasks = onBreadcrumbTasks,
-        onSessionTasks = onSessionTasks
+        onSessionTasks = onSessionTasks,
+        onSendTasks = onSendTasks
     )
 }

@@ -18,3 +18,15 @@ dokkaHtml.configure {
 }
 
 apply from: "../gradle/kotlin.gradle"
+
+// pick up dsl-json by adding to the default sourcesets
+android {
+    sourceSets {
+        main {
+            java.srcDirs += ["dsl-json/library/src/main/java"]
+        }
+        test {
+            java.srcDirs += ["dsl-json/library/src/test/java"]
+        }
+    }
+}
