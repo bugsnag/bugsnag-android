@@ -28,6 +28,11 @@ public class Thread implements JsonStream.Streamable {
         this.logger = logger;
     }
 
+    Thread(@NonNull ThreadInternal impl, @NonNull Logger logger) {
+        this.impl = impl;
+        this.logger = logger;
+    }
+
     private void logNull(String property) {
         logger.e("Invalid null value supplied to thread." + property + ", ignoring");
     }
