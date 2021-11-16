@@ -48,25 +48,16 @@ public final class Session implements JsonStream.Streamable, UserAware {
         setId((String) map.get("id"));
 
         String timestamp = (String) map.get("startedAt");
-        if (timestamp != null) {
-            setStartedAt(DateUtils.fromIso8601(timestamp));
-        } else {
-            setStartedAt(new Date(0));
-        }
+        setStartedAt(DateUtils.fromIso8601(timestamp));
 
         @SuppressWarnings("unchecked")
         Map<String, Object> events = (Map<String, Object>) map.get("events");
-        if (events != null) {
-            if (events.containsKey("handled")) {
-                Number handled = (Number) events.get("handled");
-                handledCount.set(handled.intValue());
-            }
 
-            if (events.containsKey("unhandled")) {
-                Number unhandled = (Number) events.get("unhandled");
-                unhandledCount.set(unhandled.intValue());
-            }
-        }
+        Number handled = (Number) events.get("handled");
+        handledCount.set(handled.intValue());
+
+        Number unhandled = (Number) events.get("unhandled");
+        unhandledCount.set(unhandled.intValue());
     }
 
     Session(String id, Date startedAt, User user, boolean autoCaptured,
@@ -119,7 +110,6 @@ public final class Session implements JsonStream.Streamable, UserAware {
             this.id = id;
         } else {
             logNull("id");
-            this.id = "";
         }
     }
 

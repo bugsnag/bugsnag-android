@@ -189,9 +189,12 @@ class BugsnagJournalEventMapperTest {
     }
 
     @Test
-    fun emptyMapNullEvent() {
-        val mapper = BugsnagJournalEventMapper(NoopLogger)
-        assertNull(mapper.convertToEvent(emptyMap()))
+    fun emptyMapValidEvent() {
+        val logger = InterceptingLogger()
+        val mapper = BugsnagJournalEventMapper(logger)
+        val result = mapper.convertToEvent(emptyMap())
+        assertNull(logger.msg)
+        assertNotNull(result)
     }
 
     /**
