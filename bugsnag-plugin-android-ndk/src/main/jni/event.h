@@ -198,6 +198,11 @@ typedef enum {
 } bsg_thread_send_policy;
 
 typedef struct {
+  char *name;
+  char *variant;
+} bsg_feature_flag;
+
+typedef struct {
   bsg_notifier notifier;
   bsg_app_info app;
   bsg_device_info device;
@@ -224,6 +229,17 @@ typedef struct {
 
   int thread_count;
   bsg_thread threads[BUGSNAG_THREADS_MAX];
+
+  /**
+   * The number of feature flags currently specified.
+   */
+  size_t feature_flag_count;
+
+  /**
+   * Pointer to the current feature flags. This is dynamically allocated and
+   * serialized/deserialized separately to the rest of the struct.
+   */
+  bsg_feature_flag *feature_flags;
 } bugsnag_event;
 
 void bugsnag_event_add_breadcrumb(bugsnag_event *event,

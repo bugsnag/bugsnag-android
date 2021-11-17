@@ -11,5 +11,6 @@ add_library(bugsnag-ndk-test SHARED
     cpp/test_serializer.c
     cpp/test_breadcrumbs.c
     cpp/test_bsg_event.c
+    cpp/test_featureflags.c
 )
 target_link_libraries(bugsnag-ndk-test bugsnag-ndk)

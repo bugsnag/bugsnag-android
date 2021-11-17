@@ -11,6 +11,7 @@ add_library( # Specifies the name of the library.
     jni/metadata.c
     jni/safejni.c
     jni/event.c
+    jni/featureflags.c
     jni/handlers/signal_handler.c
     jni/handlers/cpp_handler.cpp
     jni/utils/crash_info.c
