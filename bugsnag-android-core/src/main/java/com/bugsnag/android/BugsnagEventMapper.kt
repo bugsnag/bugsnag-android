@@ -10,6 +10,20 @@ import java.util.TimeZone
 internal class BugsnagEventMapper(
     private val logger: Logger
 ) {
+
+    @Suppress("UNCHECKED_CAST")
+    internal fun convertThread(thread: Map<String, Any?>): ThreadInternal {
+        return ThreadInternal(
+            (thread["id"] as? Number)?.toLong() ?: 0,
+            thread.readEntry("name"),
+            ThreadType.fromDescriptor(thread.readEntry("type")) ?: ThreadType.ANDROID,
+            thread["errorReportingThread"] == true,
+            thread.readEntry("state"),
+            (thread["stacktrace"] as? List<Map<String, Any?>>)?.let { convertStacktrace(it) }
+                ?: Stacktrace(emptyList())
+        )
+    }
+
     internal fun convertStacktrace(trace: List<Map<String, Any?>>): Stacktrace {
         return Stacktrace(trace.map { convertStackframe(it) })
     }
