@@ -59,7 +59,7 @@ services:
       BUILDKITE_REPO:
 
   android-maze-runner:
-    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner:bugsnag-reporting-poc-cli
+    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner-releases:latest-v6-cli
     environment:
       DEBUG:
       BUILDKITE:
@@ -73,6 +73,7 @@ services:
       BUILDKITE_REPO:
       BUILDKITE_RETRY_COUNT:
       BUILDKITE_STEP_KEY:
+      MAZE_BUGSNAG_API_KEY:
       BROWSER_STACK_USERNAME:
       BROWSER_STACK_ACCESS_KEY:
       SAUCE_LABS_USERNAME:
