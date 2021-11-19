@@ -72,6 +72,8 @@ internal class DeviceDataCollectorSerializationTest {
     @Parameter
     lateinit var testCase: Pair<Device, String>
 
+    private val eventMapper = BugsnagEventMapper(NoopLogger)
+
     @Test
     fun testJsonSerialisation() {
         // sanitise device-specific fields before serializing
@@ -85,5 +87,12 @@ internal class DeviceDataCollectorSerializationTest {
         }
 
         verifyJsonMatches(device, testCase.second)
+    }
+
+    @Test
+    fun testJsonDeserialization() {
+        verifyJsonParser(testCase.first, testCase.second) {
+            eventMapper.convertDeviceWithState(it)
+        }
     }
 }
