@@ -17,7 +17,7 @@ internal class BreadcrumbSerializationTest {
             val timestamp = Date(0)
             return generateSerializationTestCases(
                 "breadcrumb",
-                Breadcrumb("hello world", BreadcrumbType.MANUAL, mutableMapOf(), timestamp, NoopLogger),
+                Breadcrumb("helloworld", BreadcrumbType.MANUAL, mutableMapOf(), timestamp, NoopLogger),
                 Breadcrumb(
                     "metadata",
                     BreadcrumbType.PROCESS,
@@ -35,6 +35,15 @@ internal class BreadcrumbSerializationTest {
     @Parameter
     lateinit var testCase: Pair<Breadcrumb, String>
 
+    private val eventMapper = BugsnagEventMapper(NoopLogger)
+
     @Test
     fun testJsonSerialisation() = verifyJsonMatches(testCase.first, testCase.second)
+
+    @Test
+    fun testJsonDeserialization() {
+        verifyJsonParser(testCase.first, testCase.second) {
+            eventMapper.convertBreadcrumbInternal(it)
+        }
+    }
 }
