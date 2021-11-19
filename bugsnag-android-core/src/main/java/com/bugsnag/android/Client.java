@@ -428,6 +428,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         contextState.emitObservableEvent();
         userState.emitObservableEvent();
         memoryTrimState.emitObservableEvent();
+        featureFlagState.emitObservableEvent();
     }
 
     /**

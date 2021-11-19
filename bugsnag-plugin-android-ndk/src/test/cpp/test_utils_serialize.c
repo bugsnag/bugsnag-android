@@ -2,6 +2,7 @@
 #include <utils/serializer.h>
 #include <stdlib.h>
 #include <utils/migrate.h>
+#include <featureflags.h>
 
 #define SERIALIZE_TEST_FILE "/data/data/com.bugsnag.android.ndk.test/cache/foo.crash"
 
@@ -446,6 +447,22 @@ TEST test_report_to_file(void) {
   env->report_header.big_endian = 1;
   bugsnag_event *report = bsg_generate_event();
   memcpy(&env->next_event, report, sizeof(bugsnag_event));
+  strcpy(env->report_header.os_build, "macOS Sierra");
+  strcpy(env->next_event_path, SERIALIZE_TEST_FILE);
+  ASSERT(bsg_serialize_event_to_file(env));
+  free(report);
+  free(env);
+  PASS();
+}
+
+TEST test_report_with_feature_flags_to_file(void) {
+  bsg_environment *env = calloc(1, sizeof(bsg_environment));
+  env->report_header.version = 7;
+  env->report_header.big_endian = 1;
+  bugsnag_event *report = bsg_generate_event();
+  memcpy(&env->next_event, report, sizeof(bugsnag_event));
+  bsg_set_feature_flag(env, "sample_group", "a");
+  bsg_set_feature_flag(env, "demo_mode", NULL);
   strcpy(env->report_header.os_build, "macOS Sierra");
   strcpy(env->next_event_path, SERIALIZE_TEST_FILE);
   ASSERT(bsg_serialize_event_to_file(env));
@@ -912,6 +929,7 @@ SUITE(suite_json_serialization) {
 SUITE(suite_struct_to_file) {
   RUN_TEST(test_report_to_file);
   RUN_TEST(test_file_to_report);
+  RUN_TEST(test_report_with_feature_flags_to_file);
 }
 
 SUITE(suite_struct_migration) {

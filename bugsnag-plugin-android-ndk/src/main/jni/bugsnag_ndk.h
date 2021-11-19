@@ -21,11 +21,6 @@ extern "C" {
 #endif
 
 typedef struct {
-  char *name;
-  char *variant;
-} bsg_feature_flag;
-
-typedef struct {
   /**
    * Unwinding style used for signal-safe handling
    */
