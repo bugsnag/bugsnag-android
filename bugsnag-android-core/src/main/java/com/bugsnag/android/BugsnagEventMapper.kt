@@ -12,6 +12,92 @@ internal class BugsnagEventMapper(
 ) {
 
     @Suppress("UNCHECKED_CAST")
+    internal fun convertToEventImpl(map: Map<in String, Any?>, apiKey: String): EventInternal {
+        val event = EventInternal(apiKey)
+
+        // populate exceptions. check this early to avoid unnecessary serialization if
+        // no stacktrace was gathered.
+        val exceptions = map["exceptions"] as? List<MutableMap<String, Any?>>
+        exceptions?.mapTo(event.errors) { Error(convertErrorInternal(it), this.logger) }
+
+        // populate user
+        event.userImpl = convertUser(map.readEntry("user"))
+
+        // populate metadata
+        val metadataMap: Map<String, Map<String, Any?>> = map.readEntry("metaData")
+        metadataMap.forEach { (key, value) ->
+            event.addMetadata(key, value)
+        }
+
+        // populate breadcrumbs
+        val breadcrumbList: List<MutableMap<String, Any?>> = map.readEntry("breadcrumbs")
+        breadcrumbList.mapTo(event.breadcrumbs) {
+            Breadcrumb(
+                convertBreadcrumbInternal(it),
+                logger
+            )
+        }
+
+        // populate context
+        event.context = map["context"] as? String
+
+        // populate groupingHash
+        event.groupingHash = map["groupingHash"] as? String
+
+        // populate app
+        event.app = convertAppWithState(map.readEntry("app"))
+
+        // populate device
+        event.device = convertDeviceWithState(map.readEntry("device"))
+
+        // populate session
+        val sessionMap = map["session"] as? Map<String, Any?>
+        sessionMap?.let {
+            event.session = Session(it, logger)
+        }
+
+        // populate threads
+        val threads = map["threads"] as? List<Map<String, Any?>>
+        threads?.mapTo(event.threads) { Thread(convertThread(it), logger) }
+
+        // populate projectPackages
+        val projectPackages = map["projectPackages"] as? List<String>
+        projectPackages?.let {
+            event.projectPackages = projectPackages
+        }
+
+        // populate severity
+        val severityStr: String = map.readEntry("severity")
+        val severity = Severity.fromDescriptor(severityStr)
+        val unhandled: Boolean = map.readEntry("unhandled")
+        val reason = deserializeSeverityReason(map, unhandled, severity)
+        event.updateSeverityReasonInternal(reason)
+        event.normalizeStackframeErrorTypes()
+
+        return event
+    }
+
+    internal fun convertErrorInternal(error: Map<String, Any?>): ErrorInternal {
+        return ErrorInternal(
+            error.readEntry("errorClass"),
+            error["message"] as? String,
+            type = error.readEntry<String>("type").let { type ->
+                ErrorType.fromDescriptor(type)
+                    ?: throw IllegalArgumentException("unknown ErrorType: '$type'")
+            },
+            stacktrace = convertStacktrace(error.readEntry("stacktrace"))
+        )
+    }
+
+    internal fun convertUser(user: Map<String, Any?>): User {
+        return User(
+            user["id"] as? String,
+            user["email"] as? String,
+            user["name"] as? String
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
     internal fun convertBreadcrumbInternal(breadcrumb: Map<String, Any?>): BreadcrumbInternal {
         return BreadcrumbInternal(
             breadcrumb.readEntry("name"),

@@ -40,21 +40,38 @@ internal class EventSerializationTest {
                 createEvent {
                     val stacktrace = Stacktrace(arrayOf(), emptySet(), NoopLogger)
                     it.threads.clear()
-                    it.threads.add(Thread(5, "main", ThreadType.ANDROID, true, Thread.State.RUNNABLE, stacktrace, NoopLogger))
+                    it.threads.add(
+                        Thread(
+                            5,
+                            "main",
+                            ThreadType.ANDROID,
+                            true,
+                            Thread.State.RUNNABLE,
+                            stacktrace,
+                            NoopLogger
+                        )
+                    )
                 },
 
                 // threads included
                 createEvent {
                     it.addMetadata("app", "foo", 55)
                     it.addMetadata("device", "bar", true)
-                    it.addMetadata("wham", "some_key", "A value")
+                    it.addMetadata("wham", "some_key", "Avalue")
                     it.setUser(null, null, "Jamie")
 
-                    val crumb = Breadcrumb("hello world", BreadcrumbType.MANUAL, mutableMapOf(), Date(0), NoopLogger)
+                    val crumb = Breadcrumb(
+                        "helloworld",
+                        BreadcrumbType.MANUAL,
+                        mutableMapOf(),
+                        Date(0),
+                        NoopLogger
+                    )
                     it.breadcrumbs = listOf(crumb)
 
                     val stacktrace = Stacktrace(arrayOf(), emptySet(), NoopLogger)
-                    val err = Error(ErrorInternal("WhoopsException", "Whoops", stacktrace), NoopLogger)
+                    val err =
+                        Error(ErrorInternal("WhoopsException", "Whoops", stacktrace), NoopLogger)
                     it.errors.clear()
                     it.errors.add(err)
                 }
@@ -80,6 +97,18 @@ internal class EventSerializationTest {
     @Parameter
     lateinit var testCase: Pair<Event, String>
 
+    private val eventMapper = BugsnagEventMapper(NoopLogger)
+
     @Test
     fun testJsonSerialisation() = verifyJsonMatches(testCase.first, testCase.second)
+
+    @Test
+    fun testJsonDeserializion() {
+        verifyJsonParser(testCase.first, testCase.second) {
+            Event(
+                eventMapper.convertToEventImpl(it, "5d1ec5bd39a74caa1267142706a7fb21"),
+                NoopLogger
+            )
+        }
+    }
 }
