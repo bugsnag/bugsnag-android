@@ -100,4 +100,10 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXConfigurationMetadataNativeCras
   return 12167;
 }
 
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXFeatureFlagNativeCrashScenario_crash(JNIEnv *env,
+                                                                                      jobject instance) {
+  __builtin_trap();
+}
+
 }

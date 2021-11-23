@@ -32,6 +32,26 @@ typedef struct bsg_buffered_writer {
                 size_t length);
 
   /**
+   * Write a single byte-value to this writer.
+   *
+   * @param writer This writer
+   * @param byte the single byte to be written
+   * @return True on success. Check errno on error.
+   */
+  bool (*write_byte)(struct bsg_buffered_writer *writer, const uint8_t byte);
+
+  /**
+   * Write a length-prefixed string to this writer. This will first write 4
+   * bytes for the length of the string, and then the string itself (without
+   * it's null-terminator character).
+   *
+   * @param writer This writer
+   * @param string the string to write, may not be NULL
+   * @return True on success. Check errno on error.
+   */
+  bool (*write_string)(struct bsg_buffered_writer *writer, const char *string);
+
+  /**
    * Force a flush to file.
    *
    * Note: This method is async-safe.
@@ -45,7 +65,7 @@ typedef struct bsg_buffered_writer {
    * Dispose of this writer, closing and freeing all resources. The pointer to
    * writer will be invalid after this call.
    *
-   * Note: This method is NOT async-safe!
+   * Note: This method is async-safe!
    *
    * @param writer This writer.
    * @return True on success. Check errno on error.

@@ -1,9 +1,6 @@
-//
-// Created by Jason Morris on 19/11/2021.
-//
-
 #include "buffered_writer.h"
 #include "bugsnag_ndk.h"
+#include "string.h"
 #include <fcntl.h>
 #include <inttypes.h>
 #include <malloc.h>
@@ -41,6 +38,27 @@ static bool bsg_buffered_writer_flush(struct bsg_buffered_writer *writer) {
   }
 
   return false;
+}
+
+static bool bsg_buffered_write_string(bsg_buffered_writer *writer,
+                                      const char *s) {
+  // prefix with the string length uint32
+  const uint32_t length = bsg_strlen(s);
+  if (!writer->write(writer, &length, sizeof(length))) {
+    return false;
+  }
+
+  // then write the string data without trailing '\0'
+  if (!writer->write(writer, s, length)) {
+    return false;
+  }
+
+  return true;
+}
+
+static bool bsg_buffered_write_byte(bsg_buffered_writer *writer,
+                                    const uint8_t value) {
+  return writer->write(writer, &value, 1);
 }
 
 // The compiler keeps changing sizeof(size_t) on different platforms, which
@@ -101,6 +119,8 @@ bool bsg_buffered_writer_open(struct bsg_buffered_writer *writer,
   writer->fd = fd;
   writer->pos = 0;
   writer->write = bsg_buffered_writer_write;
+  writer->write_string = bsg_buffered_write_string;
+  writer->write_byte = bsg_buffered_write_byte;
   writer->flush = bsg_buffered_writer_flush;
   writer->dispose = bsg_buffered_writer_close;
 

@@ -271,6 +271,7 @@ exit:
   if (event != NULL) {
     bsg_safe_release_byte_array_elements(env, jstage,
                                          (jbyte *)event->app.release_stage);
+    bsg_free_feature_flags(event);
     free(event);
   }
   if (payload != NULL) {
