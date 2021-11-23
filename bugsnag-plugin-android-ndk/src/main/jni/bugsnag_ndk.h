@@ -79,6 +79,16 @@ typedef struct {
    * at the time of an error.
    */
   bsg_thread_send_policy send_threads;
+
+  /**
+   * The number of feature flags currently specified.
+   */
+  size_t feature_flag_count;
+
+  /**
+   * Pointer to the current feature flags.
+   */
+  bsg_feature_flag *feature_flags;
 } bsg_environment;
 
 bsg_unwinder bsg_configured_unwind_style();

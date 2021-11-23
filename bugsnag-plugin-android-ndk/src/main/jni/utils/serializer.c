@@ -1,4 +1,5 @@
 #include "serializer.h"
+#include "buffered_writer.h"
 #include "string.h"
 
 #include <event.h>
@@ -15,7 +16,9 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-bool bsg_event_write(bsg_report_header *header, bugsnag_event *event, int fd);
+
+bool bsg_event_write(struct bsg_buffered_writer *writer,
+                     bsg_report_header *header, bugsnag_event *event);
 
 bugsnag_event *bsg_event_read(int fd);
 bsg_report_header *bsg_report_header_read(int fd);
@@ -54,12 +57,24 @@ bool bsg_serialize_last_run_info_to_file(bsg_environment *env) {
 }
 
 bool bsg_serialize_event_to_file(bsg_environment *env) {
-  int fd = open(env->next_event_path, O_WRONLY | O_CREAT, 0644);
-  if (fd == -1) {
+  bsg_buffered_writer writer;
+  if (!bsg_buffered_writer_open(&writer, env->next_event_path)) {
     return false;
   }
 
-  return bsg_event_write(&env->report_header, &env->next_event, fd);
+  if (!bsg_event_write(&writer, &env->report_header, &env->next_event)) {
+    goto fail;
+  }
+
+  if (!bsg_write_feature_flags(env, &writer)) {
+    goto fail;
+  }
+
+  return true;
+
+fail:
+  writer.dispose(&writer);
+  return false;
 }
 
 bugsnag_event *bsg_deserialize_event_from_file(char *filepath) {
@@ -577,13 +592,13 @@ bool bsg_report_header_write(bsg_report_header *header, int fd) {
   return len == sizeof(bsg_report_header);
 }
 
-bool bsg_event_write(bsg_report_header *header, bugsnag_event *event, int fd) {
-  if (!bsg_report_header_write(header, fd)) {
+bool bsg_event_write(struct bsg_buffered_writer *writer,
+                     bsg_report_header *header, bugsnag_event *event) {
+  if (!bsg_report_header_write(header, writer->fd)) {
     return false;
   }
 
-  ssize_t len = write(fd, event, sizeof(bugsnag_event));
-  return len == sizeof(bugsnag_event);
+  return writer->write(writer, event, sizeof(bugsnag_event));
 }
 
 const char *bsg_crumb_type_string(bugsnag_breadcrumb_type type) {
@@ -908,4 +923,62 @@ char *bsg_serialize_event_to_json_string(bugsnag_event *event) {
     json_value_free(event_val);
   }
   return serialized_string;
+}
+
+static bool write_string(bsg_buffered_writer *writer, const char *s) {
+  // prefix with the string length uint32
+  const uint32_t length = bsg_strlen(s);
+  if (!writer->write(writer, &length, sizeof(length))) {
+    return false;
+  }
+
+  // then write the string data without trailing '\0'
+  if (!writer->write(writer, s, length)) {
+    return false;
+  }
+
+  return true;
+}
+
+static bool write_byte(bsg_buffered_writer *writer, const char value) {
+  return writer->write(writer, &value, 1);
+}
+
+static bool write_feature_flag(bsg_buffered_writer *writer,
+                               bsg_feature_flag *flag) {
+  if (!write_string(writer, flag->name)) {
+    return false;
+  }
+
+  if (flag->variant) {
+    if (!write_byte(writer, 1)) {
+      return false;
+    }
+
+    if (!write_string(writer, flag->variant)) {
+      return false;
+    }
+  } else {
+    if (!write_byte(writer, 0)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+bool bsg_write_feature_flags(bsg_environment *env,
+                             bsg_buffered_writer *writer) {
+  const uint32_t feature_flag_count = env->feature_flag_count;
+  if (!writer->write(writer, &feature_flag_count, sizeof(feature_flag_count))) {
+    return false;
+  }
+
+  for (uint32_t index = 0; index < feature_flag_count; index++) {
+    if (!write_feature_flag(writer, &env->feature_flags[index])) {
+      return false;
+    }
+  }
+
+  return true;
 }

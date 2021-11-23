@@ -4,6 +4,10 @@
 #include "featureflags.h"
 #include "utils/string.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
  * Implementation notes:
  *
@@ -139,3 +143,7 @@ void bsg_free_feature_flags(bugsnag_event *env) {
   env->feature_flags = NULL;
   env->feature_flag_count = 0;
 }
+
+#ifdef __cplusplus
+}
+#endif
