@@ -20,27 +20,27 @@ class DeliveryDelegate extends BaseObservable {
     private final ImmutableConfig immutableConfig;
     final BreadcrumbState breadcrumbState;
     private final Notifier notifier;
+    private final CallbackState callbackState;
     final BackgroundTaskService backgroundTaskService;
 
     DeliveryDelegate(Logger logger,
                      EventStore eventStore,
                      ImmutableConfig immutableConfig,
                      BreadcrumbState breadcrumbState,
+                     CallbackState callbackState,
                      Notifier notifier,
                      BackgroundTaskService backgroundTaskService) {
         this.logger = logger;
         this.eventStore = eventStore;
         this.immutableConfig = immutableConfig;
         this.breadcrumbState = breadcrumbState;
+        this.callbackState = callbackState;
         this.notifier = notifier;
         this.backgroundTaskService = backgroundTaskService;
     }
 
     void deliver(@NonNull Event event) {
         logger.d("DeliveryDelegate#deliver() - event being stored/delivered by Client");
-        // Build the eventPayload
-        String apiKey = event.getApiKey();
-        EventPayload eventPayload = new EventPayload(apiKey, event, notifier, immutableConfig);
         Session session = event.getSession();
 
         if (session != null) {
@@ -59,7 +59,10 @@ class DeliveryDelegate extends BaseObservable {
             boolean promiseRejection = REASON_PROMISE_REJECTION.equals(severityReasonType);
             boolean anr = event.getImpl().isAnr(event);
             cacheEvent(event, anr || promiseRejection);
-        } else {
+        } else if (callbackState.runOnSendTasks(event, logger)) {
+            // Build the eventPayload
+            String apiKey = event.getApiKey();
+            EventPayload eventPayload = new EventPayload(apiKey, event, notifier, immutableConfig);
             deliverPayloadAsync(event, eventPayload);
         }
     }

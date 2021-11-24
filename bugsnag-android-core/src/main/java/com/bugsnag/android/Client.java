@@ -185,7 +185,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         eventStore = eventStorageModule.getEventStore();
 
         deliveryDelegate = new DeliveryDelegate(logger, eventStore,
-                immutableConfig, breadcrumbState, notifier, bgTaskService);
+                immutableConfig, breadcrumbState, callbackState, notifier, bgTaskService);
 
         // Install a default exception handler with this client
         exceptionHandler = new ExceptionHandler(this, logger);
