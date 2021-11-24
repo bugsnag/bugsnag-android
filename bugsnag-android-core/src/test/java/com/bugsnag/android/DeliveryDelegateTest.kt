@@ -20,7 +20,8 @@ internal class DeliveryDelegateTest {
 
     private val notifier = Notifier()
     val config = generateImmutableConfig()
-    val breadcrumbState = BreadcrumbState(50, CallbackState(), NoopLogger)
+    val callbackState = CallbackState()
+    val breadcrumbState = BreadcrumbState(50, callbackState, NoopLogger)
     private val logger = InterceptingLogger()
     lateinit var deliveryDelegate: DeliveryDelegate
     val handledState = SeverityReason.newInstance(
@@ -36,6 +37,7 @@ internal class DeliveryDelegateTest {
                 eventStore,
                 config,
                 breadcrumbState,
+                callbackState,
                 notifier,
                 BackgroundTaskService()
             )

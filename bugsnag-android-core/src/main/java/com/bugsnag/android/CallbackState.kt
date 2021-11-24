@@ -92,12 +92,7 @@ internal data class CallbackState(
         return true
     }
 
-    fun runOnSendTasks(eventSource: () -> Event, logger: Logger): Boolean {
-        if (onSendTasks.isEmpty()) {
-            return true
-        }
-
-        val event = eventSource()
+    fun runOnSendTasks(event: Event, logger: Logger): Boolean {
         onSendTasks.forEach {
             try {
                 if (!it.onSend(event)) {
@@ -108,6 +103,15 @@ internal data class CallbackState(
             }
         }
         return true
+    }
+
+    fun runOnSendTasks(eventSource: () -> Event, logger: Logger): Boolean {
+        if (onSendTasks.isEmpty()) {
+            // avoid constructing event from eventSource if not needed
+            return true
+        }
+
+        return this.runOnSendTasks(eventSource(), logger)
     }
 
     fun copy() = this.copy(
