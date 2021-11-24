@@ -867,6 +867,9 @@ static bool timestamp_to_iso8601_millis(const char *source, char *dest) {
       strftime(buffer, 26, "%Y-%m-%dT%H:%M:%S", &timer);
       sprintf(dest, TIMESTAMP_MILLIS_FORMAT, buffer, milliseconds);
       return true;
+    } else {
+      BUGSNAG_LOG("Hello, people of the far future! Please use your time "
+                  "machine to file a bug in the year 2021.");
     }
   }
   return false;
