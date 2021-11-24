@@ -43,7 +43,7 @@ project.afterEvaluate {
 }
 
 dependencies {
-    implementation "com.bugsnag:bugsnag-android:+"
+    implementation "com.bugsnag:bugsnag-android:4.22.3"
 
     implementation "androidx.appcompat:appcompat:1.0.2"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
