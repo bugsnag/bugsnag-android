@@ -7,6 +7,6 @@ import androidx.annotation.NonNull;
  * {@link OnErrorCallback}, an {@code OnSendCallback} may modify the {@code Event}
  * contents or even reject the entire payload by returning {@code false}.
  */
-interface OnSendCallback {
+public interface OnSendCallback {
     boolean onSend(@NonNull Event event);
 }

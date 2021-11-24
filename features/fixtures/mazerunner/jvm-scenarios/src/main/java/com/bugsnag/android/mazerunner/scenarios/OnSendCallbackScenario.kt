@@ -2,7 +2,7 @@ package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
 import com.bugsnag.android.Configuration
-import com.bugsnag.android.TestOnSendCallback
+import com.bugsnag.android.OnSendCallback
 import java.lang.RuntimeException
 
 internal class OnSendCallbackScenario(
@@ -10,9 +10,14 @@ internal class OnSendCallbackScenario(
     context: Context,
     eventMetadata: String
 ) : Scenario(config, context, eventMetadata) {
-    override fun startBugsnag(startBugsnagOnly: Boolean) {
-        TestOnSendCallback().register(config)
-        super.startBugsnag(startBugsnagOnly)
+
+    init {
+        config.addOnSend(
+            OnSendCallback { event ->
+                event.addMetadata("mazerunner", "onSendCallback", "true")
+                true
+            }
+        )
     }
 
     override fun startScenario() {

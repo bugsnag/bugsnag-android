@@ -873,7 +873,18 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         }
     }
 
-    void addOnSend(@NonNull OnSendCallback onSend) {
+    /**
+     * Add a callback which will be invoked prior to an event being delivered
+     * to Bugsnag. The callback can be used to modify events or cancel
+     * delivering the event altogether by returning <code>false</code>. Note
+     * that the callback may be invoked in the current or a subsequent app
+     * launch depending on whether the app terminated prior to delivering the
+     * event.
+     *
+     * @param onSend the callback to add
+     * @see OnSendCallback
+     */
+    public void addOnSend(@NonNull OnSendCallback onSend) {
         if (onSend != null) {
             impl.addOnSend(onSend);
         } else {
@@ -881,7 +892,12 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware {
         }
     }
 
-    void removeOnSend(@NonNull OnSendCallback onSend) {
+    /**
+     * Remove a callback previously added with {@link Configuration#addOnSend(OnSendCallback)}
+     *
+     * @param onSend the callback to remove
+     */
+    public void removeOnSend(@NonNull OnSendCallback onSend) {
         if (onSend != null) {
             impl.removeOnSend(onSend);
         } else {
