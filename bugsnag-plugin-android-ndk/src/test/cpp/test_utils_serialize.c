@@ -2,6 +2,7 @@
 #include <utils/serializer.h>
 #include <stdlib.h>
 #include <utils/migrate.h>
+#include <featureflags.h>
 
 #define SERIALIZE_TEST_FILE "/data/data/com.bugsnag.android.ndk.test/cache/foo.crash"
 
@@ -454,6 +455,22 @@ TEST test_report_to_file(void) {
   PASS();
 }
 
+TEST test_report_with_feature_flags_to_file(void) {
+  bsg_environment *env = calloc(1, sizeof(bsg_environment));
+  env->report_header.version = 8;
+  env->report_header.big_endian = 1;
+  bugsnag_event *report = bsg_generate_event();
+  memcpy(&env->next_event, report, sizeof(bugsnag_event));
+  bsg_set_feature_flag(&env->next_event, "sample_group", "a");
+  bsg_set_feature_flag(&env->next_event, "demo_mode", NULL);
+  strcpy(env->report_header.os_build, "macOS Sierra");
+  strcpy(env->next_event_path, SERIALIZE_TEST_FILE);
+  ASSERT(bsg_serialize_event_to_file(env));
+  free(report);
+  free(env);
+  PASS();
+}
+
 TEST test_file_to_report(void) {
   bsg_environment *env = calloc(1, sizeof(bsg_environment));
   env->report_header.version = 5;
@@ -471,6 +488,28 @@ TEST test_file_to_report(void) {
   free(generated_report);
   free(env);
   free(report);
+  PASS();
+}
+
+TEST test_report_with_feature_flags_from_file(void) {
+  bsg_environment *env = calloc(1, sizeof(bsg_environment));
+  env->report_header.version = 8;
+  env->report_header.big_endian = 1;
+  bugsnag_event *report = bsg_generate_event();
+  memcpy(&env->next_event, report, sizeof(bugsnag_event));
+  bsg_set_feature_flag(&env->next_event, "sample_group", "a");
+  bsg_set_feature_flag(&env->next_event, "demo_mode", NULL);
+  strcpy(env->report_header.os_build, "macOS Sierra");
+  strcpy(env->next_event_path, "/data/data/com.bugsnag.android.ndk.test/cache/features.crash");
+  ASSERT(bsg_serialize_event_to_file(env));
+
+  bugsnag_event *event = bsg_deserialize_event_from_file("/data/data/com.bugsnag.android.ndk.test/cache/features.crash");
+
+  ASSERT_EQ(2, event->feature_flag_count);
+
+  free(report);
+  free(env);
+  free(event);
   PASS();
 }
 
@@ -912,6 +951,8 @@ SUITE(suite_json_serialization) {
 SUITE(suite_struct_to_file) {
   RUN_TEST(test_report_to_file);
   RUN_TEST(test_file_to_report);
+  RUN_TEST(test_report_with_feature_flags_to_file);
+  RUN_TEST(test_report_with_feature_flags_from_file);
 }
 
 SUITE(suite_struct_migration) {

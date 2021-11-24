@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include "event.h"
+#include "featureflags.h"
 #include "handlers/cpp_handler.h"
 #include "handlers/signal_handler.h"
 #include "metadata.h"
@@ -191,6 +192,10 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
     bsg_safe_release_string_utf_chars(env, _api_key, api_key);
   }
 
+  // clear the feature flag fields
+  bugsnag_env->next_event.feature_flag_count = 0;
+  bugsnag_env->next_event.feature_flags = NULL;
+
   bsg_global_env = bugsnag_env;
   bsg_update_next_run_info(bsg_global_env);
   BUGSNAG_LOG("Initialization complete!");
@@ -266,6 +271,7 @@ exit:
   if (event != NULL) {
     bsg_safe_release_byte_array_elements(env, jstage,
                                          (jbyte *)event->app.release_stage);
+    bsg_free_feature_flags(event);
     free(event);
   }
   if (payload != NULL) {
@@ -706,6 +712,58 @@ JNIEXPORT jlong JNICALL
 Java_com_bugsnag_android_ndk_NativeBridge_getUnwindStackFunction(JNIEnv *env,
                                                                  jobject thiz) {
   return (jlong)bsg_unwind_stack_default;
+}
+
+JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_addFeatureFlag(
+    JNIEnv *env, jobject thiz, jstring name_, jstring variant_) {
+
+  if (bsg_global_env == NULL) {
+    return;
+  }
+
+  char *name = (char *)bsg_safe_get_string_utf_chars(env, name_);
+  char *variant = (char *)bsg_safe_get_string_utf_chars(env, variant_);
+
+  if (name != NULL) {
+    bsg_request_env_write_lock();
+    bsg_set_feature_flag(&bsg_global_env->next_event, name, variant);
+    bsg_release_env_write_lock();
+  }
+
+  bsg_safe_release_string_utf_chars(env, name_, name);
+  bsg_safe_release_string_utf_chars(env, variant_, variant);
+}
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_ndk_NativeBridge_clearFeatureFlag(JNIEnv *env,
+                                                           jobject thiz,
+                                                           jstring name_) {
+
+  if (bsg_global_env == NULL) {
+    return;
+  }
+
+  char *name = (char *)bsg_safe_get_string_utf_chars(env, name_);
+
+  if (name != NULL) {
+    bsg_request_env_write_lock();
+    bsg_clear_feature_flag(&bsg_global_env->next_event, name);
+    bsg_release_env_write_lock();
+  }
+
+  bsg_safe_release_string_utf_chars(env, name_, name);
+}
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_ndk_NativeBridge_clearFeatureFlags(JNIEnv *env,
+                                                            jobject thiz) {
+  if (bsg_global_env == NULL) {
+    return;
+  }
+
+  bsg_request_env_write_lock();
+  bsg_free_feature_flags(&bsg_global_env->next_event);
+  bsg_release_env_write_lock();
 }
 
 #ifdef __cplusplus

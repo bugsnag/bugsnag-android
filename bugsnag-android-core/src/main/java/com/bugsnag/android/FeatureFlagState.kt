@@ -37,6 +37,14 @@ internal data class FeatureFlagState(
         }
     }
 
+    fun emitObservableEvent() {
+        val flags = toList()
+
+        flags.forEach { (name, variant) ->
+            updateState { StateEvent.AddFeatureFlag(name, variant) }
+        }
+    }
+
     fun toList(): List<FeatureFlag> = featureFlags.toList()
     fun copy() = FeatureFlagState(featureFlags.copy())
 }

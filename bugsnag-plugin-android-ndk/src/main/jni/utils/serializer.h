@@ -1,4 +1,5 @@
 #include "../bugsnag_ndk.h"
+#include "buffered_writer.h"
 #include "build.h"
 #include <fcntl.h>
 #include <parson/parson.h>
@@ -44,11 +45,15 @@ void bsg_serialize_error(bsg_error exc, JSON_Object *exception,
                          JSON_Array *stacktrace);
 void bsg_serialize_breadcrumbs(const bugsnag_event *event, JSON_Array *crumbs);
 void bsg_serialize_threads(const bugsnag_event *event, JSON_Array *threads);
+void bsg_serialize_feature_flags(const bugsnag_event *event,
+                                 JSON_Array *feature_flags);
 char *bsg_serialize_event_to_json_string(bugsnag_event *event);
 
 int bsg_calculate_total_crumbs(int old_count);
 int bsg_calculate_v1_start_index(int old_count);
 int bsg_calculate_v1_crumb_index(int crumb_pos, int first_index);
+
+bool bsg_write_feature_flags(bugsnag_event *event, bsg_buffered_writer *writer);
 
 #ifdef __cplusplus
 }

@@ -93,4 +93,32 @@ internal class FeatureFlagStateTest {
 
         assertNotNull(events.find { it is StateEvent.ClearFeatureFlags })
     }
+
+    @Test
+    fun emitObservableEvent() {
+        state.addFeatureFlag("sample_group", "4321")
+        state.addFeatureFlag("listing_view", "legacy")
+        state.addFeatureFlag("demo_mode")
+
+        // clear the events
+        events.clear()
+
+        state.emitObservableEvent()
+        assertEquals(3, events.size)
+        val addSampleGroup = events
+            .filterIsInstance<StateEvent.AddFeatureFlag>()
+            .find { it.name == "sample_group" }
+        assertEquals("4321", addSampleGroup?.variant)
+
+        val addListingView = events
+            .filterIsInstance<StateEvent.AddFeatureFlag>()
+            .find { it.name == "listing_view" }
+        assertEquals("legacy", addListingView?.variant)
+
+        val addDemoMode = events
+            .filterIsInstance<StateEvent.AddFeatureFlag>()
+            .find { it.name == "demo_mode" }
+        assertNotNull(addDemoMode)
+        assertNull(addDemoMode!!.variant)
+    }
 }

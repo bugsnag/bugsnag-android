@@ -1,4 +1,5 @@
 #include "serializer.h"
+#include "buffered_writer.h"
 #include "string.h"
 
 #include <event.h>
@@ -15,16 +16,22 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-bool bsg_event_write(bsg_report_header *header, bugsnag_event *event, int fd);
+
+bool bsg_event_write(struct bsg_buffered_writer *writer,
+                     bsg_report_header *header, bugsnag_event *event);
 
 bugsnag_event *bsg_event_read(int fd);
 bsg_report_header *bsg_report_header_read(int fd);
+bugsnag_event *bsg_map_v7_to_report(bugsnag_report_v7 *report_v7);
 bugsnag_event *bsg_map_v6_to_report(bugsnag_report_v6 *report_v6);
 bugsnag_event *bsg_map_v5_to_report(bugsnag_report_v5 *report_v5);
 bugsnag_event *bsg_map_v4_to_report(bugsnag_report_v4 *report_v4);
 bugsnag_event *bsg_map_v3_to_report(bugsnag_report_v3 *report_v3);
 bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2);
 bugsnag_event *bsg_map_v1_to_report(bugsnag_report_v1 *report_v1);
+
+void bsg_read_feature_flags(int fd, bsg_feature_flag **out_feature_flags,
+                            size_t *out_feature_flag_count);
 
 void migrate_app_v1(bugsnag_report_v2 *report_v2, bugsnag_report_v3 *event);
 void migrate_app_v2(bugsnag_report_v4 *report_v4, bugsnag_event *event);
@@ -54,12 +61,25 @@ bool bsg_serialize_last_run_info_to_file(bsg_environment *env) {
 }
 
 bool bsg_serialize_event_to_file(bsg_environment *env) {
-  int fd = open(env->next_event_path, O_WRONLY | O_CREAT, 0644);
-  if (fd == -1) {
+  bsg_buffered_writer writer;
+  if (!bsg_buffered_writer_open(&writer, env->next_event_path)) {
     return false;
   }
 
-  return bsg_event_write(&env->report_header, &env->next_event, fd);
+  if (!bsg_event_write(&writer, &env->report_header, &env->next_event)) {
+    goto fail;
+  }
+
+  if (!bsg_write_feature_flags(&env->next_event, &writer)) {
+    goto fail;
+  }
+
+  writer.dispose(&writer);
+  return true;
+
+fail:
+  writer.dispose(&writer);
+  return false;
 }
 
 bugsnag_event *bsg_deserialize_event_from_file(char *filepath) {
@@ -143,7 +163,52 @@ bugsnag_report_v6 *bsg_report_v6_read(int fd) {
   return event;
 }
 
-bugsnag_event *bsg_report_v7_read(int fd) {
+bugsnag_report_v7 *bsg_report_v7_read(int fd) {
+  size_t event_size = sizeof(bugsnag_report_v7);
+  bugsnag_report_v7 *event = calloc(1, event_size);
+
+  ssize_t len = read(fd, event, event_size);
+  if (len != event_size) {
+    free(event);
+    return NULL;
+  }
+  return event;
+}
+
+static char *read_string(int fd) {
+  ssize_t len;
+  uint32_t string_length;
+  len = read(fd, &string_length, sizeof(string_length));
+
+  if (len != sizeof(string_length)) {
+    return NULL;
+  }
+
+  // allocate enough space, zero filler, and with a trailing '\0' terminator
+  char *string_buffer = calloc(1, (string_length + 1));
+  if (!string_buffer) {
+    return NULL;
+  }
+
+  len = read(fd, string_buffer, string_length);
+  if (len != string_length) {
+    free(string_buffer);
+    return NULL;
+  }
+
+  return string_buffer;
+}
+
+int read_byte(int fd) {
+  char value;
+  if (read(fd, &value, 1) != 1) {
+    return -1;
+  }
+
+  return value;
+}
+
+bugsnag_event *bsg_report_v8_read(int fd) {
   size_t event_size = sizeof(bugsnag_event);
   bugsnag_event *event = calloc(1, event_size);
 
@@ -152,6 +217,10 @@ bugsnag_event *bsg_report_v7_read(int fd) {
     free(event);
     return NULL;
   }
+
+  // read the feature flags, if possible
+  bsg_read_feature_flags(fd, &event->feature_flags, &event->feature_flag_count);
+
   return event;
 }
 
@@ -194,7 +263,10 @@ bugsnag_event *bsg_event_read(int fd) {
     bugsnag_report_v6 *report_v6 = bsg_report_v6_read(fd);
     event = bsg_map_v6_to_report(report_v6);
   } else if (event_version == 7) {
-    event = bsg_report_v7_read(fd);
+    bugsnag_report_v7 *report_v7 = bsg_report_v7_read(fd);
+    event = bsg_map_v7_to_report(report_v7);
+  } else if (event_version == 8) {
+    event = bsg_report_v8_read(fd);
   }
   return event;
 }
@@ -208,6 +280,19 @@ bugsnag_event *bsg_map_v6_to_report(bugsnag_report_v6 *report_v6) {
   if (event != NULL) {
     memcpy(event, report_v6, sizeof(bugsnag_report_v6));
     free(report_v6);
+  }
+  return event;
+}
+
+bugsnag_event *bsg_map_v7_to_report(bugsnag_report_v7 *report_v7) {
+  if (report_v7 == NULL) {
+    return NULL;
+  }
+  bugsnag_event *event = calloc(1, sizeof(bugsnag_event));
+
+  if (event != NULL) {
+    memcpy(event, report_v7, sizeof(bugsnag_report_v7));
+    free(report_v7);
   }
   return event;
 }
@@ -577,13 +662,13 @@ bool bsg_report_header_write(bsg_report_header *header, int fd) {
   return len == sizeof(bsg_report_header);
 }
 
-bool bsg_event_write(bsg_report_header *header, bugsnag_event *event, int fd) {
-  if (!bsg_report_header_write(header, fd)) {
+bool bsg_event_write(struct bsg_buffered_writer *writer,
+                     bsg_report_header *header, bugsnag_event *event) {
+  if (!bsg_report_header_write(header, writer->fd)) {
     return false;
   }
 
-  ssize_t len = write(fd, event, sizeof(bugsnag_event));
-  return len == sizeof(bugsnag_event);
+  return writer->write(writer, event, sizeof(bugsnag_event));
 }
 
 const char *bsg_crumb_type_string(bugsnag_breadcrumb_type type) {
@@ -870,6 +955,26 @@ void bsg_serialize_threads(const bugsnag_event *event, JSON_Array *threads) {
   }
 }
 
+void bsg_serialize_feature_flags(const bugsnag_event *event,
+                                 JSON_Array *feature_flags) {
+  if (event->feature_flag_count <= 0) {
+    return;
+  }
+
+  for (int index = 0; index < event->feature_flag_count; index++) {
+    JSON_Value *feature_flag_val = json_value_init_object();
+    JSON_Object *feature_flag = json_value_get_object(feature_flag_val);
+    json_array_append_value(feature_flags, feature_flag_val);
+
+    const bsg_feature_flag *flag = &event->feature_flags[index];
+    json_object_set_string(feature_flag, "featureFlag", flag->name);
+
+    if (flag->variant) {
+      json_object_set_string(feature_flag, "variant", flag->variant);
+    }
+  }
+}
+
 char *bsg_serialize_event_to_json_string(bugsnag_event *event) {
   JSON_Value *event_val = json_value_init_object();
   JSON_Object *event_obj = json_value_get_object(event_val);
@@ -883,10 +988,13 @@ char *bsg_serialize_event_to_json_string(bugsnag_event *event) {
   JSON_Array *threads = json_value_get_array(threads_val);
   JSON_Value *stack_val = json_value_init_array();
   JSON_Array *stacktrace = json_value_get_array(stack_val);
+  JSON_Value *feature_flags_val = json_value_init_object();
+  JSON_Array *feature_flags = json_value_get_array(feature_flags_val);
   json_object_set_value(event_obj, "exceptions", exceptions_val);
   json_object_set_value(event_obj, "breadcrumbs", crumbs_val);
   json_object_set_value(event_obj, "threads", threads_val);
   json_object_set_value(exception, "stacktrace", stack_val);
+  json_object_set_value(event_obj, "featureFlags", feature_flags_val);
   json_array_append_value(exceptions, ex_val);
   char *serialized_string = NULL;
   {
@@ -903,9 +1011,108 @@ char *bsg_serialize_event_to_json_string(bugsnag_event *event) {
     bsg_serialize_error(event->error, exception, stacktrace);
     bsg_serialize_breadcrumbs(event, crumbs);
     bsg_serialize_threads(event, threads);
+    bsg_serialize_feature_flags(event, feature_flags);
 
     serialized_string = json_serialize_to_string(event_val);
     json_value_free(event_val);
   }
   return serialized_string;
+}
+
+static bool write_feature_flag(bsg_buffered_writer *writer,
+                               bsg_feature_flag *flag) {
+  if (!writer->write_string(writer, flag->name)) {
+    return false;
+  }
+
+  if (flag->variant) {
+    if (!writer->write_byte(writer, 1)) {
+      return false;
+    }
+
+    if (!writer->write_string(writer, flag->variant)) {
+      return false;
+    }
+  } else {
+    if (!writer->write_byte(writer, 0)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+bool bsg_write_feature_flags(bugsnag_event *event,
+                             bsg_buffered_writer *writer) {
+  const uint32_t feature_flag_count = event->feature_flag_count;
+  if (!writer->write(writer, &feature_flag_count, sizeof(feature_flag_count))) {
+    return false;
+  }
+
+  for (uint32_t index = 0; index < feature_flag_count; index++) {
+    if (!write_feature_flag(writer, &event->feature_flags[index])) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+void bsg_read_feature_flags(int fd, bsg_feature_flag **out_feature_flags,
+                            size_t *out_feature_flag_count) {
+
+  ssize_t len;
+  uint32_t feature_flag_count = 0;
+  len = read(fd, &feature_flag_count, sizeof(feature_flag_count));
+  if (len != sizeof(feature_flag_count)) {
+    goto feature_flags_error;
+  }
+
+  bsg_feature_flag *flags =
+      calloc(feature_flag_count, sizeof(bsg_feature_flag));
+  for (uint32_t index = 0; index < feature_flag_count; index++) {
+    char *name = read_string(fd);
+    if (!name) {
+      goto feature_flags_error;
+    }
+
+    int variant_exists = read_byte(fd);
+    if (variant_exists < 0) {
+      goto feature_flags_error;
+    }
+
+    char *variant = NULL;
+    if (variant_exists) {
+      variant = read_string(fd);
+      if (!variant) {
+        goto feature_flags_error;
+      }
+    }
+
+    flags[index].name = name;
+    flags[index].variant = variant;
+  }
+
+  *out_feature_flag_count = feature_flag_count;
+  *out_feature_flags = flags;
+
+  return;
+
+feature_flags_error:
+  // something wrong - we release all allocated memory
+  for (uint32_t index = 0; index < feature_flag_count; index++) {
+    if (flags[index].name) {
+      free(flags[index].name);
+    }
+
+    if (flags[index].variant) {
+      free(flags[index].variant);
+    }
+  }
+
+  free(flags);
+
+  // clear the out fields to indicate no feature-flags are availables
+  *out_feature_flag_count = 0;
+  *out_feature_flags = NULL;
 }
