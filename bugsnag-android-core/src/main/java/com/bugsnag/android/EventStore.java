@@ -216,7 +216,8 @@ class EventStore extends FileStore {
 
         Event processedEvent = eventSource.getEvent();
         if (processedEvent != null) {
-            return new EventPayload(apiKey, eventSource.getEvent(), null, notifier, config);
+            apiKey = processedEvent.getApiKey();
+            return new EventPayload(apiKey, processedEvent, null, notifier, config);
         } else {
             return new EventPayload(apiKey, null, eventFile, notifier, config);
         }

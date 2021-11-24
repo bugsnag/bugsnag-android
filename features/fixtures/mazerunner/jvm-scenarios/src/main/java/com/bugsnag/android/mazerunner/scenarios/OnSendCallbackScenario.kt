@@ -15,6 +15,7 @@ internal class OnSendCallbackScenario(
         config.addOnSend(
             OnSendCallback { event ->
                 event.addMetadata("mazerunner", "onSendCallback", "true")
+                event.apiKey = "99999999999999909999999999999999"
                 true
             }
         )
