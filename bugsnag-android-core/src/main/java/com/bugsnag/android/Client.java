@@ -20,6 +20,7 @@ import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -740,9 +741,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                         @Nullable OnErrorCallback onError) {
         // set the redacted keys on the event as this
         // will not have been set for RN/Unity events
-        Set<String> redactedKeys = metadataState.getMetadata().getRedactedKeys();
-        Metadata eventMetadata = event.getImpl().getMetadata();
-        eventMetadata.setRedactedKeys(redactedKeys);
+        Collection<String> redactedKeys = metadataState.getMetadata().getRedactedKeys();
+        event.setRedactedKeys(redactedKeys);
 
         // get session for event
         Session currentSession = sessionTracker.getCurrentSession();

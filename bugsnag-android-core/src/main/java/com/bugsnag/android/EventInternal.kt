@@ -13,6 +13,9 @@ internal class EventInternal @JvmOverloads internal constructor(
     val metadata: Metadata = data.copy()
     private val discardClasses: Set<String> = config.discardClasses.toSet()
     private val projectPackages = config.projectPackages
+    private val jsonStreamer: ObjectJsonStreamer = ObjectJsonStreamer().apply {
+        redactedKeys = config.redactedKeys.toSet()
+    }
 
     @JvmField
     internal var session: Session? = null
@@ -47,6 +50,13 @@ internal class EventInternal @JvmOverloads internal constructor(
     var groupingHash: String? = null
     var context: String? = null
 
+    var redactedKeys: Collection<String>
+        get() = jsonStreamer.redactedKeys
+        set(value) {
+            jsonStreamer.redactedKeys = value.toSet()
+            metadata.redactedKeys = value.toSet()
+        }
+
     /**
      * @return user information associated with this Event
      */
@@ -70,7 +80,8 @@ internal class EventInternal @JvmOverloads internal constructor(
     }
 
     @Throws(IOException::class)
-    override fun toStream(writer: JsonStream) {
+    override fun toStream(parentWriter: JsonStream) {
+        val writer = JsonStream(parentWriter, jsonStreamer)
         // Write error basics
         writer.beginObject()
         writer.name("context").value(context)
