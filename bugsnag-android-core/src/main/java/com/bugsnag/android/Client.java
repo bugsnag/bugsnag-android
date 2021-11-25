@@ -771,7 +771,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
         // Run on error tasks, don't notify if any return false
         if (!callbackState.runOnErrorTasks(event, logger)
-                || (onError != null && !onError.onError(event))) {
+                || (onError != null
+                && !onError.onError(event))) {
             logger.d("Skipping notification - onError task returned false");
             return;
         }
@@ -993,8 +994,15 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
     private void warnIfNotAppContext(Context androidContext) {
         if (!(androidContext instanceof Application)) {
-            logger.w("Warning - Non-Application context detected! Please ensure that you are "
-                + "initializing Bugsnag from a custom Application class.");
+            logger.w("You should initialize Bugsnag from the onCreate() callback of your "
+                    + "Application subclass, as this guarantees errors are captured as early "
+                    + "as possible. "
+                    + "If a custom Application subclass is not possible in your app then you "
+                    + "should suppress this warning by passing the Application context instead: "
+                    + "Bugsnag.start(context.getApplicationContext()). "
+                    + "For further info see: "
+                    + "https://docs.bugsnag.com/platforms/android/#basic-configuration");
+
         }
     }
 
