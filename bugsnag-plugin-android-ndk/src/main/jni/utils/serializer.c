@@ -830,6 +830,54 @@ void bsg_serialize_stackframe(bugsnag_stackframe *stackframe, bool is_pc,
   json_array_append_value(stacktrace, frame_val);
 }
 
+#if defined(__i386__) || defined(__arm__)
+#define TIMESTAMP_T long long
+#define TIMESTAMP_DECODE atoll
+#define TIMESTAMP_MILLIS_FORMAT "%s.%03lldZ"
+#elif defined(__x86_64__) || defined(__aarch64__)
+#define TIMESTAMP_T long
+#define TIMESTAMP_DECODE atol
+#define TIMESTAMP_MILLIS_FORMAT "%s.%03ldZ"
+#endif
+/**
+ * Convert a string representing the number of milliseconds since the epoch
+ * into the date format "yyyy-MM-ddTHH:mm:ss.SSSZ". Safe for all dates earlier
+ * than 2038.
+ *
+ * @param source the timestamp string, should be something like: 1636710533109
+ * @param dest   a buffer large enough to hold the 24 characters required in the
+ *               date format
+ *
+ * @return true if the conversion succeeded
+ */
+static bool timestamp_to_iso8601_millis(const char *source, char *dest) {
+  TIMESTAMP_T timestamp = TIMESTAMP_DECODE(source);
+  if (timestamp) {
+    time_t seconds = timestamp / 1000;
+    TIMESTAMP_T milliseconds = timestamp - (seconds * 1000LL);
+    if (milliseconds > 1000) { // round to nearest second
+      seconds++;
+      milliseconds -= 1000;
+    }
+    struct tm timer;
+    // gmtime(3) can fail if "the year does not fit into an integer". Hopefully
+    // nobody is running this code by then.
+    if (gmtime_r(&seconds, &timer)) {
+      char buffer[26];
+      strftime(buffer, 26, "%Y-%m-%dT%H:%M:%S", &timer);
+      sprintf(dest, TIMESTAMP_MILLIS_FORMAT, buffer, milliseconds);
+      return true;
+    } else {
+      BUGSNAG_LOG("Hello, people of the far future! Please use your time "
+                  "machine to file a bug in the year 2021.");
+    }
+  }
+  return false;
+}
+#undef TIMESTAMP_T
+#undef TIMESTAMP_DECODE
+#undef TIMESTAMP_MILLIS_FORMAT
+
 void bsg_serialize_breadcrumbs(const bugsnag_event *event, JSON_Array *crumbs) {
   if (event->crumb_count > 0) {
     int current_index = event->crumb_first_index;
@@ -840,7 +888,19 @@ void bsg_serialize_breadcrumbs(const bugsnag_event *event, JSON_Array *crumbs) {
 
       bugsnag_breadcrumb breadcrumb = event->breadcrumbs[current_index];
       json_object_set_string(crumb, "name", breadcrumb.name);
-      json_object_set_string(crumb, "timestamp", breadcrumb.timestamp);
+      // check whether to decode milliseconds into ISO8601 date format
+      if (breadcrumb.timestamp[0] == 't') {
+        char *unix_timestamp_str = breadcrumb.timestamp + 1;
+        char buffer[32];
+        if (timestamp_to_iso8601_millis(unix_timestamp_str, buffer)) {
+          json_object_set_string(crumb, "timestamp", buffer);
+        } else {
+          // at least we tried.
+          json_object_set_string(crumb, "timestamp", unix_timestamp_str);
+        }
+      } else {
+        json_object_set_string(crumb, "timestamp", breadcrumb.timestamp);
+      }
       json_object_set_string(crumb, "type",
                              bsg_crumb_type_string(breadcrumb.type));
       bsg_serialize_breadcrumb_metadata(breadcrumb.metadata, crumb);
