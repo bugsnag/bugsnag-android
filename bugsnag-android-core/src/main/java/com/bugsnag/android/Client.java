@@ -184,7 +184,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         eventStore = eventStorageModule.getEventStore();
 
         deliveryDelegate = new DeliveryDelegate(logger, eventStore,
-                immutableConfig, breadcrumbState, notifier, bgTaskService);
+                immutableConfig, notifier, bgTaskService);
 
         // Install a default exception handler with this client
         exceptionHandler = new ExceptionHandler(this, logger);
@@ -759,6 +759,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             return;
         }
 
+        // leave an error breadcrumb of this event - for the next event
+        leaveErrorBreadcrumb(event);
+
         deliveryDelegate.deliver(event);
     }
 
@@ -919,6 +922,24 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                              @NonNull Map<String, Object> metadata) {
         if (!immutableConfig.shouldDiscardBreadcrumb(type)) {
             breadcrumbState.add(new Breadcrumb(message, type, metadata, new Date(), logger));
+        }
+    }
+
+    private void leaveErrorBreadcrumb(@NonNull Event event) {
+        // Add a breadcrumb for this event occurring
+        List<Error> errors = event.getErrors();
+
+        if (errors.size() > 0) {
+            String errorClass = errors.get(0).getErrorClass();
+            String message = errors.get(0).getErrorMessage();
+
+            Map<String, Object> data = new HashMap<>();
+            data.put("errorClass", errorClass);
+            data.put("message", message);
+            data.put("unhandled", String.valueOf(event.isUnhandled()));
+            data.put("severity", event.getSeverity().toString());
+            breadcrumbState.add(new Breadcrumb(errorClass,
+                    BreadcrumbType.ERROR, data, new Date(), logger));
         }
     }
 
