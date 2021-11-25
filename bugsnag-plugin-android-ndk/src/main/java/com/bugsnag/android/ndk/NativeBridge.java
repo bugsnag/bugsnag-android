@@ -249,7 +249,7 @@ public class NativeBridge implements Observer {
                 List<Object> values = (List<Object>)arg;
                 if (values.size() > 0 && values.get(0) instanceof Configuration) {
                     Configuration config = (Configuration)values.get(0);
-                    String reportPath = reportDirectory + UUID.randomUUID().toString() + ".crash";
+                    String reportPath = reportDirectory + "/" + UUID.randomUUID().toString() + ".crash";
                     install(reportPath, config.getDetectNdkCrashes(), Build.VERSION.SDK_INT,
                         is32bit());
                     installed.set(true);
