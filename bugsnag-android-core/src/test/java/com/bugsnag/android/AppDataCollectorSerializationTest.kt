@@ -31,7 +31,7 @@ internal class AppDataCollectorSerializationTest {
             val memoryTrimState = MemoryTrimState()
 
             // populate summary fields
-            config.appType = "ReactNative"
+            config.appType = "React Native"
             config.releaseStage = "test-stage"
             config.appVersion = "1.2.3"
             config.versionCode = 55

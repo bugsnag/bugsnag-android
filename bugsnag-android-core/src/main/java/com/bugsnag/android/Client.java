@@ -771,7 +771,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
         // Run on error tasks, don't notify if any return false
         if (!callbackState.runOnErrorTasks(event, logger)
-                || (onError != null && !onError.onError(event))) {
+                || (onError != null
+                && !onError.onError(event))) {
             logger.d("Skipping notification - onError task returned false");
             return;
         }

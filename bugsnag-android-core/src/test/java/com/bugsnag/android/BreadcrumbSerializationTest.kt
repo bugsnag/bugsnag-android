@@ -17,7 +17,7 @@ internal class BreadcrumbSerializationTest {
             val timestamp = Date(0)
             return generateSerializationTestCases(
                 "breadcrumb",
-                Breadcrumb("helloworld", BreadcrumbType.MANUAL, mutableMapOf(), timestamp, NoopLogger),
+                Breadcrumb("hello world", BreadcrumbType.MANUAL, mutableMapOf(), timestamp, NoopLogger),
                 Breadcrumb(
                     "metadata",
                     BreadcrumbType.PROCESS,
