@@ -29,8 +29,8 @@ public class SessionStoreTest {
     @Before
     public void setUp() throws Exception {
         Configuration config = new Configuration("api-key");
-        Context context = ApplicationProvider.getApplicationContext();
-        SessionStore sessionStore = new SessionStore(config, context, null);
+        config.setPersistenceDirectory(ApplicationProvider.getApplicationContext().getCacheDir());
+        SessionStore sessionStore = new SessionStore(config, null);
         assertNotNull(sessionStore.storeDirectory);
         storageDir = new File(sessionStore.storeDirectory);
         FileUtils.clearFilesInDir(storageDir);

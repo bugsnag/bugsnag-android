@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collection;
@@ -67,6 +68,7 @@ public class Configuration extends Observable implements Observer {
 
     private Delivery delivery;
     private int maxBreadcrumbs = DEFAULT_MAX_SIZE;
+    private File persistenceDirectory;
 
     /**
      * Construct a new Bugsnag configuration object
@@ -550,6 +552,37 @@ public class Configuration extends Observable implements Observer {
      */
     public void setPersistUserBetweenSessions(boolean persistUserBetweenSessions) {
         this.persistUserBetweenSessions = persistUserBetweenSessions;
+    }
+
+    /**
+     * Sets the directory where event and session JSON payloads should be persisted if a network
+     * request is not successful. If you use Bugsnag in multiple processes, then a unique
+     * persistenceDirectory <b>must</b> be configured for each process to prevent duplicate
+     * requests being made by each instantiation of Bugsnag.
+     * <p/>
+     * By default, bugsnag sets the persistenceDirectory to {@link Context#getCacheDir()}.
+     * <p/>
+     * If the persistenceDirectory is changed between application launches, no attempt will be made
+     * to deliver events or sessions cached in the previous location.
+     */
+    @Nullable
+    public File getPersistenceDirectory() {
+        return persistenceDirectory;
+    }
+
+    /**
+     * Sets the directory where event and session JSON payloads should be persisted if a network
+     * request is not successful. If you use Bugsnag in multiple processes, then a unique
+     * persistenceDirectory <b>must</b> be configured for each process to prevent duplicate
+     * requests being made by each instantiation of Bugsnag.
+     * <p/>
+     * By default, bugsnag sets the persistenceDirectory to {@link Context#getCacheDir()}.
+     * <p/>
+     * If the persistenceDirectory is changed between application launches, no attempt will be made
+     * to deliver events or sessions cached in the previous location.
+     */
+    public void setPersistenceDirectory(@Nullable File directory) {
+        persistenceDirectory = directory;
     }
 
     /**

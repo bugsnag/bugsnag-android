@@ -46,8 +46,7 @@ abstract class FileStore<T extends JsonStream.Streamable> {
     final Collection<File> queuedFiles = new ConcurrentSkipListSet<>();
     protected final ErrorStore.Delegate delegate;
 
-
-    FileStore(@NonNull Configuration config, @NonNull Context appContext, String folder,
+    FileStore(@NonNull Configuration config, File storageDir, String folder,
               int maxStoreCount, Comparator<File> comparator, Delegate delegate) {
         this.config = config;
         this.maxStoreCount = maxStoreCount;
@@ -56,9 +55,8 @@ abstract class FileStore<T extends JsonStream.Streamable> {
 
         String path;
         try {
-            path = appContext.getCacheDir().getAbsolutePath() + folder;
-
-            File outFile = new File(path);
+            File outFile = new File(storageDir, folder);
+            path = outFile.getAbsolutePath();
             outFile.mkdirs();
             if (!outFile.exists()) {
                 Logger.warn("Could not prepare file storage directory");

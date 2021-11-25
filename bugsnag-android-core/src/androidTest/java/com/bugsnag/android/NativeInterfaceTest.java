@@ -1,13 +1,18 @@
 package com.bugsnag.android;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+
+import androidx.test.core.app.ApplicationProvider;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.util.Map;
 
 public class NativeInterfaceTest {
@@ -63,5 +68,14 @@ public class NativeInterfaceTest {
         assertSame("0.1", app.get("buildno"));
         assertSame("-print 1", app.get("args"));
         assertNull(metadata.get("info"));
+    }
+
+    @Test
+    public void getPersistenceDir() {
+        Client client = BugsnagTestUtils.generateClient();
+        NativeInterface.setClient(client);
+        File cacheDir = ApplicationProvider.getApplicationContext().getCacheDir();
+        String observed = NativeInterface.getNativeReportPath();
+        assertEquals(cacheDir.getAbsolutePath() + "/bugsnag-native", observed);
     }
 }

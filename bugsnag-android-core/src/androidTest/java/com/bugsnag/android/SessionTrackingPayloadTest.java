@@ -44,7 +44,9 @@ public class SessionTrackingPayloadTest {
     public void setUp() throws Exception {
         Context context = ApplicationProvider.getApplicationContext();
         Configuration config = new Configuration("api-key");
-        sessionStore = new SessionStore(config, context, null);
+        File cacheDir = ApplicationProvider.getApplicationContext().getCacheDir();
+        config.setPersistenceDirectory(cacheDir);
+        sessionStore = new SessionStore(config, null);
 
         Assert.assertNotNull(sessionStore.storeDirectory);
         storageDir = new File(sessionStore.storeDirectory);
