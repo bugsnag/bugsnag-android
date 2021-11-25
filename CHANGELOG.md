@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+## Bug fixes
+
+* `redactedKeys` now correctly apply to metadata on Event breadcrumbs
+  [#1526](https://github.com/bugsnag/bugsnag-android/pull/1526)
+
 ## 5.15.0 (2021-11-04)
 
 ### Bug fixes
