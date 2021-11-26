@@ -180,12 +180,13 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         registerLifecycleCallbacks();
 
         EventStorageModule eventStorageModule = new EventStorageModule(contextModule, configModule,
-                dataCollectionModule, bgTaskService, trackerModule, systemServiceModule, notifier);
+                dataCollectionModule, bgTaskService, trackerModule, systemServiceModule, notifier,
+                callbackState);
         eventStorageModule.resolveDependencies(bgTaskService, TaskType.IO);
         eventStore = eventStorageModule.getEventStore();
 
         deliveryDelegate = new DeliveryDelegate(logger, eventStore,
-                immutableConfig, notifier, bgTaskService);
+                immutableConfig, callbackState, notifier, bgTaskService);
 
         // Install a default exception handler with this client
         exceptionHandler = new ExceptionHandler(this, logger);
@@ -754,7 +755,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
 
         // Run on error tasks, don't notify if any return false
         if (!callbackState.runOnErrorTasks(event, logger)
-                || (onError != null && !onError.onError(event))) {
+                || (onError != null
+                && !onError.onError(event))) {
             logger.d("Skipping notification - onError task returned false");
             return;
         }

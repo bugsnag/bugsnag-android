@@ -35,6 +35,15 @@ internal class BreadcrumbSerializationTest {
     @Parameter
     lateinit var testCase: Pair<Breadcrumb, String>
 
+    private val eventMapper = BugsnagEventMapper(NoopLogger)
+
     @Test
     fun testJsonSerialisation() = verifyJsonMatches(testCase.first, testCase.second)
+
+    @Test
+    fun testJsonDeserialization() {
+        verifyJsonParser(testCase.first, testCase.second) {
+            eventMapper.convertBreadcrumbInternal(it)
+        }
+    }
 }
