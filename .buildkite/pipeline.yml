@@ -15,13 +15,6 @@ steps:
             - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
             - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
 
-  - label: ':docker: Build Android maze runner image'
-    key: android-maze-runner
-    timeout_in_minutes: 20
-    plugins:
-      - docker-compose#v2.6.0:
-          build: android-maze-runner
-
   - label: ':docker: Build Android jvm test image'
     key: android-jvm
     depends_on: android-base
@@ -132,8 +125,7 @@ steps:
 
   - label: ':android: Android 9 end-to-end tests'
     depends_on:
-      - android-maze-runner
-      - android-base
+      - build-apk
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -165,8 +157,7 @@ steps:
   - label: ':android: Android 5 end-to-end tests'
     depends_on:
       - block-step
-      - android-maze-runner
-      - android-base
+      - build-apk
     skip: Temporarily disabled due to flakiness with BrowserStack tunneling
     timeout_in_minutes: 60
     plugins:
@@ -183,8 +174,7 @@ steps:
   - label: ':android: Android 6 end-to-end tests'
     depends_on:
       - block-step
-      - android-maze-runner
-      - android-base
+      - build-apk
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -200,8 +190,7 @@ steps:
   - label: ':android: Android 7 end-to-end tests'
     depends_on:
       - block-step
-      - android-maze-runner
-      - android-base
+      - build-apk
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -217,8 +206,7 @@ steps:
   - label: ':android: Android 8 end-to-end tests'
     depends_on:
       - block-step
-      - android-maze-runner
-      - android-base
+      - build-apk
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:

@@ -45,9 +45,7 @@ services:
       dockerfile: dockerfiles/Dockerfile.emulator
 
   android-maze-runner:
-    build:
-      context: .
-      dockerfile: dockerfiles/Dockerfile.android
+    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner-releases:latest-v2-cli
     environment:
       VERBOSE:
       DEBUG:
@@ -59,6 +57,7 @@ services:
     command: --tags ~@ignore
     volumes:
       - ./build:/app/build
+      - ./features/:/app/features/
       - ./maze-output:/app/maze-output
 
 networks:
