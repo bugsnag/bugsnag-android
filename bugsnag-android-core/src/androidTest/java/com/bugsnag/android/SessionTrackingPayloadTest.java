@@ -42,7 +42,6 @@ public class SessionTrackingPayloadTest {
      */
     @Before
     public void setUp() throws Exception {
-        Context context = ApplicationProvider.getApplicationContext();
         Configuration config = new Configuration("api-key");
         File cacheDir = ApplicationProvider.getApplicationContext().getCacheDir();
         config.setPersistenceDirectory(cacheDir);
@@ -53,6 +52,7 @@ public class SessionTrackingPayloadTest {
         FileUtils.clearFilesInDir(storageDir);
         session = generateSession();
         client = generateClient();
+        Context context = ApplicationProvider.getApplicationContext();
         payload = generatePayloadFromSession(context, session);
         rootNode = streamableToJson(payload);
     }

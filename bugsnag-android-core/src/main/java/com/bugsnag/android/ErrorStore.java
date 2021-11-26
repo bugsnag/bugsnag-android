@@ -48,7 +48,12 @@ class ErrorStore extends FileStore<Error> {
     };
 
     ErrorStore(@NonNull Configuration config, Delegate delegate) {
-        super(config, config.getPersistenceDirectory(), "bugsnag-errors", 128, ERROR_REPORT_COMPARATOR, delegate);
+        super(config,
+            config.getPersistenceDirectory(),
+            "bugsnag-errors",
+            128,
+            ERROR_REPORT_COMPARATOR,
+            delegate);
     }
 
     void flushOnLaunch() {
