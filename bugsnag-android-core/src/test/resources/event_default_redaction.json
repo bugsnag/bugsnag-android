@@ -47,7 +47,7 @@
       "name": "Whoops",
       "type": "log",
       "metaData": {
-        "changeme": "[REDACTED]"
+        "changeme": "whoops"
       }
     }
   ],

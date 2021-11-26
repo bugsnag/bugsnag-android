@@ -13,17 +13,35 @@ internal class EventRedactionTest {
     fun testEventRedaction() {
         val event = Event(
             null,
+            generateImmutableConfig()
+                .copy(redactedKeys = setOf("password", "changeme")),
+            SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION),
+            NoopLogger
+        )
+
+        testEventRedaction(event, "event_redaction.json")
+    }
+
+    @Test
+    fun testDefaultEventRedaction() {
+        val event = Event(
+            null,
             generateImmutableConfig(),
             SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION),
             NoopLogger
         )
+
+        testEventRedaction(event, "event_default_redaction.json")
+    }
+
+    private fun testEventRedaction(event: Event, jsonFixture: String) {
         event.app = generateAppWithState()
         event.device = generateDeviceWithState()
 
         event.addMetadata("app", "password", "foo")
         event.addMetadata("device", "password", "bar")
         event.impl.metadata.addMetadata("baz", "password", "hunter2")
-        val metadata = mutableMapOf<String, Any?>(Pair("password", "whoops"))
+        val metadata = mutableMapOf<String, Any?>(Pair("changeme", "whoops"))
         event.breadcrumbs = listOf(Breadcrumb("Whoops", BreadcrumbType.LOG, metadata, Date(0), NoopLogger))
         event.threads.clear()
         event.device.cpuAbi = emptyArray()
@@ -31,6 +49,6 @@ internal class EventRedactionTest {
         val writer = StringWriter()
         val stream = JsonStream(writer)
         event.toStream(stream)
-        validateJson("event_redaction.json", writer.toString())
+        validateJson(jsonFixture, writer.toString())
     }
 }

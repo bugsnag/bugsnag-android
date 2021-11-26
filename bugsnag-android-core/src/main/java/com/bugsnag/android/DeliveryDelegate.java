@@ -18,7 +18,6 @@ class DeliveryDelegate extends BaseObservable {
     final Logger logger;
     private final EventStore eventStore;
     private final ImmutableConfig immutableConfig;
-    final BreadcrumbState breadcrumbState;
     private final Notifier notifier;
     private final CallbackState callbackState;
     final BackgroundTaskService backgroundTaskService;
@@ -26,14 +25,12 @@ class DeliveryDelegate extends BaseObservable {
     DeliveryDelegate(Logger logger,
                      EventStore eventStore,
                      ImmutableConfig immutableConfig,
-                     BreadcrumbState breadcrumbState,
                      CallbackState callbackState,
                      Notifier notifier,
                      BackgroundTaskService backgroundTaskService) {
         this.logger = logger;
         this.eventStore = eventStore;
         this.immutableConfig = immutableConfig;
-        this.breadcrumbState = breadcrumbState;
         this.callbackState = callbackState;
         this.notifier = notifier;
         this.backgroundTaskService = backgroundTaskService;
@@ -95,13 +92,11 @@ class DeliveryDelegate extends BaseObservable {
         switch (deliveryStatus) {
             case DELIVERED:
                 logger.i("Sent 1 new event to Bugsnag");
-                leaveErrorBreadcrumb(event);
                 break;
             case UNDELIVERED:
                 logger.w("Could not send event(s) to Bugsnag,"
                         + " saving to disk to send later");
                 cacheEvent(event, false);
-                leaveErrorBreadcrumb(event);
                 break;
             case FAILURE:
                 logger.w("Problem sending event to Bugsnag");
@@ -116,24 +111,6 @@ class DeliveryDelegate extends BaseObservable {
         eventStore.write(event);
         if (attemptSend) {
             eventStore.flushAsync();
-        }
-    }
-
-    private void leaveErrorBreadcrumb(@NonNull Event event) {
-        // Add a breadcrumb for this event occurring
-        List<Error> errors = event.getErrors();
-
-        if (errors.size() > 0) {
-            String errorClass = errors.get(0).getErrorClass();
-            String message = errors.get(0).getErrorMessage();
-
-            Map<String, Object> data = new HashMap<>();
-            data.put("errorClass", errorClass);
-            data.put("message", message);
-            data.put("unhandled", String.valueOf(event.isUnhandled()));
-            data.put("severity", event.getSeverity().toString());
-            breadcrumbState.add(new Breadcrumb(errorClass,
-                    BreadcrumbType.ERROR, data, new Date(), logger));
         }
     }
 }

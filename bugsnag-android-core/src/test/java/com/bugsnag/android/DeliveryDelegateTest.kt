@@ -21,7 +21,6 @@ internal class DeliveryDelegateTest {
     private val notifier = Notifier()
     val config = generateImmutableConfig()
     val callbackState = CallbackState()
-    val breadcrumbState = BreadcrumbState(50, callbackState, NoopLogger)
     private val logger = InterceptingLogger()
     lateinit var deliveryDelegate: DeliveryDelegate
     val handledState = SeverityReason.newInstance(
@@ -36,7 +35,6 @@ internal class DeliveryDelegateTest {
                 logger,
                 eventStore,
                 config,
-                breadcrumbState,
                 callbackState,
                 notifier,
                 BackgroundTaskService()
@@ -112,14 +110,6 @@ internal class DeliveryDelegateTest {
         val status = deliveryDelegate.deliverPayloadInternal(eventPayload, event)
         assertEquals(DeliveryStatus.DELIVERED, status)
         assertEquals("Sent 1 new event to Bugsnag", logger.msg)
-
-        val breadcrumb = requireNotNull(breadcrumbState.copy().first())
-        assertEquals(BreadcrumbType.ERROR, breadcrumb.type)
-        assertEquals("java.lang.RuntimeException", breadcrumb.message)
-        assertEquals("java.lang.RuntimeException", breadcrumb.metadata!!["errorClass"])
-        assertEquals("Whoops!", breadcrumb.metadata!!["message"])
-        assertEquals("true", breadcrumb.metadata!!["unhandled"])
-        assertEquals("ERROR", breadcrumb.metadata!!["severity"])
     }
 
     private class InterceptingLogger : Logger {

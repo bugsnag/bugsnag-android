@@ -24,7 +24,8 @@ internal class EventInternal : JsonStream.Streamable, MetadataAware, UserAware {
         config.projectPackages,
         severityReason,
         ThreadState(originalError, severityReason.unhandled, config).threads,
-        User()
+        User(),
+        config.redactedKeys.toSet()
     )
 
     internal constructor(
@@ -37,7 +38,8 @@ internal class EventInternal : JsonStream.Streamable, MetadataAware, UserAware {
         projectPackages: Collection<String> = setOf(),
         severityReason: SeverityReason = SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION),
         threads: MutableList<Thread> = mutableListOf(),
-        user: User = User()
+        user: User = User(),
+        redactionKeys: Set<String>? = null
     ) {
         this.apiKey = apiKey
         this.breadcrumbs = breadcrumbs
@@ -49,6 +51,10 @@ internal class EventInternal : JsonStream.Streamable, MetadataAware, UserAware {
         this.severityReason = severityReason
         this.threads = threads
         this.userImpl = user
+
+        redactionKeys?.let {
+            this.redactedKeys = it
+        }
     }
 
     val originalError: Throwable?
@@ -57,6 +63,8 @@ internal class EventInternal : JsonStream.Streamable, MetadataAware, UserAware {
     val metadata: Metadata
     private val discardClasses: Set<String>
     internal var projectPackages: Collection<String>
+
+    private val jsonStreamer: ObjectJsonStreamer = ObjectJsonStreamer()
 
     @JvmField
     internal var session: Session? = null
@@ -81,6 +89,13 @@ internal class EventInternal : JsonStream.Streamable, MetadataAware, UserAware {
     var threads: MutableList<Thread>
     var groupingHash: String? = null
     var context: String? = null
+
+    var redactedKeys: Collection<String>
+        get() = jsonStreamer.redactedKeys
+        set(value) {
+            jsonStreamer.redactedKeys = value.toSet()
+            metadata.redactedKeys = value.toSet()
+        }
 
     /**
      * @return user information associated with this Event
@@ -109,7 +124,8 @@ internal class EventInternal : JsonStream.Streamable, MetadataAware, UserAware {
     }
 
     @Throws(IOException::class)
-    override fun toStream(writer: JsonStream) {
+    override fun toStream(parentWriter: JsonStream) {
+        val writer = JsonStream(parentWriter, jsonStreamer)
         // Write error basics
         writer.beginObject()
         writer.name("context").value(context)
