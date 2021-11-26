@@ -33,23 +33,6 @@ steps:
             - android-jvm:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
             - android-jvm:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
 
-  - label: ':docker: Build Android instrumentation image'
-    timeout_in_minutes: 40
-    key: android-instrumentation-tests
-    depends_on: android-base
-    plugins:
-      - docker-compose#v2.6.0:
-          build: android-instrumentation-tests
-          cache-from:
-            - android-instrumentation-tests:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
-            - android-instrumentation-tests:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
-            - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
-            - android-base:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
-      - docker-compose#v2.6.0:
-          push:
-            - android-instrumentation-tests:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-${BRANCH_NAME}
-            - android-instrumentation-tests:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
-
   - label: ':docker: Build Android apk builder image'
     key: android-builder
     depends_on: android-base
@@ -71,7 +54,7 @@ steps:
 
   - label: ':android: Build fixture APK'
     key: build-apk
-    depends_on: android-base
+    depends_on: android-builder
     timeout_in_minutes: 30
     artifact_paths: build/fixture.apk
     plugins:
@@ -123,7 +106,6 @@ steps:
 
   - label: ':android: Android 6 end-to-end tests'
     depends_on:
-      - block-step
       - build-apk
     timeout_in_minutes: 60
     plugins:
@@ -134,12 +116,11 @@ steps:
     env:
       DEVICE_TYPE: "ANDROID_6"
       APP_LOCATION: "/app/build/fixture.apk"
-    concurrency: 5
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 7 end-to-end tests'
     depends_on:
-      - block-step
       - build-apk
     timeout_in_minutes: 60
     plugins:
@@ -150,12 +131,11 @@ steps:
     env:
       DEVICE_TYPE: "ANDROID_7"
       APP_LOCATION: "/app/build/fixture.apk"
-    concurrency: 5
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 8 end-to-end tests'
     depends_on:
-      - block-step
       - build-apk
     timeout_in_minutes: 60
     plugins:
@@ -166,7 +146,7 @@ steps:
     env:
       DEVICE_TYPE: "ANDROID_8"
       APP_LOCATION: "/app/build/fixture.apk"
-    concurrency: 5
+    concurrency: 9
     concurrency_group: 'browserstack-app'
 
   - label: ':android: Android 9 end-to-end tests'
@@ -181,5 +161,5 @@ steps:
     env:
       DEVICE_TYPE: "ANDROID_9"
       APP_LOCATION: "/app/build/fixture.apk"
-    concurrency: 5
+    concurrency: 9
     concurrency_group: 'browserstack-app'

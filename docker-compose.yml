@@ -57,7 +57,7 @@ services:
     command: --tags ~@ignore
     volumes:
       - ./build:/app/build
-      - ./features/:/app/features/
+      - ./tests/features/:/app/features/
       - ./maze-output:/app/maze-output
 
 networks:
