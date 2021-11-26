@@ -16,7 +16,7 @@ public class EventHooks {
 
     static {
         runtimeVersions.put("osBuild", "bulldog");
-        runtimeVersions.put("androidApiLevel", 24);
+        runtimeVersions.put("androidApiLevel", "24");
     }
 
     public static EventPayload generateEvent() {

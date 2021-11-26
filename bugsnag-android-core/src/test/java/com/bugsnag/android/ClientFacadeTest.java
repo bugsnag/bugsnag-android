@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.any;
@@ -18,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -519,6 +521,43 @@ public class ClientFacadeTest {
         verify(contextState, times(1)).removeObserver(observer);
         verify(deliveryDelegate, times(1)).removeObserver(observer);
         verify(launchCrashTracker, times(1)).removeObserver(observer);
+    }
+
+    @Test
+    public void notifyLeavesErrorBreadcrumb() {
+        client.notify(new RuntimeException("Whoops!"));
+
+        ArgumentCaptor<Breadcrumb> breadcrumbCaptor = ArgumentCaptor.forClass(Breadcrumb.class);
+        verify(breadcrumbState).add(breadcrumbCaptor.capture());
+        Breadcrumb breadcrumb = breadcrumbCaptor.getValue();
+
+        assertEquals(BreadcrumbType.ERROR, breadcrumb.getType());
+        assertEquals("java.lang.RuntimeException", breadcrumb.getMessage());
+        assertEquals("java.lang.RuntimeException", breadcrumb.getMetadata().get("errorClass"));
+        assertEquals("Whoops!", breadcrumb.getMetadata().get("message"));
+        assertEquals("false", breadcrumb.getMetadata().get("unhandled"));
+        assertEquals("WARNING", breadcrumb.getMetadata().get("severity"));
+    }
+
+    @Test
+    public void notifyUnhandledLeavesErrorBreadcrumb() {
+        client.notifyUnhandledException(
+                new RuntimeException("Whoops!"),
+                new Metadata(),
+                SeverityReason.REASON_UNHANDLED_EXCEPTION,
+                null
+        );
+
+        ArgumentCaptor<Breadcrumb> breadcrumbCaptor = ArgumentCaptor.forClass(Breadcrumb.class);
+        verify(breadcrumbState).add(breadcrumbCaptor.capture());
+        Breadcrumb breadcrumb = breadcrumbCaptor.getValue();
+
+        assertEquals(BreadcrumbType.ERROR, breadcrumb.getType());
+        assertEquals("java.lang.RuntimeException", breadcrumb.getMessage());
+        assertEquals("java.lang.RuntimeException", breadcrumb.getMetadata().get("errorClass"));
+        assertEquals("Whoops!", breadcrumb.getMetadata().get("message"));
+        assertEquals("true", breadcrumb.getMetadata().get("unhandled"));
+        assertEquals("ERROR", breadcrumb.getMetadata().get("severity"));
     }
 
 }

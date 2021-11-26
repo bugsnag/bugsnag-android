@@ -2,7 +2,17 @@
 
 ## TBD
 
+## Bug fixes
+
+* `redactedKeys` now correctly apply to metadata on Event breadcrumbs
+  [#1526](https://github.com/bugsnag/bugsnag-android/pull/1526)
+
+## 5.15.0 (2021-11-04)
+
 ### Bug fixes
+
+* Increase resilience of NDK stackframe method capture
+  [#1484](https://github.com/bugsnag/bugsnag-android/pull/1484)
 
 * Avoid reporting false-positive background ANRs with improved foreground detection
   [#1429](https://github.com/bugsnag/bugsnag-android/pull/1429)

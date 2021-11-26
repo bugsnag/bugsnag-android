@@ -81,15 +81,24 @@ void bsg_populate_notify_stacktrace(JNIEnv *env, bugsnag_stackframe *stacktrace,
       goto exit;
     }
 
+    // populate filename
     jstring filename = bsg_safe_new_string_utf(env, frame.filename);
-    jstring method;
+    if (filename == NULL) {
+      goto exit;
+    }
+
+    // populate method
+    jstring method = NULL;
     if (strlen(frame.method) == 0) {
-      char *frame_address = calloc(1, sizeof(char) * 32);
-      sprintf(frame_address, "0x%lx", (unsigned long)frame.frame_address);
+      char frame_address[32];
+      snprintf(frame_address, sizeof(frame_address), "0x%lx",
+               (unsigned long)frame.frame_address);
       method = bsg_safe_new_string_utf(env, frame_address);
-      free(frame_address);
     } else {
       method = bsg_safe_new_string_utf(env, frame.method);
+    }
+    if (method == NULL) {
+      goto exit;
     }
 
     // create StackTraceElement object

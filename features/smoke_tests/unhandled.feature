@@ -181,6 +181,7 @@ Scenario: Signal raised with overwritten config
     And the event "metaData.fruit.ripe" is true
     And the event "metaData.fruit.counters" equals 47
 
+@debug-safe
 Scenario: C++ exception thrown with overwritten config
     When I run "CXXExceptionSmokeScenario" and relaunch the app
     And I configure Bugsnag for "CXXExceptionSmokeScenario"
