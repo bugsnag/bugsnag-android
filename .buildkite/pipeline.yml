@@ -123,54 +123,6 @@ steps:
           run: android-jvm
     command: './gradlew test'
 
-  - label: ':android: Android 9 end-to-end tests'
-    depends_on:
-      - build-apk
-    timeout_in_minutes: 60
-    plugins:
-      artifacts#v1.2.0:
-        download: "build/fixture.apk"
-      docker-compose#v2.6.0:
-        run: android-maze-runner
-    env:
-      DEVICE_TYPE: "ANDROID_9"
-      APP_LOCATION: "/app/build/fixture.apk"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
-
-  - label: ':android: NDK 16b SDK 9.0 Instrumentation tests'
-    depends_on: android-instrumentation-tests
-    timeout_in_minutes: 60
-    plugins:
-      - docker-compose#v2.6.0:
-          run: android-instrumentation-tests
-    env:
-      APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
-      INSTRUMENTATION_DEVICES: '["Google Pixel 3-9.0"]'
-      NDK_VERSION: "r16b"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
-
-  - block: "Trigger full test suite"
-    key: block-step
-
-  - label: ':android: Android 5 end-to-end tests'
-    depends_on:
-      - block-step
-      - build-apk
-    skip: Temporarily disabled due to flakiness with BrowserStack tunneling
-    timeout_in_minutes: 60
-    plugins:
-      artifacts#v1.2.0:
-        download: "build/fixture.apk"
-      docker-compose#v2.6.0:
-        run: android-maze-runner
-    env:
-      DEVICE_TYPE: "ANDROID_5"
-      APP_LOCATION: "/app/build/fixture.apk"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
-
   - label: ':android: Android 6 end-to-end tests'
     depends_on:
       - block-step
@@ -219,122 +171,17 @@ steps:
     concurrency: 5
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: NDK 16b SDK 4.4 Instrumentation tests'
+  - label: ':android: Android 9 end-to-end tests'
     depends_on:
-      - block-step
-      - android-instrumentation-tests
+      - build-apk
     timeout_in_minutes: 60
     plugins:
-      - docker-compose#v2.6.0:
-          run: android-instrumentation-tests
+      artifacts#v1.2.0:
+        download: "build/fixture.apk"
+      docker-compose#v2.6.0:
+        run: android-maze-runner
     env:
-      APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
-      INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4"]'
-      NDK_VERSION: "r16b"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
-
-  - label: ':android: NDK 16b SDK 7.1 Instrumentation tests'
-    depends_on:
-      - block-step
-      - android-instrumentation-tests
-    timeout_in_minutes: 60
-    plugins:
-      - docker-compose#v2.6.0:
-          run: android-instrumentation-tests
-    env:
-      APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
-      INSTRUMENTATION_DEVICES: '["Google Pixel-7.1"]'
-      NDK_VERSION: "r16b"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
-
-  - label: ':android: NDK 12b SDK 4.4 Instrumentation tests'
-    depends_on:
-      - block-step
-      - android-instrumentation-tests
-    timeout_in_minutes: 60
-    plugins:
-      - docker-compose#v2.6.0:
-          run: android-instrumentation-tests
-    env:
-      APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
-      INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4"]'
-      NDK_VERSION: "r12b"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
-
-  - label: ':android: NDK 12b SDK 7.1 Instrumentation tests'
-    depends_on:
-      - block-step
-      - android-instrumentation-tests
-    timeout_in_minutes: 60
-    plugins:
-      - docker-compose#v2.6.0:
-          run: android-instrumentation-tests
-    env:
-      APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
-      INSTRUMENTATION_DEVICES: '["Google Pixel-7.1"]'
-      NDK_VERSION: "r12b"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
-
-  - label: ':android: NDK 12b SDK 9.0 Instrumentation tests'
-    depends_on:
-      - block-step
-      - android-instrumentation-tests
-    timeout_in_minutes: 60
-    plugins:
-      - docker-compose#v2.6.0:
-          run: android-instrumentation-tests
-    env:
-      APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
-      INSTRUMENTATION_DEVICES: '["Google Pixel 3-9.0"]'
-      NDK_VERSION: "r12b"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
-
-  - label: ':android: NDK 19 SDK 4.4 Instrumentation tests'
-    depends_on:
-      - block-step
-      - android-instrumentation-tests
-    timeout_in_minutes: 60
-    plugins:
-      - docker-compose#v2.6.0:
-          run: android-instrumentation-tests
-    env:
-      APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
-      INSTRUMENTATION_DEVICES: '["Google Nexus 5-4.4"]'
-      NDK_VERSION: "r19"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
-
-  - label: ':android: NDK 19 SDK 7.1 Instrumentation tests'
-    depends_on:
-      - block-step
-      - android-instrumentation-tests
-    timeout_in_minutes: 60
-    plugins:
-      - docker-compose#v2.6.0:
-          run: android-instrumentation-tests
-    env:
-      APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
-      INSTRUMENTATION_DEVICES: '["Google Pixel-7.1"]'
-      NDK_VERSION: "r19"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
-
-  - label: ':android: NDK 19 SDK 9.0 Instrumentation tests'
-    depends_on:
-      - block-step
-      - android-instrumentation-tests
-    timeout_in_minutes: 60
-    plugins:
-      - docker-compose#v2.6.0:
-          run: android-instrumentation-tests
-    env:
-      APP_LOCATION: "/app/bugsnag-android-core/build/outputs/apk/androidTest/debug/bugsnag-android-core-debug-androidTest.apk"
-      INSTRUMENTATION_DEVICES: '["Google Pixel 3-9.0"]'
-      NDK_VERSION: "r19"
+      DEVICE_TYPE: "ANDROID_9"
+      APP_LOCATION: "/app/build/fixture.apk"
     concurrency: 5
     concurrency_group: 'browserstack-app'
