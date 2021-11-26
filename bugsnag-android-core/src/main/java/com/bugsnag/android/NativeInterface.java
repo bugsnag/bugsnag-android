@@ -195,6 +195,9 @@ public class NativeInterface {
         return Logger.getEnabled();
     }
 
+    /**
+     * Retrieves the path used to store native reports
+     */
     @NonNull
     public static String getNativeReportPath() {
         Configuration config = getClient().getConfig();

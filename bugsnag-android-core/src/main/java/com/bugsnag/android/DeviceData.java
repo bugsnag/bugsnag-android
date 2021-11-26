@@ -284,10 +284,10 @@ class DeviceData {
         String orientation = null;
 
         if (resources != null) {
-            int i = resources.getConfiguration().orientation;
-            if (i == Configuration.ORIENTATION_LANDSCAPE) {
+            int value = resources.getConfiguration().orientation;
+            if (value == Configuration.ORIENTATION_LANDSCAPE) {
                 orientation = "landscape";
-            } else if (i == Configuration.ORIENTATION_PORTRAIT) {
+            } else if (value == Configuration.ORIENTATION_PORTRAIT) {
                 orientation = "portrait";
             }
         }
