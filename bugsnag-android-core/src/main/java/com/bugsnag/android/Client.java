@@ -20,6 +20,7 @@ import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -185,7 +186,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
         eventStore = eventStorageModule.getEventStore();
 
         deliveryDelegate = new DeliveryDelegate(logger, eventStore,
-                immutableConfig, breadcrumbState, callbackState, notifier, bgTaskService);
+                immutableConfig, callbackState, notifier, bgTaskService);
 
         // Install a default exception handler with this client
         exceptionHandler = new ExceptionHandler(this, logger);
@@ -741,9 +742,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                         @Nullable OnErrorCallback onError) {
         // set the redacted keys on the event as this
         // will not have been set for RN/Unity events
-        Set<String> redactedKeys = metadataState.getMetadata().getRedactedKeys();
-        Metadata eventMetadata = event.getImpl().getMetadata();
-        eventMetadata.setRedactedKeys(redactedKeys);
+        Collection<String> redactedKeys = metadataState.getMetadata().getRedactedKeys();
+        event.setRedactedKeys(redactedKeys);
 
         // get session for event
         Session currentSession = sessionTracker.getCurrentSession();
@@ -760,6 +760,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
             logger.d("Skipping notification - onError task returned false");
             return;
         }
+
+        // leave an error breadcrumb of this event - for the next event
+        leaveErrorBreadcrumb(event);
 
         deliveryDelegate.deliver(event);
     }
@@ -921,6 +924,24 @@ public class Client implements MetadataAware, CallbackAware, UserAware {
                              @NonNull Map<String, Object> metadata) {
         if (!immutableConfig.shouldDiscardBreadcrumb(type)) {
             breadcrumbState.add(new Breadcrumb(message, type, metadata, new Date(), logger));
+        }
+    }
+
+    private void leaveErrorBreadcrumb(@NonNull Event event) {
+        // Add a breadcrumb for this event occurring
+        List<Error> errors = event.getErrors();
+
+        if (errors.size() > 0) {
+            String errorClass = errors.get(0).getErrorClass();
+            String message = errors.get(0).getErrorMessage();
+
+            Map<String, Object> data = new HashMap<>();
+            data.put("errorClass", errorClass);
+            data.put("message", message);
+            data.put("unhandled", String.valueOf(event.isUnhandled()));
+            data.put("severity", event.getSeverity().toString());
+            breadcrumbState.add(new Breadcrumb(errorClass,
+                    BreadcrumbType.ERROR, data, new Date(), logger));
         }
     }
 
