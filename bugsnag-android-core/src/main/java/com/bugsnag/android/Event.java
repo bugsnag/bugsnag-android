@@ -6,8 +6,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * An Event object represents a Throwable captured by Bugsnag and is available as a parameter on
@@ -405,5 +407,9 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware, F
 
     EventInternal getImpl() {
         return impl;
+    }
+
+    void setRedactedKeys(Collection<String> redactedKeys) {
+        impl.setRedactedKeys(redactedKeys);
     }
 }

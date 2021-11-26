@@ -1,13 +1,13 @@
 {
   "metaData": {
     "app": {
-      "foo": 55
+      "password": "[REDACTED]"
     },
-    "wham": {
-      "some_key": "A value"
+    "baz": {
+      "password": "[REDACTED]"
     },
     "device": {
-      "bar": true
+      "password": "[REDACTED]"
     }
   },
   "severity": "warning",
@@ -16,20 +16,11 @@
     "unhandledOverridden": false
   },
   "unhandled": false,
-  "exceptions": [
-    {
-      "errorClass": "WhoopsException",
-      "message": "Whoops",
-      "type": "android",
-      "stacktrace": []
-    }
-  ],
+  "exceptions": [],
   "projectPackages":[
     "com.example.foo"
   ],
-  "user": {
-    "name": "Jamie"
-  },
+  "user": {},
   "app": {
     "type": "android",
     "versionCode": 0
@@ -53,11 +44,12 @@
   "breadcrumbs": [
     {
       "timestamp": "1970-01-01T00:00:00.000Z",
-      "name": "hello world",
-      "type": "manual",
-      "metaData": {}
+      "name": "Whoops",
+      "type": "log",
+      "metaData": {
+        "changeme": "whoops"
+      }
     }
   ],
-  "threads": [],
-  "featureFlags": []
+  "threads": []
 }

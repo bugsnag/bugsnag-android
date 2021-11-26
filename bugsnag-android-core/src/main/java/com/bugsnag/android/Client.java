@@ -20,6 +20,7 @@ import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -186,7 +187,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         eventStore = eventStorageModule.getEventStore();
 
         deliveryDelegate = new DeliveryDelegate(logger, eventStore,
-                immutableConfig, breadcrumbState, notifier, bgTaskService);
+                immutableConfig, notifier, bgTaskService);
 
         // Install a default exception handler with this client
         exceptionHandler = new ExceptionHandler(this, logger);
@@ -748,9 +749,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
                         @Nullable OnErrorCallback onError) {
         // set the redacted keys on the event as this
         // will not have been set for RN/Unity events
-        Set<String> redactedKeys = metadataState.getMetadata().getRedactedKeys();
-        Metadata eventMetadata = event.getImpl().getMetadata();
-        eventMetadata.setRedactedKeys(redactedKeys);
+        Collection<String> redactedKeys = metadataState.getMetadata().getRedactedKeys();
+        event.setRedactedKeys(redactedKeys);
 
         // get session for event
         Session currentSession = sessionTracker.getCurrentSession();
@@ -766,6 +766,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
             logger.d("Skipping notification - onError task returned false");
             return;
         }
+
+        // leave an error breadcrumb of this event - for the next event
+        leaveErrorBreadcrumb(event);
 
         deliveryDelegate.deliver(event);
     }
@@ -930,6 +933,24 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         }
     }
 
+    private void leaveErrorBreadcrumb(@NonNull Event event) {
+        // Add a breadcrumb for this event occurring
+        List<Error> errors = event.getErrors();
+
+        if (errors.size() > 0) {
+            String errorClass = errors.get(0).getErrorClass();
+            String message = errors.get(0).getErrorMessage();
+
+            Map<String, Object> data = new HashMap<>();
+            data.put("errorClass", errorClass);
+            data.put("message", message);
+            data.put("unhandled", String.valueOf(event.isUnhandled()));
+            data.put("severity", event.getSeverity().toString());
+            breadcrumbState.add(new Breadcrumb(errorClass,
+                    BreadcrumbType.ERROR, data, new Date(), logger));
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -1040,8 +1061,15 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
     private void warnIfNotAppContext(Context androidContext) {
         if (!(androidContext instanceof Application)) {
-            logger.w("Warning - Non-Application context detected! Please ensure that you are "
-                + "initializing Bugsnag from a custom Application class.");
+            logger.w("You should initialize Bugsnag from the onCreate() callback of your "
+                    + "Application subclass, as this guarantees errors are captured as early "
+                    + "as possible. "
+                    + "If a custom Application subclass is not possible in your app then you "
+                    + "should suppress this warning by passing the Application context instead: "
+                    + "Bugsnag.start(context.getApplicationContext()). "
+                    + "For further info see: "
+                    + "https://docs.bugsnag.com/platforms/android/#basic-configuration");
+
         }
     }
 

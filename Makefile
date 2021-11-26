@@ -35,6 +35,10 @@ test-fixtures:
 	@./gradlew -PMINIMAL_FIXTURE=true -PTEST_FIXTURE_NAME=fixture-minimal.apk  -p=features/fixtures/mazerunner/ assembleRelease -x check
 	@cp features/fixtures/mazerunner/app/build/outputs/apk/release/fixture-minimal.apk build/fixture-minimal.apk
 
+	# And the debug test fixture (full fixture - but a debug build)
+	@./gradlew -PTEST_FIXTURE_NDK_VERSION=$(TEST_FIXTURE_NDK_VERSION) -p=features/fixtures/mazerunner/ assembleDebug -x check
+	@cp features/fixtures/mazerunner/app/build/outputs/apk/debug/fixture.apk build/fixture-debug.apk
+
 bump:
 ifneq ($(shell git diff --staged),)
 	@git diff --staged
