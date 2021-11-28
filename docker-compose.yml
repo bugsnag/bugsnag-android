@@ -51,9 +51,8 @@ services:
       DEBUG:
       BROWSER_STACK_USERNAME:
       BROWSER_STACK_ACCESS_KEY:
-      BROWSER_STACK_LOCAL_IDENTIFIER: ${BUILDKITE_JOB_ID:-maze-runner}
-      DEVICE_TYPE:
-      APP_LOCATION:
+      MAZE_DEVICE_FARM_USERNAME:
+      MAZE_DEVICE_FARM_ACCESS_KEY:
     command: --tags ~@ignore
     volumes:
       - ./build:/app/build
