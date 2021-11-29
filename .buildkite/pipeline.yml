@@ -139,6 +139,7 @@ steps:
           - "--app=/app/build/fixture.apk"
           - "--farm=bs"
           - "--device=ANDROID_6"
+          - "--retry=2"
           #- "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
@@ -158,6 +159,7 @@ steps:
           - "--app=/app/build/fixture.apk"
           - "--farm=bs"
           - "--device=ANDROID_7"
+          - "--retry=2"
           #- "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
@@ -177,6 +179,7 @@ steps:
           - "--app=/app/build/fixture.apk"
           - "--farm=bs"
           - "--device=ANDROID_7"
+          - "--retry=2"
           #- "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
@@ -196,6 +199,7 @@ steps:
           - "--app=/app/build/fixture.apk"
           - "--farm=bs"
           - "--device=ANDROID_8"
+          - "--retry=2"
           #- "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
@@ -215,6 +219,7 @@ steps:
           - "--app=/app/build/fixture.apk"
           - "--farm=bs"
           - "--device=ANDROID_8"
+          - "--retry=2"
           #- "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
@@ -234,6 +239,7 @@ steps:
           - "--app=/app/build/fixture.apk"
           - "--farm=bs"
           - "--device=ANDROID_6"
+          - "--retry=2"
           #- "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
@@ -253,6 +259,7 @@ steps:
           - "--app=/app/build/fixture.apk"
           - "--farm=bs"
           - "--device=ANDROID_6"
+          - "--retry=2"
           #- "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
