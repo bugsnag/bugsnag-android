@@ -17,6 +17,7 @@ steps:
   - wait
 
   - label: ':docker: Build Android jvm test image'
+    skip: Test fixture only
     timeout_in_minutes: 40
     plugins:
       - docker-compose#v2.6.0:
@@ -33,6 +34,7 @@ steps:
             - android-jvm:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:android-latest
 
   - label: ':docker: Build Android instrumentation image'
+    skip: Test fixture only
     timeout_in_minutes: 40
     plugins:
       - docker-compose#v2.6.0:
@@ -65,6 +67,7 @@ steps:
       MAVEN_VERSION: "3.6.1"
 
   - label: ':docker: Build Android maze runner image'
+    skip: Test fixture only
     timeout_in_minutes: 20
     plugins:
       - docker-compose#v2.6.0:
@@ -73,6 +76,7 @@ steps:
   - wait
 
   - label: ':android: Linter'
+    skip: Test fixture only
     timeout_in_minutes: 30
     plugins:
       - docker-compose#v2.6.0:
@@ -80,6 +84,7 @@ steps:
     command: 'bash ./scripts/run-linter.sh'
 
   - label: ':android: JVM tests'
+    skip: Test fixture only
     timeout_in_minutes: 30
     plugins:
       - docker-compose#v2.6.0:
@@ -96,6 +101,7 @@ steps:
       MAVEN_VERSION: "3.6.1"
 
   - label: ':docker: Build Android sizer image'
+    skip: Test fixture only
     timeout_in_minutes: 40
     plugins:
       - docker-compose#v2.6.0:
@@ -115,12 +121,14 @@ steps:
   - wait
 
   - label: ':android: Android size reporting'
+    skip: Test fixture only
     timeout_in_minutes: 30
     plugins:
       - docker-compose#v2.6.0:
           run: android-sizer
 
   - label: ':android: Android 9 end-to-end tests'
+    skip: Test fixture only
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
@@ -134,6 +142,7 @@ steps:
     concurrency_group: 'browserstack-app'
 
   - label: ':android: NDK 16b SDK 9.0 Instrumentation tests'
+    skip: Test fixture only
     timeout_in_minutes: 60
     plugins:
       - docker-compose#v2.6.0:
