@@ -133,7 +133,6 @@ public class Client extends Observable implements Observer {
         warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
         config = configuration;
-        sessionStore = new SessionStore(config, null);
         storageManager = (StorageManager) appContext.getSystemService(Context.STORAGE_SERVICE);
 
         connectivity = new ConnectivityCompat(appContext, new Function1<Boolean, Unit>() {
@@ -154,6 +153,7 @@ public class Client extends Observable implements Observer {
             configuration.setPersistenceDirectory(appContext.getCacheDir());
         }
 
+        sessionStore = new SessionStore(config, null);
         sessionTracker =
             new SessionTracker(configuration, this, sessionStore);
         eventReceiver = new EventReceiver(this);
