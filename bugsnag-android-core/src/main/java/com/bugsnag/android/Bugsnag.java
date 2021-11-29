@@ -6,7 +6,6 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -447,7 +446,7 @@ public final class Bugsnag {
      * @param name the name of the feature flag to remove
      */
     public static void clearFeatureFlag(@NonNull String name) {
-        getClient().clearMetadata(name);
+        getClient().clearFeatureFlag(name);
     }
 
     /**
