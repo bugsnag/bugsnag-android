@@ -59,7 +59,7 @@ abstract class FileStore<T extends JsonStream.Streamable> {
             path = outFile.getAbsolutePath();
             outFile.mkdirs();
             if (!outFile.exists()) {
-                Logger.warn("Could not prepare file storage directory");
+                Logger.warn("Could not prepare file storage directory for path " + path);
                 path = null;
             }
         } catch (Exception exception) {
