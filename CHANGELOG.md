@@ -1,8 +1,15 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+* Bump compileSdkVersion to apiLevel 31
+  [#1536](https://github.com/bugsnag/bugsnag-android/pull/1536)
+
 ## 5.16.0 (2021-11-29)
 
-## Bug fixes
+### Bug fixes
 
 * Increase resilience of NDK stackframe method capture
   [#1484](https://github.com/bugsnag/bugsnag-android/pull/1484)
