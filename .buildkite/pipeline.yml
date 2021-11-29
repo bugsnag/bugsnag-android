@@ -105,7 +105,7 @@ steps:
           run: android-jvm
     command: './gradlew test'
 
-  - label: ':android: Android 6 end-to-end tests - batch 1'
+  - label: ':android: Android 6 end-to-end smoke tests'
     depends_on:
       - build-apk
     timeout_in_minutes: 60
@@ -116,17 +116,18 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
-          - "--exclude=features/[^a-h].*.feature"
           - "--app=/app/build/fixture.apk"
           - "--farm=bs"
           - "--device=ANDROID_6"
           - "--retry"
           - "2"
           #- "--fail-fast"
+          - "features/handled_exception.feature"
+          - "features/unhandled_exception.feature"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: Android 6 end-to-end tests - batch 2'
+  - label: ':android: Android 7 end-to-end smoke tests'
     depends_on:
       - build-apk
     timeout_in_minutes: 60
@@ -137,38 +138,18 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
-          - "--exclude=features/[^i-z].*.feature"
-          - "--app=/app/build/fixture.apk"
-          - "--farm=bs"
-          - "--device=ANDROID_6"
-          - "--retry"
-          - "2"
-          #- "--fail-fast"
-    concurrency: 9
-    concurrency_group: 'browserstack-app'
-
-  - label: ':android: Android 7 end-to-end tests - batch 1'
-    depends_on:
-      - build-apk
-    timeout_in_minutes: 60
-    plugins:
-      artifacts#v1.4.0:
-        download: "build/fixture.apk"
-      docker-compose#v3.7.0:
-        pull: android-maze-runner
-        run: android-maze-runner
-        command:
-          - "--exclude=features/[^a-h].*.feature"
           - "--app=/app/build/fixture.apk"
           - "--farm=bs"
           - "--device=ANDROID_7"
           - "--retry"
           - "2"
           #- "--fail-fast"
+          - "features/handled_exception.feature"
+          - "features/unhandled_exception.feature"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
-  - label: ':android: Android 7 end-to-end tests - batch 2'
+  - label: ':android: Android 8 end-to-end smoke tests'
     depends_on:
       - build-apk
     timeout_in_minutes: 60
@@ -179,55 +160,14 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
-          - "--exclude=features/[^i-z].*.feature"
-          - "--app=/app/build/fixture.apk"
-          - "--farm=bs"
-          - "--device=ANDROID_7"
-          - "--retry"
-          - "2"
-          #- "--fail-fast"
-    concurrency: 9
-    concurrency_group: 'browserstack-app'
-
-  - label: ':android: Android 8 end-to-end tests - batch 1'
-    depends_on:
-      - build-apk
-    timeout_in_minutes: 60
-    plugins:
-      artifacts#v1.4.0:
-        download: "build/fixture.apk"
-      docker-compose#v3.7.0:
-        pull: android-maze-runner
-        run: android-maze-runner
-        command:
-          - "--exclude=features/[^a-h].*.feature"
           - "--app=/app/build/fixture.apk"
           - "--farm=bs"
           - "--device=ANDROID_8"
           - "--retry"
           - "2"
           #- "--fail-fast"
-    concurrency: 9
-    concurrency_group: 'browserstack-app'
-
-  - label: ':android: Android 8 end-to-end tests - batch 2'
-    depends_on:
-      - build-apk
-    timeout_in_minutes: 60
-    plugins:
-      artifacts#v1.4.0:
-        download: "build/fixture.apk"
-      docker-compose#v3.7.0:
-        pull: android-maze-runner
-        run: android-maze-runner
-        command:
-          - "--exclude=features/[^i-z].*.feature"
-          - "--app=/app/build/fixture.apk"
-          - "--farm=bs"
-          - "--device=ANDROID_8"
-          - "--retry"
-          - "2"
-          #- "--fail-fast"
+          - "features/handled_exception.feature"
+          - "features/unhandled_exception.feature"
     concurrency: 9
     concurrency_group: 'browserstack-app'
 
