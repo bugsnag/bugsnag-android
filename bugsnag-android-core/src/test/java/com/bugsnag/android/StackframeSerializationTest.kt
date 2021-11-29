@@ -15,12 +15,14 @@ internal class StackframeSerializationTest {
         fun testCases(): Collection<Pair<Stackframe, String>> {
             val frame = Stackframe("foo", "Bar", 55, true)
             frame.type = ErrorType.ANDROID
+            val nativeFrame = NativeStackframe("aMethod", "aFile", 1, 2, 3, 4, null)
+            nativeFrame.type = ErrorType.C
             return generateSerializationTestCases(
                 "stackframe",
                 frame,
-                Stackframe(NativeStackframe("aMethod", "aFile", 1, 2, 3, 4)),
-                Stackframe(NativeStackframe("aMethod", "aFile", 1, null, null, null)),
-                Stackframe(NativeStackframe(null, null, null, null, null, null))
+                Stackframe(nativeFrame),
+                Stackframe(NativeStackframe("aMethod", "aFile", 1, null, null, null, null)),
+                Stackframe(NativeStackframe(null, null, null, null, null, null, null))
             )
         }
     }
@@ -28,6 +30,14 @@ internal class StackframeSerializationTest {
     @Parameter
     lateinit var testCase: Pair<Stackframe, String>
 
+    private val eventMapper = BugsnagEventMapper(NoopLogger)
+
     @Test
     fun testJsonSerialisation() = verifyJsonMatches(testCase.first, testCase.second)
+
+    @Test
+    fun testJsonDeserialisation() =
+        verifyJsonParser(testCase.first, testCase.second) {
+            eventMapper.convertStackframe(it)
+        }
 }

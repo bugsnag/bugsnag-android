@@ -1,7 +1,9 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.internal.JsonHelper
 import org.junit.Assert
 import java.io.StringWriter
+import java.lang.NullPointerException
 
 /**
  * Serializes a [JsonStream.Streamable] object into JSON and compares its equality against a JSON
@@ -19,11 +21,67 @@ internal fun verifyJsonMatches(map: Map<String, Any>, resourceName: String) {
     validateJson(resourceName, json)
 }
 
+/**
+ * To help comparing JSON we remove any whitespace that hasn't been quoted. So:
+ * ```
+ * {
+ *      "some key": "Some Value"
+ * }
+ * ```
+ *
+ * Becomes:
+ * ```
+ * {"some key":"Some Value"}
+ * ```
+ */
+private fun removeUnquotedWhitespace(json: String): String {
+    val builder = StringBuilder(json.length)
+    var quoted = false
+    var index = 0
+
+    while (index < json.length) {
+        val ch = json[index++]
+
+        if (quoted) {
+            when (ch) {
+                '\"' -> quoted = false
+                '\\' -> {
+                    builder.append('\\')
+                    builder.append(json[index++])
+                }
+            }
+
+            builder.append(ch)
+        } else if (!ch.isWhitespace()) {
+            builder.append(ch)
+
+            if (ch == '\"') {
+                quoted = true
+            }
+        }
+    }
+
+    return builder.toString()
+}
+
 internal fun validateJson(resourceName: String, json: String) {
-    val whitespace = "\\s".toRegex()
     val rawJson = JsonParser().read(resourceName)
-    val expectedJson = rawJson.replace(whitespace, "")
-    val generatedJson = json.replace(whitespace, "")
+    val expectedJson = removeUnquotedWhitespace(rawJson)
+    val generatedJson = removeUnquotedWhitespace(json)
+    Assert.assertEquals(expectedJson, generatedJson)
+}
+
+@Suppress("UNCHECKED_CAST")
+internal fun verifyJsonParser(
+    streamable: JsonStream.Streamable,
+    resourceName: String,
+    parse: (MutableMap<String, Any?>) -> JsonStream.Streamable
+) {
+    val expectedJson = JsonParser().toJsonString(streamable)
+    val resourceStream = JsonParser::class.java.classLoader?.getResourceAsStream(resourceName)
+        ?: throw NullPointerException("cannot find resource: '$resourceName'")
+    val loadedObject = parse(JsonHelper.deserialize(resourceStream) as MutableMap<String, Any?>)
+    val generatedJson = JsonParser().toJsonString(loadedObject)
     Assert.assertEquals(expectedJson, generatedJson)
 }
 

@@ -23,6 +23,7 @@
     <ID>TooGenericExceptionThrown:CrashHandlerScenario.kt$CrashHandlerScenario$throw RuntimeException("CrashHandlerScenario")</ID>
     <ID>TooGenericExceptionThrown:CustomHttpClientFlushScenario.kt$CustomHttpClientFlushScenario$throw RuntimeException("ReportCacheScenario")</ID>
     <ID>TooGenericExceptionThrown:DisableAutoDetectErrorsScenario.kt$DisableAutoDetectErrorsScenario$throw RuntimeException("Should never appear")</ID>
+    <ID>TooGenericExceptionThrown:OnSendCallbackScenario.kt$OnSendCallbackScenario$throw RuntimeException("Unhandled Error")</ID>
     <ID>TooGenericExceptionThrown:ReportCacheScenario.kt$ReportCacheScenario$throw RuntimeException("ReportCacheScenario")</ID>
     <ID>TooGenericExceptionThrown:StartupCrashFlushScenario.kt$StartupCrashFlushScenario$throw RuntimeException("Regular crash")</ID>
     <ID>TooGenericExceptionThrown:StartupCrashFlushScenario.kt$StartupCrashFlushScenario$throw RuntimeException("Startup crash")</ID>

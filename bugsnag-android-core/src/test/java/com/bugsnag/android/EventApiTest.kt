@@ -30,13 +30,13 @@ internal class EventApiTest {
 
     @Test
     fun getUser() {
-        assertEquals(event.impl._user, event.getUser())
+        assertEquals(event.impl.userImpl, event.getUser())
     }
 
     @Test
     fun setUser() {
         event.setUser("99", "boo@example.com", "Boo")
-        assertEquals(User("99", "boo@example.com", "Boo"), event.impl._user)
+        assertEquals(User("99", "boo@example.com", "Boo"), event.impl.userImpl)
     }
 
     @Test

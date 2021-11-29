@@ -3,7 +3,7 @@
   "codeBundleId": "foo-99",
   "id": "com.example.foo",
   "releaseStage": "test-stage",
-  "type": "ReactNative",
+  "type": "React Native",
   "version": "1.2.3",
   "versionCode": 55,
   "duration": 0,

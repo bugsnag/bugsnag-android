@@ -182,8 +182,8 @@ steps:
   # to detect misuse (such as use-after-free, buffer overflow). If a failure is detected then
   # the device will raise a SIGABRT mentioning GWP-ASAN - this can be investigated further
   # by inspecting the devices logs.
-  - label: ':android: Android 11 NDK r21 smoke tests'
-    key: 'android-11-smoke'
+  - label: ':android: Android 12 NDK r21 smoke tests'
+    key: 'android-12-smoke'
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
@@ -199,7 +199,7 @@ steps:
           - "features/smoke_tests"
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
-          - "--device=ANDROID_11_0"
+          - "--device=ANDROID_12_0"
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
