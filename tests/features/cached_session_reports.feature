@@ -6,6 +6,7 @@ Scenario: If an empty file is in the cache directory then zero requests should b
     And I run "EmptySessionScenario"
     Then I should receive no requests
 
+@skip_above_android_7
 Scenario: Sending internal error reports on API <26
     When I run "PartialSessionScenario" and relaunch the app
     And I configure the app to run in the "non-crashy" state
