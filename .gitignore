@@ -14,6 +14,7 @@ captures/
 .idea/
 
 # Misc
+.bundle
 .DS_Store
 docs/
 infer-out/
