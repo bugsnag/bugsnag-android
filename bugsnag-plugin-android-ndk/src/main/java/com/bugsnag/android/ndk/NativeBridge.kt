@@ -76,7 +76,7 @@ class NativeBridge : StateObserver {
     external fun updateUserId(newValue: String)
     external fun updateUserEmail(newValue: String)
     external fun updateUserName(newValue: String)
-    external fun getUnwindStackFunction(): Long
+    external fun getSignalUnwindStackFunction(): Long
     external fun updateLowMemory(newValue: Boolean, memoryTrimLevelDescription: String)
 
     override fun onStateChange(event: StateEvent) {

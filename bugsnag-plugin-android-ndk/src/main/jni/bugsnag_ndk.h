@@ -81,6 +81,10 @@ typedef struct {
   bsg_thread_send_policy send_threads;
 } bsg_environment;
 
+/**
+ * Get the configured unwind style for non-async-safe environments.
+ * DO NOT USE THIS IN A SIGNAL HANDLER!
+ */
 bsg_unwinder bsg_configured_unwind_style();
 
 /**

@@ -78,7 +78,7 @@ internal class AnrPlugin : Plugin {
         if (clz != null) {
             val ndkPlugin = client.getPlugin(clz)
             if (ndkPlugin != null) {
-                val method = ndkPlugin.javaClass.getMethod("getUnwindStackFunction")
+                val method = ndkPlugin.javaClass.getMethod("getSignalUnwindStackFunction")
 
                 @Suppress("UNCHECKED_CAST")
                 val function = method.invoke(ndkPlugin) as Long
