@@ -12,6 +12,9 @@
 * Flush in-memory sessions first
   [#1538](https://github.com/bugsnag/bugsnag-android/pull/1538)
 
+* Avoid unnecessary network connectivity change breadcrumb
+  [#1540](https://github.com/bugsnag/bugsnag-android/pull/1540)
+
 ## 5.16.0 (2021-11-29)
 
 ### Bug fixes
