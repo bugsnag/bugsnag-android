@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.BatteryManager;
 import android.os.Build;
@@ -283,15 +284,11 @@ class DeviceData {
         String orientation = null;
 
         if (resources != null) {
-            switch (resources.getConfiguration().orientation) {
-                case android.content.res.Configuration.ORIENTATION_LANDSCAPE:
-                    orientation = "landscape";
-                    break;
-                case android.content.res.Configuration.ORIENTATION_PORTRAIT:
-                    orientation = "portrait";
-                    break;
-                default:
-                    break;
+            int value = resources.getConfiguration().orientation;
+            if (value == Configuration.ORIENTATION_LANDSCAPE) {
+                orientation = "landscape";
+            } else if (value == Configuration.ORIENTATION_PORTRAIT) {
+                orientation = "portrait";
             }
         }
         return orientation;

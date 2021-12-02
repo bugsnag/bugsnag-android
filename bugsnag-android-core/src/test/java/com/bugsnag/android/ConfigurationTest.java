@@ -12,6 +12,9 @@ import androidx.annotation.NonNull;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Map;
 
 public class ConfigurationTest {
@@ -245,5 +248,14 @@ public class ConfigurationTest {
         assertNull(configuration.getVersionCode()); // populated in client ctor if null
         configuration.setVersionCode(577);
         assertEquals(577, (int) configuration.getVersionCode());
+    }
+
+    @Test
+    public void setPersistenceDirectoryValid() throws IOException {
+        File dir = Files.createTempDirectory("foo").toFile();
+        config.setPersistenceDirectory(dir);
+        assertEquals(dir, config.getPersistenceDirectory());
+        config.setPersistenceDirectory(null);
+        assertNull(config.getPersistenceDirectory());
     }
 }

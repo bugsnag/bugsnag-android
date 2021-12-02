@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -194,9 +195,14 @@ public class NativeInterface {
         return Logger.getEnabled();
     }
 
+    /**
+     * Retrieves the path used to store native reports
+     */
     @NonNull
     public static String getNativeReportPath() {
-        return getClient().appContext.getCacheDir().getAbsolutePath() + "/bugsnag-native/";
+        Configuration config = getClient().getConfig();
+        File persistenceDirectory = config.getPersistenceDirectory();
+        return new File(persistenceDirectory, "bugsnag-native").getAbsolutePath();
     }
 
     /**

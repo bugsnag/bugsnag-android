@@ -28,7 +28,7 @@ class ErrorFilenameTest {
      */
     @Before
     fun setUp() {
-        errorStore = ErrorStore(config, context, null)
+        errorStore = ErrorStore(config, null)
     }
 
     @Test

@@ -133,7 +133,6 @@ public class Client extends Observable implements Observer {
         warnIfNotAppContext(androidContext);
         appContext = androidContext.getApplicationContext();
         config = configuration;
-        sessionStore = new SessionStore(config, appContext, null);
         storageManager = (StorageManager) appContext.getSystemService(Context.STORAGE_SERVICE);
 
         connectivity = new ConnectivityCompat(appContext, new Function1<Boolean, Unit>() {
@@ -150,7 +149,11 @@ public class Client extends Observable implements Observer {
         if (configuration.getDelivery() == null) {
             configuration.setDelivery(new DefaultDelivery(connectivity));
         }
+        if (configuration.getPersistenceDirectory() == null) {
+            configuration.setPersistenceDirectory(appContext.getCacheDir());
+        }
 
+        sessionStore = new SessionStore(config, null);
         sessionTracker =
             new SessionTracker(configuration, this, sessionStore);
         eventReceiver = new EventReceiver(this);
@@ -208,7 +211,7 @@ public class Client extends Observable implements Observer {
         }
 
         // Create the error store that is used in the exception handler
-        errorStore = new ErrorStore(config, appContext, new ErrorStore.Delegate() {
+        errorStore = new ErrorStore(config, new ErrorStore.Delegate() {
             @Override
             public void onErrorIOFailure(Exception exc, File errorFile, String context) {
                 // send an internal error to bugsnag with no cache

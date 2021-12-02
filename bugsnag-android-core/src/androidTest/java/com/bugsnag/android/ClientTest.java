@@ -19,6 +19,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Map;
 
@@ -362,5 +363,12 @@ public class ClientTest {
         assertNotNull(metaData.get("dpi"));
         assertNotNull(metaData.get("emulator"));
         assertNotNull(metaData.get("screenResolution"));
+    }
+
+    @Test
+    public void testPersistenceDir() {
+        File cacheDir = ApplicationProvider.getApplicationContext().getCacheDir();
+        client = generateClient();
+        assertEquals(cacheDir, client.config.getPersistenceDirectory());
     }
 }

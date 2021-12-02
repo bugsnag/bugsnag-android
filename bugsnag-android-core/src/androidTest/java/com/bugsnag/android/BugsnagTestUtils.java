@@ -74,8 +74,7 @@ final class BugsnagTestUtils {
 
     @NonNull
     static SessionStore generateSessionStore() {
-        Context applicationContext = ApplicationProvider.getApplicationContext();
-        return new SessionStore(generateConfiguration(), applicationContext, null);
+        return new SessionStore(generateConfiguration(), null);
     }
 
     @SuppressWarnings("deprecation")

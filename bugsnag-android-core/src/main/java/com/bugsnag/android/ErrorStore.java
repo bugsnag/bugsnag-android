@@ -47,8 +47,13 @@ class ErrorStore extends FileStore<Error> {
         }
     };
 
-    ErrorStore(@NonNull Configuration config, @NonNull Context appContext, Delegate delegate) {
-        super(config, appContext, "/bugsnag-errors/", 128, ERROR_REPORT_COMPARATOR, delegate);
+    ErrorStore(@NonNull Configuration config, Delegate delegate) {
+        super(config,
+            config.getPersistenceDirectory(),
+            "bugsnag-errors",
+            128,
+            ERROR_REPORT_COMPARATOR,
+            delegate);
     }
 
     void flushOnLaunch() {
@@ -210,7 +215,7 @@ class ErrorStore extends FileStore<Error> {
         }
         String uuid = UUID.randomUUID().toString();
         long timestamp = System.currentTimeMillis();
-        return String.format(Locale.US, "%s%d_%s%s.json",
+        return String.format(Locale.US, "%s/%d_%s%s.json",
             storeDirectory, timestamp, uuid, suffix);
     }
 
