@@ -81,6 +81,7 @@ void bsg_release_byte_ary(JNIEnv *env, jbyteArray array, char *original_text) {
 void bugsnag_notify_env(JNIEnv *env, char *name, char *message,
                         bsg_severity_t severity) {
   bsg_stackframe stacktrace[BUGSNAG_FRAMES_MAX];
+  memset(stacktrace, 0, sizeof(bsg_stackframe) * BUGSNAG_FRAMES_MAX);
   ssize_t frame_count =
       bsg_unwind_stack(bsg_configured_unwind_style(), stacktrace, NULL, NULL);
 
