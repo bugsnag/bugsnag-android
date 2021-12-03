@@ -6,6 +6,16 @@
 extern "C" {
 
 
+bool __attribute__((noinline)) make_dirty_stack() {
+  const size_t depth = 1024 * 1024; // 1Mb random data
+  unsigned char junk[depth];
+  for(size_t i = 0; i < depth; i++) {
+    junk[i] = i & 0xff;
+  }
+
+  return junk[depth / 2] != 0;
+}
+
 bool on_err_true(void *event_ptr) {
   bugsnag_event_set_context(event_ptr, (char *) "Some custom context");
   return true;
@@ -157,6 +167,7 @@ JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXStartScenario_activate(
     JNIEnv *env,
     jobject instance) {
+  make_dirty_stack();
   bugsnag_start(env);
   bugsnag_leave_breadcrumb((char *) "Start scenario crumb", BSG_CRUMB_LOG);
   bugsnag_notify((char *) "Start scenario",
@@ -183,6 +194,7 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXRemoveOnErrorScenario_activate(
 JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXRemoveDataScenario_activate(JNIEnv *env,
                                                                              jobject instance) {
+  make_dirty_stack();
   bugsnag_notify_env(env, (char *) "RemoveDataScenario", (char *) "oh no", BSG_SEVERITY_ERR);
 }
 
@@ -252,12 +264,14 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXGetJavaDataScenario_activate(JN
 JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXBackgroundNotifyScenario_activate(JNIEnv *env,
                                                                                    jobject instance) {
+  make_dirty_stack();
   bugsnag_notify_env(env, (char *)"Ferret Escape!", (char *)"oh no", BSG_SEVERITY_ERR);
 }
 
 
 JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXNotifySmokeScenario_activate(JNIEnv *env, jobject instance) {
+  make_dirty_stack();
   bugsnag_set_user_env(env, (char *)"324523", NULL, (char *)"Jack Mill");
   bugsnag_leave_breadcrumb_env(env, (char *)"Cold beans detected", BSG_CRUMB_LOG);
   bugsnag_notify_env(env, (char *)"CXXNotifySmokeScenario",
@@ -281,6 +295,7 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXHandledOverrideScenario_activat
 JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_MultiProcessHandledCXXErrorScenario_activate(JNIEnv *env,
                                                                                            jobject instance) {
+  make_dirty_stack();
   bugsnag_notify_env(env, (char *)"activate",
                      (char *)"MultiProcessHandledCXXErrorScenario", BSG_SEVERITY_ERR);
 }
@@ -318,6 +333,7 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXCaptureThreadsScenario_crash(JN
 JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXCaptureThreadsNotifyScenario_activate(JNIEnv *env,
                                                                                        jobject instance) {
+  make_dirty_stack();
   bugsnag_notify_env(env, (char *)"activate",
     (char *)"CXXCaptureThreadStatesNotifyScenario", BSG_SEVERITY_ERR);
 }

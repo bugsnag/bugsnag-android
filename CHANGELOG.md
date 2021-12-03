@@ -15,6 +15,9 @@
 * Avoid unnecessary network connectivity change breadcrumb
   [#1540](https://github.com/bugsnag/bugsnag-android/pull/1540)
 
+* Clear native stacktrace memory in `bugsnag_notify_env` before attempting to unwind the stack
+  [#1543](https://github.com/bugsnag/bugsnag-android/pull/1543)
+
 ## 5.16.0 (2021-11-29)
 
 ### Bug fixes
