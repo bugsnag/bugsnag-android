@@ -15,6 +15,9 @@
 * Avoid unnecessary network connectivity change breadcrumb
   [#1540](https://github.com/bugsnag/bugsnag-android/pull/1540)
 
+* Read long map values as longs rather than doubles
+  [#1544](https://github.com/bugsnag/bugsnag-android/pull/1544)
+
 ## 5.16.0 (2021-11-29)
 
 ### Bug fixes

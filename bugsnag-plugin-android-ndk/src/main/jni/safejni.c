@@ -101,6 +101,17 @@ jdouble bsg_safe_call_double_method(JNIEnv *env, jobject _value,
   return value;
 }
 
+jlong bsg_safe_call_long_method(JNIEnv *env, jobject _value, jmethodID method) {
+  if (env == NULL || _value == NULL) {
+    return -1;
+  }
+  jlong value = (*env)->CallLongMethod(env, _value, method);
+  if (bsg_check_and_clear_exc(env)) {
+    return -1; // default to -1
+  }
+  return value;
+}
+
 jobjectArray bsg_safe_new_object_array(JNIEnv *env, jsize size, jclass clz) {
   if (env == NULL || clz == NULL) {
     return NULL;

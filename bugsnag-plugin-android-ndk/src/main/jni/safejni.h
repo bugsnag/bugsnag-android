@@ -81,6 +81,13 @@ jdouble bsg_safe_call_double_method(JNIEnv *env, jobject _value,
                                     jmethodID method);
 
 /**
+ * A safe wrapper for the JNI's CallLongMethod. This method checks if an
+ * exception is pending and if so clears it so that execution can continue.
+ * If an exception was thrown this method returns -1.
+ */
+jlong bsg_safe_call_long_method(JNIEnv *env, jobject _value, jmethodID method);
+
+/**
  * A safe wrapper for the JNI's NewObjectArray. This method checks if an
  * exception is pending and if so clears it so that execution can continue.
  * The caller is responsible for handling the invalid return value of NULL.

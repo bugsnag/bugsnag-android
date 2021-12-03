@@ -21,6 +21,7 @@ typedef struct {
   jmethodID float_float_value;
   jmethodID boolean_bool_value;
   jmethodID number_double_value;
+  jmethodID number_long_value;
   jmethodID hash_map_get;
   jmethodID hash_map_size;
   jmethodID hash_map_key_set;
@@ -98,6 +99,13 @@ bsg_jni_cache *bsg_populate_jni_cache(JNIEnv *env) {
   jni_cache->float_float_value =
       bsg_safe_get_method_id(env, jni_cache->float_class, "floatValue", "()F");
   if (jni_cache->float_float_value == NULL) {
+    return NULL;
+  }
+
+  // lookup Number.longValue()
+  jni_cache->number_long_value =
+      bsg_safe_get_method_id(env, jni_cache->number, "longValue", "()J");
+  if (jni_cache->number_long_value == NULL) {
     return NULL;
   }
 
@@ -269,13 +277,13 @@ void bsg_copy_map_value_string(JNIEnv *env, bsg_jni_cache *jni_cache,
   }
 }
 
-long bsg_get_map_value_long(JNIEnv *env, bsg_jni_cache *jni_cache, jobject map,
-                            const char *_key) {
+jlong bsg_get_map_value_long(JNIEnv *env, bsg_jni_cache *jni_cache, jobject map,
+                             const char *_key) {
   jobject _value = bsg_get_map_value_obj(env, jni_cache, map, _key);
 
   if (_value != NULL) {
-    long value = bsg_safe_call_double_method(env, _value,
-                                             jni_cache->number_double_value);
+    jlong value =
+        bsg_safe_call_long_method(env, _value, jni_cache->number_long_value);
     bsg_safe_delete_local_ref(env, _value);
     return value;
   }
@@ -457,7 +465,7 @@ void bsg_populate_app_data(JNIEnv *env, bsg_jni_cache *jni_cache,
                             sizeof(process_name));
   bugsnag_event_add_metadata_string(event, "app", "processName", process_name);
 
-  long total_memory =
+  jlong total_memory =
       bsg_get_map_value_long(env, jni_cache, data, "memoryLimit");
   bugsnag_event_add_metadata_double(event, "app", "memoryLimit",
                                     (double)total_memory);
