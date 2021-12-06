@@ -335,13 +335,3 @@ exit : {
   bsg_safe_delete_local_ref(env, jtype);
   bsg_safe_delete_local_ref(env, jmessage);
 }
-
-// Unwind the stack using the default unwind style.
-// This function gets exposed via
-// Java_com_bugsnag_android_ndk_NativeBridge_getUnwindStackFunction()
-ssize_t
-bsg_unwind_stack_default(bugsnag_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
-                         siginfo_t *info, void *user_context) __asyncsafe {
-  return bsg_unwind_stack(bsg_configured_unwind_style(), stacktrace, info,
-                          user_context);
-}
