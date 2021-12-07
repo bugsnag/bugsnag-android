@@ -1,8 +1,7 @@
 #include "serializer.h"
 #include "serializer/event_reader.h"
+#include "serializer/event_writer.h"
 #include "string.h"
-
-#include "buffered_writer.h"
 
 #include <event.h>
 #include <fcntl.h>
@@ -14,64 +13,16 @@
 #include <time.h>
 #include <unistd.h>
 
-bool bsg_event_write(struct bsg_buffered_writer *writer,
-                     bsg_report_header *header, bugsnag_event *event);
-
-/**
- * Serializes the LastRunInfo to the file. This persists information about
- * why the current launch crashed, for use on future launch.
- */
 bool bsg_serialize_last_run_info_to_file(bsg_environment *env) {
-  char *path = env->last_run_info_path;
-  int fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-  if (fd == -1) {
-    return false;
-  }
-
-  int size = bsg_strlen(env->next_last_run_info);
-  ssize_t len = write(fd, env->next_last_run_info, size);
-  return len == size;
+  return bsg_lastrun_write(env);
 }
 
 bool bsg_serialize_event_to_file(bsg_environment *env) {
-  bsg_buffered_writer writer;
-  if (!bsg_buffered_writer_open(&writer, env->next_event_path)) {
-    return false;
-  }
-
-  if (!bsg_event_write(&writer, &env->report_header, &env->next_event)) {
-    goto fail;
-  }
-
-  if (!bsg_write_feature_flags(&env->next_event, &writer)) {
-    goto fail;
-  }
-
-  writer.dispose(&writer);
-  return true;
-
-fail:
-  writer.dispose(&writer);
-  return false;
+  return bsg_event_write(env);
 }
 
 bugsnag_event *bsg_deserialize_event_from_file(char *filepath) {
   return bsg_read_event(filepath);
-}
-
-bool bsg_report_header_write(bsg_report_header *header, int fd) {
-  ssize_t len = write(fd, header, sizeof(bsg_report_header));
-
-  return len == sizeof(bsg_report_header);
-}
-
-bool bsg_event_write(struct bsg_buffered_writer *writer,
-                     bsg_report_header *header, bugsnag_event *event) {
-  if (!bsg_report_header_write(header, writer->fd)) {
-    return false;
-  }
-
-  return writer->write(writer, event, sizeof(bugsnag_event));
 }
 
 const char *bsg_crumb_type_string(bugsnag_breadcrumb_type type) {
@@ -480,43 +431,4 @@ char *bsg_serialize_event_to_json_string(bugsnag_event *event) {
     json_value_free(event_val);
   }
   return serialized_string;
-}
-
-static bool write_feature_flag(bsg_buffered_writer *writer,
-                               bsg_feature_flag *flag) {
-  if (!writer->write_string(writer, flag->name)) {
-    return false;
-  }
-
-  if (flag->variant) {
-    if (!writer->write_byte(writer, 1)) {
-      return false;
-    }
-
-    if (!writer->write_string(writer, flag->variant)) {
-      return false;
-    }
-  } else {
-    if (!writer->write_byte(writer, 0)) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-bool bsg_write_feature_flags(bugsnag_event *event,
-                             bsg_buffered_writer *writer) {
-  const uint32_t feature_flag_count = event->feature_flag_count;
-  if (!writer->write(writer, &feature_flag_count, sizeof(feature_flag_count))) {
-    return false;
-  }
-
-  for (uint32_t index = 0; index < feature_flag_count; index++) {
-    if (!write_feature_flag(writer, &event->feature_flags[index])) {
-      return false;
-    }
-  }
-
-  return true;
 }

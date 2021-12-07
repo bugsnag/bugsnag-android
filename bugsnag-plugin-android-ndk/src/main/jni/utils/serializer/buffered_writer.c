@@ -1,6 +1,8 @@
 #include "buffered_writer.h"
+
+#include "../string.h"
 #include "bugsnag_ndk.h"
-#include "string.h"
+
 #include <fcntl.h>
 #include <inttypes.h>
 #include <malloc.h>
