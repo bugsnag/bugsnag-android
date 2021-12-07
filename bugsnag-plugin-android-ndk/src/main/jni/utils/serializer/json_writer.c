@@ -7,8 +7,7 @@
 
 #include <parson/parson.h>
 
-#include "../../../bugsnag_ndk.h"
-#include "../../metadata.h"
+#include "../logger.h"
 
 const char *bsg_crumb_type_string(bugsnag_breadcrumb_type type) {
   switch (type) {
