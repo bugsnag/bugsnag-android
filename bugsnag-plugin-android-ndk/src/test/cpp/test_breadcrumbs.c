@@ -1,7 +1,7 @@
-#include <greatest/greatest.h>
 #include <event.h>
+#include <greatest/greatest.h>
 #include <time.h>
-#include <utils/serializer.h>
+#include <utils/serializer/json_writer.h>
 
 bugsnag_breadcrumb *init_breadcrumb(const char *name, char *message, bugsnag_breadcrumb_type type) {
   bugsnag_breadcrumb *crumb = calloc(1, sizeof(bugsnag_breadcrumb));

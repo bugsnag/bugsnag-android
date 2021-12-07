@@ -2,8 +2,10 @@
 #include <jni.h>
 
 #include <stdlib.h>
+
+#include <parson/parson.h>
+
 #include <utils/serializer.h>
-#include <utils/serializer/migrate.h>
 
 typedef struct {
     void *data_ptr;

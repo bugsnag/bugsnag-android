@@ -18,6 +18,7 @@ add_library( # Specifies the name of the library.
     jni/utils/serializer/buffered_writer.c
     jni/utils/serializer/event_reader.c
     jni/utils/serializer/event_writer.c
+    jni/utils/serializer/json_writer.c
     jni/utils/stack_unwinder.c
     jni/utils/stack_unwinder_libunwindstack.cpp
     jni/utils/stack_unwinder_libcorkscrew.c

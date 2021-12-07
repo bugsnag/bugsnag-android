@@ -1,13 +1,15 @@
+#include <stdlib.h>
+
 #include <android/log.h>
+#include <jni.h>
 
 #define GREATEST_FPRINTF(ignore, fmt, ...) __android_log_print(ANDROID_LOG_INFO, "BugsnagNDKTest", fmt, ##__VA_ARGS__)
 
 #include <greatest/greatest.h>
-#include <jni.h>
+#include <parson/parson.h>
 
 #include "test_serializer.h"
-#include <stdlib.h>
-#include <utils/serializer.h>
+#include <utils/serializer/json_writer.h>
 
 SUITE(suite_string_utils);
 SUITE(suite_json_serialization);
