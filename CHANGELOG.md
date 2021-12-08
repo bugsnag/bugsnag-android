@@ -1,8 +1,27 @@
 # Changelog
 
+## 5.17.0 (2021-12-08)
+
+### Enhancements
+
+* Bump compileSdkVersion to apiLevel 31
+  [#1536](https://github.com/bugsnag/bugsnag-android/pull/1536)
+
+### Bug fixes
+
+* Flush in-memory sessions first
+  [#1538](https://github.com/bugsnag/bugsnag-android/pull/1538)
+
+* Avoid unnecessary network connectivity change breadcrumb
+  [#1540](https://github.com/bugsnag/bugsnag-android/pull/1540)
+  [#1546](https://github.com/bugsnag/bugsnag-android/pull/1546)
+
+* Clear native stacktrace memory in `bugsnag_notify_env` before attempting to unwind the stack
+  [#1543](https://github.com/bugsnag/bugsnag-android/pull/1543)
+
 ## 5.16.0 (2021-11-29)
 
-## Bug fixes
+### Bug fixes
 
 * Increase resilience of NDK stackframe method capture
   [#1484](https://github.com/bugsnag/bugsnag-android/pull/1484)
