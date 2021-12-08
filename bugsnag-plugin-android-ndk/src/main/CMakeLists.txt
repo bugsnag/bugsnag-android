@@ -15,6 +15,7 @@ add_library( # Specifies the name of the library.
     jni/handlers/signal_handler.c
     jni/handlers/cpp_handler.cpp
     jni/utils/crash_info.c
+    jni/utils/serializer/event_reader.c
     jni/utils/stack_unwinder.c
     jni/utils/stack_unwinder_libunwindstack.cpp
     jni/utils/stack_unwinder_libcorkscrew.c

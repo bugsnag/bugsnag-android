@@ -1,8 +1,8 @@
-#include <greatest/greatest.h>
-#include <utils/serializer.h>
-#include <stdlib.h>
-#include <utils/migrate.h>
 #include <featureflags.h>
+#include <greatest/greatest.h>
+#include <stdlib.h>
+#include <utils/serializer.h>
+#include <utils/serializer/migrate.h>
 
 #define SERIALIZE_TEST_FILE "/data/data/com.bugsnag.android.ndk.test/cache/foo.crash"
 

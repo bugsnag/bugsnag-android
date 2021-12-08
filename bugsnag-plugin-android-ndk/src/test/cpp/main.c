@@ -5,10 +5,9 @@
 #include <greatest/greatest.h>
 #include <jni.h>
 
-#include <utils/serializer.h>
-#include <stdlib.h>
-#include <utils/migrate.h>
 #include "test_serializer.h"
+#include <stdlib.h>
+#include <utils/serializer.h>
 
 SUITE(suite_string_utils);
 SUITE(suite_json_serialization);

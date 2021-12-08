@@ -1,9 +1,9 @@
 #include <greatest/greatest.h>
 #include <jni.h>
 
-#include <utils/serializer.h>
 #include <stdlib.h>
-#include <utils/migrate.h>
+#include <utils/serializer.h>
+#include <utils/serializer/migrate.h>
 
 typedef struct {
     void *data_ptr;
