@@ -96,8 +96,12 @@ internal class ConnectivityLegacy(
         private val cb: NetworkChangeCallback?
     ) : BroadcastReceiver() {
 
+        private val receivedFirstCallback = AtomicBoolean(false)
+
         override fun onReceive(context: Context, intent: Intent) {
-            cb?.invoke(hasNetworkConnection(), retrieveNetworkAccessState())
+            if (receivedFirstCallback.getAndSet(true)) {
+                cb?.invoke(hasNetworkConnection(), retrieveNetworkAccessState())
+            }
         }
     }
 }
