@@ -408,6 +408,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         deliveryDelegate.addObserver(observer);
         launchCrashTracker.addObserver(observer);
         memoryTrimState.addObserver(observer);
+        featureFlagState.addObserver(observer);
     }
 
     void removeObserver(StateObserver observer) {
@@ -420,6 +421,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         deliveryDelegate.removeObserver(observer);
         launchCrashTracker.removeObserver(observer);
         memoryTrimState.removeObserver(observer);
+        featureFlagState.removeObserver(observer);
     }
 
     /**
