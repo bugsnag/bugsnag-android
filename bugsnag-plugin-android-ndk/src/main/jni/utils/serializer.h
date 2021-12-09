@@ -1,5 +1,4 @@
 #include "../bugsnag_ndk.h"
-#include "buffered_writer.h"
 #include "build.h"
 #include <fcntl.h>
 #include <parson/parson.h>
@@ -16,6 +15,10 @@ char *bsg_serialize_event_to_json_string(bugsnag_event *event);
 
 bool bsg_serialize_event_to_file(bsg_environment *env) __asyncsafe;
 
+/**
+ * Serializes the LastRunInfo to the file. This persists information about
+ * why the current launch crashed, for use on future launch.
+ */
 bool bsg_serialize_last_run_info_to_file(bsg_environment *env) __asyncsafe;
 
 bugsnag_event *bsg_deserialize_event_from_file(char *filepath);
@@ -52,8 +55,6 @@ char *bsg_serialize_event_to_json_string(bugsnag_event *event);
 int bsg_calculate_total_crumbs(int old_count);
 int bsg_calculate_v1_start_index(int old_count);
 int bsg_calculate_v1_crumb_index(int crumb_pos, int first_index);
-
-bool bsg_write_feature_flags(bugsnag_event *event, bsg_buffered_writer *writer);
 
 #ifdef __cplusplus
 }
