@@ -4,6 +4,7 @@
   <CurrentIssues>
     <ID>ComplexMethod:NativeBridge.kt$NativeBridge$override fun onStateChange(event: StateEvent)</ID>
     <ID>LongMethod:EventMigrationV4Tests.kt$EventMigrationV4Tests$@Test fun testMigrateEventToLatest()</ID>
+    <ID>LongMethod:EventMigrationV5Tests.kt$EventMigrationV5Tests$@Test fun testMigrateEventToLatest()</ID>
     <ID>LongParameterList:NativeBridge.kt$NativeBridge$( apiKey: String, reportingDirectory: String, lastRunInfoPath: String, consecutiveLaunchCrashes: Int, autoDetectNdkCrashes: Boolean, apiLevel: Int, is32bit: Boolean, threadSendPolicy: Int )</ID>
     <ID>NestedBlockDepth:NativeBridge.kt$NativeBridge$private fun deliverPendingReports()</ID>
     <ID>TooManyFunctions:NativeBridge.kt$NativeBridge : StateObserver</ID>
