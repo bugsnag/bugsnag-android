@@ -100,8 +100,8 @@ class EventMigrationV4Tests : EventMigrationTest() {
             output["device"]
         )
 
-        // features didn't exist in this version, inserted as empty map
-        assertEquals(emptyMap<Any>(), output["featureFlags"])
+        // features didn't exist in this version, inserted as empty list
+        assertEquals(emptyList<Any>(), output["featureFlags"])
 
         // exceptions
         assertEquals(
