@@ -386,7 +386,7 @@ char *bsg_event_to_json(bugsnag_event *event) {
   JSON_Array *threads = json_value_get_array(threads_val);
   JSON_Value *stack_val = json_value_init_array();
   JSON_Array *stacktrace = json_value_get_array(stack_val);
-  JSON_Value *feature_flags_val = json_value_init_object();
+  JSON_Value *feature_flags_val = json_value_init_array();
   JSON_Array *feature_flags = json_value_get_array(feature_flags_val);
   json_object_set_value(event_obj, "exceptions", exceptions_val);
   json_object_set_value(event_obj, "breadcrumbs", crumbs_val);

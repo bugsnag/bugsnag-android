@@ -280,19 +280,21 @@ bugsnag_event *bsg_map_v4_to_report(bugsnag_report_v4 *report_v4) {
     event->crumb_count = report_v4->crumb_count;
     event->crumb_first_index = report_v4->crumb_first_index;
     memcpy(event->breadcrumbs, report_v4->breadcrumbs,
-           sizeof(event->breadcrumbs));
+           sizeof(report_v4->breadcrumbs));
     event->severity = report_v4->severity;
+    bsg_strncpy_safe(event->context, report_v4->context,
+                     sizeof(report_v4->context));
     bsg_strncpy_safe(event->session_id, report_v4->session_id,
-                     sizeof(event->session_id));
+                     sizeof(report_v4->session_id));
     bsg_strncpy_safe(event->session_start, report_v4->session_start,
-                     sizeof(event->session_id));
+                     sizeof(report_v4->session_start));
     event->handled_events = report_v4->handled_events;
     event->unhandled_events = report_v4->unhandled_events;
     bsg_strncpy_safe(event->grouping_hash, report_v4->grouping_hash,
-                     sizeof(event->session_id));
+                     sizeof(report_v4->session_id));
     event->unhandled = report_v4->unhandled;
     bsg_strncpy_safe(event->api_key, report_v4->api_key,
-                     sizeof(event->api_key));
+                     sizeof(report_v4->api_key));
     migrate_app_v2(report_v4, event);
     free(report_v4);
   }
