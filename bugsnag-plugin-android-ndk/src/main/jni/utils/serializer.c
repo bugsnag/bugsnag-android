@@ -654,14 +654,14 @@ void bsg_serialize_app(const bsg_app_info app, JSON_Object *event_obj) {
   json_object_dotset_string(event_obj, "app.type", app.type);
 
   json_object_dotset_string(event_obj, "app.releaseStage", app.release_stage);
-  json_object_dotset_number(event_obj, "app.versionCode", app.version_code);
+  json_object_dotset_long(event_obj, "app.versionCode", app.version_code);
   if (strlen(app.build_uuid) > 0) {
     json_object_dotset_string(event_obj, "app.buildUUID", app.build_uuid);
   }
   json_object_dotset_string(event_obj, "app.binaryArch", app.binary_arch);
-  json_object_dotset_number(event_obj, "app.duration", app.duration);
-  json_object_dotset_number(event_obj, "app.durationInForeground",
-                            app.duration_in_foreground);
+  json_object_dotset_long(event_obj, "app.duration", app.duration);
+  json_object_dotset_long(event_obj, "app.durationInForeground",
+                          app.duration_in_foreground);
   json_object_dotset_boolean(event_obj, "app.inForeground", app.in_foreground);
   json_object_dotset_boolean(event_obj, "app.isLaunching", app.is_launching);
 }
@@ -697,8 +697,7 @@ void bsg_serialize_device(const bsg_device_info device,
     json_array_append_string(cpu_abis, device.cpu_abi[i].value);
   }
 
-  json_object_dotset_number(event_obj, "device.totalMemory",
-                            device.total_memory);
+  json_object_dotset_long(event_obj, "device.totalMemory", device.total_memory);
   json_object_dotset_boolean(event_obj, "device.jailbroken", device.jailbroken);
 
   char report_time[sizeof "2018-10-08T12:07:09Z"];
@@ -806,10 +805,10 @@ void bsg_serialize_stackframe(bugsnag_stackframe *stackframe, bool is_pc,
                               JSON_Array *stacktrace) {
   JSON_Value *frame_val = json_value_init_object();
   JSON_Object *frame = json_value_get_object(frame_val);
-  json_object_set_number(frame, "frameAddress", (*stackframe).frame_address);
-  json_object_set_number(frame, "symbolAddress", (*stackframe).symbol_address);
-  json_object_set_number(frame, "loadAddress", (*stackframe).load_address);
-  json_object_set_number(frame, "lineNumber", (*stackframe).line_number);
+  json_object_set_long(frame, "frameAddress", (*stackframe).frame_address);
+  json_object_set_long(frame, "symbolAddress", (*stackframe).symbol_address);
+  json_object_set_long(frame, "loadAddress", (*stackframe).load_address);
+  json_object_set_long(frame, "lineNumber", (*stackframe).line_number);
   if (is_pc) {
     // only necessary to set to true, false is the default value and omitting
     // the field keeps payload sizes smaller.

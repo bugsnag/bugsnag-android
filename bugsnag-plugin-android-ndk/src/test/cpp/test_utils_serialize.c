@@ -748,7 +748,7 @@ TEST test_app_info_to_json(void) {
   JSON_Object *event = json_value_get_object(root_value);
   ASSERT(strcmp("2.0.52", json_object_dotget_string(event, "app.version")) == 0);
   ASSERT(strcmp( "リリース", json_object_dotget_string(event, "app.releaseStage")) == 0);
-  ASSERT_EQ(57, json_object_dotget_number(event, "app.versionCode"));
+  ASSERT_STR_EQ("57", json_object_dotget_string(event, "app.versionCode"));
   ASSERT(strcmp( "1234-9876-adfe", json_object_dotget_string(event, "app.buildUUID")) == 0);
   json_value_free(root_value);
   PASS();
@@ -829,9 +829,9 @@ TEST test_exception_to_json(void) {
   ASSERT(stacktrace != NULL);
   ASSERT_EQ(2, json_array_get_count(stacktrace));
   ASSERT(strcmp("makinBacon", json_object_get_string(json_array_get_object(stacktrace, 0), "method")) == 0);
-  ASSERT_EQ(454379, json_object_get_number(json_array_get_object(stacktrace, 0), "frameAddress"));
+  ASSERT_STR_EQ("454379", json_object_get_string(json_array_get_object(stacktrace, 0), "frameAddress"));
   ASSERT(strcmp("0x5393e", json_object_get_string(json_array_get_object(stacktrace, 1), "method")) == 0);
-  ASSERT_EQ(342334, json_object_get_number(json_array_get_object(stacktrace, 1), "frameAddress"));
+  ASSERT_STR_EQ("342334", json_object_get_string(json_array_get_object(stacktrace, 1), "frameAddress"));
   json_value_free(root_value);
   PASS();
 }

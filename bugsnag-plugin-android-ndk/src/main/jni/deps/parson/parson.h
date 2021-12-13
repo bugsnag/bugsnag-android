@@ -30,6 +30,7 @@ extern "C"
 #endif
 
 #include <stddef.h>   /* size_t */
+#include <stdint.h>
 
 /* Types and enums */
 typedef struct json_object_t JSON_Object;
@@ -43,7 +44,8 @@ enum json_value_type {
     JSONNumber  = 3,
     JSONObject  = 4,
     JSONArray   = 5,
-    JSONBoolean = 6
+    JSONBoolean = 6,
+    JSONLong = 7
 };
 typedef int JSON_Value_Type;
 
@@ -143,6 +145,7 @@ int json_object_dothas_value_of_type(const JSON_Object *object, const char *name
 JSON_Status json_object_set_value(JSON_Object *object, const char *name, JSON_Value *value);
 JSON_Status json_object_set_string(JSON_Object *object, const char *name, const char *string);
 JSON_Status json_object_set_number(JSON_Object *object, const char *name, double number);
+JSON_Status json_object_set_long(JSON_Object *object, const char *name, long number);
 JSON_Status json_object_set_boolean(JSON_Object *object, const char *name, int boolean);
 JSON_Status json_object_set_null(JSON_Object *object, const char *name);
 
@@ -150,6 +153,7 @@ JSON_Status json_object_set_null(JSON_Object *object, const char *name);
  * json_object_dotset_value does not copy passed value so it shouldn't be freed afterwards. */
 JSON_Status json_object_dotset_value(JSON_Object *object, const char *name, JSON_Value *value);
 JSON_Status json_object_dotset_string(JSON_Object *object, const char *name, const char *string);
+JSON_Status json_object_dotset_long(JSON_Object *object, const char *name, int64_t number);
 JSON_Status json_object_dotset_number(JSON_Object *object, const char *name, double number);
 JSON_Status json_object_dotset_boolean(JSON_Object *object, const char *name, int boolean);
 JSON_Status json_object_dotset_null(JSON_Object *object, const char *name);
@@ -216,6 +220,7 @@ JSON_Object *   json_value_get_object (const JSON_Value *value);
 JSON_Array  *   json_value_get_array  (const JSON_Value *value);
 const char  *   json_value_get_string (const JSON_Value *value);
 double          json_value_get_number (const JSON_Value *value);
+int64_t         json_value_get_long   (const JSON_Value *value);
 int             json_value_get_boolean(const JSON_Value *value);
 JSON_Value  *   json_value_get_parent (const JSON_Value *value);
 

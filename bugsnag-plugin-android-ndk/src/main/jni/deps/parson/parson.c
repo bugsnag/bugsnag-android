@@ -34,6 +34,7 @@
 #include <ctype.h>
 #include <math.h>
 #include <errno.h>
+#include <inttypes.h>
 
 /* Apparently sscanf is not implemented in some "standard" libraries, so don't use it, if you
  * don't have to. */
@@ -68,6 +69,7 @@ static JSON_Free_Function parson_free = free;
 typedef union json_value_value {
     char        *string;
     double       number;
+    int64_t      l_value;
     JSON_Object *object;
     JSON_Array  *array;
     int          boolean;
@@ -880,6 +882,7 @@ static int json_serialize_to_buffer_r(const JSON_Value *value, char *buf, int le
     JSON_Object *object = NULL;
     size_t i = 0, count = 0;
     double num = 0.0;
+    int64_t l_value = 0;
     int written = -1, written_total = 0;
 
     switch (json_value_get_type(value)) {
@@ -990,6 +993,20 @@ static int json_serialize_to_buffer_r(const JSON_Value *value, char *buf, int le
                 num_buf = buf;
             }
             written = sprintf(num_buf, FLOAT_FORMAT, num);
+            if (written < 0) {
+                return -1;
+            }
+            if (buf != NULL) {
+                buf += written;
+            }
+            written_total += written;
+            return written_total;
+        case JSONLong:
+            l_value = json_value_get_long(value);
+            if (buf != NULL) {
+                num_buf = buf;
+            }
+            written = sprintf(num_buf, "\"%" PRId64 "\"", l_value);
             if (written < 0) {
                 return -1;
             }
@@ -1291,6 +1308,10 @@ double json_value_get_number(const JSON_Value *value) {
     return json_value_get_type(value) == JSONNumber ? value->value.number : 0;
 }
 
+int64_t json_value_get_long(const JSON_Value *value) {
+    return json_value_get_type(value) == JSONLong ? value->value.l_value : 0;
+}
+
 int json_value_get_boolean(const JSON_Value *value) {
     return json_value_get_type(value) == JSONBoolean ? value->value.boolean : -1;
 }
@@ -1366,6 +1387,18 @@ JSON_Value * json_value_init_string(const char *string) {
         parson_free(copy);
     }
     return value;
+}
+
+
+JSON_Value * json_value_init_long(int64_t number) {
+    JSON_Value *new_value = (JSON_Value*)parson_malloc(sizeof(JSON_Value));
+    if (new_value == NULL) {
+        return NULL;
+    }
+    new_value->parent = NULL;
+    new_value->type = JSONLong;
+    new_value->value.l_value = number;
+    return new_value;
 }
 
 JSON_Value * json_value_init_number(double number) {
@@ -1773,6 +1806,10 @@ JSON_Status json_object_set_number(JSON_Object *object, const char *name, double
     return json_object_set_value(object, name, json_value_init_number(number));
 }
 
+JSON_Status json_object_set_long(JSON_Object *object, const char *name, long number) {
+    return json_object_set_value(object, name, json_value_init_long(number));
+}
+
 JSON_Status json_object_set_boolean(JSON_Object *object, const char *name, int boolean) {
     return json_object_set_value(object, name, json_value_init_boolean(boolean));
 }
@@ -1837,6 +1874,18 @@ JSON_Status json_object_dotset_string(JSON_Object *object, const char *name, con
 
 JSON_Status json_object_dotset_number(JSON_Object *object, const char *name, double number) {
     JSON_Value *value = json_value_init_number(number);
+    if (value == NULL) {
+        return JSONFailure;
+    }
+    if (json_object_dotset_value(object, name, value) == JSONFailure) {
+        json_value_free(value);
+        return JSONFailure;
+    }
+    return JSONSuccess;
+}
+
+JSON_Status json_object_dotset_long(JSON_Object *object, const char *name, int64_t number) {
+    JSON_Value *value = json_value_init_long(number);
     if (value == NULL) {
         return JSONFailure;
     }

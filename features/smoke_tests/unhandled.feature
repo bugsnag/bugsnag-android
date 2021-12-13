@@ -121,10 +121,10 @@ Scenario: Signal raised with overwritten config
     And the event stacktrace identifies the program counter
     And the event "exceptions.0.stacktrace.0.method" is not null
     And the event "exceptions.0.stacktrace.0.file" is not null
-    And the error payload field "events.0.exceptions.0.stacktrace.0.frameAddress" is greater than 0
-    And the error payload field "events.0.exceptions.0.stacktrace.0.symbolAddress" is greater than 0
-    And the error payload field "events.0.exceptions.0.stacktrace.0.loadAddress" is greater than 0
-    And the error payload field "events.0.exceptions.0.stacktrace.0.lineNumber" is greater than 0
+    And the error payload field "events.0.exceptions.0.stacktrace.0.frameAddress" is not null
+    And the error payload field "events.0.exceptions.0.stacktrace.0.symbolAddress" is not null
+    And the error payload field "events.0.exceptions.0.stacktrace.0.loadAddress" is not null
+    And the error payload field "events.0.exceptions.0.stacktrace.0.lineNumber" is not null
 
     # App data
     And the event binary arch field is valid
@@ -133,9 +133,9 @@ Scenario: Signal raised with overwritten config
     And the event "app.releaseStage" equals "CXXSignalSmokeScenario"
     And the event "app.type" equals "Overwritten"
     And the event "app.version" equals "9.9.9"
-    And the event "app.versionCode" equals 999
-    And the error payload field "events.0.app.duration" is an integer
-    And the error payload field "events.0.app.durationInForeground" is an integer
+    And the event "app.versionCode" equals "999"
+    And the error payload field "events.0.app.duration" is not null
+    And the error payload field "events.0.app.durationInForeground" is not null
     And the event "app.inForeground" is true
     And the event "app.isLaunching" is true
     And the event "metaData.app.name" equals "MazeRunner"
@@ -152,7 +152,7 @@ Scenario: Signal raised with overwritten config
     And the event "device.runtimeVersions" is not null
     And the event "device.runtimeVersions.androidApiLevel" is not null
     And the event "device.runtimeVersions.osBuild" is not null
-    And the error payload field "events.0.device.totalMemory" is greater than 0
+    And the error payload field "events.0.device.totalMemory" is not null
     And the event "device.orientation" equals "portrait"
     And the event "device.time" is a timestamp
     And the event "metaData.device.locationStatus" is not null
@@ -204,10 +204,10 @@ Scenario: C++ exception thrown with overwritten config
     And the event stacktrace identifies the program counter
     And the event "exceptions.0.stacktrace.0.method" is not null
     And the event "exceptions.0.stacktrace.0.file" is not null
-    And the error payload field "events.0.exceptions.0.stacktrace.0.frameAddress" is greater than 0
-    And the error payload field "events.0.exceptions.0.stacktrace.0.symbolAddress" is greater than 0
-    And the error payload field "events.0.exceptions.0.stacktrace.0.loadAddress" is greater than 0
-    And the error payload field "events.0.exceptions.0.stacktrace.0.lineNumber" is greater than 0
+    And the error payload field "events.0.exceptions.0.stacktrace.0.frameAddress" is not null
+    And the error payload field "events.0.exceptions.0.stacktrace.0.symbolAddress" is not null
+    And the error payload field "events.0.exceptions.0.stacktrace.0.loadAddress" is not null
+    And the error payload field "events.0.exceptions.0.stacktrace.0.lineNumber" is not null
 
     # App data
     And the event binary arch field is valid
@@ -216,9 +216,9 @@ Scenario: C++ exception thrown with overwritten config
     And the event "app.releaseStage" equals "CXXExceptionSmokeScenario"
     And the event "app.type" equals "Overwritten"
     And the event "app.version" equals "9.9.9"
-    And the event "app.versionCode" equals 999
-    And the error payload field "events.0.app.duration" is an integer
-    And the error payload field "events.0.app.durationInForeground" is an integer
+    And the event "app.versionCode" equals "999"
+    And the error payload field "events.0.app.duration" is not null
+    And the error payload field "events.0.app.durationInForeground" is not null
     And the event "app.inForeground" is true
     And the event "app.isLaunching" is true
     And the event "metaData.app.name" equals "MazeRunner"
@@ -235,7 +235,7 @@ Scenario: C++ exception thrown with overwritten config
     And the event "device.runtimeVersions" is not null
     And the event "device.runtimeVersions.androidApiLevel" is not null
     And the event "device.runtimeVersions.osBuild" is not null
-    And the error payload field "events.0.device.totalMemory" is greater than 0
+    And the error payload field "events.0.device.totalMemory" is not null
     And the event "device.orientation" equals "portrait"
     And the event "device.time" is a timestamp
 
