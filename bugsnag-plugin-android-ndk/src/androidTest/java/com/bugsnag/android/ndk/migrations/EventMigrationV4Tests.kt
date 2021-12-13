@@ -42,15 +42,15 @@ class EventMigrationV4Tests : EventMigrationTest() {
             mapOf(
                 "binaryArch" to "mips",
                 "buildUUID" to "1234-9876-adfe",
-                "duration" to 6502,
-                "durationInForeground" to 12,
+                "duration" to 6502L,
+                "durationInForeground" to 12L,
                 "id" to "com.example.PhotoSnapPlus",
                 "inForeground" to true,
                 "isLaunching" to false, // not available in this version
                 "releaseStage" to "リリース",
                 "type" to "red",
                 "version" to "2.0.52",
-                "versionCode" to 57
+                "versionCode" to 57L
             ),
             output["app"]
         )
@@ -95,7 +95,7 @@ class EventMigrationV4Tests : EventMigrationTest() {
                     "androidApiLevel" to "32"
                 ),
                 "time" to "2021-12-08T19:43:50Z",
-                "totalMemory" to 3278623
+                "totalMemory" to 3278623L
             ),
             output["device"]
         )
@@ -112,19 +112,19 @@ class EventMigrationV4Tests : EventMigrationTest() {
                     "type" to "c",
                     "stacktrace" to listOf(
                         mapOf(
-                            "frameAddress" to 454379,
-                            "lineNumber" to 0,
-                            "loadAddress" to 2367523,
-                            "symbolAddress" to 776,
+                            "frameAddress" to 454379L,
+                            "lineNumber" to 0L,
+                            "loadAddress" to 2367523L,
+                            "symbolAddress" to 776L,
                             "method" to "makinBacon",
                             "file" to "lib64/libfoo.so",
                             "isPC" to true
                         ),
                         mapOf(
-                            "frameAddress" to 342334,
-                            "lineNumber" to 0,
-                            "loadAddress" to 0,
-                            "symbolAddress" to 0,
+                            "frameAddress" to 342334L,
+                            "lineNumber" to 0L,
+                            "loadAddress" to 0L,
+                            "symbolAddress" to 0L,
                             "method" to "0x5393e" // test address to method hex
                         )
                     )
@@ -143,7 +143,7 @@ class EventMigrationV4Tests : EventMigrationTest() {
                 "metrics" to mapOf(
                     "experimentX" to false,
                     "subject" to "percy",
-                    "counter" to 47.8
+                    "counter" to 47.5.toBigDecimal()
                 )
             ),
             output["metaData"]
@@ -155,8 +155,8 @@ class EventMigrationV4Tests : EventMigrationTest() {
                 "id" to "aaaaaaaaaaaaaaaa",
                 "startedAt" to "2031-07-09T11:08:21+00:00",
                 "events" to mapOf(
-                    "handled" to 5,
-                    "unhandled" to 2
+                    "handled" to 5L,
+                    "unhandled" to 2L
                 )
             ),
             output["session"]

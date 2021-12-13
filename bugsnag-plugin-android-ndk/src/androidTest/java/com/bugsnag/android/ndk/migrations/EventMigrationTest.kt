@@ -2,14 +2,14 @@ package com.bugsnag.android.ndk.migrations
 
 import android.content.Context
 import androidx.test.platform.app.InstrumentationRegistry
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.bugsnag.android.repackaged.dslplatform.json.DslJson
 import org.junit.Before
 import java.io.File
 
 open class EventMigrationTest {
 
     private lateinit var context: Context
-    private val objectMapper = ObjectMapper()
+    private val json = DslJson<Map<String, Any>>()
 
     @Before
     fun setup() {
@@ -22,12 +22,18 @@ open class EventMigrationTest {
         }
     }
 
-    internal fun parseJSON(file: File): Map<*, *> {
-        return objectMapper.readValue(file, Map::class.java)
+    internal fun parseJSON(file: File): Map<String, Any> {
+        return deserialize(file.readBytes())
     }
 
-    internal fun parseJSON(text: String): Map<*, *> {
-        return objectMapper.readValue(text, Map::class.java)
+    internal fun parseJSON(text: String): Map<String, Any> {
+        return deserialize(text.toByteArray())
+    }
+
+    private fun deserialize(contents: ByteArray): Map<String, Any> {
+        val result = json.deserialize(Map::class.java, contents, contents.size)
+        @Suppress("UNCHECKED_CAST")
+        return result as Map<String, Any>
     }
 
     companion object NativeLibs {
