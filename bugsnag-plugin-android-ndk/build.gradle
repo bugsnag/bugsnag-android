@@ -10,10 +10,6 @@ apply plugin: "com.android.library"
 
 dependencies {
     api(project(":bugsnag-android-core"))
-    // newest version that didn't require fiddling with sourceCompatibility -
-    // didn't use kotlin module to avoid runtime version conflicts
-    // FUTURE(df): Remove databind in favor of JsonHelper in the internal pkg
-    androidTestImplementation("com.fasterxml.jackson.core:jackson-databind:2.12.5")
 }
 
 apply from: "../gradle/kotlin.gradle"

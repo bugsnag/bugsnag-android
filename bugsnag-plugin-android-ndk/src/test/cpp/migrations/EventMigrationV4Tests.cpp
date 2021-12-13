@@ -80,7 +80,7 @@ static void *create_full_event() {
   bugsnag_event_add_metadata_bool(event, "metrics", "experimentX", false);
   bugsnag_event_add_metadata_string(event, "metrics", "subject", "percy");
   bugsnag_event_add_metadata_string(event, "app", "weather", "rain");
-  bugsnag_event_add_metadata_double(event, "metrics", "counter", 47.8);
+  bugsnag_event_add_metadata_double(event, "metrics", "counter", 47.5);
 
   // session info
   event->handled_events = 5;
