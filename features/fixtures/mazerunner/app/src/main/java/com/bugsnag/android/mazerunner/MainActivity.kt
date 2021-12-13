@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -24,8 +25,10 @@ class MainActivity : Activity() {
         prefs = getPreferences(Context.MODE_PRIVATE)
 
         // Attempt to dismiss any system dialogs (such as "MazeRunner crashed")
-        val closeDialog = Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
-        sendBroadcast(closeDialog)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            val closeDialog = Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
+            sendBroadcast(closeDialog)
+        }
 
         // load the scenario first, which initialises bugsnag without running any crashy code
         findViewById<Button>(R.id.start_bugsnag).setOnClickListener {

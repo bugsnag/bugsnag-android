@@ -20,6 +20,7 @@ internal class DeliveryDelegateTest {
 
     private val notifier = Notifier()
     val config = generateImmutableConfig()
+    val callbackState = CallbackState()
     private val logger = InterceptingLogger()
     lateinit var deliveryDelegate: DeliveryDelegate
     val handledState = SeverityReason.newInstance(
@@ -34,6 +35,7 @@ internal class DeliveryDelegateTest {
                 logger,
                 eventStore,
                 config,
+                callbackState,
                 notifier,
                 BackgroundTaskService()
             )

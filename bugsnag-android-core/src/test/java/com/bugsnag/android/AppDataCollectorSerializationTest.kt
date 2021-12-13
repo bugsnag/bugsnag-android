@@ -74,8 +74,18 @@ internal class AppDataCollectorSerializationTest {
     @Parameter
     lateinit var testCase: Pair<App, String>
 
+    private val eventMapper = BugsnagEventMapper(NoopLogger)
+
     @Test
     fun testJsonSerialisation() {
         verifyJsonMatches(testCase.first, testCase.second)
+    }
+
+    @Test
+    fun testJsonDeserialization() {
+        val (appModel, jsonFixture) = testCase
+        verifyJsonParser(appModel, jsonFixture) { jsonMap ->
+            eventMapper.convertAppWithState(jsonMap)
+        }
     }
 }

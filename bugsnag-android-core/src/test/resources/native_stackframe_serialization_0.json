@@ -5,5 +5,6 @@
   "frameAddress": 2,
   "symbolAddress": 3,
   "loadAddress": 4,
+  "isPC": true,
   "type": "c"
 }

@@ -135,6 +135,7 @@ public class ClientFacadeTest {
         when(metadataState.getMetadata()).thenReturn(new Metadata());
         when(featureFlagState.getFeatureFlags()).thenReturn(new FeatureFlags());
         when(immutableConfig.getLogger()).thenReturn(logger);
+        when(immutableConfig.getApiKey()).thenReturn("test-apiKey");
         when(immutableConfig.getSendThreads()).thenReturn(ThreadSendPolicy.ALWAYS);
 
         when(deviceDataCollector.generateDeviceWithState(anyLong())).thenReturn(device);

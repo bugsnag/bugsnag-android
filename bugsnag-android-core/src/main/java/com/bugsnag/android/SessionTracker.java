@@ -181,12 +181,10 @@ class SessionTracker extends BaseObservable {
         if (deliverSession && session.isTracked().compareAndSet(false, true)) {
             currentSession = session;
             notifySessionStartObserver(session);
-            flushAsync();
             flushInMemorySession(session);
-
+            flushAsync();
             return true;
         }
-
         return false;
     }
 
