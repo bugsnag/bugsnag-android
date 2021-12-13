@@ -64,10 +64,10 @@ internal class NdkPlugin : Plugin {
         }
     }
 
-    fun getUnwindStackFunction(): Long {
+    fun getSignalUnwindStackFunction(): Long {
         val bridge = nativeBridge
         if (bridge != null) {
-            return bridge.getUnwindStackFunction()
+            return bridge.getSignalUnwindStackFunction()
         }
         return 0
     }

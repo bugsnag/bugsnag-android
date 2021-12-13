@@ -66,6 +66,8 @@ internal class ConfigInternal(
         callbackState.removeOnBreadcrumb(onBreadcrumb)
     override fun addOnSession(onSession: OnSessionCallback) = callbackState.addOnSession(onSession)
     override fun removeOnSession(onSession: OnSessionCallback) = callbackState.removeOnSession(onSession)
+    fun addOnSend(onSend: OnSendCallback) = callbackState.addOnSend(onSend)
+    fun removeOnSend(onSend: OnSendCallback) = callbackState.removeOnSend(onSend)
 
     override fun addMetadata(section: String, value: Map<String, Any?>) =
         metadataState.addMetadata(section, value)

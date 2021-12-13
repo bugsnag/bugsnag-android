@@ -27,6 +27,7 @@ internal class EventDeserializer(
             Severity.valueOf(severity.toUpperCase(Locale.US)),
             unhandled,
             originalUnhandled,
+            null,
             null
         )
 

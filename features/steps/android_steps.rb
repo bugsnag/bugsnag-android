@@ -276,10 +276,8 @@ end
 # which results in multiple similar log messages
 Then("Bugsnag confirms it has no errors to send") do
   steps %Q{
-    And I wait to receive 3 logs
+    And I wait to receive 2 logs
     Then the "debug" level log message equals "No startupcrash events to flush to Bugsnag."
-    And I discard the oldest log
-    Then the "debug" level log message equals "No regular events to flush to Bugsnag."
     And I discard the oldest log
     Then the "debug" level log message equals "No regular events to flush to Bugsnag."
   }

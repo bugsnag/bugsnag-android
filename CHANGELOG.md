@@ -1,18 +1,43 @@
 # Changelog
 
-## TBD
+## 5.17.0 (2021-12-08)
 
-## Bug fixes
+### Enhancements
 
-* `redactedKeys` now correctly apply to metadata on Event breadcrumbs
-  [#1526](https://github.com/bugsnag/bugsnag-android/pull/1526)
+* Bump compileSdkVersion to apiLevel 31
+  [#1536](https://github.com/bugsnag/bugsnag-android/pull/1536)
 
-## 5.15.0 (2021-11-04)
+### Bug fixes
+
+* Flush in-memory sessions first
+  [#1538](https://github.com/bugsnag/bugsnag-android/pull/1538)
+
+* Avoid unnecessary network connectivity change breadcrumb
+  [#1540](https://github.com/bugsnag/bugsnag-android/pull/1540)
+  [#1546](https://github.com/bugsnag/bugsnag-android/pull/1546)
+
+* Clear native stacktrace memory in `bugsnag_notify_env` before attempting to unwind the stack
+  [#1543](https://github.com/bugsnag/bugsnag-android/pull/1543)
+
+## 5.16.0 (2021-11-29)
 
 ### Bug fixes
 
 * Increase resilience of NDK stackframe method capture
   [#1484](https://github.com/bugsnag/bugsnag-android/pull/1484)
+
+* `redactedKeys` now correctly apply to metadata on Event breadcrumbs
+  [#1526](https://github.com/bugsnag/bugsnag-android/pull/1526)
+  
+* Improved the robustness of automatically logged `ERROR` breadcrumbs
+  [#1531](https://github.com/bugsnag/bugsnag-android/pull/1531)
+  
+* Improve performance on the breadcrumb storage "hot path" by removing Date formatting
+  [#1525](https://github.com/bugsnag/bugsnag-android/pull/1525)
+
+## 5.15.0 (2021-11-04)
+
+### Bug fixes
 
 * Avoid reporting false-positive background ANRs with improved foreground detection
   [#1429](https://github.com/bugsnag/bugsnag-android/pull/1429)

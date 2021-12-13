@@ -10,14 +10,20 @@
         android:gwpAsanMode="always"
         android:name=".MazerunnerApp"
         >
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
 
             </intent-filter>
         </activity>
-        <activity android:name=".SecondActivity">
+        <activity
+            android:name=".SecondActivity"
+            android:exported="true"
+            >
             <intent-filter>
                 <action android:name="com.bugsnag.android.mazerunner.UPDATE_CONTEXT" />
                 <category android:name="android.intent.category.DEFAULT" />
