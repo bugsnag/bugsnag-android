@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+* Improve the memory use and performance overhead when handling the delivery response status codes
+  [#1558](https://github.com/bugsnag/bugsnag-android/pull/1558)
+
 ## 5.17.0 (2021-12-08)
 
 ### Enhancements

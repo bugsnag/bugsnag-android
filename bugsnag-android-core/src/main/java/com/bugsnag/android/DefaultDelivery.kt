@@ -123,14 +123,15 @@ internal class DefaultDelivery(
     }
 
     internal fun getDeliveryStatus(responseCode: Int): DeliveryStatus {
-        val unrecoverableCodes = IntRange(HTTP_BAD_REQUEST, 499).filter {
-            it != HTTP_CLIENT_TIMEOUT && it != 429
-        }
-
-        return when (responseCode) {
-            in HTTP_OK..299 -> DeliveryStatus.DELIVERED
-            in unrecoverableCodes -> DeliveryStatus.FAILURE
+        return when {
+            responseCode in HTTP_OK..299 -> DeliveryStatus.DELIVERED
+            isUnrecoverableStatusCode(responseCode) -> DeliveryStatus.FAILURE
             else -> DeliveryStatus.UNDELIVERED
         }
     }
+
+    private fun isUnrecoverableStatusCode(responseCode: Int) =
+        responseCode in HTTP_BAD_REQUEST..499 && // 400-499 are considered unrecoverable
+            responseCode != HTTP_CLIENT_TIMEOUT && // except for 408
+            responseCode != 429 // and 429
 }
