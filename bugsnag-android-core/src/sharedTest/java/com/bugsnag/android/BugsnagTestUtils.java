@@ -3,7 +3,7 @@ package com.bugsnag.android;
 import com.bugsnag.android.internal.ImmutableConfig;
 import com.bugsnag.android.internal.ImmutableConfigKt;
 
-import org.jetbrains.annotations.NotNull;
+import androidx.annotation.NonNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +37,19 @@ final class BugsnagTestUtils {
 
     static ImmutableConfig generateImmutableConfig() {
         return convert(generateConfiguration());
+    }
+
+    static ImmutableConfig generateImmutableConfig(Configuration config) {
+        config.setDelivery(generateDelivery());
+        config.setLogger(NoopLogger.INSTANCE);
+        config.setProjectPackages(Collections.singleton("com.example.foo"));
+        try {
+            File dir = Files.createTempDirectory("test").toFile();
+            config.setPersistenceDirectory(dir);
+        } catch (IOException ignored) {
+            // ignore IO exception
+        }
+        return ImmutableConfigKt.convertToImmutableConfig(config);
     }
 
     static EventPayload generateEventPayload(ImmutableConfig config) {
@@ -87,17 +100,17 @@ final class BugsnagTestUtils {
 
     public static Delivery generateDelivery() {
         return new Delivery() {
-            @NotNull
+            @NonNull
             @Override
-            public DeliveryStatus deliver(@NotNull EventPayload payload,
-                                          @NotNull DeliveryParams deliveryParams) {
+            public DeliveryStatus deliver(@NonNull EventPayload payload,
+                                          @NonNull DeliveryParams deliveryParams) {
                 return DeliveryStatus.DELIVERED;
             }
 
-            @NotNull
+            @NonNull
             @Override
-            public DeliveryStatus deliver(@NotNull Session payload,
-                                          @NotNull DeliveryParams deliveryParams) {
+            public DeliveryStatus deliver(@NonNull Session payload,
+                                          @NonNull DeliveryParams deliveryParams) {
                 return DeliveryStatus.DELIVERED;
             }
         };
@@ -110,5 +123,9 @@ final class BugsnagTestUtils {
 
     public static App generateApp() {
         return new App(generateImmutableConfig(), null, null, null, null, null);
+    }
+
+    static MetadataState generateMetadataState() {
+        return new MetadataState();
     }
 }
