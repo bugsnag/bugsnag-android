@@ -17,6 +17,7 @@ internal class EventDeserializer(
     @Suppress("UNCHECKED_CAST")
     override fun deserialize(map: MutableMap<String, Any?>): Event {
         val severityReason = map["severityReason"] as Map<String, Any>
+        val featureFlags = map["featureFlags"] as? List<Map<String, Any?>>
         val severityReasonType = severityReason["type"] as String
         val severity = map["severity"] as String
         val unhandled = map["unhandled"] as Boolean
@@ -43,6 +44,12 @@ internal class EventDeserializer(
         // user
         val user = UserDeserializer().deserialize(map["user"] as MutableMap<String, Any>)
         event.setUser(user.id, user.email, user.name)
+
+        // featureFlags
+        event.clearFeatureFlags() // we discard the featureFlags from Android native
+        featureFlags?.forEach { flagMap ->
+            event.addFeatureFlag(flagMap["featureFlag"] as String, flagMap["variant"] as String?)
+        }
 
         // errors
         val errors = map["errors"] as List<Map<String, Any?>>

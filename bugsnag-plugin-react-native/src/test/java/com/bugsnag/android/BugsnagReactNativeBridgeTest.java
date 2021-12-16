@@ -2,10 +2,10 @@ package com.bugsnag.android;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,8 +14,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Observable;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BugsnagReactNativeBridgeTest {
@@ -97,6 +97,46 @@ public class BugsnagReactNativeBridgeTest {
         assertNotNull(cb.event);
         assertEquals("MetadataUpdate", cb.event.getType());
         assertEquals(metadata, cb.event.getData());
+    }
+
+    @Test
+    public void addFeatureFlag() {
+        MessageEventCb cb = new MessageEventCb();
+        BugsnagReactNativeBridge bridge = new BugsnagReactNativeBridge(client, cb);
+
+        StateEvent.AddFeatureFlag arg = new StateEvent.AddFeatureFlag("feature", "var");
+        bridge.onStateChange(arg);
+        assertNotNull(cb.event);
+        assertEquals("AddFeatureFlag", cb.event.getType());
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("name", "feature");
+        data.put("variant", "var");
+        assertEquals(data, cb.event.getData());
+    }
+
+    @Test
+    public void clearFeatureFlag() {
+        MessageEventCb cb = new MessageEventCb();
+        BugsnagReactNativeBridge bridge = new BugsnagReactNativeBridge(client, cb);
+
+        StateEvent.ClearFeatureFlag arg = new StateEvent.ClearFeatureFlag("feature");
+        bridge.onStateChange(arg);
+        assertNotNull(cb.event);
+        assertEquals("ClearFeatureFlag", cb.event.getType());
+        assertEquals(Collections.singletonMap("name", "feature"), cb.event.getData());
+    }
+
+    @Test
+    public void clearAllFeatureFlags() {
+        MessageEventCb cb = new MessageEventCb();
+        BugsnagReactNativeBridge bridge = new BugsnagReactNativeBridge(client, cb);
+
+        StateEvent.ClearFeatureFlags arg = StateEvent.ClearFeatureFlags.INSTANCE;
+        bridge.onStateChange(arg);
+        assertNotNull(cb.event);
+        assertEquals("ClearFeatureFlag", cb.event.getType());
+        assertNull(cb.event.getData());
     }
 
     static class MessageEventCb implements Function1<MessageEvent, Unit> {
