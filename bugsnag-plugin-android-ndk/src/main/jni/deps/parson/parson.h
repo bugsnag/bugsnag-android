@@ -145,7 +145,7 @@ int json_object_dothas_value_of_type(const JSON_Object *object, const char *name
 JSON_Status json_object_set_value(JSON_Object *object, const char *name, JSON_Value *value);
 JSON_Status json_object_set_string(JSON_Object *object, const char *name, const char *string);
 JSON_Status json_object_set_number(JSON_Object *object, const char *name, double number);
-JSON_Status json_object_set_long(JSON_Object *object, const char *name, long number);
+JSON_Status json_object_set_long(JSON_Object *object, const char *name, int64_t number);
 JSON_Status json_object_set_boolean(JSON_Object *object, const char *name, int boolean);
 JSON_Status json_object_set_null(JSON_Object *object, const char *name);
 
@@ -201,6 +201,7 @@ JSON_Status json_array_append_value(JSON_Array *array, JSON_Value *value);
 JSON_Status json_array_append_string(JSON_Array *array, const char *string);
 JSON_Status json_array_append_number(JSON_Array *array, double number);
 JSON_Status json_array_append_boolean(JSON_Array *array, int boolean);
+JSON_Status json_array_append_long(JSON_Array *array, int64_t number);
 JSON_Status json_array_append_null(JSON_Array *array);
 
 /*

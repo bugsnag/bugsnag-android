@@ -6,6 +6,7 @@ include_directories(
 )
 add_library(bugsnag-ndk-test SHARED
     cpp/main.c
+    cpp/ParsonTest.cpp
     cpp/test_utils_string.c
     cpp/test_utils_serialize.c
     cpp/test_serializer.c

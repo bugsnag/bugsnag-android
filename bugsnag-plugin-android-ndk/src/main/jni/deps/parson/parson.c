@@ -1001,12 +1001,18 @@ static int json_serialize_to_buffer_r(const JSON_Value *value, char *buf, int le
             }
             written_total += written;
             return written_total;
-        case JSONLong:
+        case JSONLong: {
+            const int64_t limit_value = powl(2, 53);
             l_value = json_value_get_long(value);
             if (buf != NULL) {
                 num_buf = buf;
             }
-            written = sprintf(num_buf, "\"%" PRId64 "\"", l_value);
+            if (l_value < -limit_value || l_value > limit_value) {
+              // wrap value in a string to avoid precision loss
+              written = sprintf(num_buf, "\"%" PRId64 "\"", l_value);
+            } else {
+              written = sprintf(num_buf, "%" PRId64, l_value);
+            }
             if (written < 0) {
                 return -1;
             }
@@ -1015,6 +1021,7 @@ static int json_serialize_to_buffer_r(const JSON_Value *value, char *buf, int le
             }
             written_total += written;
             return written_total;
+        }
         case JSONNull:
             APPEND_STRING("null");
             return written_total;
@@ -1729,6 +1736,18 @@ JSON_Status json_array_append_value(JSON_Array *array, JSON_Value *value) {
     return json_array_add(array, value);
 }
 
+JSON_Status json_array_append_long(JSON_Array *array, int64_t number) {
+    JSON_Value *value = json_value_init_long(number);
+    if (value == NULL) {
+        return JSONFailure;
+    }
+    if (json_array_append_value(array, value) == JSONFailure) {
+        json_value_free(value);
+        return JSONFailure;
+    }
+    return JSONSuccess;
+}
+
 JSON_Status json_array_append_string(JSON_Array *array, const char *string) {
     JSON_Value *value = json_value_init_string(string);
     if (value == NULL) {
@@ -1806,7 +1825,7 @@ JSON_Status json_object_set_number(JSON_Object *object, const char *name, double
     return json_object_set_value(object, name, json_value_init_number(number));
 }
 
-JSON_Status json_object_set_long(JSON_Object *object, const char *name, long number) {
+JSON_Status json_object_set_long(JSON_Object *object, const char *name, int64_t number) {
     return json_object_set_value(object, name, json_value_init_long(number));
 }
 
