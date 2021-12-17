@@ -5,7 +5,7 @@
 #include "utils.hpp"
 
 static void *create_payload_info_event() {
-  auto event = (bugsnag_report_v4 *)calloc(1, sizeof(bugsnag_report_v4));
+  auto event = (bugsnag_report_v5 *)calloc(1, sizeof(bugsnag_report_v5));
 
   strcpy(event->api_key, "5d1e5fbd39a74caa1200142706a90b20");
   strcpy(event->notifier.name, "Test Library");
@@ -16,10 +16,10 @@ static void *create_payload_info_event() {
 }
 
 /**
- * Create a new event in v4 format
+ * Create a new event in v5 format
  */
 static void *create_full_event() {
-  auto event = (bugsnag_report_v4 *)calloc(1, sizeof(bugsnag_report_v4));
+  auto event = (bugsnag_report_v5 *)calloc(1, sizeof(bugsnag_report_v5));
 
   strcpy(event->context,
          "00000000000m0r3.61ee9e6e099d3dd7448f740d395768da6b2df55d5.m4g1c");
@@ -33,6 +33,7 @@ static void *create_full_event() {
   event->app.duration = 6502;
   event->app.duration_in_foreground = 12;
   event->app.in_foreground = true;
+  event->app.is_launching = true;
   strcpy(event->app.id, "com.example.PhotoSnapPlus");
   strcpy(event->app.release_stage, "リリース");
   strcpy(event->app.type, "red");
@@ -103,14 +104,14 @@ extern "C" {
 #endif
 
 JNIEXPORT jstring JNICALL
-Java_com_bugsnag_android_ndk_migrations_EventMigrationV4Tests_migratePayloadInfo(
+Java_com_bugsnag_android_ndk_migrations_EventMigrationV5Tests_migratePayloadInfo(
     JNIEnv *env, jobject _this, jstring temp_file) {
   const char *path = (*env).GetStringUTFChars(temp_file, nullptr);
 
   // (old format) event struct -> file on disk
   void *old_event = create_payload_info_event();
   bool success =
-      write_struct_to_file(old_event, 4, sizeof(bugsnag_report_v4), path);
+      write_struct_to_file(old_event, 5, sizeof(bugsnag_report_v5), path);
   free(old_event);
 
   // file on disk -> latest event type
@@ -130,9 +131,9 @@ Java_com_bugsnag_android_ndk_migrations_EventMigrationV4Tests_migratePayloadInfo
 }
 
 JNIEXPORT void JNICALL
-Java_com_bugsnag_android_ndk_migrations_EventMigrationV4Tests_migrateEvent(
+Java_com_bugsnag_android_ndk_migrations_EventMigrationV5Tests_migrateEvent(
     JNIEnv *env, jobject _this, jstring temp_file) {
-  write_json_for_event(env, create_full_event, 4, sizeof(bugsnag_report_v4),
+  write_json_for_event(env, create_full_event, 5, sizeof(bugsnag_report_v5),
                        temp_file);
 }
 

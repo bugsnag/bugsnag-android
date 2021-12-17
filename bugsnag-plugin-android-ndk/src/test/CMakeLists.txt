@@ -13,5 +13,9 @@ add_library(bugsnag-ndk-test SHARED
     cpp/test_bsg_event.c
     cpp/test_featureflags.c
     cpp/migrations/EventMigrationV4Tests.cpp
+    cpp/migrations/EventMigrationV5Tests.cpp
+    cpp/migrations/EventMigrationV6Tests.cpp
+    cpp/migrations/EventMigrationV7Tests.cpp
+    cpp/migrations/EventMigrationV8Tests.cpp
 )
 target_link_libraries(bugsnag-ndk-test bugsnag-ndk)

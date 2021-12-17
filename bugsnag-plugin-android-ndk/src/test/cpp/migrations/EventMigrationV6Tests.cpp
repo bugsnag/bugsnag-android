@@ -5,7 +5,7 @@
 #include "utils.hpp"
 
 static void *create_payload_info_event() {
-  auto event = (bugsnag_report_v4 *)calloc(1, sizeof(bugsnag_report_v4));
+  auto event = (bugsnag_report_v6 *)calloc(1, sizeof(bugsnag_report_v6));
 
   strcpy(event->api_key, "5d1e5fbd39a74caa1200142706a90b20");
   strcpy(event->notifier.name, "Test Library");
@@ -16,10 +16,10 @@ static void *create_payload_info_event() {
 }
 
 /**
- * Create a new event in v4 format
+ * Create a new event in v6 format
  */
 static void *create_full_event() {
-  auto event = (bugsnag_report_v4 *)calloc(1, sizeof(bugsnag_report_v4));
+  auto event = (bugsnag_report_v6 *)calloc(1, sizeof(bugsnag_report_v6));
 
   strcpy(event->context,
          "00000000000m0r3.61ee9e6e099d3dd7448f740d395768da6b2df55d5.m4g1c");
@@ -33,6 +33,7 @@ static void *create_full_event() {
   event->app.duration = 6502;
   event->app.duration_in_foreground = 12;
   event->app.in_foreground = true;
+  event->app.is_launching = true;
   strcpy(event->app.id, "com.example.PhotoSnapPlus");
   strcpy(event->app.release_stage, "リリース");
   strcpy(event->app.type, "red");
@@ -40,12 +41,20 @@ static void *create_full_event() {
   event->app.version_code = 57;
 
   // breadcrumbs
-  insert_crumb(event->breadcrumbs, 0, "decrease torque", BSG_CRUMB_STATE,
-               1638992630014, "Moving laterally 26º");
-  insert_crumb(event->breadcrumbs, 1, "enable blasters", BSG_CRUMB_USER,
-               1638992630301, "this is a drill.");
-  event->crumb_count = 2;
-  event->crumb_first_index = 0;
+  auto max = 50;
+  event->crumb_first_index = 2; // test the circular buffer logic
+  char name[30];
+  for (int i = event->crumb_first_index; i < max; i++) {
+    sprintf(name, "mission %d", i - event->crumb_first_index);
+    insert_crumb(event->breadcrumbs, i, name, BSG_CRUMB_STATE, 1638992630014,
+                 "Now we know what they mean by 'advanced' tactical training.");
+  }
+  for (int i = 0; i < event->crumb_first_index; i++) {
+    sprintf(name, "mission %d", (max - event->crumb_first_index) + i);
+    insert_crumb(event->breadcrumbs, i, name, BSG_CRUMB_STATE, 1638992630014,
+                 "Now we know what they mean by 'advanced' tactical training.");
+  }
+  event->crumb_count = max;
 
   // device
   event->device.cpu_abi_count = 1;
@@ -54,7 +63,7 @@ static void *create_full_event() {
   event->device.jailbroken = true;
   strcpy(event->device.locale, "en_AU#Melbun");
   strcpy(event->device.manufacturer, "HI-TEC™");
-  strcpy(event->device.model, "Rasseur");
+  strcpy(event->device.model, "🍨");
   strcpy(event->device.orientation, "sideup");
   strcpy(event->device.os_name, "BOX BOX");
   strcpy(event->device.os_version, "98.7");
@@ -103,14 +112,14 @@ extern "C" {
 #endif
 
 JNIEXPORT jstring JNICALL
-Java_com_bugsnag_android_ndk_migrations_EventMigrationV4Tests_migratePayloadInfo(
+Java_com_bugsnag_android_ndk_migrations_EventMigrationV6Tests_migratePayloadInfo(
     JNIEnv *env, jobject _this, jstring temp_file) {
   const char *path = (*env).GetStringUTFChars(temp_file, nullptr);
 
   // (old format) event struct -> file on disk
   void *old_event = create_payload_info_event();
   bool success =
-      write_struct_to_file(old_event, 4, sizeof(bugsnag_report_v4), path);
+      write_struct_to_file(old_event, 6, sizeof(bugsnag_report_v6), path);
   free(old_event);
 
   // file on disk -> latest event type
@@ -130,9 +139,9 @@ Java_com_bugsnag_android_ndk_migrations_EventMigrationV4Tests_migratePayloadInfo
 }
 
 JNIEXPORT void JNICALL
-Java_com_bugsnag_android_ndk_migrations_EventMigrationV4Tests_migrateEvent(
+Java_com_bugsnag_android_ndk_migrations_EventMigrationV6Tests_migrateEvent(
     JNIEnv *env, jobject _this, jstring temp_file) {
-  write_json_for_event(env, create_full_event, 4, sizeof(bugsnag_report_v4),
+  write_json_for_event(env, create_full_event, 6, sizeof(bugsnag_report_v6),
                        temp_file);
 }
 

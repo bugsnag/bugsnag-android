@@ -2,9 +2,11 @@ package com.bugsnag.android.ndk.migrations
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
+import org.junit.Assert.fail
 import org.junit.Test
 
-class EventMigrationV4Tests : EventMigrationTest() {
+/** Migration v6 increased the number of breadcrumbs to 50 */
+class EventMigrationV6Tests : EventMigrationTest() {
 
     @Test
     /** check notifier and api key, since they aren't included in event JSON */
@@ -52,7 +54,7 @@ class EventMigrationV4Tests : EventMigrationTest() {
                 "durationInForeground" to 12L,
                 "id" to "com.example.PhotoSnapPlus",
                 "inForeground" to true,
-                "isLaunching" to false, // not available in this version
+                "isLaunching" to true,
                 "releaseStage" to "リリース",
                 "type" to "red",
                 "version" to "2.0.52",
@@ -62,27 +64,25 @@ class EventMigrationV4Tests : EventMigrationTest() {
         )
 
         // breadcrumbs
-        assertEquals(
-            listOf(
-                mapOf(
-                    "type" to "state",
-                    "name" to "decrease torque",
-                    "timestamp" to "2021-12-08T19:43:50.014Z",
-                    "metaData" to mapOf(
-                        "message" to "Moving laterally 26º"
-                    )
-                ),
-                mapOf(
-                    "type" to "user",
-                    "name" to "enable blasters",
-                    "timestamp" to "2021-12-08T19:43:50.301Z",
-                    "metaData" to mapOf(
-                        "message" to "this is a drill."
-                    )
+        val crumbs = output["breadcrumbs"]
+        if (crumbs is List<Any?>) {
+            assertEquals(50, crumbs.size)
+            crumbs.forEachIndexed { index, crumb ->
+                assertEquals(
+                    mapOf(
+                        "type" to "state",
+                        "name" to "mission $index",
+                        "timestamp" to "2021-12-08T19:43:50.014Z",
+                        "metaData" to mapOf(
+                            "message" to "Now we know what they mean by 'advanced' tactical training."
+                        )
+                    ),
+                    crumb
                 )
-            ),
-            output["breadcrumbs"]
-        )
+            }
+        } else {
+            fail("breadcrumbs is not a list of crumb objects?!")
+        }
 
         // device
         assertEquals(
@@ -92,7 +92,7 @@ class EventMigrationV4Tests : EventMigrationTest() {
                 "locale" to "en_AU#Melbun",
                 "jailbroken" to true,
                 "manufacturer" to "HI-TEC™",
-                "model" to "Rasseur",
+                "model" to "🍨",
                 "orientation" to "sideup",
                 "osName" to "BOX BOX",
                 "osVersion" to "98.7",

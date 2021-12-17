@@ -248,16 +248,16 @@ bugsnag_event *bsg_map_v5_to_report(bugsnag_report_v5 *report_v5) {
     event->metadata = report_v5->metadata;
     event->severity = report_v5->severity;
     bsg_strncpy_safe(event->session_id, report_v5->session_id,
-                     sizeof(event->session_id));
+                     sizeof(report_v5->session_id));
     bsg_strncpy_safe(event->session_start, report_v5->session_start,
-                     sizeof(event->session_id));
+                     sizeof(report_v5->session_start));
     event->handled_events = report_v5->handled_events;
     event->unhandled_events = report_v5->unhandled_events;
     bsg_strncpy_safe(event->grouping_hash, report_v5->grouping_hash,
-                     sizeof(event->session_id));
+                     sizeof(report_v5->grouping_hash));
     event->unhandled = report_v5->unhandled;
     bsg_strncpy_safe(event->api_key, report_v5->api_key,
-                     sizeof(event->api_key));
+                     sizeof(report_v5->api_key));
 
     migrate_breadcrumb_v2(report_v5, event);
     free(report_v5);
@@ -291,7 +291,7 @@ bugsnag_event *bsg_map_v4_to_report(bugsnag_report_v4 *report_v4) {
     event->handled_events = report_v4->handled_events;
     event->unhandled_events = report_v4->unhandled_events;
     bsg_strncpy_safe(event->grouping_hash, report_v4->grouping_hash,
-                     sizeof(report_v4->session_id));
+                     sizeof(report_v4->grouping_hash));
     event->unhandled = report_v4->unhandled;
     bsg_strncpy_safe(event->api_key, report_v4->api_key,
                      sizeof(report_v4->api_key));

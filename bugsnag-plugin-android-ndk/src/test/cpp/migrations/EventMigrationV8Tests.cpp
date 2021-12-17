@@ -5,7 +5,7 @@
 #include "utils.hpp"
 
 static void *create_payload_info_event() {
-  auto event = (bugsnag_report_v4 *)calloc(1, sizeof(bugsnag_report_v4));
+  auto event = (bugsnag_event *)calloc(1, sizeof(bugsnag_event));
 
   strcpy(event->api_key, "5d1e5fbd39a74caa1200142706a90b20");
   strcpy(event->notifier.name, "Test Library");
@@ -16,10 +16,10 @@ static void *create_payload_info_event() {
 }
 
 /**
- * Create a new event in v4 format
+ * Create a new event in v8 format
  */
 static void *create_full_event() {
-  auto event = (bugsnag_report_v4 *)calloc(1, sizeof(bugsnag_report_v4));
+  auto event = (bugsnag_event *)calloc(1, sizeof(bugsnag_event));
 
   strcpy(event->context,
          "00000000000m0r3.61ee9e6e099d3dd7448f740d395768da6b2df55d5.m4g1c");
@@ -33,6 +33,7 @@ static void *create_full_event() {
   event->app.duration = 6502;
   event->app.duration_in_foreground = 12;
   event->app.in_foreground = true;
+  event->app.is_launching = true;
   strcpy(event->app.id, "com.example.PhotoSnapPlus");
   strcpy(event->app.release_stage, "リリース");
   strcpy(event->app.type, "red");
@@ -40,12 +41,20 @@ static void *create_full_event() {
   event->app.version_code = 57;
 
   // breadcrumbs
-  insert_crumb(event->breadcrumbs, 0, "decrease torque", BSG_CRUMB_STATE,
-               1638992630014, "Moving laterally 26º");
-  insert_crumb(event->breadcrumbs, 1, "enable blasters", BSG_CRUMB_USER,
-               1638992630301, "this is a drill.");
-  event->crumb_count = 2;
-  event->crumb_first_index = 0;
+  auto max = 50;
+  event->crumb_first_index = 2; // test the circular buffer logic
+  char name[30];
+  for (int i = event->crumb_first_index; i < max; i++) {
+    sprintf(name, "mission %d", i - event->crumb_first_index);
+    insert_crumb(event->breadcrumbs, i, name, BSG_CRUMB_STATE, 1638992630014,
+                 "Now we know what they mean by 'advanced' tactical training.");
+  }
+  for (int i = 0; i < event->crumb_first_index; i++) {
+    sprintf(name, "mission %d", (max - event->crumb_first_index) + i);
+    insert_crumb(event->breadcrumbs, i, name, BSG_CRUMB_STATE, 1638992630014,
+                 "Now we know what they mean by 'advanced' tactical training.");
+  }
+  event->crumb_count = max;
 
   // device
   event->device.cpu_abi_count = 1;
@@ -54,7 +63,7 @@ static void *create_full_event() {
   event->device.jailbroken = true;
   strcpy(event->device.locale, "en_AU#Melbun");
   strcpy(event->device.manufacturer, "HI-TEC™");
-  strcpy(event->device.model, "Rasseur");
+  strcpy(event->device.model, "🍨");
   strcpy(event->device.orientation, "sideup");
   strcpy(event->device.os_name, "BOX BOX");
   strcpy(event->device.os_version, "98.7");
@@ -64,6 +73,18 @@ static void *create_full_event() {
   }
   event->device.time = 1638992630;
   event->device.total_memory = 3278623;
+
+  // feature flags
+  event->feature_flag_count = 4;
+  event->feature_flags =
+      (bsg_feature_flag *)calloc(4, sizeof(bsg_feature_flag));
+  event->feature_flags[0].name = strdup("bluebutton");
+  event->feature_flags[0].variant = strdup("on");
+  event->feature_flags[1].name = strdup("redbutton");
+  event->feature_flags[1].variant = strdup("off");
+  event->feature_flags[2].name = strdup("nobutton");
+  event->feature_flags[3].name = strdup("switch");
+  event->feature_flags[3].variant = strdup("left");
 
   // exceptions
   strcpy(event->error.errorClass, "SIGBUS");
@@ -90,6 +111,14 @@ static void *create_full_event() {
   strcpy(event->session_id, "aaaaaaaaaaaaaaaa");
   strcpy(event->session_start, "2031-07-09T11:08:21+00:00");
 
+  // threads
+  event->thread_count = 8;
+  for (int i = 0; i < event->thread_count; i++) {
+    event->threads[i].id = 1000 + i;
+    sprintf(event->threads[i].name, "Thread #%d", i);
+    sprintf(event->threads[i].state, "paused-%d", i);
+  }
+
   // user
   strcpy(event->user.email, "fenton@io.example.com");
   strcpy(event->user.name, "Fenton");
@@ -98,20 +127,34 @@ static void *create_full_event() {
   return event;
 }
 
+static const char *write_event_v8(JNIEnv *env, jstring temp_file,
+                                  void *(event_generator)()) {
+  auto event_ctx = (bsg_environment *)calloc(1, sizeof(bsg_environment));
+  event_ctx->report_header.version = 8;
+  const char *path = (*env).GetStringUTFChars(temp_file, nullptr);
+  sprintf(event_ctx->next_event_path, "%s", path);
+
+  // (old format) event struct -> file on disk
+  void *old_event = event_generator();
+  memcpy(&event_ctx->next_event, old_event, sizeof(bugsnag_event));
+  free(old_event);
+  // FUTURE(df): whenever migration v9 rolls around, the v8 version of
+  // bsg_serialize_event_to_file() function should be moved into this file to
+  // preserve the migration test behavior. The good news is—if this doesn't
+  // happen—the test will probably start failing loudly.
+  bsg_serialize_event_to_file(event_ctx);
+  free(event_ctx);
+  return path;
+}
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 JNIEXPORT jstring JNICALL
-Java_com_bugsnag_android_ndk_migrations_EventMigrationV4Tests_migratePayloadInfo(
+Java_com_bugsnag_android_ndk_migrations_EventMigrationV8Tests_migratePayloadInfo(
     JNIEnv *env, jobject _this, jstring temp_file) {
-  const char *path = (*env).GetStringUTFChars(temp_file, nullptr);
-
-  // (old format) event struct -> file on disk
-  void *old_event = create_payload_info_event();
-  bool success =
-      write_struct_to_file(old_event, 4, sizeof(bugsnag_report_v4), path);
-  free(old_event);
+  const char *path = write_event_v8(env, temp_file, create_payload_info_event);
 
   // file on disk -> latest event type
   bugsnag_event *parsed_event = bsg_deserialize_event_from_file((char *)path);
@@ -125,15 +168,31 @@ Java_com_bugsnag_android_ndk_migrations_EventMigrationV4Tests_migratePayloadInfo
   json_object_set_string(event_obj, "notifierURL", parsed_event->notifier.url);
   json_object_set_string(event_obj, "notifierVersion",
                          parsed_event->notifier.version);
-  char *result = json_serialize_to_string(event_val);
-  return (*env).NewStringUTF(result);
+  char *json_str = json_serialize_to_string(event_val);
+  auto result = (*env).NewStringUTF(json_str);
+  free(json_str);
+
+  return result;
 }
 
 JNIEXPORT void JNICALL
-Java_com_bugsnag_android_ndk_migrations_EventMigrationV4Tests_migrateEvent(
+Java_com_bugsnag_android_ndk_migrations_EventMigrationV8Tests_migrateEvent(
     JNIEnv *env, jobject _this, jstring temp_file) {
-  write_json_for_event(env, create_full_event, 4, sizeof(bugsnag_report_v4),
-                       temp_file);
+  const char *path = write_event_v8(env, temp_file, create_full_event);
+
+  // file on disk -> latest event type
+  bugsnag_event *parsed_event = bsg_deserialize_event_from_file((char *)path);
+  char *output = bsg_serialize_event_to_json_string(parsed_event);
+  for (int i = 0; i < parsed_event->feature_flag_count; i++) {
+    free(parsed_event->feature_flags[i].name);
+    free(parsed_event->feature_flags[i].variant);
+  }
+  free(parsed_event->feature_flags);
+  free(parsed_event);
+
+  // latest event type -> temp file
+  write_str_to_file(output, path);
+  free(output);
 }
 
 #ifdef __cplusplus

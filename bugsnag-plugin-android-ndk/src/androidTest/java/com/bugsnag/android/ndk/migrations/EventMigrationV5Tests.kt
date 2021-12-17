@@ -4,7 +4,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Test
 
-class EventMigrationV4Tests : EventMigrationTest() {
+/** Migration v5 added event.app.isLaunching() */
+class EventMigrationV5Tests : EventMigrationTest() {
 
     @Test
     /** check notifier and api key, since they aren't included in event JSON */
@@ -52,7 +53,7 @@ class EventMigrationV4Tests : EventMigrationTest() {
                 "durationInForeground" to 12L,
                 "id" to "com.example.PhotoSnapPlus",
                 "inForeground" to true,
-                "isLaunching" to false, // not available in this version
+                "isLaunching" to true,
                 "releaseStage" to "リリース",
                 "type" to "red",
                 "version" to "2.0.52",
