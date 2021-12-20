@@ -12,7 +12,7 @@ Java_com_bugsnag_android_ndk_ParsonTest_longToJsonArray(JNIEnv *env,
                                                         jlong value) {
   JSON_Value *ary_value = json_value_init_array();
   JSON_Array *ary = json_value_get_array(ary_value);
-  json_array_append_long(ary, value);
+  json_array_append_integer(ary, value);
   auto serialized = json_serialize_to_string(ary_value);
   auto result = (*env).NewStringUTF(serialized);
 

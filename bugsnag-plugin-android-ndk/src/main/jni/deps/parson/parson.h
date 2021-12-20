@@ -145,7 +145,7 @@ int json_object_dothas_value_of_type(const JSON_Object *object, const char *name
 JSON_Status json_object_set_value(JSON_Object *object, const char *name, JSON_Value *value);
 JSON_Status json_object_set_string(JSON_Object *object, const char *name, const char *string);
 JSON_Status json_object_set_number(JSON_Object *object, const char *name, double number);
-JSON_Status json_object_set_long(JSON_Object *object, const char *name, int64_t number);
+JSON_Status json_object_set_integer(JSON_Object *object, const char *name, int64_t number);
 JSON_Status json_object_set_boolean(JSON_Object *object, const char *name, int boolean);
 JSON_Status json_object_set_null(JSON_Object *object, const char *name);
 
@@ -153,7 +153,7 @@ JSON_Status json_object_set_null(JSON_Object *object, const char *name);
  * json_object_dotset_value does not copy passed value so it shouldn't be freed afterwards. */
 JSON_Status json_object_dotset_value(JSON_Object *object, const char *name, JSON_Value *value);
 JSON_Status json_object_dotset_string(JSON_Object *object, const char *name, const char *string);
-JSON_Status json_object_dotset_long(JSON_Object *object, const char *name, int64_t number);
+JSON_Status json_object_dotset_integer(JSON_Object *object, const char *name, int64_t number);
 JSON_Status json_object_dotset_number(JSON_Object *object, const char *name, double number);
 JSON_Status json_object_dotset_boolean(JSON_Object *object, const char *name, int boolean);
 JSON_Status json_object_dotset_null(JSON_Object *object, const char *name);
@@ -201,7 +201,7 @@ JSON_Status json_array_append_value(JSON_Array *array, JSON_Value *value);
 JSON_Status json_array_append_string(JSON_Array *array, const char *string);
 JSON_Status json_array_append_number(JSON_Array *array, double number);
 JSON_Status json_array_append_boolean(JSON_Array *array, int boolean);
-JSON_Status json_array_append_long(JSON_Array *array, int64_t number);
+JSON_Status json_array_append_integer(JSON_Array *array, int64_t number);
 JSON_Status json_array_append_null(JSON_Array *array);
 
 /*
@@ -221,7 +221,7 @@ JSON_Object *   json_value_get_object (const JSON_Value *value);
 JSON_Array  *   json_value_get_array  (const JSON_Value *value);
 const char  *   json_value_get_string (const JSON_Value *value);
 double          json_value_get_number (const JSON_Value *value);
-int64_t         json_value_get_long   (const JSON_Value *value);
+int64_t         json_value_get_integer(const JSON_Value *value);
 int             json_value_get_boolean(const JSON_Value *value);
 JSON_Value  *   json_value_get_parent (const JSON_Value *value);
 
