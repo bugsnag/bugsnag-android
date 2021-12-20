@@ -12,6 +12,9 @@
 * Delete persisted NDK events earlier in delivery process
   [#1562](https://github.com/bugsnag/bugsnag-android/pull/1562)
 
+* Add null checks for strlen()
+  [#1563](https://github.com/bugsnag/bugsnag-android/pull/1563)
+
 ## 5.17.0 (2021-12-08)
 
 ### Enhancements

@@ -89,7 +89,7 @@ void bsg_populate_notify_stacktrace(JNIEnv *env, bugsnag_stackframe *stacktrace,
 
     // populate method
     jstring method = NULL;
-    if (strlen(frame.method) == 0) {
+    if (bsg_strlen(frame.method) == 0) {
       char frame_address[32];
       snprintf(frame_address, sizeof(frame_address), "0x%lx",
                (unsigned long)frame.frame_address);

@@ -408,7 +408,7 @@ void migrate_breadcrumb_v1(bugsnag_report_v2 *report_v2,
     for (int j = 0; j < 8; j++) {
       bsg_char_metadata_pair pair = old_crumb->metadata[j];
 
-      if (strlen(pair.value) > 0 && strlen(pair.key) > 0) {
+      if (bsg_strlen(pair.value) > 0 && bsg_strlen(pair.key) > 0) {
         bsg_add_metadata_value_str(&new_crumb->metadata, "metaData", pair.key,
                                    pair.value);
       }
@@ -624,7 +624,7 @@ void bsg_serialize_context(const bugsnag_event *event, JSON_Object *event_obj) {
 
 void bsg_serialize_grouping_hash(const bugsnag_event *event,
                                  JSON_Object *event_obj) {
-  if (strlen(event->grouping_hash) > 0) {
+  if (bsg_strlen(event->grouping_hash) > 0) {
     json_object_set_string(event_obj, "groupingHash", event->grouping_hash);
   }
 }
@@ -655,7 +655,7 @@ void bsg_serialize_app(const bsg_app_info app, JSON_Object *event_obj) {
 
   json_object_dotset_string(event_obj, "app.releaseStage", app.release_stage);
   json_object_dotset_number(event_obj, "app.versionCode", app.version_code);
-  if (strlen(app.build_uuid) > 0) {
+  if (bsg_strlen(app.build_uuid) > 0) {
     json_object_dotset_string(event_obj, "app.buildUUID", app.build_uuid);
   }
   json_object_dotset_string(event_obj, "app.binaryArch", app.binary_arch);
@@ -764,11 +764,11 @@ void bsg_serialize_breadcrumb_metadata(const bugsnag_metadata metadata,
 }
 
 void bsg_serialize_user(const bugsnag_user user, JSON_Object *event_obj) {
-  if (strlen(user.name) > 0)
+  if (bsg_strlen(user.name) > 0)
     json_object_dotset_string(event_obj, "user.name", user.name);
-  if (strlen(user.email) > 0)
+  if (bsg_strlen(user.email) > 0)
     json_object_dotset_string(event_obj, "user.email", user.email);
-  if (strlen(user.id) > 0)
+  if (bsg_strlen(user.id) > 0)
     json_object_dotset_string(event_obj, "user.id", user.id);
 }
 
@@ -815,10 +815,10 @@ void bsg_serialize_stackframe(bugsnag_stackframe *stackframe, bool is_pc,
     // the field keeps payload sizes smaller.
     json_object_set_boolean(frame, "isPC", true);
   }
-  if (strlen((*stackframe).filename) > 0) {
+  if (bsg_strlen((*stackframe).filename) > 0) {
     json_object_set_string(frame, "file", (*stackframe).filename);
   }
-  if (strlen((*stackframe).method) == 0) {
+  if (bsg_strlen((*stackframe).method) == 0) {
     char *frame_address = calloc(1, sizeof(char) * 32);
     sprintf(frame_address, "0x%lx", (unsigned long)(*stackframe).frame_address);
     json_object_set_string(frame, "method", frame_address);

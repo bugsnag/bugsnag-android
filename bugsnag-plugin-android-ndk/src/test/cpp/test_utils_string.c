@@ -35,8 +35,14 @@ TEST length_literal_string(void) {
     ASSERT_EQ(11, bsg_strlen("C h a n g e"));
     PASS();
 }
+
 TEST length_empty_string(void) {
     ASSERT_EQ(0, bsg_strlen(""));
+    PASS();
+}
+
+TEST length_null_string(void) {
+    ASSERT_EQ(0, bsg_strlen(NULL));
     PASS();
 }
 
@@ -45,5 +51,6 @@ SUITE(suite_string_utils) {
     RUN_TEST(test_copy_literal_string);
     RUN_TEST(length_empty_string);
     RUN_TEST(length_literal_string);
+    RUN_TEST(length_null_string);
 }
 
