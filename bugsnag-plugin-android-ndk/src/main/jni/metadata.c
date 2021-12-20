@@ -585,7 +585,7 @@ void bsg_populate_context(JNIEnv *env, bsg_jni_cache *jni_cache,
       bsg_safe_release_string_utf_chars(env, _context, value);
     }
   } else {
-    memset(&event->context, 0, strlen(event->context));
+    memset(&event->context, 0, bsg_strlen(event->context));
   }
 }
 

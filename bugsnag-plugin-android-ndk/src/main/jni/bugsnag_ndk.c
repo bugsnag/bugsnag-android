@@ -189,7 +189,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   }
 
   // If set, save os build info to report info header
-  if (strlen(bugsnag_env->next_event.device.os_build) > 0) {
+  if (bsg_strlen(bugsnag_env->next_event.device.os_build) > 0) {
     bsg_strncpy_safe(bugsnag_env->report_header.os_build,
                      bugsnag_env->next_event.device.os_build,
                      sizeof(bugsnag_env->report_header.os_build));
@@ -346,8 +346,8 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_pausedSession(
   }
   bsg_request_env_write_lock();
   bugsnag_event *event = &bsg_global_env->next_event;
-  memset(event->session_id, 0, strlen(event->session_id));
-  memset(event->session_start, 0, strlen(event->session_start));
+  memset(event->session_id, 0, bsg_strlen(event->session_id));
+  memset(event->session_start, 0, bsg_strlen(event->session_start));
   event->handled_events = 0;
   event->unhandled_events = 0;
   bsg_release_env_write_lock();

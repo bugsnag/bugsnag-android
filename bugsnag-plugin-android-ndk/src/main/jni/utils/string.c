@@ -18,6 +18,9 @@ void bsg_strncpy(char *dst, const char *src, size_t len) {
 }
 
 size_t bsg_strlen(const char *str) {
+  if (str == NULL) {
+    return 0;
+  }
   size_t i = 0;
   while (true) {
     char current = str[i];
