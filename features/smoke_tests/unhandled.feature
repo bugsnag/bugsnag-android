@@ -133,7 +133,7 @@ Scenario: Signal raised with overwritten config
     And the event "app.releaseStage" equals "CXXSignalSmokeScenario"
     And the event "app.type" equals "Overwritten"
     And the event "app.version" equals "9.9.9"
-    And the event "app.versionCode" equals "999"
+    And the event "app.versionCode" equals 999
     And the error payload field "events.0.app.duration" is not null
     And the error payload field "events.0.app.durationInForeground" is not null
     And the event "app.inForeground" is true
@@ -216,7 +216,7 @@ Scenario: C++ exception thrown with overwritten config
     And the event "app.releaseStage" equals "CXXExceptionSmokeScenario"
     And the event "app.type" equals "Overwritten"
     And the event "app.version" equals "9.9.9"
-    And the event "app.versionCode" equals "999"
+    And the event "app.versionCode" equals 999
     And the error payload field "events.0.app.duration" is not null
     And the error payload field "events.0.app.durationInForeground" is not null
     And the event "app.inForeground" is true

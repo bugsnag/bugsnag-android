@@ -1001,12 +1001,18 @@ static int json_serialize_to_buffer_r(const JSON_Value *value, char *buf, int le
             }
             written_total += written;
             return written_total;
-        case JSONLong:
-            l_value = json_value_get_long(value);
+        case JSONLong: {
+            const int64_t limit_value = powl(2, 53);
+            l_value = json_value_get_integer(value);
             if (buf != NULL) {
                 num_buf = buf;
             }
-            written = sprintf(num_buf, "\"%" PRId64 "\"", l_value);
+            if (l_value < -limit_value || l_value > limit_value) {
+              // wrap value in a string to avoid precision loss
+              written = sprintf(num_buf, "\"%" PRId64 "\"", l_value);
+            } else {
+              written = sprintf(num_buf, "%" PRId64, l_value);
+            }
             if (written < 0) {
                 return -1;
             }
@@ -1015,6 +1021,7 @@ static int json_serialize_to_buffer_r(const JSON_Value *value, char *buf, int le
             }
             written_total += written;
             return written_total;
+        }
         case JSONNull:
             APPEND_STRING("null");
             return written_total;
@@ -1308,7 +1315,7 @@ double json_value_get_number(const JSON_Value *value) {
     return json_value_get_type(value) == JSONNumber ? value->value.number : 0;
 }
 
-int64_t json_value_get_long(const JSON_Value *value) {
+int64_t json_value_get_integer(const JSON_Value *value) {
     return json_value_get_type(value) == JSONLong ? value->value.l_value : 0;
 }
 
@@ -1390,7 +1397,7 @@ JSON_Value * json_value_init_string(const char *string) {
 }
 
 
-JSON_Value * json_value_init_long(int64_t number) {
+JSON_Value * json_value_init_integer(int64_t number) {
     JSON_Value *new_value = (JSON_Value*)parson_malloc(sizeof(JSON_Value));
     if (new_value == NULL) {
         return NULL;
@@ -1729,6 +1736,18 @@ JSON_Status json_array_append_value(JSON_Array *array, JSON_Value *value) {
     return json_array_add(array, value);
 }
 
+JSON_Status json_array_append_integer(JSON_Array *array, int64_t number) {
+    JSON_Value *value = json_value_init_integer(number);
+    if (value == NULL) {
+        return JSONFailure;
+    }
+    if (json_array_append_value(array, value) == JSONFailure) {
+        json_value_free(value);
+        return JSONFailure;
+    }
+    return JSONSuccess;
+}
+
 JSON_Status json_array_append_string(JSON_Array *array, const char *string) {
     JSON_Value *value = json_value_init_string(string);
     if (value == NULL) {
@@ -1806,8 +1825,8 @@ JSON_Status json_object_set_number(JSON_Object *object, const char *name, double
     return json_object_set_value(object, name, json_value_init_number(number));
 }
 
-JSON_Status json_object_set_long(JSON_Object *object, const char *name, long number) {
-    return json_object_set_value(object, name, json_value_init_long(number));
+JSON_Status json_object_set_integer(JSON_Object *object, const char *name, int64_t number) {
+    return json_object_set_value(object, name, json_value_init_integer(number));
 }
 
 JSON_Status json_object_set_boolean(JSON_Object *object, const char *name, int boolean) {
@@ -1884,8 +1903,8 @@ JSON_Status json_object_dotset_number(JSON_Object *object, const char *name, dou
     return JSONSuccess;
 }
 
-JSON_Status json_object_dotset_long(JSON_Object *object, const char *name, int64_t number) {
-    JSON_Value *value = json_value_init_long(number);
+JSON_Status json_object_dotset_integer(JSON_Object *object, const char *name, int64_t number) {
+    JSON_Value *value = json_value_init_integer(number);
     if (value == NULL) {
         return JSONFailure;
     }
