@@ -224,6 +224,10 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
   }
   event = bsg_deserialize_event_from_file((char *)event_path);
 
+  // remove persisted NDK struct early - this reduces the chance of crash loops
+  // in delivery.
+  remove(event_path);
+
   if (event != NULL) {
     payload = bsg_serialize_event_to_json_string(event);
     if (payload != NULL) {
@@ -269,7 +273,6 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
   } else {
     BUGSNAG_LOG("Failed to read event at file: %s", event_path);
   }
-  remove(event_path);
   goto exit;
 
 exit:
