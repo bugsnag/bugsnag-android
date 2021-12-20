@@ -11,6 +11,9 @@
 * Explicitly define Kotlin api/language versions
   [#1564](https://github.com/bugsnag/bugsnag-android/pull/1564)
 
+* Explicitly define Kotlin api/language versions
+  [#1564](https://github.com/bugsnag/bugsnag-android/pull/1564)
+
 ### Bug fixes
 
 * Delete persisted NDK events earlier in delivery process
