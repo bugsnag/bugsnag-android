@@ -31,7 +31,7 @@ services:
       PUBLISH_PASS:
 
   android-maze-runner:
-    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner:integration-bitbar-cli
+    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner:bitbar-scheduled-testing-cli
     environment:
       DEBUG:
       BUILDKITE:
