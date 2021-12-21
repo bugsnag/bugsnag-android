@@ -1,3 +1,30 @@
+class Assertions
+  class << self
+    include Test::Unit::Assertions
+
+    def true(test, message = nil)
+      assert_true(test, message)
+    end
+
+    def block(message = 'block failed', &block)
+      assert_block(message, &block)
+    end
+
+    def not_nil(test, message = nil)
+      assert_not_nil(test, message)
+    end
+
+    def equal(expected, act, message = nil)
+      assert_equal(expected, act, message)
+    end
+
+    def include(collection, object, message = nil)
+      assert_include(collection, object, message)
+    end
+    alias includes include
+  end
+end
+
 # Waits 5s for an element to be present.  If it isn't assume a system error dialog is
 # blocking its view and dismiss it before trying once more.
 #
@@ -17,7 +44,7 @@ When('any dialog is cleared and the element {string} is present') do |element_id
     $logger.info "System dialog cleared, reattempting wait_for_element" if clicked
   end
 
-  assert(present, "The element #{element_id} could not be found")
+  Assertions.true(present, "The element #{element_id} could not be found")
 end
 
 When("I run {string}") do |event_type|
@@ -89,14 +116,14 @@ end
 Then("the exception reflects a signal was raised") do
   value = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.exceptions.0")
   error_class = value["errorClass"]
-  assert_block("The errorClass was not from a signal: #{error_class}") do
+  Assertions.block("The errorClass was not from a signal: #{error_class}") do
     %w[SIGFPE SIGILL SIGSEGV SIGABRT SIGTRAP SIGBUS].include? error_class
   end
 end
 
 Then("the exception {string} equals one of:") do |keypath, possible_values|
   value = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.exceptions.0.#{keypath}")
-  assert_includes(possible_values.raw.flatten, value)
+  Assertions.includes(possible_values.raw.flatten, value)
 end
 
 # Checks whether the first significant frames match several given frames
@@ -121,8 +148,10 @@ Then("the first significant stack frame methods and files should match:") do |ex
     test_frame = significant_frames[index]
     method_match_a = expected_frame[0] == test_frame[:method]
     method_match_b = expected_frame[1] == test_frame[:method]
-    assert(method_match_a || method_match_b, "'#{test_frame[:method]}' in frame #{test_frame[:index]} is not equal to '#{expected_frame[0]}' or '#{expected_frame[1]}'")
-    assert(test_frame[:file].end_with?(expected_frame[2]), "'#{test_frame[:file]}' in frame #{test_frame[:index]} does not end with '#{expected_frame[2]}'")
+    Assertions.true(method_match_a || method_match_b,
+      "'#{test_frame[:method]}' in frame #{test_frame[:index]} is not equal to '#{expected_frame[0]}' or '#{expected_frame[1]}'")
+    Assertions.true(test_frame[:file].end_with?(expected_frame[2]),
+      "'#{test_frame[:file]}' in frame #{test_frame[:index]} does not end with '#{expected_frame[2]}'")
   end
 end
 
@@ -177,9 +206,9 @@ Then("the error payload contains a completed unhandled native report") do
   }
   stack = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.exceptions.0.stacktrace")
     stack.each_with_index do |frame, index|
-      assert_not_nil(frame['symbolAddress'], "The symbolAddress of frame #{index} is nil")
-      assert_not_nil(frame['frameAddress'], "The frameAddress of frame #{index} is nil")
-      assert_not_nil(frame['loadAddress'], "The loadAddress of frame #{index} is nil")
+      Assertions.not_nil(frame['symbolAddress'], "The symbolAddress of frame #{index} is nil")
+      Assertions.not_nil(frame['frameAddress'], "The frameAddress of frame #{index} is nil")
+      Assertions.not_nil(frame['loadAddress'], "The loadAddress of frame #{index} is nil")
     end
 end
 
@@ -196,8 +225,8 @@ Then("the stacktrace contains native frame information") do
   step("the error payload field \"events.0.exceptions.0.stacktrace\" is a non-empty array")
   stack = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.exceptions.0.stacktrace")
   stack.each_with_index do |frame, index|
-    assert_not_nil(frame['method'], "The method of frame #{index} is nil")
-    assert_not_nil(frame['lineNumber'], "The lineNumber of frame #{index} is nil")
+    Assertions.not_nil(frame['method'], "The method of frame #{index} is nil")
+    Assertions.not_nil(frame['lineNumber'], "The lineNumber of frame #{index} is nil")
   end
 end
 
@@ -220,11 +249,12 @@ end
 Then("the exception stacktrace matches the thread stacktrace") do
   exc_trace = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.exceptions.0.stacktrace")
   thread_trace = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.threads.0.stacktrace")
-  assert_equal(exc_trace.length(), thread_trace.length(), "Exception and thread stacktraces are different lengths.")
+
+  Assertions.equal(exc_trace.length(), thread_trace.length(), "Exception and thread stacktraces are different lengths.")
 
   thread_trace.each_with_index do |thread_frame, index|
     exc_frame = exc_trace[index]
-    assert_equal(exc_frame, thread_frame)
+    Assertions.equal(exc_frame, thread_frame)
   end
 end
 
@@ -246,17 +276,17 @@ end
 Then("the exception stacktrace matches the thread stacktrace") do
   exc_trace = read_key_path(Server.current_request[:body], "events.0.exceptions.0.stacktrace")
   thread_trace = read_key_path(Server.current_request[:body], "events.0.threads.0.stacktrace")
-  assert_equal(exc_trace.length(), thread_trace.length(), "Exception and thread stacktraces are different lengths.")
+  Assertions.equal(exc_trace.length(), thread_trace.length(), "Exception and thread stacktraces are different lengths.")
 
   thread_trace.each_with_index do |thread_frame, index|
     exc_frame = exc_trace[index]
-    assert_equal(exc_frame, thread_frame)
+    Assertions.equal(exc_frame, thread_frame)
   end
 end
 
 Then("the event binary arch field is valid") do
   arch = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.app.binaryArch")
-  assert_block "'#{arch}' is not a valid value for app.binaryArch" do
+  Assertions.block "'#{arch}' is not a valid value for app.binaryArch" do
     ["x86", "x86_64", "arm32", "arm64"].include? arch
   end
 end
@@ -265,9 +295,9 @@ Then("the event stacktrace identifies the program counter") do
   trace = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.exceptions.0.stacktrace")
   trace.each_with_index do |frame, index|
     if index == 0
-      assert_equal(frame["isPC"], true, "The first frame should be the program counter")
+      Assertions.equal(frame["isPC"], true, "The first frame should be the program counter")
     else
-      assert_equal(frame["isPC"], nil, "The #{index} frame should not be the program counter")
+      Assertions.equal(frame["isPC"], nil, "The #{index} frame should not be the program counter")
     end
   end
 end
