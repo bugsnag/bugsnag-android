@@ -30,7 +30,7 @@ class LeaveBreadcrumbTest {
         crumb["message"] = "JS: invoked API"
         crumb["type"] = "request"
 
-        val metadata = hashMapOf(
+        val metadata = hashMapOf<String, Any?>(
             "customFoo" to "Flobber",
             "isJs" to true,
             "naughtyValue" to null
