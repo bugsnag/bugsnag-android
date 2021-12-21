@@ -18,6 +18,9 @@
 * Add null checks for strlen()
   [#1563](https://github.com/bugsnag/bugsnag-android/pull/1563)
 
+* Catch IOException when logging response status code
+  [#1567](https://github.com/bugsnag/bugsnag-android/pull/1567)
+
 ## 5.17.0 (2021-12-08)
 
 ### Enhancements

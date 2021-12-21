@@ -105,19 +105,24 @@ internal class DefaultDelivery(
     }
 
     private fun logRequestInfo(code: Int, conn: HttpURLConnection, status: DeliveryStatus) {
-        logger.i(
-            "Request completed with code $code, " +
-                "message: ${conn.responseMessage}, " +
-                "headers: ${conn.headerFields}"
-        )
-
-        conn.inputStream.bufferedReader().use {
-            logger.d("Received request response: ${it.readText()}")
+        runCatching {
+            logger.i(
+                "Request completed with code $code, " +
+                    "message: ${conn.responseMessage}, " +
+                    "headers: ${conn.headerFields}"
+            )
+        }
+        runCatching {
+            conn.inputStream.bufferedReader().use {
+                logger.d("Received request response: ${it.readText()}")
+            }
         }
 
-        if (status != DeliveryStatus.DELIVERED) {
-            conn.errorStream.bufferedReader().use {
-                logger.w("Request error details: ${it.readText()}")
+        runCatching {
+            if (status != DeliveryStatus.DELIVERED) {
+                conn.errorStream.bufferedReader().use {
+                    logger.w("Request error details: ${it.readText()}")
+                }
             }
         }
     }
