@@ -15,7 +15,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-bool bsg_event_write(bsg_report_header *header, bugsnag_event *event, int fd);
+bool bsg_event_write(const bsg_report_header *header,
+                     const bugsnag_event *event, const int fd);
 
 bugsnag_event *bsg_event_read(int fd);
 bsg_report_header *bsg_report_header_read(int fd);
@@ -41,8 +42,8 @@ void migrate_breadcrumb_v2(bugsnag_report_v5 *report_v5, bugsnag_event *event);
  * Serializes the LastRunInfo to the file. This persists information about
  * why the current launch crashed, for use on future launch.
  */
-bool bsg_serialize_last_run_info_to_file(bsg_environment *env) {
-  char *path = env->last_run_info_path;
+bool bsg_serialize_last_run_info_to_file(const bsg_environment *env) {
+  const char *path = env->last_run_info_path;
   int fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
   if (fd == -1) {
     return false;
@@ -53,7 +54,7 @@ bool bsg_serialize_last_run_info_to_file(bsg_environment *env) {
   return len == size;
 }
 
-bool bsg_serialize_event_to_file(bsg_environment *env) {
+bool bsg_serialize_event_to_file(const bsg_environment *env) {
   int fd = open(env->next_event_path, O_WRONLY | O_CREAT, 0644);
   if (fd == -1) {
     return false;
@@ -62,7 +63,7 @@ bool bsg_serialize_event_to_file(bsg_environment *env) {
   return bsg_event_write(&env->report_header, &env->next_event, fd);
 }
 
-bugsnag_event *bsg_deserialize_event_from_file(char *filepath) {
+bugsnag_event *bsg_deserialize_event_from_file(const char *filepath) {
   int fd = open(filepath, O_RDONLY);
   if (fd == -1) {
     return NULL;
@@ -368,7 +369,7 @@ int bsg_calculate_v1_crumb_index(int crumb_pos, int first_index) {
 }
 
 void bugsnag_report_v3_add_breadcrumb(bugsnag_report_v3 *event,
-                                      bugsnag_breadcrumb *crumb) {
+                                      const bugsnag_breadcrumb *crumb) {
   int crumb_index;
   if (event->crumb_count < V2_BUGSNAG_CRUMBS_MAX) {
     crumb_index = event->crumb_count;
@@ -571,13 +572,14 @@ bsg_report_header *bsg_report_header_read(int fd) {
   return header;
 }
 
-bool bsg_report_header_write(bsg_report_header *header, int fd) {
+bool bsg_report_header_write(const bsg_report_header *header, int fd) {
   ssize_t len = write(fd, header, sizeof(bsg_report_header));
 
   return len == sizeof(bsg_report_header);
 }
 
-bool bsg_event_write(bsg_report_header *header, bugsnag_event *event, int fd) {
+bool bsg_event_write(const bsg_report_header *header,
+                     const bugsnag_event *event, const int fd) {
   if (!bsg_report_header_write(header, fd)) {
     return false;
   }
@@ -586,7 +588,7 @@ bool bsg_event_write(bsg_report_header *header, bugsnag_event *event, int fd) {
   return len == sizeof(bugsnag_event);
 }
 
-const char *bsg_crumb_type_string(bugsnag_breadcrumb_type type) {
+const char *bsg_crumb_type_string(const bugsnag_breadcrumb_type type) {
   switch (type) {
   case BSG_CRUMB_ERROR:
     return "error";
@@ -607,7 +609,7 @@ const char *bsg_crumb_type_string(bugsnag_breadcrumb_type type) {
   }
 }
 
-const char *bsg_severity_string(bugsnag_severity type) {
+const char *bsg_severity_string(const bugsnag_severity type) {
   switch (type) {
   case BSG_SEVERITY_INFO:
     return "info";
@@ -772,7 +774,7 @@ void bsg_serialize_user(const bugsnag_user user, JSON_Object *event_obj) {
     json_object_dotset_string(event_obj, "user.id", user.id);
 }
 
-void bsg_serialize_session(bugsnag_event *event, JSON_Object *event_obj) {
+void bsg_serialize_session(const bugsnag_event *event, JSON_Object *event_obj) {
   if (bugsnag_event_has_session(event)) {
     json_object_dotset_string(event_obj, "session.startedAt",
                               event->session_start);
@@ -784,7 +786,7 @@ void bsg_serialize_session(bugsnag_event *event, JSON_Object *event_obj) {
   }
 }
 
-void bsg_serialize_error(bsg_error exc, JSON_Object *exception,
+void bsg_serialize_error(const bsg_error exc, JSON_Object *exception,
                          JSON_Array *stacktrace) {
   json_object_set_string(exception, "errorClass", exc.errorClass);
   json_object_set_string(exception, "message", exc.errorMessage);
@@ -802,7 +804,7 @@ void bsg_serialize_error(bsg_error exc, JSON_Object *exception,
   }
 }
 
-void bsg_serialize_stackframe(bugsnag_stackframe *stackframe, bool is_pc,
+void bsg_serialize_stackframe(const bugsnag_stackframe *stackframe, bool is_pc,
                               JSON_Array *stacktrace) {
   JSON_Value *frame_val = json_value_init_object();
   JSON_Object *frame = json_value_get_object(frame_val);
@@ -930,7 +932,7 @@ void bsg_serialize_threads(const bugsnag_event *event, JSON_Array *threads) {
   }
 }
 
-char *bsg_serialize_event_to_json_string(bugsnag_event *event) {
+char *bsg_serialize_event_to_json_string(const bugsnag_event *event) {
   JSON_Value *event_val = json_value_init_object();
   JSON_Object *event_obj = json_value_get_object(event_val);
   JSON_Value *crumbs_val = json_value_init_array();

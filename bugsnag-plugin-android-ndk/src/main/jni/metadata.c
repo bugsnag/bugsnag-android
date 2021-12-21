@@ -465,7 +465,7 @@ void bsg_populate_app_data(JNIEnv *env, bsg_jni_cache *jni_cache,
   bsg_safe_delete_local_ref(env, data);
 }
 
-char *bsg_os_name() { return "android"; }
+const char *bsg_os_name() { return "android"; }
 
 void populate_device_metadata(JNIEnv *env, bsg_jni_cache *jni_cache,
                               bugsnag_event *event, void *data) {
