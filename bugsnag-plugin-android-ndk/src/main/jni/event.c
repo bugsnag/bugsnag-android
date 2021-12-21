@@ -163,9 +163,10 @@ bool bugsnag_event_get_metadata_bool(void *event_ptr, const char *section,
   return false;
 }
 
-void bugsnag_event_start_session(bugsnag_event *event, char *session_id,
-                                 char *started_at, int handled_count,
-                                 int unhandled_count) {
+void bugsnag_event_start_session(bugsnag_event *event, const char *session_id,
+                                 const char *started_at,
+                                 const int handled_count,
+                                 const int unhandled_count) {
   bsg_strncpy_safe(event->session_id, session_id, sizeof(event->session_id));
   bsg_strncpy_safe(event->session_start, started_at,
                    sizeof(event->session_start));
@@ -220,7 +221,7 @@ void bugsnag_event_clear_breadcrumbs(bugsnag_event *event) {
   event->crumb_first_index = 0;
 }
 
-bool bugsnag_event_has_session(bugsnag_event *event) {
+bool bugsnag_event_has_session(const bugsnag_event *event) {
   return bsg_strlen(event->session_id) > 0;
 }
 
