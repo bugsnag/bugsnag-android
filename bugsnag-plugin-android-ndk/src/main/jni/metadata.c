@@ -263,7 +263,7 @@ void bsg_copy_map_value_string(JNIEnv *env, bsg_jni_cache *jni_cache,
   if (_value != NULL) {
     const char *value = bsg_safe_get_string_utf_chars(env, (jstring)_value);
     if (value != NULL) {
-      bsg_strncpy_safe(dest, value, len);
+      bsg_strncpy(dest, value, len);
       bsg_safe_release_string_utf_chars(env, _value, value);
     }
   }
@@ -336,8 +336,8 @@ int bsg_populate_cpu_abi_from_map(JNIEnv *env, bsg_jni_cache *jni_cache,
 
       const char *abi = bsg_safe_get_string_utf_chars(env, jabi);
       if (abi != NULL) {
-        bsg_strncpy_safe(device->cpu_abi[i].value, abi,
-                         sizeof(device->cpu_abi[i].value));
+        bsg_strncpy(device->cpu_abi[i].value, abi,
+                    sizeof(device->cpu_abi[i].value));
         bsg_safe_release_string_utf_chars(env, jabi, abi);
         device->cpu_abi_count++;
       }
@@ -531,7 +531,8 @@ void bsg_populate_device_data(JNIEnv *env, bsg_jni_cache *jni_cache,
   bsg_copy_map_value_string(env, jni_cache, data, "orientation",
                             event->device.orientation,
                             sizeof(event->device.orientation));
-  bsg_strcpy(event->device.os_name, bsg_os_name());
+  bsg_strncpy(event->device.os_name, bsg_os_name(),
+              sizeof(event->device.os_name));
   bsg_copy_map_value_string(env, jni_cache, data, "osVersion",
                             event->device.os_version,
                             sizeof(event->device.os_version));
@@ -581,7 +582,7 @@ void bsg_populate_context(JNIEnv *env, bsg_jni_cache *jni_cache,
   if (_context != NULL) {
     const char *value = bsg_safe_get_string_utf_chars(env, (jstring)_context);
     if (value != NULL) {
-      bsg_strncpy_safe(event->context, value, sizeof(event->context) - 1);
+      bsg_strncpy(event->context, value, sizeof(event->context) - 1);
       bsg_safe_release_string_utf_chars(env, _context, value);
     }
   } else {
