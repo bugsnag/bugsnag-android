@@ -51,10 +51,12 @@ void bsg_insert_fileinfo(ssize_t frame_count,
       stacktrace[i].line_number =
           stacktrace[i].frame_address - stacktrace[i].load_address;
       if (info.dli_fname != NULL) {
-        bsg_strcpy(stacktrace[i].filename, (char *)info.dli_fname);
+        bsg_strncpy(stacktrace[i].filename, (char *)info.dli_fname,
+                    sizeof(stacktrace[i].filename));
       }
       if (info.dli_sname != NULL) {
-        bsg_strcpy(stacktrace[i].method, (char *)info.dli_sname);
+        bsg_strncpy(stacktrace[i].method, (char *)info.dli_sname,
+                    sizeof(stacktrace[i].method));
       }
     }
   }

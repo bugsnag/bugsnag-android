@@ -223,22 +223,21 @@ bugsnag_event *bsg_map_v5_to_report(bugsnag_report_v5 *report_v5) {
     event->notifier = report_v5->notifier;
     event->app = report_v5->app;
     event->device = report_v5->device;
-    bsg_strcpy(event->context, report_v5->context);
+    bsg_strncpy(event->context, report_v5->context, sizeof(event->context));
     event->user = report_v5->user;
     event->error = report_v5->error;
     event->metadata = report_v5->metadata;
     event->severity = report_v5->severity;
-    bsg_strncpy_safe(event->session_id, report_v5->session_id,
-                     sizeof(event->session_id));
-    bsg_strncpy_safe(event->session_start, report_v5->session_start,
-                     sizeof(event->session_id));
+    bsg_strncpy(event->session_id, report_v5->session_id,
+                sizeof(event->session_id));
+    bsg_strncpy(event->session_start, report_v5->session_start,
+                sizeof(event->session_id));
     event->handled_events = report_v5->handled_events;
     event->unhandled_events = report_v5->unhandled_events;
-    bsg_strncpy_safe(event->grouping_hash, report_v5->grouping_hash,
-                     sizeof(event->session_id));
+    bsg_strncpy(event->grouping_hash, report_v5->grouping_hash,
+                sizeof(event->session_id));
     event->unhandled = report_v5->unhandled;
-    bsg_strncpy_safe(event->api_key, report_v5->api_key,
-                     sizeof(event->api_key));
+    bsg_strncpy(event->api_key, report_v5->api_key, sizeof(event->api_key));
 
     migrate_breadcrumb_v2(report_v5, event);
     free(report_v5);
@@ -263,17 +262,16 @@ bugsnag_event *bsg_map_v4_to_report(bugsnag_report_v4 *report_v4) {
     memcpy(event->breadcrumbs, report_v4->breadcrumbs,
            sizeof(event->breadcrumbs));
     event->severity = report_v4->severity;
-    bsg_strncpy_safe(event->session_id, report_v4->session_id,
-                     sizeof(event->session_id));
-    bsg_strncpy_safe(event->session_start, report_v4->session_start,
-                     sizeof(event->session_id));
+    bsg_strncpy(event->session_id, report_v4->session_id,
+                sizeof(event->session_id));
+    bsg_strncpy(event->session_start, report_v4->session_start,
+                sizeof(event->session_id));
     event->handled_events = report_v4->handled_events;
     event->unhandled_events = report_v4->unhandled_events;
-    bsg_strncpy_safe(event->grouping_hash, report_v4->grouping_hash,
-                     sizeof(event->session_id));
+    bsg_strncpy(event->grouping_hash, report_v4->grouping_hash,
+                sizeof(event->session_id));
     event->unhandled = report_v4->unhandled;
-    bsg_strncpy_safe(event->api_key, report_v4->api_key,
-                     sizeof(event->api_key));
+    bsg_strncpy(event->api_key, report_v4->api_key, sizeof(event->api_key));
     migrate_app_v2(report_v4, event);
     free(report_v4);
   }
@@ -298,15 +296,18 @@ bugsnag_event *bsg_map_v3_to_report(bugsnag_report_v3 *report_v3) {
     memcpy(event->breadcrumbs, report_v3->breadcrumbs,
            sizeof(event->breadcrumbs));
     event->severity = report_v3->severity;
-    strcpy(event->session_id, report_v3->session_id);
-    strcpy(event->session_start, report_v3->session_start);
+    bsg_strncpy(event->session_id, report_v3->session_id,
+                sizeof(event->session_id));
+    bsg_strncpy(event->session_start, report_v3->session_start,
+                sizeof(event->session_start));
     event->handled_events = report_v3->handled_events;
     event->unhandled_events = report_v3->unhandled_events;
-    strcpy(event->grouping_hash, report_v3->grouping_hash);
+    bsg_strncpy(event->grouping_hash, report_v3->grouping_hash,
+                sizeof(event->grouping_hash));
     event->unhandled = report_v3->unhandled;
 
     // set a default value for the api key
-    strcpy(event->api_key, "");
+    event->api_key[0] = 0;
     free(report_v3);
   }
   return bsg_map_v4_to_report(event);
@@ -326,22 +327,30 @@ bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2) {
     event->user = report_v2->user;
     migrate_breadcrumb_v1(report_v2, event);
 
-    strcpy(event->context, report_v2->context);
+    bsg_strncpy(event->context, report_v2->context, sizeof(event->context));
     event->severity = report_v2->severity;
-    strcpy(event->session_id, report_v2->session_id);
-    strcpy(event->session_start, report_v2->session_start);
+    bsg_strncpy(event->session_id, report_v2->session_id,
+                sizeof(event->session_id));
+    bsg_strncpy(event->session_start, report_v2->session_start,
+                sizeof(event->session_start));
     event->handled_events = report_v2->handled_events;
     event->unhandled_events = report_v2->unhandled_events;
 
     // migrate changed notifier fields
-    strcpy(event->notifier.version, report_v2->notifier.version);
-    strcpy(event->notifier.name, report_v2->notifier.name);
-    strcpy(event->notifier.url, report_v2->notifier.url);
+    bsg_strncpy(event->notifier.version, report_v2->notifier.version,
+                sizeof(event->notifier.version));
+    bsg_strncpy(event->notifier.name, report_v2->notifier.name,
+                sizeof(event->notifier.name));
+    bsg_strncpy(event->notifier.url, report_v2->notifier.url,
+                sizeof(event->notifier.url));
 
     // migrate changed error fields
-    strcpy(event->error.errorClass, report_v2->exception.name);
-    strcpy(event->error.errorMessage, report_v2->exception.message);
-    strcpy(event->error.type, report_v2->exception.type);
+    bsg_strncpy(event->error.errorClass, report_v2->exception.name,
+                sizeof(event->error.errorClass));
+    bsg_strncpy(event->error.errorMessage, report_v2->exception.message,
+                sizeof(event->error.errorMessage));
+    bsg_strncpy(event->error.type, report_v2->exception.type,
+                sizeof(event->error.type));
     event->error.frame_count = report_v2->exception.frame_count;
     size_t error_size = sizeof(bugsnag_stackframe) * BUGSNAG_FRAMES_MAX;
     memcpy(&event->error.stacktrace, report_v2->exception.stacktrace,
@@ -402,9 +411,9 @@ void migrate_breadcrumb_v1(bugsnag_report_v2 *report_v2,
 
     // copy old crumb fields to new
     new_crumb->type = old_crumb->type;
-    bsg_strncpy_safe(new_crumb->name, old_crumb->name, sizeof(new_crumb->name));
-    bsg_strncpy_safe(new_crumb->timestamp, old_crumb->timestamp,
-                     sizeof(new_crumb->timestamp));
+    bsg_strncpy(new_crumb->name, old_crumb->name, sizeof(new_crumb->name));
+    bsg_strncpy(new_crumb->timestamp, old_crumb->timestamp,
+                sizeof(new_crumb->timestamp));
 
     for (int j = 0; j < 8; j++) {
       bsg_char_metadata_pair pair = old_crumb->metadata[j];
@@ -422,13 +431,18 @@ void migrate_breadcrumb_v1(bugsnag_report_v2 *report_v2,
 }
 
 void migrate_app_v1(bugsnag_report_v2 *report_v2, bugsnag_report_v3 *event) {
-  bsg_strcpy(event->app.id, report_v2->app.id);
-  bsg_strcpy(event->app.release_stage, report_v2->app.release_stage);
-  bsg_strcpy(event->app.type, report_v2->app.type);
-  bsg_strcpy(event->app.version, report_v2->app.version);
-  bsg_strcpy(event->app.active_screen, report_v2->app.active_screen);
-  bsg_strcpy(event->app.build_uuid, report_v2->app.build_uuid);
-  bsg_strcpy(event->app.binary_arch, report_v2->app.binaryArch);
+  bsg_strncpy(event->app.id, report_v2->app.id, sizeof(event->app.id));
+  bsg_strncpy(event->app.release_stage, report_v2->app.release_stage,
+              sizeof(event->app.release_stage));
+  bsg_strncpy(event->app.type, report_v2->app.type, sizeof(event->app.type));
+  bsg_strncpy(event->app.version, report_v2->app.version,
+              sizeof(event->app.version));
+  bsg_strncpy(event->app.active_screen, report_v2->app.active_screen,
+              sizeof(event->app.active_screen));
+  bsg_strncpy(event->app.build_uuid, report_v2->app.build_uuid,
+              sizeof(event->app.build_uuid));
+  bsg_strncpy(event->app.binary_arch, report_v2->app.binaryArch,
+              sizeof(event->app.binary_arch));
   event->app.version_code = report_v2->app.version_code;
   event->app.duration = report_v2->app.duration;
   event->app.duration_in_foreground = report_v2->app.duration_in_foreground;
@@ -459,19 +473,18 @@ void migrate_breadcrumb_v2(bugsnag_report_v5 *report_v5, bugsnag_event *event) {
 }
 
 void migrate_app_v2(bugsnag_report_v4 *report_v4, bugsnag_event *event) {
-  bsg_strncpy_safe(event->app.id, report_v4->app.id, sizeof(event->app.id));
-  bsg_strncpy_safe(event->app.release_stage, report_v4->app.release_stage,
-                   sizeof(event->app.release_stage));
-  bsg_strncpy_safe(event->app.type, report_v4->app.type,
-                   sizeof(event->app.type));
-  bsg_strncpy_safe(event->app.version, report_v4->app.version,
-                   sizeof(event->app.version));
-  bsg_strncpy_safe(event->app.active_screen, report_v4->app.active_screen,
-                   sizeof(event->app.active_screen));
-  bsg_strncpy_safe(event->app.build_uuid, report_v4->app.build_uuid,
-                   sizeof(event->app.build_uuid));
-  bsg_strncpy_safe(event->app.binary_arch, report_v4->app.binary_arch,
-                   sizeof(event->app.binary_arch));
+  bsg_strncpy(event->app.id, report_v4->app.id, sizeof(event->app.id));
+  bsg_strncpy(event->app.release_stage, report_v4->app.release_stage,
+              sizeof(event->app.release_stage));
+  bsg_strncpy(event->app.type, report_v4->app.type, sizeof(event->app.type));
+  bsg_strncpy(event->app.version, report_v4->app.version,
+              sizeof(event->app.version));
+  bsg_strncpy(event->app.active_screen, report_v4->app.active_screen,
+              sizeof(event->app.active_screen));
+  bsg_strncpy(event->app.build_uuid, report_v4->app.build_uuid,
+              sizeof(event->app.build_uuid));
+  bsg_strncpy(event->app.binary_arch, report_v4->app.binary_arch,
+              sizeof(event->app.binary_arch));
   event->app.version_code = report_v4->app.version_code;
   event->app.duration = report_v4->app.duration;
   event->app.duration_in_foreground = report_v4->app.duration_in_foreground;
@@ -485,8 +498,8 @@ void migrate_app_v2(bugsnag_report_v4 *report_v4, bugsnag_event *event) {
 }
 
 void migrate_device_v1(bugsnag_report_v2 *report_v2, bugsnag_report_v3 *event) {
-  bsg_strcpy(event->device.os_name,
-             bsg_os_name()); // os_name was not a field in v2
+  bsg_strncpy(event->device.os_name, bsg_os_name(),
+              sizeof(event->device.os_name)); // os_name was not a field in v2
   event->device.api_level = report_v2->device.api_level;
   event->device.cpu_abi_count = report_v2->device.cpu_abi_count;
   event->device.time = report_v2->device.time;
@@ -496,18 +509,25 @@ void migrate_device_v1(bugsnag_report_v2 *report_v2, bugsnag_report_v3 *event) {
   for (int k = 0; k < report_v2->device.cpu_abi_count &&
                   k < sizeof(report_v2->device.cpu_abi);
        k++) {
-    bsg_strcpy(event->device.cpu_abi[k].value,
-               report_v2->device.cpu_abi[k].value);
+    bsg_strncpy(event->device.cpu_abi[k].value,
+                report_v2->device.cpu_abi[k].value,
+                sizeof(event->device.cpu_abi[k].value));
     event->device.cpu_abi_count++;
   }
 
-  bsg_strcpy(event->device.orientation, report_v2->device.orientation);
-  bsg_strcpy(event->device.id, report_v2->device.id);
-  bsg_strcpy(event->device.locale, report_v2->device.locale);
-  bsg_strcpy(event->device.manufacturer, report_v2->device.manufacturer);
-  bsg_strcpy(event->device.model, report_v2->device.model);
-  bsg_strcpy(event->device.os_build, report_v2->device.os_build);
-  bsg_strcpy(event->device.os_version, report_v2->device.os_version);
+  bsg_strncpy(event->device.orientation, report_v2->device.orientation,
+              sizeof(event->device.orientation));
+  bsg_strncpy(event->device.id, report_v2->device.id, sizeof(event->device.id));
+  bsg_strncpy(event->device.locale, report_v2->device.locale,
+              sizeof(event->device.locale));
+  bsg_strncpy(event->device.manufacturer, report_v2->device.manufacturer,
+              sizeof(event->device.manufacturer));
+  bsg_strncpy(event->device.model, report_v2->device.model,
+              sizeof(event->device.model));
+  bsg_strncpy(event->device.os_build, report_v2->device.os_build,
+              sizeof(event->device.os_build));
+  bsg_strncpy(event->device.os_version, report_v2->device.os_version,
+              sizeof(event->device.os_version));
 
   // migrate legacy fields to metadata
   bugsnag_event_add_metadata_bool(event, "device", "emulator",
@@ -549,10 +569,13 @@ bugsnag_event *bsg_map_v1_to_report(bugsnag_report_v1 *report_v1) {
         sizeof(bugsnag_breadcrumb_v1) * V1_BUGSNAG_CRUMBS_MAX;
     memcpy(&event_v2->breadcrumbs, report_v1->breadcrumbs, breadcrumb_size);
 
-    strcpy(event_v2->context, report_v1->context);
+    bsg_strncpy(event_v2->context, report_v1->context,
+                sizeof(event_v2->context));
     event_v2->severity = report_v1->severity;
-    strcpy(event_v2->session_id, report_v1->session_id);
-    strcpy(event_v2->session_start, report_v1->session_start);
+    bsg_strncpy(event_v2->session_id, report_v1->session_id,
+                sizeof(event_v2->session_id));
+    bsg_strncpy(event_v2->session_start, report_v1->session_start,
+                sizeof(event_v2->session_start));
     event_v2->handled_events = report_v1->handled_events;
     event_v2->unhandled_events = 1;
 
