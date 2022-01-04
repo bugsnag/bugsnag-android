@@ -41,8 +41,8 @@ void bsg_set_unwind_types(int apiLevel, bool is32bit, bsg_unwinder *signal_type,
   }
 }
 
-void bsg_insert_fileinfo(ssize_t frame_count,
-                         bugsnag_stackframe stacktrace[BUGSNAG_FRAMES_MAX]) {
+static void insert_fileinfo(ssize_t frame_count,
+                            bugsnag_stackframe *stacktrace) {
   static Dl_info info;
   for (int i = 0; i < frame_count; ++i) {
     if (dladdr((void *)stacktrace[i].frame_address, &info) != 0) {
@@ -51,10 +51,12 @@ void bsg_insert_fileinfo(ssize_t frame_count,
       stacktrace[i].line_number =
           stacktrace[i].frame_address - stacktrace[i].load_address;
       if (info.dli_fname != NULL) {
-        bsg_strcpy(stacktrace[i].filename, (char *)info.dli_fname);
+        bsg_strncpy_safe(stacktrace[i].filename, (char *)info.dli_fname,
+                         sizeof(stacktrace[i].filename));
       }
       if (info.dli_sname != NULL) {
-        bsg_strcpy(stacktrace[i].method, (char *)info.dli_sname);
+        bsg_strncpy_safe(stacktrace[i].method, (char *)info.dli_sname,
+                         sizeof(stacktrace[i].method));
       }
     }
   }
@@ -74,8 +76,8 @@ ssize_t bsg_unwind_stack(bsg_unwinder unwind_style,
   } else {
     frame_count = bsg_unwind_stack_simple(stacktrace, info, user_context);
   }
-  bsg_insert_fileinfo(frame_count,
-                      stacktrace); // none of this is safe ¯\_(ツ)_/¯
+  insert_fileinfo(frame_count,
+                  stacktrace); // none of this is safe ¯\_(ツ)_/¯
 
   return frame_count;
 }

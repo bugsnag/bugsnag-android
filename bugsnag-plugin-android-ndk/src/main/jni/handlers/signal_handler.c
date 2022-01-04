@@ -196,10 +196,12 @@ void bsg_handle_signal(int signum, siginfo_t *info,
   for (int i = 0; i < BSG_HANDLED_SIGNAL_COUNT; i++) {
     const int signal = bsg_native_signals[i];
     if (signal == signum) {
-      bsg_strcpy(bsg_global_env->next_event.error.errorClass,
-                 (char *)bsg_native_signal_names[i]);
-      bsg_strcpy(bsg_global_env->next_event.error.errorMessage,
-                 (char *)bsg_native_signal_msgs[i]);
+      bsg_strncpy_safe(bsg_global_env->next_event.error.errorClass,
+                       (char *)bsg_native_signal_names[i],
+                       sizeof(bsg_global_env->next_event.error.errorClass));
+      bsg_strncpy_safe(bsg_global_env->next_event.error.errorMessage,
+                       (char *)bsg_native_signal_msgs[i],
+                       sizeof(bsg_global_env->next_event.error.errorMessage));
       break;
     }
   }

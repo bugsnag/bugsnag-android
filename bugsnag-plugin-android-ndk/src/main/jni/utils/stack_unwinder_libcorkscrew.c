@@ -35,7 +35,7 @@ struct bsg_unwind_config {
 
 static struct bsg_unwind_config *bsg_global_unwind_cfg;
 
-bool bsg_libcorkscrew_configured() {
+static bool libcorkscrew_configured() {
   return bsg_global_unwind_cfg->cork_unwind_backtrace_signal_arch != NULL &&
          bsg_global_unwind_cfg->cork_unwind_backtrace_thread != NULL &&
          bsg_global_unwind_cfg->cork_acquire_my_map_info_list != NULL &&
@@ -62,7 +62,7 @@ bool bsg_configure_libcorkscrew(void) {
         dlsym(libcorkscrew, "unwind_backtrace_thread");
   }
 
-  return bsg_libcorkscrew_configured();
+  return libcorkscrew_configured();
 }
 
 ssize_t
@@ -111,7 +111,9 @@ bsg_unwind_stack_libcorkscrew(bugsnag_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
       continue; // already seen this
     }
     if (backtrace_symbol.symbol_name != NULL) {
-      bsg_strcpy(stacktrace[frame_count].method, backtrace_symbol.symbol_name);
+      bsg_strncpy_safe(stacktrace[frame_count].method,
+                       backtrace_symbol.symbol_name,
+                       sizeof(stacktrace[frame_count].method));
     }
 
     stacktrace[frame_count].frame_address = backtrace_frame.absolute_pc;

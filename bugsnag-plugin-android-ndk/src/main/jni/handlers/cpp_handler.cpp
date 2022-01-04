@@ -47,11 +47,11 @@ void bsg_write_current_exception_message(char *message, size_t length) {
   try {
     throw;
   } catch (std::exception &exc) {
-    bsg_strncpy(message, (char *)exc.what(), length);
+    bsg_strncpy_safe(message, (char *)exc.what(), length);
   } catch (std::exception *exc) {
-    bsg_strncpy(message, (char *)exc->what(), length);
+    bsg_strncpy_safe(message, (char *)exc->what(), length);
   } catch (std::string obj) {
-    bsg_strncpy(message, (char *)obj.c_str(), length);
+    bsg_strncpy_safe(message, (char *)obj.c_str(), length);
   } catch (char *obj) {
     snprintf(message, length, "%s", obj);
   } catch (char obj) {
@@ -105,15 +105,15 @@ void bsg_handle_cpp_terminate() {
 
   std::type_info *tinfo = __cxxabiv1::__cxa_current_exception_type();
   if (tinfo != NULL) {
-    bsg_strncpy(bsg_global_env->next_event.error.errorClass,
-                (char *)tinfo->name(),
-                sizeof(bsg_global_env->next_event.error.errorClass));
+    bsg_strncpy_safe(bsg_global_env->next_event.error.errorClass,
+                     (char *)tinfo->name(),
+                     sizeof(bsg_global_env->next_event.error.errorClass));
   }
   size_t message_length = sizeof(bsg_global_env->next_event.error.errorMessage);
   char message[message_length];
   bsg_write_current_exception_message(message, message_length);
-  bsg_strncpy(bsg_global_env->next_event.error.errorMessage, (char *)message,
-              message_length);
+  bsg_strncpy_safe(bsg_global_env->next_event.error.errorMessage,
+                   (char *)message, message_length);
 
   if (bsg_run_on_error()) {
     bsg_increment_unhandled_count(&bsg_global_env->next_event);
