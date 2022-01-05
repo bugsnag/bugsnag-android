@@ -80,10 +80,31 @@ static void *create_full_event() {
 
   // metadata
   strcpy(event->app.active_screen, "Menu");
-  bugsnag_event_add_metadata_bool(event, "metrics", "experimentX", false);
-  bugsnag_event_add_metadata_string(event, "metrics", "subject", "percy");
-  bugsnag_event_add_metadata_string(event, "app", "weather", "rain");
-  bugsnag_event_add_metadata_double(event, "metrics", "counter", 47.5);
+  event->metadata.value_count = 4;
+  event->metadata.values[0] = {
+    .name = {"weather"},
+    .section = {"app"},
+    .type = BSG_METADATA_CHAR_VALUE,
+    .char_value = {"rain"},
+  };
+  event->metadata.values[1] = {
+    .name = {"experimentX"},
+    .section = {"metrics"},
+    .type = BSG_METADATA_BOOL_VALUE,
+    .bool_value = false,
+  };
+  event->metadata.values[2] = {
+    .name = {"subject"},
+    .section = {"metrics"},
+    .type = BSG_METADATA_CHAR_VALUE,
+    .char_value = {"percy"},
+  };
+  event->metadata.values[3] = {
+    .name = {"counter"},
+    .section = {"metrics"},
+    .type = BSG_METADATA_NUMBER_VALUE,
+    .double_value = 47.5,
+  };
 
   // session info
   event->handled_events = 5;

@@ -8,6 +8,7 @@
 #include <featureflags.h>
 #include <utils/serializer.h>
 #include <utils/serializer/migrate.h>
+#include <utils/serializer/event_reader.h>
 
 #define SERIALIZE_TEST_FILE "/data/data/com.bugsnag.android.ndk.test/cache/foo.crash"
 
@@ -124,10 +125,31 @@ void generate_basic_report(bugsnag_event *event) {
   strcpy(event->user.id, "fex");
   event->device.total_memory = 234678100;
   event->app.duration = 6502;
-  bugsnag_event_add_metadata_bool(event, "metrics", "experimentX", false);
-  bugsnag_event_add_metadata_string(event, "metrics", "subject", "percy");
-  bugsnag_event_add_metadata_string(event, "app", "weather", "rain");
-  bugsnag_event_add_metadata_double(event, "metrics", "counter", 47.8);
+  event->metadata.value_count = 4;
+  event->metadata.values[0] = (bsg_metadata_value) {
+    .name = {"weather"},
+    .section = {"app"},
+    .type = BSG_METADATA_CHAR_VALUE,
+    .char_value = {"rain"},
+  };
+  event->metadata.values[1] = (bsg_metadata_value) {
+    .name = {"experimentX"},
+    .section = {"metrics"},
+    .type = BSG_METADATA_BOOL_VALUE,
+    .bool_value = false,
+  };
+  event->metadata.values[2] = (bsg_metadata_value) {
+    .name = {"subject"},
+    .section = {"metrics"},
+    .type = BSG_METADATA_CHAR_VALUE,
+    .char_value = {"percy"},
+  };
+  event->metadata.values[3] = (bsg_metadata_value) {
+    .name = {"counter"},
+    .section = {"metrics"},
+    .type = BSG_METADATA_NUMBER_VALUE,
+    .double_value = 47.8,
+  };
 
   event->crumb_count = 0;
   event->crumb_first_index = 0;
@@ -311,11 +333,31 @@ bugsnag_report_v2 *bsg_generate_report_v2(void) {
   strcpy(event->user.id, "fex");
   event->device.total_memory = 234678100;
   event->app.duration = 6502;
-  bugsnag_event_add_metadata_bool(event, "metrics", "experimentX", false);
-  bugsnag_event_add_metadata_string(event, "metrics", "subject", "percy");
-  bugsnag_event_add_metadata_string(event, "app", "weather", "rain");
-  bugsnag_event_add_metadata_double(event, "metrics", "counter", 47.8);
-
+  event->metadata.value_count = 4;
+  event->metadata.values[0] = (bsg_metadata_value) {
+    .name = {"weather"},
+    .section = {"app"},
+    .type = BSG_METADATA_CHAR_VALUE,
+    .char_value = {"rain"},
+  };
+  event->metadata.values[1] = (bsg_metadata_value) {
+    .name = {"experimentX"},
+    .section = {"metrics"},
+    .type = BSG_METADATA_BOOL_VALUE,
+    .bool_value = false,
+  };
+  event->metadata.values[2] = (bsg_metadata_value) {
+    .name = {"subject"},
+    .section = {"metrics"},
+    .type = BSG_METADATA_CHAR_VALUE,
+    .char_value = {"percy"},
+  };
+  event->metadata.values[3] = (bsg_metadata_value) {
+    .name = {"counter"},
+    .section = {"metrics"},
+    .type = BSG_METADATA_NUMBER_VALUE,
+    .double_value = 47.8,
+  };
 
   event->handled_events = 1;
   event->unhandled_events = 1;
@@ -478,7 +520,7 @@ TEST test_report_with_feature_flags_to_file(void) {
 
 TEST test_file_to_report(void) {
   bsg_environment *env = calloc(1, sizeof(bsg_environment));
-  env->report_header.version = 5;
+  env->report_header.version = BSG_MIGRATOR_CURRENT_VERSION;
   env->report_header.big_endian = 1;
   strcpy(env->report_header.os_build, "macOS Sierra");
   bugsnag_event *generated_report = bsg_generate_event();
@@ -574,8 +616,8 @@ TEST test_report_v2_migration(void) {
   ASSERT_STR_EQ("android", event->device.os_name);
 
   // package_name/version_name are migrated to metadata
-  ASSERT_STR_EQ("com.example.foo", event->metadata.values[0].char_value);
-  ASSERT_STR_EQ("2.5", event->metadata.values[1].char_value);
+  ASSERT_STR_EQ("com.example.foo", event->metadata.values[4].char_value);
+  ASSERT_STR_EQ("2.5", event->metadata.values[5].char_value);
 
   // breadcrumbs are migrated correctly
   ASSERT_EQ(2, event->crumb_count);

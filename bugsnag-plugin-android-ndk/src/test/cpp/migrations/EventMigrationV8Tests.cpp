@@ -30,15 +30,15 @@ static void *create_full_event() {
   // app
   strcpy(event->app.binary_arch, "mips");
   strcpy(event->app.build_uuid, "1234-9876-adfe");
-  event->app.duration = 6502;
-  event->app.duration_in_foreground = 12;
+  event->app.duration = 81395165021;
+  event->app.duration_in_foreground = 81395165010;
   event->app.in_foreground = true;
   event->app.is_launching = true;
   strcpy(event->app.id, "com.example.PhotoSnapPlus");
   strcpy(event->app.release_stage, "リリース");
   strcpy(event->app.type, "red");
   strcpy(event->app.version, "2.0.52");
-  event->app.version_code = 57;
+  event->app.version_code = 8139512718;
 
   // breadcrumbs
   auto max = 50;
@@ -72,7 +72,7 @@ static void *create_full_event() {
     event->device.api_level = 32;
   }
   event->device.time = 1638992630;
-  event->device.total_memory = 3278623;
+  event->device.total_memory = 3839512576;
 
   // feature flags
   event->feature_flag_count = 4;
@@ -91,12 +91,14 @@ static void *create_full_event() {
   strcpy(event->error.errorMessage, "POSIX is serious about oncoming traffic");
   strcpy(event->error.type, "C");
   event->error.frame_count = 2;
-  event->error.stacktrace[0].frame_address = 454379;
-  event->error.stacktrace[0].load_address = 2367523;
+  event->error.stacktrace[0].frame_address = (uintptr_t)4294967294;
+  event->error.stacktrace[0].load_address = (uintptr_t)2367523;
   event->error.stacktrace[0].symbol_address = 776;
+  event->error.stacktrace[0].line_number = (uintptr_t)4194967233;
   strcpy(event->error.stacktrace[0].method, "makinBacon");
   strcpy(event->error.stacktrace[0].filename, "lib64/libfoo.so");
-  event->error.stacktrace[1].frame_address = 342334; // will become method hex
+  event->error.stacktrace[1].frame_address =
+      (uintptr_t)3011142731; // will become method hex
 
   // metadata
   strcpy(event->app.active_screen, "Menu");

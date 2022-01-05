@@ -50,15 +50,15 @@ typedef struct {
   char type[32];
   char version[32];
   char active_screen[64];
-  int version_code;
+  int64_t version_code;
   char build_uuid[64];
-  time_t duration;
-  time_t duration_in_foreground;
+  int64_t duration;
+  int64_t duration_in_foreground;
   /**
    * The elapsed time in milliseconds between when the system clock starts and
    * when bugsnag-ndk install() is called
    */
-  time_t duration_ms_offset;
+  int64_t duration_ms_offset;
   /**
    * The elapsed time in the foreground in milliseconds between when the app
    * first enters the foreground and when bugsnag-ndk install() is called, if
@@ -89,7 +89,7 @@ typedef struct {
   char os_build[64];
   char os_version[64];
   char os_name[64];
-  long total_memory;
+  int64_t total_memory;
 } bsg_device_info;
 
 /**

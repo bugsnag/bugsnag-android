@@ -108,6 +108,23 @@ typedef struct {
 } bsg_app_info_v2;
 
 typedef struct {
+  char id[64];
+  char release_stage[64];
+  char type[32];
+  char version[32];
+  char active_screen[64];
+  int version_code;
+  char build_uuid[64];
+  time_t duration;
+  time_t duration_in_foreground;
+  time_t duration_ms_offset;
+  time_t duration_in_foreground_ms_offset;
+  bool in_foreground;
+  bool is_launching;
+  char binary_arch[32];
+} bsg_app_info_v3;
+
+typedef struct {
   int api_level;
   double battery_level;
   char brand[64];
@@ -130,6 +147,23 @@ typedef struct {
   char screen_resolution[32];
   long total_memory;
 } bsg_device_info_v1;
+
+typedef struct {
+  int api_level;
+  int cpu_abi_count;
+  bsg_cpu_abi cpu_abi[8];
+  char orientation[32];
+  time_t time;
+  char id[64];
+  bool jailbroken;
+  char locale[32];
+  char manufacturer[64];
+  char model[64];
+  char os_build[64];
+  char os_version[64];
+  char os_name[64];
+  long total_memory;
+} bsg_device_info_v2;
 
 typedef struct {
   bsg_library notifier;
@@ -179,7 +213,7 @@ typedef struct {
 typedef struct {
   bsg_notifier notifier;
   bsg_app_info_v2 app;
-  bsg_device_info device;
+  bsg_device_info_v2 device;
   bugsnag_user user;
   bsg_error error;
   bugsnag_metadata metadata;
@@ -204,7 +238,7 @@ typedef struct {
 typedef struct {
   bsg_notifier notifier;
   bsg_app_info_v2 app;
-  bsg_device_info device;
+  bsg_device_info_v2 device;
   bugsnag_user user;
   bsg_error error;
   bugsnag_metadata metadata;
@@ -229,8 +263,8 @@ typedef struct {
 
 typedef struct {
   bsg_notifier notifier;
-  bsg_app_info app;
-  bsg_device_info device;
+  bsg_app_info_v3 app;
+  bsg_device_info_v2 device;
   bugsnag_user user;
   bsg_error error;
   bugsnag_metadata metadata;
@@ -255,8 +289,8 @@ typedef struct {
 
 typedef struct {
   bsg_notifier notifier;
-  bsg_app_info app;
-  bsg_device_info device;
+  bsg_app_info_v3 app;
+  bsg_device_info_v2 device;
   bugsnag_user user;
   bsg_error error;
   bugsnag_metadata metadata;
@@ -281,8 +315,8 @@ typedef struct {
 
 typedef struct {
   bsg_notifier notifier;
-  bsg_app_info app;
-  bsg_device_info device;
+  bsg_app_info_v3 app;
+  bsg_device_info_v2 device;
   bugsnag_user user;
   bsg_error error;
   bugsnag_metadata metadata;
