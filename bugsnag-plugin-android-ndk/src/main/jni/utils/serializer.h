@@ -11,13 +11,14 @@
 extern "C" {
 #endif
 
-char *bsg_serialize_event_to_json_string(bugsnag_event *event);
+char *bsg_serialize_event_to_json_string(const bugsnag_event *event);
 
-bool bsg_serialize_event_to_file(bsg_environment *env) __asyncsafe;
+bool bsg_serialize_event_to_file(const bsg_environment *env) __asyncsafe;
 
-bool bsg_serialize_last_run_info_to_file(bsg_environment *env) __asyncsafe;
+bool bsg_serialize_last_run_info_to_file(const bsg_environment *env)
+    __asyncsafe;
 
-bugsnag_event *bsg_deserialize_event_from_file(char *filepath);
+bugsnag_event *bsg_deserialize_event_from_file(const char *filepath);
 
 void bsg_serialize_context(const bugsnag_event *event, JSON_Object *event_obj);
 void bsg_serialize_severity_reason(const bugsnag_event *event,
@@ -30,7 +31,7 @@ void bsg_serialize_device_metadata(const bsg_device_info device,
 void bsg_serialize_custom_metadata(const bugsnag_metadata metadata,
                                    JSON_Object *event_obj);
 void bsg_serialize_user(const bugsnag_user user, JSON_Object *event_obj);
-void bsg_serialize_session(bugsnag_event *event, JSON_Object *event_obj);
+void bsg_serialize_session(const bugsnag_event *event, JSON_Object *event_obj);
 /**
  * Append a JSON-serialized stackframe to an array
  *
@@ -38,13 +39,12 @@ void bsg_serialize_session(bugsnag_event *event, JSON_Object *event_obj);
  * @param is_pc      true if the current frame is the program counter
  * @param stacktrace the destination array
  */
-void bsg_serialize_stackframe(bugsnag_stackframe *stackframe, bool is_pc,
+void bsg_serialize_stackframe(const bugsnag_stackframe *stackframe, bool is_pc,
                               JSON_Array *stacktrace);
-void bsg_serialize_error(bsg_error exc, JSON_Object *exception,
+void bsg_serialize_error(const bsg_error exc, JSON_Object *exception,
                          JSON_Array *stacktrace);
 void bsg_serialize_breadcrumbs(const bugsnag_event *event, JSON_Array *crumbs);
 void bsg_serialize_threads(const bugsnag_event *event, JSON_Array *threads);
-char *bsg_serialize_event_to_json_string(bugsnag_event *event);
 
 int bsg_calculate_total_crumbs(int old_count);
 int bsg_calculate_v1_start_index(int old_count);

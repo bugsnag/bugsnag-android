@@ -171,8 +171,8 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   if (last_run_info_path == NULL) {
     return;
   }
-  bsg_strncpy_safe(bugsnag_env->last_run_info_path, last_run_info_path,
-                   sizeof(bugsnag_env->last_run_info_path));
+  bsg_strncpy(bugsnag_env->last_run_info_path, last_run_info_path,
+              sizeof(bugsnag_env->last_run_info_path));
   bsg_safe_release_string_utf_chars(env, _last_run_info_path,
                                     last_run_info_path);
 
@@ -189,16 +189,16 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   }
 
   // If set, save os build info to report info header
-  if (strlen(bugsnag_env->next_event.device.os_build) > 0) {
-    bsg_strncpy_safe(bugsnag_env->report_header.os_build,
-                     bugsnag_env->next_event.device.os_build,
-                     sizeof(bugsnag_env->report_header.os_build));
+  if (bsg_strlen(bugsnag_env->next_event.device.os_build) > 0) {
+    bsg_strncpy(bugsnag_env->report_header.os_build,
+                bugsnag_env->next_event.device.os_build,
+                sizeof(bugsnag_env->report_header.os_build));
   }
 
   const char *api_key = bsg_safe_get_string_utf_chars(env, _api_key);
   if (api_key != NULL) {
-    bsg_strncpy_safe(bugsnag_env->next_event.api_key, (char *)api_key,
-                     sizeof(bugsnag_env->next_event.api_key));
+    bsg_strncpy(bugsnag_env->next_event.api_key, (char *)api_key,
+                sizeof(bugsnag_env->next_event.api_key));
     bsg_safe_release_string_utf_chars(env, _api_key, api_key);
   }
 
@@ -223,6 +223,10 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
     goto exit;
   }
   event = bsg_deserialize_event_from_file((char *)event_path);
+
+  // remove persisted NDK struct early - this reduces the chance of crash loops
+  // in delivery.
+  remove(event_path);
 
   if (event != NULL) {
     payload = bsg_serialize_event_to_json_string(event);
@@ -269,7 +273,6 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
   } else {
     BUGSNAG_LOG("Failed to read event at file: %s", event_path);
   }
-  remove(event_path);
   goto exit;
 
 exit:
@@ -343,8 +346,8 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_pausedSession(
   }
   bsg_request_env_write_lock();
   bugsnag_event *event = &bsg_global_env->next_event;
-  memset(event->session_id, 0, strlen(event->session_id));
-  memset(event->session_start, 0, strlen(event->session_start));
+  memset(event->session_id, 0, bsg_strlen(event->session_id));
+  memset(event->session_start, 0, bsg_strlen(event->session_start));
   event->handled_events = 0;
   event->unhandled_events = 0;
   bsg_release_env_write_lock();
@@ -362,8 +365,8 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_addBreadcrumb(
 
   if (name != NULL && type != NULL && timestamp != NULL) {
     bugsnag_breadcrumb *crumb = calloc(1, sizeof(bugsnag_breadcrumb));
-    bsg_strncpy_safe(crumb->name, name, sizeof(crumb->name));
-    bsg_strncpy_safe(crumb->timestamp, timestamp, sizeof(crumb->timestamp));
+    bsg_strncpy(crumb->name, name, sizeof(crumb->name));
+    bsg_strncpy(crumb->timestamp, timestamp, sizeof(crumb->timestamp));
     if (strcmp(type, "user") == 0) {
       crumb->type = BSG_CRUMB_USER;
     } else if (strcmp(type, "error") == 0) {
@@ -455,8 +458,8 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateInForeground(
   bsg_request_env_write_lock();
   bool was_in_foreground = bsg_global_env->next_event.app.in_foreground;
   bsg_global_env->next_event.app.in_foreground = (bool)new_value;
-  bsg_strncpy_safe(bsg_global_env->next_event.app.active_screen, activity,
-                   sizeof(bsg_global_env->next_event.app.active_screen));
+  bsg_strncpy(bsg_global_env->next_event.app.active_screen, activity,
+              sizeof(bsg_global_env->next_event.app.active_screen));
   if ((bool)new_value) {
     if (!was_in_foreground) {
       time(&bsg_global_env->foreground_start_time);

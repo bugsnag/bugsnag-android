@@ -125,6 +125,12 @@ class BugsnagBuildPlugin : Plugin<Project> {
                 isReturnDefaultValues = true
             }
         }
+
+        sourceSets {
+            named("test") {
+                java.srcDir(SHARED_TEST_SRC_DIR)
+            }
+        }
     }
 
     /**
@@ -180,5 +186,9 @@ class BugsnagBuildPlugin : Plugin<Project> {
             plugins.apply("io.gitlab.arturbosch.detekt")
             plugins.apply("org.jlleitschuh.gradle.ktlint")
         }
+    }
+
+    companion object {
+        private const val SHARED_TEST_SRC_DIR = "../bugsnag-android-core/src/sharedTest/java"
     }
 }
