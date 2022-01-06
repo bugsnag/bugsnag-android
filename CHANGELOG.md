@@ -6,9 +6,10 @@
 
 * Improve the memory use and performance overhead when handling the delivery response status codes
   [#1558](https://github.com/bugsnag/bugsnag-android/pull/1558)
-
 * Harden ndk layer through use of const keyword
   [#1566](https://github.com/bugsnag/bugsnag-android/pull/1566)
+* Explicitly define Kotlin api/language versions
+  [#1564](https://github.com/bugsnag/bugsnag-android/pull/1564)
 
 ### Bug fixes
 
