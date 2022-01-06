@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 5.18.0 (2022-01-05)
 
 ### Enhancements
 
