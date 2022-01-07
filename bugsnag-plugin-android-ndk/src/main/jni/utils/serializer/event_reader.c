@@ -55,6 +55,9 @@ void migrate_breadcrumb_v1(bugsnag_report_v2 *report_v2,
                            bugsnag_report_v3 *event);
 void migrate_breadcrumb_v2(bugsnag_report_v5 *report_v5, bugsnag_event *event);
 
+void migrate_device_v2(bsg_device_info *output, bsg_device_info_v2 *input);
+void migrate_app_v3(bsg_app_info *output, bsg_app_info_v3 *input);
+
 void bsg_read_feature_flags(int fd, bsg_feature_flag **out_feature_flags,
                             size_t *out_feature_flag_count);
 
@@ -213,7 +216,29 @@ bugsnag_event *bsg_map_v6_to_report(bugsnag_report_v6 *report_v6) {
   bugsnag_event *event = calloc(1, sizeof(bugsnag_event));
 
   if (event != NULL) {
-    memcpy(event, report_v6, sizeof(bugsnag_report_v6));
+    event->notifier = report_v6->notifier;
+    event->metadata = report_v6->metadata;
+    migrate_app_v3(&event->app, &report_v6->app);
+    migrate_device_v2(&event->device, &report_v6->device);
+    event->user = report_v6->user;
+    event->error = report_v6->error;
+    event->crumb_count = report_v6->crumb_count;
+    event->crumb_first_index = report_v6->crumb_first_index;
+    memcpy(&event->breadcrumbs, report_v6->breadcrumbs,
+           sizeof(report_v6->breadcrumbs));
+    memcpy(&event->context, report_v6->context, sizeof(report_v6->context));
+    event->severity = report_v6->severity;
+    memcpy(&event->session_id, report_v6->session_id,
+           sizeof(report_v6->session_id));
+    memcpy(&event->session_start, report_v6->session_start,
+           sizeof(report_v6->session_start));
+    event->handled_events = report_v6->handled_events;
+    event->unhandled_events = report_v6->unhandled_events;
+    memcpy(&event->grouping_hash, report_v6->grouping_hash,
+           sizeof(report_v6->grouping_hash));
+    event->unhandled = report_v6->unhandled;
+    memcpy(&event->api_key, report_v6->api_key, sizeof(report_v6->api_key));
+
     free(report_v6);
   }
   return event;
@@ -226,7 +251,31 @@ bugsnag_event *bsg_map_v7_to_report(bugsnag_report_v7 *report_v7) {
   bugsnag_event *event = calloc(1, sizeof(bugsnag_event));
 
   if (event != NULL) {
-    memcpy(event, report_v7, sizeof(bugsnag_report_v7));
+    event->notifier = report_v7->notifier;
+    event->metadata = report_v7->metadata;
+    migrate_app_v3(&event->app, &report_v7->app);
+    migrate_device_v2(&event->device, &report_v7->device);
+    event->user = report_v7->user;
+    event->error = report_v7->error;
+    event->crumb_count = report_v7->crumb_count;
+    event->crumb_first_index = report_v7->crumb_first_index;
+    memcpy(&event->breadcrumbs, report_v7->breadcrumbs,
+           sizeof(report_v7->breadcrumbs));
+    memcpy(&event->context, report_v7->context, sizeof(report_v7->context));
+    event->severity = report_v7->severity;
+    memcpy(&event->session_id, report_v7->session_id,
+           sizeof(report_v7->session_id));
+    memcpy(&event->session_start, report_v7->session_start,
+           sizeof(report_v7->session_start));
+    event->handled_events = report_v7->handled_events;
+    event->unhandled_events = report_v7->unhandled_events;
+    memcpy(&event->grouping_hash, report_v7->grouping_hash,
+           sizeof(report_v7->grouping_hash));
+    event->unhandled = report_v7->unhandled;
+    memcpy(&event->api_key, report_v7->api_key, sizeof(report_v7->api_key));
+    event->thread_count = report_v7->thread_count;
+    memcpy(&event->threads, report_v7->threads, sizeof(report_v7->threads));
+
     free(report_v7);
   }
   return event;
@@ -240,12 +289,12 @@ bugsnag_event *bsg_map_v5_to_report(bugsnag_report_v5 *report_v5) {
 
   if (event != NULL) {
     event->notifier = report_v5->notifier;
-    event->app = report_v5->app;
-    event->device = report_v5->device;
+    event->metadata = report_v5->metadata;
+    migrate_app_v3(&event->app, &report_v5->app);
+    migrate_device_v2(&event->device, &report_v5->device);
     bsg_strcpy(event->context, report_v5->context);
     event->user = report_v5->user;
     event->error = report_v5->error;
-    event->metadata = report_v5->metadata;
     event->severity = report_v5->severity;
     bsg_strncpy_safe(event->session_id, report_v5->session_id,
                      sizeof(report_v5->session_id));
@@ -273,10 +322,10 @@ bugsnag_event *bsg_map_v4_to_report(bugsnag_report_v4 *report_v4) {
 
   if (event != NULL) {
     event->notifier = report_v4->notifier;
-    event->device = report_v4->device;
+    event->metadata = report_v4->metadata;
+    migrate_device_v2(&event->device, &report_v4->device);
     event->user = report_v4->user;
     event->error = report_v4->error;
-    event->metadata = report_v4->metadata;
     event->crumb_count = report_v4->crumb_count;
     event->crumb_first_index = report_v4->crumb_first_index;
     memcpy(event->breadcrumbs, report_v4->breadcrumbs,
@@ -317,7 +366,7 @@ bugsnag_event *bsg_map_v3_to_report(bugsnag_report_v3 *report_v3) {
     event->crumb_count = report_v3->crumb_count;
     event->crumb_first_index = report_v3->crumb_first_index;
     memcpy(event->breadcrumbs, report_v3->breadcrumbs,
-           sizeof(event->breadcrumbs));
+           sizeof(report_v3->breadcrumbs));
     event->severity = report_v3->severity;
     strcpy(event->session_id, report_v3->session_id);
     strcpy(event->session_start, report_v3->session_start);
@@ -376,6 +425,42 @@ bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2) {
   return bsg_map_v3_to_report(event);
 }
 
+static void add_metadata_string(bugsnag_metadata *meta, char *section,
+                                char *name, char *value) {
+  if (meta->value_count < BUGSNAG_METADATA_MAX) {
+    bsg_metadata_value *item = &meta->values[meta->value_count];
+    strncpy(item->section, section, sizeof(item->section));
+    strncpy(item->name, name, sizeof(item->name));
+    strncpy(item->char_value, value, sizeof(item->char_value));
+    item->type = BSG_METADATA_CHAR_VALUE;
+    meta->value_count++;
+  }
+}
+
+static void add_metadata_double(bugsnag_metadata *meta, char *section,
+                                char *name, double value) {
+  if (meta->value_count < BUGSNAG_METADATA_MAX) {
+    bsg_metadata_value *item = &meta->values[meta->value_count];
+    strncpy(item->section, section, sizeof(item->section));
+    strncpy(item->name, name, sizeof(item->name));
+    item->type = BSG_METADATA_NUMBER_VALUE;
+    item->double_value = value;
+    meta->value_count++;
+  }
+}
+
+static void add_metadata_bool(bugsnag_metadata *meta, char *section, char *name,
+                              bool value) {
+  if (meta->value_count < BUGSNAG_METADATA_MAX) {
+    bsg_metadata_value *item = &meta->values[meta->value_count];
+    strncpy(item->section, section, sizeof(item->section));
+    strncpy(item->name, name, sizeof(item->name));
+    item->type = BSG_METADATA_BOOL_VALUE;
+    item->bool_value = value;
+    meta->value_count++;
+  }
+}
+
 void migrate_device_v1(bugsnag_report_v2 *report_v2, bugsnag_report_v3 *event) {
   bsg_strcpy(event->device.os_name,
              "android"); // os_name was not a field in v2
@@ -402,22 +487,39 @@ void migrate_device_v1(bugsnag_report_v2 *report_v2, bugsnag_report_v3 *event) {
   bsg_strcpy(event->device.os_version, report_v2->device.os_version);
 
   // migrate legacy fields to metadata
-  bugsnag_event_add_metadata_bool(event, "device", "emulator",
-                                  report_v2->device.emulator);
-  bugsnag_event_add_metadata_double(event, "device", "dpi",
-                                    report_v2->device.dpi);
-  bugsnag_event_add_metadata_double(event, "device", "screenDensity",
-                                    report_v2->device.screen_density);
-  bugsnag_event_add_metadata_double(event, "device", "batteryLevel",
-                                    report_v2->device.battery_level);
-  bugsnag_event_add_metadata_string(event, "device", "locationStatus",
-                                    report_v2->device.location_status);
-  bugsnag_event_add_metadata_string(event, "device", "brand",
-                                    report_v2->device.brand);
-  bugsnag_event_add_metadata_string(event, "device", "networkAccess",
-                                    report_v2->device.network_access);
-  bugsnag_event_add_metadata_string(event, "device", "screenResolution",
-                                    report_v2->device.screen_resolution);
+  add_metadata_bool(&event->metadata, "device", "emulator",
+                    report_v2->device.emulator);
+  add_metadata_double(&event->metadata, "device", "dpi", report_v2->device.dpi);
+  add_metadata_double(&event->metadata, "device", "screenDensity",
+                      report_v2->device.screen_density);
+  add_metadata_double(&event->metadata, "device", "batteryLevel",
+                      report_v2->device.battery_level);
+  add_metadata_string(&event->metadata, "device", "locationStatus",
+                      report_v2->device.location_status);
+  add_metadata_string(&event->metadata, "device", "brand",
+                      report_v2->device.brand);
+  add_metadata_string(&event->metadata, "device", "networkAccess",
+                      report_v2->device.network_access);
+  add_metadata_string(&event->metadata, "device", "screenResolution",
+                      report_v2->device.screen_resolution);
+}
+
+void migrate_device_v2(bsg_device_info *output, bsg_device_info_v2 *input) {
+  output->api_level = input->api_level;
+  output->cpu_abi_count = input->cpu_abi_count;
+  memcpy(&output->cpu_abi, input->cpu_abi, sizeof(input->cpu_abi));
+  memcpy(&output->orientation, input->orientation, sizeof(input->orientation));
+  output->time = input->time;
+  memcpy(&output->id, input->id, sizeof(input->id));
+  output->jailbroken = input->jailbroken;
+  memcpy(&output->locale, input->locale, sizeof(input->locale));
+  memcpy(&output->manufacturer, input->manufacturer,
+         sizeof(input->manufacturer));
+  memcpy(&output->model, input->model, sizeof(input->model));
+  memcpy(&output->os_build, input->os_build, sizeof(input->os_build));
+  memcpy(&output->os_version, input->os_version, sizeof(input->os_version));
+  memcpy(&output->os_name, input->os_name, sizeof(input->os_name));
+  output->total_memory = input->total_memory;
 }
 
 void bugsnag_report_v3_add_breadcrumb(bugsnag_report_v3 *event,
@@ -549,12 +651,13 @@ void migrate_app_v1(bugsnag_report_v2 *report_v2, bugsnag_report_v3 *event) {
   event->app.in_foreground = report_v2->app.in_foreground;
 
   // migrate legacy fields to metadata
-  bugsnag_event_add_metadata_string(event, "app", "packageName",
-                                    report_v2->app.package_name);
-  bugsnag_event_add_metadata_string(event, "app", "versionName",
-                                    report_v2->app.version_name);
-  bugsnag_event_add_metadata_string(event, "app", "name", report_v2->app.name);
+  add_metadata_string(&event->metadata, "app", "packageName",
+                      report_v2->app.package_name);
+  add_metadata_string(&event->metadata, "app", "versionName",
+                      report_v2->app.version_name);
+  add_metadata_string(&event->metadata, "app", "name", report_v2->app.name);
 }
+
 void migrate_app_v2(bugsnag_report_v4 *report_v4, bugsnag_event *event) {
   bsg_strncpy_safe(event->app.id, report_v4->app.id, sizeof(event->app.id));
   bsg_strncpy_safe(event->app.release_stage, report_v4->app.release_stage,
@@ -579,6 +682,26 @@ void migrate_app_v2(bugsnag_report_v4 *report_v4, bugsnag_event *event) {
 
   // no info available, set to sensible default
   event->app.is_launching = false;
+}
+
+void migrate_app_v3(bsg_app_info *output, bsg_app_info_v3 *input) {
+  memcpy(&output->id, input->id, sizeof(input->id));
+  memcpy(&output->release_stage, input->release_stage,
+         sizeof(input->release_stage));
+  memcpy(&output->type, input->type, sizeof(input->type));
+  memcpy(&output->version, input->version, sizeof(input->version));
+  memcpy(&output->active_screen, input->active_screen,
+         sizeof(input->active_screen));
+  output->version_code = input->version_code;
+  memcpy(&output->build_uuid, input->build_uuid, sizeof(input->build_uuid));
+  output->duration = input->duration;
+  output->duration_in_foreground = input->duration_in_foreground;
+  output->duration_ms_offset = input->duration_ms_offset;
+  output->duration_in_foreground_ms_offset =
+      input->duration_in_foreground_ms_offset;
+  output->in_foreground = input->in_foreground;
+  output->is_launching = input->is_launching;
+  memcpy(&output->binary_arch, input->binary_arch, sizeof(input->binary_arch));
 }
 
 static char *read_string(int fd) {
