@@ -152,31 +152,6 @@ steps:
   #   env:
   #     TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
 
-  # - label: ':android: Android 8.1 NDK r19 smoke tests'
-  #   key: 'android-8-1-smoke'
-  #   depends_on: "fixture-r19"
-  #   timeout_in_minutes: 60
-  #   plugins:
-  #     artifacts#v1.2.0:
-  #       download:
-  #         - "build/fixture-r19.apk"
-  #         - "build/fixture-r19/*"
-  #       upload: "maze_output/failed/**/*"
-  #     docker-compose#v3.7.0:
-  #       pull: android-maze-runner
-  #       run: android-maze-runner
-  #       command:
-  #         - "features/smoke_tests"
-  #         - "--app=/app/build/fixture-r19.apk"
-  #         - "--farm=bb"
-  #         - "--device=ANDROID_8_1"
-  #         - "--fail-fast"
-  #   concurrency: 24
-  #   concurrency_group: 'browserstack-app'
-  #   concurrency_method: eager
-  #   env:
-  #     TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
-
   - label: ':android: Android 10 NDK r21 smoke tests'
     key: 'android-10-smoke'
     depends_on: "fixture-r21"
