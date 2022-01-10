@@ -285,5 +285,5 @@ steps:
   #   concurrency_group: 'browserstack-app'
   #   concurrency_method: eager
 
-  - label: 'Conditionally trigger full set of tests'
-    command: sh -c .buildkite/pipeline_trigger.sh
+  # - label: 'Conditionally trigger full set of tests'
+  #   command: sh -c .buildkite/pipeline_trigger.sh
