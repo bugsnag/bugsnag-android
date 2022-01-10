@@ -44,7 +44,7 @@
           android:ems="10"
           android:hint="Notify endpoint"
           android:inputType="text"
-          android:text="http://bs-local.com:9339/notify" />
+          android:text="http://maze:9339/notify" />
 
   <EditText
           android:id="@+id/session_endpoint"
@@ -54,7 +54,7 @@
           android:ems="10"
           android:hint="Session endpoint"
           android:inputType="text"
-          android:text="http://bs-local.com:9339/sessions" />
+          android:text="http://maze:9339/sessions" />
 
   <Space
     android:layout_width="match_parent"
