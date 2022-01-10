@@ -198,7 +198,6 @@ steps:
           - "--app=/app/build/release/fixture-r16.apk"
           - "--farm=bs"
           - "--device=ANDROID_6_0"
-          - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
