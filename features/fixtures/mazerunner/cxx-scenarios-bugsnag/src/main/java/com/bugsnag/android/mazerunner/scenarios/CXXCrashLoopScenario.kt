@@ -15,6 +15,7 @@ internal class CXXCrashLoopScenario(
 
     init {
         System.loadLibrary("cxx-scenarios-bugsnag")
+        config.enabledErrorTypes.unhandledExceptions = false
     }
 
     external fun crash()
