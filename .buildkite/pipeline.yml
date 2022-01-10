@@ -50,20 +50,20 @@ steps:
   #         command:
   #           - ./scripts/audit-dependency-licenses.sh
 
-  # - label: ':android: Build fixture APK r16'
-  #   key: "fixture-r16"
-  #   depends_on: "android-ci"
-  #   timeout_in_minutes: 30
-  #   artifact_paths: build/release/fixture-r16.apk
-  #   plugins:
-  #     - docker-compose#v3.7.0:
-  #         run: android-builder
-  #   env:
-  #     MAVEN_VERSION: "3.6.1"
-  #     TEST_FIXTURE_NDK_VERSION: "17.2.4988734"
-  #     TEST_FIXTURE_NAME: "fixture-r16.apk"
-  #     USE_LEGACY_OKHTTP: "true"
-  #     BUILD_TASK: "assembleRelease"
+  - label: ':android: Build fixture APK r16'
+    key: "fixture-r16"
+    depends_on: "android-ci"
+    timeout_in_minutes: 30
+    artifact_paths: build/release/fixture-r16.apk
+    plugins:
+      - docker-compose#v3.7.0:
+          run: android-builder
+    env:
+      MAVEN_VERSION: "3.6.1"
+      TEST_FIXTURE_NDK_VERSION: "17.2.4988734"
+      TEST_FIXTURE_NAME: "fixture-r16.apk"
+      USE_LEGACY_OKHTTP: "true"
+      BUILD_TASK: "assembleRelease"
 
   # - label: ':android: Build fixture APK r19'
   #   key: "fixture-r19"
@@ -79,19 +79,19 @@ steps:
   #     TEST_FIXTURE_NAME: "fixture-r19.apk"
   #     BUILD_TASK: "assembleRelease"
 
-  - label: ':android: Build fixture APK r21'
-    key: "fixture-r21"
-    depends_on: "android-ci"
-    timeout_in_minutes: 30
-    artifact_paths: build/release/fixture-r21.apk
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-builder
-    env:
-      MAVEN_VERSION: "3.6.1"
-      TEST_FIXTURE_NDK_VERSION: "21.3.6528147"
-      TEST_FIXTURE_NAME: "fixture-r21.apk"
-      BUILD_TASK: "assembleRelease"
+  # - label: ':android: Build fixture APK r21'
+  #   key: "fixture-r21"
+  #   depends_on: "android-ci"
+  #   timeout_in_minutes: 30
+  #   artifact_paths: build/release/fixture-r21.apk
+  #   plugins:
+  #     - docker-compose#v3.7.0:
+  #         run: android-builder
+  #   env:
+  #     MAVEN_VERSION: "3.6.1"
+  #     TEST_FIXTURE_NDK_VERSION: "21.3.6528147"
+  #     TEST_FIXTURE_NAME: "fixture-r21.apk"
+  #     BUILD_TASK: "assembleRelease"
 
   # - label: ':android: Lint'
   #   depends_on: "android-ci"
@@ -182,24 +182,22 @@ steps:
   # to detect misuse (such as use-after-free, buffer overflow). If a failure is detected then
   # the device will raise a SIGABRT mentioning GWP-ASAN - this can be investigated further
   # by inspecting the devices logs.
-  - label: ':android: Android 12 NDK r21 smoke tests'
-    key: 'android-12-smoke'
-    depends_on: "fixture-r21"
-    timeout_in_minutes: 60
+  - label: ':android: Testing on Android 6'
+    depends_on:
+      - "fixture-r16"
+    timeout_in_minutes: 90
     plugins:
       artifacts#v1.2.0:
-        download: "build/release/fixture-r21.apk"
+        download: "build/release/fixture-r16.apk"
         upload: "maze_output/failed/**/*"
       docker-compose#v3.7.0:
         pull: android-maze-runner
         run: android-maze-runner
-        args:
-            - TESTS_DIR=features/smoke_tests
         command:
           - "features/full_tests/identify_crashes_on_launch.feature"
-          - "--app=/app/build/release/fixture-r21.apk"
+          - "--app=/app/build/release/fixture-r16.apk"
           - "--farm=bs"
-          - "--device=ANDROID_12_0"
+          - "--device=ANDROID_6_0"
           - "--fail-fast"
     concurrency: 9
     concurrency_group: 'browserstack-app'
