@@ -9,9 +9,6 @@
 * Explicitly define Kotlin api/language versions
   [#1564](https://github.com/bugsnag/bugsnag-android/pull/1564)
 
-* Explicitly define Kotlin api/language versions
-  [#1564](https://github.com/bugsnag/bugsnag-android/pull/1564)
-
 * Build project with Kotlin 1.4, maintain compat with Kotlin 1.3
   [#1565](https://github.com/bugsnag/bugsnag-android/pull/1565)
 
