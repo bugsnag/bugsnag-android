@@ -6,48 +6,48 @@
 
 bugsnag_event *init_event() {
     bugsnag_event *event = calloc(1, sizeof(bugsnag_event));
-    bsg_strncpy_safe(event->api_key, "5d1e5fbd39a74caa1200142706a90b20", sizeof(event->api_key));
-    bsg_strncpy_safe(event->context, "Foo", sizeof(event->context));
-    bsg_strncpy_safe(event->user.id, "123", sizeof(event->user.id));
-    bsg_strncpy_safe(event->user.email, "jane@example.com", sizeof(event->user.email));
-    bsg_strncpy_safe(event->user.name, "Jane Doe", sizeof(event->user.name));
+    bsg_strncpy(event->api_key, "5d1e5fbd39a74caa1200142706a90b20", sizeof(event->api_key));
+    bsg_strncpy(event->context, "Foo", sizeof(event->context));
+    bsg_strncpy(event->user.id, "123", sizeof(event->user.id));
+    bsg_strncpy(event->user.email, "jane@example.com", sizeof(event->user.email));
+    bsg_strncpy(event->user.name, "Jane Doe", sizeof(event->user.name));
     event->severity = BSG_SEVERITY_INFO;
     event->unhandled = true;
-    bsg_strncpy_safe(event->user.id, "123", sizeof(event->user.id));
-    bsg_strncpy_safe(event->user.email, "bob@example.com", sizeof(event->user.email));
-    bsg_strncpy_safe(event->user.name, "Bob Bobbiton", sizeof(event->user.name));
+    bsg_strncpy(event->user.id, "123", sizeof(event->user.id));
+    bsg_strncpy(event->user.email, "bob@example.com", sizeof(event->user.email));
+    bsg_strncpy(event->user.name, "Bob Bobbiton", sizeof(event->user.name));
 
-    bsg_strncpy_safe(event->app.binary_arch, "x86", sizeof(event->app.binary_arch));
-    bsg_strncpy_safe(event->app.build_uuid, "123", sizeof(event->app.build_uuid));
-    bsg_strncpy_safe(event->app.id, "fa02", sizeof(event->app.id));
-    bsg_strncpy_safe(event->app.release_stage, "dev", sizeof(event->app.release_stage));
-    bsg_strncpy_safe(event->app.type, "C", sizeof(event->app.type));
-    bsg_strncpy_safe(event->app.version, "1.0", sizeof(event->app.version));
+    bsg_strncpy(event->app.binary_arch, "x86", sizeof(event->app.binary_arch));
+    bsg_strncpy(event->app.build_uuid, "123", sizeof(event->app.build_uuid));
+    bsg_strncpy(event->app.id, "fa02", sizeof(event->app.id));
+    bsg_strncpy(event->app.release_stage, "dev", sizeof(event->app.release_stage));
+    bsg_strncpy(event->app.type, "C", sizeof(event->app.type));
+    bsg_strncpy(event->app.version, "1.0", sizeof(event->app.version));
     event->app.version_code = 55;
     event->app.duration = 9019;
     event->app.duration_in_foreground = 7017;
     event->app.in_foreground = true;
     event->app.is_launching = true;
-    bsg_strncpy_safe(event->grouping_hash, "Bar", sizeof(event->grouping_hash));
+    bsg_strncpy(event->grouping_hash, "Bar", sizeof(event->grouping_hash));
 
     event->device.jailbroken = true;
     event->device.total_memory = 1095092340;
-    bsg_strncpy_safe(event->device.id, "my-id-123", sizeof(event->device.id));
-    bsg_strncpy_safe(event->device.locale, "en", sizeof(event->device.locale));
-    bsg_strncpy_safe(event->device.os_name, "android", sizeof(event->device.os_name));
-    bsg_strncpy_safe(event->device.manufacturer, "Google", sizeof(event->device.manufacturer));
-    bsg_strncpy_safe(event->device.model, "Nexus", sizeof(event->device.model));
-    bsg_strncpy_safe(event->device.os_version, "9.1", sizeof(event->device.os_version));
-    bsg_strncpy_safe(event->device.orientation, "portrait", sizeof(event->device.orientation));
+    bsg_strncpy(event->device.id, "my-id-123", sizeof(event->device.id));
+    bsg_strncpy(event->device.locale, "en", sizeof(event->device.locale));
+    bsg_strncpy(event->device.os_name, "android", sizeof(event->device.os_name));
+    bsg_strncpy(event->device.manufacturer, "Google", sizeof(event->device.manufacturer));
+    bsg_strncpy(event->device.model, "Nexus", sizeof(event->device.model));
+    bsg_strncpy(event->device.os_version, "9.1", sizeof(event->device.os_version));
+    bsg_strncpy(event->device.orientation, "portrait", sizeof(event->device.orientation));
     event->device.time = 7609;
 
-    bsg_strncpy_safe(event->error.errorClass, "SIGSEGV", sizeof(event->error.errorClass));
-    bsg_strncpy_safe(event->error.errorMessage, "Whoops!", sizeof(event->error.errorMessage));
-    bsg_strncpy_safe(event->error.type, "C", sizeof(event->error.type));
+    bsg_strncpy(event->error.errorClass, "SIGSEGV", sizeof(event->error.errorClass));
+    bsg_strncpy(event->error.errorMessage, "Whoops!", sizeof(event->error.errorMessage));
+    bsg_strncpy(event->error.type, "C", sizeof(event->error.type));
 
     event->error.frame_count = 1;
-    bsg_strncpy_safe(event->error.stacktrace->method, "foo()", sizeof(event->error.stacktrace->method));
-    bsg_strncpy_safe(event->error.stacktrace->filename, "Something.c", sizeof(event->error.stacktrace->filename));
+    bsg_strncpy(event->error.stacktrace->method, "foo()", sizeof(event->error.stacktrace->method));
+    bsg_strncpy(event->error.stacktrace->filename, "Something.c", sizeof(event->error.stacktrace->filename));
     event->error.stacktrace->line_number = 58;
     return event;
 }
@@ -376,7 +376,7 @@ TEST test_event_stacktrace(void) {
     ASSERT_EQ(58, frame->line_number);
 
     // modify and copy into a new array
-    bsg_strncpy_safe(frame->method, "bar()", sizeof(frame->method));
+    bsg_strncpy(frame->method, "bar()", sizeof(frame->method));
     bugsnag_stackframe *another_frame = bugsnag_event_get_stackframe(event, 0);
     ASSERT_EQ(frame, another_frame);
 

@@ -245,10 +245,10 @@ typedef struct {
 void bugsnag_event_add_breadcrumb(bugsnag_event *event,
                                   bugsnag_breadcrumb *crumb);
 void bugsnag_event_clear_breadcrumbs(bugsnag_event *event);
-void bugsnag_event_start_session(bugsnag_event *event, char *session_id,
-                                 char *started_at, int handled_count,
+void bugsnag_event_start_session(bugsnag_event *event, const char *session_id,
+                                 const char *started_at, int handled_count,
                                  int unhandled_count);
-bool bugsnag_event_has_session(bugsnag_event *event);
+bool bugsnag_event_has_session(const bugsnag_event *event);
 
 void bsg_add_metadata_value_double(bugsnag_metadata *metadata,
                                    const char *section, const char *name,

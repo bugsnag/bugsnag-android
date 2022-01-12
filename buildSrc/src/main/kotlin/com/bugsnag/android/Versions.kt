@@ -11,12 +11,12 @@ object Versions {
     val compileSdkVersion = 31
     val ndk = "17.2.4988734"
     val java = JavaVersion.VERSION_1_7
-    val kotlin = "1.3.72"
+    val kotlin = "1.4.32"
 
     // plugins
-    val androidGradlePlugin = "7.0.2"
+    val androidGradlePlugin = "7.0.4"
     val detektPlugin = "1.18.1"
-    val ktlintPlugin = "10.1.0"
+    val ktlintPlugin = "10.2.0"
     val dokkaPlugin = "1.5.0"
     val benchmarkPlugin = "1.0.0"
 

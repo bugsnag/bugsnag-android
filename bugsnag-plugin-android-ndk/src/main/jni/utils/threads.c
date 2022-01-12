@@ -42,11 +42,12 @@ static const char *const task_state_array[] = {
     "X dead",    "Z zombie",   "P parked",     "I idle",
 };
 
-static void get_task_state_description(const char code, char *dest) {
+static void get_task_state_description(const char code, char *dest,
+                                       size_t dest_size) {
   for (size_t index = 0; index < (sizeof(task_state_array) / sizeof(char *));
        index++) {
     if (task_state_array[index][0] == code) {
-      bsg_strcpy(dest, &task_state_array[index][2]);
+      bsg_strncpy(dest, &task_state_array[index][2], dest_size);
       return;
     }
   }
@@ -121,7 +122,7 @@ static bool parse_stat_content(bsg_thread *dest, char *content, size_t len) {
       }
       break;
     case PARSE_STATUS:
-      get_task_state_description(current, dest->state);
+      get_task_state_description(current, dest->state, sizeof(dest->state));
       state = PARSE_DONE;
       break;
     case PARSE_DONE:

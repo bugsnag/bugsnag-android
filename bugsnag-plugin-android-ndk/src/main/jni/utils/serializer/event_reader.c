@@ -296,17 +296,16 @@ bugsnag_event *bsg_map_v5_to_report(bugsnag_report_v5 *report_v5) {
     event->user = report_v5->user;
     event->error = report_v5->error;
     event->severity = report_v5->severity;
-    bsg_strncpy_safe(event->session_id, report_v5->session_id,
-                     sizeof(report_v5->session_id));
-    bsg_strncpy_safe(event->session_start, report_v5->session_start,
-                     sizeof(report_v5->session_start));
+    bsg_strncpy(event->session_id, report_v5->session_id,
+                sizeof(report_v5->session_id));
+    bsg_strncpy(event->session_start, report_v5->session_start,
+                sizeof(report_v5->session_start));
     event->handled_events = report_v5->handled_events;
     event->unhandled_events = report_v5->unhandled_events;
-    bsg_strncpy_safe(event->grouping_hash, report_v5->grouping_hash,
-                     sizeof(report_v5->grouping_hash));
+    bsg_strncpy(event->grouping_hash, report_v5->grouping_hash,
+                sizeof(report_v5->grouping_hash));
     event->unhandled = report_v5->unhandled;
-    bsg_strncpy_safe(event->api_key, report_v5->api_key,
-                     sizeof(report_v5->api_key));
+    bsg_strncpy(event->api_key, report_v5->api_key, sizeof(report_v5->api_key));
 
     migrate_breadcrumb_v2(report_v5, event);
     free(report_v5);
@@ -331,19 +330,17 @@ bugsnag_event *bsg_map_v4_to_report(bugsnag_report_v4 *report_v4) {
     memcpy(event->breadcrumbs, report_v4->breadcrumbs,
            sizeof(report_v4->breadcrumbs));
     event->severity = report_v4->severity;
-    bsg_strncpy_safe(event->context, report_v4->context,
-                     sizeof(report_v4->context));
-    bsg_strncpy_safe(event->session_id, report_v4->session_id,
-                     sizeof(report_v4->session_id));
-    bsg_strncpy_safe(event->session_start, report_v4->session_start,
-                     sizeof(report_v4->session_start));
+    bsg_strncpy(event->context, report_v4->context, sizeof(report_v4->context));
+    bsg_strncpy(event->session_id, report_v4->session_id,
+                sizeof(report_v4->session_id));
+    bsg_strncpy(event->session_start, report_v4->session_start,
+                sizeof(report_v4->session_start));
     event->handled_events = report_v4->handled_events;
     event->unhandled_events = report_v4->unhandled_events;
-    bsg_strncpy_safe(event->grouping_hash, report_v4->grouping_hash,
-                     sizeof(report_v4->grouping_hash));
+    bsg_strncpy(event->grouping_hash, report_v4->grouping_hash,
+                sizeof(report_v4->grouping_hash));
     event->unhandled = report_v4->unhandled;
-    bsg_strncpy_safe(event->api_key, report_v4->api_key,
-                     sizeof(report_v4->api_key));
+    bsg_strncpy(event->api_key, report_v4->api_key, sizeof(report_v4->api_key));
     migrate_app_v2(report_v4, event);
     free(report_v4);
   }
@@ -569,9 +566,9 @@ void migrate_breadcrumb_v1(bugsnag_report_v2 *report_v2,
 
     // copy old crumb fields to new
     new_crumb->type = old_crumb->type;
-    bsg_strncpy_safe(new_crumb->name, old_crumb->name, sizeof(new_crumb->name));
-    bsg_strncpy_safe(new_crumb->timestamp, old_crumb->timestamp,
-                     sizeof(new_crumb->timestamp));
+    bsg_strncpy(new_crumb->name, old_crumb->name, sizeof(new_crumb->name));
+    bsg_strncpy(new_crumb->timestamp, old_crumb->timestamp,
+                sizeof(new_crumb->timestamp));
 
     for (int j = 0; j < 8; j++) {
       bsg_char_metadata_pair pair = old_crumb->metadata[j];
@@ -659,19 +656,18 @@ void migrate_app_v1(bugsnag_report_v2 *report_v2, bugsnag_report_v3 *event) {
 }
 
 void migrate_app_v2(bugsnag_report_v4 *report_v4, bugsnag_event *event) {
-  bsg_strncpy_safe(event->app.id, report_v4->app.id, sizeof(event->app.id));
-  bsg_strncpy_safe(event->app.release_stage, report_v4->app.release_stage,
-                   sizeof(event->app.release_stage));
-  bsg_strncpy_safe(event->app.type, report_v4->app.type,
-                   sizeof(event->app.type));
-  bsg_strncpy_safe(event->app.version, report_v4->app.version,
-                   sizeof(event->app.version));
-  bsg_strncpy_safe(event->app.active_screen, report_v4->app.active_screen,
-                   sizeof(event->app.active_screen));
-  bsg_strncpy_safe(event->app.build_uuid, report_v4->app.build_uuid,
-                   sizeof(event->app.build_uuid));
-  bsg_strncpy_safe(event->app.binary_arch, report_v4->app.binary_arch,
-                   sizeof(event->app.binary_arch));
+  bsg_strncpy(event->app.id, report_v4->app.id, sizeof(event->app.id));
+  bsg_strncpy(event->app.release_stage, report_v4->app.release_stage,
+              sizeof(event->app.release_stage));
+  bsg_strncpy(event->app.type, report_v4->app.type, sizeof(event->app.type));
+  bsg_strncpy(event->app.version, report_v4->app.version,
+              sizeof(event->app.version));
+  bsg_strncpy(event->app.active_screen, report_v4->app.active_screen,
+              sizeof(event->app.active_screen));
+  bsg_strncpy(event->app.build_uuid, report_v4->app.build_uuid,
+              sizeof(event->app.build_uuid));
+  bsg_strncpy(event->app.binary_arch, report_v4->app.binary_arch,
+              sizeof(event->app.binary_arch));
   event->app.version_code = report_v4->app.version_code;
   event->app.duration = report_v4->app.duration;
   event->app.duration_in_foreground = report_v4->app.duration_in_foreground;

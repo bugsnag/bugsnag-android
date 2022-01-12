@@ -89,7 +89,7 @@ void bsg_populate_notify_stacktrace(JNIEnv *env, bugsnag_stackframe *stacktrace,
 
     // populate method
     jstring method = NULL;
-    if (strlen(frame.method) == 0) {
+    if (bsg_strlen(frame.method) == 0) {
       char frame_address[32];
       snprintf(frame_address, sizeof(frame_address), "0x%lx",
                (unsigned long)frame.frame_address);
@@ -258,7 +258,7 @@ exit:
   bsg_safe_delete_local_ref(env, interface_class);
 }
 
-jfieldID bsg_parse_jcrumb_type(JNIEnv *env, bugsnag_breadcrumb_type type,
+jfieldID bsg_parse_jcrumb_type(JNIEnv *env, const bugsnag_breadcrumb_type type,
                                jclass type_class) {
   const char *type_sig = "Lcom/bugsnag/android/BreadcrumbType;";
   if (type == BSG_CRUMB_USER) {
@@ -282,7 +282,7 @@ jfieldID bsg_parse_jcrumb_type(JNIEnv *env, bugsnag_breadcrumb_type type,
 }
 
 void bugsnag_leave_breadcrumb_env(JNIEnv *env, const char *message,
-                                  bugsnag_breadcrumb_type type) {
+                                  const bugsnag_breadcrumb_type type) {
   jclass interface_class = NULL;
   jmethodID leave_breadcrumb_method = NULL;
   jclass type_class = NULL;
