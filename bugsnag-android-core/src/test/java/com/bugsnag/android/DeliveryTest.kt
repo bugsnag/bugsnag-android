@@ -14,5 +14,10 @@ class DeliveryTest {
         assertEquals(DeliveryStatus.UNDELIVERED, delivery.getDeliveryStatus(408))
         assertEquals(DeliveryStatus.UNDELIVERED, delivery.getDeliveryStatus(429))
         assertEquals(DeliveryStatus.FAILURE, delivery.getDeliveryStatus(400))
+        assertEquals(DeliveryStatus.FAILURE, delivery.getDeliveryStatus(401))
+        assertEquals(DeliveryStatus.FAILURE, delivery.getDeliveryStatus(498))
+        assertEquals(DeliveryStatus.FAILURE, delivery.getDeliveryStatus(499))
+        assertEquals(DeliveryStatus.UNDELIVERED, delivery.getDeliveryStatus(408))
+        assertEquals(DeliveryStatus.UNDELIVERED, delivery.getDeliveryStatus(429))
     }
 }

@@ -84,7 +84,7 @@ class BugsnagOkHttpPlugin @JvmOverloads constructor(
     ): Map<String, Any> {
         val request = call.request()
 
-        val data = mutableMapOf(
+        val data = mutableMapOf<String, Any>(
             "method" to request.method,
             "url" to sanitizeUrl(request),
             "duration" to nowMs - info.startTime,

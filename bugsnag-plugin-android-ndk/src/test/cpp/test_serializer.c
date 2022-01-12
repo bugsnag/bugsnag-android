@@ -45,7 +45,7 @@ void loadAppMetadataTestCase(bugsnag_event *event) {
 void loadDeviceTestCase(bugsnag_event *event) {
     bsg_device_info *device = &event->device;
     device->api_level = 29;
-    bsg_strncpy_safe(device->cpu_abi[0].value, "x86", sizeof(device->cpu_abi[0].value));
+    bsg_strncpy(device->cpu_abi[0].value, "x86", sizeof(device->cpu_abi[0].value));
     device->cpu_abi_count = 1;
     strcpy(device->orientation, "portrait");
 
