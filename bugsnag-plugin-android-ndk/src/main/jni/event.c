@@ -2,7 +2,7 @@
 #include "utils/string.h"
 #include <string.h>
 
-int bsg_find_next_free_metadata_index(bugsnag_metadata *const metadata) {
+static int find_next_free_metadata_index(bugsnag_metadata *const metadata) {
   if (metadata->value_count < BUGSNAG_METADATA_MAX) {
     return metadata->value_count;
   } else {
@@ -15,9 +15,9 @@ int bsg_find_next_free_metadata_index(bugsnag_metadata *const metadata) {
   return -1;
 }
 
-int bsg_allocate_metadata_index(bugsnag_metadata *metadata, const char *section,
-                                const char *name) {
-  int index = bsg_find_next_free_metadata_index(metadata);
+static int allocate_metadata_index(bugsnag_metadata *metadata,
+                                   const char *section, const char *name) {
+  int index = find_next_free_metadata_index(metadata);
   if (index < 0) {
     return index;
   }
@@ -34,7 +34,7 @@ int bsg_allocate_metadata_index(bugsnag_metadata *metadata, const char *section,
 void bsg_add_metadata_value_double(bugsnag_metadata *metadata,
                                    const char *section, const char *name,
                                    double value) {
-  int index = bsg_allocate_metadata_index(metadata, section, name);
+  int index = allocate_metadata_index(metadata, section, name);
   if (index >= 0) {
     metadata->values[index].type = BSG_METADATA_NUMBER_VALUE;
     metadata->values[index].double_value = value;
@@ -43,7 +43,7 @@ void bsg_add_metadata_value_double(bugsnag_metadata *metadata,
 
 void bsg_add_metadata_value_str(bugsnag_metadata *metadata, const char *section,
                                 const char *name, const char *value) {
-  int index = bsg_allocate_metadata_index(metadata, section, name);
+  int index = allocate_metadata_index(metadata, section, name);
   if (index >= 0) {
     metadata->values[index].type = BSG_METADATA_CHAR_VALUE;
     bsg_strncpy(metadata->values[index].char_value, value,
@@ -54,7 +54,7 @@ void bsg_add_metadata_value_str(bugsnag_metadata *metadata, const char *section,
 void bsg_add_metadata_value_bool(bugsnag_metadata *metadata,
                                  const char *section, const char *name,
                                  bool value) {
-  int index = bsg_allocate_metadata_index(metadata, section, name);
+  int index = allocate_metadata_index(metadata, section, name);
   if (index >= 0) {
     metadata->values[index].type = BSG_METADATA_BOOL_VALUE;
     metadata->values[index].bool_value = value;
