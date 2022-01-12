@@ -4,17 +4,12 @@
 #ifndef BUGSNAG_NDK_H
 #define BUGSNAG_NDK_H
 
-#include <android/log.h>
 #include <stdbool.h>
 
 #include "../assets/include/bugsnag.h"
 #include "event.h"
+#include "utils/logger.h"
 #include "utils/stack_unwinder.h"
-
-#ifndef BUGSNAG_LOG
-#define BUGSNAG_LOG(fmt, ...)                                                  \
-  __android_log_print(ANDROID_LOG_WARN, "BugsnagNDK", fmt, ##__VA_ARGS__)
-#endif
 
 #ifdef __cplusplus
 extern "C" {

@@ -3,14 +3,15 @@ package com.bugsnag.android
 import com.bugsnag.android.internal.ImmutableConfig
 import java.io.IOException
 
-internal class EventInternal : JsonStream.Streamable, MetadataAware, UserAware {
+internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, MetadataAware, UserAware {
 
     @JvmOverloads
     internal constructor(
         originalError: Throwable? = null,
         config: ImmutableConfig,
         severityReason: SeverityReason,
-        data: Metadata = Metadata()
+        data: Metadata = Metadata(),
+        featureFlags: FeatureFlags = FeatureFlags()
     ) : this(
         config.apiKey,
         mutableListOf(),
@@ -20,6 +21,7 @@ internal class EventInternal : JsonStream.Streamable, MetadataAware, UserAware {
             else -> Error.createError(originalError, config.projectPackages, config.logger)
         },
         data.copy(),
+        featureFlags.copy(),
         originalError,
         config.projectPackages,
         severityReason,
@@ -34,6 +36,7 @@ internal class EventInternal : JsonStream.Streamable, MetadataAware, UserAware {
         discardClasses: Set<String> = setOf(),
         errors: MutableList<Error> = mutableListOf(),
         metadata: Metadata = Metadata(),
+        featureFlags: FeatureFlags = FeatureFlags(),
         originalError: Throwable? = null,
         projectPackages: Collection<String> = setOf(),
         severityReason: SeverityReason = SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION),
@@ -46,6 +49,7 @@ internal class EventInternal : JsonStream.Streamable, MetadataAware, UserAware {
         this.discardClasses = discardClasses
         this.errors = errors
         this.metadata = metadata
+        this.featureFlags = featureFlags
         this.originalError = originalError
         this.projectPackages = projectPackages
         this.severityReason = severityReason
@@ -61,10 +65,13 @@ internal class EventInternal : JsonStream.Streamable, MetadataAware, UserAware {
     internal var severityReason: SeverityReason
 
     val metadata: Metadata
+    val featureFlags: FeatureFlags
     private val discardClasses: Set<String>
     internal var projectPackages: Collection<String>
 
-    private val jsonStreamer: ObjectJsonStreamer = ObjectJsonStreamer()
+    private val jsonStreamer: ObjectJsonStreamer = ObjectJsonStreamer().apply {
+        redactedKeys = redactedKeys.toSet()
+    }
 
     @JvmField
     internal var session: Session? = null
@@ -161,6 +168,8 @@ internal class EventInternal : JsonStream.Streamable, MetadataAware, UserAware {
         threads.forEach { writer.value(it) }
         writer.endArray()
 
+        writer.name("featureFlags").value(featureFlags)
+
         if (session != null) {
             val copy = Session.copySession(session)
             writer.name("session").beginObject()
@@ -239,4 +248,15 @@ internal class EventInternal : JsonStream.Streamable, MetadataAware, UserAware {
     override fun getMetadata(section: String) = metadata.getMetadata(section)
 
     override fun getMetadata(section: String, key: String) = metadata.getMetadata(section, key)
+
+    override fun addFeatureFlag(name: String) = featureFlags.addFeatureFlag(name)
+
+    override fun addFeatureFlag(name: String, variant: String?) = featureFlags.addFeatureFlag(name, variant)
+
+    override fun addFeatureFlags(featureFlags: MutableIterable<FeatureFlag>) =
+        this.featureFlags.addFeatureFlags(featureFlags)
+
+    override fun clearFeatureFlag(name: String) = featureFlags.clearFeatureFlag(name)
+
+    override fun clearFeatureFlags() = featureFlags.clearFeatureFlags()
 }

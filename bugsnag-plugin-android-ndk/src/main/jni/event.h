@@ -34,7 +34,7 @@
 /**
  * Version of the bugsnag_event struct. Serialized to report header.
  */
-#define BUGSNAG_EVENT_VERSION 7
+#define BUGSNAG_EVENT_VERSION 8
 
 #ifdef __cplusplus
 extern "C" {
@@ -50,15 +50,15 @@ typedef struct {
   char type[32];
   char version[32];
   char active_screen[64];
-  int version_code;
+  int64_t version_code;
   char build_uuid[64];
-  time_t duration;
-  time_t duration_in_foreground;
+  int64_t duration;
+  int64_t duration_in_foreground;
   /**
    * The elapsed time in milliseconds between when the system clock starts and
    * when bugsnag-ndk install() is called
    */
-  time_t duration_ms_offset;
+  int64_t duration_ms_offset;
   /**
    * The elapsed time in the foreground in milliseconds between when the app
    * first enters the foreground and when bugsnag-ndk install() is called, if
@@ -89,7 +89,7 @@ typedef struct {
   char os_build[64];
   char os_version[64];
   char os_name[64];
-  long total_memory;
+  int64_t total_memory;
 } bsg_device_info;
 
 /**
@@ -198,6 +198,11 @@ typedef enum {
 } bsg_thread_send_policy;
 
 typedef struct {
+  char *name;
+  char *variant;
+} bsg_feature_flag;
+
+typedef struct {
   bsg_notifier notifier;
   bsg_app_info app;
   bsg_device_info device;
@@ -224,6 +229,17 @@ typedef struct {
 
   int thread_count;
   bsg_thread threads[BUGSNAG_THREADS_MAX];
+
+  /**
+   * The number of feature flags currently specified.
+   */
+  size_t feature_flag_count;
+
+  /**
+   * Pointer to the current feature flags. This is dynamically allocated and
+   * serialized/deserialized separately to the rest of the struct.
+   */
+  bsg_feature_flag *feature_flags;
 } bugsnag_event;
 
 void bugsnag_event_add_breadcrumb(bugsnag_event *event,

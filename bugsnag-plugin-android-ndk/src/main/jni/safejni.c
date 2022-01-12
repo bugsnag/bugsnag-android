@@ -14,10 +14,7 @@ bool bsg_check_and_clear_exc(JNIEnv *env) {
 }
 
 jclass bsg_safe_find_class(JNIEnv *env, const char *clz_name) {
-  if (env == NULL) {
-    return NULL;
-  }
-  if (clz_name == NULL) {
+  if (env == NULL || clz_name == NULL) {
     return NULL;
   }
   jclass clz = (*env)->FindClass(env, clz_name);
@@ -56,7 +53,7 @@ jstring bsg_safe_new_string_utf(JNIEnv *env, const char *str) {
 
 jboolean bsg_safe_call_boolean_method(JNIEnv *env, jobject _value,
                                       jmethodID method) {
-  if (env == NULL || _value == NULL) {
+  if (env == NULL || _value == NULL || method == NULL) {
     return false;
   }
   jboolean value = (*env)->CallBooleanMethod(env, _value, method);
@@ -67,7 +64,7 @@ jboolean bsg_safe_call_boolean_method(JNIEnv *env, jobject _value,
 }
 
 jint bsg_safe_call_int_method(JNIEnv *env, jobject _value, jmethodID method) {
-  if (env == NULL || _value == NULL) {
+  if (env == NULL || _value == NULL || method == NULL) {
     return -1;
   }
   jint value = (*env)->CallIntMethod(env, _value, method);
@@ -79,7 +76,7 @@ jint bsg_safe_call_int_method(JNIEnv *env, jobject _value, jmethodID method) {
 
 jfloat bsg_safe_call_float_method(JNIEnv *env, jobject _value,
                                   jmethodID method) {
-  if (env == NULL || _value == NULL) {
+  if (env == NULL || _value == NULL || method == NULL) {
     return -1;
   }
   jfloat value = (*env)->CallFloatMethod(env, _value, method);
@@ -91,13 +88,22 @@ jfloat bsg_safe_call_float_method(JNIEnv *env, jobject _value,
 
 jdouble bsg_safe_call_double_method(JNIEnv *env, jobject _value,
                                     jmethodID method) {
-  if (env == NULL || _value == NULL) {
+  if (env == NULL || _value == NULL || method == NULL) {
     return -1;
   }
   jdouble value = (*env)->CallDoubleMethod(env, _value, method);
   if (bsg_check_and_clear_exc(env)) {
     return -1; // default to -1
   }
+  return value;
+}
+
+jlong bsg_safe_call_long_method(JNIEnv *env, jobject _value, jmethodID method) {
+  if (env == NULL || _value == NULL) {
+    return 0;
+  }
+  jlong value = (*env)->CallLongMethod(env, _value, method);
+  bsg_check_and_clear_exc(env);
   return value;
 }
 
@@ -141,7 +147,7 @@ jfieldID bsg_safe_get_static_field_id(JNIEnv *env, jclass clz, const char *name,
 
 jobject bsg_safe_get_static_object_field(JNIEnv *env, jclass clz,
                                          jfieldID field) {
-  if (env == NULL || clz == NULL) {
+  if (env == NULL || clz == NULL || field == NULL) {
     return NULL;
   }
   jobject obj = (*env)->GetStaticObjectField(env, clz, field);
@@ -150,7 +156,7 @@ jobject bsg_safe_get_static_object_field(JNIEnv *env, jclass clz,
 }
 
 jobject bsg_safe_new_object(JNIEnv *env, jclass clz, jmethodID method, ...) {
-  if (env == NULL || clz == NULL) {
+  if (env == NULL || clz == NULL || method == NULL) {
     return NULL;
   }
   va_list args;
@@ -163,7 +169,7 @@ jobject bsg_safe_new_object(JNIEnv *env, jclass clz, jmethodID method, ...) {
 
 jobject bsg_safe_call_object_method(JNIEnv *env, jobject _value,
                                     jmethodID method, ...) {
-  if (env == NULL || _value == NULL) {
+  if (env == NULL || _value == NULL || method == NULL) {
     return NULL;
   }
   va_list args;
@@ -176,7 +182,7 @@ jobject bsg_safe_call_object_method(JNIEnv *env, jobject _value,
 
 void bsg_safe_call_static_void_method(JNIEnv *env, jclass clz, jmethodID method,
                                       ...) {
-  if (env == NULL || clz == NULL) {
+  if (env == NULL || clz == NULL || method == NULL) {
     return;
   }
   va_list args;
@@ -188,7 +194,7 @@ void bsg_safe_call_static_void_method(JNIEnv *env, jclass clz, jmethodID method,
 
 jobject bsg_safe_call_static_object_method(JNIEnv *env, jclass clz,
                                            jmethodID method, ...) {
-  if (env == NULL || clz == NULL) {
+  if (env == NULL || clz == NULL || method == NULL) {
     return NULL;
   }
   va_list args;
@@ -200,54 +206,57 @@ jobject bsg_safe_call_static_object_method(JNIEnv *env, jclass clz,
 }
 
 void bsg_safe_delete_local_ref(JNIEnv *env, jobject obj) {
-  if (env != NULL) {
-    (*env)->DeleteLocalRef(env, obj);
+  if (env == NULL || obj == NULL) {
+    return;
   }
+  (*env)->DeleteLocalRef(env, obj);
 }
 
 const char *bsg_safe_get_string_utf_chars(JNIEnv *env, jstring string) {
-  if (env != NULL && string != NULL) {
-    return (*env)->GetStringUTFChars(env, string, NULL);
+  if (env == NULL || string == NULL) {
+    return NULL;
   }
-  return NULL;
+  return (*env)->GetStringUTFChars(env, string, NULL);
 }
 
 void bsg_safe_release_string_utf_chars(JNIEnv *env, jstring string,
                                        const char *utf) {
-  if (env != NULL && string != NULL && utf != NULL) {
-    (*env)->ReleaseStringUTFChars(env, string, utf);
+  if (env == NULL || string == NULL || utf == NULL) {
+    return;
   }
+  (*env)->ReleaseStringUTFChars(env, string, utf);
 }
 
 void bsg_safe_release_byte_array_elements(JNIEnv *env, jbyteArray array,
                                           jbyte *elems) {
+  if (env == NULL || array == NULL || elems == NULL) {
+    return;
+  }
   // If mode is anything other than JNI_COMMIT, the JNI method will try and call
   // delete[] on the elems parameter, which leads to bad things happening (e.g.
   // aborting will cause it to free, blowing up any custom allocators).
   // Therefore JNI_COMMIT will always be called and the caller should free the
   // elems parameter themselves if necessary.
   // https://android.googlesource.com/platform/art/+/refs/heads/master/runtime/jni/jni_internal.cc#2689
-  if (env != NULL && array != NULL) {
-    (*env)->ReleaseByteArrayElements(env, array, elems, JNI_COMMIT);
-  }
+  (*env)->ReleaseByteArrayElements(env, array, elems, JNI_COMMIT);
 }
 
 jsize bsg_safe_get_array_length(JNIEnv *env, jarray array) {
-  if (env != NULL && array != NULL) {
-    return (*env)->GetArrayLength(env, array);
+  if (env == NULL || array == NULL) {
+    return -1;
   }
-  return -1;
+  return (*env)->GetArrayLength(env, array);
 }
 
 jboolean bsg_safe_is_instance_of(JNIEnv *env, jobject object, jclass clz) {
-  if (env != NULL && clz != NULL) {
-    return (*env)->IsInstanceOf(env, object, clz);
+  if (env == NULL || clz == NULL) {
+    return false;
   }
-  return false;
+  return (*env)->IsInstanceOf(env, object, clz);
 }
 
 jbyteArray bsg_byte_ary_from_string(JNIEnv *env, const char *text) {
-  if (text == NULL) {
+  if (env == NULL || text == NULL) {
     return NULL;
   }
   size_t text_length = bsg_strlen(text);

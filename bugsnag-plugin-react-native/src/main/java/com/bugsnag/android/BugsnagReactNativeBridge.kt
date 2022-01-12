@@ -1,6 +1,9 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.StateEvent.AddFeatureFlag
 import com.bugsnag.android.StateEvent.AddMetadata
+import com.bugsnag.android.StateEvent.ClearFeatureFlag
+import com.bugsnag.android.StateEvent.ClearFeatureFlags
 import com.bugsnag.android.StateEvent.ClearMetadataSection
 import com.bugsnag.android.StateEvent.ClearMetadataValue
 import com.bugsnag.android.StateEvent.UpdateContext
@@ -32,6 +35,29 @@ internal class BugsnagReactNativeBridge(
                         Pair("email", event.user.email),
                         Pair("name", event.user.name)
                     )
+                )
+            }
+            is AddFeatureFlag -> {
+                MessageEvent(
+                    "AddFeatureFlag",
+                    mapOf(
+                        Pair("name", event.name),
+                        Pair("variant", event.variant)
+                    )
+                )
+            }
+            is ClearFeatureFlag -> {
+                MessageEvent(
+                    "ClearFeatureFlag",
+                    mapOf(
+                        Pair("name", event.name)
+                    )
+                )
+            }
+            is ClearFeatureFlags -> {
+                MessageEvent(
+                    "ClearFeatureFlag",
+                    null
                 )
             }
             else -> null

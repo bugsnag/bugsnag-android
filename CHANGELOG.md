@@ -1,12 +1,23 @@
 # Changelog
 
+## 5.19.0 (2022-01-12)
+
+* New APIs to support forthcoming feature flag and experiment functionality. For more information, please see https://docs.bugsnag.com/product/features-experiments.
+
+### Enhancements
+
+* Explicitly define Kotlin api/language versions
+  [#1564](https://github.com/bugsnag/bugsnag-android/pull/1564)
+
+* Build project with Kotlin 1.4, maintain compat with Kotlin 1.3
+  [#1565](https://github.com/bugsnag/bugsnag-android/pull/1565)
+
 ## 5.18.0 (2022-01-05)
 
 ### Enhancements
 
 * Improve the memory use and performance overhead when handling the delivery response status codes
   [#1558](https://github.com/bugsnag/bugsnag-android/pull/1558)
-
 * Harden ndk layer through use of const keyword
   [#1566](https://github.com/bugsnag/bugsnag-android/pull/1566)
 

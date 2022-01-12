@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -131,5 +132,14 @@ final class BugsnagTestUtils {
 
     public static App generateApp() {
         return new App(generateImmutableConfig(), null, null, null, null, null);
+    }
+
+    static Comparator<FeatureFlag> featureFlagComparator() {
+        return new Comparator<FeatureFlag>() {
+            @Override
+            public int compare(FeatureFlag f1, FeatureFlag f2) {
+                return f1.getName().compareTo(f2.getName());
+            }
+        };
     }
 }

@@ -51,5 +51,6 @@
       }
     }
   ],
-  "threads": []
+  "threads": [],
+  "featureFlags": []
 }

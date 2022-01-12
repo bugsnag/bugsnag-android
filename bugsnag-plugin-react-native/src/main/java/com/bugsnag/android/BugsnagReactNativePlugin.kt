@@ -115,6 +115,18 @@ class BugsnagReactNativePlugin : Plugin {
         client.codeBundleId = id
     }
 
+    fun addFeatureFlag(name: String, variant: String?) {
+        client.addFeatureFlag(name, variant)
+    }
+
+    fun clearFeatureFlag(name: String) {
+        client.clearFeatureFlag(name)
+    }
+
+    fun clearFeatureFlags() {
+        client.clearFeatureFlags()
+    }
+
     fun clearMetadata(section: String, key: String?) {
         when (key) {
             null -> client.clearMetadata(section)
