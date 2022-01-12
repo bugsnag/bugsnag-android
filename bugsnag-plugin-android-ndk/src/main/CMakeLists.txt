@@ -12,9 +12,14 @@ add_library( # Specifies the name of the library.
     jni/safejni.c
     jni/jni_cache.c
     jni/event.c
+    jni/featureflags.c
     jni/handlers/signal_handler.c
     jni/handlers/cpp_handler.cpp
     jni/utils/crash_info.c
+    jni/utils/serializer/buffered_writer.c
+    jni/utils/serializer/event_reader.c
+    jni/utils/serializer/event_writer.c
+    jni/utils/serializer/json_writer.c
     jni/utils/stack_unwinder.c
     jni/utils/stack_unwinder_libunwindstack.cpp
     jni/utils/stack_unwinder_libcorkscrew.c

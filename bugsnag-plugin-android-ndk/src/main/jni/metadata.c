@@ -86,27 +86,6 @@ exit:
   return value;
 }
 
-static int get_map_value_int(JNIEnv *env, jobject map, const char *_key) {
-  jobject _value = NULL;
-  int value = 0;
-
-  if (bsg_global_jni_cache == NULL) {
-    goto exit;
-  }
-
-  _value = get_map_value_obj(env, map, _key);
-  if (_value == NULL) {
-    goto exit;
-  }
-
-  value = bsg_safe_call_int_method(env, _value,
-                                   bsg_global_jni_cache->integer_int_value);
-
-exit:
-  bsg_safe_delete_local_ref(env, _value);
-  return value;
-}
-
 static bool get_map_value_bool(JNIEnv *env, jobject map, const char *_key) {
   jobject _value = NULL;
   bool value = 0;
@@ -208,7 +187,7 @@ static void populate_app_data(JNIEnv *env, bugsnag_event *event) {
                         sizeof(event->app.type));
   copy_map_value_string(env, data, "version", event->app.version,
                         sizeof(event->app.version));
-  event->app.version_code = get_map_value_int(env, data, "versionCode");
+  event->app.version_code = get_map_value_long(env, data, "versionCode");
 
   bool restricted = get_map_value_bool(env, data, "backgroundWorkRestricted");
 
@@ -236,7 +215,7 @@ static void populate_device_metadata(JNIEnv *env, bugsnag_event *event,
   bugsnag_event_add_metadata_string(event, "device", "brand", brand);
 
   bugsnag_event_add_metadata_double(event, "device", "dpi",
-                                    get_map_value_int(env, data, "dpi"));
+                                    get_map_value_long(env, data, "dpi"));
   bugsnag_event_add_metadata_bool(event, "device", "emulator",
                                   get_map_value_bool(env, data, "emulator"));
 

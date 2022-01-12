@@ -68,4 +68,22 @@ internal class BugsnagReactNativePluginTest {
         plugin.updateCodeBundleId("123")
         verify(client, times(1)).codeBundleId = "123"
     }
+
+    @Test
+    fun addFeatureFlag() {
+        plugin.addFeatureFlag("flag name", "variant")
+        verify(client, times(1)).addFeatureFlag("flag name", "variant")
+    }
+
+    @Test
+    fun clearFeatureFlag() {
+        plugin.clearFeatureFlag("flag name")
+        verify(client, times(1)).clearFeatureFlag("flag name")
+    }
+
+    @Test
+    fun clearFeatureFla() {
+        plugin.clearFeatureFlags()
+        verify(client, times(1)).clearFeatureFlags()
+    }
 }

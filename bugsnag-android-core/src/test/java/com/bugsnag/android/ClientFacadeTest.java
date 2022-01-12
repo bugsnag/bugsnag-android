@@ -48,6 +48,9 @@ public class ClientFacadeTest {
     UserState userState;
 
     @Mock
+    FeatureFlagState featureFlagState;
+
+    @Mock
     ClientObservable clientObservable;
 
     @Mock
@@ -110,6 +113,7 @@ public class ClientFacadeTest {
                 contextState,
                 callbackState,
                 userState,
+                featureFlagState,
                 clientObservable,
                 appContext,
                 deviceDataCollector,
@@ -129,6 +133,7 @@ public class ClientFacadeTest {
 
         // required fields for generating an event
         when(metadataState.getMetadata()).thenReturn(new Metadata());
+        when(featureFlagState.getFeatureFlags()).thenReturn(new FeatureFlags());
         when(immutableConfig.getLogger()).thenReturn(logger);
         when(immutableConfig.getApiKey()).thenReturn("test-apiKey");
         when(immutableConfig.getSendThreads()).thenReturn(ThreadSendPolicy.ALWAYS);

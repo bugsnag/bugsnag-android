@@ -78,6 +78,9 @@ class NativeBridge : StateObserver {
     external fun updateUserName(newValue: String)
     external fun getSignalUnwindStackFunction(): Long
     external fun updateLowMemory(newValue: Boolean, memoryTrimLevelDescription: String)
+    external fun addFeatureFlag(name: String, variant: String?)
+    external fun clearFeatureFlag(name: String)
+    external fun clearFeatureFlags()
 
     override fun onStateChange(event: StateEvent) {
         if (isInvalidMessage(event)) return
@@ -120,6 +123,12 @@ class NativeBridge : StateObserver {
                 updateUserEmail(makeSafe(event.user.email ?: ""))
             }
             is StateEvent.UpdateMemoryTrimEvent -> updateLowMemory(event.isLowMemory, event.memoryTrimLevelDescription)
+            is StateEvent.AddFeatureFlag -> addFeatureFlag(
+                makeSafe(event.name),
+                event.variant?.let { makeSafe(it) }
+            )
+            is StateEvent.ClearFeatureFlag -> clearFeatureFlag(makeSafe(event.name))
+            is StateEvent.ClearFeatureFlags -> clearFeatureFlags()
         }
     }
 

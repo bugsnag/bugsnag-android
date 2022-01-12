@@ -52,6 +52,10 @@ final class BugsnagTestUtils {
         return ImmutableConfigKt.convertToImmutableConfig(config);
     }
 
+    static FeatureFlagState generateFeatureFlagState() {
+        return new FeatureFlagState();
+    }
+
     static EventPayload generateEventPayload(ImmutableConfig config) {
         return new EventPayload(config.getApiKey(), generateEvent(), new Notifier(), config);
     }

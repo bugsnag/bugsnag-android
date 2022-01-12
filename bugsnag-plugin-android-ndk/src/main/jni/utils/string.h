@@ -9,6 +9,11 @@ extern "C" {
 #endif
 
 /**
+ * Copy the contents of src to dst where src is null-terminated
+ */
+void bsg_strcpy(char *dst, const char *src) __asyncsafe;
+
+/**
  * Return the length of a string, or 0 if the pointer is NULL.
  */
 size_t bsg_strlen(const char *str) __asyncsafe;

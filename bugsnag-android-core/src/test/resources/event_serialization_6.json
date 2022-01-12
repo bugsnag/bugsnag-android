@@ -58,5 +58,6 @@
       "metaData": {}
     }
   ],
-  "threads": []
+  "threads": [],
+  "featureFlags": []
 }

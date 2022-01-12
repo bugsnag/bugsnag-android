@@ -8,4 +8,8 @@ class TestHooks {
     static MetadataState generateMetadataState() {
         return new MetadataState();
     }
+
+    static FeatureFlagState generateFeatureFlagsState() {
+        return new FeatureFlagState();
+    }
 }

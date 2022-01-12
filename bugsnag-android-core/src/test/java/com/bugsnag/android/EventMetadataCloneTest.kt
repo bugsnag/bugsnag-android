@@ -15,7 +15,15 @@ class EventMetadataCloneTest {
             SeverityReason.REASON_HANDLED_EXCEPTION
         )
         val config = BugsnagTestUtils.generateImmutableConfig()
-        val event = Event(RuntimeException(), config, handledState, data, NoopLogger)
+        val event = Event(
+            RuntimeException(),
+            config,
+            handledState,
+            data,
+            FeatureFlags(),
+            NoopLogger
+        )
+
         event.addMetadata("test_section", "second", "another value")
 
         // metadata object should be deep copied

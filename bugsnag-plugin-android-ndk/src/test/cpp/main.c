@@ -1,14 +1,15 @@
+#include <stdlib.h>
+
 #include <android/log.h>
+#include <jni.h>
 
 #define GREATEST_FPRINTF(ignore, fmt, ...) __android_log_print(ANDROID_LOG_INFO, "BugsnagNDKTest", fmt, ##__VA_ARGS__)
 
 #include <greatest/greatest.h>
-#include <jni.h>
+#include <parson/parson.h>
 
-#include <utils/serializer.h>
-#include <stdlib.h>
-#include <utils/migrate.h>
 #include "test_serializer.h"
+#include <utils/serializer/json_writer.h>
 
 SUITE(suite_string_utils);
 SUITE(suite_json_serialization);
@@ -18,6 +19,7 @@ SUITE(suite_event_app_mutators);
 SUITE(suite_event_device_mutators);
 SUITE(suite_struct_to_file);
 SUITE(suite_struct_migration);
+SUITE(suite_feature_flags);
 
 GREATEST_MAIN_DEFS();
 
@@ -87,6 +89,11 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_NativeEventAppMutatorsTest_ru
 JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_NativeEventDeviceMutatorsTest_run(
     JNIEnv *_env, jobject _this) {
     return run_test_suite(suite_event_device_mutators);
+}
+
+JNIEXPORT jint JNICALL
+Java_com_bugsnag_android_ndk_NativeFeatureFlagsTest_run(JNIEnv *env, jobject thiz) {
+    return run_test_suite(suite_feature_flags);
 }
 
 JNIEXPORT jstring JNICALL Java_com_bugsnag_android_ndk_UserSerializationTest_run(
