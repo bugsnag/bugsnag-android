@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 5.19.0 (2022-01-12)
 
 * New APIs to support forthcoming feature flag and experiment functionality. For more information, please see https://docs.bugsnag.com/product/features-experiments.
 
