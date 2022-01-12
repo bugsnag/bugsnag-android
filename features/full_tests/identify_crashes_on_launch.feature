@@ -1,5 +1,71 @@
 Feature: Identifying crashes on launch
 
+    Scenario: JVM exception captured with autoNotify reenabled
+        When I run "UnhandledJvmAutoNotifyTrueScenario" and relaunch the app
+        And I configure Bugsnag for "UnhandledJvmAutoNotifyTrueScenario"
+        Then I wait to receive an error
+        And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+
+    Scenario: JVM exception captured with autoNotify reenabled
+        When I run "UnhandledJvmAutoNotifyTrueScenario" and relaunch the app
+        And I configure Bugsnag for "UnhandledJvmAutoNotifyTrueScenario"
+        Then I wait to receive an error
+        And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+
+    Scenario: JVM exception captured with autoNotify reenabled
+        When I run "UnhandledJvmAutoNotifyTrueScenario" and relaunch the app
+        And I configure Bugsnag for "UnhandledJvmAutoNotifyTrueScenario"
+        Then I wait to receive an error
+        And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+
+    Scenario: JVM exception captured with autoNotify reenabled
+        When I run "UnhandledJvmAutoNotifyTrueScenario" and relaunch the app
+        And I configure Bugsnag for "UnhandledJvmAutoNotifyTrueScenario"
+        Then I wait to receive an error
+        And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+
+    Scenario: JVM exception captured with autoNotify reenabled
+        When I run "UnhandledJvmAutoNotifyTrueScenario" and relaunch the app
+        And I configure Bugsnag for "UnhandledJvmAutoNotifyTrueScenario"
+        Then I wait to receive an error
+        And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+
+    Scenario: JVM exception captured with autoNotify reenabled
+        When I run "UnhandledJvmAutoNotifyTrueScenario" and relaunch the app
+        And I configure Bugsnag for "UnhandledJvmAutoNotifyTrueScenario"
+        Then I wait to receive an error
+        And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+
+    Scenario: JVM exception captured with autoNotify reenabled
+        When I run "UnhandledJvmAutoNotifyTrueScenario" and relaunch the app
+        And I configure Bugsnag for "UnhandledJvmAutoNotifyTrueScenario"
+        Then I wait to receive an error
+        And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+
+    Scenario: JVM exception captured with autoNotify reenabled
+        When I run "UnhandledJvmAutoNotifyTrueScenario" and relaunch the app
+        And I configure Bugsnag for "UnhandledJvmAutoNotifyTrueScenario"
+        Then I wait to receive an error
+        And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+
+    Scenario: JVM exception captured with autoNotify reenabled
+        When I run "UnhandledJvmAutoNotifyTrueScenario" and relaunch the app
+        And I configure Bugsnag for "UnhandledJvmAutoNotifyTrueScenario"
+        Then I wait to receive an error
+        And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+
+    Scenario: JVM exception captured with autoNotify reenabled
+        When I run "UnhandledJvmAutoNotifyTrueScenario" and relaunch the app
+        And I configure Bugsnag for "UnhandledJvmAutoNotifyTrueScenario"
+        Then I wait to receive an error
+        And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+
+    Scenario: JVM exception captured with autoNotify reenabled
+        When I run "UnhandledJvmAutoNotifyTrueScenario" and relaunch the app
+        And I configure Bugsnag for "UnhandledJvmAutoNotifyTrueScenario"
+        Then I wait to receive an error
+        And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+
     Scenario: Escaping from a crash loop by reading LastRunInfo in an NDK error
         When I run "CXXCrashLoopScenario" and relaunch the app
         When I run "CXXCrashLoopScenario" and relaunch the app
