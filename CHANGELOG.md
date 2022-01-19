@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* Discarded unhandled exceptions are propagated to any previously registered handlers
+  [#1584](https://github.com/bugsnag/bugsnag-android/pull/1584)
+
 ## 5.19.0 (2022-01-12)
 
 * New APIs to support forthcoming feature flag and experiment functionality. For more information, please see https://docs.bugsnag.com/product/features-experiments.
