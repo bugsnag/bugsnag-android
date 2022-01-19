@@ -75,6 +75,19 @@ internal class ExceptionHandlerTest {
     }
 
     @Test
+    fun exceptionPropagatedWhenDiscarded() {
+        val runtimeException = RuntimeException("Whoops")
+        `when`(cfg.shouldDiscardError(runtimeException)).thenReturn(true)
+
+        var propagated = false
+        Thread.setDefaultUncaughtExceptionHandler { _, _ -> propagated = true }
+        val exceptionHandler = ExceptionHandler(client, NoopLogger)
+        val thread = Thread.currentThread()
+        exceptionHandler.uncaughtException(thread, runtimeException)
+        assertTrue(propagated)
+    }
+
+    @Test
     fun uncaughtExceptionOutsideReleaseStages() {
         val exceptionHandler = ExceptionHandler(client, NoopLogger)
         val thread = Thread.currentThread()
