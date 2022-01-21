@@ -6,6 +6,9 @@
 
 * Discarded unhandled exceptions are propagated to any previously registered handlers
   [#1584](https://github.com/bugsnag/bugsnag-android/pull/1584)
+  
+* Fix SIGABRT crashes caused by race conditions in the NDK layer
+  [#1585](https://github.com/bugsnag/bugsnag-android/pull/1585)
 
 ## 5.19.0 (2022-01-12)
 

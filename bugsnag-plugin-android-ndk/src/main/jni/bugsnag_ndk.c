@@ -150,8 +150,10 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
     jboolean auto_detect_ndk_crashes, jint _api_level, jboolean is32bit,
     jint send_threads) {
 
-  if (!bsg_jni_cache_refresh(env)) {
-    BUGSNAG_LOG("Could not refresh JNI cache.");
+  bsg_jni_cache jni_cache;
+
+  if (!bsg_jni_cache_init(env, &jni_cache)) {
+    BUGSNAG_LOG("Could not refresh JNI jni_cache.");
   }
 
   bsg_environment *bugsnag_env = calloc(1, sizeof(bsg_environment));
@@ -189,7 +191,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   }
 
   // populate metadata from Java layer
-  bsg_populate_event(env, &bugsnag_env->next_event);
+  bsg_populate_event(env, &jni_cache, &bugsnag_env->next_event);
   time(&bugsnag_env->start_time);
   if (bugsnag_env->next_event.app.in_foreground) {
     bugsnag_env->foreground_start_time = bugsnag_env->start_time;
@@ -224,6 +226,8 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
   static pthread_mutex_t bsg_native_delivery_mutex = PTHREAD_MUTEX_INITIALIZER;
   pthread_mutex_lock(&bsg_native_delivery_mutex);
 
+  bsg_jni_cache jni_cache;
+
   const char *event_path = NULL;
   bugsnag_event *event = NULL;
   jbyteArray jpayload = NULL;
@@ -231,11 +235,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
   char *payload = NULL;
   jstring japi_key = NULL;
 
-  if (bsg_global_jni_cache == NULL) {
-    goto exit;
-  }
-
-  if (!bsg_jni_cache_refresh(env)) {
+  if (!bsg_jni_cache_init(env, &jni_cache)) {
     BUGSNAG_LOG("Could not refresh JNI cache.");
     goto exit;
   }
@@ -277,10 +277,9 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
   japi_key = bsg_safe_new_string_utf(env, event->api_key);
   if (japi_key != NULL) {
     bool is_launching = event->app.is_launching;
-    bsg_safe_call_static_void_method(env,
-                                     bsg_global_jni_cache->native_interface,
-                                     bsg_global_jni_cache->ni_deliver_report,
-                                     jstage, jpayload, japi_key, is_launching);
+    bsg_safe_call_static_void_method(env, jni_cache.native_interface,
+                                     jni_cache.ni_deliver_report, jstage,
+                                     jpayload, japi_key, is_launching);
   }
 
 exit:
@@ -362,10 +361,10 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_pausedSession(
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_addBreadcrumb(
     JNIEnv *env, jobject _this, jstring name_, jstring crumb_type,
     jstring timestamp_, jobject metadata) {
-  if (bsg_global_env == NULL) {
-    return;
-  }
-  if (!bsg_jni_cache_refresh(env)) {
+
+  bsg_jni_cache jni_cache;
+
+  if (!bsg_jni_cache_init(env, &jni_cache)) {
     BUGSNAG_LOG("Could not refresh JNI cache.");
     return;
   }
@@ -395,7 +394,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_addBreadcrumb(
       crumb->type = BSG_CRUMB_MANUAL;
     }
 
-    bsg_populate_crumb_metadata(env, crumb, metadata);
+    bsg_populate_crumb_metadata(env, &jni_cache, crumb, metadata);
     request_env_write_lock();
     bugsnag_event_add_breadcrumb(&bsg_global_env->next_event, crumb);
     release_env_write_lock();
@@ -717,12 +716,15 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateMetadata(
   if (bsg_global_env == NULL) {
     return;
   }
-  if (!bsg_jni_cache_refresh(env)) {
+
+  bsg_jni_cache jni_cache;
+  if (!bsg_jni_cache_init(env, &jni_cache)) {
     BUGSNAG_LOG("Could not refresh JNI cache.");
     return;
   }
   request_env_write_lock();
-  bsg_populate_metadata(env, &bsg_global_env->next_event.metadata, metadata);
+  bsg_populate_metadata(env, &jni_cache, &bsg_global_env->next_event.metadata,
+                        metadata);
   release_env_write_lock();
 }
 
