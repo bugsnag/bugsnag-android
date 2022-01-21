@@ -52,17 +52,16 @@ typedef struct {
   jmethodID ste_constructor;
 } bsg_jni_cache;
 
-// Always check for null before using this!
-extern bsg_jni_cache *bsg_global_jni_cache;
-
 /**
- * Refresh all references in the JNI cache.
- * This MUST be called on every Java-to-native call!
+ * Populate all references in the JNI cache.
+ * This MUST be called on every Java-to-native call to ensure that references
+ * remain bound to the correct JNIEnv.
  *
  * @param env The JNI env
+ * @param cache The cache to refresh
  * @return false if an error occurs, in which case the cache is unusable.
  */
-bool bsg_jni_cache_refresh(JNIEnv *env);
+bool bsg_jni_cache_init(JNIEnv *env, bsg_jni_cache *cache);
 
 #ifdef __cplusplus
 }

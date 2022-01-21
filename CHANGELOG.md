@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.19.1 (2022-01-21)
+
+### Bug fixes
+
+* Discarded unhandled exceptions are propagated to any previously registered handlers
+  [#1584](https://github.com/bugsnag/bugsnag-android/pull/1584)
+  
+* Fix SIGABRT crashes caused by race conditions in the NDK layer
+  [#1585](https://github.com/bugsnag/bugsnag-android/pull/1585)
+
 ## 5.19.0 (2022-01-12)
 
 * New APIs to support forthcoming feature flag and experiment functionality. For more information, please see https://docs.bugsnag.com/product/features-experiments.

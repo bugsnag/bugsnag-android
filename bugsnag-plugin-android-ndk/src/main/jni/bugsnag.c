@@ -118,7 +118,9 @@ void bugsnag_notify_env(JNIEnv *env, const char *name, const char *message,
   jbyteArray jname = NULL;
   jbyteArray jmessage = NULL;
 
-  if (!bsg_jni_cache_refresh(env)) {
+  bsg_jni_cache jni_cache;
+
+  if (!bsg_jni_cache_init(env, &jni_cache)) {
     BUGSNAG_LOG("Could not refresh JNI cache.");
     goto exit;
   }
@@ -130,25 +132,24 @@ void bugsnag_notify_env(JNIEnv *env, const char *name, const char *message,
 
   // create StackTraceElement array
   jtrace = bsg_safe_new_object_array(env, frame_count,
-                                     bsg_global_jni_cache->stack_trace_element);
+                                     jni_cache.stack_trace_element);
   if (jtrace == NULL) {
     goto exit;
   }
 
   // populate stacktrace object
   populate_notify_stacktrace(env, stacktrace, frame_count,
-                             bsg_global_jni_cache->stack_trace_element,
-                             bsg_global_jni_cache->ste_constructor, jtrace);
+                             jni_cache.stack_trace_element,
+                             jni_cache.ste_constructor, jtrace);
 
   // get the severity field
-  jfieldID severity_field =
-      parse_jseverity(env, severity, bsg_global_jni_cache->severity);
+  jfieldID severity_field = parse_jseverity(env, severity, jni_cache.severity);
   if (severity_field == NULL) {
     goto exit;
   }
   // get the error severity object
-  jseverity = bsg_safe_get_static_object_field(
-      env, bsg_global_jni_cache->severity, severity_field);
+  jseverity =
+      bsg_safe_get_static_object_field(env, jni_cache.severity, severity_field);
   if (jseverity == NULL) {
     goto exit;
   }
@@ -156,9 +157,9 @@ void bugsnag_notify_env(JNIEnv *env, const char *name, const char *message,
   jname = bsg_byte_ary_from_string(env, name);
   jmessage = bsg_byte_ary_from_string(env, message);
 
-  bsg_safe_call_static_void_method(env, bsg_global_jni_cache->native_interface,
-                                   bsg_global_jni_cache->ni_notify, jname,
-                                   jmessage, jseverity, jtrace);
+  bsg_safe_call_static_void_method(env, jni_cache.native_interface,
+                                   jni_cache.ni_notify, jname, jmessage,
+                                   jseverity, jtrace);
 
   goto exit;
 
@@ -173,7 +174,10 @@ exit:
 
 void bugsnag_set_user_env(JNIEnv *env, const char *id, const char *email,
                           const char *name) {
-  if (!bsg_jni_cache_refresh(env)) {
+
+  bsg_jni_cache jni_cache;
+
+  if (!bsg_jni_cache_init(env, &jni_cache)) {
     BUGSNAG_LOG("Could not refresh JNI cache.");
     return;
   }
@@ -182,9 +186,8 @@ void bugsnag_set_user_env(JNIEnv *env, const char *id, const char *email,
   jbyteArray jemail = bsg_byte_ary_from_string(env, email);
   jbyteArray jname = bsg_byte_ary_from_string(env, name);
 
-  bsg_safe_call_static_void_method(env, bsg_global_jni_cache->native_interface,
-                                   bsg_global_jni_cache->ni_set_user, jid,
-                                   jemail, jname);
+  bsg_safe_call_static_void_method(env, jni_cache.native_interface,
+                                   jni_cache.ni_set_user, jid, jemail, jname);
 
   bsg_safe_release_byte_array_elements(env, jid, (jbyte *)id);
   bsg_safe_delete_local_ref(env, jid);
@@ -220,31 +223,32 @@ static jfieldID parse_jcrumb_type(JNIEnv *env,
 
 void bugsnag_leave_breadcrumb_env(JNIEnv *env, const char *message,
                                   const bugsnag_breadcrumb_type type) {
+  bsg_jni_cache jni_cache;
+
   jbyteArray jmessage = NULL;
   jobject jtype = NULL;
 
-  if (!bsg_jni_cache_refresh(env)) {
+  if (!bsg_jni_cache_init(env, &jni_cache)) {
     BUGSNAG_LOG("Could not refresh JNI cache.");
     goto exit;
   }
 
   // get breadcrumb type fieldID
-  jfieldID crumb_type =
-      parse_jcrumb_type(env, type, bsg_global_jni_cache->breadcrumb_type);
+  jfieldID crumb_type = parse_jcrumb_type(env, type, jni_cache.breadcrumb_type);
   if (crumb_type == NULL) {
     goto exit;
   }
 
   // get the breadcrumb type
-  jtype = bsg_safe_get_static_object_field(
-      env, bsg_global_jni_cache->breadcrumb_type, crumb_type);
+  jtype = bsg_safe_get_static_object_field(env, jni_cache.breadcrumb_type,
+                                           crumb_type);
   if (jtype == NULL) {
     goto exit;
   }
   jmessage = bsg_byte_ary_from_string(env, message);
-  bsg_safe_call_static_void_method(env, bsg_global_jni_cache->native_interface,
-                                   bsg_global_jni_cache->ni_leave_breadcrumb,
-                                   jmessage, jtype);
+  bsg_safe_call_static_void_method(env, jni_cache.native_interface,
+                                   jni_cache.ni_leave_breadcrumb, jmessage,
+                                   jtype);
 
   goto exit;
 
