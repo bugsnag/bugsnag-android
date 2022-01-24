@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 5.19.1 (2022-01-21)
 
 ### Bug fixes
 
