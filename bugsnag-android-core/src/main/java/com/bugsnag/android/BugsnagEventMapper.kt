@@ -29,6 +29,14 @@ internal class BugsnagEventMapper(
             event.addMetadata(key, value)
         }
 
+        val featureFlagsList: List<Map<String, Any?>> = map.readEntry("featureFlags")
+        featureFlagsList.forEach { featureFlagMap ->
+            event.addFeatureFlag(
+                featureFlagMap.readEntry("featureFlag"),
+                featureFlagMap["variant"] as? String
+            )
+        }
+
         // populate breadcrumbs
         val breadcrumbList: List<MutableMap<String, Any?>> = map.readEntry("breadcrumbs")
         breadcrumbList.mapTo(event.breadcrumbs) {

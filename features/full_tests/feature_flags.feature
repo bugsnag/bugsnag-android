@@ -42,3 +42,16 @@ Scenario: Sends no feature flags after clearFeatureFlags()
   And the exception "errorClass" equals "java.lang.RuntimeException"
   And the event "unhandled" is false
   And event 0 has no feature flags
+
+Scenario: Sends feature flags added in OnSend Callbacks
+  When I configure the app to run in the "onsend" state
+  And I run "FeatureFlagScenario" and relaunch the app
+  And I configure Bugsnag for "FeatureFlagScenario"
+  Then I wait to receive an error
+  And the exception "errorClass" equals "java.lang.RuntimeException"
+  And the event "unhandled" is false
+  And event 0 contains the feature flag "demo_mode" with no variant
+  And event 0 contains the feature flag "on_send_callback" with no variant
+  And event 0 does not contain the feature flag "should_not_be_reported_1"
+  And event 0 does not contain the feature flag "should_not_be_reported_2"
+  And event 0 does not contain the feature flag "should_not_be_reported_3"

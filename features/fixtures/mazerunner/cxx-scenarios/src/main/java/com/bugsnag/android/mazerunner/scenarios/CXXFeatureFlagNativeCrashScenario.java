@@ -2,7 +2,9 @@ package com.bugsnag.android.mazerunner.scenarios;
 
 import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.Configuration;
+import com.bugsnag.android.Event;
 import com.bugsnag.android.FeatureFlag;
+import com.bugsnag.android.OnSendCallback;
 
 import android.content.Context;
 
@@ -18,10 +20,21 @@ public class CXXFeatureFlagNativeCrashScenario extends Scenario {
 
     public native void crash();
 
+    /**
+     */
     public CXXFeatureFlagNativeCrashScenario(@NonNull Configuration config,
                                              @NonNull Context context,
                                              @Nullable String eventMetadata) {
         super(config, context, eventMetadata);
+
+        if (getEventMetadata() != null && getEventMetadata().contains("onsend")) {
+            config.addOnSend(new OnSendCallback() {
+                public boolean onSend(@NonNull Event event) {
+                    event.addFeatureFlag("on_send_callback");
+                    return true;
+                }
+            });
+        }
     }
 
     @Override
