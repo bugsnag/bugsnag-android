@@ -8,8 +8,18 @@ import com.bugsnag.android.FeatureFlag
 class FeatureFlagScenario(
     config: Configuration,
     context: Context,
-    eventMetadata: String
+    eventMetadata: String?
 ) : Scenario(config, context, eventMetadata) {
+
+    init {
+        if (eventMetadata?.contains("onsend") == true) {
+            config.addOnSend { event ->
+                event.addFeatureFlag("on_send_callback")
+                return@addOnSend true
+            }
+        }
+    }
+
     override fun startScenario() {
         super.startScenario()
 
