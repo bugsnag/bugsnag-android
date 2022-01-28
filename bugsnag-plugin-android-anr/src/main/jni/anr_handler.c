@@ -174,22 +174,10 @@ static void notify_anr_detected() {
     return;
   }
 
-  bool should_detach = false;
   JNIEnv *env;
-  int result = (*bsg_jvm)->GetEnv(bsg_jvm, (void **)&env, JNI_VERSION_1_4);
-  switch (result) {
-  case JNI_OK:
-    break;
-  case JNI_EDETACHED:
-    result = (*bsg_jvm)->AttachCurrentThread(bsg_jvm, &env, NULL);
-    if (result != 0) {
-      BUGSNAG_LOG("Failed to call JNIEnv->AttachCurrentThread(): %d", result);
-      return;
-    }
-    should_detach = true;
-    break;
-  default:
-    BUGSNAG_LOG("Failed to call JNIEnv->GetEnv(): %d", result);
+  int result = (*bsg_jvm)->AttachCurrentThread(bsg_jvm, &env, NULL);
+  if (result != 0) {
+    BUGSNAG_LOG("Failed to call JNIEnv->AttachCurrentThread(): %d", result);
     return;
   }
 
@@ -236,10 +224,7 @@ static void notify_anr_detected() {
     check_and_clear_exc(env);
   }
 
-  if (should_detach) {
-    (*bsg_jvm)->DetachCurrentThread(
-        bsg_jvm); // detach to restore initial condition
-  }
+  (*bsg_jvm)->DetachCurrentThread(bsg_jvm);
 }
 
 static inline void block_sigquit() {
