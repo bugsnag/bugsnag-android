@@ -74,6 +74,12 @@ internal class EventSerializationTest {
                         Error(ErrorInternal("WhoopsException", "Whoops", stacktrace), NoopLogger)
                     it.errors.clear()
                     it.errors.add(err)
+                },
+
+                // featureFlags included
+                createEvent {
+                    it.addFeatureFlag("no_variant")
+                    it.addFeatureFlag("flag", "with_variant")
                 }
             )
         }

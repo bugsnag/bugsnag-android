@@ -90,6 +90,7 @@ class EventDeserializerTest {
         assertEquals("app-id", event.app.id)
         assertEquals("device-id", event.device.id)
         assertEquals("123", event.getMetadata("custom", "id"))
+        assertEquals(TestData.generateConfig().apiKey, event.apiKey)
     }
 
     @Test
@@ -114,5 +115,31 @@ class EventDeserializerTest {
         val event = EventDeserializer(client, emptyList()).deserialize(map)
         assertFalse(event.isUnhandled)
         assertTrue(TestHooks.getUnhandledOverridden(event))
+    }
+
+    @Test
+    fun deserializeApiKeyOverridden() {
+        val map: MutableMap<String, Any?> = hashMapOf(
+            "apiKey" to "abc123",
+            "severity" to "info",
+            "user" to mapOf("id" to "123"),
+            "unhandled" to false,
+            "severityReason" to hashMapOf(
+                "type" to "unhandledException",
+                "unhandledOverridden" to true
+            ),
+            "breadcrumbs" to listOf(breadcrumbMap()),
+            "threads" to listOf(threadMap()),
+            "errors" to listOf(errorMap()),
+            "metadata" to metadataMap(),
+            "app" to mapOf("id" to "app-id"),
+            "device" to mapOf(
+                "id" to "device-id",
+                "runtimeVersions" to hashMapOf<String, Any>()
+            )
+        )
+
+        val event = EventDeserializer(client, emptyList()).deserialize(map)
+        assertEquals("abc123", event.apiKey)
     }
 }
