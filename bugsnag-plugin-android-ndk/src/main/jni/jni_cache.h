@@ -13,55 +13,71 @@ extern "C" {
 #endif
 
 typedef struct {
-  jclass hash_map;
-  jclass map;
-  jclass arraylist;
-  jclass integer;
-  jclass boolean;
-  jclass metadata;
-  jclass native_interface;
-  jclass long_class;
-  jclass float_class;
+  bool initialized;
+
+  JavaVM *jvm;
+
+  jclass Boolean;
+  jmethodID Boolean_booleanValue;
+
+  jclass Float;
+  jmethodID Float_floatValue;
+
   jclass number;
-  jclass string;
-  jclass stack_trace_element;
-  jclass severity;
-  jclass breadcrumb_type;
-  jmethodID integer_int_value;
-  jmethodID long_long_value;
-  jmethodID float_float_value;
-  jmethodID boolean_bool_value;
   jmethodID number_double_value;
-  jmethodID hash_map_get;
-  jmethodID hash_map_size;
-  jmethodID hash_map_key_set;
-  jmethodID map_get;
-  jmethodID map_size;
-  jmethodID map_key_set;
-  jmethodID arraylist_init_with_obj;
-  jmethodID arraylist_get;
-  jmethodID ni_get_app;
-  jmethodID ni_get_device;
-  jmethodID ni_get_user;
-  jmethodID ni_set_user;
-  jmethodID ni_get_metadata;
-  jmethodID ni_get_context;
-  jmethodID ni_notify;
-  jmethodID ni_leave_breadcrumb;
-  jmethodID ni_deliver_report;
-  jmethodID ste_constructor;
-} bsg_jni_cache;
+
+  jclass String;
+
+  jclass Map;
+  jmethodID Map_get;
+  jmethodID Map_size;
+  jmethodID Map_keySet;
+
+  jclass HashMap;
+  jmethodID HashMap_get;
+  jmethodID HashMap_size;
+  jmethodID HashMap_keySet;
+
+  jclass ArrayList;
+  jmethodID ArrayList_constructor;
+  jmethodID ArrayList_get;
+
+  jclass NativeInterface;
+  jmethodID NativeInterface_getApp;
+  jmethodID NativeInterface_getDevice;
+  jmethodID NativeInterface_getUser;
+  jmethodID NativeInterface_setUser;
+  jmethodID NativeInterface_getMetadata;
+  jmethodID NativeInterface_getContext;
+  jmethodID NativeInterface_notify;
+  jmethodID NativeInterface_leaveBreadcrumb;
+  jmethodID NativeInterface_deliverReport;
+
+  jclass StackTraceElement;
+  jmethodID StackTraceElement_constructor;
+
+  jclass Severity;
+
+  jclass BreadcrumbType;
+} bsg_jni_cache_t;
+
+extern bsg_jni_cache_t *const bsg_jni_cache;
 
 /**
  * Populate all references in the JNI cache.
- * This MUST be called on every Java-to-native call to ensure that references
- * remain bound to the correct JNIEnv.
  *
  * @param env The JNI env
- * @param cache The cache to refresh
  * @return false if an error occurs, in which case the cache is unusable.
  */
-bool bsg_jni_cache_init(JNIEnv *env, bsg_jni_cache *cache);
+bool bsg_jni_cache_init(JNIEnv *env);
+
+/**
+ * Get the current JNI environment, attaching if necessary.
+ * The environment will be detached automatically on thread termination.
+ * @return The current JNI environment, or NULL in case of JNI error (which will
+ * be logged).
+ */
+JNIEnv *bsg_jni_cache_get_env();
 
 #ifdef __cplusplus
 }
