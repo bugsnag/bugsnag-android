@@ -4,7 +4,6 @@
 
 #include "jni_cache.h"
 #include "safejni.h"
-#include <stdlib.h>
 
 #include <android/log.h>
 #ifndef BUGSNAG_LOG
@@ -12,267 +11,116 @@
   __android_log_print(ANDROID_LOG_WARN, "BugsnagNDK", fmt, ##__VA_ARGS__)
 #endif
 
-#define report_contents(VALUE, TYPECODE)                                       \
-  BUGSNAG_LOG(#VALUE " == " TYPECODE, VALUE)
+static bsg_jni_cache_t jni_cache;
+bsg_jni_cache_t *bsg_jni_cache = &jni_cache;
 
-bool bsg_jni_cache_init(JNIEnv *env, bsg_jni_cache *cache) {
-  if (cache == NULL) {
-    return false;
+// All classes must be cached as global refs
+#define CACHE_CLASS(CLASS, PATH)                                               \
+  do {                                                                         \
+    jclass cls = bsg_safe_find_class(env, PATH);                               \
+    if (cls == NULL) {                                                         \
+      BUGSNAG_LOG("JNI Cache Init Error: JNI class ref " #CLASS                \
+                  " (%s) is NULL",                                             \
+                  PATH);                                                       \
+      goto failed;                                                             \
+    }                                                                          \
+    bsg_jni_cache->CLASS = (*env)->NewGlobalRef(env, cls);                     \
+  } while (0)
+
+// Methods are IDs, which remain valid as long as their class ref remains valid.
+#define CACHE_METHOD(CLASS, METHOD, NAME, PARAMS)                              \
+  do {                                                                         \
+    jmethodID mtd =                                                            \
+        bsg_safe_get_method_id(env, bsg_jni_cache->CLASS, NAME, PARAMS);       \
+    if (mtd == NULL) {                                                         \
+      BUGSNAG_LOG("JNI Cache Init Error: JNI method ref " #CLASS "." #METHOD   \
+                  " (%s%s) is NULL",                                           \
+                  NAME, PARAMS);                                               \
+      goto failed;                                                             \
+    }                                                                          \
+    bsg_jni_cache->METHOD = mtd;                                               \
+  } while (0)
+
+#define CACHE_STATIC_METHOD(CLASS, METHOD, NAME, PARAMS)                       \
+  do {                                                                         \
+    jmethodID mtd = bsg_safe_get_static_method_id(env, bsg_jni_cache->CLASS,   \
+                                                  NAME, PARAMS);               \
+    if (mtd == NULL) {                                                         \
+      BUGSNAG_LOG("JNI Cache Init Error: JNI method ref " #CLASS "." #METHOD   \
+                  " (%s%s) is NULL",                                           \
+                  NAME, PARAMS);                                               \
+      goto failed;                                                             \
+    }                                                                          \
+    bsg_jni_cache->METHOD = mtd;                                               \
+  } while (0)
+
+bool bsg_jni_cache_init(JNIEnv *env) {
+  if (bsg_jni_cache->initialized) {
+    return true;
   }
 
-  // All objects here are local references, and MUST be refreshed on every
-  // transition from Java to native.
-
-  // Classes
-
-  cache->integer = bsg_safe_find_class(env, "java/lang/Integer");
-  if (cache->integer == NULL) {
-    report_contents(cache->integer, "%p");
+  (*env)->GetJavaVM(env, &bsg_jni_cache->jvm);
+  if (bsg_jni_cache->jvm == NULL) {
+    BUGSNAG_LOG("JNI Cache Init Error: Could not get global JavaVM");
     goto failed;
   }
 
-  cache->boolean = bsg_safe_find_class(env, "java/lang/Boolean");
-  if (cache->boolean == NULL) {
-    report_contents(cache->boolean, "%p");
-    goto failed;
-  }
+  CACHE_CLASS(boolean, "java/lang/Boolean");
+  CACHE_METHOD(boolean, boolean_bool_value, "booleanValue", "()Z");
 
-  cache->long_class = bsg_safe_find_class(env, "java/lang/Long");
-  if (cache->long_class == NULL) {
-    report_contents(cache->long_class, "%p");
-    goto failed;
-  }
+  CACHE_CLASS(float_class, "java/lang/Float");
+  CACHE_METHOD(float_class, float_float_value, "floatValue", "()F");
 
-  cache->float_class = bsg_safe_find_class(env, "java/lang/Float");
-  if (cache->float_class == NULL) {
-    report_contents(cache->float_class, "%p");
-    goto failed;
-  }
+  CACHE_CLASS(number, "java/lang/Number");
+  CACHE_METHOD(number, number_double_value, "doubleValue", "()D");
 
-  cache->number = bsg_safe_find_class(env, "java/lang/Number");
-  if (cache->number == NULL) {
-    report_contents(cache->number, "%p");
-    goto failed;
-  }
+  CACHE_CLASS(string, "java/lang/String");
 
-  cache->string = bsg_safe_find_class(env, "java/lang/String");
-  if (cache->string == NULL) {
-    report_contents(cache->string, "%p");
-    goto failed;
-  }
+  CACHE_CLASS(arraylist, "java/util/ArrayList");
+  CACHE_METHOD(arraylist, arraylist_init_with_obj, "<init>",
+               "(Ljava/util/Collection;)V");
+  CACHE_METHOD(arraylist, arraylist_get, "get", "(I)Ljava/lang/Object;");
 
-  // Methods
+  CACHE_CLASS(map, "java/util/Map");
+  CACHE_METHOD(map, map_key_set, "keySet", "()Ljava/util/Set;");
+  CACHE_METHOD(map, map_size, "size", "()I");
+  CACHE_METHOD(map, map_get, "get", "(Ljava/lang/Object;)Ljava/lang/Object;");
 
-  cache->arraylist = bsg_safe_find_class(env, "java/util/ArrayList");
-  if (cache->arraylist == NULL) {
-    report_contents(cache->arraylist, "%p");
-    goto failed;
-  }
+  CACHE_CLASS(hash_map, "java/util/HashMap");
+  CACHE_METHOD(hash_map, hash_map_key_set, "keySet", "()Ljava/util/Set;");
+  CACHE_METHOD(hash_map, hash_map_size, "size", "()I");
+  CACHE_METHOD(hash_map, hash_map_get, "get",
+               "(Ljava/lang/Object;)Ljava/lang/Object;");
 
-  cache->hash_map = bsg_safe_find_class(env, "java/util/HashMap");
-  if (cache->hash_map == NULL) {
-    report_contents(cache->hash_map, "%p");
-    goto failed;
-  }
-
-  cache->map = bsg_safe_find_class(env, "java/util/Map");
-  if (cache->map == NULL) {
-    report_contents(cache->map, "%p");
-    goto failed;
-  }
-
-  cache->native_interface =
-      bsg_safe_find_class(env, "com/bugsnag/android/NativeInterface");
-  if (cache->native_interface == NULL) {
-    report_contents(cache->native_interface, "%p");
-    goto failed;
-  }
-
-  cache->stack_trace_element =
-      bsg_safe_find_class(env, "java/lang/StackTraceElement");
-  if (cache->stack_trace_element == NULL) {
-    report_contents(cache->stack_trace_element, "%p");
-    goto failed;
-  }
-
-  cache->severity = bsg_safe_find_class(env, "com/bugsnag/android/Severity");
-  if (cache->severity == NULL) {
-    report_contents(cache->severity, "%p");
-    goto failed;
-  }
-
-  cache->breadcrumb_type =
-      bsg_safe_find_class(env, "com/bugsnag/android/BreadcrumbType");
-  if (cache->breadcrumb_type == NULL) {
-    report_contents(cache->breadcrumb_type, "%p");
-    goto failed;
-  }
-
-  cache->integer_int_value =
-      bsg_safe_get_method_id(env, cache->integer, "intValue", "()I");
-  if (cache->integer_int_value == NULL) {
-    report_contents(cache->integer_int_value, "%p");
-    goto failed;
-  }
-
-  cache->float_float_value =
-      bsg_safe_get_method_id(env, cache->float_class, "floatValue", "()F");
-  if (cache->float_float_value == NULL) {
-    report_contents(cache->float_float_value, "%p");
-    goto failed;
-  }
-
-  cache->number_double_value =
-      bsg_safe_get_method_id(env, cache->number, "doubleValue", "()D");
-  if (cache->number_double_value == NULL) {
-    report_contents(cache->number_double_value, "%p");
-    goto failed;
-  }
-
-  cache->long_long_value =
-      bsg_safe_get_method_id(env, cache->integer, "longValue", "()J");
-  if (cache->long_long_value == NULL) {
-    report_contents(cache->long_long_value, "%p");
-    goto failed;
-  }
-
-  cache->boolean_bool_value =
-      bsg_safe_get_method_id(env, cache->boolean, "booleanValue", "()Z");
-  if (cache->boolean_bool_value == NULL) {
-    report_contents(cache->boolean_bool_value, "%p");
-    goto failed;
-  }
-
-  cache->arraylist_init_with_obj = bsg_safe_get_method_id(
-      env, cache->arraylist, "<init>", "(Ljava/util/Collection;)V");
-  if (cache->arraylist_init_with_obj == NULL) {
-    report_contents(cache->arraylist_init_with_obj, "%p");
-    goto failed;
-  }
-
-  cache->arraylist_get = bsg_safe_get_method_id(env, cache->arraylist, "get",
-                                                "(I)Ljava/lang/Object;");
-  if (cache->arraylist_get == NULL) {
-    report_contents(cache->arraylist_get, "%p");
-    goto failed;
-  }
-
-  cache->hash_map_key_set = bsg_safe_get_method_id(
-      env, cache->hash_map, "keySet", "()Ljava/util/Set;");
-  if (cache->hash_map_key_set == NULL) {
-    report_contents(cache->hash_map_key_set, "%p");
-    goto failed;
-  }
-
-  cache->hash_map_size =
-      bsg_safe_get_method_id(env, cache->hash_map, "size", "()I");
-  if (cache->hash_map_size == NULL) {
-    report_contents(cache->hash_map_size, "%p");
-    goto failed;
-  }
-
-  cache->hash_map_get = bsg_safe_get_method_id(
-      env, cache->hash_map, "get", "(Ljava/lang/Object;)Ljava/lang/Object;");
-  if (cache->hash_map_get == NULL) {
-    report_contents(cache->hash_map_get, "%p");
-    goto failed;
-  }
-
-  cache->map_key_set =
-      bsg_safe_get_method_id(env, cache->map, "keySet", "()Ljava/util/Set;");
-  if (cache->map_key_set == NULL) {
-    report_contents(cache->map_key_set, "%p");
-    goto failed;
-  }
-
-  cache->map_size = bsg_safe_get_method_id(env, cache->map, "size", "()I");
-  if (cache->map_size == NULL) {
-    report_contents(cache->map_size, "%p");
-    goto failed;
-  }
-
-  cache->map_get = bsg_safe_get_method_id(
-      env, cache->map, "get", "(Ljava/lang/Object;)Ljava/lang/Object;");
-  if (cache->map_get == NULL) {
-    report_contents(cache->map_get, "%p");
-    goto failed;
-  }
-
-  cache->ni_get_app = bsg_safe_get_static_method_id(
-      env, cache->native_interface, "getApp", "()Ljava/util/Map;");
-  if (cache->ni_get_app == NULL) {
-    report_contents(cache->ni_get_app, "%p");
-    goto failed;
-  }
-
-  cache->ni_get_device = bsg_safe_get_static_method_id(
-      env, cache->native_interface, "getDevice", "()Ljava/util/Map;");
-  if (cache->ni_get_device == NULL) {
-    report_contents(cache->ni_get_device, "%p");
-    goto failed;
-  }
-
-  cache->ni_get_user = bsg_safe_get_static_method_id(
-      env, cache->native_interface, "getUser", "()Ljava/util/Map;");
-  if (cache->ni_get_user == NULL) {
-    report_contents(cache->ni_get_user, "%p");
-    goto failed;
-  }
-
-  cache->ni_set_user = bsg_safe_get_static_method_id(
-      env, cache->native_interface, "setUser", "([B[B[B)V");
-  if (cache->ni_set_user == NULL) {
-    report_contents(cache->ni_set_user, "%p");
-    goto failed;
-  }
-
-  cache->ni_get_metadata = bsg_safe_get_static_method_id(
-      env, cache->native_interface, "getMetadata", "()Ljava/util/Map;");
-  if (cache->ni_get_metadata == NULL) {
-    report_contents(cache->ni_get_metadata, "%p");
-    goto failed;
-  }
-
-  // lookup NativeInterface.getContext()
-  cache->ni_get_context = bsg_safe_get_static_method_id(
-      env, cache->native_interface, "getContext", "()Ljava/lang/String;");
-  if (cache->ni_get_context == NULL) {
-    report_contents(cache->ni_get_context, "%p");
-    goto failed;
-  }
-
-  cache->ni_notify = bsg_safe_get_static_method_id(
-      env, cache->native_interface, "notify",
+  CACHE_CLASS(native_interface, "com/bugsnag/android/NativeInterface");
+  CACHE_STATIC_METHOD(native_interface, ni_get_app, "getApp",
+                      "()Ljava/util/Map;");
+  CACHE_STATIC_METHOD(native_interface, ni_get_device, "getDevice",
+                      "()Ljava/util/Map;");
+  CACHE_STATIC_METHOD(native_interface, ni_get_user, "getUser",
+                      "()Ljava/util/Map;");
+  CACHE_STATIC_METHOD(native_interface, ni_set_user, "setUser", "([B[B[B)V");
+  CACHE_STATIC_METHOD(native_interface, ni_get_metadata, "getMetadata",
+                      "()Ljava/util/Map;");
+  CACHE_STATIC_METHOD(native_interface, ni_get_context, "getContext",
+                      "()Ljava/lang/String;");
+  CACHE_STATIC_METHOD(
+      native_interface, ni_notify, "notify",
       "([B[BLcom/bugsnag/android/Severity;[Ljava/lang/StackTraceElement;)V");
-  if (cache->ni_notify == NULL) {
-    report_contents(cache->ni_notify, "%p");
-    goto failed;
-  }
+  CACHE_STATIC_METHOD(native_interface, ni_deliver_report, "deliverReport",
+                      "([B[BLjava/lang/String;Z)V");
+  CACHE_STATIC_METHOD(native_interface, ni_leave_breadcrumb, "leaveBreadcrumb",
+                      "([BLcom/bugsnag/android/BreadcrumbType;)V");
 
-  cache->ni_deliver_report = bsg_safe_get_static_method_id(
-      env, cache->native_interface, "deliverReport",
-      "([B[BLjava/lang/String;Z)V");
-  if (cache->ni_deliver_report == NULL) {
-    report_contents(cache->ni_deliver_report, "%p");
-    goto failed;
-  }
+  CACHE_CLASS(stack_trace_element, "java/lang/StackTraceElement");
+  CACHE_METHOD(stack_trace_element, ste_constructor, "<init>",
+               "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V");
 
-  cache->ni_leave_breadcrumb = bsg_safe_get_static_method_id(
-      env, cache->native_interface, "leaveBreadcrumb",
-      "([BLcom/bugsnag/android/BreadcrumbType;)V");
-  if (cache->ni_leave_breadcrumb == NULL) {
-    report_contents(cache->ni_leave_breadcrumb, "%p");
-    goto failed;
-  }
+  CACHE_CLASS(severity, "com/bugsnag/android/Severity");
 
-  cache->ste_constructor = bsg_safe_get_method_id(
-      env, cache->stack_trace_element, "<init>",
-      "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V");
-  if (cache->ste_constructor == NULL) {
-    report_contents(cache->ste_constructor, "%p");
-    goto failed;
-  }
+  CACHE_CLASS(breadcrumb_type, "com/bugsnag/android/BreadcrumbType");
 
+  bsg_jni_cache->initialized = true;
   return true;
 
 failed:

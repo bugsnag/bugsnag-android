@@ -1,12 +1,32 @@
 #include "safejni.h"
+#include "bugsnag_ndk.h"
+#include "utils/stack_unwinder.h"
 #include <stdbool.h>
+#include <string.h>
 #include <utils/string.h>
+
+#include <android/log.h>
+#ifndef BUGSNAG_LOG
+#define BUGSNAG_LOG(fmt, ...)                                                  \
+  __android_log_print(ANDROID_LOG_WARN, "BugsnagNDK", fmt, ##__VA_ARGS__)
+#endif
 
 bool bsg_check_and_clear_exc(JNIEnv *env) {
   if (env == NULL) {
     return false;
   }
   if ((*env)->ExceptionCheck(env)) {
+    BUGSNAG_LOG("BUG: JNI Native->Java call threw an exception:");
+
+    // Print a trace to stderr so that we can debug it
+    (*env)->ExceptionDescribe(env);
+
+    // Trigger more accurate dalvik trace (this will also crash the app).
+
+    // Code review check: THIS MUST BE COMMENTED OUT IN CHECKED IN CODE!
+    //(*env)->FindClass(env, NULL);
+
+    // Clear the exception so that we don't crash.
     (*env)->ExceptionClear(env);
     return true;
   }

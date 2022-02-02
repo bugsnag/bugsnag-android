@@ -13,33 +13,34 @@ extern "C" {
 #endif
 
 typedef struct {
-  jclass hash_map;
-  jclass map;
-  jclass arraylist;
-  jclass integer;
+  JavaVM *jvm;
+
   jclass boolean;
-  jclass metadata;
-  jclass native_interface;
-  jclass long_class;
-  jclass float_class;
-  jclass number;
-  jclass string;
-  jclass stack_trace_element;
-  jclass severity;
-  jclass breadcrumb_type;
-  jmethodID integer_int_value;
-  jmethodID long_long_value;
-  jmethodID float_float_value;
   jmethodID boolean_bool_value;
+
+  jclass float_class;
+  jmethodID float_float_value;
+
+  jclass number;
   jmethodID number_double_value;
-  jmethodID hash_map_get;
-  jmethodID hash_map_size;
-  jmethodID hash_map_key_set;
+
+  jclass string;
+
+  jclass map;
   jmethodID map_get;
   jmethodID map_size;
   jmethodID map_key_set;
+
+  jclass hash_map;
+  jmethodID hash_map_get;
+  jmethodID hash_map_size;
+  jmethodID hash_map_key_set;
+
+  jclass arraylist;
   jmethodID arraylist_init_with_obj;
   jmethodID arraylist_get;
+
+  jclass native_interface;
   jmethodID ni_get_app;
   jmethodID ni_get_device;
   jmethodID ni_get_user;
@@ -49,19 +50,26 @@ typedef struct {
   jmethodID ni_notify;
   jmethodID ni_leave_breadcrumb;
   jmethodID ni_deliver_report;
+
+  jclass stack_trace_element;
   jmethodID ste_constructor;
-} bsg_jni_cache;
+
+  jclass severity;
+
+  jclass breadcrumb_type;
+
+  bool initialized;
+} bsg_jni_cache_t;
+
+extern bsg_jni_cache_t *bsg_jni_cache;
 
 /**
  * Populate all references in the JNI cache.
- * This MUST be called on every Java-to-native call to ensure that references
- * remain bound to the correct JNIEnv.
  *
  * @param env The JNI env
- * @param cache The cache to refresh
  * @return false if an error occurs, in which case the cache is unusable.
  */
-bool bsg_jni_cache_init(JNIEnv *env, bsg_jni_cache *cache);
+bool bsg_jni_cache_init(JNIEnv *env);
 
 #ifdef __cplusplus
 }
