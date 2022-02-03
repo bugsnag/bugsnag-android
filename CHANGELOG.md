@@ -1,11 +1,14 @@
 # Changelog
 
-## TBD
+## 5.19.2 (2022-01-31)
 
 ### Bug fixes
 
 * Fixed an issue where feature-flags were not always sent if an OnSendCallback was configured
   [#1589](https://github.com/bugsnag/bugsnag-android/pull/1589)
+
+* Fix a bug where api keys set in React Native callbacks were ignored
+  [#1592](https://github.com/bugsnag/bugsnag-android/pull/1592)
 
 ## 5.19.1 (2022-01-21)
 

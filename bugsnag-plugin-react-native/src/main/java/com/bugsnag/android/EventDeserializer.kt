@@ -37,6 +37,10 @@ internal class EventDeserializer(
         event.context = map["context"] as String?
         event.groupingHash = map["groupingHash"] as String?
 
+        // apiKey if it exists in the map and is not empty
+        val apiKey = (map["apiKey"] as? String)?.takeIf { it.isNotEmpty() }
+        apiKey?.let { event.apiKey = apiKey }
+
         // app/device
         event.app = appDeserializer.deserialize(map["app"] as MutableMap<String, Any>)
         event.device = deviceDeserializer.deserialize(map["device"] as MutableMap<String, Any>)
@@ -62,7 +66,8 @@ internal class EventDeserializer(
         if (map.containsKey("nativeStack") && event.errors.isNotEmpty()) {
             runCatching {
                 val jsError = event.errors.first()
-                val nativeStackDeserializer = NativeStackDeserializer(projectPackages, client.config)
+                val nativeStackDeserializer =
+                    NativeStackDeserializer(projectPackages, client.config)
                 val nativeStack = nativeStackDeserializer.deserialize(map)
                 jsError.stacktrace.addAll(0, nativeStack)
             }

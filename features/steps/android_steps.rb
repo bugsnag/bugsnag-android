@@ -1,5 +1,3 @@
-require 'minitest/spec'
-
 # Waits 5s for an element to be present.  If it isn't assume a system error dialog is
 # blocking its view and dismiss it before trying once more.
 #
