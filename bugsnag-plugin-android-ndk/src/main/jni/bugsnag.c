@@ -136,13 +136,13 @@ static void populate_notify_stacktrace(JNIEnv *env,
     bugsnag_stackframe frame = stacktrace[i];
 
     // create Java string objects for class/filename/method
-    jstring class = bsg_safe_new_string_utf(env, "");
+    jstring class = bsg_anr_safe_new_string_utf(env, "");
     if (class == NULL) {
       goto exit;
     }
 
     // populate filename
-    jstring filename = bsg_safe_new_string_utf(env, frame.filename);
+    jstring filename = bsg_anr_safe_new_string_utf(env, frame.filename);
     if (filename == NULL) {
       goto exit;
     }
@@ -153,16 +153,16 @@ static void populate_notify_stacktrace(JNIEnv *env,
       char frame_address[32];
       snprintf(frame_address, sizeof(frame_address), "0x%lx",
                (unsigned long)frame.frame_address);
-      method = bsg_safe_new_string_utf(env, frame_address);
+      method = bsg_anr_safe_new_string_utf(env, frame_address);
     } else {
-      method = bsg_safe_new_string_utf(env, frame.method);
+      method = bsg_anr_safe_new_string_utf(env, frame.method);
     }
     if (method == NULL) {
       goto exit;
     }
 
     // create StackTraceElement object
-    jobject jframe = bsg_safe_new_object(
+    jobject jframe = bsg_anr_safe_new_object(
         env, bsg_jni_cache->stack_trace_element, bsg_jni_cache->ste_constructor,
         class, method, filename, frame.line_number);
     if (jframe == NULL) {
@@ -173,8 +173,8 @@ static void populate_notify_stacktrace(JNIEnv *env,
     goto exit;
 
   exit:
-    bsg_safe_delete_local_ref(env, filename);
-    bsg_safe_delete_local_ref(env, class);
+    bsg_anr_safe_delete_local_ref(env, filename);
+    bsg_anr_safe_delete_local_ref(env, class);
   }
 }
 
@@ -228,11 +228,11 @@ void bugsnag_notify_env(JNIEnv *env, const char *name, const char *message,
 
 exit:
   bsg_safe_release_byte_array_elements(env, jname, (jbyte *)name);
-  bsg_safe_delete_local_ref(env, jname);
+  bsg_anr_safe_delete_local_ref(env, jname);
   bsg_safe_release_byte_array_elements(env, jmessage, (jbyte *)message);
-  bsg_safe_delete_local_ref(env, jmessage);
-  bsg_safe_delete_local_ref(env, jtrace);
-  bsg_safe_delete_local_ref(env, jseverity);
+  bsg_anr_safe_delete_local_ref(env, jmessage);
+  bsg_anr_safe_delete_local_ref(env, jtrace);
+  bsg_anr_safe_delete_local_ref(env, jseverity);
 }
 
 void bugsnag_set_user_env(JNIEnv *env, const char *id, const char *email,
@@ -252,11 +252,11 @@ void bugsnag_set_user_env(JNIEnv *env, const char *id, const char *email,
                                    jname);
 
   bsg_safe_release_byte_array_elements(env, jid, (jbyte *)id);
-  bsg_safe_delete_local_ref(env, jid);
+  bsg_anr_safe_delete_local_ref(env, jid);
   bsg_safe_release_byte_array_elements(env, jemail, (jbyte *)email);
-  bsg_safe_delete_local_ref(env, jemail);
+  bsg_anr_safe_delete_local_ref(env, jemail);
   bsg_safe_release_byte_array_elements(env, jname, (jbyte *)name);
-  bsg_safe_delete_local_ref(env, jname);
+  bsg_anr_safe_delete_local_ref(env, jname);
 }
 
 static jfieldID parse_jcrumb_type(JNIEnv *env,
@@ -325,6 +325,6 @@ void bugsnag_leave_breadcrumb_env(JNIEnv *env, const char *message,
 
 exit:
   bsg_safe_release_byte_array_elements(env, jmessage, (jbyte *)message);
-  bsg_safe_delete_local_ref(env, jmessage);
-  bsg_safe_delete_local_ref(env, jtype);
+  bsg_anr_safe_delete_local_ref(env, jmessage);
+  bsg_anr_safe_delete_local_ref(env, jtype);
 }

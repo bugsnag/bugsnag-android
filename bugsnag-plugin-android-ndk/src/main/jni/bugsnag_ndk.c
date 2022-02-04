@@ -106,7 +106,7 @@ Java_com_bugsnag_android_NdkPlugin_getBinaryArch(JNIEnv *env, jobject _this) {
 #else
   const char *binary_arch = "unknown";
 #endif
-  return bsg_safe_new_string_utf(env, binary_arch);
+  return bsg_anr_safe_new_string_utf(env, binary_arch);
 }
 
 JNIEXPORT void JNICALL
@@ -270,7 +270,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
   }
 
   // call NativeInterface.deliverReport()
-  japi_key = bsg_safe_new_string_utf(env, event->api_key);
+  japi_key = bsg_anr_safe_new_string_utf(env, event->api_key);
   if (japi_key != NULL) {
     bool is_launching = event->app.is_launching;
     bsg_safe_call_static_void_method(env, bsg_jni_cache->native_interface,

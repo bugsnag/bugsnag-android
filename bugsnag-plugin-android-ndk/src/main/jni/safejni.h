@@ -47,7 +47,7 @@ jmethodID bsg_safe_get_static_method_id(JNIEnv *env, jclass clz,
  *
  * @return the java string or NULL if it could not be created
  */
-jstring bsg_safe_new_string_utf(JNIEnv *env, const char *str);
+jstring bsg_anr_safe_new_string_utf(JNIEnv *env, const char *str);
 
 /**
  * A safe wrapper for the JNI's CallBooleanMethod. This method checks if an
@@ -130,7 +130,7 @@ jobject bsg_safe_get_static_object_field(JNIEnv *env, jclass clz,
  * exception is pending and if so clears it so that execution can continue.
  * The caller is responsible for handling the invalid return value of NULL.
  */
-jobject bsg_safe_new_object(JNIEnv *env, jclass clz, jmethodID method, ...);
+jobject bsg_anr_safe_new_object(JNIEnv *env, jclass clz, jmethodID method, ...);
 
 /**
  * A safe wrapper for the JNI's CallObjectMethod. This method checks if an
@@ -159,7 +159,7 @@ jobject bsg_safe_call_static_object_method(JNIEnv *env, jclass clz,
  * A safe wrapper for the JNI's DeleteLocalRef. This method checks if the env
  * is NULL and no-ops if so.
  */
-void bsg_safe_delete_local_ref(JNIEnv *env, jobject obj);
+void bsg_anr_safe_delete_local_ref(JNIEnv *env, jobject obj);
 
 /**
  * A safe wrapper for the JNI's GetStringUTFChars. This method checks if the

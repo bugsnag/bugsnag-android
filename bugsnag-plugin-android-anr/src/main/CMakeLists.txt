@@ -6,6 +6,8 @@ add_library( # Specifies the name of the library.
              # Provides a relative path to your source file(s).
     jni/anr_google.c
     jni/anr_handler.c
+    jni/anr_jni_cache.c
+    jni/anr_safejni.c
     jni/bugsnag_anr.c
     jni/utils/string.c
     )

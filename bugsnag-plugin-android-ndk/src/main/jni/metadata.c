@@ -13,7 +13,7 @@ static jobject get_map_value_obj(JNIEnv *env, jobject map, const char *_key) {
     goto exit;
   }
 
-  key = bsg_safe_new_string_utf(env, _key);
+  key = bsg_anr_safe_new_string_utf(env, _key);
   if (key == NULL) {
     goto exit;
   }
@@ -21,7 +21,7 @@ static jobject get_map_value_obj(JNIEnv *env, jobject map, const char *_key) {
   obj = bsg_safe_call_object_method(env, map, bsg_jni_cache->hash_map_get, key);
 
 exit:
-  bsg_safe_delete_local_ref(env, key);
+  bsg_anr_safe_delete_local_ref(env, key);
   return obj;
 }
 
@@ -40,7 +40,7 @@ static void copy_map_value_string(JNIEnv *env, jobject map, const char *_key,
 
   bsg_strncpy(dest, value, len);
   bsg_safe_release_string_utf_chars(env, _value, value);
-  bsg_safe_delete_local_ref(env, _value);
+  bsg_anr_safe_delete_local_ref(env, _value);
 }
 
 static long get_map_value_long(JNIEnv *env, jobject map, const char *_key) {
@@ -60,7 +60,7 @@ static long get_map_value_long(JNIEnv *env, jobject map, const char *_key) {
                                       bsg_jni_cache->number_double_value);
 
 exit:
-  bsg_safe_delete_local_ref(env, _value);
+  bsg_anr_safe_delete_local_ref(env, _value);
   return value;
 }
 
@@ -81,7 +81,7 @@ static float get_map_value_float(JNIEnv *env, jobject map, const char *_key) {
       bsg_safe_call_float_method(env, _value, bsg_jni_cache->float_float_value);
 
 exit:
-  bsg_safe_delete_local_ref(env, _value);
+  bsg_anr_safe_delete_local_ref(env, _value);
   return value;
 }
 
@@ -102,7 +102,7 @@ static bool get_map_value_bool(JNIEnv *env, jobject map, const char *_key) {
                                        bsg_jni_cache->boolean_bool_value);
 
 exit:
-  bsg_safe_delete_local_ref(env, _value);
+  bsg_anr_safe_delete_local_ref(env, _value);
   return value;
 }
 
@@ -116,7 +116,7 @@ static int populate_cpu_abi_from_map(JNIEnv *env, jobject map,
     goto exit;
   }
 
-  key = bsg_safe_new_string_utf(env, "cpuAbi");
+  key = bsg_anr_safe_new_string_utf(env, "cpuAbi");
   if (key == NULL) {
     goto exit;
   }
@@ -143,12 +143,12 @@ static int populate_cpu_abi_from_map(JNIEnv *env, jobject map,
       bsg_safe_release_string_utf_chars(env, jabi, abi);
       device->cpu_abi_count++;
     }
-    bsg_safe_delete_local_ref(env, jabi);
+    bsg_anr_safe_delete_local_ref(env, jabi);
   }
 
 exit:
-  bsg_safe_delete_local_ref(env, key);
-  bsg_safe_delete_local_ref(env, _value);
+  bsg_anr_safe_delete_local_ref(env, key);
+  bsg_anr_safe_delete_local_ref(env, _value);
   return count;
 }
 
@@ -203,7 +203,7 @@ static void populate_app_data(JNIEnv *env, bugsnag_event *event) {
   bugsnag_event_add_metadata_double(event, "app", "memoryLimit",
                                     (double)total_memory);
 
-  bsg_safe_delete_local_ref(env, data);
+  bsg_anr_safe_delete_local_ref(env, data);
 }
 
 static void populate_device_metadata(JNIEnv *env, bugsnag_event *event,
@@ -288,8 +288,8 @@ static void populate_device_data(JNIEnv *env, bugsnag_event *event) {
   // add fields to device metadata
   populate_device_metadata(env, event, data);
 
-  bsg_safe_delete_local_ref(env, data);
-  bsg_safe_delete_local_ref(env, _runtime_versions);
+  bsg_anr_safe_delete_local_ref(env, data);
+  bsg_anr_safe_delete_local_ref(env, _runtime_versions);
 }
 
 static void populate_user_data(JNIEnv *env, bugsnag_event *event) {
@@ -309,7 +309,7 @@ static void populate_user_data(JNIEnv *env, bugsnag_event *event) {
   copy_map_value_string(env, data, "email", event->user.email,
                         sizeof(event->user.email));
 
-  bsg_safe_delete_local_ref(env, data);
+  bsg_anr_safe_delete_local_ref(env, data);
 }
 
 static void populate_context(JNIEnv *env, bugsnag_event *event) {
@@ -329,7 +329,7 @@ static void populate_context(JNIEnv *env, bugsnag_event *event) {
     memset(&event->context, 0, bsg_strlen(event->context));
   }
 
-  bsg_safe_delete_local_ref(env, _context);
+  bsg_anr_safe_delete_local_ref(env, _context);
 }
 
 static void populate_metadata_value(JNIEnv *env, bugsnag_metadata *dst,
@@ -385,8 +385,8 @@ static void populate_metadata_obj(JNIEnv *env, bugsnag_metadata *dst,
 
 exit:
   bsg_safe_release_string_utf_chars(env, section_key, name);
-  bsg_safe_delete_local_ref(env, section_key);
-  bsg_safe_delete_local_ref(env, _value);
+  bsg_anr_safe_delete_local_ref(env, section_key);
+  bsg_anr_safe_delete_local_ref(env, _value);
 }
 
 static void populate_metadata_section(JNIEnv *env, bugsnag_metadata *dst,
@@ -427,9 +427,9 @@ static void populate_metadata_section(JNIEnv *env, bugsnag_metadata *dst,
     goto exit;
   }
 
-  section_keylist = bsg_safe_new_object(env, bsg_jni_cache->arraylist,
-                                        bsg_jni_cache->arraylist_init_with_obj,
-                                        section_keyset);
+  section_keylist = bsg_anr_safe_new_object(
+      env, bsg_jni_cache->arraylist, bsg_jni_cache->arraylist_init_with_obj,
+      section_keyset);
   if (section_keylist == NULL) {
     goto exit;
   }
@@ -440,10 +440,10 @@ static void populate_metadata_section(JNIEnv *env, bugsnag_metadata *dst,
 
 exit:
   bsg_safe_release_string_utf_chars(env, _key, section);
-  bsg_safe_delete_local_ref(env, _key);
-  bsg_safe_delete_local_ref(env, _section);
-  bsg_safe_delete_local_ref(env, section_keyset);
-  bsg_safe_delete_local_ref(env, section_keylist);
+  bsg_anr_safe_delete_local_ref(env, _key);
+  bsg_anr_safe_delete_local_ref(env, _section);
+  bsg_anr_safe_delete_local_ref(env, section_keyset);
+  bsg_anr_safe_delete_local_ref(env, section_keylist);
 }
 
 // Internal API
@@ -480,8 +480,9 @@ void bsg_populate_metadata(JNIEnv *env, bugsnag_metadata *dst,
   if (keyset == NULL) {
     goto exit;
   }
-  keylist = bsg_safe_new_object(env, bsg_jni_cache->arraylist,
-                                bsg_jni_cache->arraylist_init_with_obj, keyset);
+  keylist =
+      bsg_anr_safe_new_object(env, bsg_jni_cache->arraylist,
+                              bsg_jni_cache->arraylist_init_with_obj, keyset);
   if (keylist == NULL) {
     goto exit;
   }
@@ -491,9 +492,9 @@ void bsg_populate_metadata(JNIEnv *env, bugsnag_metadata *dst,
   }
 
 exit:
-  bsg_safe_delete_local_ref(env, _metadata);
-  bsg_safe_delete_local_ref(env, keyset);
-  bsg_safe_delete_local_ref(env, keylist);
+  bsg_anr_safe_delete_local_ref(env, _metadata);
+  bsg_anr_safe_delete_local_ref(env, keyset);
+  bsg_anr_safe_delete_local_ref(env, keylist);
 }
 
 void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,
@@ -521,8 +522,9 @@ void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,
   if (keyset == NULL) {
     goto exit;
   }
-  keylist = bsg_safe_new_object(env, bsg_jni_cache->arraylist,
-                                bsg_jni_cache->arraylist_init_with_obj, keyset);
+  keylist =
+      bsg_anr_safe_new_object(env, bsg_jni_cache->arraylist,
+                              bsg_jni_cache->arraylist_init_with_obj, keyset);
   if (keylist == NULL) {
     goto exit;
   }
@@ -540,13 +542,13 @@ void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,
         bsg_safe_release_string_utf_chars(env, _key, key);
       }
     }
-    bsg_safe_delete_local_ref(env, _key);
-    bsg_safe_delete_local_ref(env, _value);
+    bsg_anr_safe_delete_local_ref(env, _key);
+    bsg_anr_safe_delete_local_ref(env, _value);
   }
 
 exit:
-  bsg_safe_delete_local_ref(env, keyset);
-  bsg_safe_delete_local_ref(env, keylist);
+  bsg_anr_safe_delete_local_ref(env, keyset);
+  bsg_anr_safe_delete_local_ref(env, keylist);
 }
 
 void bsg_populate_event(JNIEnv *env, bugsnag_event *event) {
