@@ -33,7 +33,9 @@ jclass bsg_safe_find_class(JNIEnv *env, const char *clz_name) {
     return NULL;
   }
   jclass clz = (*env)->FindClass(env, clz_name);
-  bsg_check_and_clear_exc(env);
+  if (bsg_check_and_clear_exc(env)) {
+    return NULL;
+  }
   return clz;
 }
 
@@ -43,7 +45,9 @@ jmethodID bsg_safe_get_method_id(JNIEnv *env, jclass clz, const char *name,
     return NULL;
   }
   jmethodID methodId = (*env)->GetMethodID(env, clz, name, sig);
-  bsg_check_and_clear_exc(env);
+  if (bsg_check_and_clear_exc(env)) {
+    return NULL;
+  }
   return methodId;
 }
 
@@ -53,7 +57,9 @@ jmethodID bsg_safe_get_static_method_id(JNIEnv *env, jclass clz,
     return NULL;
   }
   jmethodID methodId = (*env)->GetStaticMethodID(env, clz, name, sig);
-  bsg_check_and_clear_exc(env);
+  if (bsg_check_and_clear_exc(env)) {
+    return NULL;
+  }
   return methodId;
 }
 
@@ -62,7 +68,9 @@ jstring bsg_safe_new_string_utf(JNIEnv *env, const char *str) {
     return NULL;
   }
   jstring jstr = (*env)->NewStringUTF(env, str);
-  bsg_check_and_clear_exc(env);
+  if (bsg_check_and_clear_exc(env)) {
+    return NULL;
+  }
   return jstr;
 }
 
@@ -118,7 +126,9 @@ jlong bsg_safe_call_long_method(JNIEnv *env, jobject _value, jmethodID method) {
     return 0;
   }
   jlong value = (*env)->CallLongMethod(env, _value, method);
-  bsg_check_and_clear_exc(env);
+  if (bsg_check_and_clear_exc(env)) {
+    return -1; // default to -1
+  }
   return value;
 }
 
@@ -127,7 +137,9 @@ jobjectArray bsg_safe_new_object_array(JNIEnv *env, jsize size, jclass clz) {
     return NULL;
   }
   jobjectArray trace = (*env)->NewObjectArray(env, size, clz, NULL);
-  bsg_check_and_clear_exc(env);
+  if (bsg_check_and_clear_exc(env)) {
+    return NULL;
+  }
   return trace;
 }
 
@@ -137,7 +149,9 @@ jobject bsg_safe_get_object_array_element(JNIEnv *env, jobjectArray array,
     return NULL;
   }
   jobject obj = (*env)->GetObjectArrayElement(env, array, size);
-  bsg_check_and_clear_exc(env);
+  if (bsg_check_and_clear_exc(env)) {
+    return NULL;
+  }
   return obj;
 }
 
@@ -156,7 +170,9 @@ jfieldID bsg_safe_get_static_field_id(JNIEnv *env, jclass clz, const char *name,
     return NULL;
   }
   jfieldID field_id = (*env)->GetStaticFieldID(env, clz, name, sig);
-  bsg_check_and_clear_exc(env);
+  if (bsg_check_and_clear_exc(env)) {
+    return NULL;
+  }
   return field_id;
 }
 
@@ -166,7 +182,9 @@ jobject bsg_safe_get_static_object_field(JNIEnv *env, jclass clz,
     return NULL;
   }
   jobject obj = (*env)->GetStaticObjectField(env, clz, field);
-  bsg_check_and_clear_exc(env);
+  if (bsg_check_and_clear_exc(env)) {
+    return NULL;
+  }
   return obj;
 }
 
@@ -178,7 +196,9 @@ jobject bsg_safe_new_object(JNIEnv *env, jclass clz, jmethodID method, ...) {
   va_start(args, method);
   jobject obj = (*env)->NewObjectV(env, clz, method, args);
   va_end(args);
-  bsg_check_and_clear_exc(env);
+  if (bsg_check_and_clear_exc(env)) {
+    return NULL;
+  }
   return obj;
 }
 
@@ -191,7 +211,9 @@ jobject bsg_safe_call_object_method(JNIEnv *env, jobject _value,
   va_start(args, method);
   jobject value = (*env)->CallObjectMethodV(env, _value, method, args);
   va_end(args);
-  bsg_check_and_clear_exc(env);
+  if (bsg_check_and_clear_exc(env)) {
+    return NULL;
+  }
   return value;
 }
 
@@ -216,7 +238,9 @@ jobject bsg_safe_call_static_object_method(JNIEnv *env, jclass clz,
   va_start(args, method);
   jobject obj = (*env)->CallStaticObjectMethodV(env, clz, method, args);
   va_end(args);
-  bsg_check_and_clear_exc(env);
+  if (bsg_check_and_clear_exc(env)) {
+    return NULL;
+  }
   return obj;
 }
 
