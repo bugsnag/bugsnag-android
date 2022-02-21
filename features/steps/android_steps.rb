@@ -98,6 +98,13 @@ Then("the exception {string} equals one of:") do |keypath, possible_values|
   Maze.check.include(possible_values.raw.flatten, value)
 end
 
+Then("the exception {string} demangles to {string}") do |keypath, expected_value|
+  actual_value = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.exceptions.0.#{keypath}")
+  demangled_value = `c++filt --types --no-strip-underscore '#{actual_value}'`.chomp
+  Maze.check.true(demangled_value == expected_value,
+                  "expected '#{demangled_value}' to equal '#{expected_value}'")
+end
+
 # Checks whether the first significant frames match several given frames
 #
 # @param expected_values [Array] A table dictating the expected files and methods of the frames

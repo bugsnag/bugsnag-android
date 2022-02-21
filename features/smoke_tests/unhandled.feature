@@ -190,7 +190,7 @@ Scenario: C++ exception thrown with overwritten config
 
     # Exception details
     And the error payload field "events" is an array with 1 elements
-    And the exception "message" equals "How about NO"
+    And the exception "errorClass" demangles to "std::runtime_error*"
     And the exception "type" equals "c"
     And the event "unhandled" is true
     And the event "severity" equals "error"
