@@ -21,9 +21,6 @@ add_library( # Specifies the name of the library.
     jni/utils/serializer/event_writer.c
     jni/utils/serializer/json_writer.c
     jni/utils/stack_unwinder.cpp
-    jni/utils/stack_unwinder_libcorkscrew.c
-    jni/utils/stack_unwinder_libunwind.c
-    jni/utils/stack_unwinder_simple.c
     jni/utils/serializer.c
     jni/utils/string.c
     jni/utils/threads.c
@@ -33,7 +30,6 @@ add_library( # Specifies the name of the library.
 include_directories(
     jni
     jni/deps
-    jni/external/libunwind/include
     jni/external/libunwindstack-ndk/include
              )
 
