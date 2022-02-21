@@ -20,8 +20,7 @@ add_library( # Specifies the name of the library.
     jni/utils/serializer/event_reader.c
     jni/utils/serializer/event_writer.c
     jni/utils/serializer/json_writer.c
-    jni/utils/stack_unwinder.c
-    jni/utils/stack_unwinder_libunwindstack.cpp
+    jni/utils/stack_unwinder.cpp
     jni/utils/stack_unwinder_libcorkscrew.c
     jni/utils/stack_unwinder_libunwind.c
     jni/utils/stack_unwinder_simple.c
@@ -47,14 +46,9 @@ target_link_libraries( # Specifies the target library.
 
 set_target_properties(bugsnag-ndk
                       PROPERTIES
-                      COMPILE_OPTIONS
-                      -Werror -Wall -pedantic)
+                      COMPILE_OPTIONS -Werror -Wall -pedantic
+                      CXX_STANDARD 17
+                      CXX_STANDARD_REQUIRED YES)
 
 add_subdirectory(jni/external/libunwindstack-ndk/cmake)
 target_link_libraries(bugsnag-ndk unwindstack)
-if(${ANDROID_ABI} STREQUAL "armeabi" OR ${ANDROID_ABI} STREQUAL "armeabi-v7a")
-    add_library(libunwind STATIC IMPORTED)
-    set_target_properties(libunwind PROPERTIES IMPORTED_LOCATION
-        ${ANDROID_NDK}/sources/cxx-stl/llvm-libc++/libs/${ANDROID_ABI}/libunwind.a)
-    target_link_libraries(bugsnag-ndk libunwind)
-endif()
