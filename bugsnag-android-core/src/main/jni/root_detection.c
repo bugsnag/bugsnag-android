@@ -59,7 +59,7 @@ static inline bool is_path_writable(const char* path) {
 static inline bool can_create_file(const char* path) {
   unlink(path);
 
-  const int fd = open(path, O_CREAT);
+  const int fd = open(path, O_CREAT, O_RDONLY);
   if (fd < 0) {
     return false;
   }
