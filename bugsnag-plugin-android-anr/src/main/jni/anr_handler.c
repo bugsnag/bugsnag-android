@@ -12,6 +12,8 @@
 #include "unwind_func.h"
 #include "utils/string.h"
 
+#define JNI_VERSION JNI_VERSION_1_6
+
 // Lock for changing the handler configuration
 static pthread_mutex_t bsg_anr_handler_config = PTHREAD_MUTEX_INITIALIZER;
 
@@ -25,7 +27,6 @@ static bool should_wait_for_semaphore = false;
 static sem_t watchdog_thread_semaphore;
 static volatile bool watchdog_thread_triggered = false;
 
-static JavaVM *bsg_jvm = NULL;
 static jmethodID mthd_notify_anr_detected = NULL;
 static jobject obj_plugin = NULL;
 static jclass frame_class = NULL;
@@ -41,11 +42,61 @@ static unwind_func unwind_stack_function;
 // bugsnag-plugin-android-ndk. Until a shared C module is available
 // for sharing common code when PLAT-5794 is addressed, this
 // duplication is a necessary evil.
+
+static JavaVM *jvm = NULL;
+static pthread_key_t jni_cleanup_key;
+
+static void detach_env(void *env) {
+  if (jvm != NULL && env != NULL) {
+    (*jvm)->DetachCurrentThread(jvm);
+  }
+}
+
+static JNIEnv *get_env() {
+  if (jvm == NULL) {
+    return NULL;
+  }
+
+  JNIEnv *env = NULL;
+  switch ((*jvm)->GetEnv(jvm, (void **)&env, JNI_VERSION)) {
+  case JNI_OK:
+    return env;
+  case JNI_EDETACHED:
+    if ((*jvm)->AttachCurrentThread(jvm, &env, NULL) != JNI_OK) {
+      BUGSNAG_LOG("Could not attach thread to JVM");
+      return NULL;
+    }
+    if (env == NULL) {
+      BUGSNAG_LOG("AttachCurrentThread filled a NULL JNIEnv");
+      return NULL;
+    }
+
+    // attach a destructor to detach the env before the thread terminates
+    pthread_setspecific(jni_cleanup_key, env);
+
+    return env;
+  default:
+    BUGSNAG_LOG("Could not get JNIEnv");
+    return NULL;
+  }
+}
+
 static bool check_and_clear_exc(JNIEnv *env) {
   if (env == NULL) {
     return false;
   }
   if ((*env)->ExceptionCheck(env)) {
+    BUGSNAG_LOG("BUG: JNI Native->Java call threw an exception:");
+
+    // Print a trace to stderr so that we can debug it
+    (*env)->ExceptionDescribe(env);
+
+    // Trigger more accurate dalvik trace (this will also crash the app).
+
+    // Code review check: THIS MUST BE COMMENTED OUT IN CHECKED IN CODE!
+    //(*env)->FindClass(env, NULL);
+
+    // Clear the exception so that we don't crash.
     (*env)->ExceptionClear(env);
     return true;
   }
@@ -53,14 +104,13 @@ static bool check_and_clear_exc(JNIEnv *env) {
 }
 
 static jclass safe_find_class(JNIEnv *env, const char *clz_name) {
-  if (env == NULL) {
-    return NULL;
-  }
-  if (clz_name == NULL) {
+  if (env == NULL || clz_name == NULL) {
     return NULL;
   }
   jclass clz = (*env)->FindClass(env, clz_name);
-  check_and_clear_exc(env);
+  if (check_and_clear_exc(env)) {
+    return NULL;
+  }
   return clz;
 }
 
@@ -70,7 +120,9 @@ static jmethodID safe_get_method_id(JNIEnv *env, jclass clz, const char *name,
     return NULL;
   }
   jmethodID methodId = (*env)->GetMethodID(env, clz, name, sig);
-  check_and_clear_exc(env);
+  if (check_and_clear_exc(env)) {
+    return NULL;
+  }
   return methodId;
 }
 
@@ -80,64 +132,22 @@ static jfieldID safe_get_static_field_id(JNIEnv *env, jclass clz,
     return NULL;
   }
   jfieldID fid = (*env)->GetStaticFieldID(env, clz, name, sig);
-  check_and_clear_exc(env);
+  if (check_and_clear_exc(env)) {
+    return NULL;
+  }
   return fid;
 }
 
 static jobject safe_get_static_object_field(JNIEnv *env, jclass clz,
                                             jfieldID field) {
-  if (env == NULL || clz == NULL) {
+  if (env == NULL || clz == NULL || field == NULL) {
     return NULL;
   }
   jobject obj = (*env)->GetStaticObjectField(env, clz, field);
-  check_and_clear_exc(env);
+  if (check_and_clear_exc(env)) {
+    return NULL;
+  }
   return obj;
-}
-
-static bool configure_anr_jni_impl(JNIEnv *env) {
-  // get a global reference to the AnrPlugin class
-  // https://developer.android.com/training/articles/perf-jni#faq:-why-didnt-findclass-find-my-class
-  if (env == NULL) {
-    return false;
-  }
-  int result = (*env)->GetJavaVM(env, &bsg_jvm);
-  if (result != 0) {
-    return false;
-  }
-
-  jclass clz = safe_find_class(env, "com/bugsnag/android/AnrPlugin");
-  if (check_and_clear_exc(env) || clz == NULL) {
-    return false;
-  }
-  mthd_notify_anr_detected =
-      safe_get_method_id(env, clz, "notifyAnrDetected", "(Ljava/util/List;)V");
-
-  // find ErrorType class
-  jclass error_type_class =
-      safe_find_class(env, "com/bugsnag/android/ErrorType");
-  jfieldID error_type_field = safe_get_static_field_id(
-      env, error_type_class, "C", "Lcom/bugsnag/android/ErrorType;");
-  error_type =
-      safe_get_static_object_field(env, error_type_class, error_type_field);
-  error_type = (*env)->NewGlobalRef(env, error_type);
-
-  // find NativeStackFrame class
-  frame_class = safe_find_class(env, "com/bugsnag/android/NativeStackframe");
-  frame_class = (*env)->NewGlobalRef(env, frame_class);
-
-  // find NativeStackframe ctor
-  frame_init = safe_get_method_id(
-      env, frame_class, "<init>",
-      "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Number;Ljava/lang/"
-      "Long;Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Boolean;Lcom/bugsnag/"
-      "android/ErrorType;)V");
-  return true;
-}
-
-static void safe_delete_local_ref(JNIEnv *env, jobject obj) {
-  if (env != NULL) {
-    (*env)->DeleteLocalRef(env, obj);
-  }
 }
 
 static jobject safe_new_object(JNIEnv *env, jclass clz, jmethodID method, ...) {
@@ -148,7 +158,9 @@ static jobject safe_new_object(JNIEnv *env, jclass clz, jmethodID method, ...) {
   va_start(args, method);
   jobject obj = (*env)->NewObjectV(env, clz, method, args);
   va_end(args);
-  check_and_clear_exc(env);
+  if (check_and_clear_exc(env)) {
+    return NULL;
+  }
   return obj;
 }
 
@@ -157,8 +169,78 @@ static jstring safe_new_string_utf(JNIEnv *env, const char *str) {
     return NULL;
   }
   jstring jstr = (*env)->NewStringUTF(env, str);
-  check_and_clear_exc(env);
+  if (check_and_clear_exc(env)) {
+    return NULL;
+  }
   return jstr;
+}
+
+static void safe_delete_local_ref(JNIEnv *env, jobject obj) {
+  if (env != NULL && obj != NULL) {
+    (*env)->DeleteLocalRef(env, obj);
+  }
+}
+
+// End of duplication
+
+static bool configure_anr_jni_impl(JNIEnv *env) {
+  if (env == NULL) {
+    return false;
+  }
+
+  jclass clz = safe_find_class(env, "com/bugsnag/android/AnrPlugin");
+  if (clz == NULL) {
+    return false;
+  }
+  mthd_notify_anr_detected =
+      safe_get_method_id(env, clz, "notifyAnrDetected", "(Ljava/util/List;)V");
+  if (mthd_notify_anr_detected == NULL) {
+    return false;
+  }
+
+  // find ErrorType class
+  jclass error_type_class =
+      safe_find_class(env, "com/bugsnag/android/ErrorType");
+  if (error_type_class == NULL) {
+    return false;
+  }
+  jfieldID error_type_field = safe_get_static_field_id(
+      env, error_type_class, "C", "Lcom/bugsnag/android/ErrorType;");
+  if (error_type_field == NULL) {
+    return false;
+  }
+  error_type =
+      safe_get_static_object_field(env, error_type_class, error_type_field);
+  if (error_type == NULL) {
+    return false;
+  }
+  error_type = (*env)->NewGlobalRef(env, error_type);
+
+  // find NativeStackFrame class
+  frame_class = safe_find_class(env, "com/bugsnag/android/NativeStackframe");
+  if (frame_class == NULL) {
+    return false;
+  }
+  frame_class = (*env)->NewGlobalRef(env, frame_class);
+
+  // find NativeStackframe ctor
+  frame_init = safe_get_method_id(
+      env, frame_class, "<init>",
+      "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Number;Ljava/lang/"
+      "Long;Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Boolean;Lcom/bugsnag/"
+      "android/ErrorType;)V");
+  if (frame_init == NULL) {
+    return false;
+  }
+
+  // Initialize jvm last so that it's guaranteed NULL if any part of the init
+  // goes wrong.
+  if ((*env)->GetJavaVM(env, &jvm) != JNI_OK) {
+    return false;
+  }
+
+  pthread_key_create(&jni_cleanup_key, detach_env);
+  return true;
 }
 
 static bool configure_anr_jni(JNIEnv *env) {
@@ -170,39 +252,49 @@ static bool configure_anr_jni(JNIEnv *env) {
 }
 
 static void notify_anr_detected() {
-  if (!enabled) {
+  if (!enabled || obj_plugin == NULL) {
     return;
   }
 
-  bool should_detach = false;
-  JNIEnv *env;
-  int result = (*bsg_jvm)->GetEnv(bsg_jvm, (void **)&env, JNI_VERSION_1_4);
-  switch (result) {
-  case JNI_OK:
-    break;
-  case JNI_EDETACHED:
-    result = (*bsg_jvm)->AttachCurrentThread(bsg_jvm, &env, NULL);
-    if (result != 0) {
-      BUGSNAG_LOG("Failed to call JNIEnv->AttachCurrentThread(): %d", result);
-      return;
-    }
-    should_detach = true;
-    break;
-  default:
-    BUGSNAG_LOG("Failed to call JNIEnv->GetEnv(): %d", result);
+  JNIEnv *env = get_env();
+  if (env == NULL) {
     return;
   }
 
   jclass list_class = safe_find_class(env, "java/util/LinkedList");
+  if (list_class == NULL) {
+    return;
+  }
   jmethodID list_init = safe_get_method_id(env, list_class, "<init>", "()V");
+  if (list_init == NULL) {
+    return;
+  }
   jmethodID list_add =
       safe_get_method_id(env, list_class, "add", "(Ljava/lang/Object;)Z");
+  if (list_add == NULL) {
+    return;
+  }
   jclass int_class = safe_find_class(env, "java/lang/Integer");
+  if (int_class == NULL) {
+    return;
+  }
   jmethodID int_init = safe_get_method_id(env, int_class, "<init>", "(I)V");
+  if (int_init == NULL) {
+    return;
+  }
   jclass long_class = safe_find_class(env, "java/lang/Long");
+  if (long_class == NULL) {
+    return;
+  }
   jmethodID long_init = safe_get_method_id(env, long_class, "<init>", "(J)V");
+  if (long_init == NULL) {
+    return;
+  }
 
   jobject jlist = safe_new_object(env, list_class, list_init);
+  if (jlist == NULL) {
+    return;
+  }
   for (ssize_t i = 0; i < anr_stacktrace_length; i++) {
     bugsnag_stackframe *frame = anr_stacktrace + i;
     jobject jmethod = safe_new_string_utf(env, frame->method);
@@ -218,7 +310,7 @@ static void notify_anr_detected() {
     jobject jframe = safe_new_object(
         env, frame_class, frame_init, jmethod, jfilename, jline_number,
         jframe_address, jsymbol_address, jload_address, NULL, error_type);
-    if (jlist != NULL && list_add != NULL && jframe != NULL) {
+    if (jframe != NULL) {
       (*env)->CallBooleanMethod(env, jlist, list_add, jframe);
       check_and_clear_exc(env);
     }
@@ -231,15 +323,9 @@ static void notify_anr_detected() {
     safe_delete_local_ref(env, jframe);
   }
 
-  if (obj_plugin != NULL && mthd_notify_anr_detected != NULL && jlist != NULL) {
-    (*env)->CallVoidMethod(env, obj_plugin, mthd_notify_anr_detected, jlist);
-    check_and_clear_exc(env);
-  }
-
-  if (should_detach) {
-    (*bsg_jvm)->DetachCurrentThread(
-        bsg_jvm); // detach to restore initial condition
-  }
+  (*env)->CallVoidMethod(env, obj_plugin, mthd_notify_anr_detected, jlist);
+  check_and_clear_exc(env);
+  safe_delete_local_ref(env, jlist);
 }
 
 static inline void block_sigquit() {
@@ -301,10 +387,8 @@ _Noreturn static void *sigquit_watchdog_thread_main(__unused void *_) {
     // Trigger Google ANR processing (occurs on a different thread).
     bsg_google_anr_call();
 
-    if (enabled) {
-      // Do our ANR processing.
-      notify_anr_detected();
-    }
+    // Trigger our ANR processing on our JNI worker thread (if enabled).
+    notify_anr_detected();
 
     // Unblock SIGQUIT again so that handle_sigquit() will run again.
     unblock_sigquit();
