@@ -117,7 +117,8 @@ Then("the first significant stack frame methods and files should match:") do |ex
     method = frame["method"] if method == "_#{frame["method"]}"
     insignificant = method.start_with?("bsg_") ||
       method.start_with?("std::") ||
-      method.start_with?("__cxx") ||
+      method.start_with?("__cx") ||
+      method.start_with?("0x") ||
       frame["file"].start_with?("/system/") ||
       frame["file"].end_with?("libbugsnag-ndk.so")
     { :index => index, :method => method, :file => frame["file"] } unless insignificant

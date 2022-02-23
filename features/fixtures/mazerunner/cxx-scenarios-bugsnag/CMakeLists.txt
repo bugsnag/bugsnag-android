@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.4.1)
 
 add_library(cxx-scenarios-bugsnag SHARED
-        src/main/cpp/cxx-scenarios-bugsnag.cpp)
+        src/main/cpp/cxx-scenarios-bugsnag.cpp
+        src/main/cpp/CXXExceptionSmokeScenario.cpp)
 
 add_library(lib_bugsnag SHARED IMPORTED)
 set(BUGSNAG_LIB_DIR
