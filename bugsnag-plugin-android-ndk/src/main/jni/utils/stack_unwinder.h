@@ -1,5 +1,4 @@
-#ifndef BSG_STACK_UNWINDER_H
-#define BSG_STACK_UNWINDER_H
+#pragma once
 
 #include "build.h"
 #include <event.h>
@@ -9,36 +8,40 @@
 extern "C" {
 #endif
 
-typedef enum {
-  BSG_LIBUNWIND,
-  BSG_LIBUNWINDSTACK,
-  BSG_LIBCORKSCREW,
-  BSG_CUSTOM_UNWIND,
-} bsg_unwinder;
-
 /**
- * Based on the current environment, determine what unwinding library to use.
- *
- * Android API level 21+: libunwind
- * Android API level 16-19: libunwind, unless in a signal handler. Then
- * libcorkscrew.
- * Everything else: custom unwinding logic
+ * Initialize the stack unwinder. Must be called prior to initial use.
  */
-void bsg_set_unwind_types(int apiLevel, bool is32bit, bsg_unwinder *signal_type,
-                          bsg_unwinder *other_type);
+void bsg_unwinder_init(void);
 
 /**
- * Unwind the stack using the preferred tool/style. If info and a user
- * context pointer are provided, the exception stack will be walked. Otherwise,
- * the current stack will be walked instead. The results will populate the
- * stacktrace
+ * Unwind a stack in a terminating context. If info and a user context pointer
+ * are provided, the exception stack will be walked. Otherwise, the current
+ * stack will be walked. The results will populate the stack.
+ *
+ * @param stack        buffer to contain the frame contents
+ * @param info         signal info or null if none
+ * @param user_context crash context or null if none
+ *
  * @return the number of frames
  */
-ssize_t bsg_unwind_stack(bsg_unwinder unwind_style,
-                         bugsnag_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
-                         siginfo_t *info, void *user_context) __asyncsafe;
+ssize_t bsg_unwind_crash_stack(bugsnag_stackframe stack[BUGSNAG_FRAMES_MAX],
+                               siginfo_t *info, void *user_context) __asyncsafe;
+
+/**
+ * Unwind a stack in a thread-safe context. If info and a user context pointer
+ * are provided, the exception stack will be walked. Otherwise, the current
+ * stack will be walked. The results will populate the stack.
+ *
+ * @param stack        buffer to contain the frame contents
+ * @param info         IGNORED - provided for signature compatibility
+ * @param user_context IGNORED - provided for signature compatibility
+ *
+ * @return the number of frames
+ */
+ssize_t
+bsg_unwind_concurrent_stack(bugsnag_stackframe stack[BUGSNAG_FRAMES_MAX],
+                            siginfo_t *info, void *user_context);
 
 #ifdef __cplusplus
 }
-#endif
 #endif
