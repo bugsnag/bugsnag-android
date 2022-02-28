@@ -1,0 +1,13 @@
+LIBBUGSNAG_NDK {
+global:
+    bugsnag_*;
+    Java_*;
+    bsg_*;
+    json_*;
+    BSG_MIGRATOR_CURRENT_VERSION;
+    migrate_app_v2;
+    __gxx_*;
+    __cxa_*;
+local:
+    *;
+};

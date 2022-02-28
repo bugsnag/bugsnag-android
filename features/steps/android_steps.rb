@@ -96,6 +96,13 @@ Then("the exception {string} equals one of:") do |keypath, possible_values|
   Maze.check.include(possible_values.raw.flatten, value)
 end
 
+Then("the exception {string} demangles to {string}") do |keypath, expected_value|
+  actual_value = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.exceptions.0.#{keypath}")
+  demangled_value = `c++filt --types --no-strip-underscore '#{actual_value}'`.chomp
+  Maze.check.true(demangled_value == expected_value,
+                  "expected '#{demangled_value}' to equal '#{expected_value}'")
+end
+
 # Checks whether the first significant frames match several given frames
 #
 # @param expected_values [Array] A table dictating the expected files and methods of the frames
@@ -108,7 +115,8 @@ Then("the first significant stack frame methods and files should match:") do |ex
     method = frame["method"] if method == "_#{frame["method"]}"
     insignificant = method.start_with?("bsg_") ||
       method.start_with?("std::") ||
-      method.start_with?("__cxx") ||
+      method.start_with?("__cx") ||
+      method.start_with?("0x") ||
       frame["file"].start_with?("/system/") ||
       frame["file"].end_with?("libbugsnag-ndk.so")
     { :index => index, :method => method, :file => frame["file"] } unless insignificant
