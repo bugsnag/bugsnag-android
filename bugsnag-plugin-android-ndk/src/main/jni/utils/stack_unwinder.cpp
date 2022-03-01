@@ -11,6 +11,10 @@
 
 // unwinder intended for a potentially terminating context
 static unwindstack::Unwinder *crash_time_unwinder;
+// soft lock for using the crash time unwinder - if active, return without
+// attempting to unwind. This isn't a "real" lock to avoid deadlocking in the
+// event of a crash while handling an ANR or the reverse.
+static bool unwinding_crash_stack;
 
 // Thread-safe, reusable unwinder - uses thread-specific memory caches
 static unwindstack::LocalUnwinder *current_time_unwinder;
@@ -45,9 +49,10 @@ void bsg_unwinder_init() {
 
 ssize_t bsg_unwind_crash_stack(bugsnag_stackframe stack[BUGSNAG_FRAMES_MAX],
                                siginfo_t *info, void *user_context) {
-  if (crash_time_unwinder == nullptr) {
+  if (crash_time_unwinder == nullptr || unwinding_crash_stack) {
     return 0;
   }
+  unwinding_crash_stack = true;
   if (user_context) {
     crash_time_unwinder->SetRegs(unwindstack::Regs::CreateFromUcontext(
         unwindstack::Regs::CurrentArch(), user_context));
@@ -70,6 +75,7 @@ ssize_t bsg_unwind_crash_stack(bugsnag_stackframe stack[BUGSNAG_FRAMES_MAX],
                 sizeof(stack[frame_count].method));
     frame_count++;
   }
+  unwinding_crash_stack = false;
   return frame_count;
 }
 
