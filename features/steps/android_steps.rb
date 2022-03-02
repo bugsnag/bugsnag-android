@@ -96,47 +96,6 @@ Then("the exception {string} equals one of:") do |keypath, possible_values|
   Maze.check.include(possible_values.raw.flatten, value)
 end
 
-Then("the exception {string} demangles to {string}") do |keypath, expected_value|
-  actual_value = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.exceptions.0.#{keypath}")
-  demangled_value = `c++filt --types --no-strip-underscore '#{actual_value}'`.chomp
-  Maze.check.true(demangled_value == expected_value,
-                  "expected '#{demangled_value}' to equal '#{expected_value}'")
-end
-
-# Checks whether the first significant frames match several given frames
-#
-# @param expected_values [Array] A table dictating the expected files and methods of the frames
-#   The first two entries are methods (enabling flexibility across SDKs), the third is the file name
-Then("the first significant stack frame methods and files should match:") do |expected_values|
-  stacktrace = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.exceptions.0.stacktrace")
-  expected_frame_values = expected_values.raw
-  significant_frames = stacktrace.each_with_index.map do |frame, index|
-    method = `c++filt -_ _#{frame["method"]}`.chomp
-    method = frame["method"] if method == "_#{frame["method"]}"
-    insignificant = method.start_with?("bsg_") ||
-      method.start_with?("std::") ||
-      method.start_with?("__cx") ||
-      method.start_with?("0x") ||
-      frame["file"].start_with?("/system/") ||
-      frame["file"].end_with?("libbugsnag-ndk.so")
-    { :index => index, :method => method, :file => frame["file"] } unless insignificant
-  end
-  significant_frames.select! { |frame| frame }
-  expected_frame_values.each_with_index do |expected_frame, index|
-    test_frame = significant_frames[index]
-    method_match_a = expected_frame[0] == test_frame[:method]
-    method_match_b = expected_frame[1] == test_frame[:method]
-    Maze.check.true(
-      method_match_a || method_match_b,
-      "'#{test_frame[:method]}' in frame #{test_frame[:index]} is not equal to '#{expected_frame[0]}' or '#{expected_frame[1]}'"
-    )
-    Maze.check.true(
-      test_frame[:file].end_with?(expected_frame[2]),
-      "'#{test_frame[:file]}' in frame #{test_frame[:index]} does not end with '#{expected_frame[2]}'"
-    )
-  end
-end
-
 Then("the report contains the required fields") do
   steps %Q{
     And the error payload field "notifier.name" is not null

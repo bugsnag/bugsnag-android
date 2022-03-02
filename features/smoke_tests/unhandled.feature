@@ -202,11 +202,11 @@ Scenario: C++ exception thrown with overwritten config
     # Stacktrace validation
     And the error payload field "events.0.exceptions.0.stacktrace" is a non-empty array
     And the event stacktrace identifies the program counter
-    And the first significant stack frame methods and files should match:
-        | magicstacks::top()    | | libcxx-scenarios-bugsnag.so |
-        | magicstacks::middle() | | libcxx-scenarios-bugsnag.so |
-        | magicstacks::start()  | | libcxx-scenarios-bugsnag.so |
-        | Java_com_bugsnag_android_mazerunner_scenarios_CXXExceptionSmokeScenario_crash | | libcxx-scenarios-bugsnag.so |
+    And the first significant stack frames match:
+        | magicstacks::top()    | CXXExceptionSmokeScenario.cpp | 13 |
+        | magicstacks::middle() | CXXExceptionSmokeScenario.cpp | 16 |
+        | magicstacks::start()  | CXXExceptionSmokeScenario.cpp | 18 |
+        | Java_com_bugsnag_android_mazerunner_scenarios_CXXExceptionSmokeScenario_crash | CXXExceptionSmokeScenario.cpp | 25 |
 
     # App data
     And the event binary arch field is valid

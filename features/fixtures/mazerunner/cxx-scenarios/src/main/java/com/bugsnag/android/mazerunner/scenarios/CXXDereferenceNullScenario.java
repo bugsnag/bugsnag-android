@@ -7,17 +7,17 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-public class CXXNullPointerScenario extends Scenario {
+public class CXXDereferenceNullScenario extends Scenario {
 
     static {
         System.loadLibrary("cxx-scenarios");
     }
 
-    public native void crash();
+    public native int crash();
 
-    public CXXNullPointerScenario(@NonNull Configuration config,
-                                  @NonNull Context context,
-                                  @Nullable String eventMetadata) {
+    public CXXDereferenceNullScenario(@NonNull Configuration config,
+                                      @NonNull Context context,
+                                      @Nullable String eventMetadata) {
         super(config, context, eventMetadata);
     }
 
