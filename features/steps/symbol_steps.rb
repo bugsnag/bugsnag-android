@@ -6,6 +6,8 @@
 
 # Sentinel value which can be used in stack frame matching to ignore location info
 IGNORED_VALUE = '(ignore)'
+# Location on disk of native symbol files
+SYMBOL_DIR = ENV['TEST_FIXTURE_SYMBOL_DIR'] || 'build'
 
 # Checks whether the first significant frames in an event match provided frames
 #
@@ -105,7 +107,7 @@ def symbolicate arch, frame
 
   return nil if is_out_of_project?(binary_file, method)
 
-  symbol_file = "build/#{File.basename(binary_file, '.so')}-#{arch}.so"
+  symbol_file = File.join(SYMBOL_DIR, "#{File.basename(binary_file, '.so')}-#{arch}.so")
 
   if File.exist?(symbol_file) and sym_info = lookup_address(symbol_file, frame["lineNumber"])
     return sym_info
