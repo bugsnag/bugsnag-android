@@ -20,7 +20,7 @@ Instrumentation tests require an Android emulator or device to run, and they can
 
 ## Static analysis
 
-Several static analysis checks are run against bugsnag-android to maintain the quality of the codebase. `./gradlew check` runs them all at once.
+Several static analysis and code style checks are run against bugsnag-android to maintain the quality of the codebase. `make check` runs them all at once.
 
 ### Android Lint
 
