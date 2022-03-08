@@ -97,6 +97,15 @@ TEST test_app_build_uuid(void) {
     PASS();
 }
 
+TEST test_app_build_uuid_size(void) {
+    bugsnag_event *event = init_event();
+    char long_id[65] = "0123456789012345678901234567890123456789012345678901234567890123";
+    bugsnag_app_set_build_uuid(event, long_id);
+    ASSERT_STR_EQ(long_id, bugsnag_app_get_build_uuid(event));
+    free(event);
+    PASS();
+}
+
 TEST test_app_id(void) {
     bugsnag_event *event = init_event();
     ASSERT_STR_EQ("fa02", bugsnag_app_get_id(event));
