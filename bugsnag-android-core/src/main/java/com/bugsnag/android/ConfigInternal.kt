@@ -40,6 +40,7 @@ internal class ConfigInternal(
     var maxBreadcrumbs: Int = DEFAULT_MAX_BREADCRUMBS
     var maxPersistedEvents: Int = DEFAULT_MAX_PERSISTED_EVENTS
     var maxPersistedSessions: Int = DEFAULT_MAX_PERSISTED_SESSIONS
+    var maxReportedThreads: Int = DEFAULT_MAX_REPORTED_THREADS
     var context: String? = null
 
     var redactedKeys: Set<String>
@@ -99,6 +100,7 @@ internal class ConfigInternal(
         private const val DEFAULT_MAX_BREADCRUMBS = 50
         private const val DEFAULT_MAX_PERSISTED_SESSIONS = 128
         private const val DEFAULT_MAX_PERSISTED_EVENTS = 32
+        private const val DEFAULT_MAX_REPORTED_THREADS = 200
         private const val DEFAULT_LAUNCH_CRASH_THRESHOLD_MS: Long = 5000
 
         @JvmStatic
