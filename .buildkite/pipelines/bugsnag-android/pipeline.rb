@@ -33,6 +33,7 @@ Buildkite::Builder.pipeline do
     key "android-ci"
     depends_on "android-common"
     timeout_in_minutes 30
+    command "env"
     plugin :docker_compose,
            build: "android-ci",
            'image-repository': "855461928731.dkr.ecr.us-west-1.amazonaws.com/android",
