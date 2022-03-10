@@ -16,17 +16,17 @@ Buildkite::Builder.pipeline do
   # end
 
 
-  command do
-    label "Build Android base image"
-    key "android-common"
-    timeout_in_minutes 30
-    plugin :docker_compose,
-           build: "android-common",
-           'image-repository': "855461928731.dkr.ecr.us-west-1.amazonaws.com/android",
-           'cache-from': "android-common:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:latest"
-    plugin :docker_compose,
-           push: "android-common:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:latest"
-  end
+  # command do
+  #   label "Build Android base image"
+  #   key "android-common"
+  #   timeout_in_minutes 30
+  #   plugin :docker_compose,
+  #          build: "android-common",
+  #          'image-repository': "855461928731.dkr.ecr.us-west-1.amazonaws.com/android",
+  #          'cache-from': "android-common:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:latest"
+  #   plugin :docker_compose,
+  #          push: "android-common:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:latest"
+  # end
 
   command do
     label "Build Android base CI image"
@@ -40,6 +40,16 @@ Buildkite::Builder.pipeline do
            'cache-from': "android-ci:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:ci-#{ENV["BRANCH_NAME"]}"
     plugin :docker_compose,
            push: "android-ci:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:ci-#{ENV["BRANCH_NAME"]}"
+  end
+
+  command do
+    label "BRANCH NAME"
+    command "echo $$BRANCH_NAME"
+  end
+
+  command do
+    label "ENV"
+    command "env"
   end
 
   # command do
