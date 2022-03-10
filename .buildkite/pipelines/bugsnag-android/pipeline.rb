@@ -37,9 +37,9 @@ Buildkite::Builder.pipeline do
     plugin :docker_compose,
            build: "android-ci",
            'image-repository': "855461928731.dkr.ecr.us-west-1.amazonaws.com/android",
-           'cache-from': "android-ci:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:ci-#{ENV["BRANCH_NAME"]}"
+           'cache-from': "android-ci:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:ci-#{ENV["BUILDKITE_BRANCH"]}"
     plugin :docker_compose,
-           push: "android-ci:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:ci-#{ENV["BRANCH_NAME"]}"
+           push: "android-ci:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:ci-#{ENV["BUILDKITE_BRANCH"]}"
   end
 
   # command do
