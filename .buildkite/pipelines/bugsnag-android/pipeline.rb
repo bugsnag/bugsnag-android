@@ -17,9 +17,7 @@ Buildkite::Builder.pipeline do
 
   command do
     label "echo Branch name"
-    command "echo ${BRANCH_NAME}"
-    env \
-      BRANCH_NAME: "${BRANCH_NAME}"
+    command "env"
   end
   #
   # command do
