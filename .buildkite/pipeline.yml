@@ -4,7 +4,6 @@ steps:
       - docker#v3.7.0:
           image: gusto/buildkite-builder:2.1.0
           propagate-environment: true
-          run: "env"
 
 #  - label: 'Trigger RN tests for all builds of our next branch'
 #    if: build.branch == "next"
