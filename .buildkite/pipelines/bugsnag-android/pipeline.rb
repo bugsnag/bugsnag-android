@@ -2,7 +2,7 @@ Buildkite::Builder.pipeline do
   plugin :docker_compose, "docker-compose#v3.7.0"
   plugin :artifacts, "artifacts#v1.2.0"
 
-  env BRANCH_NAME: ENV["BUILDKITE_BRANCH"]
+  env BRANCH_NAME: ENV["BRANCH_NAME"]
 
   # trigger do
   #   label "Trigger RN tests for al builds of our next branch"
