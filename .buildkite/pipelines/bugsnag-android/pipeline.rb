@@ -44,30 +44,30 @@ Buildkite::Builder.pipeline do
            push: "android-ci:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:ci-${BRANCH_NAME}"
   end
 
-  # command do
-  #   label "Audit current licenses"
-  #   depends_on "android-ci"
-  #   timeout_in_minutes 30
-  #   plugin :docker_compose,
-  #          run: "android-license-audit",
-  #          command: %w[./scripts/audit-dependency-licenses.sh]
-  # end
-  #
-  # command do
-  #   label "Build fixture APK r16"
-  #   key "fixture-r16"
-  #   depends_on "android-ci"
-  #   timeout_in_minutes 30
-  #   artifact_paths "build/release/fixture-r16.apk"
-  #   plugin :docker_compose,
-  #          run: "android-builder"
-  #   env \
-  #     MAVEN_VERSION: "3.6.1",
-  #     TEST_FIXTURE_NDK_VERSION: "17.2.4988734",
-  #     TEST_FIXTURE_NAME: "fixture-r16.apk",
-  #     USE_LEGACY_OKHTTP: "true",
-  #     BUILD_TASK: "assembleRelease"
-  # end
+  command do
+    label "Audit current licenses"
+    depends_on "android-ci"
+    timeout_in_minutes 30
+    plugin :docker_compose,
+           run: "android-license-audit",
+           command: %w[./scripts/audit-dependency-licenses.sh]
+  end
+
+  command do
+    label "Build fixture APK r16"
+    key "fixture-r16"
+    depends_on "android-ci"
+    timeout_in_minutes 30
+    artifact_paths "build/release/fixture-r16.apk"
+    plugin :docker_compose,
+           run: "android-builder"
+    env \
+      MAVEN_VERSION: "3.6.1",
+      TEST_FIXTURE_NDK_VERSION: "17.2.4988734",
+      TEST_FIXTURE_NAME: "fixture-r16.apk",
+      USE_LEGACY_OKHTTP: "true",
+      BUILD_TASK: "assembleRelease"
+  end
   #
   # command do
   #   label "Build fixture APK r19"
