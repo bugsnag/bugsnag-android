@@ -562,6 +562,32 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
     }
 
     /**
+     * Gets the maximum number of threads that will be reported with an event. Once the threshold is
+     * reached, all remaining threads will be omitted.
+     *
+     * By default, up to 200 threads are reported.
+     */
+    public int getMaxReportedThreads() {
+        return impl.getMaxReportedThreads();
+    }
+
+    /**
+     * Sets the maximum number of threads that will be reported with an event. Once the threshold is
+     * reached, all remaining threads will be omitted.
+     *
+     * By default, up to 200 threads are reported.
+     */
+    public void setMaxReportedThreads(int maxReportedThreads) {
+        if (maxReportedThreads >= 0) {
+            impl.setMaxReportedThreads(maxReportedThreads);
+        } else {
+            getLogger().e("Invalid configuration value detected. "
+                    + "Option maxReportedThreads should be a positive integer."
+                    + "Supplied value is " + maxReportedThreads);
+        }
+    }
+
+    /**
      * Sets the maximum number of persisted sessions which will be stored. Once the threshold is
      * reached, the oldest session will be deleted.
      *
