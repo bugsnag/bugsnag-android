@@ -1,12 +1,17 @@
 steps:
   - label: "{{matrix.os}} build"
-    command: "echo {{matrix.os}}"
+    command: "echo {{matrix.os}} {{matrix.arch}} {{matrix.test}}"
     matrix:
       setup:
+        arch:
+          - "amd64"
+          - "arm64"
         os:
-          - "darwin"
-          - "Linux"
-          - "Windows"
+          - "windows"
+          - "linux"
+        test:
+          - "A"
+          - "B"
 
 
 #  - label: 'Trigger RN tests for all builds of our next branch'
