@@ -1,6 +1,6 @@
 steps:
   - label: "{{matrix.os}} build"
-    command: "GOOS={{matrix.os}} go build"
+    command: "echo {{matrix.os}}"
     matrix:
       setup:
         os:
