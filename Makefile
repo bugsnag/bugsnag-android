@@ -53,3 +53,9 @@ endif
 	@sed -i '' "s/var version: String = .*/var version: String = \"$(VERSION)\",/"\
 	 bugsnag-android-core/src/main/java/com/bugsnag/android/Notifier.kt
 	@sed -i '' "s/## TBD/## $(VERSION) ($(shell date '+%Y-%m-%d'))/" CHANGELOG.md
+
+.PHONY: check
+check:
+	@./gradlew lint detekt ktlintCheck checkstyle
+	@./scripts/run-cpp-check.sh
+	@./scripts/run-clang-format-ci-check.sh
