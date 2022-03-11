@@ -1,5 +1,5 @@
 steps:
-  - label: "💥 Matrix build with adjustments"
+  - label: "{{matrix.os}} build"
     command: "echo {{matrix.os}} {{matrix.arch}} {{matrix.test}}"
     matrix:
       setup:
@@ -12,17 +12,6 @@ steps:
         test:
           - "A"
           - "B"
-      adjustments:
-        - with:
-            os: "windows"
-            arch: "arm64"
-            test: "B"
-          soft_fail: true
-        - with:
-            os: "linux"
-            arch: "arm64"
-            test: "B"
-          skip: true
 
 
 #  - label: 'Trigger RN tests for all builds of our next branch'
