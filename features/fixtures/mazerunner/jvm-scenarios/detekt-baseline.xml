@@ -7,6 +7,7 @@
     <ID>MagicNumber:AutoDetectAnrsFalseScenario.kt$AutoDetectAnrsFalseScenario$100000</ID>
     <ID>MagicNumber:AutoDetectAnrsTrueScenario.kt$AutoDetectAnrsTrueScenario$100000</ID>
     <ID>MagicNumber:BugsnagInitScenario.kt$BugsnagInitScenario$25</ID>
+    <ID>MagicNumber:HandledExceptionMaxThreadsScenario.kt$HandledExceptionMaxThreadsScenario$3</ID>
     <ID>MagicNumber:HandledKotlinSmokeScenario.kt$HandledKotlinSmokeScenario$999</ID>
     <ID>MagicNumber:JvmAnrSleepScenario.kt$JvmAnrSleepScenario$100000</ID>
     <ID>MagicNumber:LoadConfigurationKotlinScenario.kt$LoadConfigurationKotlinScenario$10000</ID>

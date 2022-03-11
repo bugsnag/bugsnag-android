@@ -47,6 +47,7 @@ data class ImmutableConfig(
     val maxBreadcrumbs: Int,
     val maxPersistedEvents: Int,
     val maxPersistedSessions: Int,
+    val maxReportedThreads: Int,
     val persistenceDirectory: Lazy<File>,
     val sendLaunchCrashesSynchronously: Boolean,
 
@@ -159,6 +160,7 @@ internal fun convertToImmutableConfig(
         maxBreadcrumbs = config.maxBreadcrumbs,
         maxPersistedEvents = config.maxPersistedEvents,
         maxPersistedSessions = config.maxPersistedSessions,
+        maxReportedThreads = config.maxReportedThreads,
         enabledBreadcrumbTypes = config.enabledBreadcrumbTypes?.toSet(),
         persistenceDirectory = persistenceDir,
         sendLaunchCrashesSynchronously = config.sendLaunchCrashesSynchronously,
