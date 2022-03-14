@@ -97,7 +97,7 @@ steps:
           run: android-builder
     env:
       MAVEN_VERSION: "3.6.1"
-      TEST_FIXTURE_NDK_VERSION: "21.3.6528147"
+      TEST_FIXTURE_NDK_VERSION: "21.4.7075529"
       TEST_FIXTURE_NAME: "fixture-r21"
       TEST_FIXTURE_CONFIGURATION: "release"
       BUILD_TASK: "assembleRelease"
