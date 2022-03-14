@@ -6,6 +6,10 @@ fun log(msg: String) {
     Log.d("BugsnagMazeRunner", msg)
 }
 
+fun log(msg: String, e: Exception) {
+    Log.e("BugsnagMazeRunner", msg, e)
+}
+
 /**
  * Gets the log messages expected when zero events should be sent to Bugsnag.
  */

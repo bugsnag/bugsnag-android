@@ -4,6 +4,13 @@
   android:layout_height="match_parent"
   android:orientation="vertical">
 
+  <Button
+          android:id="@+id/run_command"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_weight="0"
+          android:text="Run command" />
+
   <EditText
           android:id="@+id/scenario_name"
           android:layout_width="match_parent"
@@ -14,12 +21,12 @@
           android:inputType="text" />
 
   <EditText
-          android:id="@+id/scenario_metadata"
+          android:id="@+id/scenario_mode"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_weight="0"
           android:ems="10"
-          android:hint="Scenario metadata"
+          android:hint="Scenario mode"
           android:inputType="text" />
 
   <Button

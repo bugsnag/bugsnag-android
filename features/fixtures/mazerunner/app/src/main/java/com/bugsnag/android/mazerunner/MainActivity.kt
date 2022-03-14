@@ -12,6 +12,16 @@ import com.bugsnag.android.Configuration
 import com.bugsnag.android.mazerunner.scenarios.Scenario
 import java.io.File
 
+import java.io.BufferedReader
+import java.io.InputStream
+import java.io.InputStreamReader
+
+import java.net.HttpURLConnection
+import java.net.MalformedURLException
+import java.net.URL
+
+import kotlin.concurrent.thread
+
 class MainActivity : Activity() {
 
     private val apiKeyKey = "BUGSNAG_API_KEY"
@@ -38,6 +48,31 @@ class MainActivity : Activity() {
             clearFolder("device-id")
             clearFolder("user-info")
             clearFolder("fake")
+        }
+
+        // Get the next maze runner command
+        findViewById<Button>(R.id.run_command).setOnClickListener {
+            thread(start = true) {
+                log("Run command")
+                val commandUrl: String = "http://bs-local.com:9339/command"
+                var command: String
+                try {
+                    val url = URL(commandUrl)
+                    val sb = StringBuilder()
+                    val conn: HttpURLConnection = url.openConnection() as HttpURLConnection
+                    conn.setRequestMethod("GET")
+                    val reader = BufferedReader(InputStreamReader(conn.getInputStream()))
+                    var line: String?
+                    while (reader.readLine().also { line = it } != null) {
+                        sb.append(line)
+                    }
+                    command = sb.toString()
+                    log("Command: " + command)
+                } catch (e: Exception) {
+                    // TODO Handle the exception
+                    log("Failed to fetch command from Maze Runner", e)
+                }
+            }
         }
 
         // load the scenario first, which initialises bugsnag without running any crashy code
@@ -91,16 +126,10 @@ class MainActivity : Activity() {
     }
 
     private fun loadScenarioFromUi(): Scenario {
-        val scenarioPicker = findViewById<EditText>(R.id.scenario_name)
-        val eventType = scenarioPicker.text.toString()
-        val eventMetadata = findViewById<EditText>(R.id.scenario_metadata)
-        val metadata = eventMetadata.text.toString()
 
-        val config = loadConfigFromUi()
-        return Scenario.load(this, config, eventType, metadata)
-    }
+        val eventType = findViewById<EditText>(R.id.scenario_name).text.toString()
+        val mode = findViewById<EditText>(R.id.scenario_mode).text.toString()
 
-    private fun loadConfigFromUi(): Configuration {
         val apiKeyField = findViewById<EditText>(R.id.manualApiKey)
         val notifyEndpointField = findViewById<EditText>(R.id.notify_endpoint)
         val sessionEndpointField = findViewById<EditText>(R.id.session_endpoint)
@@ -117,10 +146,11 @@ class MainActivity : Activity() {
         }
         val notify = notifyEndpointField.text.toString()
         val sessions = sessionEndpointField.text.toString()
-        return prepareConfig(apiKey, notify, sessions) {
+        val config = prepareConfig(apiKey, notify, sessions) {
             val interceptedLogMessages = scenario?.getInterceptedLogMessages()
             interceptedLogMessages?.contains(it) ?: false
         }
+        return Scenario.load(this, config, eventType, mode)
     }
 
     private fun apiKeyStored() = prefs.contains(apiKeyKey)
