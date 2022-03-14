@@ -62,10 +62,10 @@ class AppDataCollectorForegroundTest {
 
         val appWithState = appDataCollector.generateAppWithState()
         assertEquals(true, appWithState.inForeground)
-        // allow for 20ms of error
+        // allow for 200ms of error
         assertTrue(
             "Unexpected durationInForeground: ${appWithState.durationInForeground}",
-            appWithState.durationInForeground in 1000L..1020L
+            appWithState.durationInForeground in 1000L..1200L
         )
 
         verify(sessionTracker, times(1)).isInForeground

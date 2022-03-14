@@ -60,7 +60,14 @@ ifeq ($(VERSION),)
 	@$(error VERSION is not defined. Run with `make VERSION=number bump`)
 endif
 	@echo Bumping the version number to $(VERSION)
+	@sed -i '' "s/bugsnag-android:.*\"/bugsnag-android:$(VERSION)\"/" examples/sdk-app-example/app/build.gradle
 	@sed -i '' "s/VERSION_NAME=.*/VERSION_NAME=$(VERSION)/" gradle.properties
 	@sed -i '' "s/var version: String = .*/var version: String = \"$(VERSION)\",/"\
 	 bugsnag-android-core/src/main/java/com/bugsnag/android/Notifier.kt
 	@sed -i '' "s/## TBD/## $(VERSION) ($(shell date '+%Y-%m-%d'))/" CHANGELOG.md
+
+.PHONY: check
+check:
+	@./gradlew lint detekt ktlintCheck checkstyle
+	@./scripts/run-cpp-check.sh
+	@./scripts/run-clang-format-ci-check.sh

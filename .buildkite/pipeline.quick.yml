@@ -5,7 +5,9 @@ steps:
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
-        download: "build/release/fixture-r16.apk"
+        download:
+          - "build/release/fixture-r16.apk"
+          - "build/release/fixture-r16/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v3.7.0:
         pull: android-maze-runner
@@ -21,6 +23,8 @@ steps:
     concurrency_method: eager
     soft_fail:
       - exit_status: "*"
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/release/fixture-r16"
 
   - label: ':android: Android 6 NDK r16 smoke tests'
     key: 'android-6-smoke'
@@ -28,7 +32,9 @@ steps:
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
-        download: "build/release/fixture-r16.apk"
+        download:
+          - "build/release/fixture-r16.apk"
+          - "build/release/fixture-r16/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v3.7.0:
         pull: android-maze-runner
@@ -44,6 +50,8 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/release/fixture-r16"
 
   - label: ':android: Android 7 NDK r19 smoke tests'
     key: 'android-7-smoke'
@@ -51,7 +59,9 @@ steps:
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
-        download: "build/release/fixture-r19.apk"
+        download:
+          - "build/release/fixture-r19.apk"
+          - "build/release/fixture-r19/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v3.7.0:
         pull: android-maze-runner
@@ -65,6 +75,8 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/release/fixture-r19"
 
   - label: ':android: Android 8.1 NDK r19 smoke tests'
     key: 'android-8-1-smoke'
@@ -72,7 +84,9 @@ steps:
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
-        download: "build/release/fixture-r19.apk"
+        download:
+          - "build/release/fixture-r19.apk"
+          - "build/release/fixture-r19/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v3.7.0:
         pull: android-maze-runner
@@ -86,6 +100,8 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/release/fixture-r19"
 
   - label: ':android: Android 9 NDK r21 end-to-end tests - batch 1'
     depends_on:
@@ -93,7 +109,9 @@ steps:
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
-        download: "build/release/fixture-r21.apk"
+        download:
+          - "build/release/fixture-r21.apk"
+          - "build/release/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v3.7.0:
         pull: android-maze-runner
@@ -108,6 +126,8 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/release/fixture-r21"
 
   - label: ':android: Android 9 NDK r21 end-to-end tests - batch 2'
     depends_on:
@@ -115,7 +135,9 @@ steps:
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
-        download: "build/release/fixture-r21.apk"
+        download:
+          - "build/release/fixture-r21.apk"
+          - "build/release/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v3.7.0:
         pull: android-maze-runner
@@ -130,6 +152,8 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/release/fixture-r21"
 
   # Note that the smoke tests are included in this batch to even up
   # the time for each batch.
@@ -139,7 +163,9 @@ steps:
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
-        download: "build/release/fixture-r21.apk"
+        download:
+          - "build/release/fixture-r21.apk"
+          - "build/release/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v3.7.0:
         pull: android-maze-runner
@@ -155,6 +181,8 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/release/fixture-r21"
 
   - label: ':android: Android 10 NDK r21 smoke tests'
     key: 'android-10-smoke'
@@ -162,7 +190,9 @@ steps:
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
-        download: "build/release/fixture-r21.apk"
+        download:
+          - "build/release/fixture-r21.apk"
+          - "build/release/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v3.7.0:
         pull: android-maze-runner
@@ -176,6 +206,8 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/release/fixture-r21"
 
   - label: ':android: Android 11 NDK r21 smoke tests'
     key: 'android-11-smoke'
@@ -183,7 +215,9 @@ steps:
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
-        download: "build/release/fixture-r21.apk"
+        download:
+          - "build/release/fixture-r21.apk"
+          - "build/release/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v3.7.0:
         pull: android-maze-runner
@@ -197,3 +231,5 @@ steps:
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/release/fixture-r21"

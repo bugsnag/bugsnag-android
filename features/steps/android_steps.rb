@@ -5,8 +5,7 @@
 When('any dialog is cleared and the element {string} is present') do |element_id|
   count = 0
   present = false
-  # Give Android 5 more time to find elements in an attempt to combat flakes
-  timeout = (Maze.config.os_version == 5 ? 15 : 3)
+  timeout = 3
   until present || count > 5
     present = Maze.driver.wait_for_element(element_id, timeout = timeout)
     break if present
