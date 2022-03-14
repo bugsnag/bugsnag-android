@@ -153,16 +153,6 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXExceptionOnErrorFalseScenario_c
   return 22;
 }
 
-JNIEXPORT int JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_CXXExceptionSmokeScenario_crash(
-    JNIEnv *env,
-    jobject instance) {
-  int x = 61;
-  printf("This one here: %ld\n", (long) f_trigger_an_exception(x > 0));
-  printf("This one here: %ld\n", (long) f_throw_an_object(x > 0, x));
-  return 55;
-}
-
 JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXStartScenario_activate(
     JNIEnv *env,

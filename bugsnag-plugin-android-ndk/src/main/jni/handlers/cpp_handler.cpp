@@ -43,48 +43,6 @@ void bsg_handler_uninstall_cpp() {
   bsg_global_env = NULL;
 }
 
-void bsg_write_current_exception_message(char *message, size_t length) {
-  try {
-    throw;
-  } catch (std::exception &exc) {
-    bsg_strncpy(message, (char *)exc.what(), length);
-  } catch (std::exception *exc) {
-    bsg_strncpy(message, (char *)exc->what(), length);
-  } catch (std::string obj) {
-    bsg_strncpy(message, (char *)obj.c_str(), length);
-  } catch (char *obj) {
-    snprintf(message, length, "%s", obj);
-  } catch (char obj) {
-    snprintf(message, length, "%c", obj);
-  } catch (short obj) {
-    snprintf(message, length, "%d", obj);
-  } catch (int obj) {
-    snprintf(message, length, "%d", obj);
-  } catch (long obj) {
-    snprintf(message, length, "%ld", obj);
-  } catch (long long obj) {
-    snprintf(message, length, "%lld", obj);
-  } catch (long double obj) {
-    snprintf(message, length, "%Lf", obj);
-  } catch (double obj) {
-    snprintf(message, length, "%f", obj);
-  } catch (float obj) {
-    snprintf(message, length, "%f", obj);
-  } catch (unsigned char obj) {
-    snprintf(message, length, "%u", obj);
-  } catch (unsigned short obj) {
-    snprintf(message, length, "%u", obj);
-  } catch (unsigned int obj) {
-    snprintf(message, length, "%u", obj);
-  } catch (unsigned long obj) {
-    snprintf(message, length, "%lu", obj);
-  } catch (unsigned long long obj) {
-    snprintf(message, length, "%llu", obj);
-  } catch (...) {
-    // no way to describe what this is
-  }
-}
-
 void bsg_handle_cpp_terminate() {
   if (bsg_global_env == NULL || bsg_global_env->handling_crash)
     return;
@@ -92,9 +50,8 @@ void bsg_handle_cpp_terminate() {
   bsg_global_env->handling_crash = true;
   bsg_populate_event_as(bsg_global_env);
   bsg_global_env->next_event.unhandled = true;
-  bsg_global_env->next_event.error.frame_count =
-      bsg_unwind_stack(bsg_global_env->unwind_style,
-                       bsg_global_env->next_event.error.stacktrace, NULL, NULL);
+  bsg_global_env->next_event.error.frame_count = bsg_unwind_crash_stack(
+      bsg_global_env->next_event.error.stacktrace, NULL, NULL);
 
   if (bsg_global_env->send_threads != SEND_THREADS_NEVER) {
     bsg_global_env->next_event.thread_count = bsg_capture_thread_states(
@@ -109,11 +66,6 @@ void bsg_handle_cpp_terminate() {
                 (char *)tinfo->name(),
                 sizeof(bsg_global_env->next_event.error.errorClass));
   }
-  size_t message_length = sizeof(bsg_global_env->next_event.error.errorMessage);
-  char message[message_length];
-  bsg_write_current_exception_message(message, message_length);
-  bsg_strncpy(bsg_global_env->next_event.error.errorMessage, (char *)message,
-              message_length);
 
   if (bsg_run_on_error()) {
     bsg_increment_unhandled_count(&bsg_global_env->next_event);
