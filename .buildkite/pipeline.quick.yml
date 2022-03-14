@@ -1,31 +1,4 @@
 steps:
-  - label: ':android: Android 5 NDK r16 smoke tests'
-    key: 'android-5-smoke'
-    depends_on: "fixture-r16"
-    timeout_in_minutes: 60
-    plugins:
-      artifacts#v1.2.0:
-        download:
-          - "build/release/fixture-r16.apk"
-          - "build/release/fixture-r16/*"
-        upload: "maze_output/failed/**/*"
-      docker-compose#v3.7.0:
-        pull: android-maze-runner
-        run: android-maze-runner
-        command:
-          - "features/smoke_tests"
-          - "--app=/app/build/release/fixture-r16.apk"
-          - "--farm=bs"
-          - "--device=ANDROID_5_0"
-          - "--fail-fast"
-    concurrency: 9
-    concurrency_group: 'browserstack-app'
-    concurrency_method: eager
-    soft_fail:
-      - exit_status: "*"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/release/fixture-r16"
-
   - label: ':android: Android 6 NDK r16 smoke tests'
     key: 'android-6-smoke'
     depends_on: "fixture-r16"
