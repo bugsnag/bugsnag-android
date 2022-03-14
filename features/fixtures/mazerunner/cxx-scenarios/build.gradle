@@ -33,6 +33,14 @@ android {
             path "CMakeLists.txt"
         }
     }
+    if (project.hasProperty("TEST_FIXTURE_NDK_VERSION")) {
+        def version = project.property("TEST_FIXTURE_NDK_VERSION")
+        project.logger.lifecycle("Building module with custom NDK version '$version'")
+        ndkVersion = version
+    } else {
+        ndkVersion = "17.2.4988734"
+        project.logger.lifecycle("Building module with default NDK version ($ndkVersion)")
+    }
 }
 
 dependencies {
