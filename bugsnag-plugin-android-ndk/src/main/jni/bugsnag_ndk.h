@@ -17,14 +17,6 @@ extern "C" {
 
 typedef struct {
   /**
-   * Unwinding style used for signal-safe handling
-   */
-  bsg_unwinder signal_unwind_style;
-  /**
-   * Preferred unwinding style
-   */
-  bsg_unwinder unwind_style;
-  /**
    * Records the version of the bugsnag NDK report being serialized to disk.
    */
   bsg_report_header report_header;
@@ -75,12 +67,6 @@ typedef struct {
    */
   bsg_thread_send_policy send_threads;
 } bsg_environment;
-
-/**
- * Get the configured unwind style for non-async-safe environments.
- * DO NOT USE THIS IN A SIGNAL HANDLER!
- */
-bsg_unwinder bsg_configured_unwind_style();
 
 /**
  * Invokes the user-supplied on_error callback, if it has been set. This allows

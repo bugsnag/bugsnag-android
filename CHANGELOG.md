@@ -1,5 +1,27 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* Fix inconsistencies in stack trace quality for C/C++ events. Resolves a few
+  cases where file and line number information was not resolving to the correct
+  locations. This change may result in grouping changes to more correctly
+  highlight the root cause of an event.
+  [#1605](https://github.com/bugsnag/bugsnag-android/pull/1605)
+  [#1606](https://github.com/bugsnag/bugsnag-android/pull/1606)
+
+## 5.20.0 (2022-03-10)
+
+### Enhancements
+
+* The number of threads reported can now be limited using `Configuration.setMaxReportedThreads` (defaulting to 200)
+  [#1607](https://github.com/bugsnag/bugsnag-android/pull/1607)
+  
+* Improved the performance and stability of the NDK and ANR plugins by caching JNI references on start
+  [#1596](https://github.com/bugsnag/bugsnag-android/pull/1596)
+  [#1601](https://github.com/bugsnag/bugsnag-android/pull/1601)
+
 ## 5.19.2 (2022-01-31)
 
 ### Bug fixes
