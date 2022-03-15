@@ -190,7 +190,7 @@ Scenario: C++ exception thrown with overwritten config
 
     # Exception details
     And the error payload field "events" is an array with 1 elements
-    And the exception "message" equals "How about NO"
+    And the exception "errorClass" demangles to "magicstacks::FatalProblem*"
     And the exception "type" equals "c"
     And the event "unhandled" is true
     And the event "severity" equals "error"
@@ -202,12 +202,11 @@ Scenario: C++ exception thrown with overwritten config
     # Stacktrace validation
     And the error payload field "events.0.exceptions.0.stacktrace" is a non-empty array
     And the event stacktrace identifies the program counter
-    And the event "exceptions.0.stacktrace.0.method" is not null
-    And the event "exceptions.0.stacktrace.0.file" is not null
-    And the error payload field "events.0.exceptions.0.stacktrace.0.frameAddress" is greater than 0
-    And the error payload field "events.0.exceptions.0.stacktrace.0.symbolAddress" is greater than 0
-    And the error payload field "events.0.exceptions.0.stacktrace.0.loadAddress" is greater than 0
-    And the error payload field "events.0.exceptions.0.stacktrace.0.lineNumber" is greater than 0
+    And the first significant stack frames match:
+        | magicstacks::top()    | CXXExceptionSmokeScenario.cpp | 13 |
+        | magicstacks::middle() | CXXExceptionSmokeScenario.cpp | 16 |
+        | magicstacks::start()  | CXXExceptionSmokeScenario.cpp | 18 |
+        | Java_com_bugsnag_android_mazerunner_scenarios_CXXExceptionSmokeScenario_crash | CXXExceptionSmokeScenario.cpp | 25 |
 
     # App data
     And the event binary arch field is valid
