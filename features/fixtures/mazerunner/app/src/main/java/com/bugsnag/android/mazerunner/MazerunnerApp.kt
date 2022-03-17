@@ -14,7 +14,7 @@ class MazerunnerApp : Application() {
     companion object {
         private var instance: MazerunnerApp? = null
 
-        fun applicationContext() : Context {
+        fun applicationContext(): Context {
             return instance!!.applicationContext
         }
     }
