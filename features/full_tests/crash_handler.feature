@@ -1,6 +1,9 @@
 Feature: Reporting with other exception handlers installed
 
-Scenario: Other uncaught exception handler installed
+  Background:
+    Given I clear all persistent data
+
+  Scenario: Other uncaught exception handler installed
     When I run "CrashHandlerScenario" and relaunch the app
     And I configure Bugsnag for "CrashHandlerScenario"
     And I wait to receive an error

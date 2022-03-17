@@ -1,6 +1,9 @@
 Feature: Pausing and resuming sessions
 
-Scenario: Stopping, resuming, and starting sessions are reflected in error and session payloads
+  Background:
+    Given I clear all persistent data
+
+  Scenario: Stopping, resuming, and starting sessions are reflected in error and session payloads
     When I run "SessionStoppingScenario"
 
     # 2 sessions are received

@@ -1,6 +1,9 @@
 Feature: ANRs triggered in a fixture with only bugsnag-android-core are captured
 
-Scenario: Triggering ANR does not crash the minimal app
+  Background:
+    Given I clear all persistent data
+
+  Scenario: Triggering ANR does not crash the minimal app
     When I run "JvmAnrMinimalFixtureScenario"
     And I wait for 2 seconds
     And I tap the screen 3 times

@@ -1,5 +1,8 @@
 Feature: OnSend Callbacks can alter Events before upload
 
+  Background:
+    Given I clear all persistent data
+
   Scenario: Unhandled exception altered by OnSendCallback
     When I run "OnSendCallbackScenario" and relaunch the app
     And I configure the app to run in the "start-only" state

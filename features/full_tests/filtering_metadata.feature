@@ -1,6 +1,9 @@
 Feature: Metadata is filtered
 
-Scenario: Using the default metadata filter
+  Background:
+    Given I clear all persistent data
+
+  Scenario: Using the default metadata filter
     When I run "AutoRedactKeysScenario"
     Then I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
@@ -9,7 +12,7 @@ Scenario: Using the default metadata filter
     And the event "metaData.custom.password" equals "[REDACTED]"
     And the event "metaData.user.password" equals "[REDACTED]"
 
-Scenario: Adding a custom metadata filter
+  Scenario: Adding a custom metadata filter
     When I run "ManualRedactKeysScenario"
     Then I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier

@@ -1,6 +1,9 @@
 Feature: Reporting OOMs
 
-Scenario: Out of Memory Error captured
+  Background:
+    Given I clear all persistent data
+
+  Scenario: Out of Memory Error captured
     When I run "OomScenario" and relaunch the app
     And I configure Bugsnag for "OomScenario"
     Then I wait to receive an error
