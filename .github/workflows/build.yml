@@ -1,6 +1,6 @@
 name: instrumentation_tests
 
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 env:
   GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g -Dorg.gradle.daemon=false -Dkotlin.incremental=false -Dorg.gradle.parallel=true"
@@ -25,6 +25,19 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: 11
+
+      - name: Gradle cache
+        uses: gradle/gradle-build-action@v2
+
+      - name: Create AVD and generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          script: echo "Generated AVD snapshot for caching."
 
       - name: Run Tests
         uses: reactivecircus/android-emulator-runner@v2
