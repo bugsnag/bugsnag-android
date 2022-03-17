@@ -182,8 +182,7 @@ void bsg_handle_signal(int signum, siginfo_t *info,
   bsg_global_env->handling_crash = true;
   bsg_global_env->next_event.unhandled = true;
   bsg_populate_event_as(bsg_global_env);
-  bsg_global_env->next_event.error.frame_count = bsg_unwind_stack(
-      bsg_global_env->signal_unwind_style,
+  bsg_global_env->next_event.error.frame_count = bsg_unwind_crash_stack(
       bsg_global_env->next_event.error.stacktrace, info, user_context);
 
   if (bsg_global_env->send_threads != SEND_THREADS_NEVER) {

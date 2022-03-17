@@ -23,15 +23,6 @@ bool __attribute__((noinline)) run_back(int value, int boundary) {
 
 extern "C" {
 
-static char * __attribute__((used)) somefakefunc(void) {
-  return NULL;
-};
-
-typedef struct {
-  int field1;
-  char *field2;
-} reporter_t;
-
 int crash_abort(bool route) {
     if (route)
         abort();
@@ -73,14 +64,6 @@ int crash_anr(bool route) {
     return 7;
 }
 
-int crash_write_read_only_mem(int counter) {
-  if (counter > 2) {
-    int *pointer = (int *)&somefakefunc;
-    *pointer = counter;
-  }
-  return counter / 14;
-}
-
 int __attribute__((noinline)) throw_an_object(bool value, int boundary) {
   if (value) {
     printf("Now we know what they mean by 'advanced' tactical training: %d", boundary);
@@ -97,27 +80,6 @@ int __attribute__((noinline)) trigger_an_exception(bool value) {
     return 405;
 }
 
-char *crash_improper_cast(intptr_t counter) {
-  reporter_t *report = (reporter_t *)counter;
-
-  return report->field2;
-}
-
-int crash_double_free(int counter) {
-  for (int i = 0; i < 30; i++) {
-    reporter_t *reporter = (reporter_t *)malloc(sizeof(reporter_t));
-    reporter->field1 = 22 + counter;
-    char *field2 = reporter->field2;
-    strcpy(field2, "Indeed");
-    printf("%d field1 is: %d", i, reporter->field1);
-    printf("%d field2 is: %s", i, field2);
-    free(field2);
-    free(reporter);
-  }
-
-  return counter / -8;
-}
-
 int crash_trap() {
   time_t now;
   now = time(&now);
@@ -125,14 +87,6 @@ int crash_trap() {
     __builtin_trap();
 
     return 0;
-}
-
-int crash_stack_overflow(int counter, char *input) {
-  char stack[7];
-
-  strcpy(stack, input);
-
-  return 4 / counter;
 }
 
 JNIEXPORT int JNICALL
@@ -276,65 +230,9 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXTrapOutsideReleaseStagesScenari
 }
 
 JNIEXPORT void JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_CXXStackoverflowScenario_crash(JNIEnv *env,
-                                                                             jobject instance,
-                                                                             jint counter,
-                                                                             jstring text_) {
-  char *text = (char *)(*env).GetStringUTFChars(text_, 0);
-  printf("This one here: %ld\n", (long) crash_stack_overflow((int)counter, text));
-  (*env).ReleaseStringUTFChars(text_, text);
-}
-
-JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXTrapLaterDisabledScenario_crash(JNIEnv *env,
                                                                                  jobject instance) {
   printf("This one here: %ld\n", (long) crash_trap());
-}
-
-JNIEXPORT void JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_CXXTrapScenario_crash(JNIEnv *env, jobject instance) {
-  printf("This one here: %ld\n", (long) crash_trap());
-}
-
-JNIEXPORT void JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_CXXDoubleFreeScenario_crash(JNIEnv *env,
-                                                                                   jobject instance) {
-    printf("This one here: %d\n", crash_double_free(42));
-}
-
-JNIEXPORT void JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_CXXWriteReadOnlyMemoryScenario_crash(JNIEnv *env,
-                                                                                   jobject instance) {
-    printf("This one here: %d\n", crash_write_read_only_mem(42));
-}
-
-JNIEXPORT void JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_CXXImproperTypecastScenario_crash(JNIEnv *env,
-                                                                                jobject instance) {
-    printf("This one here: %s\n", crash_improper_cast(39));
-}
-
-// defined in libs/[ABI]/libmonochrome.so
-int something_innocuous(int input);
-
-JNIEXPORT int JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_CXXExternalStackElementScenario_crash(JNIEnv *env,
-                                                                                    jobject instance,
-                                                                                    jint counter) {
-    printf("Captain, why are we out here chasing comets?\n%d\n", counter);
-    int value = counter * 4;
-    if (counter > 0) {
-        value = something_innocuous(counter);
-    }
-    printf("Something innocuous this way comes: %d\n", value);
-    return value;
-}
-
-JNIEXPORT void JNICALL
-Java_com_bugsnag_android_mazerunner_scenarios_CXXAbortScenario_crash(JNIEnv *env,
-                                                                            jobject instance) {
-    int x = 47;
-    printf("This one here: %ld\n", (long) crash_abort(x > 0));
 }
 
 JNIEXPORT void JNICALL

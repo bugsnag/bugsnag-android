@@ -140,7 +140,7 @@ class LaunchCrashDeliveryTest {
             payload: EventPayload,
             deliveryParams: DeliveryParams
         ): DeliveryStatus {
-            Thread.sleep(3000)
+            Thread.sleep(2000)
             count.getAndIncrement()
             return DeliveryStatus.DELIVERED
         }

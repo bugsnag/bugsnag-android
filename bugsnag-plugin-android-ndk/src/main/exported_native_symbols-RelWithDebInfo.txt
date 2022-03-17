@@ -1,0 +1,25 @@
+LIBBUGSNAG_NDK {
+global:
+    bugsnag_*;
+    __cxa_*;
+    __dynamic_cast;
+    __emutls_get_address;
+    __gxx_personality_v0;
+    Java_*;
+    extern "C++" {
+        "std::get_terminate()";
+        "std::set_terminate(void (*)())";
+        "std::set_unexpected(void (*)())";
+        "std::get_new_handler()";
+        "std::set_new_handler(void (*)())";
+        "std::rethrow_exception(std::exception_ptr)";
+        "std::__throw_bad_alloc()";
+        "std::uncaught_exception()";
+        "std::uncaught_exceptions()";
+        "std::nothrow";
+        "std::terminate()";
+    };
+
+local:
+    *;
+};
