@@ -30,6 +30,13 @@
           android:text="Start Bugsnag" />
 
   <Button
+          android:id="@+id/clear_persistent_data"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_weight="0"
+          android:text="Clear data" />
+
+  <Button
           android:id="@+id/run_scenario"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"

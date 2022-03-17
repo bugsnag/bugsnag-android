@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.EditText
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.mazerunner.scenarios.Scenario
+import java.io.File
 
 class MainActivity : Activity() {
 
@@ -28,6 +29,15 @@ class MainActivity : Activity() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
             val closeDialog = Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
             sendBroadcast(closeDialog)
+        }
+
+        // Clear persistent data (used to stop scenarios bleeding into each other)
+        findViewById<Button>(R.id.clear_persistent_data).setOnClickListener {
+            clearFolder("last-run-info")
+            clearFolder("bugsnag-errors")
+            clearFolder("device-id")
+            clearFolder("user-info")
+            clearFolder("fake")
         }
 
         // load the scenario first, which initialises bugsnag without running any crashy code
@@ -71,6 +81,13 @@ class MainActivity : Activity() {
             apiKeyField.text.clear()
             apiKeyField.text.append(apiKey)
         }
+    }
+
+    private fun clearFolder(name: String) {
+        val context = MazerunnerApp.applicationContext()
+        val folder = File(context.cacheDir, name)
+        log("Clearing folder: ${folder.path}")
+        folder.deleteRecursively()
     }
 
     private fun loadScenarioFromUi(): Scenario {
