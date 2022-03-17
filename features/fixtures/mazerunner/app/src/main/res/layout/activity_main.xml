@@ -23,18 +23,18 @@
           android:inputType="text" />
 
   <Button
+          android:id="@+id/clear_persistent_data"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_weight="0"
+          android:text="Clear app data" />
+
+  <Button
           android:id="@+id/start_bugsnag"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_weight="0"
           android:text="Start Bugsnag" />
-
-  <Button
-          android:id="@+id/clear_persistent_data"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_weight="0"
-          android:text="Clear data" />
 
   <Button
           android:id="@+id/run_scenario"
