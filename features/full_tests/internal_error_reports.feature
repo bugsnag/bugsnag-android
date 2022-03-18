@@ -1,6 +1,9 @@
 Feature: Cached Error Reports
 
-Scenario: If an exception is thrown when sending errors/sessions then internal error reports should be sent
+  Background:
+    Given I clear all persistent data
+
+  Scenario: If an exception is thrown when sending errors/sessions then internal error reports should be sent
     When I run "InternalErrorScenario"
     And I wait to receive 1 errors
 

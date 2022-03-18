@@ -1,5 +1,8 @@
 Feature: Capture native threads
 
+  Background:
+    Given I clear all persistent data
+
   Scenario: Reports native threads for Unhandled errors
     When I run "CXXCaptureThreadsScenario" and relaunch the app
     And I configure Bugsnag for "CXXCaptureThreadsScenario"

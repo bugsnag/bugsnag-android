@@ -1,6 +1,9 @@
 Feature: In foreground field populates correctly
 
-Scenario: Test handled exception in background
+  Background:
+    Given I clear all persistent data
+
+  Scenario: Test handled exception in background
     When I run "InForegroundScenario"
     And I send the app to the background for 1 seconds
     Then I wait to receive an error

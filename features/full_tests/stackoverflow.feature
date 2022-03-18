@@ -1,6 +1,9 @@
 Feature: Reporting Stack overflow
 
-Scenario: Stack Overflow sends
+  Background:
+    Given I clear all persistent data
+
+  Scenario: Stack Overflow sends
     When I run "StackOverflowScenario" and relaunch the app
     And I configure Bugsnag for "StackOverflowScenario"
     And I wait to receive an error

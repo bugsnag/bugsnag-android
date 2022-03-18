@@ -1,6 +1,9 @@
 Feature: Reporting with other exception handlers installed
 
-Scenario: Unhandled exception with max threads set
+  Background:
+    Given I clear all persistent data
+
+  Scenario: Unhandled exception with max threads set
     When I run "UnhandledExceptionMaxThreadsScenario" and relaunch the app
     And I configure Bugsnag for "UnhandledExceptionMaxThreadsScenario"
     And I wait to receive an error
@@ -12,7 +15,7 @@ Scenario: Unhandled exception with max threads set
     And the error payload field "events.0.threads.2.id" equals -1
     And the error payload field "events.0.threads.2.name" ends with "threads omitted as the maxReportedThreads limit (2) was exceeded]"
 
-Scenario: Handled exception with max threads set
+  Scenario: Handled exception with max threads set
     When I run "HandledExceptionMaxThreadsScenario" and relaunch the app
     And I configure Bugsnag for "HandledExceptionMaxThreadsScenario"
     And I wait to receive an error
