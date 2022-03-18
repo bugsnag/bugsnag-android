@@ -67,7 +67,7 @@ internal data class EventFilenameInfo(
             return EventFilenameInfo(
                 findApiKeyInFilename(file, config),
                 "", // ignore UUID field when reading from file as unused
-                -1, // ignore timestamp when reading from file as unused
+                findTimestampInFilename(file),
                 findSuffixInFilename(file),
                 findErrorTypesInFilename(file)
             )
@@ -118,6 +118,15 @@ internal data class EventFilenameInfo(
                 STARTUP_CRASH, NON_JVM_CRASH -> suffix
                 else -> ""
             }
+        }
+
+        /**
+         * Retrieves the error types encoded in the filename, or an empty string if this
+         * information is not encoded for the given event
+         */
+        fun findTimestampInFilename(eventFile: File): Long {
+            val name = eventFile.nameWithoutExtension
+            return java.lang.Long.parseLong(name.substring(0, name.indexOf("_")))
         }
 
         /**

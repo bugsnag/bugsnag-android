@@ -156,6 +156,7 @@ class EventStore extends FileStore {
             logger.i("Sending " + size + " saved error(s) to Bugsnag");
 
             for (File eventFile : storedReports) {
+                logger.i("### Flushing " + eventFile);
                 flushEventFile(eventFile);
             }
         }
@@ -168,11 +169,14 @@ class EventStore extends FileStore {
             EventPayload payload = createEventPayload(eventFile, apiKey);
 
             if (payload == null) {
+                logger.i("### Failed to load payload");
                 deleteStoredFiles(Collections.singleton(eventFile));
             } else {
+                logger.i("### Delivering payload");
                 deliverEventPayload(eventFile, payload);
             }
         } catch (Exception exception) {
+            logger.i("### Exception sending payload: " + exception);
             handleEventFlushFailure(exception, eventFile);
         }
     }
@@ -182,23 +186,37 @@ class EventStore extends FileStore {
         Delivery delivery = config.getDelivery();
         DeliveryStatus deliveryStatus = delivery.deliver(payload, deliveryParams);
 
+        logger.i("### 1");
         switch (deliveryStatus) {
             case DELIVERED:
+                logger.i("### 2");
                 deleteStoredFiles(Collections.singleton(eventFile));
                 logger.i("Deleting sent error file " + eventFile.getName());
                 break;
             case UNDELIVERED:
-                cancelQueuedFiles(Collections.singleton(eventFile));
-                logger.w("Could not send previously saved error(s)"
-                        + " to Bugsnag, will try again later");
+                logger.i("### 3");
+                if (isTooBig(eventFile) || isTooOld(eventFile)) {
+                    deleteStoredFiles(Collections.singleton(eventFile));
+                    logger.w("Could not send previously saved error to Bugsnag, "
+                            + "but it is too big or old to keep stored, so deleting");
+                } else {
+                    cancelQueuedFiles(Collections.singleton(eventFile));
+                    logger.w("Could not send previously saved error(s)"
+                            + " to Bugsnag, will try again later");
+                }
                 break;
             case FAILURE:
+                logger.i("### 4");
+                logger.i("### Delivery failure");
                 Exception exc = new RuntimeException("Failed to deliver event payload");
                 handleEventFlushFailure(exc, eventFile);
                 break;
             default:
+                logger.i("### 5");
+                logger.i("### Default");
                 break;
         }
+        logger.i("### 6");
     }
 
     @Nullable

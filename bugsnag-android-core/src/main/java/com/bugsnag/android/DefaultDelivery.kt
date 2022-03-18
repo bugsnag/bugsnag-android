@@ -42,6 +42,7 @@ internal class DefaultDelivery(
         streamable: JsonStream.Streamable,
         headers: Map<String, String?>
     ): DeliveryStatus {
+        RuntimeException().printStackTrace()
 
         TrafficStats.setThreadStatsTag(1)
         if (connectivity != null && !connectivity.hasNetworkConnection()) {

@@ -95,7 +95,7 @@ class DeliveryDelegate extends BaseObservable {
                 break;
             case UNDELIVERED:
                 logger.w("Could not send event(s) to Bugsnag,"
-                        + " saving to disk to send later");
+                        + " saving to disk to send later ###");
                 cacheEvent(event, false);
                 break;
             case FAILURE:

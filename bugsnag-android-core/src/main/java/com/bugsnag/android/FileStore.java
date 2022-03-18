@@ -11,10 +11,12 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Date;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -231,4 +233,19 @@ abstract class FileStore {
         }
     }
 
+    private static long oneMegabyte = 1024 * 1024;
+
+    public boolean isTooBig(File file) {
+        return file.length() > oneMegabyte;
+    }
+
+    public boolean isTooOld(File file) {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -60);
+        System.out.println("### TOO OLD? " + new Date().getTime() + " - 60 days = " +
+                cal.getTimeInMillis() + ", compared to " +
+                EventFilenameInfo.Companion.findTimestampInFilename(file) + " results " +
+                (EventFilenameInfo.Companion.findTimestampInFilename(file) < cal.getTimeInMillis()));
+        return EventFilenameInfo.Companion.findTimestampInFilename(file) < cal.getTimeInMillis();
+    }
 }
