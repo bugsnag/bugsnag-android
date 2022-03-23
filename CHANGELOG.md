@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* Calling `bugsnag_event_set_context` with NULL `context` correctly clears the event context again
+  [#1637](https://github.com/bugsnag/bugsnag-android/pull/1637)
+
 ## 5.21.0 (2022-03-17)
 
 ### Enhancements
