@@ -76,18 +76,19 @@ public final class Bugsnag {
     /**
      * Bugsnag uses the concept of "contexts" to help display and group your errors. Contexts
      * represent what was happening in your application at the time an error occurs.
-     *
+     * <p>
      * In an android app the "context" is automatically set as the foreground Activity.
      * If you would like to set this value manually, you should alter this property.
      */
-    @Nullable public static String getContext() {
+    @Nullable
+    public static String getContext() {
         return getClient().getContext();
     }
 
     /**
      * Bugsnag uses the concept of "contexts" to help display and group your errors. Contexts
      * represent what was happening in your application at the time an error occurs.
-     *
+     * <p>
      * In an android app the "context" is automatically set as the foreground Activity.
      * If you would like to set this value manually, you should alter this property.
      */
@@ -115,15 +116,15 @@ public final class Bugsnag {
     /**
      * Add a "on error" callback, to execute code at the point where an error report is
      * captured in Bugsnag.
-     *
+     * <p>
      * You can use this to add or modify information attached to an Event
      * before it is sent to your dashboard. You can also return
      * <code>false</code> from any callback to prevent delivery. "on error"
      * callbacks do not run before reports generated in the event
      * of immediate app termination from crashes in C/C++ code.
-     *
+     * <p>
      * For example:
-     *
+     * <p>
      * Bugsnag.addOnError(new OnErrorCallback() {
      * public boolean run(Event event) {
      * event.setSeverity(Severity.INFO);
@@ -140,6 +141,7 @@ public final class Bugsnag {
 
     /**
      * Removes a previously added "on error" callback
+     *
      * @param onError the callback to remove
      */
     public static void removeOnError(@NonNull OnErrorCallback onError) {
@@ -149,12 +151,12 @@ public final class Bugsnag {
     /**
      * Add an "on breadcrumb" callback, to execute code before every
      * breadcrumb captured by Bugsnag.
-     *
+     * <p>
      * You can use this to modify breadcrumbs before they are stored by Bugsnag.
      * You can also return <code>false</code> from any callback to ignore a breadcrumb.
-     *
+     * <p>
      * For example:
-     *
+     * <p>
      * Bugsnag.onBreadcrumb(new OnBreadcrumbCallback() {
      * public boolean run(Breadcrumb breadcrumb) {
      * return false; // ignore the breadcrumb
@@ -170,6 +172,7 @@ public final class Bugsnag {
 
     /**
      * Removes a previously added "on breadcrumb" callback
+     *
      * @param onBreadcrumb the callback to remove
      */
     public static void removeOnBreadcrumb(@NonNull OnBreadcrumbCallback onBreadcrumb) {
@@ -179,12 +182,12 @@ public final class Bugsnag {
     /**
      * Add an "on session" callback, to execute code before every
      * session captured by Bugsnag.
-     *
+     * <p>
      * You can use this to modify sessions before they are stored by Bugsnag.
      * You can also return <code>false</code> from any callback to ignore a session.
-     *
+     * <p>
      * For example:
-     *
+     * <p>
      * Bugsnag.onSession(new OnSessionCallback() {
      * public boolean run(Session session) {
      * return false; // ignore the session
@@ -200,6 +203,7 @@ public final class Bugsnag {
 
     /**
      * Removes a previously added "on session" callback
+     *
      * @param onSession the callback to remove
      */
     public static void removeOnSession(@NonNull OnSessionCallback onSession) {
@@ -219,7 +223,7 @@ public final class Bugsnag {
      * Notify Bugsnag of a handled exception
      *
      * @param exception the exception to send to Bugsnag
-     * @param onError  callback invoked on the generated error report for
+     * @param onError   callback invoked on the generated error report for
      *                  additional modification
      */
     public static void notify(@NonNull final Throwable exception,
@@ -286,7 +290,8 @@ public final class Bugsnag {
     /**
      * Leave a "breadcrumb" log message representing an action or event which
      * occurred in your app, to aid with debugging
-     * @param message     A short label
+     *
+     * @param message  A short label
      * @param metadata Additional diagnostic information about the app environment
      * @param type     A category for the breadcrumb
      */
@@ -332,11 +337,10 @@ public final class Bugsnag {
      * <a href="https://docs.bugsnag.com/product/releases/releases-dashboard/#stability-score">
      * stability score</a>.
      *
+     * @return true if a previous session was resumed, false if a new session was started.
      * @see #startSession()
      * @see #pauseSession()
      * @see Configuration#setAutoTrackSessions(boolean)
-     *
-     * @return true if a previous session was resumed, false if a new session was started.
      */
     public static boolean resumeSession() {
         return getClient().resumeSession();
@@ -365,7 +369,7 @@ public final class Bugsnag {
      * Returns the current buffer of breadcrumbs that will be sent with captured events. This
      * ordered list represents the most recent breadcrumbs to be captured up to the limit
      * set in {@link Configuration#getMaxBreadcrumbs()}.
-     *
+     * <p>
      * The returned collection is readonly and mutating the list will cause no effect on the
      * Client's state. If you wish to alter the breadcrumbs collected by the Client then you should
      * use {@link Configuration#setEnabledBreadcrumbTypes(Set)} and
@@ -380,7 +384,7 @@ public final class Bugsnag {
 
     /**
      * Retrieves information about the last launch of the application, if it has been run before.
-     *
+     * <p>
      * For example, this allows checking whether the app crashed on its last launch, which could
      * be used to perform conditional behaviour to recover from crashes, such as clearing the
      * app data cache.
@@ -394,7 +398,7 @@ public final class Bugsnag {
      * Informs Bugsnag that the application has finished launching. Once this has been called
      * {@link AppWithState#isLaunching()} will always be false in any new error reports,
      * and synchronous delivery will not be attempted on the next launch for any fatal crashes.
-     *
+     * <p>
      * By default this method will be called after Bugsnag is initialized when
      * {@link Configuration#getLaunchDurationMillis()} has elapsed. Invoking this method manually
      * has precedence over the value supplied via the launchDurationMillis configuration option.
@@ -462,8 +466,12 @@ public final class Bugsnag {
     @NonNull
     public static Client getClient() {
         if (client == null) {
-            throw new IllegalStateException("You must call Bugsnag.start before any"
-                + " other Bugsnag methods");
+            synchronized (lock) {
+                if (client == null) {
+                    throw new IllegalStateException("You must call Bugsnag.start before any"
+                            + " other Bugsnag methods");
+                }
+            }
         }
 
         return client;

@@ -6,6 +6,9 @@
 
 * Calling `bugsnag_event_set_context` with NULL `context` correctly clears the event context again
   [#1637](https://github.com/bugsnag/bugsnag-android/pull/1637)
+* `Bugsnag` methods are now [safe](https://github.com/bugsnag/bugsnag-android/issues/883) to invoke on different threads while `Bugsnag.start()` is still in-flight,
+  making multi-threaded application startup easier to implement
+  [#1638](https://github.com/bugsnag/bugsnag-android/pull/1638)
 
 ## 5.21.0 (2022-03-17)
 
