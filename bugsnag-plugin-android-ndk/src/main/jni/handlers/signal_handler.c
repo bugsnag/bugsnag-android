@@ -168,18 +168,19 @@ void bsg_handle_signal(int signum, siginfo_t *info,
   if (bsg_global_env == NULL) {
     return;
   }
-  if (bsg_global_env->handling_crash) {
-    if (bsg_global_env->crash_handled) {
-      // The C++ handler default action is to raise a fatal signal once
-      // handling is complete. The report is already generated so at this
-      // point, the handler only needs to be uninstalled.
-      bsg_handler_uninstall_signal();
-      bsg_invoke_previous_signal_handler(signum, info, user_context);
-    }
+  if (!bsg_begin_handling_crash()) {
     return;
   }
 
-  bsg_global_env->handling_crash = true;
+  if (bsg_global_env->crash_handled) {
+    // The C++ handler default action is to raise a fatal signal once
+    // handling is complete. The report is already generated so at this
+    // point, the handler only needs to be uninstalled.
+    bsg_handler_uninstall_signal();
+    bsg_invoke_previous_signal_handler(signum, info, user_context);
+    return;
+  }
+
   bsg_global_env->next_event.unhandled = true;
   bsg_populate_event_as(bsg_global_env);
   bsg_global_env->next_event.error.frame_count = bsg_unwind_crash_stack(
@@ -209,6 +210,8 @@ void bsg_handle_signal(int signum, siginfo_t *info,
     bsg_serialize_event_to_file(bsg_global_env);
     bsg_serialize_last_run_info_to_file(bsg_global_env);
   }
+
+  bsg_finish_handling_crash();
   bsg_handler_uninstall_signal();
   bsg_invoke_previous_signal_handler(signum, info, user_context);
 }

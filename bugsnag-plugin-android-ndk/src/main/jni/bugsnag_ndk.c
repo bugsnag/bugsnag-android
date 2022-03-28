@@ -58,6 +58,17 @@ bool bsg_run_on_error() {
   return true;
 }
 
+bool bsg_begin_handling_crash() {
+  static bool expected = false;
+  return atomic_compare_exchange_strong(&bsg_global_env->handling_crash,
+                                        &expected, true);
+}
+
+void bsg_finish_handling_crash() {
+  bsg_global_env->crash_handled = true;
+  bsg_global_env->handling_crash = false;
+}
+
 JNIEXPORT void JNICALL Java_com_bugsnag_android_NdkPlugin_enableCrashReporting(
     JNIEnv *env, jobject _this) {
   if (bsg_global_env == NULL) {
@@ -143,6 +154,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   bugsnag_env->report_header.version = BUGSNAG_EVENT_VERSION;
   bugsnag_env->consecutive_launch_crashes = consecutive_launch_crashes;
   bugsnag_env->send_threads = send_threads;
+  bugsnag_env->handling_crash = ATOMIC_VAR_INIT(false);
 
   // copy event path to env struct
   const char *event_path = bsg_safe_get_string_utf_chars(env, _event_path);

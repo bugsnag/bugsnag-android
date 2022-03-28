@@ -4,6 +4,7 @@
 #ifndef BUGSNAG_NDK_H
 #define BUGSNAG_NDK_H
 
+#include <stdatomic.h>
 #include <stdbool.h>
 
 #include "../assets/include/bugsnag.h"
@@ -53,7 +54,7 @@ typedef struct {
    * true if a crash is currently being handled. Disallows multiple crashes
    * from being processed simultaneously
    */
-  bool handling_crash;
+  _Atomic bool handling_crash;
   /**
    * true if a handler has completed crash handling
    */
@@ -77,6 +78,22 @@ typedef struct {
  * discarded
  */
 bool bsg_run_on_error();
+
+/**
+ * This must be called before handling a native crash to ensure that two crash
+ * handlers don't run simultaneously. If this function returns falls, DO NOT
+ * PROCEED WITH CRASH HANDLING!
+ *
+ * When done handling the crash, you must call bsg_finish_handling_crash()
+ *
+ * @return true if no other crash handler is already running.
+ */
+bool bsg_begin_handling_crash();
+
+/**
+ * Let the system know that you've finished handling the crash.
+ */
+void bsg_finish_handling_crash();
 
 #ifdef __cplusplus
 }
