@@ -1,5 +1,8 @@
 Feature: Native crash reporting with thrown objects
 
+  Background:
+    Given I clear all persistent data
+
   Scenario: Throwing an exception in C++
     When I run "CXXExceptionScenario" and relaunch the app
     And I configure Bugsnag for "CXXExceptionScenario"
@@ -42,6 +45,6 @@ Feature: Native crash reporting with thrown objects
     And the event "severity" equals "error"
     And the event "unhandled" is true
     And on arm64, the first significant stack frames match:
-      | FunkError::what() const | CXXThrowFromNoexcept.cpp | 13 |
+      | FunkError::what() const                                                  | CXXThrowFromNoexcept.cpp | 13 |
       | Java_com_bugsnag_android_mazerunner_scenarios_CXXThrowFromNoexcept_crash | CXXThrowFromNoexcept.cpp | 21 |
 

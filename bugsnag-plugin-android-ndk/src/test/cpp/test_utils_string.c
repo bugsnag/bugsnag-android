@@ -12,6 +12,16 @@ TEST test_copy_empty_string(void) {
     PASS();
 }
 
+TEST test_copy_null_string(void) {
+    int dst_len = 10;
+    char *dst = calloc(sizeof(char), dst_len);
+    strcpy(dst, "C h a n g e");
+    bsg_strncpy(dst, NULL, dst_len);
+    ASSERT(dst[0] == '\0');
+    free(dst);
+    PASS();
+}
+
 TEST test_copy_literal_string(void) {
     char *src = "C h a n g e";
     int dst_len = 10;
@@ -48,6 +58,7 @@ TEST length_null_string(void) {
 
 SUITE(suite_string_utils) {
     RUN_TEST(test_copy_empty_string);
+    RUN_TEST(test_copy_null_string);
     RUN_TEST(test_copy_literal_string);
     RUN_TEST(length_empty_string);
     RUN_TEST(length_literal_string);

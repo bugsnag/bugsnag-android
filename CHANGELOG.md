@@ -4,12 +4,27 @@
 
 ### Bug fixes
 
+* Calling `bugsnag_event_set_context` with NULL `context` correctly clears the event context again
+  [#1637](https://github.com/bugsnag/bugsnag-android/pull/1637)
+* `Bugsnag` methods are now [safe](https://github.com/bugsnag/bugsnag-android/issues/883) to invoke on different threads while `Bugsnag.start()` is still in-flight,
+  making multi-threaded application startup easier to implement
+  [#1638](https://github.com/bugsnag/bugsnag-android/pull/1638)
+
+## 5.21.0 (2022-03-17)
+
+### Enhancements
+
 * Fix inconsistencies in stack trace quality for C/C++ events. Resolves a few
   cases where file and line number information was not resolving to the correct
   locations. This change may result in grouping changes to more correctly
   highlight the root cause of an event.
   [#1605](https://github.com/bugsnag/bugsnag-android/pull/1605)
   [#1606](https://github.com/bugsnag/bugsnag-android/pull/1606)
+
+### Bug fixes
+
+* Fixed an issue where an uncaught exception on the main thread could in rare cases trigger an ANR.
+  [#1624](https://github.com/bugsnag/bugsnag-android/pull/1624)
 
 ## 5.20.0 (2022-03-10)
 

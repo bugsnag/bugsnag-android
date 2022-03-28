@@ -1,6 +1,9 @@
 Feature: Overriding unhandled state
 
-Scenario: Non-fatal exception overridden to unhandled
+  Background:
+    Given I clear all persistent data
+
+  Scenario: Non-fatal exception overridden to unhandled
     When I run "OverrideToUnhandledExceptionScenario"
     Then I wait to receive an error
     And I wait to receive a session
@@ -14,7 +17,7 @@ Scenario: Non-fatal exception overridden to unhandled
     And the event "session.events.handled" equals 0
     And the event "session.events.unhandled" equals 1
 
-Scenario: Fatal exception overridden to handled
+  Scenario: Fatal exception overridden to handled
     When I run "OverrideToHandledExceptionScenario" and relaunch the app
     And I configure Bugsnag for "OverrideToHandledExceptionScenario"
     And I wait to receive an error
@@ -29,7 +32,7 @@ Scenario: Fatal exception overridden to handled
     And the event "session.events.handled" equals 1
     And the event "session.events.unhandled" equals 0
 
-Scenario: CXX error overridden to handled
+  Scenario: CXX error overridden to handled
     When I run "CXXHandledOverrideScenario" and relaunch the app
     And I configure Bugsnag for "CXXHandledOverrideScenario"
     And I wait to receive an error
