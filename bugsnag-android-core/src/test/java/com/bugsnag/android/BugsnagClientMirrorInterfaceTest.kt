@@ -9,13 +9,18 @@ import java.lang.reflect.Method
  * signatures, and fails if the two are out of sync.
  *
  * This is intended to catch the case where a new API is added to one class but not the other.
- * If a method genuinely only needs to be present on one of the classes, it can be added to a
- * blacklist via [bugsnagBlacklist] or [clientBlacklist].
+ * If a method genuinely only needs to be present on one of the classes, it should be added to
+ * [bugsnagAllowList] or [clientAllowList].
  */
 class BugsnagClientMirrorInterfaceTest {
 
-    private val bugsnagBlacklist = setOf("start", "getClient")
-    private val clientBlacklist = setOf(
+    private val bugsnagAllowList = setOf(
+        "start",
+        "getClient",
+        "isStarted"
+    )
+
+    private val clientAllowList = setOf(
         "update",
         "notifyObservers",
         "addObserver",
@@ -35,14 +40,14 @@ class BugsnagClientMirrorInterfaceTest {
     @Test
     fun bugsnagHasSameMethodsAsClient() {
         val methods = clientMethods.subtract(bugsnagMethods)
-            .filter { !clientBlacklist.contains(it.name) }
+            .filter { !clientAllowList.contains(it.name) }
         assertTrue("Bugsnag is missing the following methods: $methods", methods.isEmpty())
     }
 
     @Test
     fun clientHasSameMethodsAsBugsnag() {
         val methods = bugsnagMethods.subtract(clientMethods)
-            .filter { !bugsnagBlacklist.contains(it.name) }
+            .filter { !bugsnagAllowList.contains(it.name) }
         assertTrue("Client is missing the following methods: $methods", methods.isEmpty())
     }
 }

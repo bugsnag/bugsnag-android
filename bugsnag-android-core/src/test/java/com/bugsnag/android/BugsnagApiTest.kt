@@ -38,6 +38,17 @@ class BugsnagApiTest {
     }
 
     @Test
+    fun isStartedWhenStarted() {
+        assertEquals(true, Bugsnag.isStarted())
+    }
+
+    @Test
+    fun isStartedWhenNotStarted() {
+        Bugsnag.client = null
+        assertEquals(false, Bugsnag.isStarted())
+    }
+
+    @Test
     fun getUser() {
         Bugsnag.getUser()
         verify(client, times(1)).getUser()
