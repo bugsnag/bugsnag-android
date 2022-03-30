@@ -4,7 +4,7 @@ Feature: Synchronizing feature flags to the native layer
     Given I clear all persistent data
 
   Scenario: Feature flags are synchronized to the native layer
-    When I run "CXXFeatureFlagNativeCrashScenario" and relaunch the app
+    When I run "CXXFeatureFlagNativeCrashScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXFeatureFlagNativeCrashScenario"
     And I wait to receive an error
     And the error payload contains a completed unhandled native report
@@ -19,7 +19,7 @@ Feature: Synchronizing feature flags to the native layer
 
   Scenario: clearFeatureFlags() is synchronized to the native layer
     When I configure the app to run in the "cleared" state
-    And I run "CXXFeatureFlagNativeCrashScenario" and relaunch the app
+    And I run "CXXFeatureFlagNativeCrashScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXFeatureFlagNativeCrashScenario"
     And I wait to receive an error
     And the error payload contains a completed unhandled native report

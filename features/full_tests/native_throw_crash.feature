@@ -4,7 +4,7 @@ Feature: Native crash reporting with thrown objects
     Given I clear all persistent data
 
   Scenario: Throwing an exception in C++
-    When I run "CXXExceptionScenario" and relaunch the app
+    When I run "CXXExceptionScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXExceptionScenario"
     And I wait to receive an error
     And the error payload contains a completed unhandled native report
@@ -14,7 +14,7 @@ Feature: Native crash reporting with thrown objects
     And the exception "message" equals "Abort program"
 
   Scenario: Throwing an object in C++
-    When I run "CXXThrowSomethingScenario" and relaunch the app
+    When I run "CXXThrowSomethingScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXThrowSomethingScenario"
     And I wait to receive an error
     And the error payload contains a completed unhandled native report
@@ -24,7 +24,7 @@ Feature: Native crash reporting with thrown objects
     And the exception "message" equals "Abort program"
 
   Scenario: Rethrow in C++ without initial exception
-    When I run "CXXInvalidRethrow" and relaunch the app
+    When I run "CXXInvalidRethrow" and relaunch the crashed app
     And I configure Bugsnag for "CXXInvalidRethrow"
     And I wait to receive an error
     And the error payload contains a completed unhandled native report
@@ -36,7 +36,7 @@ Feature: Native crash reporting with thrown objects
       | print_last_exception() | CXXInvalidRethrow.cpp | 7 |
 
   Scenario: Throw from C++ noexcept function
-    When I run "CXXThrowFromNoexcept" and relaunch the app
+    When I run "CXXThrowFromNoexcept" and relaunch the crashed app
     And I configure Bugsnag for "CXXThrowFromNoexcept"
     And I wait to receive an error
     And the error payload contains a completed unhandled native report

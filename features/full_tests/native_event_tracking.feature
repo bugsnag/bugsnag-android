@@ -23,7 +23,7 @@ Feature: Synchronizing app/device metadata in the native layer
     And the event "unhandled" is false
 
   Scenario: Capture foreground state while in a foreground crash
-    When I run "CXXTrapScenario" and relaunch the app
+    When I run "CXXTrapScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXStartSessionScenario"
     And I wait to receive an error
     Then the error payload contains a completed handled native report

@@ -18,7 +18,7 @@ Feature: Overriding unhandled state
     And the event "session.events.unhandled" equals 1
 
   Scenario: Fatal exception overridden to handled
-    When I run "OverrideToHandledExceptionScenario" and relaunch the app
+    When I run "OverrideToHandledExceptionScenario" and relaunch the crashed app
     And I configure Bugsnag for "OverrideToHandledExceptionScenario"
     And I wait to receive an error
     And I wait to receive a session
@@ -33,7 +33,7 @@ Feature: Overriding unhandled state
     And the event "session.events.unhandled" equals 0
 
   Scenario: CXX error overridden to handled
-    When I run "CXXHandledOverrideScenario" and relaunch the app
+    When I run "CXXHandledOverrideScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXHandledOverrideScenario"
     And I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier

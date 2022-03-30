@@ -15,7 +15,7 @@ Feature: Identifying crashes on launch
     And the event "app.isLaunching" is false
 
   Scenario: An NDK error captured after the launch period is false for app.isLaunching
-    When I run "CXXDelayedErrorScenario" and relaunch the app
+    When I run "CXXDelayedErrorScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXDelayedErrorScenario"
     Then I wait to receive 2 errors
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
@@ -38,7 +38,7 @@ Feature: Identifying crashes on launch
     And the event "app.isLaunching" is false
 
   Scenario: An NDK error captured after markLaunchComplete() is false for app.isLaunching
-    When I run "CXXMarkLaunchCompletedScenario" and relaunch the app
+    When I run "CXXMarkLaunchCompletedScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXMarkLaunchCompletedScenario"
     Then I wait to receive 2 errors
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
@@ -50,8 +50,8 @@ Feature: Identifying crashes on launch
     And the event "app.isLaunching" is false
 
   Scenario: Escaping from a crash loop by reading LastRunInfo in a JVM error
-    When I run "JvmCrashLoopScenario" and relaunch the app
-    When I run "JvmCrashLoopScenario" and relaunch the app
+    When I run "JvmCrashLoopScenario" and relaunch the crashed app
+    When I run "JvmCrashLoopScenario" and relaunch the crashed app
     When I run "JvmCrashLoopScenario"
     And I wait to receive 3 errors
 
@@ -79,8 +79,8 @@ Feature: Identifying crashes on launch
     And the event "metaData.LastRunInfo.consecutiveLaunchCrashes" equals 2
 
   Scenario: Escaping from a crash loop by reading LastRunInfo in an NDK error
-    When I run "CXXCrashLoopScenario" and relaunch the app
-    When I run "CXXCrashLoopScenario" and relaunch the app
+    When I run "CXXCrashLoopScenario" and relaunch the crashed app
+    When I run "CXXCrashLoopScenario" and relaunch the crashed app
     When I run "CXXCrashLoopScenario"
     And I wait to receive 3 errors
 
