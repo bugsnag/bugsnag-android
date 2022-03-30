@@ -13,12 +13,13 @@ class MultiThreadedStartupScenario(
     override fun startBugsnag(startBugsnagOnly: Boolean) {}
 
     override fun startScenario() {
-        // MIN_PRIORITY = trying our best to be slow without putting delays in place
-        val startThread = thread {
+        val startThread = thread(name = "AsyncStart") {
             Bugsnag.start(context, config)
         }
 
-        thread {
+        thread(name = "leaveBreadcrumb") {
+            // simulate the start of some startup work, but not enough for Bugsnag.start to complete
+            Thread.sleep(1L)
             try {
                 Bugsnag.leaveBreadcrumb("I'm leaving a breadcrumb on another thread")
             } catch (e: Exception) {
