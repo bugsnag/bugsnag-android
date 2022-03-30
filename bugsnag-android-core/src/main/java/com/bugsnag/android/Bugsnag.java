@@ -69,6 +69,15 @@ public final class Bugsnag {
         return client;
     }
 
+    /**
+     * Returns true if one of the <code>start</code> methods have been has been called and
+     * so Bugsnag is initialized; false if <code>start</code> has not been called and the
+     * other methods will throw IllegalStateException.
+     */
+    public static boolean isStarted() {
+        return client != null;
+    }
+
     private static void logClientInitWarning() {
         getClient().logger.w("Multiple Bugsnag.start calls detected. Ignoring.");
     }
