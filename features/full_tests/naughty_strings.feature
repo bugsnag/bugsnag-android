@@ -29,7 +29,7 @@ Feature: The notifier handles user data containing unusual strings
 # commented out some failing unicode assertions and skipped Android <6 until PLAT-5606 is addressed
   @skip_below_android_6
   Scenario: Test unhandled NDK error
-    When I run "CXXNaughtyStringsScenario" and relaunch the app
+    When I run "CXXNaughtyStringsScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXNaughtyStringsScenario"
     Then I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier

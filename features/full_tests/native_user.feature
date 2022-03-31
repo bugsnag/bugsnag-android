@@ -4,7 +4,7 @@ Feature: Native User API
     Given I clear all persistent data
 
   Scenario: Adding user information in Java followed by a C crash
-    And I run "CXXJavaUserInfoNativeCrashScenario" and relaunch the app
+    And I run "CXXJavaUserInfoNativeCrashScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXJavaUserInfoNativeCrashScenario"
     And I wait to receive an error
     Then the error payload contains a completed handled native report
@@ -18,7 +18,7 @@ Feature: Native User API
     And the event "unhandled" is true
 
   Scenario: Set user in Native layer followed by a Java crash
-    When I run "CXXNativeUserInfoJavaCrashScenario" and relaunch the app
+    When I run "CXXNativeUserInfoJavaCrashScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXNativeUserInfoJavaCrashScenario"
     And I wait to receive an error
     Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier

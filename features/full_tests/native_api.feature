@@ -4,7 +4,7 @@ Feature: Native API
     Given I clear all persistent data
 
   Scenario: Set extraordinarily long app information
-    When I run "CXXExtraordinaryLongStringScenario" and relaunch the app
+    When I run "CXXExtraordinaryLongStringScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXExtraordinaryLongStringScenario"
     And I wait to receive an error
     And the error payload contains a completed handled native report

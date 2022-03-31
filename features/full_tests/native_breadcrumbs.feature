@@ -4,7 +4,7 @@ Feature: Native Breadcrumbs API
     Given I clear all persistent data
 
   Scenario: Leaving breadcrumbs in C followed by a Java crash
-    When I run "CXXNativeBreadcrumbJavaCrashScenario" and relaunch the app
+    When I run "CXXNativeBreadcrumbJavaCrashScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXNativeBreadcrumbJavaCrashScenario"
     And I wait to receive an error
     And the error payload contains a completed handled native report

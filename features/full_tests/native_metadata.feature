@@ -4,7 +4,7 @@ Feature: Native Metadata API
     Given I clear all persistent data
 
   Scenario: Add custom metadata to configuration followed by a C crash
-    When I run "CXXConfigurationMetadataNativeCrashScenario" and relaunch the app
+    When I run "CXXConfigurationMetadataNativeCrashScenario" and relaunch the crashed app
     And I configure the app to run in the "non-metadata" state
     And I configure Bugsnag for "CXXConfigurationMetadataNativeCrashScenario"
     And I wait to receive an error
@@ -39,7 +39,7 @@ Feature: Native Metadata API
     And the event "metaData.remove" is null
 
   Scenario: Get Java data in the Native layer
-    When I run "CXXGetJavaDataScenario" and relaunch the app
+    When I run "CXXGetJavaDataScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXGetJavaDataScenario"
     And I wait to receive an error
     Then the error payload contains a completed unhandled native report

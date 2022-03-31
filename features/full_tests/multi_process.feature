@@ -34,9 +34,9 @@ Feature: Reporting errors in multi process apps
 
   Scenario: Unhandled JVM error
     And I configure the app to run in the "main-activity" state
-    When I run "MultiProcessUnhandledExceptionScenario" and relaunch the app
+    When I run "MultiProcessUnhandledExceptionScenario" and relaunch the crashed app
     And I configure the app to run in the "multi-process-service" state
-    And I run "MultiProcessUnhandledExceptionScenario" and relaunch the app
+    And I run "MultiProcessUnhandledExceptionScenario" and relaunch the crashed app
     And I run "MultiProcessUnhandledExceptionScenario"
     Then I wait to receive 2 errors
     And I sort the errors by "events.0.metaData.app.processName"
@@ -84,9 +84,9 @@ Feature: Reporting errors in multi process apps
 
   Scenario: Unhandled NDK error
     And I configure the app to run in the "main-activity" state
-    When I run "MultiProcessUnhandledCXXErrorScenario" and relaunch the app
+    When I run "MultiProcessUnhandledCXXErrorScenario" and relaunch the crashed app
     And I configure the app to run in the "multi-process-service" state
-    And I run "MultiProcessUnhandledCXXErrorScenario" and relaunch the app
+    And I run "MultiProcessUnhandledCXXErrorScenario" and relaunch the crashed app
     And I run "MultiProcessUnhandledCXXErrorScenario"
     Then I wait to receive 2 errors
     And I sort the errors by "events.0.metaData.app.processName"

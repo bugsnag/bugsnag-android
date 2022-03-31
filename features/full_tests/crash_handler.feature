@@ -4,7 +4,7 @@ Feature: Reporting with other exception handlers installed
     Given I clear all persistent data
 
   Scenario: Other uncaught exception handler installed
-    When I run "CrashHandlerScenario" and relaunch the app
+    When I run "CrashHandlerScenario" and relaunch the crashed app
     And I configure Bugsnag for "CrashHandlerScenario"
     And I wait to receive an error
     Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier

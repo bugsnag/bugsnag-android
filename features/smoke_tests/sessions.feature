@@ -57,7 +57,7 @@ Feature: Session functionality smoke tests
 
   @debug-safe
   Scenario: Manual session control works
-    When I run "ManualSessionSmokeScenario" and relaunch the app
+    When I run "ManualSessionSmokeScenario" and relaunch the crashed app
     And I configure Bugsnag for "ManualSessionSmokeScenario"
     And I wait to receive a session
 

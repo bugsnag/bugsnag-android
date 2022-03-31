@@ -4,7 +4,7 @@ Feature: Reporting with other exception handlers installed
     Given I clear all persistent data
 
   Scenario: Unhandled exception with max threads set
-    When I run "UnhandledExceptionMaxThreadsScenario" and relaunch the app
+    When I run "UnhandledExceptionMaxThreadsScenario" and relaunch the crashed app
     And I configure Bugsnag for "UnhandledExceptionMaxThreadsScenario"
     And I wait to receive an error
     Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
@@ -16,7 +16,7 @@ Feature: Reporting with other exception handlers installed
     And the error payload field "events.0.threads.2.name" ends with "threads omitted as the maxReportedThreads limit (2) was exceeded]"
 
   Scenario: Handled exception with max threads set
-    When I run "HandledExceptionMaxThreadsScenario" and relaunch the app
+    When I run "HandledExceptionMaxThreadsScenario" and relaunch the crashed app
     And I configure Bugsnag for "HandledExceptionMaxThreadsScenario"
     And I wait to receive an error
     Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier

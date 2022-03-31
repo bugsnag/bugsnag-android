@@ -33,7 +33,7 @@ Feature: Reporting Breadcrumbs
     And the event has a "state" breadcrumb with the message "Bugsnag loaded"
 
   Scenario: Error Breadcrumbs appear in subsequent events
-    When I run "ErrorBreadcrumbsScenario" and relaunch the app
+    When I run "ErrorBreadcrumbsScenario" and relaunch the crashed app
     And I configure Bugsnag for "ErrorBreadcrumbsScenario"
     Then I wait to receive 2 errors
     And the exception "errorClass" equals "java.lang.RuntimeException"

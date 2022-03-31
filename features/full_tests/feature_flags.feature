@@ -27,7 +27,7 @@ Feature: Reporting with feature flags
 
   Scenario: Sends unhandled exception which includes feature flags added in the notify callback
     When I configure the app to run in the "unhandled callback" state
-    And I run "FeatureFlagScenario" and relaunch the app
+    And I run "FeatureFlagScenario" and relaunch the crashed app
     And I configure Bugsnag for "FeatureFlagScenario"
     Then I wait to receive an error
     And the exception "errorClass" equals "java.lang.RuntimeException"
@@ -48,7 +48,7 @@ Feature: Reporting with feature flags
 
   Scenario: Sends feature flags added in OnSend Callbacks
     When I configure the app to run in the "onsend" state
-    And I run "FeatureFlagScenario" and relaunch the app
+    And I run "FeatureFlagScenario" and relaunch the crashed app
     And I configure Bugsnag for "FeatureFlagScenario"
     Then I wait to receive an error
     And the exception "errorClass" equals "java.lang.RuntimeException"

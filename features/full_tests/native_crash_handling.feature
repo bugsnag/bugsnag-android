@@ -4,7 +4,7 @@ Feature: Native crash reporting
     Given I clear all persistent data
 
   Scenario: Dereference a null pointer
-    When I run "CXXDereferenceNullScenario" and relaunch the app
+    When I run "CXXDereferenceNullScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXDereferenceNullScenario"
     And I wait to receive an error
     And the error payload contains a completed unhandled native report
@@ -30,7 +30,7 @@ Feature: Native crash reporting
   # https://android.googlesource.com/platform/bionic/+/fb7eb5e07f43587c2bedf2aaa53b21fa002417bb
   @skip_below_api18
   Scenario: Stack buffer overflow
-    When I run "CXXStackoverflowScenario" and relaunch the app
+    When I run "CXXStackoverflowScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXStackoverflowScenario"
     And I wait to receive an error
     And the error payload contains a completed unhandled native report
@@ -42,7 +42,7 @@ Feature: Native crash reporting
       | crash_stack_overflow | CXXStackoverflowScenario.cpp |
 
   Scenario: Program trap()
-    When I run "CXXTrapScenario" and relaunch the app
+    When I run "CXXTrapScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXTrapScenario"
     And I wait to receive an error
     And the error payload contains a completed unhandled native report
@@ -59,7 +59,7 @@ Feature: Native crash reporting
       | trap_it() | CXXTrapScenario.cpp | 10 |
 
   Scenario: Write to read-only memory
-    When I run "CXXWriteReadOnlyMemoryScenario" and relaunch the app
+    When I run "CXXWriteReadOnlyMemoryScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXWriteReadOnlyMemoryScenario"
     And I wait to receive an error
     And the exception "errorClass" equals "SIGSEGV"
@@ -72,7 +72,7 @@ Feature: Native crash reporting
       | Java_com_bugsnag_android_mazerunner_scenarios_CXXWriteReadOnlyMemoryScenario_crash | CXXWriteReadOnlyMemoryScenario.cpp | 22 |
 
   Scenario: Improper object type cast
-    When I run "CXXImproperTypecastScenario" and relaunch the app
+    When I run "CXXImproperTypecastScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXImproperTypecastScenario"
     And I wait to receive an error
     And the exception "errorClass" equals "SIGSEGV"
@@ -85,7 +85,7 @@ Feature: Native crash reporting
       | Java_com_bugsnag_android_mazerunner_scenarios_CXXImproperTypecastScenario_crash | CXXImproperTypecastScenario.cpp | 20 |
 
   Scenario: Program abort()
-    When I run "CXXAbortScenario" and relaunch the app
+    When I run "CXXAbortScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXAbortScenario"
     And I wait to receive an error
     And the error payload contains a completed unhandled native report
@@ -103,7 +103,7 @@ Feature: Native crash reporting
       | Java_com_bugsnag_android_mazerunner_scenarios_CXXAbortScenario_crash | CXXAbortScenario.cpp | 13 |
 
   Scenario: Undefined JNI method
-    When I run "UnsatisfiedLinkErrorScenario" and relaunch the app
+    When I run "UnsatisfiedLinkErrorScenario" and relaunch the crashed app
     And I configure Bugsnag for "UnsatisfiedLinkErrorScenario"
     And I wait to receive an error
     And the report contains the required fields
@@ -113,7 +113,7 @@ Feature: Native crash reporting
     And the event "unhandled" is true
 
   Scenario: Causing a crash in a separate library
-    When I run "CXXExternalStackElementScenario" and relaunch the app
+    When I run "CXXExternalStackElementScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXExternalStackElementScenario"
     And I wait to receive an error
     And the error payload contains a completed unhandled native report
@@ -134,7 +134,7 @@ Feature: Native crash reporting
   A null pointer should be the first element of a stack trace,
   followed by the calling function
 
-    When I run "CXXCallNullFunctionPointerScenario" and relaunch the app
+    When I run "CXXCallNullFunctionPointerScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXCallNullFunctionPointerScenario"
     And I wait to receive an error
     And the error payload contains a completed unhandled native report

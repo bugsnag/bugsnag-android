@@ -5,7 +5,7 @@ Feature: Reporting Strict Mode Violations
 
   @skip_below_android_9
   Scenario: StrictMode Exposed File URI violation
-    When I run "StrictModeFileUriExposeScenario" and relaunch the app
+    When I run "StrictModeFileUriExposeScenario" and relaunch the crashed app
     And I configure Bugsnag for "StrictModeFileUriExposeScenario"
     And I wait to receive an error
     Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
@@ -20,7 +20,7 @@ Feature: Reporting Strict Mode Violations
 
   @skip_below_android_9
   Scenario: StrictMode DiscWrite violation
-    When I run "StrictModeDiscScenario" and relaunch the app
+    When I run "StrictModeDiscScenario" and relaunch the crashed app
     And I configure Bugsnag for "StrictModeDiscScenario"
     And I wait to receive 2 errors
 
