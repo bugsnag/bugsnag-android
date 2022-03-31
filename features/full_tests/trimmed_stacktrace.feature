@@ -1,6 +1,9 @@
 Feature: Reporting large stacktrace
 
-Scenario: A large stacktrace should have its frames trimmed to a reasonable number
+  Background:
+    Given I clear all persistent data
+
+  Scenario: A large stacktrace should have its frames trimmed to a reasonable number
     When I run "TrimmedStacktraceScenario"
     And I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier

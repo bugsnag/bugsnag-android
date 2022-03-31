@@ -1,7 +1,10 @@
 Feature: Reporting Stack overflow
 
-Scenario: Stack Overflow sends
-    When I run "StackOverflowScenario" and relaunch the app
+  Background:
+    Given I clear all persistent data
+
+  Scenario: Stack Overflow sends
+    When I run "StackOverflowScenario" and relaunch the crashed app
     And I configure Bugsnag for "StackOverflowScenario"
     And I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier

@@ -22,6 +22,7 @@
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$429</ID>
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$499</ID>
     <ID>MagicNumber:LastRunInfoStore.kt$LastRunInfoStore$3</ID>
+    <ID>MagicNumber:SessionFilenameInfo.kt$SessionFilenameInfo.Companion$35</ID>
     <ID>MaxLineLength:LastRunInfo.kt$LastRunInfo$return "LastRunInfo(consecutiveLaunchCrashes=$consecutiveLaunchCrashes, crashed=$crashed, crashedDuringLaunch=$crashedDuringLaunch)"</ID>
     <ID>MaxLineLength:ThreadState.kt$ThreadState$"[${allThreads.size - maxThreadCount} threads omitted as the maxReportedThreads limit ($maxThreadCount) was exceeded]"</ID>
     <ID>ProtectedMemberInFinalClass:ConfigInternal.kt$ConfigInternal$protected val plugins = HashSet&lt;Plugin>()</ID>
@@ -38,7 +39,9 @@
     <ID>SwallowedException:DeviceDataCollector.kt$DeviceDataCollector$catch (exception: Exception) { logger.w("Could not get battery status") }</ID>
     <ID>SwallowedException:DeviceDataCollector.kt$DeviceDataCollector$catch (exception: Exception) { logger.w("Could not get locationStatus") }</ID>
     <ID>SwallowedException:DeviceIdStore.kt$DeviceIdStore$catch (exc: OverlappingFileLockException) { Thread.sleep(FILE_LOCK_WAIT_MS) }</ID>
+    <ID>SwallowedException:EventFilenameInfo.kt$EventFilenameInfo.Companion$catch (e: Exception) { return -1 }</ID>
     <ID>SwallowedException:PluginClient.kt$PluginClient$catch (exc: ClassNotFoundException) { logger.d("Plugin '$clz' is not on the classpath - functionality will not be enabled.") null }</ID>
+    <ID>SwallowedException:SessionFilenameInfo.kt$SessionFilenameInfo.Companion$catch (e: Exception) { return 0 }</ID>
     <ID>TooManyFunctions:ConfigInternal.kt$ConfigInternal : CallbackAwareMetadataAwareUserAwareFeatureFlagAware</ID>
     <ID>TooManyFunctions:EventInternal.kt$EventInternal : FeatureFlagAwareStreamableMetadataAwareUserAware</ID>
     <ID>UnnecessaryAbstractClass:DependencyModule.kt$DependencyModule</ID>

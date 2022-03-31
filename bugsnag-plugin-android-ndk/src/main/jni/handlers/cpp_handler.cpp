@@ -47,7 +47,10 @@ void bsg_handle_cpp_terminate() {
   if (bsg_global_env == NULL || bsg_global_env->handling_crash)
     return;
 
-  bsg_global_env->handling_crash = true;
+  if (!bsg_begin_handling_crash()) {
+    return;
+  }
+
   bsg_populate_event_as(bsg_global_env);
   bsg_global_env->next_event.unhandled = true;
   bsg_global_env->next_event.error.frame_count = bsg_unwind_crash_stack(
@@ -72,7 +75,8 @@ void bsg_handle_cpp_terminate() {
     bsg_serialize_event_to_file(bsg_global_env);
     bsg_serialize_last_run_info_to_file(bsg_global_env);
   }
-  bsg_global_env->crash_handled = true;
+
+  bsg_finish_handling_crash();
   bsg_handler_uninstall_cpp();
   if (bsg_global_terminate_previous != NULL) {
     bsg_global_terminate_previous();

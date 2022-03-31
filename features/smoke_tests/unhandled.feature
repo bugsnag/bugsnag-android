@@ -1,7 +1,10 @@
 Feature: Unhandled smoke tests
 
-Scenario: Unhandled Java Exception with loaded configuration
-    When I run "UnhandledJavaLoadedConfigScenario" and relaunch the app
+  Background:
+    Given I clear all persistent data
+
+  Scenario: Unhandled Java Exception with loaded configuration
+    When I run "UnhandledJavaLoadedConfigScenario" and relaunch the crashed app
     And I configure Bugsnag for "UnhandledJavaLoadedConfigScenario"
     And I wait to receive an error
     Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
@@ -95,8 +98,8 @@ Scenario: Unhandled Java Exception with loaded configuration
     And the event "threads.0.stacktrace.0.file" is not null
     And the event "threads.0.stacktrace.0.lineNumber" is not null
 
-Scenario: Signal raised with overwritten config
-    When I run "CXXSignalSmokeScenario" and relaunch the app
+  Scenario: Signal raised with overwritten config
+    When I run "CXXSignalSmokeScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXSignalSmokeScenario"
     And I wait to receive an error
     Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
@@ -181,9 +184,9 @@ Scenario: Signal raised with overwritten config
     And the event "metaData.fruit.ripe" is true
     And the event "metaData.fruit.counters" equals 47
 
-@debug-safe
-Scenario: C++ exception thrown with overwritten config
-    When I run "CXXExceptionSmokeScenario" and relaunch the app
+  @debug-safe
+  Scenario: C++ exception thrown with overwritten config
+    When I run "CXXExceptionSmokeScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXExceptionSmokeScenario"
     And I wait to receive an error
     Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
@@ -203,10 +206,10 @@ Scenario: C++ exception thrown with overwritten config
     And the error payload field "events.0.exceptions.0.stacktrace" is a non-empty array
     And the event stacktrace identifies the program counter
     And the first significant stack frames match:
-        | magicstacks::top()    | CXXExceptionSmokeScenario.cpp | 13 |
-        | magicstacks::middle() | CXXExceptionSmokeScenario.cpp | 16 |
-        | magicstacks::start()  | CXXExceptionSmokeScenario.cpp | 18 |
-        | Java_com_bugsnag_android_mazerunner_scenarios_CXXExceptionSmokeScenario_crash | CXXExceptionSmokeScenario.cpp | 25 |
+      | magicstacks::top()                                                            | CXXExceptionSmokeScenario.cpp | 13 |
+      | magicstacks::middle()                                                         | CXXExceptionSmokeScenario.cpp | 16 |
+      | magicstacks::start()                                                          | CXXExceptionSmokeScenario.cpp | 18 |
+      | Java_com_bugsnag_android_mazerunner_scenarios_CXXExceptionSmokeScenario_crash | CXXExceptionSmokeScenario.cpp | 25 |
 
     # App data
     And the event binary arch field is valid
@@ -258,8 +261,8 @@ Scenario: C++ exception thrown with overwritten config
     # Breadcrumbs
     And the event has a "manual" breadcrumb named "CXXExceptionSmokeScenario"
 
-@skip_android_8_1
-Scenario: ANR detection
+  @skip_android_8_1
+  Scenario: ANR detection
     When I run "JvmAnrLoopScenario"
     And I wait for 2 seconds
     And I tap the screen 3 times

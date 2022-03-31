@@ -1,6 +1,9 @@
 Feature: Reporting Breadcrumbs
 
-Scenario: Manually added breadcrumbs are sent in report
+  Background:
+    Given I clear all persistent data
+
+  Scenario: Manually added breadcrumbs are sent in report
     When I run "BreadcrumbScenario"
     And I wait to receive an error
     Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
@@ -17,20 +20,20 @@ Scenario: Manually added breadcrumbs are sent in report
     And the event "breadcrumbs.0.name" equals "Hello Breadcrumb!"
     And the event "breadcrumbs.0.type" equals "manual"
 
-Scenario: Manually added breadcrumbs are sent in report when auto breadcrumbs are disabled
+  Scenario: Manually added breadcrumbs are sent in report when auto breadcrumbs are disabled
     When I run "BreadcrumbDisabledScenario"
     And I wait to receive an error
     Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the event has 1 breadcrumbs
 
-Scenario: An automatic breadcrumb is sent in report when the appropriate type is enabled
+  Scenario: An automatic breadcrumb is sent in report when the appropriate type is enabled
     When I run "BreadcrumbAutoScenario"
     And I wait to receive an error
     Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the event has a "state" breadcrumb with the message "Bugsnag loaded"
 
-Scenario: Error Breadcrumbs appear in subsequent events
-    When I run "ErrorBreadcrumbsScenario" and relaunch the app
+  Scenario: Error Breadcrumbs appear in subsequent events
+    When I run "ErrorBreadcrumbsScenario" and relaunch the crashed app
     And I configure Bugsnag for "ErrorBreadcrumbsScenario"
     Then I wait to receive 2 errors
     And the exception "errorClass" equals "java.lang.RuntimeException"

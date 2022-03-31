@@ -1,3 +1,7 @@
+When('I clear all persistent data') do
+  step 'I click the element "clear_persistent_data"'
+end
+
 # Waits 5s for an element to be present.  If it isn't assume a system error dialog is
 # blocking its view and dismiss it before trying once more.
 #
@@ -27,7 +31,7 @@ When("I run {string}") do |event_type|
   }
 end
 
-When("I run {string} and relaunch the app") do |event_type|
+When("I run {string} and relaunch the crashed app") do |event_type|
   steps %Q{
     When I run "#{event_type}"
     And I relaunch the app after a crash

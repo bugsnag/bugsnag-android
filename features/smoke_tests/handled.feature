@@ -1,6 +1,9 @@
 Feature: Handled smoke tests
 
-Scenario: Notify caught Java exception with default configuration
+  Background:
+    Given I clear all persistent data
+
+  Scenario: Notify caught Java exception with default configuration
     When I run "HandledJavaSmokeScenario"
     And I wait to receive an error
     Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
@@ -109,7 +112,7 @@ Scenario: Notify caught Java exception with default configuration
     And the event "threads.0.stacktrace.0.file" is not null
     And the event "threads.0.stacktrace.0.lineNumber" is not null
 
-Scenario: Notify Kotlin exception with overwritten configuration
+  Scenario: Notify Kotlin exception with overwritten configuration
     When I run "HandledKotlinSmokeScenario"
     Then I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
@@ -165,8 +168,8 @@ Scenario: Notify Kotlin exception with overwritten configuration
     And the event "threads.0.stacktrace.0.file" is not null
     And the event "threads.0.stacktrace.0.lineNumber" is not null
 
-@debug-safe
-Scenario: Handled C functionality
+  @debug-safe
+  Scenario: Handled C functionality
     When I run "CXXNotifySmokeScenario"
     And I wait to receive an error
 

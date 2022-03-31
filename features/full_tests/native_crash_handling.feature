@@ -1,7 +1,10 @@
 Feature: Native crash reporting
 
+  Background:
+    Given I clear all persistent data
+
   Scenario: Dereference a null pointer
-    When I run "CXXDereferenceNullScenario" and relaunch the app
+    When I run "CXXDereferenceNullScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXDereferenceNullScenario"
     And I wait to receive an error
     And the error payload contains a completed unhandled native report
@@ -27,7 +30,7 @@ Feature: Native crash reporting
   # https://android.googlesource.com/platform/bionic/+/fb7eb5e07f43587c2bedf2aaa53b21fa002417bb
   @skip_below_api18
   Scenario: Stack buffer overflow
-    When I run "CXXStackoverflowScenario" and relaunch the app
+    When I run "CXXStackoverflowScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXStackoverflowScenario"
     And I wait to receive an error
     And the error payload contains a completed unhandled native report
@@ -39,12 +42,12 @@ Feature: Native crash reporting
       | crash_stack_overflow | CXXStackoverflowScenario.cpp |
 
   Scenario: Program trap()
-    When I run "CXXTrapScenario" and relaunch the app
+    When I run "CXXTrapScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXTrapScenario"
     And I wait to receive an error
     And the error payload contains a completed unhandled native report
     And the exception "errorClass" equals one of:
-      | SIGILL |
+      | SIGILL  |
       | SIGTRAP |
     And the exception "message" equals one of:
       | Illegal instruction   |
@@ -56,7 +59,7 @@ Feature: Native crash reporting
       | trap_it() | CXXTrapScenario.cpp | 10 |
 
   Scenario: Write to read-only memory
-    When I run "CXXWriteReadOnlyMemoryScenario" and relaunch the app
+    When I run "CXXWriteReadOnlyMemoryScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXWriteReadOnlyMemoryScenario"
     And I wait to receive an error
     And the exception "errorClass" equals "SIGSEGV"
@@ -65,11 +68,11 @@ Feature: Native crash reporting
     And the event "severity" equals "error"
     And the event "unhandled" is true
     And the first significant stack frames match:
-      | crash_write_read_only_mem(int) | CXXWriteReadOnlyMemoryScenario.cpp | 12 |
+      | crash_write_read_only_mem(int)                                                     | CXXWriteReadOnlyMemoryScenario.cpp | 12 |
       | Java_com_bugsnag_android_mazerunner_scenarios_CXXWriteReadOnlyMemoryScenario_crash | CXXWriteReadOnlyMemoryScenario.cpp | 22 |
 
   Scenario: Improper object type cast
-    When I run "CXXImproperTypecastScenario" and relaunch the app
+    When I run "CXXImproperTypecastScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXImproperTypecastScenario"
     And I wait to receive an error
     And the exception "errorClass" equals "SIGSEGV"
@@ -78,11 +81,11 @@ Feature: Native crash reporting
     And the event "severity" equals "error"
     And the event "unhandled" is true
     And the first significant stack frames match:
-      | crash_improper_cast(void*) | CXXImproperTypecastScenario.cpp | 12 |
+      | crash_improper_cast(void*)                                                      | CXXImproperTypecastScenario.cpp | 12 |
       | Java_com_bugsnag_android_mazerunner_scenarios_CXXImproperTypecastScenario_crash | CXXImproperTypecastScenario.cpp | 20 |
 
   Scenario: Program abort()
-    When I run "CXXAbortScenario" and relaunch the app
+    When I run "CXXAbortScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXAbortScenario"
     And I wait to receive an error
     And the error payload contains a completed unhandled native report
@@ -90,17 +93,17 @@ Feature: Native crash reporting
       | SIGABRT |
       | SIGSEGV |
     And the exception "message" equals one of:
-      | Abort program |
+      | Abort program                                     |
       | Segmentation violation (invalid memory reference) |
     And the exception "type" equals "c"
     And the event "severity" equals "error"
     And the event "unhandled" is true
     And the first significant stack frames match:
-      | evictor::exit_with_style() | CXXAbortScenario.cpp | 5 |
+      | evictor::exit_with_style()                                           | CXXAbortScenario.cpp | 5  |
       | Java_com_bugsnag_android_mazerunner_scenarios_CXXAbortScenario_crash | CXXAbortScenario.cpp | 13 |
 
   Scenario: Undefined JNI method
-    When I run "UnsatisfiedLinkErrorScenario" and relaunch the app
+    When I run "UnsatisfiedLinkErrorScenario" and relaunch the crashed app
     And I configure Bugsnag for "UnsatisfiedLinkErrorScenario"
     And I wait to receive an error
     And the report contains the required fields
@@ -110,7 +113,7 @@ Feature: Native crash reporting
     And the event "unhandled" is true
 
   Scenario: Causing a crash in a separate library
-    When I run "CXXExternalStackElementScenario" and relaunch the app
+    When I run "CXXExternalStackElementScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXExternalStackElementScenario"
     And I wait to receive an error
     And the error payload contains a completed unhandled native report
@@ -124,14 +127,14 @@ Feature: Native crash reporting
       | Trace/breakpoint trap |
     And the exception "type" equals "c"
     And the first significant stack frames match:
-      | something_innocuous | libmonochrome.so | (ignore) |
-      | Java_com_bugsnag_android_mazerunner_scenarios_CXXExternalStackElementScenario_crash | CXXExternalStackElementScenario.cpp | 14 |
+      | something_innocuous                                                                 | libmonochrome.so                    | (ignore) |
+      | Java_com_bugsnag_android_mazerunner_scenarios_CXXExternalStackElementScenario_crash | CXXExternalStackElementScenario.cpp | 14       |
 
   Scenario: Call null function pointer
-    A null pointer should be the first element of a stack trace,
-    followed by the calling function
+  A null pointer should be the first element of a stack trace,
+  followed by the calling function
 
-    When I run "CXXCallNullFunctionPointerScenario" and relaunch the app
+    When I run "CXXCallNullFunctionPointerScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXCallNullFunctionPointerScenario"
     And I wait to receive an error
     And the error payload contains a completed unhandled native report
