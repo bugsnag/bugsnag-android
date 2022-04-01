@@ -71,8 +71,10 @@ def is_out_of_project? file, method
   file.nil? ||
     # in native functions from bugsnag-plugin-android-ndk
     method.start_with?("bsg_") || file.end_with?("libbugsnag-ndk.so") ||
-    # c++ standard library + hooks (__cxx_*, __cxa_*, etc)
+    # c++ standard library + llvm hooks (__cxx_*, __cxa_*, etc)
     method.start_with?("std::") || method.start_with?("__cx") ||
+    # gnu hooks
+    method.start_with?("__gnu") ||
     # failed to resolve a symbol location
     method.start_with?("0x") ||
     # sneaky libc functions
