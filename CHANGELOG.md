@@ -1,12 +1,15 @@
 # Changelog
 
-## TBD
+## 5.22.0 (2022-03-31)
 
 ### Enhancements
 
 * Added `Bugsnag.isStarted()` to test whether the Bugsnag client is in the middle of initializing. This can be used to guard uses of the Bugsnag API that are either on separate threads early in the app's start-up and so not guaranteed to be executed after `Bugsnag.start` has completed, or where Bugsnag may not have been started at all due to some internal app logic.
  [slack-jallen](https://github.com/slack-jallen):[#1621](https://github.com/bugsnag/bugsnag-android/pull/1621)
  [#1640](https://github.com/bugsnag/bugsnag-android/pull/1640)
+  
+* Events and Sessions will be discarded if they cannot be uploaded and are older than 60 days or larger than 1MB
+  [#1633](https://github.com/bugsnag/bugsnag-android/pull/1633)
 
 ### Bug fixes
 
