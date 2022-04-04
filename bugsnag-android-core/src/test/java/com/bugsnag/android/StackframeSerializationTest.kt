@@ -22,7 +22,20 @@ internal class StackframeSerializationTest {
                 frame,
                 Stackframe(nativeFrame),
                 Stackframe(NativeStackframe("aMethod", "aFile", 1, null, null, null, null)),
-                Stackframe(NativeStackframe(null, null, null, null, null, null, null))
+                Stackframe(NativeStackframe(null, null, null, null, null, null, null)),
+                Stackframe(
+                    NativeStackframe(
+                        "_kDartIsolateSnapshotInstructions",
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        ErrorType.DART,
+                        "b6951c7f8ae5ea368e83b65d81ff5c91"
+                    )
+                )
             )
         }
     }
