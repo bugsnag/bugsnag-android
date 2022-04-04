@@ -36,7 +36,7 @@ class DeliveryDelegate extends BaseObservable {
         this.backgroundTaskService = backgroundTaskService;
     }
 
-    void deliver(@NonNull Event event) {
+    void deliver(@NonNull Event event, boolean scheduleSend) {
         logger.d("DeliveryDelegate#deliver() - event being stored/delivered by Client");
         Session session = event.getSession();
 
@@ -50,18 +50,22 @@ class DeliveryDelegate extends BaseObservable {
             }
         }
 
-        if (event.getImpl().getOriginalUnhandled()) {
-            // should only send unhandled errors if they don't terminate the process (i.e. ANRs)
-            String severityReasonType = event.getImpl().getSeverityReasonType();
-            boolean promiseRejection = REASON_PROMISE_REJECTION.equals(severityReasonType);
-            boolean anr = event.getImpl().isAnr(event);
-            cacheEvent(event, anr || promiseRejection);
+        if (scheduleSend) {
+            cacheEvent(event, true);
         } else if (callbackState.runOnSendTasks(event, logger)) {
             // Build the eventPayload
             String apiKey = event.getApiKey();
             EventPayload eventPayload = new EventPayload(apiKey, event, notifier, immutableConfig);
             deliverPayloadAsync(event, eventPayload);
         }
+    }
+
+    void deliver(@NonNull Event event) {
+        // should only send unhandled errors if they don't terminate the process (i.e. ANRs)
+        String severityReasonType = event.getImpl().getSeverityReasonType();
+        boolean promiseRejection = REASON_PROMISE_REJECTION.equals(severityReasonType);
+        boolean anr = event.getImpl().isAnr(event);
+        deliver(event, event.getImpl().getOriginalUnhandled() || anr || promiseRejection);
     }
 
     private void deliverPayloadAsync(@NonNull Event event, EventPayload eventPayload) {
