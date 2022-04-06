@@ -1,6 +1,9 @@
 Feature: Empty Stacktrace reported
 
-Scenario: Exceptions with empty stacktraces are sent
+  Background:
+    Given I clear all persistent data
+
+  Scenario: Exceptions with empty stacktraces are sent
     When I run "EmptyStacktraceScenario"
     Then I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier

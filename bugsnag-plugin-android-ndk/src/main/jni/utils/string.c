@@ -16,9 +16,11 @@ size_t bsg_strlen(const char *str) {
 }
 
 void bsg_strncpy(char *dst, const char *src, size_t dst_size) {
-  if (src == NULL || dst == NULL || dst_size == 0) {
+  if (dst == NULL || dst_size == 0) {
     return;
   }
   dst[0] = '\0';
-  strncat(dst, src, dst_size - 1);
+  if (src != NULL) {
+    strncat(dst, src, dst_size - 1);
+  }
 }

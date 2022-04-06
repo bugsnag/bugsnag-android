@@ -4,6 +4,7 @@
 #ifndef BUGSNAG_NDK_H
 #define BUGSNAG_NDK_H
 
+#include <stdatomic.h>
 #include <stdbool.h>
 
 #include "../assets/include/bugsnag.h"
@@ -16,14 +17,6 @@ extern "C" {
 #endif
 
 typedef struct {
-  /**
-   * Unwinding style used for signal-safe handling
-   */
-  bsg_unwinder signal_unwind_style;
-  /**
-   * Preferred unwinding style
-   */
-  bsg_unwinder unwind_style;
   /**
    * Records the version of the bugsnag NDK report being serialized to disk.
    */
@@ -61,7 +54,7 @@ typedef struct {
    * true if a crash is currently being handled. Disallows multiple crashes
    * from being processed simultaneously
    */
-  bool handling_crash;
+  _Atomic bool handling_crash;
   /**
    * true if a handler has completed crash handling
    */
@@ -77,12 +70,6 @@ typedef struct {
 } bsg_environment;
 
 /**
- * Get the configured unwind style for non-async-safe environments.
- * DO NOT USE THIS IN A SIGNAL HANDLER!
- */
-bsg_unwinder bsg_configured_unwind_style();
-
-/**
  * Invokes the user-supplied on_error callback, if it has been set. This allows
  * users to mutate the bugsnag_event payload before it is persisted to disk, and
  * to discard the report by returning false..
@@ -91,6 +78,22 @@ bsg_unwinder bsg_configured_unwind_style();
  * discarded
  */
 bool bsg_run_on_error();
+
+/**
+ * This must be called before handling a native crash to ensure that two crash
+ * handlers don't run simultaneously. If this function returns falls, DO NOT
+ * PROCEED WITH CRASH HANDLING!
+ *
+ * When done handling the crash, you must call bsg_finish_handling_crash()
+ *
+ * @return true if no other crash handler is already running.
+ */
+bool bsg_begin_handling_crash();
+
+/**
+ * Let the system know that you've finished handling the crash.
+ */
+void bsg_finish_handling_crash();
 
 #ifdef __cplusplus
 }

@@ -1,3 +1,7 @@
+When('I clear all persistent data') do
+  step 'I click the element "clear_persistent_data"'
+end
+
 # Waits 5s for an element to be present.  If it isn't assume a system error dialog is
 # blocking its view and dismiss it before trying once more.
 #
@@ -5,8 +9,7 @@
 When('any dialog is cleared and the element {string} is present') do |element_id|
   count = 0
   present = false
-  # Give Android 5 more time to find elements in an attempt to combat flakes
-  timeout = (Maze.config.os_version == 5 ? 15 : 3)
+  timeout = 3
   until present || count > 5
     present = Maze.driver.wait_for_element(element_id, timeout = timeout)
     break if present
@@ -28,7 +31,7 @@ When("I run {string}") do |event_type|
   }
 end
 
-When("I run {string} and relaunch the app") do |event_type|
+When("I run {string} and relaunch the crashed app") do |event_type|
   steps %Q{
     When I run "#{event_type}"
     And I relaunch the app after a crash
@@ -94,39 +97,6 @@ end
 Then("the exception {string} equals one of:") do |keypath, possible_values|
   value = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.exceptions.0.#{keypath}")
   Maze.check.include(possible_values.raw.flatten, value)
-end
-
-# Checks whether the first significant frames match several given frames
-#
-# @param expected_values [Array] A table dictating the expected files and methods of the frames
-#   The first two entries are methods (enabling flexibility across SDKs), the third is the file name
-Then("the first significant stack frame methods and files should match:") do |expected_values|
-  stacktrace = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.exceptions.0.stacktrace")
-  expected_frame_values = expected_values.raw
-  significant_frames = stacktrace.each_with_index.map do |frame, index|
-    method = `c++filt -_ _#{frame["method"]}`.chomp
-    method = frame["method"] if method == "_#{frame["method"]}"
-    insignificant = method.start_with?("bsg_") ||
-      method.start_with?("std::") ||
-      method.start_with?("__cxx") ||
-      frame["file"].start_with?("/system/") ||
-      frame["file"].end_with?("libbugsnag-ndk.so")
-    { :index => index, :method => method, :file => frame["file"] } unless insignificant
-  end
-  significant_frames.select! { |frame| frame }
-  expected_frame_values.each_with_index do |expected_frame, index|
-    test_frame = significant_frames[index]
-    method_match_a = expected_frame[0] == test_frame[:method]
-    method_match_b = expected_frame[1] == test_frame[:method]
-    Maze.check.true(
-      method_match_a || method_match_b,
-      "'#{test_frame[:method]}' in frame #{test_frame[:index]} is not equal to '#{expected_frame[0]}' or '#{expected_frame[1]}'"
-    )
-    Maze.check.true(
-      test_frame[:file].end_with?(expected_frame[2]),
-      "'#{test_frame[:file]}' in frame #{test_frame[:index]} does not end with '#{expected_frame[2]}'"
-    )
-  end
 end
 
 Then("the report contains the required fields") do

@@ -1,6 +1,9 @@
 Feature: Capturing network breadcrumbs
 
-Scenario: Breadcrumbs are captured for OkHttp network requests
+  Background:
+    Given I clear all persistent data
+
+  Scenario: Breadcrumbs are captured for OkHttp network requests
     When I run "NetworkBreadcrumbScenario"
     And I wait to receive an error
     Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier

@@ -1,5 +1,38 @@
 # Changelog
 
+## 5.22.0 (2022-03-31)
+
+### Enhancements
+
+* Added `Bugsnag.isStarted()` to test whether the Bugsnag client is in the middle of initializing. This can be used to guard uses of the Bugsnag API that are either on separate threads early in the app's start-up and so not guaranteed to be executed after `Bugsnag.start` has completed, or where Bugsnag may not have been started at all due to some internal app logic.
+ [slack-jallen](https://github.com/slack-jallen):[#1621](https://github.com/bugsnag/bugsnag-android/pull/1621)
+ [#1640](https://github.com/bugsnag/bugsnag-android/pull/1640)
+  
+* Events and Sessions will be discarded if they cannot be uploaded and are older than 60 days or larger than 1MB
+  [#1633](https://github.com/bugsnag/bugsnag-android/pull/1633)
+
+### Bug fixes
+
+* Fixed potentially [thread-unsafe access](https://github.com/bugsnag/bugsnag-android/issues/883) when invoking `Bugsnag` static methods across different threads whilst `Bugsnag.start` is still in-flight. It is now safe to call any `Bugsnag` static method once `Bugsnag.start` has _begun_ executing, as access to the client singleton is controlled by a lock, so the new `isStarted` method (see above) should only be required where it cannot be determined whether the call to `Bugsnag.start` has begun or you do not want to wait. [#1638](https://github.com/bugsnag/bugsnag-android/pull/1638)
+* Calling `bugsnag_event_set_context` with NULL `context` correctly clears the event context again
+  [#1637](https://github.com/bugsnag/bugsnag-android/pull/1637)
+
+## 5.21.0 (2022-03-17)
+
+### Enhancements
+
+* Fix inconsistencies in stack trace quality for C/C++ events. Resolves a few
+  cases where file and line number information was not resolving to the correct
+  locations. This change may result in grouping changes to more correctly
+  highlight the root cause of an event.
+  [#1605](https://github.com/bugsnag/bugsnag-android/pull/1605)
+  [#1606](https://github.com/bugsnag/bugsnag-android/pull/1606)
+
+### Bug fixes
+
+* Fixed an issue where an uncaught exception on the main thread could in rare cases trigger an ANR.
+  [#1624](https://github.com/bugsnag/bugsnag-android/pull/1624)
+
 ## 5.20.0 (2022-03-10)
 
 ### Enhancements

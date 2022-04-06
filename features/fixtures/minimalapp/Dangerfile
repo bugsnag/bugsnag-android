@@ -9,7 +9,6 @@ UNBUNDLED_RELEASE = "app-release.apks"
 STANDALONE_DIR = BUNDLE_DIR + "standalones/"
 STANDALONE_HDPI_BASE = "standalone-hdpi.apk"
 STANDALONE_ARM64_V8A = "standalone-arm64_v8a_hdpi.apk"
-STANDALONE_ARMEABI = "standalone-armeabi_hdpi.apk"
 STANDALONE_ARMEABI_V7A = "standalone-armeabi_v7a_hdpi.apk"
 STANDALONE_X86_64 = "standalone-x86_64_hdpi.apk"
 STANDALONE_X86 = "standalone-x86_hdpi.apk"
@@ -48,7 +47,6 @@ buildOutputs(bugsnag: true, minified: false)
 
 apk_bugsnag_size = `stat --printf="%s" #{RELEASE_APK}`.to_i
 arm64_bugsnag_size = `stat --printf "%s" #{STANDALONE_DIR + STANDALONE_ARM64_V8A}`.to_i
-armeabi_bugsnag_size = `stat --printf "%s" #{STANDALONE_DIR + STANDALONE_ARMEABI}`.to_i
 armeabi_v7a_bugsnag_size = `stat --printf "%s" #{STANDALONE_DIR + STANDALONE_ARMEABI_V7A}`.to_i
 x86_64_bugsnag_size = `stat --print "%s" #{STANDALONE_DIR + STANDALONE_X86_64}`.to_i
 x86_bugsnag_size = `stat --print "%s" #{STANDALONE_DIR + STANDALONE_X86}`.to_i
@@ -57,20 +55,17 @@ buildOutputs(bugsnag: true, minified: true)
 
 min_apk_bugsnag_size = `stat --printf="%s" #{RELEASE_APK}`.to_i
 min_arm64_bugsnag_size = `stat --printf "%s" #{STANDALONE_DIR + STANDALONE_ARM64_V8A}`.to_i
-min_armeabi_bugsnag_size = `stat --printf "%s" #{STANDALONE_DIR + STANDALONE_ARMEABI}`.to_i
 min_armeabi_v7a_bugsnag_size = `stat --printf "%s" #{STANDALONE_DIR + STANDALONE_ARMEABI_V7A}`.to_i
 min_x86_64_bugsnag_size = `stat --print "%s" #{STANDALONE_DIR + STANDALONE_X86_64}`.to_i
 min_x86_bugsnag_size = `stat --print "%s" #{STANDALONE_DIR + STANDALONE_X86}`.to_i
 
 calculated_sizes = {
   :arm64 => arm64_bugsnag_size - aab_size,
-  :armeabi => armeabi_bugsnag_size - aab_size,
   :armeabi_v7a => armeabi_v7a_bugsnag_size - aab_size,
   :x86_64 => x86_64_bugsnag_size - aab_size,
   :x86 => x86_bugsnag_size - aab_size,
   :apk => apk_bugsnag_size - apk_size,
   :min_arm64 => min_arm64_bugsnag_size - min_aab_size,
-  :min_armeabi => min_armeabi_bugsnag_size - min_aab_size,
   :min_armeabi_v7a => min_armeabi_v7a_bugsnag_size - min_aab_size,
   :min_x86_64 => min_x86_64_bugsnag_size - min_aab_size,
   :min_x86 => min_x86_bugsnag_size - min_aab_size,
@@ -88,7 +83,6 @@ markdown(%Q{
   |-------------|-----------------------------------------------|---------------------------------------------------|
   | APK         | #{format_kbs(calculated_sizes[:apk])}         | #{format_kbs(calculated_sizes[:min_apk])}         |
   | arm64_v8a   | #{format_kbs(calculated_sizes[:arm64])}       | #{format_kbs(calculated_sizes[:min_arm64])}       |
-  | armeabi     | #{format_kbs(calculated_sizes[:armeabi])}     | #{format_kbs(calculated_sizes[:min_armeabi])}     |
   | armeabi_v7a | #{format_kbs(calculated_sizes[:armeabi_v7a])} | #{format_kbs(calculated_sizes[:min_armeabi_v7a])} |
   | x86         | #{format_kbs(calculated_sizes[:x86])}         | #{format_kbs(calculated_sizes[:min_x86])}         |
   | x86_64      | #{format_kbs(calculated_sizes[:x86_64])}      | #{format_kbs(calculated_sizes[:min_x86_64])}      |

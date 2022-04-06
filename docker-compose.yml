@@ -29,6 +29,7 @@ services:
       MINIMAL_FIXTURE:
       TEST_FIXTURE_NDK_VERSION:
       TEST_FIXTURE_NAME:
+      TEST_FIXTURE_CONFIGURATION:
       USE_LEGACY_OKHTTP:
       BUILD_TASK:
     volumes:
@@ -78,6 +79,7 @@ services:
       BROWSER_STACK_ACCESS_KEY:
       SAUCE_LABS_USERNAME:
       SAUCE_LABS_ACCESS_KEY:
+      TEST_FIXTURE_SYMBOL_DIR:
     volumes:
       - ./build:/app/build
       - ./features/:/app/features/

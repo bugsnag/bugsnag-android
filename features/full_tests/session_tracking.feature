@@ -1,6 +1,9 @@
 Feature: Session Tracking
 
-Scenario: User is persisted between sessions
+  Background:
+    Given I clear all persistent data
+
+  Scenario: User is persisted between sessions
     When I run "SessionPersistUserScenario"
     And I wait to receive a session
     Then the session is valid for the session reporting API version "1.0" for the "Android Bugsnag Notifier" notifier
@@ -20,7 +23,7 @@ Scenario: User is persisted between sessions
     And the session "user.email" equals "test@test.test"
     And the session "user.name" equals "test user"
 
-Scenario: User is not persisted between sessions
+  Scenario: User is not persisted between sessions
     When I run "SessionPersistUserDisabledScenario"
     And I wait to receive a session
     Then the session is valid for the session reporting API version "1.0" for the "Android Bugsnag Notifier" notifier

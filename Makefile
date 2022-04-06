@@ -30,6 +30,18 @@ test-fixtures:
 	# Build the full test fixture
 	@./gradlew -PTEST_FIXTURE_NDK_VERSION=$(TEST_FIXTURE_NDK_VERSION) -p=features/fixtures/mazerunner/ assembleRelease -x check
 	@cp features/fixtures/mazerunner/app/build/outputs/apk/release/fixture.apk build/fixture.apk
+	# copy the unstripped scenarios libs (for stack unwinding validation)
+	# grabs the newest files as the likely just built ones
+	LIB_CXX_BUGSNAG=$$(ls -dtr features/fixtures/mazerunner/cxx-scenarios-bugsnag/build/intermediates/cxx/RelWithDebInfo/* | head -n 1) && \
+	LIB_CXX=$$(ls -dtr features/fixtures/mazerunner/cxx-scenarios/build/intermediates/cxx/RelWithDebInfo/* | head -n 1) && \
+		cp $$LIB_CXX/obj/x86_64/libcxx-scenarios.so build/libcxx-scenarios-x86_64.so && \
+		cp $$LIB_CXX/obj/x86/libcxx-scenarios.so build/libcxx-scenarios-x86.so && \
+		cp $$LIB_CXX/obj/arm64-v8a/libcxx-scenarios.so build/libcxx-scenarios-arm64.so && \
+		cp $$LIB_CXX/obj/armeabi-v7a/libcxx-scenarios.so build/libcxx-scenarios-arm32.so && \
+		cp $$LIB_CXX_BUGSNAG/obj/x86_64/libcxx-scenarios-bugsnag.so build/libcxx-scenarios-bugsnag-x86_64.so && \
+		cp $$LIB_CXX_BUGSNAG/obj/x86/libcxx-scenarios-bugsnag.so build/libcxx-scenarios-bugsnag-x86.so && \
+		cp $$LIB_CXX_BUGSNAG/obj/arm64-v8a/libcxx-scenarios-bugsnag.so build/libcxx-scenarios-bugsnag-arm64.so && \
+		cp $$LIB_CXX_BUGSNAG/obj/armeabi-v7a/libcxx-scenarios-bugsnag.so build/libcxx-scenarios-bugsnag-arm32.so
 
 	# And the minimal (no NDK or ANR plugin) test fixture
 	@./gradlew -PMINIMAL_FIXTURE=true -PTEST_FIXTURE_NAME=fixture-minimal.apk  -p=features/fixtures/mazerunner/ assembleRelease -x check
@@ -48,7 +60,14 @@ ifeq ($(VERSION),)
 	@$(error VERSION is not defined. Run with `make VERSION=number bump`)
 endif
 	@echo Bumping the version number to $(VERSION)
+	@sed -i '' "s/bugsnag-android:.*\"/bugsnag-android:$(VERSION)\"/" examples/sdk-app-example/app/build.gradle
 	@sed -i '' "s/VERSION_NAME=.*/VERSION_NAME=$(VERSION)/" gradle.properties
 	@sed -i '' "s/var version: String = .*/var version: String = \"$(VERSION)\",/"\
 	 bugsnag-android-core/src/main/java/com/bugsnag/android/Notifier.kt
 	@sed -i '' "s/## TBD/## $(VERSION) ($(shell date '+%Y-%m-%d'))/" CHANGELOG.md
+
+.PHONY: check
+check:
+	@./gradlew lint detekt ktlintCheck checkstyle
+	@./scripts/run-cpp-check.sh
+	@./scripts/run-clang-format-ci-check.sh

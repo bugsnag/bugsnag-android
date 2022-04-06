@@ -1,8 +1,11 @@
 Feature: Using custom API clients for reporting errors
 
-Scenario: Set a custom HTTP client and flush a stored error + session
+  Background:
+    Given I clear all persistent data
+
+  Scenario: Set a custom HTTP client and flush a stored error + session
     When I configure the app to run in the "offline" state
-    And I run "CustomHttpClientFlushScenario" and relaunch the app
+    And I run "CustomHttpClientFlushScenario" and relaunch the crashed app
     And I configure Bugsnag for "CustomHttpClientFlushScenario"
 
     # error received
@@ -15,7 +18,7 @@ Scenario: Set a custom HTTP client and flush a stored error + session
     And the session "Custom-Client" header equals "Hello World"
     And the session is valid for the session reporting API version "1.0" for the "Android Bugsnag Notifier" notifier
 
-Scenario: Set a custom HTTP client and send an error + session
+  Scenario: Set a custom HTTP client and send an error + session
     When I run "CustomHttpClientScenario"
 
     # error received

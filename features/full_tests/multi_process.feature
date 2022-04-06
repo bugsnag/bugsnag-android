@@ -1,6 +1,9 @@
 Feature: Reporting errors in multi process apps
 
-Scenario: Handled JVM error
+  Background:
+    Given I clear all persistent data
+
+  Scenario: Handled JVM error
     When I run "MultiProcessHandledExceptionScenario"
     Then I wait to receive 2 errors
     And I sort the errors by "events.0.metaData.app.processName"
@@ -29,11 +32,11 @@ Scenario: Handled JVM error
     And the error payload field "events.0.user.name" equals "MultiProcessHandledExceptionScenario"
     And the error payload field "events.0.user.email" equals "foreground@example.com"
 
-Scenario: Unhandled JVM error
+  Scenario: Unhandled JVM error
     And I configure the app to run in the "main-activity" state
-    When I run "MultiProcessUnhandledExceptionScenario" and relaunch the app
+    When I run "MultiProcessUnhandledExceptionScenario" and relaunch the crashed app
     And I configure the app to run in the "multi-process-service" state
-    And I run "MultiProcessUnhandledExceptionScenario" and relaunch the app
+    And I run "MultiProcessUnhandledExceptionScenario" and relaunch the crashed app
     And I run "MultiProcessUnhandledExceptionScenario"
     Then I wait to receive 2 errors
     And I sort the errors by "events.0.metaData.app.processName"
@@ -52,7 +55,7 @@ Scenario: Unhandled JVM error
     And the event "unhandled" is true
     And the error payload field "events.0.metaData.app.processName" equals "com.example.bugsnag.android.mazerunner.multiprocess"
 
-Scenario: Handled NDK error
+  Scenario: Handled NDK error
     When I run "MultiProcessHandledCXXErrorScenario"
     Then I wait to receive 2 errors
     And I sort the errors by "events.0.metaData.app.processName"
@@ -79,11 +82,11 @@ Scenario: Handled NDK error
     And the error payload field "events.0.device.id" equals the stored value "first_device_id"
     And the error payload field "events.0.user.id" equals the stored value "first_device_id"
 
-Scenario: Unhandled NDK error
+  Scenario: Unhandled NDK error
     And I configure the app to run in the "main-activity" state
-    When I run "MultiProcessUnhandledCXXErrorScenario" and relaunch the app
+    When I run "MultiProcessUnhandledCXXErrorScenario" and relaunch the crashed app
     And I configure the app to run in the "multi-process-service" state
-    And I run "MultiProcessUnhandledCXXErrorScenario" and relaunch the app
+    And I run "MultiProcessUnhandledCXXErrorScenario" and relaunch the crashed app
     And I run "MultiProcessUnhandledCXXErrorScenario"
     Then I wait to receive 2 errors
     And I sort the errors by "events.0.metaData.app.processName"
@@ -112,7 +115,7 @@ Scenario: Unhandled NDK error
     And the error payload field "events.0.user.name" equals "MultiProcessUnhandledCXXErrorScenario"
     And the error payload field "events.0.user.email" equals "1@test.com"
 
-Scenario: User/device information is migrated from SharedPreferences
+  Scenario: User/device information is migrated from SharedPreferences
     When I run "SharedPrefMigrationScenario"
     Then I wait to receive 2 errors
     And I sort the errors by "events.0.metaData.app.processName"

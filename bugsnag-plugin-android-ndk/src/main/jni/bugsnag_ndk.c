@@ -38,24 +38,6 @@ static void release_env_write_lock(void) {
   pthread_mutex_unlock(&bsg_global_env_write_mutex);
 }
 
-bsg_unwinder bsg_configured_unwind_style() {
-  if (bsg_global_env != NULL)
-    return bsg_global_env->unwind_style;
-
-  return BSG_CUSTOM_UNWIND;
-}
-
-/**
- * Get the configured unwind style for async-safe environments such as signal
- * handlers.
- */
-bsg_unwinder bsg_configured_signal_unwind_style() {
-  if (bsg_global_env != NULL)
-    return bsg_global_env->signal_unwind_style;
-
-  return BSG_CUSTOM_UNWIND;
-}
-
 void bugsnag_add_on_error(bsg_on_error on_error) {
   if (bsg_global_env != NULL) {
     bsg_global_env->on_error = on_error;
@@ -74,6 +56,17 @@ bool bsg_run_on_error() {
     return on_error(&bsg_global_env->next_event);
   }
   return true;
+}
+
+bool bsg_begin_handling_crash() {
+  static bool expected = false;
+  return atomic_compare_exchange_strong(&bsg_global_env->handling_crash,
+                                        &expected, true);
+}
+
+void bsg_finish_handling_crash() {
+  bsg_global_env->crash_handled = true;
+  bsg_global_env->handling_crash = false;
 }
 
 JNIEXPORT void JNICALL Java_com_bugsnag_android_NdkPlugin_enableCrashReporting(
@@ -155,14 +148,13 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   }
 
   bsg_environment *bugsnag_env = calloc(1, sizeof(bsg_environment));
-  bsg_set_unwind_types((int)_api_level, (bool)is32bit,
-                       &bugsnag_env->signal_unwind_style,
-                       &bugsnag_env->unwind_style);
+  bsg_unwinder_init();
   bugsnag_env->report_header.big_endian =
       htonl(47) == 47; // potentially too clever, see man 3 htonl
   bugsnag_env->report_header.version = BUGSNAG_EVENT_VERSION;
   bugsnag_env->consecutive_launch_crashes = consecutive_launch_crashes;
   bugsnag_env->send_threads = send_threads;
+  bugsnag_env->handling_crash = ATOMIC_VAR_INIT(false);
 
   // copy event path to env struct
   const char *event_path = bsg_safe_get_string_utf_chars(env, _event_path);
@@ -721,20 +713,10 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_updateMetadata(
   release_env_write_lock();
 }
 
-// Unwind the stack using the configured unwind style for signal handlers.
-// This function gets exposed via
-// Java_com_bugsnag_android_ndk_NativeBridge_getSignalUnwindStackFunction()
-static ssize_t
-bsg_unwind_stack_signal(bugsnag_stackframe stacktrace[BUGSNAG_FRAMES_MAX],
-                        siginfo_t *info, void *user_context) __asyncsafe {
-  return bsg_unwind_stack(bsg_configured_signal_unwind_style(), stacktrace,
-                          info, user_context);
-}
-
 JNIEXPORT jlong JNICALL
 Java_com_bugsnag_android_ndk_NativeBridge_getSignalUnwindStackFunction(
     JNIEnv *env, jobject thiz) {
-  return (jlong)bsg_unwind_stack_signal;
+  return (jlong)bsg_unwind_crash_stack;
 }
 
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_addFeatureFlag(

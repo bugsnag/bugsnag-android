@@ -20,11 +20,7 @@ add_library( # Specifies the name of the library.
     jni/utils/serializer/event_reader.c
     jni/utils/serializer/event_writer.c
     jni/utils/serializer/json_writer.c
-    jni/utils/stack_unwinder.c
-    jni/utils/stack_unwinder_libunwindstack.cpp
-    jni/utils/stack_unwinder_libcorkscrew.c
-    jni/utils/stack_unwinder_libunwind.c
-    jni/utils/stack_unwinder_simple.c
+    jni/utils/stack_unwinder.cpp
     jni/utils/serializer.c
     jni/utils/string.c
     jni/utils/threads.c
@@ -34,7 +30,6 @@ add_library( # Specifies the name of the library.
 include_directories(
     jni
     jni/deps
-    jni/external/libunwind/include
     jni/external/libunwindstack-ndk/include
              )
 
@@ -45,16 +40,16 @@ target_link_libraries( # Specifies the target library.
                      # Links the log library to the target library.
                      log)
 
+# Avoid exporting symbols in release mode to keep internals private
+# More symbols are exported in debug mode for the sake of unit testing
+set(EXTRA_LINK_FLAGS "-Wl,--version-script=${CMAKE_CURRENT_LIST_DIR}/exported_native_symbols-${CMAKE_BUILD_TYPE}.txt")
+
 set_target_properties(bugsnag-ndk
                       PROPERTIES
-                      COMPILE_OPTIONS
-                      -Werror -Wall -pedantic)
+                      COMPILE_OPTIONS -Werror -Wall -pedantic
+                      LINK_FLAGS "${EXTRA_LINK_FLAGS}"
+                      CXX_STANDARD 17
+                      CXX_STANDARD_REQUIRED YES)
 
 add_subdirectory(jni/external/libunwindstack-ndk/cmake)
 target_link_libraries(bugsnag-ndk unwindstack)
-if(${ANDROID_ABI} STREQUAL "armeabi" OR ${ANDROID_ABI} STREQUAL "armeabi-v7a")
-    add_library(libunwind STATIC IMPORTED)
-    set_target_properties(libunwind PROPERTIES IMPORTED_LOCATION
-        ${ANDROID_NDK}/sources/cxx-stl/llvm-libc++/libs/${ANDROID_ABI}/libunwind.a)
-    target_link_libraries(bugsnag-ndk libunwind)
-endif()

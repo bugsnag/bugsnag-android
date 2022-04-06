@@ -121,7 +121,7 @@ class EventErrorTypeTest {
     fun verifyFileNameMixedTypes() {
         val config = convertToImmutableConfig(BugsnagTestUtils.generateConfiguration())
         val file =
-            File("1504255147933_0000111122223333aaaabbbbcccc9999_android,c,reactnativejs_my-uuid-123_.json")
+            File("1504255147933_0000111122223333aaaabbbbcccc9999_android,c,reactnativejs,dart_my-uuid-123_.json")
         val payload = EventPayload(config.apiKey, null, file, Notifier(), config)
         assertEquals(ErrorType.values().toSet(), payload.getErrorTypes())
     }

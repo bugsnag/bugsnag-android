@@ -1,6 +1,9 @@
 Feature: ANRs triggered in CXX code are captured
 
-Scenario: ANR triggered in CXX code is captured
+  Background:
+    Given I clear all persistent data
+
+  Scenario: ANR triggered in CXX code is captured
     When I run "CXXAnrScenario"
     And I wait for 2 seconds
     And I tap the screen 3 times
@@ -14,7 +17,7 @@ Scenario: ANR triggered in CXX code is captured
     And the error payload field "events.0.threads.0.type" equals "android"
     And the error payload field "events.0.threads.0.stacktrace.0.type" is null
 
-Scenario: ANR triggered in CXX code is captured even when NDK detection is disabled
+  Scenario: ANR triggered in CXX code is captured even when NDK detection is disabled
     When I run "CXXAnrNdkDisabledScenario"
     And I wait for 2 seconds
     And I tap the screen 3 times
