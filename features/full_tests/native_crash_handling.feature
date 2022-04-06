@@ -56,7 +56,7 @@ Feature: Native crash reporting
     And the event "severity" equals "error"
     And the event "unhandled" is true
     And the first significant stack frames match:
-      | trap_it() | CXXTrapScenario.cpp | 10 |
+      | trap_it() | CXXTrapScenario.cpp | 12 |
 
   Scenario: Write to read-only memory
     When I run "CXXWriteReadOnlyMemoryScenario" and relaunch the crashed app

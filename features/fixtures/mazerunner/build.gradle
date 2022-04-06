@@ -28,3 +28,12 @@ buildscript {
         classpath "org.jlleitschuh.gradle:ktlint-gradle:10.2.0"
     }
 }
+
+if (project.hasProperty("TEST_FIXTURE_NDK_VERSION")) {
+    def version = project.property("TEST_FIXTURE_NDK_VERSION")
+    project.logger.lifecycle("Building test fixture with custom NDK version '$version'")
+    ext.ndkVersion = version
+} else {
+    project.logger.lifecycle("Building test fixture with default NDK version")
+    ext.ndkVersion = "17.2.4988734"
+}
