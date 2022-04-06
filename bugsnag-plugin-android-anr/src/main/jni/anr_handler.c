@@ -228,7 +228,7 @@ static bool configure_anr_jni_impl(JNIEnv *env) {
       env, frame_class, "<init>",
       "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Number;Ljava/lang/"
       "Long;Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Boolean;Lcom/bugsnag/"
-      "android/ErrorType;)V");
+      "android/ErrorType;Ljava/lang/String;)V");
   if (frame_init == NULL) {
     return false;
   }
@@ -309,7 +309,7 @@ static void notify_anr_detected() {
         safe_new_object(env, long_class, long_init, (jlong)frame->load_address);
     jobject jframe = safe_new_object(
         env, frame_class, frame_init, jmethod, jfilename, jline_number,
-        jframe_address, jsymbol_address, jload_address, NULL, error_type);
+        jframe_address, jsymbol_address, jload_address, NULL, error_type, NULL);
     if (jframe != NULL) {
       (*env)->CallBooleanMethod(env, jlist, list_add, jframe);
       check_and_clear_exc(env);
