@@ -34,9 +34,5 @@ internal class DiscardBigEventsScenario(
         super.startScenario()
         Bugsnag.markLaunchCompleted()
         Bugsnag.notify(MyThrowable("DiscardBigEventsScenario"))
-
-        waitForEventFile()
-
-        Bugsnag.notify(MyThrowable("To keep maze-runner from shutting me down prematurely"))
     }
 }

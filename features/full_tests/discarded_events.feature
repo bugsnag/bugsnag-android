@@ -27,26 +27,22 @@ Feature: Discarding events
     And I configure Bugsnag for "DiscardOldEventsScenario"
     Then I should receive no requests
 
-  Scenario: Discard an on-disk error that failed to send and is too big
+    Scenario: Discard an on-disk error that failed to send and is too big
     # Fail to send initial handled error. Client stores it to disk.
-    When I set the HTTP status code for the next request to 500
-    And I run "DiscardBigEventsScenario"
-    And I wait to receive an error
-    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    Given I set the endpoints to the terminating server
+    And I start the terminating server
+    When I run "DiscardBigEventsScenario"
+    And I wait for 2 seconds
+    And the terminating server has received 1 requests
 
-    # Fail to send event that was reloaded from disk. Event is too old, so the client discards it.
-    Then I discard the oldest error
-    # We send another error to keep maze-runner from shutting down the app prematurely.
-    And I wait to receive an error
-    And I discard the oldest error
-    And I set the HTTP status code for the next request to 500
-    And I close and relaunch the app
+    # Relaunch, failing again by targetting the terminating server.
+    Then I close and relaunch the app
+    And I set the endpoints to the terminating server
     And I configure Bugsnag for "DiscardBigEventsScenario"
-    And I wait to receive an error
-    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And I wait for 2 seconds
+    And the terminating server has received 1 requests
 
-    # Now there is no event on disk, so there's nothing to send.
-    Then I discard the oldest error
-    And I close and relaunch the app
+    # The event should have been deleted, so we should receive nothing
+    Then I close and relaunch the app
     And I configure Bugsnag for "DiscardBigEventsScenario"
-    Then I should receive no requests
+    And I should receive no requests
