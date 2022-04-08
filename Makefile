@@ -22,36 +22,52 @@ endif
 	 INSTRUMENTATION_DEVICES='["Google Nexus 5-4.4", "Google Pixel-7.1", "Google Pixel 3-9.0"]' \
 	 docker-compose up --build android-instrumentation-tests
 
+BUILD_TASK ?= assembleRelease
+MINIMAL_FIXTURE ?= false
 TEST_FIXTURE_NDK_VERSION ?= 16.1.4479499
-test-fixtures:
+TEST_FIXTURE_NAME ?= fixture
+USE_LEGACY_OKHTTP ?= false
+
+notifier:
 	# Build the notifier
 	@./gradlew -PVERSION_NAME=9.9.9 assembleRelease publishToMavenLocal -x check
 
-	# Build the full test fixture
-	@./gradlew -PTEST_FIXTURE_NDK_VERSION=$(TEST_FIXTURE_NDK_VERSION) -p=features/fixtures/mazerunner/ assembleRelease -x check
-	@cp features/fixtures/mazerunner/app/build/outputs/apk/release/fixture.apk build/fixture.apk
-	# copy the unstripped scenarios libs (for stack unwinding validation)
-	# grabs the newest files as the likely just built ones
-	LIB_CXX_BUGSNAG_64=$$(dirname `ls -dt features/fixtures/mazerunner/cxx-scenarios-bugsnag/build/intermediates/cxx/RelWithDebInfo/*/obj/x86_64 | head -n 1`) && \
-	LIB_CXX_BUGSNAG_32=$$(dirname `ls -dt features/fixtures/mazerunner/cxx-scenarios-bugsnag/build/intermediates/cxx/RelWithDebInfo/*/obj/armeabi-v7a | head -n 1`) && \
-	LIB_CXX_64=$$(dirname `ls -dt features/fixtures/mazerunner/cxx-scenarios/build/intermediates/cxx/RelWithDebInfo/*/obj/x86_64 | head -n 1`) && \
-	LIB_CXX_32=$$(dirname `ls -dt features/fixtures/mazerunner/cxx-scenarios/build/intermediates/cxx/RelWithDebInfo/*/obj/armeabi-v7a | head -n 1`) && \
-		cp $$LIB_CXX_64/x86_64/libcxx-scenarios.so build/libcxx-scenarios-x86_64.so && \
-		cp $$LIB_CXX_32/x86/libcxx-scenarios.so build/libcxx-scenarios-x86.so && \
-		cp $$LIB_CXX_64/arm64-v8a/libcxx-scenarios.so build/libcxx-scenarios-arm64.so && \
-		cp $$LIB_CXX_32/armeabi-v7a/libcxx-scenarios.so build/libcxx-scenarios-arm32.so && \
-		cp $$LIB_CXX_BUGSNAG_64/x86_64/libcxx-scenarios-bugsnag.so build/libcxx-scenarios-bugsnag-x86_64.so && \
-		cp $$LIB_CXX_BUGSNAG_32/x86/libcxx-scenarios-bugsnag.so build/libcxx-scenarios-bugsnag-x86.so && \
-		cp $$LIB_CXX_BUGSNAG_64/arm64-v8a/libcxx-scenarios-bugsnag.so build/libcxx-scenarios-bugsnag-arm64.so && \
-		cp $$LIB_CXX_BUGSNAG_32/armeabi-v7a/libcxx-scenarios-bugsnag.so build/libcxx-scenarios-bugsnag-arm32.so
+fixture-r16: notifier
+	# Build the r16 test fixture
+	@./gradlew -PTEST_FIXTURE_NDK_VERSION=16.1.4479499 \
+               -PTEST_FIXTURE_NAME=fixture-r16.apk \
+               -PUSE_LEGACY_OKHTTP=true \
+	           -p=features/fixtures/mazerunner assembleRelease -x check
+	@scripts/copy-build-files.sh release fixture-r16
 
-	# And the minimal (no NDK or ANR plugin) test fixture
-	@./gradlew -PMINIMAL_FIXTURE=true -PTEST_FIXTURE_NAME=fixture-minimal.apk  -p=features/fixtures/mazerunner/ assembleRelease -x check
-	@cp features/fixtures/mazerunner/app/build/outputs/apk/release/fixture-minimal.apk build/fixture-minimal.apk
+fixture-r19: notifier
+	# Build the r19 test fixture
+	@./gradlew -PTEST_FIXTURE_NDK_VERSION=19.2.5345600 \
+               -PTEST_FIXTURE_NAME=fixture-r19.apk \
+	           -p=features/fixtures/mazerunner assembleRelease -x check
+	@scripts/copy-build-files.sh release fixture-r19
 
-	# And the debug test fixture (full fixture - but a debug build)
-	@./gradlew -PTEST_FIXTURE_NDK_VERSION=$(TEST_FIXTURE_NDK_VERSION) -p=features/fixtures/mazerunner/ assembleDebug -x check
-	@cp features/fixtures/mazerunner/app/build/outputs/apk/debug/fixture.apk build/fixture-debug.apk
+fixture-r21: notifier
+	# Build the minimal test fixture
+	@./gradlew -PTEST_FIXTURE_NDK_VERSION=21.4.7075529 \
+               -PTEST_FIXTURE_NAME=fixture-r21.apk \
+               -p=features/fixtures/mazerunner assembleRelease -x check
+	@scripts/copy-build-files.sh release fixture-r21
+
+fixture-minimal: notifier
+	# Build the minimal test fixture
+	@./gradlew -PMINIMAL_FIXTURE=true \
+	           -PTEST_FIXTURE_NDK_VERSION=17.2.4988734 \
+               -PTEST_FIXTURE_NAME=fixture-minimal.apk \
+               -p=features/fixtures/mazerunner assembleRelease -x check
+	@scripts/copy-build-files.sh release fixture-minimal
+
+fixture-debug: notifier
+	# Build the minimal test fixture
+	@./gradlew -PTEST_FIXTURE_NDK_VERSION=17.2.4988734 \
+               -PTEST_FIXTURE_NAME=fixture-debug.apk \
+               -p=features/fixtures/mazerunner assembleDebug -x check
+	@scripts/copy-build-files.sh debug fixture-debug
 
 bump:
 ifneq ($(shell git diff --staged),)
