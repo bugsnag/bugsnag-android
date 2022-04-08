@@ -22,6 +22,8 @@ import java.net.URL
 
 import kotlin.concurrent.thread
 
+import org.json.JSONObject
+
 class MainActivity : Activity() {
 
     private val apiKeyKey = "BUGSNAG_API_KEY"
@@ -53,9 +55,10 @@ class MainActivity : Activity() {
         // Get the next maze runner command
         findViewById<Button>(R.id.run_command).setOnClickListener {
             thread(start = true) {
+                // Get the next command from Maze Runner
                 log("Run command")
                 val commandUrl: String = "http://bs-local.com:9339/command"
-                var command: String
+                var command: JSONObject
                 try {
                     val url = URL(commandUrl)
                     val sb = StringBuilder()
@@ -66,39 +69,19 @@ class MainActivity : Activity() {
                     while (reader.readLine().also { line = it } != null) {
                         sb.append(line)
                     }
-                    command = sb.toString()
-                    log("Command: " + command)
+                    val commandStr = sb.toString()
+                    log("Received command: " + commandStr)
+                    command = JSONObject(commandStr)
+                    log("command.action: " + command.getString("action"))
+                    log("command.scenario_name: " + command.getString("scenario_name"))
+                    log("command.scenario_mode: " + command.getString("scenario_mode"))
                 } catch (e: Exception) {
-                    // TODO Handle the exception
                     log("Failed to fetch command from Maze Runner", e)
                 }
+
+                // command
+
             }
-        }
-
-        // load the scenario first, which initialises bugsnag without running any crashy code
-        findViewById<Button>(R.id.start_bugsnag).setOnClickListener {
-            scenario = loadScenarioFromUi()
-            scenario?.startBugsnag(true)
-        }
-
-        // execute the pre-loaded scenario, or load it then execute it if needed
-        findViewById<Button>(R.id.run_scenario).setOnClickListener {
-            if (scenario == null) {
-                scenario = loadScenarioFromUi()
-                scenario?.startBugsnag(false)
-            }
-
-            /**
-             * Enqueues the test case with a delay on the main thread. This avoids the Activity wrapping
-             * unhandled Exceptions
-             */
-            window.decorView.postDelayed(
-                {
-                    log("Executing scenario")
-                    scenario?.startScenario()
-                },
-                1
-            )
         }
 
         val clearUserData = findViewById<Button>(R.id.clearUserData)
@@ -118,6 +101,32 @@ class MainActivity : Activity() {
         }
     }
 
+    // load the scenario first, which initialises bugsnag without running any crashy code
+    private fun start_bugsnag(eventType: String, mode: String) {
+        scenario = loadScenario(eventType, mode)
+        scenario?.startBugsnag(true)
+    }
+
+    // execute the pre-loaded scenario, or load it then execute it if needed
+    private fun run_scenario(eventType: String, mode: String) {
+        if (scenario == null) {
+            scenario = loadScenario(eventType, mode)
+            scenario?.startBugsnag(false)
+        }
+
+        /**
+         * Enqueues the test case with a delay on the main thread. This avoids the Activity wrapping
+         * unhandled Exceptions
+         */
+        window.decorView.postDelayed(
+            {
+                log("Executing scenario")
+                scenario?.startScenario()
+            },
+            1
+        )
+    }
+
     private fun clearFolder(name: String) {
         val context = MazerunnerApp.applicationContext()
         val folder = File(context.cacheDir, name)
@@ -125,10 +134,7 @@ class MainActivity : Activity() {
         folder.deleteRecursively()
     }
 
-    private fun loadScenarioFromUi(): Scenario {
-
-        val eventType = findViewById<EditText>(R.id.scenario_name).text.toString()
-        val mode = findViewById<EditText>(R.id.scenario_mode).text.toString()
+    private fun loadScenario(eventType: String, mode: String): Scenario {
 
         val apiKeyField = findViewById<EditText>(R.id.manualApiKey)
         val notifyEndpointField = findViewById<EditText>(R.id.notify_endpoint)
