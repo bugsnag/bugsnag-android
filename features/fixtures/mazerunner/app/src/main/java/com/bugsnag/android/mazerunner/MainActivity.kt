@@ -52,12 +52,14 @@ class MainActivity : Activity() {
                     log("command.scenarioName: " + scenarioName)
                     log("command.scenarioMode: " + scenarioMode)
 
-                    // Perform the given action
-                    when (action) {
-                        "start_bugsnag" -> startBugsnag(scenarioName, scenarioMode)
-                        "run_scenario" -> runScenario(scenarioName, scenarioMode)
-                        "clear_persistent_data" -> clearPersistentData()
-                        else -> throw IllegalArgumentException("Unknown action: " + action)
+                    // Perform the given action on the UI thread
+                    runOnUiThread {
+                        when (action) {
+                            "start_bugsnag" -> startBugsnag(scenarioName, scenarioMode)
+                            "run_scenario" -> runScenario(scenarioName, scenarioMode)
+                            "clear_persistent_data" -> clearPersistentData()
+                            else -> throw IllegalArgumentException("Unknown action: " + action)
+                        }
                     }
                 } catch (e: Exception) {
                     log("Failed to fetch command from Maze Runner", e)
