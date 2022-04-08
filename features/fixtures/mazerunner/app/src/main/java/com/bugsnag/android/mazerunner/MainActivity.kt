@@ -6,7 +6,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
-import android.view.Window;
+import android.view.Window
 import android.widget.Button
 import android.widget.EditText
 import com.bugsnag.android.mazerunner.scenarios.Scenario
@@ -56,7 +56,7 @@ class MainActivity : Activity() {
                     when (action) {
                         "start_bugsnag" -> startBugsnag(scenarioName, scenarioMode)
                         "run_scenario" -> runScenario(scenarioName, scenarioMode)
-                        "clear_persistent_data" -> clear_persistent_data()
+                        "clear_persistent_data" -> clearPersistentData()
                         else -> throw IllegalArgumentException("Unknown action: " + action)
                     }
                 } catch (e: Exception) {
@@ -109,7 +109,7 @@ class MainActivity : Activity() {
     }
 
     // Clear persistent data (used to stop scenarios bleeding into each other)
-    private fun clear_persistent_data() {
+    private fun clearPersistentData() {
         log("Clearing persistent data")
         clearFolder("last-run-info")
         clearFolder("bugsnag-errors")

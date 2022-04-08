@@ -28,7 +28,7 @@ def execute_command(action, scenario_name)
   Maze::Server.commands.add command
 
   # Tapping saves a lot of time finding and clicking elements with Appium
-  tap_at 100, 100
+  tap_at 200, 200
   $scenario_mode = ''
   $reset_data = false
 
@@ -88,7 +88,6 @@ When("I tap the screen {int} times") do |count|
   (1..count).each { |i|
     begin
       tap_at 500, 300
-      touch_action.perform
     rescue Selenium::WebDriver::Error::ElementNotInteractableError
       # Ignore it§
     end
