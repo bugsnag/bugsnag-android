@@ -119,6 +119,8 @@ bsg_metadata_value bugsnag_get_metadata_value(void *event_ptr,
   }
   bsg_metadata_value data;
   data.type = BSG_METADATA_NONE_VALUE;
+  data.bool_value = false;
+  data.double_value = 0.0;
   return data;
 }
 
