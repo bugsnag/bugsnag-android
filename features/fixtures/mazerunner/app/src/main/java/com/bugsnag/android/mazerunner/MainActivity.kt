@@ -56,7 +56,6 @@ class MainActivity : Activity() {
         findViewById<Button>(R.id.run_command).setOnClickListener {
             thread(start = true) {
                 // Get the next command from Maze Runner
-                log("Run command")
                 val commandUrl: String = "http://bs-local.com:9339/command"
                 var command: JSONObject
                 try {
@@ -72,15 +71,25 @@ class MainActivity : Activity() {
                     val commandStr = sb.toString()
                     log("Received command: " + commandStr)
                     command = JSONObject(commandStr)
-                    log("command.action: " + command.getString("action"))
-                    log("command.scenario_name: " + command.getString("scenario_name"))
-                    log("command.scenario_mode: " + command.getString("scenario_mode"))
+
+                    val action = command.getString("action")
+                    val scenarioName = command.getString("scenario_name")
+                    val scenarioMode = command.getString("scenario_mode")
+                    log("command.action: " + action)
+                    log("command.scenario_name: " + scenarioName)
+                    log("command.scenario_mode: " + scenarioMode)
+
+                    runOnUiThread {
+                        when (action) {
+                            "start_bugsnag" -> start_bugsnag(scenarioName, scenarioMode)
+                            "run_scenario" -> run_scenario(scenarioName, scenarioMode)
+                            else -> throw Exception("Unknown action: " + action)
+                        }
+                    }
+
                 } catch (e: Exception) {
                     log("Failed to fetch command from Maze Runner", e)
                 }
-
-                // command
-
             }
         }
 

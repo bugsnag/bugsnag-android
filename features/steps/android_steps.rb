@@ -29,7 +29,7 @@ def execute_command(action, scenario_name)
 
   # TODO Consider tapping at an x,y to save time
   Maze.driver.click_element 'run_command'
-  $scenario_mode = nil
+  $scenario_mode = ''
   $reset_data = false
 
   # Ensure fixture has read the command
@@ -73,6 +73,7 @@ end
 When("I relaunch the app after a crash") do
   # This step should only be used when the app has crashed, but the notifier needs a little
   # time to write the crash report before being forced to reopen.  From trials, 2s was not enough.
+  # TODO: Consider checking when the app has closed using Appium app_state
   sleep(5)
   Maze.driver.launch_app
 end
@@ -91,7 +92,7 @@ When("I tap the screen {int} times") do |count|
 end
 
 When("I configure the app to run in the {string} state") do |scenario_mode|
-  $scenario_mode =  scenario_mode
+  $scenario_mode = scenario_mode
 end
 
 Then("the exception reflects a signal was raised") do
