@@ -11,13 +11,6 @@
           android:layout_weight="4"
           android:text="Run command" />
 
-  <Button
-          android:id="@+id/clear_persistent_data"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_weight="0"
-          android:text="Clear app data" />
-
   <EditText
           android:id="@+id/notify_endpoint"
           android:layout_width="match_parent"

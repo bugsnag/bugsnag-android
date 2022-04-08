@@ -36,15 +36,6 @@ class MainActivity : Activity() {
             sendBroadcast(closeDialog)
         }
 
-        // Clear persistent data (used to stop scenarios bleeding into each other)
-        findViewById<Button>(R.id.clear_persistent_data).setOnClickListener {
-            clearFolder("last-run-info")
-            clearFolder("bugsnag-errors")
-            clearFolder("device-id")
-            clearFolder("user-info")
-            clearFolder("fake")
-        }
-
         // Get the next maze runner command
         findViewById<Button>(R.id.run_command).setOnClickListener {
             thread(start = true) {
@@ -65,6 +56,7 @@ class MainActivity : Activity() {
                     when (action) {
                         "start_bugsnag" -> startBugsnag(scenarioName, scenarioMode)
                         "run_scenario" -> runScenario(scenarioName, scenarioMode)
+                        "clear_persistent_data" -> clear_persistent_data()
                         else -> throw IllegalArgumentException("Unknown action: " + action)
                     }
                 } catch (e: Exception) {
@@ -114,6 +106,16 @@ class MainActivity : Activity() {
             },
             1
         )
+    }
+
+    // Clear persistent data (used to stop scenarios bleeding into each other)
+    private fun clear_persistent_data() {
+        log("Clearing persistent data")
+        clearFolder("last-run-info")
+        clearFolder("bugsnag-errors")
+        clearFolder("device-id")
+        clearFolder("user-info")
+        clearFolder("fake")
     }
 
     private fun clearFolder(name: String) {

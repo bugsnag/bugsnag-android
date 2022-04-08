@@ -1,5 +1,5 @@
 When('I clear all persistent data') do
-  step 'I click the element "clear_persistent_data"'
+  execute_command :clear_persistent_data, ''
 end
 
 # Waits 5s for an element to be present.  If it isn't assume a system error dialog is
