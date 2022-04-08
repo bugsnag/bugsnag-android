@@ -8,7 +8,7 @@
           android:id="@+id/run_command"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:layout_weight="0"
+          android:layout_weight="4"
           android:text="Run command" />
 
   <Button
@@ -38,11 +38,6 @@
           android:inputType="text"
           android:text="http://bs-local.com:9339/sessions" />
 
-  <Space
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_weight="1" />
-
   <TextView
     android:id="@+id/textView"
     android:layout_width="wrap_content"
@@ -69,10 +64,5 @@
     android:layout_height="wrap_content"
     android:layout_weight="0"
     android:text="Clear User data" />
-
-  <Space
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_weight="6" />
 
 </LinearLayout>

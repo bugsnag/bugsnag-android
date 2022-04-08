@@ -27,8 +27,8 @@ def execute_command(action, scenario_name)
   command = { action: action, scenario_name: scenario_name, scenario_mode: $scenario_mode }
   Maze::Server.commands.add command
 
-  # TODO Consider tapping at an x,y to save time
-  Maze.driver.click_element 'run_command'
+  # Tapping saves a lot of time finding and clicking elements with Appium
+  tap_at 100, 100
   $scenario_mode = ''
   $reset_data = false
 
@@ -36,6 +36,12 @@ def execute_command(action, scenario_name)
   count = 100
   sleep 0.1 until Maze::Server.commands.remaining.empty? || (count -= 1) < 1
   raise 'Test fixture did not GET /command' unless Maze::Server.commands.remaining.empty?
+end
+
+def tap_at(x, y)
+  touch_action = Appium::TouchAction.new
+  touch_action.tap({:x => x, :y => y})
+  touch_action.perform
 end
 
 When("I clear any error dialogue") do
@@ -73,7 +79,7 @@ end
 When("I relaunch the app after a crash") do
   # This step should only be used when the app has crashed, but the notifier needs a little
   # time to write the crash report before being forced to reopen.  From trials, 2s was not enough.
-  # TODO: Consider checking when the app has closed using Appium app_state
+  # TODO Consider checking when the app has closed using Appium app_state
   sleep(5)
   Maze.driver.launch_app
 end
@@ -81,8 +87,7 @@ end
 When("I tap the screen {int} times") do |count|
   (1..count).each { |i|
     begin
-      touch_action = Appium::TouchAction.new
-      touch_action.tap({:x => 500, :y => 300})
+      tap_at 500, 300
       touch_action.perform
     rescue Selenium::WebDriver::Error::ElementNotInteractableError
       # Ignore it§

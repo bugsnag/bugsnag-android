@@ -6,23 +6,15 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
+import android.view.Window;
 import android.widget.Button
 import android.widget.EditText
-import com.bugsnag.android.Configuration
 import com.bugsnag.android.mazerunner.scenarios.Scenario
-import java.io.File
-
-import java.io.BufferedReader
-import java.io.InputStream
-import java.io.InputStreamReader
-
-import java.net.HttpURLConnection
-import java.net.MalformedURLException
-import java.net.URL
-
-import kotlin.concurrent.thread
-
 import org.json.JSONObject
+import java.io.File
+import java.lang.IllegalArgumentException
+import java.net.URL
+import kotlin.concurrent.thread
 
 class MainActivity : Activity() {
 
@@ -33,6 +25,7 @@ class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_main)
         log("Launched mazerunner fixture MainActivity")
         prefs = getPreferences(Context.MODE_PRIVATE)
@@ -55,38 +48,25 @@ class MainActivity : Activity() {
         // Get the next maze runner command
         findViewById<Button>(R.id.run_command).setOnClickListener {
             thread(start = true) {
-                // Get the next command from Maze Runner
-                val commandUrl: String = "http://bs-local.com:9339/command"
-                var command: JSONObject
                 try {
-                    val url = URL(commandUrl)
-                    val sb = StringBuilder()
-                    val conn: HttpURLConnection = url.openConnection() as HttpURLConnection
-                    conn.setRequestMethod("GET")
-                    val reader = BufferedReader(InputStreamReader(conn.getInputStream()))
-                    var line: String?
-                    while (reader.readLine().also { line = it } != null) {
-                        sb.append(line)
-                    }
-                    val commandStr = sb.toString()
+                    // Get the next command from Maze Runner
+                    val commandUrl: String = "http://bs-local.com:9339/command"
+                    val commandStr = URL(commandUrl).readText()
                     log("Received command: " + commandStr)
-                    command = JSONObject(commandStr)
-
+                    var command = JSONObject(commandStr)
                     val action = command.getString("action")
                     val scenarioName = command.getString("scenario_name")
                     val scenarioMode = command.getString("scenario_mode")
                     log("command.action: " + action)
-                    log("command.scenario_name: " + scenarioName)
-                    log("command.scenario_mode: " + scenarioMode)
+                    log("command.scenarioName: " + scenarioName)
+                    log("command.scenarioMode: " + scenarioMode)
 
-                    runOnUiThread {
-                        when (action) {
-                            "start_bugsnag" -> start_bugsnag(scenarioName, scenarioMode)
-                            "run_scenario" -> run_scenario(scenarioName, scenarioMode)
-                            else -> throw Exception("Unknown action: " + action)
-                        }
+                    // Perform the given action
+                    when (action) {
+                        "start_bugsnag" -> startBugsnag(scenarioName, scenarioMode)
+                        "run_scenario" -> runScenario(scenarioName, scenarioMode)
+                        else -> throw IllegalArgumentException("Unknown action: " + action)
                     }
-
                 } catch (e: Exception) {
                     log("Failed to fetch command from Maze Runner", e)
                 }
@@ -111,13 +91,13 @@ class MainActivity : Activity() {
     }
 
     // load the scenario first, which initialises bugsnag without running any crashy code
-    private fun start_bugsnag(eventType: String, mode: String) {
+    private fun startBugsnag(eventType: String, mode: String) {
         scenario = loadScenario(eventType, mode)
         scenario?.startBugsnag(true)
     }
 
     // execute the pre-loaded scenario, or load it then execute it if needed
-    private fun run_scenario(eventType: String, mode: String) {
+    private fun runScenario(eventType: String, mode: String) {
         if (scenario == null) {
             scenario = loadScenario(eventType, mode)
             scenario?.startBugsnag(false)
