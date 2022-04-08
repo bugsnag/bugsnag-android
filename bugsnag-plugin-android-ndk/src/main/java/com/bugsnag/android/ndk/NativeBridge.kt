@@ -37,7 +37,7 @@ class NativeBridge : StateObserver {
     private val is32bit: Boolean
         get() {
             val abis = NativeInterface.getCpuAbi()
-            return !abis.toList().any { it.contains("64") }
+            return !abis.any { it.contains("64") }
         }
 
     external fun install(
