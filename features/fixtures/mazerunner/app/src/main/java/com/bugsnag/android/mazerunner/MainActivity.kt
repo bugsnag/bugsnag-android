@@ -38,6 +38,7 @@ class MainActivity : Activity() {
 
         // Get the next maze runner command
         findViewById<Button>(R.id.run_command).setOnClickListener {
+            log("run_command pressed")
             thread(start = true) {
                 try {
                     // Get the next command from Maze Runner
