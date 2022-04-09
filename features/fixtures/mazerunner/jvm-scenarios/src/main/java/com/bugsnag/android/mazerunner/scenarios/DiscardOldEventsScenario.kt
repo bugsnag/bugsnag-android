@@ -52,6 +52,8 @@ internal class DiscardOldEventsScenario(
         Bugsnag.notify(MyThrowable("DiscardOldEventsScenario"))
 
         waitForEventFile()
+        // Extra sleep needed on Android 10+
+        Thread.sleep(2000)
         oldifyEventFiles()
 
         Bugsnag.notify(MyThrowable("To keep maze-runner from shutting me down prematurely"))
