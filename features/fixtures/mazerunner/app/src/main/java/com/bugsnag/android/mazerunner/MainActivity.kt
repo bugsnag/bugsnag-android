@@ -44,14 +44,14 @@ class MainActivity : Activity() {
                     // Get the next command from Maze Runner
                     val commandUrl: String = "http://bs-local.com:9339/command"
                     val commandStr = URL(commandUrl).readText()
-                    log("Received command: " + commandStr)
+                    log("Received command: $commandStr")
                     var command = JSONObject(commandStr)
                     val action = command.getString("action")
                     val scenarioName = command.getString("scenario_name")
                     val scenarioMode = command.getString("scenario_mode")
-                    log("command.action: " + action)
-                    log("command.scenarioName: " + scenarioName)
-                    log("command.scenarioMode: " + scenarioMode)
+                    log("command.action: $action")
+                    log("command.scenarioName: $scenarioName")
+                    log("command.scenarioMode: $scenarioMode")
 
                     // Perform the given action on the UI thread
                     runOnUiThread {
@@ -59,7 +59,7 @@ class MainActivity : Activity() {
                             "start_bugsnag" -> startBugsnag(scenarioName, scenarioMode)
                             "run_scenario" -> runScenario(scenarioName, scenarioMode)
                             "clear_persistent_data" -> clearPersistentData()
-                            else -> throw IllegalArgumentException("Unknown action: " + action)
+                            else -> throw IllegalArgumentException("Unknown action: $action")
                         }
                     }
                 } catch (e: Exception) {
