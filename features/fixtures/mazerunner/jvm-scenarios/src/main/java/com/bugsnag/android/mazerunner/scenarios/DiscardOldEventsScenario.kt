@@ -52,7 +52,7 @@ internal class DiscardOldEventsScenario(
         Bugsnag.notify(MyThrowable("DiscardOldEventsScenario"))
 
         waitForEventFile()
-        // Extra sleep needed on Android 10+
+        // PLAT-8344 Determine why an extra sleep is needed on Android 10+
         Thread.sleep(2000)
         oldifyEventFiles()
 
