@@ -21,8 +21,16 @@ buildscript {
     ext.kotlin_version = "1.3.72"
 
     dependencies {
-        classpath "com.android.tools.build:gradle:7.0.4"
-        classpath "com.bugsnag:bugsnag-android-gradle-plugin:7.1.0"
+        if (project.hasProperty("USE_LEGACY_AGP") && "true" == project.property("USE_LEGACY_AGP")) {
+            project.logger.lifecycle("Using AGP 4.2.0")
+            classpath "com.android.tools.build:gradle:4.2.0"
+            classpath "com.bugsnag:bugsnag-android-gradle-plugin:5.8.2"
+        }
+        else {
+            project.logger.lifecycle("Using AGP 7.1.0")
+            classpath "com.android.tools.build:gradle:7.1.0"
+            classpath "com.bugsnag:bugsnag-android-gradle-plugin:7.1.0"
+        }
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.18.1"
         classpath "org.jlleitschuh.gradle:ktlint-gradle:10.2.0"

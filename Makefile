@@ -36,6 +36,7 @@ fixture-r16: notifier
 	# Build the r16 test fixture
 	@./gradlew -PTEST_FIXTURE_NDK_VERSION=16.1.4479499 \
                -PTEST_FIXTURE_NAME=fixture-r16.apk \
+               -PUSE_LEGACY_AGP=true \
                -PUSE_LEGACY_OKHTTP=true \
 	           -p=features/fixtures/mazerunner assembleRelease -x check
 	@scripts/copy-build-files.sh release fixture-r16
