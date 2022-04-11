@@ -4,7 +4,8 @@ Feature: ANRs triggered in JVM code are captured
     Given I clear all persistent data
 
   Scenario: ANR triggered in JVM loop code is captured
-    When I run "JvmAnrLoopScenario"
+    When I clear any error dialogue
+    And I run "JvmAnrLoopScenario"
     And I wait for 2 seconds
     And I tap the screen 3 times
     Then I wait to receive an error
@@ -21,11 +22,10 @@ Feature: ANRs triggered in JVM code are captured
 # on Samsung as it is explicitly design to test ANRs caused by a sleeping thread.
   @skip_samsung
   Scenario: ANR triggered in JVM sleep code is captured
-    When I run "JvmAnrSleepScenario"
+    When I clear any error dialogue
+    And I run "JvmAnrSleepScenario"
     And I wait for 2 seconds
     And I tap the screen 3 times
-    And I wait for 4 seconds
-    And I clear any error dialogue
     Then I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "errorClass" equals "ANR"

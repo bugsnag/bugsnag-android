@@ -38,7 +38,6 @@ Feature: Synchronizing app/device metadata in the native layer
   Scenario: Capture foreground state while in a background crash
     When I run "CXXDelayedCrashScenario"
     And I send the app to the background for 10 seconds
-    And I clear any error dialogue
     And I relaunch the app after a crash
     And I configure Bugsnag for "CXXDelayedCrashScenario"
     And I wait to receive an error
