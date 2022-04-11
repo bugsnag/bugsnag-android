@@ -60,7 +60,7 @@ services:
       BUILDKITE_REPO:
 
   android-maze-runner:
-    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner:terminating-server-ci-ruby-3
+    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner:terminating-server-cli
     environment:
       DEBUG:
       BUILDKITE:
