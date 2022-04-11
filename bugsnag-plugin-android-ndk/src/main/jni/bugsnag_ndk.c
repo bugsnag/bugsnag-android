@@ -159,8 +159,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   // copy event path to env struct
   const char *event_path = bsg_safe_get_string_utf_chars(env, _event_path);
   if (event_path == NULL) {
-    free(bugsnag_env);
-    return;
+    goto error;
   }
   sprintf(bugsnag_env->next_event_path, "%s", event_path);
   bsg_safe_release_string_utf_chars(env, _event_path, event_path);
@@ -169,8 +168,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   const char *last_run_info_path =
       bsg_safe_get_string_utf_chars(env, _last_run_info_path);
   if (last_run_info_path == NULL) {
-    free(bugsnag_env);
-    return;
+    goto error;
   }
   bsg_strncpy(bugsnag_env->last_run_info_path, last_run_info_path,
               sizeof(bugsnag_env->last_run_info_path));
@@ -210,6 +208,10 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   bsg_global_env = bugsnag_env;
   bsg_update_next_run_info(bsg_global_env);
   BUGSNAG_LOG("Initialization complete!");
+  return;
+
+error:
+  free(bugsnag_env);
 }
 
 JNIEXPORT void JNICALL
