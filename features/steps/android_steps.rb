@@ -1,5 +1,5 @@
 When('I clear all persistent data') do
-  step 'I click the element "clear_persistent_data"'
+  execute_command :clear_persistent_data, ''
 end
 
 # Waits 5s for an element to be present.  If it isn't assume a system error dialog is
@@ -23,12 +23,36 @@ When('any dialog is cleared and the element {string} is present') do |element_id
   Maze.check.true(present, "The element #{element_id} could not be found")
 end
 
-When("I run {string}") do |event_type|
-  steps %Q{
-    Given any dialog is cleared and the element "scenario_name" is present
-    When I send the keys "#{event_type}" to the element "scenario_name"
-    And I click the element "run_scenario"
-  }
+def execute_command(action, scenario_name)
+  command = { action: action, scenario_name: scenario_name, scenario_mode: $scenario_mode }
+  Maze::Server.commands.add command
+
+  # Tapping saves a lot of time finding and clicking elements with Appium
+  tap_at 200, 200
+  $scenario_mode = ''
+  $reset_data = false
+
+  # Ensure fixture has read the command
+  count = 600
+  sleep 0.1 until Maze::Server.commands.remaining.empty? || (count -= 1) < 1
+  raise 'Test fixture did not GET /command' unless Maze::Server.commands.remaining.empty?
+end
+
+def tap_at(x, y)
+  touch_action = Appium::TouchAction.new
+  touch_action.tap({:x => x, :y => y})
+  touch_action.perform
+end
+
+When("I clear any error dialogue") do
+  click_if_present 'android:id/button1'
+  click_if_present 'android:id/aerr_close'
+  click_if_present 'android:id/aerr_restart'
+end
+
+When('I run {string}') do |scenario_name|
+  step 'I clear any error dialogue'
+  execute_command :run_scenario, scenario_name
 end
 
 When("I run {string} and relaunch the crashed app") do |event_type|
@@ -38,18 +62,9 @@ When("I run {string} and relaunch the crashed app") do |event_type|
   }
 end
 
-When("I clear any error dialogue") do
-  click_if_present 'android:id/button1'
-  click_if_present 'android:id/aerr_close'
-  click_if_present 'android:id/aerr_restart'
-end
-
 When("I configure Bugsnag for {string}") do |event_type|
-  steps %Q{
-    Given any dialog is cleared and the element "scenario_name" is present
-    When I send the keys "#{event_type}" to the element "scenario_name"
-    And I click the element "start_bugsnag"
-  }
+  step 'I clear any error dialogue'
+  execute_command :start_bugsnag, event_type
 end
 
 When("I close and relaunch the app") do
@@ -64,6 +79,7 @@ end
 When("I relaunch the app after a crash") do
   # This step should only be used when the app has crashed, but the notifier needs a little
   # time to write the crash report before being forced to reopen.  From trials, 2s was not enough.
+  # TODO Consider checking when the app has closed using Appium app_state
   sleep(5)
   Maze.driver.launch_app
 end
@@ -71,9 +87,7 @@ end
 When("I tap the screen {int} times") do |count|
   (1..count).each { |i|
     begin
-      touch_action = Appium::TouchAction.new
-      touch_action.tap({:x => 500, :y => 300})
-      touch_action.perform
+      tap_at 500, 300
     rescue Selenium::WebDriver::Error::ElementNotInteractableError
       # Ignore it§
     end
@@ -81,11 +95,8 @@ When("I tap the screen {int} times") do |count|
   }
 end
 
-When("I configure the app to run in the {string} state") do |event_metadata|
-  steps %Q{
-    Given any dialog is cleared and the element "scenario_metadata" is present
-    And I send the keys "#{event_metadata}" to the element "scenario_metadata"
-  }
+When("I configure the app to run in the {string} state") do |scenario_mode|
+  $scenario_mode = scenario_mode
 end
 
 Then("the exception reflects a signal was raised") do

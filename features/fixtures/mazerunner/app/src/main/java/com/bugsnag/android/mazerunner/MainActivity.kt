@@ -6,11 +6,15 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
+import android.view.Window
 import android.widget.Button
 import android.widget.EditText
-import com.bugsnag.android.Configuration
 import com.bugsnag.android.mazerunner.scenarios.Scenario
+import org.json.JSONObject
 import java.io.File
+import java.lang.IllegalArgumentException
+import java.net.URL
+import kotlin.concurrent.thread
 
 class MainActivity : Activity() {
 
@@ -21,6 +25,7 @@ class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_main)
         log("Launched mazerunner fixture MainActivity")
         prefs = getPreferences(Context.MODE_PRIVATE)
@@ -31,39 +36,36 @@ class MainActivity : Activity() {
             sendBroadcast(closeDialog)
         }
 
-        // Clear persistent data (used to stop scenarios bleeding into each other)
-        findViewById<Button>(R.id.clear_persistent_data).setOnClickListener {
-            clearFolder("last-run-info")
-            clearFolder("bugsnag-errors")
-            clearFolder("device-id")
-            clearFolder("user-info")
-            clearFolder("fake")
-        }
+        // Get the next maze runner command
+        findViewById<Button>(R.id.run_command).setOnClickListener {
+            log("run_command pressed")
+            thread(start = true) {
+                try {
+                    // Get the next command from Maze Runner
+                    val commandUrl: String = "http://bs-local.com:9339/command"
+                    val commandStr = URL(commandUrl).readText()
+                    log("Received command: $commandStr")
+                    var command = JSONObject(commandStr)
+                    val action = command.getString("action")
+                    val scenarioName = command.getString("scenario_name")
+                    val scenarioMode = command.getString("scenario_mode")
+                    log("command.action: $action")
+                    log("command.scenarioName: $scenarioName")
+                    log("command.scenarioMode: $scenarioMode")
 
-        // load the scenario first, which initialises bugsnag without running any crashy code
-        findViewById<Button>(R.id.start_bugsnag).setOnClickListener {
-            scenario = loadScenarioFromUi()
-            scenario?.startBugsnag(true)
-        }
-
-        // execute the pre-loaded scenario, or load it then execute it if needed
-        findViewById<Button>(R.id.run_scenario).setOnClickListener {
-            if (scenario == null) {
-                scenario = loadScenarioFromUi()
-                scenario?.startBugsnag(false)
+                    // Perform the given action on the UI thread
+                    runOnUiThread {
+                        when (action) {
+                            "start_bugsnag" -> startBugsnag(scenarioName, scenarioMode)
+                            "run_scenario" -> runScenario(scenarioName, scenarioMode)
+                            "clear_persistent_data" -> clearPersistentData()
+                            else -> throw IllegalArgumentException("Unknown action: $action")
+                        }
+                    }
+                } catch (e: Exception) {
+                    log("Failed to fetch command from Maze Runner", e)
+                }
             }
-
-            /**
-             * Enqueues the test case with a delay on the main thread. This avoids the Activity wrapping
-             * unhandled Exceptions
-             */
-            window.decorView.postDelayed(
-                {
-                    log("Executing scenario")
-                    scenario?.startScenario()
-                },
-                1
-            )
         }
 
         val clearUserData = findViewById<Button>(R.id.clearUserData)
@@ -83,6 +85,42 @@ class MainActivity : Activity() {
         }
     }
 
+    // load the scenario first, which initialises bugsnag without running any crashy code
+    private fun startBugsnag(eventType: String, mode: String) {
+        scenario = loadScenario(eventType, mode)
+        scenario?.startBugsnag(true)
+    }
+
+    // execute the pre-loaded scenario, or load it then execute it if needed
+    private fun runScenario(eventType: String, mode: String) {
+        if (scenario == null) {
+            scenario = loadScenario(eventType, mode)
+            scenario?.startBugsnag(false)
+        }
+
+        /**
+         * Enqueues the test case with a delay on the main thread. This avoids the Activity wrapping
+         * unhandled Exceptions
+         */
+        window.decorView.postDelayed(
+            {
+                log("Executing scenario")
+                scenario?.startScenario()
+            },
+            1
+        )
+    }
+
+    // Clear persistent data (used to stop scenarios bleeding into each other)
+    private fun clearPersistentData() {
+        log("Clearing persistent data")
+        clearFolder("last-run-info")
+        clearFolder("bugsnag-errors")
+        clearFolder("device-id")
+        clearFolder("user-info")
+        clearFolder("fake")
+    }
+
     private fun clearFolder(name: String) {
         val context = MazerunnerApp.applicationContext()
         val folder = File(context.cacheDir, name)
@@ -90,17 +128,8 @@ class MainActivity : Activity() {
         folder.deleteRecursively()
     }
 
-    private fun loadScenarioFromUi(): Scenario {
-        val scenarioPicker = findViewById<EditText>(R.id.scenario_name)
-        val eventType = scenarioPicker.text.toString()
-        val eventMetadata = findViewById<EditText>(R.id.scenario_metadata)
-        val metadata = eventMetadata.text.toString()
+    private fun loadScenario(eventType: String, mode: String): Scenario {
 
-        val config = loadConfigFromUi()
-        return Scenario.load(this, config, eventType, metadata)
-    }
-
-    private fun loadConfigFromUi(): Configuration {
         val apiKeyField = findViewById<EditText>(R.id.manualApiKey)
         val notifyEndpointField = findViewById<EditText>(R.id.notify_endpoint)
         val sessionEndpointField = findViewById<EditText>(R.id.session_endpoint)
@@ -117,10 +146,11 @@ class MainActivity : Activity() {
         }
         val notify = notifyEndpointField.text.toString()
         val sessions = sessionEndpointField.text.toString()
-        return prepareConfig(apiKey, notify, sessions) {
+        val config = prepareConfig(apiKey, notify, sessions) {
             val interceptedLogMessages = scenario?.getInterceptedLogMessages()
             interceptedLogMessages?.contains(it) ?: false
         }
+        return Scenario.load(this, config, eventType, mode)
     }
 
     private fun apiKeyStored() = prefs.contains(apiKeyKey)
