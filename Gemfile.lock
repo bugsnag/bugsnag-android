@@ -1,7 +1,7 @@
 GIT
   remote: https://github.com/bugsnag/maze-runner
-  revision: d7b74e6c06ab00144620544ea5ff0556068b5c65
-  branch: terminating-server
+  revision: 50e354dd25d96291796ed333be0e32ba37240107
+  tag: v6.10.0
   specs:
     bugsnag-maze-runner (6.10.0)
       appium_lib (~> 11.2.0)
@@ -82,10 +82,10 @@ GEM
     mime-types-data (3.2022.0105)
     mini_portile2 (2.8.0)
     multi_test (0.1.2)
-    nokogiri (1.13.3)
+    nokogiri (1.13.4)
       mini_portile2 (~> 2.8.0)
       racc (~> 1.4)
-    nokogiri (1.13.3-x86_64-darwin)
+    nokogiri (1.13.4-x86_64-darwin)
       racc (~> 1.4)
     optimist (3.0.1)
     os (1.0.1)

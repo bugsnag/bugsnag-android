@@ -27,7 +27,7 @@ Feature: Discarding events
     And I configure Bugsnag for "DiscardOldEventsScenario"
     Then I should receive no requests
 
-    Scenario: Discard an on-disk error that failed to send and is too big
+  Scenario: Discard an on-disk error that failed to send and is too big
     # Fail to send initial handled error. Client stores it to disk.
     Given I set the endpoints to the terminating server
     And I start the terminating server
