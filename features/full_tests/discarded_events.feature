@@ -35,13 +35,6 @@ Feature: Discarding events
     And I wait for 2 seconds
     And the terminating server has received 1 requests
 
-    # Relaunch, failing again by targetting the terminating server.
-    Then I close and relaunch the app
-    And I set the endpoints to the terminating server
-    And I configure Bugsnag for "DiscardBigEventsScenario"
-    And I wait for 2 seconds
-    And the terminating server has received 1 requests
-
     # The event should have been deleted, so we should receive nothing
     Then I close and relaunch the app
     And I configure Bugsnag for "DiscardBigEventsScenario"

@@ -23,13 +23,6 @@ internal class DiscardBigEventsScenario(
         return "*".repeat(1024 * 1024)
     }
 
-    fun waitForEventFile() {
-        val dir = File(context.cacheDir, "bugsnag-errors")
-        while (dir.listFiles()!!.isEmpty()) {
-            Thread.sleep(100)
-        }
-    }
-
     override fun startScenario() {
         super.startScenario()
         Bugsnag.markLaunchCompleted()
