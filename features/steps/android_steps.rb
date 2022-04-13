@@ -67,6 +67,15 @@ When("I configure Bugsnag for {string}") do |event_type|
   execute_command :start_bugsnag, event_type
 end
 
+When("I set the endpoints to the terminating server") do
+  steps %Q{
+    Given any dialog is cleared and the element "notify_endpoint" is present
+    And any dialog is cleared and the element "session_endpoint" is present
+    When I send the keys "http://bs-local.com:9341" to the element "notify_endpoint"
+    And I send the keys "http://bs-local.com:9341" to the element "session_endpoint"
+  }
+end
+
 When("I close and relaunch the app") do
   Maze.driver.close_app
   Maze.driver.launch_app

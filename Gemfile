@@ -4,9 +4,9 @@ source "https://rubygems.org"
 #gem 'bugsnag-maze-runner', path: '../maze-runner'
 
 # Or a specific release:
-gem 'bugsnag-maze-runner', git: 'https://github.com/bugsnag/maze-runner', tag: 'v6.9.3'
+gem 'bugsnag-maze-runner', git: 'https://github.com/bugsnag/maze-runner', tag: 'v6.10.0'
 
 # Or follow master:
-#gem 'bugsnag-maze-runner', git: 'https://github.com/bugsnag/maze-runner'
+# gem 'bugsnag-maze-runner', git: 'https://github.com/bugsnag/maze-runner'
 
 gem "license_finder", "~> 6.13"
