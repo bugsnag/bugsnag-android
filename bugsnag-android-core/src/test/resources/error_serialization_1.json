@@ -1,0 +1,17 @@
+{
+  "errorClass": "foo",
+  "message": "bar",
+  "type": "android",
+  "stacktrace": [
+    {
+      "method": "foo()",
+      "file": "Bar.kt",
+      "lineNumber": 55,
+      "inProject": true,
+      "columnNumber": 99,
+      "code": {
+        "54": "invoke()"
+      }
+    }
+  ]
+}

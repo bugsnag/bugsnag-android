@@ -89,7 +89,11 @@ internal class BugsnagEventMapper(
         return event
     }
 
-    internal fun convertErrorInternal(error: Map<String, Any?>): ErrorInternal {
+    internal fun convertError(error: Map<in String, Any?>): Error {
+        return Error(convertErrorInternal(error), logger)
+    }
+
+    internal fun convertErrorInternal(error: Map<in String, Any?>): ErrorInternal {
         return ErrorInternal(
             error.readEntry("errorClass"),
             error["message"] as? String,
