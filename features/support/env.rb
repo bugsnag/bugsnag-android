@@ -1,8 +1,11 @@
 BeforeAll do
   $api_key = "a35a2a72bd230ac0aa0f52715bbdc6aa"
-  $scenario_mode = ''
   Maze.config.receive_no_requests_wait = 10
   Maze.config.receive_requests_wait = 60
+end
+
+Before do
+  $scenario_mode = ''
 end
 
 Before('@skip') do |scenario|

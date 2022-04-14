@@ -36,15 +36,41 @@ class MainActivity : Activity() {
             sendBroadcast(closeDialog)
         }
 
+        val clearUserData = findViewById<Button>(R.id.clearUserData)
+
+        clearUserData.setOnClickListener {
+            clearStoredApiKey()
+            val apiKeyField = findViewById<EditText>(R.id.manualApiKey)
+            apiKeyField.text.clear()
+            log("Cleared user data")
+        }
+
+        if (apiKeyStored()) {
+            val apiKey = getStoredApiKey()
+            val apiKeyField = findViewById<EditText>(R.id.manualApiKey)
+            apiKeyField.text.clear()
+            apiKeyField.text.append(apiKey)
+        }
+
+        startCommandRunner()
+    }
+
+    // Starts a thread to poll for Maze Runner actions to perform
+    private fun startCommandRunner() {
         // Get the next maze runner command
-        findViewById<Button>(R.id.run_command).setOnClickListener {
-            log("run_command pressed")
-            thread(start = true) {
+        thread(start = true) {
+            while (true) {
+                Thread.sleep(1000)
                 try {
                     // Get the next command from Maze Runner
                     val commandUrl: String = "http://bs-local.com:9339/command"
                     val commandStr = URL(commandUrl).readText()
+                    if (commandStr == "null") {
+                        log("No Maze Runner commands queued")
+                        continue
+                    }
                     log("Received command: $commandStr")
+
                     var command = JSONObject(commandStr)
                     val action = command.getString("action")
                     val scenarioName = command.getString("scenario_name")
@@ -66,22 +92,6 @@ class MainActivity : Activity() {
                     log("Failed to fetch command from Maze Runner", e)
                 }
             }
-        }
-
-        val clearUserData = findViewById<Button>(R.id.clearUserData)
-
-        clearUserData.setOnClickListener {
-            clearStoredApiKey()
-            val apiKeyField = findViewById<EditText>(R.id.manualApiKey)
-            apiKeyField.text.clear()
-            log("Cleared user data")
-        }
-
-        if (apiKeyStored()) {
-            val apiKey = getStoredApiKey()
-            val apiKeyField = findViewById<EditText>(R.id.manualApiKey)
-            apiKeyField.text.clear()
-            apiKeyField.text.append(apiKey)
         }
     }
 

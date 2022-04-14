@@ -1,36 +1,12 @@
 When('I clear all persistent data') do
-  execute_command :clear_persistent_data, ''
+  execute_command :clear_persistent_data
 end
 
-# Waits 5s for an element to be present.  If it isn't assume a system error dialog is
-# blocking its view and dismiss it before trying once more.
-#
-# @step_input element_id [String] The element to wait for
-When('any dialog is cleared and the element {string} is present') do |element_id|
-  count = 0
-  present = false
-  timeout = 3
-  until present || count > 5
-    present = Maze.driver.wait_for_element(element_id, timeout = timeout)
-    break if present
-    count += 1
-    clicked = click_if_present('android:id/button1') ||
-              click_if_present('android:id/aerr_close') ||
-              click_if_present('android:id/aerr_restart')
-    $logger.info "System dialog cleared, reattempting wait_for_element" if clicked
-  end
-
-  Maze.check.true(present, "The element #{element_id} could not be found")
-end
-
-def execute_command(action, scenario_name)
+def execute_command(action, scenario_name = '')
   command = { action: action, scenario_name: scenario_name, scenario_mode: $scenario_mode }
   Maze::Server.commands.add command
 
-  # Tapping saves a lot of time finding and clicking elements with Appium
-  tap_at 200, 200
   $scenario_mode = ''
-  $reset_data = false
 
   # Ensure fixture has read the command
   count = 600
@@ -45,13 +21,17 @@ def tap_at(x, y)
 end
 
 When("I clear any error dialogue") do
-  click_if_present 'android:id/button1'
-  click_if_present 'android:id/aerr_close'
-  click_if_present 'android:id/aerr_restart'
+  # It can take multiple clicks to clear a dialog,
+  # so keep pressing until nothing is pressed
+  keep_clicking = true
+  while keep_clicking
+    keep_clicking = click_if_present('android:id/button1') ||
+                    click_if_present('android:id/aerr_close') ||
+                    click_if_present('android:id/aerr_restart')
+  end
 end
 
 When('I run {string}') do |scenario_name|
-  step 'I clear any error dialogue'
   execute_command :run_scenario, scenario_name
 end
 
@@ -63,7 +43,6 @@ When("I run {string} and relaunch the crashed app") do |event_type|
 end
 
 When("I configure Bugsnag for {string}") do |event_type|
-  step 'I clear any error dialogue'
   execute_command :start_bugsnag, event_type
 end
 
