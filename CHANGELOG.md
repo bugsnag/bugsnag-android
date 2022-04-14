@@ -1,5 +1,11 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+* Max reported threads can now be configured via the manifest.
+
 ## 5.22.0 (2022-03-31)
 
 ### Enhancements
