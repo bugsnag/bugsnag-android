@@ -4,7 +4,7 @@
 
 ### Enhancements
 
-* Max reported threads can now be configured via the manifest.
+* Max reported threads can now be configured using manifest meta-data "com.bugsnag.android. MAX_REPORTED_THREADS"
 
 ## 5.22.0 (2022-03-31)
 
