@@ -102,37 +102,19 @@ steps:
       TEST_FIXTURE_CONFIGURATION: "release"
       BUILD_TASK: "assembleRelease"
 
-  - label: ':android: Lint'
+  - label: ':android: Coding standards checks'
     depends_on: "android-ci"
     timeout_in_minutes: 10
     plugins:
       - docker-compose#v3.7.0:
           run: android-ci
-    command: './gradlew lint'
-
-  - label: ':android: Checkstyle'
-    depends_on: "android-ci"
-    timeout_in_minutes: 10
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    command: './gradlew checkstyle'
-
-  - label: ':android: Detekt'
-    depends_on: "android-ci"
-    timeout_in_minutes: 10
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    command: './gradlew detekt'
-
-  - label: ':android: Ktlint'
-    depends_on: "android-ci"
-    timeout_in_minutes: 10
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    command: './gradlew ktlintCheck'
+    command: './gradlew --continue checkstyle detekt lint ktlintCheck'
+    artifact_paths:
+      - "./bugsnag-plugin-android-okhttp/build/reports/ktlint/ktlintMainSourceSetCheck/ktlintMainSourceSetCheck.txt"
+      - "./bugsnag-plugin-react-native/build/reports/ktlint/ktlintMainSourceSetCheck/ktlintMainSourceSetCheck.txt"
+      - "./bugsnag-plugin-android-ndk/build/reports/ktlint/ktlintMainSourceSetCheck/ktlintMainSourceSetCheck.txt"
+      - "./bugsnag-android-core/build/reports/ktlint/ktlintMainSourceSetCheck/ktlintMainSourceSetCheck.txt"
+      - "./bugsnag-plugin-android-anr/build/reports/ktlint/ktlintMainSourceSetCheck/ktlintMainSourceSetCheck.txt"
 
   - label: ':android: CppCheck'
     depends_on: "android-ci"
