@@ -64,11 +64,34 @@ When('I set the screen orientation to portrait') do
   Maze.driver.set_rotation(:portrait)
 end
 
+# Waits for the given block to yield true
+#
+# @return [Float] Number of seconds it took for the condition to yield true
+# @raise [StandardError] If the condition is not met
+def wait_for_true
+  max_attempts = 300
+  attempts = 0
+  assertion_passed = false
+  until (attempts >= max_attempts) || assertion_passed
+    attempts += 1
+    assertion_passed = yield
+    sleep 0.1
+  end
+  raise 'Assertion not passed in 30s' unless assertion_passed
+  attempts / 10
+end
+
+When('the app is not running') do
+  time = wait_for_true do
+    state = Maze.driver.app_state('com.bugsnag.android.mazerunner')
+    $logger.info "app_state: #{state}"
+    state == :not_running
+  end
+  $logger.info "Waited #{time} seconds for the app to stop running"
+end
+
 When("I relaunch the app after a crash") do
-  # This step should only be used when the app has crashed, but the notifier needs a little
-  # time to write the crash report before being forced to reopen.  From trials, 2s was not enough.
-  # TODO Consider checking when the app has closed using Appium app_state
-  sleep(5)
+  step 'the app is not running'
   Maze.driver.launch_app
 end
 
