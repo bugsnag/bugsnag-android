@@ -1,0 +1,19 @@
+{
+  "errorClass": "com.bugsnag.android.StacktraceSerializationTest",
+  "message": "bar",
+  "type": "android",
+  "stacktrace": [
+    {
+      "method": "com.bugsnag.android.StacktraceSerializationTest$Companion.inProject",
+      "file": "StacktraceSerializationTest.kt",
+      "lineNumber": 47,
+      "inProject": true
+    },
+    {
+      "method": "com.bugsnag.android.StacktraceSerializationTest$Companion.testCases",
+      "file": "StacktraceSerializationTest.kt",
+      "lineNumber": 31,
+      "inProject": true
+    }
+  ]
+}
