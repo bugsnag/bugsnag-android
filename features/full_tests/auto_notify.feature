@@ -21,9 +21,13 @@ Feature: Switching automatic error detection on/off for Unity
 
   @skip_android_8_1
   Scenario: ANR not captured with autoDetectAnrs=false
-    When I run "AutoDetectAnrsFalseScenario" and relaunch the crashed app
+    When I run "AutoDetectAnrsFalseScenario"
+    And I wait for 2 seconds
+    And I tap the screen 3 times
+    And I close and relaunch the app
     And I configure Bugsnag for "AutoDetectAnrsFalseScenario"
     Then Bugsnag confirms it has no errors to send
+    And I should receive no requests
 
   Scenario: JVM exception captured with autoNotify reenabled
     When I run "UnhandledJvmAutoNotifyTrueScenario" and relaunch the crashed app
