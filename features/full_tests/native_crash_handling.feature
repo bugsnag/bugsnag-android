@@ -128,7 +128,7 @@ Feature: Native crash reporting
     And the exception "type" equals "c"
     And the first significant stack frames match:
       | something_innocuous                                                                 | libmonochrome.so                    | (ignore) |
-      | Java_com_bugsnag_android_mazerunner_scenarios_CXXExternalStackElementScenario_crash | CXXExternalStackElementScenario.cpp | 14       |
+      | Java_com_bugsnag_android_mazerunner_scenarios_CXXExternalStackElementScenario_crash | CXXExternalStackElementScenario.cpp | 18       |
 
   Scenario: Call null function pointer
   A null pointer should be the first element of a stack trace,
