@@ -1,4 +1,14 @@
 steps:
+  - label: 'Trigger RN tests for all builds of our next branch'
+    if: build.branch == "next"
+    trigger: 'bugsnag-js'
+    build:
+      branch: 'next'
+      message: 'Run RN tests with latest Android next branch'
+      env:
+        BUILD_RN_WITH_LATEST_NATIVES: "true"
+    async: true
+
   - label: ':android: Build minimal fixture APK'
     key: "fixture-minimal"
     depends_on: "android-ci"
