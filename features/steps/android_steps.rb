@@ -64,11 +64,27 @@ When('I set the screen orientation to portrait') do
   Maze.driver.set_rotation(:portrait)
 end
 
+# Waits for up to 10 seconds for the app to stop running.  It seems that Appium doesn't always
+# get the state correct (e.g. when backgrounding the app, or on old Android versions), so we
+# don't fail if it still says running after the time allowed.
+def wait_for_app_state(expected_state)
+  max_attempts = 20
+  attempts = 0
+  state = Maze.driver.app_state('com.bugsnag.android.mazerunner')
+  until (attempts >= max_attempts) || state == expected_state
+    attempts += 1
+    state = Maze.driver.app_state('com.bugsnag.android.mazerunner')
+    sleep 0.5
+  end
+  $logger.warn "App state #{state} instead of #{expected_state} after 10s" unless state == expected_state
+end
+
+When('the app is not running') do
+  time = wait_for_app_state(:not_running)
+end
+
 When("I relaunch the app after a crash") do
-  # This step should only be used when the app has crashed, but the notifier needs a little
-  # time to write the crash report before being forced to reopen.  From trials, 2s was not enough.
-  # TODO Consider checking when the app has closed using Appium app_state
-  sleep(5)
+  step 'the app is not running'
   Maze.driver.launch_app
 end
 
