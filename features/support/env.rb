@@ -6,6 +6,8 @@ end
 
 Before do
   $scenario_mode = ''
+  $sessions_endpoint = 'http://bs-local.com:9339/sessions'
+  $notify_endpoint = 'http://bs-local.com:9339/notify'
 end
 
 Before('@skip') do |scenario|
