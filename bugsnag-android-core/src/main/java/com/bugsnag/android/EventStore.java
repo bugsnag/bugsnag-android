@@ -184,6 +184,8 @@ class EventStore extends FileStore {
         Delivery delivery = config.getDelivery();
         DeliveryStatus deliveryStatus = delivery.deliver(payload, deliveryParams);
 
+        logger.i("DeliveryStatus Checkpoint");
+
         switch (deliveryStatus) {
             case DELIVERED:
                 deleteStoredFiles(Collections.singleton(eventFile));
@@ -261,6 +263,7 @@ class EventStore extends FileStore {
     private static long oneMegabyte = 1024 * 1024;
 
     public boolean isTooBig(File file) {
+        logger.i("isTooBig Checkpoint: " + file.length());
         return file.length() > oneMegabyte;
     }
 
