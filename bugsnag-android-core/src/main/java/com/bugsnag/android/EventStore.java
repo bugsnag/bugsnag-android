@@ -169,9 +169,13 @@ class EventStore extends FileStore {
             String apiKey = eventInfo.getApiKey();
             EventPayload payload = createEventPayload(eventFile, apiKey);
 
+            logger.i("flushEventFile Checkpoint: " + payload);
+
             if (payload == null) {
+                logger.i("deleteStoredFiles Checkpoint");
                 deleteStoredFiles(Collections.singleton(eventFile));
             } else {
+                logger.i("deliverEventPayload Checkpoint");
                 deliverEventPayload(eventFile, payload);
             }
         } catch (Exception exception) {
@@ -184,7 +188,7 @@ class EventStore extends FileStore {
         Delivery delivery = config.getDelivery();
         DeliveryStatus deliveryStatus = delivery.deliver(payload, deliveryParams);
 
-        logger.i("DeliveryStatus Checkpoint");
+        logger.i("DeliveryStatus Checkpoint " + deliveryStatus);
 
         switch (deliveryStatus) {
             case DELIVERED:
@@ -209,6 +213,7 @@ class EventStore extends FileStore {
                 }
                 break;
             case FAILURE:
+                logger.i("DeliveryStatus FAILURE Checkpoint " + deliveryStatus);
                 Exception exc = new RuntimeException("Failed to deliver event payload");
                 handleEventFlushFailure(exc, eventFile);
                 break;
@@ -223,6 +228,7 @@ class EventStore extends FileStore {
 
         try {
             if (!callbackState.runOnSendTasks(eventSource, logger)) {
+                logger.i("EventPayload Checkpoint ");
                 // do not send the payload at all, we must block sending
                 return null;
             }

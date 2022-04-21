@@ -215,6 +215,7 @@ abstract class FileStore {
     }
 
     void deleteStoredFiles(Collection<File> storedFiles) {
+        logger.i("deleteStoredFiles Checkpoint");
         lock.lock();
         try {
             if (storedFiles != null) {
