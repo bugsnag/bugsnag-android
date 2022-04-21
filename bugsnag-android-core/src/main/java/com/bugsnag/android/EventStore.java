@@ -183,6 +183,7 @@ class EventStore extends FileStore {
         DeliveryParams deliveryParams = config.getErrorApiDeliveryParams(payload);
         Delivery delivery = config.getDelivery();
         DeliveryStatus deliveryStatus = delivery.deliver(payload, deliveryParams);
+        logger.i("We got here");
 
         switch (deliveryStatus) {
             case DELIVERED:
@@ -261,6 +262,7 @@ class EventStore extends FileStore {
     private static long oneMegabyte = 1024 * 1024;
 
     public boolean isTooBig(File file) {
+        logger.i("josh: " + file.length());
         return file.length() > oneMegabyte;
     }
 
