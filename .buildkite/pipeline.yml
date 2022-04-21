@@ -85,9 +85,66 @@ steps:
       TEST_FIXTURE_CONFIGURATION: "release"
       BUILD_TASK: "assembleRelease"
 
-  - label: ':android: Android 7 NDK r19 end-to-end tests - batch 1'
-    depends_on:
-      - "fixture-r19"
+  - label: ':android: Build fixture APK r21'
+    key: "fixture-r21"
+    depends_on: "android-ci"
+    timeout_in_minutes: 30
+    artifact_paths:
+      - "build/release/fixture-r21.apk"
+      - "build/release/fixture-r21/*"
+    plugins:
+      - docker-compose#v3.7.0:
+          run: android-builder
+    env:
+      MAVEN_VERSION: "3.6.1"
+      TEST_FIXTURE_NDK_VERSION: "21.4.7075529"
+      TEST_FIXTURE_NAME: "fixture-r21"
+      TEST_FIXTURE_CONFIGURATION: "release"
+      BUILD_TASK: "assembleRelease"
+
+  - label: ':android: Coding standards checks'
+    depends_on: "android-ci"
+    timeout_in_minutes: 10
+    plugins:
+      - docker-compose#v3.7.0:
+          run: android-ci
+    command: './gradlew --continue checkstyle detekt lint ktlintCheck'
+
+  - label: ':android: CppCheck'
+    depends_on: "android-ci"
+    timeout_in_minutes: 10
+    plugins:
+      - docker-compose#v3.7.0:
+          run: android-ci
+    command: 'bash ./scripts/run-cpp-check.sh'
+
+  - label: ':android: ClangFormat'
+    depends_on: "android-ci"
+    timeout_in_minutes: 10
+    plugins:
+      - docker-compose#v3.7.0:
+          run: android-ci
+    command: 'bash ./scripts/run-clang-format-ci-check.sh'
+
+  - label: ':android: Lint mazerunner scenarios'
+    depends_on: "android-ci"
+    timeout_in_minutes: 10
+    plugins:
+      - docker-compose#v3.7.0:
+          run: android-builder
+    command: 'cd features/fixtures/mazerunner && ./gradlew ktlintCheck detekt checkstyle'
+
+  - label: ':android: JVM tests'
+    depends_on: "android-ci"
+    timeout_in_minutes: 10
+    plugins:
+      - docker-compose#v3.7.0:
+          run: android-ci
+    command: './gradlew test'
+
+  - label: ':android: Android 4.4 NDK r16 smoke tests'
+    key: 'android-4-4-smoke'
+    depends_on: "fixture-r16"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.2.0:
