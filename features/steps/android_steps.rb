@@ -2,6 +2,24 @@ When('I clear all persistent data') do
   execute_command :clear_persistent_data
 end
 
+When('any dialog is cleared and the element {string} is present') do |element_id|
+  count = 0
+  present = false
+  # Give Android 5 more time to find elements in an attempt to combat flakes
+  timeout = (Maze.config.os_version == 5 ? 15 : 3)
+  until present || count > 5
+    present = Maze.driver.wait_for_element(element_id, timeout = timeout)
+    break if present
+    count += 1
+    clicked = click_if_present('android:id/button1') ||
+      click_if_present('android:id/aerr_close') ||
+      click_if_present('android:id/aerr_restart')
+    $logger.info "System dialog cleared, reattempting wait_for_element" if clicked
+  end
+
+  Maze.check.true(present, "The element #{element_id} could not be found")
+end
+
 def execute_command(action, scenario_name = '')
   command = { action: action, scenario_name: scenario_name, scenario_mode: $scenario_mode }
   Maze::Server.commands.add command
