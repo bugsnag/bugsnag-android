@@ -69,8 +69,9 @@ class MainActivity : Activity() {
                         log("No Maze Runner commands queued")
                         continue
                     }
-                    log("Received command: $commandStr")
 
+                    // Log the received command
+                    log("Received command: $commandStr")
                     var command = JSONObject(commandStr)
                     val action = command.getString("action")
                     val scenarioName = command.getString("scenario_name")
@@ -83,8 +84,14 @@ class MainActivity : Activity() {
                     log("command.sessionsUrl: $sessionsUrl")
                     log("command.notifyUrl: $notifyUrl")
 
-                    // Perform the given action on the UI thread
                     runOnUiThread {
+                        // Display some feedback of the action being run on he UI
+                        val actionField = findViewById<EditText>(R.id.command_action)
+                        val scenarioField = findViewById<EditText>(R.id.command_scenario)
+                        actionField.setText(action)
+                        scenarioField.setText(scenarioName)
+
+                        // Perform the given action on the UI thread
                         when (action) {
                             "start_bugsnag" -> startBugsnag(scenarioName, scenarioMode, sessionsUrl, notifyUrl)
                             "run_scenario" -> runScenario(scenarioName, scenarioMode, sessionsUrl, notifyUrl)

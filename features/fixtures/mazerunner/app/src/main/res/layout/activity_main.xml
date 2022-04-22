@@ -5,24 +5,22 @@
   android:orientation="vertical">
 
   <EditText
-          android:id="@+id/notify_endpoint"
+          android:id="@+id/command_action"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_weight="0"
           android:ems="10"
-          android:hint="Notify endpoint"
-          android:inputType="text"
-          android:text="http://bs-local.com:9339/notify" />
+          android:text=""
+          android:inputType="text" />
 
   <EditText
-          android:id="@+id/session_endpoint"
+          android:id="@+id/command_scenario"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_weight="0"
           android:ems="10"
-          android:hint="Session endpoint"
-          android:inputType="text"
-          android:text="http://bs-local.com:9339/sessions" />
+          android:text=""
+          android:inputType="text" />
 
   <TextView
     android:id="@+id/textView"
