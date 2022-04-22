@@ -69,21 +69,32 @@ class MainActivity : Activity() {
                         log("No Maze Runner commands queued")
                         continue
                     }
-                    log("Received command: $commandStr")
 
+                    // Log the received command
+                    log("Received command: $commandStr")
                     var command = JSONObject(commandStr)
                     val action = command.getString("action")
                     val scenarioName = command.getString("scenario_name")
                     val scenarioMode = command.getString("scenario_mode")
+                    val sessionsUrl = command.getString("sessions_endpoint")
+                    val notifyUrl = command.getString("notify_endpoint")
                     log("command.action: $action")
                     log("command.scenarioName: $scenarioName")
                     log("command.scenarioMode: $scenarioMode")
+                    log("command.sessionsUrl: $sessionsUrl")
+                    log("command.notifyUrl: $notifyUrl")
 
-                    // Perform the given action on the UI thread
                     runOnUiThread {
+                        // Display some feedback of the action being run on he UI
+                        val actionField = findViewById<EditText>(R.id.command_action)
+                        val scenarioField = findViewById<EditText>(R.id.command_scenario)
+                        actionField.setText(action)
+                        scenarioField.setText(scenarioName)
+
+                        // Perform the given action on the UI thread
                         when (action) {
-                            "start_bugsnag" -> startBugsnag(scenarioName, scenarioMode)
-                            "run_scenario" -> runScenario(scenarioName, scenarioMode)
+                            "start_bugsnag" -> startBugsnag(scenarioName, scenarioMode, sessionsUrl, notifyUrl)
+                            "run_scenario" -> runScenario(scenarioName, scenarioMode, sessionsUrl, notifyUrl)
                             "clear_persistent_data" -> clearPersistentData()
                             else -> throw IllegalArgumentException("Unknown action: $action")
                         }
@@ -96,15 +107,15 @@ class MainActivity : Activity() {
     }
 
     // load the scenario first, which initialises bugsnag without running any crashy code
-    private fun startBugsnag(eventType: String, mode: String) {
-        scenario = loadScenario(eventType, mode)
+    private fun startBugsnag(eventType: String, mode: String, sessionsUrl: String, notifyUrl: String) {
+        scenario = loadScenario(eventType, mode, sessionsUrl, notifyUrl)
         scenario?.startBugsnag(true)
     }
 
     // execute the pre-loaded scenario, or load it then execute it if needed
-    private fun runScenario(eventType: String, mode: String) {
+    private fun runScenario(eventType: String, mode: String, sessionsUrl: String, notifyUrl: String) {
         if (scenario == null) {
-            scenario = loadScenario(eventType, mode)
+            scenario = loadScenario(eventType, mode, sessionsUrl, notifyUrl)
             scenario?.startBugsnag(false)
         }
 
@@ -138,11 +149,9 @@ class MainActivity : Activity() {
         folder.deleteRecursively()
     }
 
-    private fun loadScenario(eventType: String, mode: String): Scenario {
+    private fun loadScenario(eventType: String, mode: String, sessionsUrl: String, notifyUrl: String): Scenario {
 
         val apiKeyField = findViewById<EditText>(R.id.manualApiKey)
-        val notifyEndpointField = findViewById<EditText>(R.id.notify_endpoint)
-        val sessionEndpointField = findViewById<EditText>(R.id.session_endpoint)
 
         val manualMode = apiKeyField.text.isNotEmpty()
         val apiKey = when {
@@ -154,9 +163,7 @@ class MainActivity : Activity() {
             log("Running in manual mode with API key: $apiKey")
             setStoredApiKey(apiKey)
         }
-        val notify = notifyEndpointField.text.toString()
-        val sessions = sessionEndpointField.text.toString()
-        val config = prepareConfig(apiKey, notify, sessions) {
+        val config = prepareConfig(apiKey, notifyUrl, sessionsUrl) {
             val interceptedLogMessages = scenario?.getInterceptedLogMessages()
             interceptedLogMessages?.contains(it) ?: false
         }

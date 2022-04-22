@@ -3,10 +3,19 @@ When('I clear all persistent data') do
 end
 
 def execute_command(action, scenario_name = '')
-  command = { action: action, scenario_name: scenario_name, scenario_mode: $scenario_mode }
+  command = {
+    action: action,
+    scenario_name: scenario_name,
+    scenario_mode: $scenario_mode,
+    sessions_endpoint: $sessions_endpoint,
+    notify_endpoint: $notify_endpoint
+  }
   Maze::Server.commands.add command
 
+  # Reset values to defaults
   $scenario_mode = ''
+  $sessions_endpoint = 'http://bs-local.com:9339/sessions'
+  $notify_endpoint = 'http://bs-local.com:9339/notify'
 
   # Ensure fixture has read the command
   count = 600
@@ -47,12 +56,8 @@ When("I configure Bugsnag for {string}") do |event_type|
 end
 
 When("I set the endpoints to the terminating server") do
-  steps %Q{
-    Given any dialog is cleared and the element "notify_endpoint" is present
-    And any dialog is cleared and the element "session_endpoint" is present
-    When I send the keys "http://bs-local.com:9341" to the element "notify_endpoint"
-    And I send the keys "http://bs-local.com:9341" to the element "session_endpoint"
-  }
+  $notify_endpoint = 'http://bs-local.com:9341'
+  $sessions_endpoint = 'http://bs-local.com:9341'
 end
 
 When("I close and relaunch the app") do
