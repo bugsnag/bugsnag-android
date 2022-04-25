@@ -22,6 +22,16 @@ internal class DiscardBigEventsScenario(
         return "*".repeat(1024 * 1024)
     }
 
+    override fun startBugsnag(startBugsnagOnly: Boolean) {
+        super.startBugsnag(startBugsnagOnly)
+
+        // Wait and signal to Maze that the error has been deleted
+        if (eventMetadata == "delete-wait") {
+            waitForNoEventFiles()
+            Bugsnag.notify(MyThrowable("ErrorsDirectoryEmpty"))
+        }
+    }
+
     override fun startScenario() {
         super.startScenario()
         Bugsnag.markLaunchCompleted()

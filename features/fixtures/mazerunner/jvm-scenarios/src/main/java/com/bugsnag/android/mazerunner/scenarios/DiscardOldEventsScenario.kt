@@ -23,17 +23,6 @@ internal class DiscardOldEventsScenario(
         assert(file.renameTo(dstFile))
     }
 
-    fun errorsDir(): File {
-        return File(context.cacheDir, "bugsnag-errors")
-    }
-
-    fun waitForEventFile() {
-        val dir = errorsDir()
-        while (dir.listFiles()!!.isEmpty()) {
-            Thread.sleep(100)
-        }
-    }
-
     fun oldifyEventFiles() {
         val cal = Calendar.getInstance()
         cal.add(Calendar.DATE, -60)
