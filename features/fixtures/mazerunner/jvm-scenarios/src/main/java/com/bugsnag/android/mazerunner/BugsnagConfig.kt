@@ -2,8 +2,14 @@ package com.bugsnag.android.mazerunner
 
 import android.util.Log
 import com.bugsnag.android.Configuration
+import com.bugsnag.android.Delivery
+import com.bugsnag.android.DeliveryParams
+import com.bugsnag.android.DeliveryStatus
 import com.bugsnag.android.EndpointConfiguration
+import com.bugsnag.android.EventPayload
 import com.bugsnag.android.Logger
+import com.bugsnag.android.Session
+import com.bugsnag.android.createDefaultDelivery
 import java.net.URL
 
 fun prepareConfig(
@@ -82,5 +88,49 @@ private fun generateInterceptingLogger(
     override fun d(msg: String, throwable: Throwable) {
         Log.d(TAG, msg, throwable)
         cb(LogLevel.DEBUG, msg)
+    }
+}
+
+/**
+ * Sets a NOP implementation for the Session Tracking API, preventing delivery
+ */
+fun disableSessionDelivery(config: Configuration) {
+    val baseDelivery = createDefaultDelivery()
+    config.delivery = object : Delivery {
+        override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
+            return baseDelivery.deliver(payload, deliveryParams)
+        }
+
+        override fun deliver(payload: Session, deliveryParams: DeliveryParams): DeliveryStatus {
+            return DeliveryStatus.UNDELIVERED
+        }
+    }
+}
+
+/**
+ * Sets a NOP implementation for the Error Tracking API, preventing delivery
+ */
+fun disableReportDelivery(config: Configuration) {
+    val baseDelivery = createDefaultDelivery()
+    config.delivery = object : Delivery {
+        override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
+            return DeliveryStatus.UNDELIVERED
+        }
+
+        override fun deliver(payload: Session, deliveryParams: DeliveryParams): DeliveryStatus {
+            return baseDelivery.deliver(payload, deliveryParams)
+        }
+    }
+}
+
+fun disableAllDelivery(config: Configuration) {
+    config.delivery = object : Delivery {
+        override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
+            return DeliveryStatus.UNDELIVERED
+        }
+
+        override fun deliver(payload: Session, deliveryParams: DeliveryParams): DeliveryStatus {
+            return DeliveryStatus.UNDELIVERED
+        }
     }
 }

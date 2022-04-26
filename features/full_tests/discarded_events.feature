@@ -27,17 +27,46 @@ Feature: Discarding events
     And I configure Bugsnag for "DiscardOldEventsScenario"
     Then I should receive no requests
 
-  # Skip pending PLAT-8374
-  @skip
-  Scenario: Discard an on-disk error that failed to send and is too big
-    # Fail to send initial handled error. Client stores it to disk.
-    Given I set the endpoints to the terminating server
-    And I start the terminating server
-    When I run "DiscardBigEventsScenario"
-    And I wait for 2 seconds
-    And the terminating server has received 1 requests
+  Scenario: Discard an on-disk error that received 500 and is too big
+    # Fail to send initial handled error due to 500 error. Client stores it to disk.
+    When I set the HTTP status code for the next request to 500
+    And I run "DiscardBigEventsScenario"
+    And I wait to receive an error
+    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And I discard the oldest error
 
-    # The event should have been deleted, so we should receive nothing
-    Then I close and relaunch the app
+    # Fail to send event that was reloaded from disk. Event is too big, so the client discards it.
+    And I set the HTTP status code for the next request to 500
+    And I close and relaunch the app
+
+    And I configure the app to run in the "delete-wait" state
     And I configure Bugsnag for "DiscardBigEventsScenario"
-    And I should receive no requests
+
+    And I wait to receive 2 errors
+
+    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And the exception "message" equals "DiscardBigEventsScenario"
+
+    And I discard the oldest error
+    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And the exception "message" equals "ErrorsDirectoryEmpty"
+
+    And I discard the oldest error
+
+    # Now there is no event on disk, so there's nothing to send.
+    And I close and relaunch the app
+    And I configure Bugsnag for "DiscardBigEventsScenario"
+    Then I should receive no requests
+
+  Scenario: Discard an on-disk error that received 400 and is too big
+    # Fail to send initial handled error due to 400 error. Client discards it immediately.
+    When I set the HTTP status code for the next request to 400
+    And I run "DiscardBigEventsScenario"
+    And I wait to receive an error
+    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And I discard the oldest error
+
+    # Now there is no event on disk, so there's nothing to send.
+    And I close and relaunch the app
+    And I configure Bugsnag for "DiscardBigEventsScenario"
+    Then I should receive no requests
