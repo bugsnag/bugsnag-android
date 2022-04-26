@@ -12,12 +12,6 @@ import android.os.HandlerThread
 import android.os.Looper
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
-import com.bugsnag.android.Delivery
-import com.bugsnag.android.DeliveryParams
-import com.bugsnag.android.DeliveryStatus
-import com.bugsnag.android.EventPayload
-import com.bugsnag.android.Session
-import com.bugsnag.android.createDefaultDelivery
 import com.bugsnag.android.mazerunner.BugsnagIntentParams
 import com.bugsnag.android.mazerunner.log
 import com.bugsnag.android.mazerunner.multiprocess.MultiProcessService
@@ -59,50 +53,6 @@ abstract class Scenario(
      */
     open fun startScenario() {
         startBugsnagOnly = false
-    }
-
-    /**
-     * Sets a NOP implementation for the Session Tracking API, preventing delivery
-     */
-    protected fun disableSessionDelivery(config: Configuration) {
-        val baseDelivery = createDefaultDelivery()
-        config.delivery = object : Delivery {
-            override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
-                return baseDelivery.deliver(payload, deliveryParams)
-            }
-
-            override fun deliver(payload: Session, deliveryParams: DeliveryParams): DeliveryStatus {
-                return DeliveryStatus.UNDELIVERED
-            }
-        }
-    }
-
-    /**
-     * Sets a NOP implementation for the Error Tracking API, preventing delivery
-     */
-    protected fun disableReportDelivery(config: Configuration) {
-        val baseDelivery = createDefaultDelivery()
-        config.delivery = object : Delivery {
-            override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
-                return DeliveryStatus.UNDELIVERED
-            }
-
-            override fun deliver(payload: Session, deliveryParams: DeliveryParams): DeliveryStatus {
-                return baseDelivery.deliver(payload, deliveryParams)
-            }
-        }
-    }
-
-    protected fun disableAllDelivery(config: Configuration) {
-        config.delivery = object : Delivery {
-            override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
-                return DeliveryStatus.UNDELIVERED
-            }
-
-            override fun deliver(payload: Session, deliveryParams: DeliveryParams): DeliveryStatus {
-                return DeliveryStatus.UNDELIVERED
-            }
-        }
     }
 
     /**

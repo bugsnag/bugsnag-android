@@ -8,6 +8,7 @@ import com.bugsnag.android.Configuration
 import com.bugsnag.android.OnBreadcrumbCallback
 import com.bugsnag.android.OnErrorCallback
 import com.bugsnag.android.Severity
+import com.bugsnag.android.mazerunner.disableSessionDelivery
 
 class CXXExceptionSmokeScenario(
     config: Configuration,

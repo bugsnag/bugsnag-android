@@ -4,6 +4,7 @@ import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.createCustomHeaderDelivery
+import com.bugsnag.android.mazerunner.disableAllDelivery
 
 /**
  * Sends an unhandled exception and sessions which is cached on disk to Bugsnag,
