@@ -27,7 +27,6 @@ Feature: Switching automatic error detection on/off for Unity
     And I close and relaunch the app
     And I configure Bugsnag for "AutoDetectAnrsFalseScenario"
     Then Bugsnag confirms it has no errors to send
-    And I should receive no requests
 
   Scenario: JVM exception captured with autoNotify reenabled
     When I run "UnhandledJvmAutoNotifyTrueScenario" and relaunch the crashed app

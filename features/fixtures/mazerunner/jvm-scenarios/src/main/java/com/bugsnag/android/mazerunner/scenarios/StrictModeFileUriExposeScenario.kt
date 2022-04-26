@@ -9,6 +9,7 @@ import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
 import com.bugsnag.android.BugsnagVmViolationListener
 import com.bugsnag.android.Configuration
+import com.bugsnag.android.mazerunner.getZeroEventsLogMessages
 import java.io.File
 
 /**
@@ -48,5 +49,9 @@ internal class StrictModeFileUriExposeScenario(
             policy.penaltyListener(context.mainExecutor, listener)
         }
         StrictMode.setVmPolicy(policy.build())
+    }
+
+    override fun getInterceptedLogMessages(): List<String> {
+        return getZeroEventsLogMessages(startBugsnagOnly)
     }
 }
