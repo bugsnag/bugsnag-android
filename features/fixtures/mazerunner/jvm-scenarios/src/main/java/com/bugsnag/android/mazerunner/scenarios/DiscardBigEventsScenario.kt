@@ -3,6 +3,7 @@ package com.bugsnag.android.mazerunner.scenarios
 import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
+import com.bugsnag.android.mazerunner.getZeroEventsLogMessages
 
 internal class DiscardBigEventsScenario(
     config: Configuration,
@@ -36,5 +37,9 @@ internal class DiscardBigEventsScenario(
         super.startScenario()
         Bugsnag.markLaunchCompleted()
         Bugsnag.notify(MyThrowable("DiscardBigEventsScenario"))
+    }
+
+    override fun getInterceptedLogMessages(): List<String> {
+        return getZeroEventsLogMessages(startBugsnagOnly)
     }
 }

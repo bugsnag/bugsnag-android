@@ -69,4 +69,4 @@ Feature: Discarding events
     # Now there is no event on disk, so there's nothing to send.
     And I close and relaunch the app
     And I configure Bugsnag for "DiscardBigEventsScenario"
-    Then I should receive no requests
+    Then Bugsnag confirms it has no errors to send
