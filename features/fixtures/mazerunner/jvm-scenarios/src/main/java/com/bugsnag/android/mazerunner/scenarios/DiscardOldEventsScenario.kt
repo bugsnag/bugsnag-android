@@ -31,7 +31,6 @@ internal class DiscardOldEventsScenario(
 
         val files = errorsDir().listFiles()
         for (file in files!!) {
-            println("Josh here is a file: ${file}")
             setEventFileTimestamp(file, timestamp)
         }
     }
