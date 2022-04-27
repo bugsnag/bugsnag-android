@@ -31,6 +31,7 @@ internal class DiscardOldEventsScenario(
 
         val files = errorsDir().listFiles()
         for (file in files!!) {
+            println("Josh here is a file: ${file}")
             setEventFileTimestamp(file, timestamp)
         }
     }
@@ -41,10 +42,8 @@ internal class DiscardOldEventsScenario(
         Bugsnag.notify(MyThrowable("DiscardOldEventsScenario"))
 
         waitForEventFile()
-        // PLAT-8344 Determine why an extra sleep is needed on Android 10+
-        Thread.sleep(2000)
         oldifyEventFiles()
 
-        Bugsnag.notify(MyThrowable("To keep maze-runner from shutting me down prematurely"))
+        Bugsnag.notify(MyThrowable("MazeRunner KeepAlive"))
     }
 }
