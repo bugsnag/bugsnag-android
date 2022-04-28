@@ -48,8 +48,7 @@ Feature: Reporting with feature flags
 
   Scenario: Sends feature flags added in OnSend Callbacks
     When I configure the app to run in the "onsend" state
-    And I run "FeatureFlagScenario" and relaunch the crashed app
-    And I configure Bugsnag for "FeatureFlagScenario"
+    And I run "FeatureFlagScenario"
     Then I wait to receive an error
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the event "unhandled" is false

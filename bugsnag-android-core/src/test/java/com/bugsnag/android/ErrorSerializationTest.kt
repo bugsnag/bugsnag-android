@@ -14,7 +14,49 @@ internal class ErrorSerializationTest {
         @Parameters
         fun testCases() = generateSerializationTestCases(
             "error",
-            Error(ErrorInternal("foo", "bar", Stacktrace(listOf())), NoopLogger)
+            Error(ErrorInternal("foo", "bar", Stacktrace(listOf())), NoopLogger),
+            Error(
+                ErrorInternal(
+                    "foo",
+                    "bar",
+                    Stacktrace(
+                        listOf(
+                            Stackframe(
+                                method = "foo()",
+                                file = "Bar.kt",
+                                lineNumber = 55,
+                                inProject = true,
+                                columnNumber = 99,
+                                code = mapOf("54" to "invoke()")
+                            ),
+                        )
+                    )
+                ),
+                NoopLogger
+            ),
+            Error(
+                ErrorInternal(
+                    "com.bugsnag.android.StacktraceSerializationTest",
+                    "bar",
+                    Stacktrace(
+                        listOf(
+                            Stackframe(
+                                method = "com.bugsnag.android.StacktraceSerializationTest\$Companion.inProject",
+                                file = "StacktraceSerializationTest.kt",
+                                lineNumber = 47,
+                                inProject = true,
+                            ),
+                            Stackframe(
+                                method = "com.bugsnag.android.StacktraceSerializationTest\$Companion.testCases",
+                                file = "StacktraceSerializationTest.kt",
+                                lineNumber = 31,
+                                inProject = true,
+                            )
+                        )
+                    )
+                ),
+                NoopLogger
+            )
         )
     }
 

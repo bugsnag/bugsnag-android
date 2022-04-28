@@ -1,5 +1,7 @@
 <?xml version="1.0" ?>
 <SmellBaseline>
   <ManuallySuppressedIssues></ManuallySuppressedIssues>
-  <CurrentIssues></CurrentIssues>
+  <CurrentIssues>
+    <ID>MagicNumber:MainActivity.kt$MainActivity$1000</ID>
+  </CurrentIssues>
 </SmellBaseline>

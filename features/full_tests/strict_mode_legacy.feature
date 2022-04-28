@@ -28,4 +28,4 @@ Feature: Reporting Strict Mode Violations
   Scenario: StrictMode Activity leak violation
     When I run "StrictModeFileUriExposeScenario" and relaunch the crashed app
     And I configure Bugsnag for "StrictModeFileUriExposeScenario"
-    Then I should receive no requests
+    Then Bugsnag confirms it has no errors to send

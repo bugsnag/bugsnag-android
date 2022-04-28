@@ -5,68 +5,22 @@
   android:orientation="vertical">
 
   <EditText
-          android:id="@+id/scenario_name"
+          android:id="@+id/command_action"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_weight="0"
           android:ems="10"
-          android:hint="Scenario name"
+          android:text=""
           android:inputType="text" />
 
   <EditText
-          android:id="@+id/scenario_metadata"
+          android:id="@+id/command_scenario"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_weight="0"
           android:ems="10"
-          android:hint="Scenario metadata"
+          android:text=""
           android:inputType="text" />
-
-  <Button
-          android:id="@+id/clear_persistent_data"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_weight="0"
-          android:text="Clear app data" />
-
-  <Button
-          android:id="@+id/start_bugsnag"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_weight="0"
-          android:text="Start Bugsnag" />
-
-  <Button
-          android:id="@+id/run_scenario"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_weight="0"
-          android:text="Execute" />
-
-  <EditText
-          android:id="@+id/notify_endpoint"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_weight="0"
-          android:ems="10"
-          android:hint="Notify endpoint"
-          android:inputType="text"
-          android:text="http://bs-local.com:9339/notify" />
-
-  <EditText
-          android:id="@+id/session_endpoint"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_weight="0"
-          android:ems="10"
-          android:hint="Session endpoint"
-          android:inputType="text"
-          android:text="http://bs-local.com:9339/sessions" />
-
-  <Space
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_weight="1" />
 
   <TextView
     android:id="@+id/textView"
@@ -94,10 +48,5 @@
     android:layout_height="wrap_content"
     android:layout_weight="0"
     android:text="Clear User data" />
-
-  <Space
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_weight="6" />
 
 </LinearLayout>

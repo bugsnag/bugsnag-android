@@ -7,6 +7,7 @@ import com.bugsnag.android.Event;
 import com.bugsnag.android.OnBreadcrumbCallback;
 import com.bugsnag.android.OnErrorCallback;
 import com.bugsnag.android.Severity;
+import com.bugsnag.android.mazerunner.BugsnagConfigKt;
 
 import android.content.Context;
 import android.os.Handler;
@@ -18,6 +19,7 @@ import androidx.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
 
 public class CXXSignalSmokeScenario extends Scenario {
 
@@ -66,7 +68,7 @@ public class CXXSignalSmokeScenario extends Scenario {
                 return true;
             }
         });
-        disableSessionDelivery(config);
+        BugsnagConfigKt.disableSessionDelivery(config);
 
         config.addMetadata("fruit", "counters", 47);
         config.addMetadata("fruit", "ripe", true);

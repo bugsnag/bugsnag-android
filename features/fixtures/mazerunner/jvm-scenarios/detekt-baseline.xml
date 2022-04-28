@@ -7,9 +7,8 @@
     <ID>MagicNumber:AutoDetectAnrsFalseScenario.kt$AutoDetectAnrsFalseScenario$100000</ID>
     <ID>MagicNumber:AutoDetectAnrsTrueScenario.kt$AutoDetectAnrsTrueScenario$100000</ID>
     <ID>MagicNumber:BugsnagInitScenario.kt$BugsnagInitScenario$25</ID>
-    <ID>MagicNumber:DiscardBigEventsScenario.kt$DiscardBigEventsScenario$100</ID>
     <ID>MagicNumber:DiscardBigEventsScenario.kt$DiscardBigEventsScenario$1024</ID>
-    <ID>MagicNumber:DiscardOldEventsScenario.kt$DiscardOldEventsScenario$100</ID>
+    <ID>MagicNumber:DiscardOldEventsScenario.kt$DiscardOldEventsScenario$2000</ID>
     <ID>MagicNumber:DiscardOldEventsScenario.kt$DiscardOldEventsScenario$60</ID>
     <ID>MagicNumber:DiscardOldSessionScenario.kt$DiscardOldSessionScenario$100</ID>
     <ID>MagicNumber:DiscardOldSessionScenario.kt$DiscardOldSessionScenario$35</ID>
@@ -21,6 +20,8 @@
     <ID>MagicNumber:LoadConfigurationKotlinScenario.kt$LoadConfigurationKotlinScenario$10000</ID>
     <ID>MagicNumber:LoadConfigurationKotlinScenario.kt$LoadConfigurationKotlinScenario$98</ID>
     <ID>MagicNumber:ManualSessionSmokeScenario.kt$ManualSessionSmokeScenario$3</ID>
+    <ID>MagicNumber:Scenario.kt$Scenario$100</ID>
+    <ID>MagicNumber:Scenario.kt$Scenario$1000</ID>
     <ID>MagicNumber:StartupCrashFlushScenario.kt$StartupCrashFlushScenario$6000</ID>
     <ID>MagicNumber:TestHarnessHooks.kt$&lt;no name provided&gt;$500</ID>
     <ID>MagicNumber:TrimmedStacktraceScenario.kt$TrimmedStacktraceScenario$100000</ID>
