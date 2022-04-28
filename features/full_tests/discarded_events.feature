@@ -19,7 +19,7 @@ Feature: Discarding events
     And I close and relaunch the app
     And I configure Bugsnag for "DiscardOldEventsScenario"
     And I wait to receive an error
-    # This allows for the request from MazeRunner to be processed.
+    # This allows for the response from MazeRunner to be processed.
     And I wait for 5 seconds
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
 
