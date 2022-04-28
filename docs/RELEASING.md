@@ -56,7 +56,8 @@ This contains a prompt of checks which you may want to test, depending on the ex
     - Select the com.bugsnag closed repository
     - Click the “release” button in the toolbar
   - Merge outstanding docs PRs related to this release
-  - Raise PRs to update the bugsnag-android dependency for bugsnag-js and bugsnag-unity
+  - Raise PRs to update the bugsnag-android dependency for [bugsnag-js](https://github.com/bugsnag/bugsnag-js), [bugsnag-unity](https://github.com/bugsnag/bugsnag-unity) and bugsnag-unreal (https://github.com/bugsnag/bugsnag-unreal)
+    - Also consider a PR for [bugsnag-cocos2dx](https://github.com/bugsnag/bugsnag-cocos2dx) if there is a critical fix
 
 ## Post-release checklist
 

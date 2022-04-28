@@ -23,17 +23,6 @@ internal class DiscardOldEventsScenario(
         assert(file.renameTo(dstFile))
     }
 
-    fun errorsDir(): File {
-        return File(context.cacheDir, "bugsnag-errors")
-    }
-
-    fun waitForEventFile() {
-        val dir = errorsDir()
-        while (dir.listFiles()!!.isEmpty()) {
-            Thread.sleep(100)
-        }
-    }
-
     fun oldifyEventFiles() {
         val cal = Calendar.getInstance()
         cal.add(Calendar.DATE, -60)
@@ -52,6 +41,8 @@ internal class DiscardOldEventsScenario(
         Bugsnag.notify(MyThrowable("DiscardOldEventsScenario"))
 
         waitForEventFile()
+        // PLAT-8344 Determine why an extra sleep is needed on Android 10+
+        Thread.sleep(2000)
         oldifyEventFiles()
 
         Bugsnag.notify(MyThrowable("To keep maze-runner from shutting me down prematurely"))

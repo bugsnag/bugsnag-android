@@ -1,5 +1,8 @@
 Feature: Discarding sessions
 
+  Background:
+    Given I clear all persistent data
+
   Scenario: Discard an on-disk session that failed to send and is too old
     # Part 1 sets a bogus session endpoint so that all attempts to send the session fail.
     # Note: The app will make two attempts.

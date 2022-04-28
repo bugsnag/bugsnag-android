@@ -4,6 +4,10 @@ add_library(cxx-scenarios-bugsnag SHARED
         src/main/cpp/cxx-scenarios-bugsnag.cpp
         src/main/cpp/CXXExceptionSmokeScenario.cpp)
 
+set_target_properties(cxx-scenarios-bugsnag PROPERTIES
+                      CXX_STANDARD 11
+                      CXX_STANDARD_REQUIRED YES)
+
 add_library(lib_bugsnag SHARED IMPORTED)
 set(BUGSNAG_LIB_DIR
     ${CMAKE_SOURCE_DIR}/build/intermediates/bugsnag-libs)

@@ -12,16 +12,11 @@ import android.os.HandlerThread
 import android.os.Looper
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
-import com.bugsnag.android.Delivery
-import com.bugsnag.android.DeliveryParams
-import com.bugsnag.android.DeliveryStatus
-import com.bugsnag.android.EventPayload
-import com.bugsnag.android.Session
-import com.bugsnag.android.createDefaultDelivery
 import com.bugsnag.android.mazerunner.BugsnagIntentParams
 import com.bugsnag.android.mazerunner.log
 import com.bugsnag.android.mazerunner.multiprocess.MultiProcessService
 import com.bugsnag.android.mazerunner.multiprocess.findCurrentProcessName
+import java.io.File
 
 abstract class Scenario(
     protected val config: Configuration,
@@ -58,50 +53,6 @@ abstract class Scenario(
      */
     open fun startScenario() {
         startBugsnagOnly = false
-    }
-
-    /**
-     * Sets a NOP implementation for the Session Tracking API, preventing delivery
-     */
-    protected fun disableSessionDelivery(config: Configuration) {
-        val baseDelivery = createDefaultDelivery()
-        config.delivery = object : Delivery {
-            override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
-                return baseDelivery.deliver(payload, deliveryParams)
-            }
-
-            override fun deliver(payload: Session, deliveryParams: DeliveryParams): DeliveryStatus {
-                return DeliveryStatus.UNDELIVERED
-            }
-        }
-    }
-
-    /**
-     * Sets a NOP implementation for the Error Tracking API, preventing delivery
-     */
-    protected fun disableReportDelivery(config: Configuration) {
-        val baseDelivery = createDefaultDelivery()
-        config.delivery = object : Delivery {
-            override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
-                return DeliveryStatus.UNDELIVERED
-            }
-
-            override fun deliver(payload: Session, deliveryParams: DeliveryParams): DeliveryStatus {
-                return baseDelivery.deliver(payload, deliveryParams)
-            }
-        }
-    }
-
-    protected fun disableAllDelivery(config: Configuration) {
-        config.delivery = object : Delivery {
-            override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
-                return DeliveryStatus.UNDELIVERED
-            }
-
-            override fun deliver(payload: Session, deliveryParams: DeliveryParams): DeliveryStatus {
-                return DeliveryStatus.UNDELIVERED
-            }
-        }
     }
 
     /**
@@ -154,6 +105,26 @@ abstract class Scenario(
         val handlerThread = HandlerThread("bg-thread")
         handlerThread.start()
         Handler(handlerThread.looper).post(block)
+    }
+
+    protected fun errorsDir(): File {
+        return File(context.cacheDir, "bugsnag-errors")
+    }
+
+    protected fun waitForEventFile() {
+        val dir = errorsDir()
+        while (dir.listFiles()!!.isEmpty()) {
+            dir.listFiles().forEach { println(it) }
+            Thread.sleep(100)
+        }
+    }
+
+    protected fun waitForNoEventFiles() {
+        val dir = errorsDir()
+        while (!dir.listFiles()!!.isEmpty()) {
+            dir.listFiles().forEach { println(it) }
+            Thread.sleep(1000)
+        }
     }
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}

@@ -1,34 +1,47 @@
 When('I clear all persistent data') do
-  step 'I click the element "clear_persistent_data"'
+  execute_command :clear_persistent_data
 end
 
-# Waits 5s for an element to be present.  If it isn't assume a system error dialog is
-# blocking its view and dismiss it before trying once more.
-#
-# @step_input element_id [String] The element to wait for
-When('any dialog is cleared and the element {string} is present') do |element_id|
-  count = 0
-  present = false
-  timeout = 3
-  until present || count > 5
-    present = Maze.driver.wait_for_element(element_id, timeout = timeout)
-    break if present
-    count += 1
-    clicked = click_if_present('android:id/button1') ||
-              click_if_present('android:id/aerr_close') ||
-              click_if_present('android:id/aerr_restart')
-    $logger.info "System dialog cleared, reattempting wait_for_element" if clicked
-  end
-
-  Maze.check.true(present, "The element #{element_id} could not be found")
-end
-
-When("I run {string}") do |event_type|
-  steps %Q{
-    Given any dialog is cleared and the element "scenario_name" is present
-    When I send the keys "#{event_type}" to the element "scenario_name"
-    And I click the element "run_scenario"
+def execute_command(action, scenario_name = '')
+  command = {
+    action: action,
+    scenario_name: scenario_name,
+    scenario_mode: $scenario_mode,
+    sessions_endpoint: $sessions_endpoint,
+    notify_endpoint: $notify_endpoint
   }
+  Maze::Server.commands.add command
+
+  # Reset values to defaults
+  $scenario_mode = ''
+  $sessions_endpoint = 'http://bs-local.com:9339/sessions'
+  $notify_endpoint = 'http://bs-local.com:9339/notify'
+
+  # Ensure fixture has read the command
+  count = 600
+  sleep 0.1 until Maze::Server.commands.remaining.empty? || (count -= 1) < 1
+  raise 'Test fixture did not GET /command' unless Maze::Server.commands.remaining.empty?
+end
+
+def tap_at(x, y)
+  touch_action = Appium::TouchAction.new
+  touch_action.tap({:x => x, :y => y})
+  touch_action.perform
+end
+
+When("I clear any error dialogue") do
+  # It can take multiple clicks to clear a dialog,
+  # so keep pressing until nothing is pressed
+  keep_clicking = true
+  while keep_clicking
+    keep_clicking = click_if_present('android:id/button1') ||
+                    click_if_present('android:id/aerr_close') ||
+                    click_if_present('android:id/aerr_restart')
+  end
+end
+
+When('I run {string}') do |scenario_name|
+  execute_command :run_scenario, scenario_name
 end
 
 When("I run {string} and relaunch the crashed app") do |event_type|
@@ -38,18 +51,13 @@ When("I run {string} and relaunch the crashed app") do |event_type|
   }
 end
 
-When("I clear any error dialogue") do
-  click_if_present 'android:id/button1'
-  click_if_present 'android:id/aerr_close'
-  click_if_present 'android:id/aerr_restart'
+When("I configure Bugsnag for {string}") do |event_type|
+  execute_command :start_bugsnag, event_type
 end
 
-When("I configure Bugsnag for {string}") do |event_type|
-  steps %Q{
-    Given any dialog is cleared and the element "scenario_name" is present
-    When I send the keys "#{event_type}" to the element "scenario_name"
-    And I click the element "start_bugsnag"
-  }
+When("I set the endpoints to the terminating server") do
+  $notify_endpoint = 'http://bs-local.com:9341'
+  $sessions_endpoint = 'http://bs-local.com:9341'
 end
 
 When("I close and relaunch the app") do
@@ -61,19 +69,34 @@ When('I set the screen orientation to portrait') do
   Maze.driver.set_rotation(:portrait)
 end
 
+# Waits for up to 10 seconds for the app to stop running.  It seems that Appium doesn't always
+# get the state correct (e.g. when backgrounding the app, or on old Android versions), so we
+# don't fail if it still says running after the time allowed.
+def wait_for_app_state(expected_state)
+  max_attempts = 20
+  attempts = 0
+  state = Maze.driver.app_state('com.bugsnag.android.mazerunner')
+  until (attempts >= max_attempts) || state == expected_state
+    attempts += 1
+    state = Maze.driver.app_state('com.bugsnag.android.mazerunner')
+    sleep 0.5
+  end
+  $logger.warn "App state #{state} instead of #{expected_state} after 10s" unless state == expected_state
+end
+
+When('the app is not running') do
+  time = wait_for_app_state(:not_running)
+end
+
 When("I relaunch the app after a crash") do
-  # This step should only be used when the app has crashed, but the notifier needs a little
-  # time to write the crash report before being forced to reopen.  From trials, 2s was not enough.
-  sleep(5)
+  step 'the app is not running'
   Maze.driver.launch_app
 end
 
 When("I tap the screen {int} times") do |count|
   (1..count).each { |i|
     begin
-      touch_action = Appium::TouchAction.new
-      touch_action.tap({:x => 500, :y => 300})
-      touch_action.perform
+      tap_at 500, 300
     rescue Selenium::WebDriver::Error::ElementNotInteractableError
       # Ignore it§
     end
@@ -81,11 +104,8 @@ When("I tap the screen {int} times") do |count|
   }
 end
 
-When("I configure the app to run in the {string} state") do |event_metadata|
-  steps %Q{
-    Given any dialog is cleared and the element "scenario_metadata" is present
-    And I send the keys "#{event_metadata}" to the element "scenario_metadata"
-  }
+When("I configure the app to run in the {string} state") do |scenario_mode|
+  $scenario_mode = scenario_mode
 end
 
 Then("the exception reflects a signal was raised") do

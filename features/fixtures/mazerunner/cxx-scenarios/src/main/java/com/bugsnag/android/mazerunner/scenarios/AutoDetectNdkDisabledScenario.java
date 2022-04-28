@@ -1,11 +1,15 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
+import static com.bugsnag.android.mazerunner.LogKt.getZeroEventsLogMessages;
+
 import com.bugsnag.android.Configuration;
 
 import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import java.util.List;
 
 public class AutoDetectNdkDisabledScenario extends Scenario {
 
@@ -28,5 +32,10 @@ public class AutoDetectNdkDisabledScenario extends Scenario {
     public void startScenario() {
         super.startScenario();
         crash();
+    }
+
+    @Override
+    public List<String> getInterceptedLogMessages() {
+        return getZeroEventsLogMessages(getStartBugsnagOnly());
     }
 }

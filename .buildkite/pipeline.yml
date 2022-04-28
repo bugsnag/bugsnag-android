@@ -1,15 +1,5 @@
 steps:
 
-  - label: 'Trigger RN tests for all builds of our next branch'
-    if: build.branch == "next"
-    trigger: 'bugsnag-js'
-    build:
-      branch: 'next'
-      message: 'Run RN tests with latest Android next branch'
-      env:
-        BUILD_RN_WITH_LATEST_NATIVES: "true"
-    async: true
-
   # downloads the Android toolchain
   - label: ':docker: Build Android base image'
     key: "android-common"
@@ -62,7 +52,7 @@ steps:
           run: android-builder
     env:
       MAVEN_VERSION: "3.6.1"
-      TEST_FIXTURE_NDK_VERSION: "17.2.4988734"
+      TEST_FIXTURE_NDK_VERSION: "16.1.4479499"
       TEST_FIXTURE_NAME: "fixture-r16"
       TEST_FIXTURE_CONFIGURATION: "release"
       USE_LEGACY_OKHTTP: "true"
@@ -97,42 +87,18 @@ steps:
           run: android-builder
     env:
       MAVEN_VERSION: "3.6.1"
-      TEST_FIXTURE_NDK_VERSION: "21.3.6528147"
+      TEST_FIXTURE_NDK_VERSION: "21.4.7075529"
       TEST_FIXTURE_NAME: "fixture-r21"
       TEST_FIXTURE_CONFIGURATION: "release"
       BUILD_TASK: "assembleRelease"
 
-  - label: ':android: Lint'
+  - label: ':android: Coding standards checks'
     depends_on: "android-ci"
     timeout_in_minutes: 10
     plugins:
       - docker-compose#v3.7.0:
           run: android-ci
-    command: './gradlew lint'
-
-  - label: ':android: Checkstyle'
-    depends_on: "android-ci"
-    timeout_in_minutes: 10
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    command: './gradlew checkstyle'
-
-  - label: ':android: Detekt'
-    depends_on: "android-ci"
-    timeout_in_minutes: 10
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    command: './gradlew detekt'
-
-  - label: ':android: Ktlint'
-    depends_on: "android-ci"
-    timeout_in_minutes: 10
-    plugins:
-      - docker-compose#v3.7.0:
-          run: android-ci
-    command: './gradlew ktlintCheck'
+    command: './gradlew --continue checkstyle detekt lint ktlintCheck'
 
   - label: ':android: CppCheck'
     depends_on: "android-ci"
@@ -191,12 +157,84 @@ steps:
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
-  # Android 11+ devices have the GWP-ASAN tool enabled which randomly samples native memory to
-  # to detect misuse (such as use-after-free, buffer overflow). If a failure is detected then
-  # the device will raise a SIGABRT mentioning GWP-ASAN - this can be investigated further
-  # by inspecting the devices logs.
-  - label: ':android: Android 12 NDK r21 smoke tests'
-    key: 'android-12-smoke'
+  - label: ':android: Android 6 NDK r16 smoke tests'
+    key: 'android-6-smoke'
+    depends_on: "fixture-r16"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download:
+          - "build/release/fixture-r16.apk"
+          - "build/release/fixture-r16/*"
+        upload: "maze_output/failed/**/*"
+      docker-compose#v3.7.0:
+        pull: android-maze-runner
+        run: android-maze-runner
+        command:
+          - "features/smoke_tests"
+          - "--app=/app/build/release/fixture-r16.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_6_0_MOTOROLA_MOTO_X_2ND_GEN"
+          - "--device=ANDROID_6_0_GOOGLE_NEXUS_6"
+          - "--fail-fast"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+    concurrency_method: eager
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/release/fixture-r16"
+
+  - label: ':android: Android 7 NDK r19 smoke tests'
+    key: 'android-7-smoke'
+    depends_on: "fixture-r19"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download:
+          - "build/release/fixture-r19.apk"
+          - "build/release/fixture-r19/*"
+        upload: "maze_output/failed/**/*"
+      docker-compose#v3.7.0:
+        pull: android-maze-runner
+        run: android-maze-runner
+        command:
+          - "features/smoke_tests"
+          - "--app=/app/build/release/fixture-r19.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_7_1_SAMSUNG_GALAXY_NOTE_8"
+          - "--fail-fast"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+    concurrency_method: eager
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/release/fixture-r19"
+
+  - label: ':android: Android 8.1 NDK r19 smoke tests'
+    key: 'android-8-1-smoke'
+    depends_on: "fixture-r19"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download:
+          - "build/release/fixture-r19.apk"
+          - "build/release/fixture-r19/*"
+        upload: "maze_output/failed/**/*"
+      docker-compose#v3.7.0:
+        pull: android-maze-runner
+        run: android-maze-runner
+        command:
+          - "features/smoke_tests"
+          - "--app=/app/build/release/fixture-r19.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_8_1"
+          - "--fail-fast"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+    concurrency_method: eager
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/release/fixture-r19"
+
+  - label: ':android: Android 10 NDK r21 smoke tests'
+    key: 'android-10-smoke'
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
@@ -208,10 +246,90 @@ steps:
       docker-compose#v3.7.0:
         pull: android-maze-runner
         run: android-maze-runner
-        args:
-            - TESTS_DIR=features/smoke_tests
         command:
           - "features/smoke_tests"
+          - "--app=/app/build/release/fixture-r21.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_10_0"
+          - "--fail-fast"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+    concurrency_method: eager
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/release/fixture-r21"
+
+  - label: ':android: Android 11 NDK r21 smoke tests'
+    key: 'android-11-smoke'
+    depends_on: "fixture-r21"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download:
+          - "build/release/fixture-r21.apk"
+          - "build/release/fixture-r21/*"
+        upload: "maze_output/failed/**/*"
+      docker-compose#v3.7.0:
+        pull: android-maze-runner
+        run: android-maze-runner
+        command:
+          - "features/smoke_tests"
+          - "--app=/app/build/release/fixture-r21.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_11_0"
+          - "--fail-fast"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+    concurrency_method: eager
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/release/fixture-r21"
+
+  # Android 11+ devices have the GWP-ASAN tool enabled which randomly samples native memory
+  # to detect misuse (such as use-after-free, buffer overflow). If a failure is detected then
+  # the device will raise a SIGABRT mentioning GWP-ASAN - this can be investigated further
+  # by inspecting the devices logs.
+  - label: ':android: Android 12 NDK r21 end-to-end tests - batch 1'
+    depends_on:
+      - "fixture-r21"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download:
+          - "build/release/fixture-r21.apk"
+          - "build/release/fixture-r21/*"
+        upload: "maze_output/failed/**/*"
+      docker-compose#v3.7.0:
+        pull: android-maze-runner
+        run: android-maze-runner
+        command:
+          - "features/smoke_tests"
+          - "features/full_tests"
+          - "--exclude=features/full_tests/[^a-k].*.feature"
+          - "--app=/app/build/release/fixture-r21.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_12_0"
+          - "--fail-fast"
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/release/fixture-r21"
+    concurrency: 9
+    concurrency_group: 'browserstack-app'
+    concurrency_method: eager
+
+  - label: ':android: Android 12 NDK r21 end-to-end tests - batch 2'
+    depends_on:
+      - "fixture-r21"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download:
+          - "build/release/fixture-r21.apk"
+          - "build/release/fixture-r21/*"
+        upload: "maze_output/failed/**/*"
+      docker-compose#v3.7.0:
+        pull: android-maze-runner
+        run: android-maze-runner
+        command:
+          - "features/full_tests"
+          - "--exclude=features/full_tests/[^l-z].*.feature"
           - "--app=/app/build/release/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_12_0"

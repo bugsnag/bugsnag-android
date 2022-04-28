@@ -3,7 +3,7 @@ package com.bugsnag.android.mazerunner.scenarios
 import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
-import java.io.File
+import com.bugsnag.android.mazerunner.getZeroEventsLogMessages
 
 internal class DiscardBigEventsScenario(
     config: Configuration,
@@ -23,10 +23,13 @@ internal class DiscardBigEventsScenario(
         return "*".repeat(1024 * 1024)
     }
 
-    fun waitForEventFile() {
-        val dir = File(context.cacheDir, "bugsnag-errors")
-        while (dir.listFiles()!!.isEmpty()) {
-            Thread.sleep(100)
+    override fun startBugsnag(startBugsnagOnly: Boolean) {
+        super.startBugsnag(startBugsnagOnly)
+
+        // Wait and signal to Maze that the error has been deleted
+        if (eventMetadata == "delete-wait") {
+            waitForNoEventFiles()
+            Bugsnag.notify(MyThrowable("ErrorsDirectoryEmpty"))
         }
     }
 
@@ -34,9 +37,9 @@ internal class DiscardBigEventsScenario(
         super.startScenario()
         Bugsnag.markLaunchCompleted()
         Bugsnag.notify(MyThrowable("DiscardBigEventsScenario"))
+    }
 
-        waitForEventFile()
-
-        Bugsnag.notify(MyThrowable("To keep maze-runner from shutting me down prematurely"))
+    override fun getInterceptedLogMessages(): List<String> {
+        return getZeroEventsLogMessages(startBugsnagOnly)
     }
 }

@@ -27,6 +27,8 @@ const char *bsg_crumb_type_string(bugsnag_breadcrumb_type type) {
     return "state";
   case BSG_CRUMB_USER:
     return "user";
+  default:
+    return "";
   }
 }
 
@@ -38,6 +40,8 @@ const char *bsg_severity_string(bugsnag_severity type) {
     return "warn";
   case BSG_SEVERITY_ERR:
     return "error";
+  default:
+    return "";
   }
 }
 

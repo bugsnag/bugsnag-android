@@ -35,17 +35,17 @@ Then("the first significant stack frames match:") do |expected_values|
     test_frame = significant_frames[index]
     Maze.check.equal(
       expected_frame[0], test_frame[:method],
-      "'#{test_frame[:method]}' in frame #{index} is not equal to '#{expected_frame[0]}'"
+      "'#{test_frame[:method]}' in frame #{index} is not equal to '#{expected_frame[0]}'. Significant frames: #{significant_frames}"
     )
     if expected_frame.length > 1 && expected_frame[1] != IGNORED_VALUE
       Maze.check.true(
         test_frame[:file].end_with?(expected_frame[1]),
-        "'#{test_frame[:file]}' in frame #{index} does not end with '#{expected_frame[1]}'"
+        "'#{test_frame[:file]}' in frame #{index} does not end with '#{expected_frame[1]}'. Significant frames: #{significant_frames}"
       )
     end
     if expected_frame.length > 2 && expected_frame[2] != IGNORED_VALUE
       Maze.check.equal(test_frame[:lineNumber], expected_frame[2],
-        "line number #{test_frame[:lineNumber]} in frame #{index} does not equal #{expected_frame[2]}"
+        "line number #{test_frame[:lineNumber]} in frame #{index} does not equal #{expected_frame[2]}. Significant frames: #{significant_frames}"
       )
     end
   end
@@ -71,8 +71,10 @@ def is_out_of_project? file, method
   file.nil? ||
     # in native functions from bugsnag-plugin-android-ndk
     method.start_with?("bsg_") || file.end_with?("libbugsnag-ndk.so") ||
-    # c++ standard library + hooks (__cxx_*, __cxa_*, etc)
+    # c++ standard library + llvm hooks (__cxx_*, __cxa_*, etc)
     method.start_with?("std::") || method.start_with?("__cx") ||
+    # gnu hooks
+    method.start_with?("__gnu") ||
     # failed to resolve a symbol location
     method.start_with?("0x") ||
     # sneaky libc functions

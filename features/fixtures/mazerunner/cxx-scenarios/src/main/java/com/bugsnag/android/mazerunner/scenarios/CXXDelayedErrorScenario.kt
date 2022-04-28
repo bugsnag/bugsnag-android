@@ -7,6 +7,7 @@ import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.createDefaultDelivery
 import com.bugsnag.android.mazerunner.InterceptingDelivery
+import com.bugsnag.android.mazerunner.log
 
 /**
  * Sends an NDK error to Bugsnag shortly after the launchDurationMillis has past.
@@ -18,7 +19,7 @@ internal class CXXDelayedErrorScenario(
 ) : Scenario(config, context, eventMetadata) {
 
     companion object {
-        private const val CRASH_DELAY_MS = 250L
+        private const val CRASH_DELAY_MS = 2500L
     }
 
     external fun crash()
@@ -31,6 +32,7 @@ internal class CXXDelayedErrorScenario(
 
             handler.postDelayed(
                 {
+                    log("Trigger native crash")
                     crash()
                 },
                 CRASH_DELAY_MS * 2
@@ -40,6 +42,7 @@ internal class CXXDelayedErrorScenario(
 
     override fun startScenario() {
         super.startScenario()
+        log("Notify JVM error")
         Bugsnag.notify(RuntimeException("first error"))
     }
 }
