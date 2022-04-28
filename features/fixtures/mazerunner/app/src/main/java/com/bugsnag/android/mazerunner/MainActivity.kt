@@ -164,8 +164,11 @@ class MainActivity : Activity() {
             setStoredApiKey(apiKey)
         }
         val config = prepareConfig(apiKey, notifyUrl, sessionsUrl) {
+            var logMessage = it
             val interceptedLogMessages = scenario?.getInterceptedLogMessages()
-            interceptedLogMessages?.contains(it) ?: false
+            interceptedLogMessages?.any {
+                Regex(it).matches(logMessage)
+            } ?: false
         }
         return Scenario.load(this, config, eventType, mode)
     }
