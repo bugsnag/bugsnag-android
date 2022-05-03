@@ -10,7 +10,6 @@ import androidx.annotation.Nullable;
 public class CXXExternalStackElementScenario extends Scenario {
 
     static {
-        System.loadLibrary("monochrome");
         System.loadLibrary("cxx-scenarios");
     }
 

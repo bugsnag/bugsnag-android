@@ -15,11 +15,8 @@ add_library(cxx-scenarios SHARED
         src/main/cpp/bugsnag-java-scenarios.cpp)
 
 set_target_properties(cxx-scenarios PROPERTIES
-                      CXX_STANDARD 11
-                      CXX_STANDARD_REQUIRED YES)
+        CXX_STANDARD 11
+        CXX_STANDARD_REQUIRED YES)
 
-add_library(lib_monochrome SHARED IMPORTED)
-set_target_properties(lib_monochrome PROPERTIES IMPORTED_LOCATION
-                      ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/libmonochrome.so)
-target_link_libraries(cxx-scenarios lib_monochrome)
+target_link_libraries(cxx-scenarios)
 

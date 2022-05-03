@@ -2,6 +2,7 @@
 
 #include "string.h"
 
+#include <dlfcn.h>
 #include <unwindstack/LocalUnwinder.h>
 #include <unwindstack/Maps.h>
 #include <unwindstack/MemoryLocal.h>
@@ -73,6 +74,23 @@ ssize_t bsg_unwind_crash_stack(bugsnag_stackframe stack[BUGSNAG_FRAMES_MAX],
                 sizeof(stack[frame_count].filename));
     bsg_strncpy(stack[frame_count].method, frame.function_name.c_str(),
                 sizeof(stack[frame_count].method));
+
+    // if the filename or method name cannot be found - try fallback to dladdr
+    // to find them
+    static Dl_info info;
+    if ((frame.map_name.empty() || frame.function_name.empty()) &&
+        dladdr((void *)frame.pc, &info) != 0) {
+
+      if (info.dli_fname != nullptr) {
+        bsg_strncpy(stack[frame_count].filename, (char *)info.dli_fname,
+                    sizeof(stack[frame_count].filename));
+      }
+      if (info.dli_sname != nullptr) {
+        bsg_strncpy(stack[frame_count].method, (char *)info.dli_sname,
+                    sizeof(stack[frame_count].method));
+      }
+    }
+
     frame_count++;
   }
   unwinding_crash_stack = false;
@@ -97,6 +115,22 @@ bsg_unwind_concurrent_stack(bugsnag_stackframe stack[BUGSNAG_FRAMES_MAX],
       stack[frame_count].symbol_address = frame.pc - frame.map_info->offset();
       bsg_strncpy(stack[frame_count].filename, frame.map_info->name().c_str(),
                   sizeof(stack[frame_count].filename));
+
+      // if the filename or method name cannot be found - try fallback to dladdr
+      // to find them
+      static Dl_info info;
+      if ((frame.map_info->name().empty() || frame.function_name.empty()) &&
+          dladdr((void *)frame.pc, &info) != 0) {
+
+        if (info.dli_fname != nullptr) {
+          bsg_strncpy(stack[frame_count].filename, (char *)info.dli_fname,
+                      sizeof(stack[frame_count].filename));
+        }
+        if (info.dli_sname != nullptr) {
+          bsg_strncpy(stack[frame_count].method, (char *)info.dli_sname,
+                      sizeof(stack[frame_count].method));
+        }
+      }
     }
     bsg_strncpy(stack[frame_count].method, frame.function_name.c_str(),
                 sizeof(stack[frame_count].method));
