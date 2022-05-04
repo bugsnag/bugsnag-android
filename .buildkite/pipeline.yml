@@ -10,8 +10,7 @@ steps:
     key: "fixture-r16"
     timeout_in_minutes: 30
     agents:
-      #queue: macos-12-arm
-      queue: ms-arm-12-1
+      queue: macos-12-arm
     artifact_paths:
       - "build/fixture-r16.apk"
       - "build/fixture-r16/*"
@@ -22,8 +21,7 @@ steps:
     key: "fixture-r19"
     timeout_in_minutes: 30
     agents:
-      #queue: macos-12-arm
-      queue: ms-arm-12-1
+      queue: macos-12-arm
     artifact_paths:
       - "build/fixture-r19.apk"
       - "build/fixture-r19/*"
@@ -34,8 +32,7 @@ steps:
     key: "fixture-r21"
     timeout_in_minutes: 30
     agents:
-      #queue: macos-12-arm
-      queue: ms-arm-12-1
+      queue: macos-12-arm
     artifact_paths:
       - "build/fixture-r21.apk"
       - "build/fixture-r21/*"
