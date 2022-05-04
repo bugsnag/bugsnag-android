@@ -58,8 +58,9 @@ class MainActivity : Activity() {
     // Starts a thread to poll for Maze Runner actions to perform
     private fun startCommandRunner() {
         // Get the next maze runner command
+        var polling = true
         thread(start = true) {
-            while (true) {
+            while (polling) {
                 Thread.sleep(1000)
                 try {
                     // Get the next command from Maze Runner
@@ -93,8 +94,14 @@ class MainActivity : Activity() {
 
                         // Perform the given action on the UI thread
                         when (action) {
-                            "start_bugsnag" -> startBugsnag(scenarioName, scenarioMode, sessionsUrl, notifyUrl)
-                            "run_scenario" -> runScenario(scenarioName, scenarioMode, sessionsUrl, notifyUrl)
+                            "start_bugsnag" -> {
+                                polling = false
+                                startBugsnag(scenarioName, scenarioMode, sessionsUrl, notifyUrl)
+                            }
+                            "run_scenario" -> {
+                                polling = false
+                                runScenario(scenarioName, scenarioMode, sessionsUrl, notifyUrl)
+                            }
                             "clear_persistent_data" -> clearPersistentData()
                             else -> throw IllegalArgumentException("Unknown action: $action")
                         }
