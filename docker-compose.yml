@@ -19,22 +19,6 @@ services:
       INSTRUMENTATION_DEVICES:
       TEST_APK_LOCATION:
 
-  android-builder:
-    build:
-      context: .
-      dockerfile: dockerfiles/Dockerfile.android-builder
-      args:
-        BRANCH_NAME: ${BRANCH_NAME}
-    environment:
-      MINIMAL_FIXTURE:
-      TEST_FIXTURE_NDK_VERSION:
-      TEST_FIXTURE_NAME:
-      TEST_FIXTURE_CONFIGURATION:
-      USE_LEGACY_OKHTTP:
-      BUILD_TASK:
-    volumes:
-      - ./build:/app/build
-
   android-publisher:
     build:
       context: .
@@ -45,19 +29,6 @@ services:
       KEY_PASS:
       PUBLISH_USER:
       PUBLISH_PASS:
-
-  android-sizer:
-    build:
-      context: .
-      dockerfile: dockerfiles/Dockerfile.android-sizer
-      args:
-        BRANCH_NAME: ${BRANCH_NAME}
-    environment:
-      DANGER_GITHUB_API_TOKEN:
-      BUILDKITE:
-      BUILDKITE_PULL_REQUEST_REPO:
-      BUILDKITE_PULL_REQUEST:
-      BUILDKITE_REPO:
 
   android-maze-runner:
     image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner-releases:latest-v6-cli

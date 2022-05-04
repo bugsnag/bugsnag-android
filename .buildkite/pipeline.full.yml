@@ -74,20 +74,23 @@ steps:
         command:
           - "features/smoke_tests"
           - "--tags=debug-safe"
-          - "--app=/app/build/debug/fixture-debug.apk"
+          - "--app=/app/build/fixture-debug.apk"
           - "--farm=bs"
           - "--device=ANDROID_9_0"
           - "--fail-fast"
     env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/debug/fixture-debug"
+      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-debug"
     concurrency: 9
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
   - label: ':android: Android size reporting'
     timeout_in_minutes: 10
+    agents:
+      queue: macos-12-arm
     commands:
       - cd features/fixtures/minimalapp
+      - ln -s ../../../.git
       - bundle install
       - bundle exec danger
 
