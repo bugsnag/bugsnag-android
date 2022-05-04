@@ -45,4 +45,6 @@ internal class DiscardOldEventsScenario(
 
         Bugsnag.notify(MyThrowable("MazeRunner KeepAlive"))
     }
+
+    override fun getInterceptedLogMessages() = listOf("Discarding historical event \\(from .+\\) after failed delivery")
 }
