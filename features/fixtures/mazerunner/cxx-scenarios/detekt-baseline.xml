@@ -3,6 +3,7 @@
   <ManuallySuppressedIssues></ManuallySuppressedIssues>
   <CurrentIssues>
     <ID>MagicNumber:CXXDelayedCrashScenario.kt$CXXDelayedCrashScenario$405</ID>
+    <ID>MagicNumber:CXXDelayedCrashScenario.kt$CXXDelayedCrashScenario$1000</ID>
     <ID>MagicNumber:CXXSessionInfoCrashScenario.kt$CXXSessionInfoCrashScenario$3</ID>
     <ID>MagicNumber:CXXSessionInfoCrashScenario.kt$CXXSessionInfoCrashScenario$3837</ID>
     <ID>MagicNumber:CXXThrowSomethingOutsideReleaseStagesScenario.kt$CXXThrowSomethingOutsideReleaseStagesScenario$23</ID>
