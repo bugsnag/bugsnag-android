@@ -14,6 +14,8 @@ class CXXDelayedCrashScenario(
 
     companion object {
         init {
+            private const val DELAY_MS = 1000
+            private const val CRASH_TRIGGER = 450
             System.loadLibrary("cxx-scenarios")
         }
     }
@@ -29,7 +31,7 @@ class CXXDelayedCrashScenario(
         super.onActivityStopped(activity)
         log("App sent to background, triggering crash in 0.5 seconds.")
         Handler().postDelayed({
-            activate(450)
-        }, 1000)
+            activate(CRASH_TRIGGER)
+        }, DELAY_MS)
     }
 }
