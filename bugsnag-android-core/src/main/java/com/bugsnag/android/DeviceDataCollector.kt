@@ -42,7 +42,7 @@ internal class DeviceDataCollector(
     private val screenResolution = getScreenResolution()
     private val locale = Locale.getDefault().toString()
     private val cpuAbi = getCpuAbi()
-    private val runtimeVersions: MutableMap<String, Any>
+    private var runtimeVersions: MutableMap<String, Any>
     private val rootedFuture: Future<Boolean>?
     private val totalMemoryFuture: Future<Long?>? = retrieveTotalDeviceMemory()
     private var orientation = AtomicInteger(resources.configuration.orientation)
@@ -293,6 +293,9 @@ internal class DeviceDataCollector(
     }
 
     fun addRuntimeVersionInfo(key: String, value: String) {
-        runtimeVersions[key] = value
+        // Use copy-on-write to avoid a ConcurrentModificationException in generateDeviceWithState
+        val newRuntimeVersions = runtimeVersions.toMutableMap()
+        newRuntimeVersions[key] = value
+        runtimeVersions = newRuntimeVersions
     }
 }
