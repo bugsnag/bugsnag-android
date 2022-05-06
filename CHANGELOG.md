@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+* Small performance improvements to `Bugnag.start`
+  [#1680](https://github.com/bugsnag/bugsnag-android/pull/1680)
+
 ## 5.22.2 (2022-05-04)
 
 ### Bug fixes
