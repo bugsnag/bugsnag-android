@@ -65,6 +65,16 @@ steps:
       - cd features/fixtures/mazerunner
       - ./gradlew ktlintCheck detekt checkstyle
 
+  - label: ':android: Android size reporting'
+    timeout_in_minutes: 10
+    agents:
+      queue: macos-12-arm
+    commands:
+      - cd features/fixtures/minimalapp
+      - cp -r ../../../.git .
+      - bundle install
+      - bundle exec danger
+
   - label: ':android: JVM tests'
     timeout_in_minutes: 10
     agents:
