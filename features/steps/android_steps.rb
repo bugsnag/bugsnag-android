@@ -277,3 +277,13 @@ Then("Bugsnag confirms it has no errors to send") do
     Then the "debug" level log message equals "No regular events to flush to Bugsnag."
   }
 end
+
+Then("the error is correct for {string} or I allow a retry") do |scenario|
+  error = Maze::Server.errors.current[:body]
+  message = Maze::Helper.read_key_path(error, 'events.0.exceptions.0.message')
+  case scenario
+  when 'MultiThreadedStartupScenario'
+    Maze.dynamic_retry = true if message == 'You must call Bugsnag.start before any other Bugsnag methods'
+    assert_equal 'Scenario complete', message
+  end
+end
