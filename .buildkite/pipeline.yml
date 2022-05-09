@@ -71,9 +71,11 @@ steps:
       queue: macos-12-arm
     commands:
       - cd features/fixtures/minimalapp
-      - cp -r ../../../.git .
+      - rm -rf .git
+      - ln -s ../../../.git
       - bundle install
       - bundle exec danger
+      - rm -f .git
 
   - label: ':android: JVM tests'
     timeout_in_minutes: 10
