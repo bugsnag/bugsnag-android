@@ -22,6 +22,9 @@ steps:
     agents:
       queue: macos-12-arm
     command: './gradlew -pexamples/sdk-app-example clean assembleRelease'
+    plugins:
+      artifacts#v1.2.0:
+        upload: "examples/sdk-app-example/app/build/outputs/apk/release"
 
   - label: ':android: Build debug fixture APK'
     key: "fixture-debug"
