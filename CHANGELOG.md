@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.22.2 (2022-05-04)
+
+### Bug fixes
+
+* Fixed NDK stack-traces for libraries linked after `Bugsnag.start` was called
+  [#1671](https://github.com/bugsnag/bugsnag-android/pull/1671)
+
 ## 5.22.1 (2022-04-28)
 
 ### Enhancements
