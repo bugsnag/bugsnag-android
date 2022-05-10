@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
+import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
@@ -14,7 +15,7 @@ import com.bugsnag.android.internal.ImmutableConfig
  * Collects various data on the application state
  */
 internal class AppDataCollector(
-    appContext: Context,
+    private val appContext: Context,
     private val packageManager: PackageManager?,
     private val config: ImmutableConfig,
     private val sessionTracker: SessionTracker,
@@ -54,6 +55,7 @@ internal class AppDataCollector(
         map["activeScreen"] = sessionTracker.contextActivity
         map["lowMemory"] = memoryTrimState.isLowMemory
         map["memoryTrimLevel"] = memoryTrimState.trimLevelDescription
+        map["permissions"] = getGrantedPermissions()
 
         populateRuntimeMemoryMetadata(map)
 
@@ -154,6 +156,20 @@ internal class AppDataCollector(
             }
         }.getOrNull()
     }
+
+    private fun getGrantedPermissions(): List<String>? =
+        if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
+            runCatching {
+                packageManager?.getPackageInfo(
+                    appContext.packageName,
+                    PackageManager.GET_PERMISSIONS
+                )?.let { packageInfo ->
+                    packageInfo.requestedPermissions.filterIndexed { index, _ ->
+                        packageInfo.requestedPermissionsFlags[index] and PackageInfo.REQUESTED_PERMISSION_GRANTED != 0
+                    }
+                }
+            }.getOrNull()
+        } else null
 
     companion object {
         internal val startTimeMs = SystemClock.elapsedRealtime()
