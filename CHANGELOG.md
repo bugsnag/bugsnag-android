@@ -9,6 +9,8 @@
 
 ### Bug fixes
 
+* Fixed concurrency bug that could be triggered via the React Native plugin
+  [#1679](https://github.com/bugsnag/bugsnag-android/pull/1679)
 * Correctly report `device.locationStatus` on Android 12 onwards using `LocationManager.isLocationEnabled`
   [1683](https://github.com/bugsnag/bugsnag-android/pull/1683)
 
