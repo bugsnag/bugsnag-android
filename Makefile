@@ -27,10 +27,11 @@ MINIMAL_FIXTURE ?= false
 TEST_FIXTURE_NDK_VERSION ?= 16.1.4479499
 TEST_FIXTURE_NAME ?= fixture
 USE_LEGACY_OKHTTP ?= false
+NOTIFIER_VERSION ?= 9.9.9
 
 notifier:
 	# Build the notifier
-	@./gradlew -PVERSION_NAME=9.9.9 assembleRelease publishToMavenLocal -x check
+	@./gradlew -PVERSION_NAME=$(NOTIFIER_VERSION) assembleRelease publishToMavenLocal -x check
 
 fixture-r16: notifier
 	# Build the r16 test fixture
@@ -68,6 +69,10 @@ fixture-debug: notifier
                -PTEST_FIXTURE_NAME=fixture-debug.apk \
                -p=features/fixtures/mazerunner assembleDebug -x check
 	@scripts/copy-build-files.sh debug fixture-debug
+
+example-app: notifier
+	# Build Android example app
+	@./gradlew -pexamples/sdk-app-example clean assembleRelease
 
 bump:
 ifneq ($(shell git diff --staged),)

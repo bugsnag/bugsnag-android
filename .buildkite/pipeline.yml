@@ -6,16 +6,13 @@ steps:
 #      queue: macos-12-arm
 #    command: ./scripts/audit-dependency-licenses.sh
 
-  - label: ':android: Build Notifier'
-    key: build-notifier
-    timeout_in_minutes: 30
-    agents:
-      queue: macos-12-arm
-    commands:
-      - make notifier
-      - zip bugsnag-android.zip /Users/administrator/.m2/repository/com/bugsnag/bugsnag-android/
-    artifact_paths:
-      - "bugsnag-android.zip"
+#  - label: ':android: Build Notifier'
+#    key: build-notifier
+#    timeout_in_minutes: 30
+#    agents:
+#      queue: macos-12-arm
+#    commands:
+#      - make notifier
 #
 #  - label: ':android: Build fixture APK r16'
 #    key: "fixture-r16"
@@ -301,5 +298,5 @@ steps:
 #    concurrency_group: 'browserstack-app'
 #    concurrency_method: eager
 #
-#  - label: 'Conditionally trigger full set of tests'
-#    command: sh -c .buildkite/pipeline_trigger.sh
+  - label: 'Conditionally trigger full set of tests'
+    command: sh -c .buildkite/pipeline_trigger.sh

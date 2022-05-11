@@ -21,7 +21,7 @@ steps:
     timeout_in_minutes: 5
     agents:
       queue: macos-12-arm
-    command: './gradlew -pexamples/sdk-app-example clean assembleRelease'
+    command: 'make example-app'
     plugins:
       artifacts#v1.2.0:
         upload: "examples/sdk-app-example/app/build/outputs/apk/release/*"
