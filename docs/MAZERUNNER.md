@@ -24,8 +24,8 @@ Remote tests can be run against real devices provided by BrowserStack. In order 
 1. Check the contents of `Gemfile` to select the version of `maze-runner` to use
 1. To run a single feature:
     ```shell script
-    make test-fixtures && \
-    bundle exec maze-runner --app=build/fixture.apk                 \
+    make fixture-r21 && \
+    bundle exec maze-runner --app=build/fixture-r21.apk                 \
                             --farm=bs                               \
                             --device=ANDROID_9_0                    \
                             features/smoke_tests/unhandled.feature
