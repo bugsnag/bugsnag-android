@@ -25,19 +25,20 @@ class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        log("MainActivity.onCreate started")
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_main)
-        log("Launched mazerunner fixture MainActivity")
         prefs = getPreferences(Context.MODE_PRIVATE)
 
         // Attempt to dismiss any system dialogs (such as "MazeRunner crashed")
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            log("Broadcast ACTION_CLOSE_SYSTEM_DIALOGS intent")
             val closeDialog = Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
             sendBroadcast(closeDialog)
         }
 
+        log("Set up clearUserData click handler")
         val clearUserData = findViewById<Button>(R.id.clearUserData)
-
         clearUserData.setOnClickListener {
             clearStoredApiKey()
             val apiKeyField = findViewById<EditText>(R.id.manualApiKey)
@@ -46,13 +47,34 @@ class MainActivity : Activity() {
         }
 
         if (apiKeyStored()) {
+            log("Using stored API key")
             val apiKey = getStoredApiKey()
             val apiKeyField = findViewById<EditText>(R.id.manualApiKey)
             apiKeyField.text.clear()
             apiKeyField.text.append(apiKey)
         }
 
+        log("startCommandRunner")
         startCommandRunner()
+        log("MainActivity.onCreate complete")
+    }
+
+    // Checks general internet and secure tunnel connectivity
+    private fun checkNetwork() {
+        log("Checking network connectivity")
+        try {
+            URL("https://www.google.com").readText()
+            log("Connection to www.google.com seems ok")
+        } catch (e: Exception) {
+            log("Connection to www.google.com FAILED", e)
+        }
+
+        try {
+            URL("http://bs-local.com:9339").readText()
+            log("Connection to Maze Runner seems ok")
+        } catch (e: Exception) {
+            log("Connection to Maze Runner FAILED", e)
+        }
     }
 
     // Starts a thread to poll for Maze Runner actions to perform
@@ -60,6 +82,8 @@ class MainActivity : Activity() {
         // Get the next maze runner command
         var polling = true
         thread(start = true) {
+            checkNetwork()
+
             while (polling) {
                 Thread.sleep(1000)
                 try {
