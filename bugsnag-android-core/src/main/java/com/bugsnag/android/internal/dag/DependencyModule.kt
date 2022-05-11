@@ -1,22 +1,34 @@
 package com.bugsnag.android.internal.dag
 
+import androidx.annotation.WorkerThread
 import com.bugsnag.android.BackgroundTaskService
 import com.bugsnag.android.TaskType
+import java.util.concurrent.Callable
 
 internal abstract class DependencyModule {
 
-    private val properties = mutableListOf<Lazy<*>>()
+    @Volatile
+    internal var dependenciesResolved = false
 
-    /**
-     * Creates a new [Lazy] property that is marked as an object that should be resolved off the
-     * main thread when [resolveDependencies] is called.
-     */
-    fun <T> future(initializer: () -> T): Lazy<T> {
-        val lazy = lazy {
-            initializer()
+    inline fun <R> resolvedValueOf(value: () -> R): R {
+        synchronized(this) {
+            while (!dependenciesResolved) {
+                // The probability that we actually need to wait for the dependencies to be resolved
+                // is quite low, so we don't want the overhead (especially during startup) or a
+                // ReentrantLock. Instead we want to use the Java wait() and notify() methods
+                // so we can leverage monitor locks, which (at time of writing) typically have
+                // no allocation cost (until there is contention)
+                // https://android.googlesource.com/platform/art/+/master/runtime/monitor.cc#57
+                @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+                (this as Object).wait()
+            }
         }
-        properties.add(lazy)
-        return lazy
+
+        return value()
+    }
+
+    @WorkerThread
+    protected open fun resolveDependencies() {
     }
 
     /**
@@ -24,14 +36,23 @@ internal abstract class DependencyModule {
      * for modules to construct objects in a background thread, then have a user block on another
      * thread until all the objects have been constructed.
      */
-    fun resolveDependencies(bgTaskService: BackgroundTaskService, taskType: TaskType) {
-        kotlin.runCatching {
+    open fun resolveDependencies(bgTaskService: BackgroundTaskService, taskType: TaskType) {
+        try {
             bgTaskService.submitTask(
                 taskType,
-                Runnable {
-                    properties.forEach { it.value }
+                // Callable<Unit> avoids wrapping the Runnable in a Callable
+                Callable {
+                    synchronized(this) {
+                        dependenciesResolved = true
+                        resolveDependencies()
+
+                        @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+                        (this as Object).notifyAll()
+                    }
                 }
-            ).get()
+            )
+        } catch (exception: Exception) {
+            // ignore failures
         }
     }
 }

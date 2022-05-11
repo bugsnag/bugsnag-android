@@ -13,7 +13,6 @@ import android.os.Build
 import android.provider.Settings
 import java.io.File
 import java.util.Date
-import java.util.HashMap
 import java.util.Locale
 import java.util.concurrent.Callable
 import java.util.concurrent.Future
@@ -163,17 +162,22 @@ internal class DeviceDataCollector(
      */
     private fun getLocationStatus(): String? {
         try {
-            val cr = appContext.contentResolver
-            @Suppress("DEPRECATION") val providersAllowed =
-                Settings.Secure.getString(cr, Settings.Secure.LOCATION_PROVIDERS_ALLOWED)
-            return when {
-                providersAllowed != null && providersAllowed.isNotEmpty() -> "allowed"
-                else -> "disallowed"
-            }
+            return if (isLocationEnabled()) "allowed" else "disallowed"
         } catch (exception: Exception) {
             logger.w("Could not get locationStatus")
         }
         return null
+    }
+
+    private fun isLocationEnabled() = when {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ->
+            appContext.getLocationManager()?.isLocationEnabled == true
+        else -> {
+            val cr = appContext.contentResolver
+            @Suppress("DEPRECATION") val providersAllowed =
+                Settings.Secure.getString(cr, Settings.Secure.LOCATION_PROVIDERS_ALLOWED)
+            providersAllowed != null && providersAllowed.isNotEmpty()
+        }
     }
 
     /**
