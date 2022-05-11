@@ -1,11 +1,6 @@
 # Changelog
 
-## TBD
-
-### Enhancements
-
-* Small performance improvements to `Bugnag.start`
-  [#1680](https://github.com/bugsnag/bugsnag-android/pull/1680)
+## 5.22.3 (2022-05-12)
 
 ### Bug fixes
 
@@ -13,6 +8,8 @@
   [#1679](https://github.com/bugsnag/bugsnag-android/pull/1679)
 * Correctly report `device.locationStatus` on Android 12 onwards using `LocationManager.isLocationEnabled`
   [1683](https://github.com/bugsnag/bugsnag-android/pull/1683)
+* Small performance improvements to `Bugnag.start`
+  [#1680](https://github.com/bugsnag/bugsnag-android/pull/1680)
 
 ## 5.22.2 (2022-05-04)
 
