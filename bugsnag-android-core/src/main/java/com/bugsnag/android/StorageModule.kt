@@ -8,40 +8,57 @@ import com.bugsnag.android.internal.dag.DependencyModule
  * A dependency module which constructs the objects that store information to disk in Bugsnag.
  */
 internal class StorageModule(
-    appContext: Context,
-    immutableConfig: ImmutableConfig,
-    logger: Logger
+    private val appContext: Context,
+    private val immutableConfig: ImmutableConfig,
+    private val logger: Logger
 ) : DependencyModule() {
 
-    val sharedPrefMigrator by future { SharedPrefMigrator(appContext) }
+    private lateinit var _sharedPrefMigrator: SharedPrefMigrator
+    private lateinit var _userStore: UserStore
+    private lateinit var _lastRunInfoStore: LastRunInfoStore
+    private lateinit var _sessionStore: SessionStore
 
-    private val deviceIdStore by future {
-        DeviceIdStore(
-            appContext,
-            sharedPrefMigrator = sharedPrefMigrator,
-            logger = logger
-        )
-    }
+    private var _deviceId: String? = null
+    private var _lastRunInfo: LastRunInfo? = null
 
-    val deviceId by future { deviceIdStore.loadDeviceId() }
+    val sharedPrefMigrator get() = resolvedValueOf { _sharedPrefMigrator }
+    val deviceId get() = resolvedValueOf { _deviceId }
+    val userStore get() = resolvedValueOf { _userStore }
+    val lastRunInfoStore get() = resolvedValueOf { _lastRunInfoStore }
+    val sessionStore get() = resolvedValueOf { _sessionStore }
+    val lastRunInfo get() = resolvedValueOf { _lastRunInfo }
 
-    val userStore by future {
-        UserStore(
+    override fun resolveDependencies() {
+        _sharedPrefMigrator = SharedPrefMigrator(appContext)
+        _deviceId = resolveDeviceId()
+
+        _userStore = UserStore(
             immutableConfig,
-            deviceId,
-            sharedPrefMigrator = sharedPrefMigrator,
+            _deviceId,
+            sharedPrefMigrator = _sharedPrefMigrator,
             logger = logger
         )
+
+        _lastRunInfoStore = LastRunInfoStore(immutableConfig)
+        _sessionStore = SessionStore(immutableConfig, logger, null)
+
+        _lastRunInfo = resolveLastRunInfo()
     }
 
-    val lastRunInfoStore by future { LastRunInfoStore(immutableConfig) }
+    private fun resolveDeviceId(): String? {
+        val deviceIdStore = DeviceIdStore(
+            appContext,
+            sharedPrefMigrator = _sharedPrefMigrator,
+            logger = logger
+        )
 
-    val sessionStore by future { SessionStore(immutableConfig, logger, null) }
+        return deviceIdStore.loadDeviceId()
+    }
 
-    val lastRunInfo by future {
+    private fun resolveLastRunInfo(): LastRunInfo? {
         val info = lastRunInfoStore.load()
         val currentRunInfo = LastRunInfo(0, crashed = false, crashedDuringLaunch = false)
         lastRunInfoStore.persist(currentRunInfo)
-        info
+        return info
     }
 }

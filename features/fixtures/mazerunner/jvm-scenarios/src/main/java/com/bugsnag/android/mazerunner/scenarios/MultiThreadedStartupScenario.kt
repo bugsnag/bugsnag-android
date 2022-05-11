@@ -22,6 +22,7 @@ class MultiThreadedStartupScenario(
             Thread.sleep(1L)
             try {
                 Bugsnag.leaveBreadcrumb("I'm leaving a breadcrumb on another thread")
+                Bugsnag.notify(Exception("Scenario complete"))
             } catch (e: Exception) {
                 Bugsnag.start(context, config)
                 Bugsnag.notify(e)
