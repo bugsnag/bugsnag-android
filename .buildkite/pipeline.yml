@@ -14,7 +14,7 @@ steps:
     commands:
       - make notifier
     artifact_paths:
-      - "/Users/administrator/.m2/*"
+      - "/Users/administrator/.m2/repository/com/bugsnag/bugsnag-android/*"
 #
 #  - label: ':android: Build fixture APK r16'
 #    key: "fixture-r16"
