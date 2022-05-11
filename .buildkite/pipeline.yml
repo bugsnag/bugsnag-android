@@ -13,8 +13,9 @@ steps:
       queue: macos-12-arm
     commands:
       - make notifier
+      - zip bugsnag-android.zip /Users/administrator/.m2/repository/com/bugsnag/bugsnag-android/
     artifact_paths:
-      - "/Users/administrator/.m2/repository/com/bugsnag/bugsnag-android/*"
+      - "bugsnag-android.zip"
 #
 #  - label: ':android: Build fixture APK r16'
 #    key: "fixture-r16"
