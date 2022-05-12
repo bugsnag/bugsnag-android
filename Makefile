@@ -70,7 +70,8 @@ fixture-debug: notifier
                -p=features/fixtures/mazerunner assembleDebug -x check
 	@scripts/copy-build-files.sh debug fixture-debug
 
-example-app: notifier
+example-app:
+	@./gradlew assembleRelease publishToMavenLocal -x check
 	# Build Android example app
 	@./gradlew -pexamples/sdk-app-example clean assembleRelease
 
