@@ -6,14 +6,6 @@ steps:
       queue: macos-12-arm
     command: ./scripts/audit-dependency-licenses.sh
 
-  - label: ':android: Build Notifier'
-    key: build-notifier
-    timeout_in_minutes: 30
-    agents:
-      queue: macos-12-arm
-    commands:
-      - make notifier
-
   - label: ':android: Build fixture APK r16'
     key: "fixture-r16"
     timeout_in_minutes: 30
