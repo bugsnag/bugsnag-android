@@ -70,6 +70,11 @@ fixture-debug: notifier
                -p=features/fixtures/mazerunner assembleDebug -x check
 	@ruby scripts/copy-build-files.rb debug debug
 
+example-app:
+	@./gradlew assembleRelease publishToMavenLocal -x check
+	# Build Android example app
+	@./gradlew -pexamples/sdk-app-example clean assembleRelease
+
 bump:
 ifneq ($(shell git diff --staged),)
 	@git diff --staged
