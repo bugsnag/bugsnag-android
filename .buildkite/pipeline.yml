@@ -104,7 +104,7 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r16"
-    concurrency: 9
+    concurrency: 24
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
@@ -128,7 +128,7 @@ steps:
           - "--device=ANDROID_6_0_MOTOROLA_MOTO_X_2ND_GEN"
           - "--device=ANDROID_6_0_GOOGLE_NEXUS_6"
           - "--fail-fast"
-    concurrency: 9
+    concurrency: 24
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
     env:
@@ -153,7 +153,7 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_7_1_SAMSUNG_GALAXY_NOTE_8"
           - "--fail-fast"
-    concurrency: 9
+    concurrency: 24
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
     env:
@@ -178,7 +178,7 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_8_1"
           - "--fail-fast"
-    concurrency: 9
+    concurrency: 24
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
     env:
@@ -203,7 +203,7 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_10_0"
           - "--fail-fast"
-    concurrency: 9
+    concurrency: 24
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
     env:
@@ -228,7 +228,7 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_11_0"
           - "--fail-fast"
-    concurrency: 9
+    concurrency: 24
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
     env:
@@ -260,7 +260,7 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 9
+    concurrency: 24
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
@@ -286,7 +286,7 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 9
+    concurrency: 24
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 

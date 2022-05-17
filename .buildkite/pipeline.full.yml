@@ -55,7 +55,7 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_9_0"
           - "--fail-fast"
-    concurrency: 9
+    concurrency: 24
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
@@ -80,7 +80,7 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-debug"
-    concurrency: 9
+    concurrency: 24
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
@@ -106,7 +106,7 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r16"
-    concurrency: 9
+    concurrency: 24
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
@@ -132,7 +132,7 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r16"
-    concurrency: 9
+    concurrency: 24
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
@@ -157,7 +157,7 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
-    concurrency: 9
+    concurrency: 24
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
@@ -182,7 +182,7 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
-    concurrency: 9
+    concurrency: 24
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
@@ -207,7 +207,7 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
-    concurrency: 9
+    concurrency: 24
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
@@ -232,7 +232,7 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
-    concurrency: 9
+    concurrency: 24
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
@@ -257,7 +257,7 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 9
+    concurrency: 24
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
@@ -282,7 +282,7 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 9
+    concurrency: 24
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
@@ -307,7 +307,7 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 9
+    concurrency: 24
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
@@ -332,7 +332,7 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 9
+    concurrency: 24
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
@@ -361,7 +361,7 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 9
+    concurrency: 24
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
@@ -386,7 +386,7 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 9
+    concurrency: 24
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
