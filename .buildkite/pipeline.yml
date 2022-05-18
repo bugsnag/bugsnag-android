@@ -68,7 +68,7 @@ steps:
   - label: ':android: Android size reporting'
     timeout_in_minutes: 10
     agents:
-      queue: ms-arm-12-8
+      queue: macos-12-arm
     command: scripts/run-sizer.sh
 
   - label: ':android: JVM tests'
