@@ -33,7 +33,7 @@ public class CXXAutoContextScenario extends Scenario {
     }
 
     @Override
-    public void onActivityStarted(@NonNull Activity activity) {
+    public void onActivityResumed(@NonNull Activity activity) {
         activate();
         Bugsnag.notify(generateException());
     }
