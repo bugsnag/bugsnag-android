@@ -68,14 +68,8 @@ steps:
   - label: ':android: Android size reporting'
     timeout_in_minutes: 10
     agents:
-      queue: macos-12-arm
-    commands:
-      - cd features/fixtures/minimalapp
-      - rm -rf .git
-      - ln -s ../../../.git
-      - bundle install
-      - bundle exec danger
-      - rm -f .git
+      queue: ms-arm-12-8
+    command: scripts/run-sizer.sh
 
   - label: ':android: JVM tests'
     timeout_in_minutes: 10
