@@ -22,7 +22,7 @@ def buildOutputs(bugsnag: false, minified: false)
   `./gradlew assembleRelease #{opts}`
   `./gradlew bundleRelease #{opts}`
 
-  `java -jar /sdk/bundletool.jar build-apks \
+  `bundletool build-apks \
     --bundle=#{BUNDLE_DIR + RELEASE_BUNDLE} \
     --output=#{BUNDLE_DIR + UNBUNDLED_RELEASE} \
     --ks=app/fakekeys.jks \
@@ -35,29 +35,29 @@ end
 
 buildOutputs(bugsnag: false, minified: false)
 
-apk_size = `stat --printf="%s" #{RELEASE_APK}`.to_i
-aab_size = `stat --printf="%s" #{STANDALONE_DIR + STANDALONE_HDPI_BASE}`.to_i
+apk_size = `stat -f "%z" #{RELEASE_APK}`.to_i
+aab_size = `stat -f "%z" #{STANDALONE_DIR + STANDALONE_HDPI_BASE}`.to_i
 
 buildOutputs(bugsnag: false, minified: true)
 
-min_apk_size = `stat --printf="%s" #{RELEASE_APK}`.to_i
-min_aab_size = `stat --printf="%s" #{STANDALONE_DIR + STANDALONE_HDPI_BASE}`.to_i
+min_apk_size = `stat -f "%z" #{RELEASE_APK}`.to_i
+min_aab_size = `stat -f "%z" #{STANDALONE_DIR + STANDALONE_HDPI_BASE}`.to_i
 
 buildOutputs(bugsnag: true, minified: false)
 
-apk_bugsnag_size = `stat --printf="%s" #{RELEASE_APK}`.to_i
-arm64_bugsnag_size = `stat --printf "%s" #{STANDALONE_DIR + STANDALONE_ARM64_V8A}`.to_i
-armeabi_v7a_bugsnag_size = `stat --printf "%s" #{STANDALONE_DIR + STANDALONE_ARMEABI_V7A}`.to_i
-x86_64_bugsnag_size = `stat --print "%s" #{STANDALONE_DIR + STANDALONE_X86_64}`.to_i
-x86_bugsnag_size = `stat --print "%s" #{STANDALONE_DIR + STANDALONE_X86}`.to_i
+apk_bugsnag_size = `stat -f "%z" #{RELEASE_APK}`.to_i
+arm64_bugsnag_size = `stat -f "%z" #{STANDALONE_DIR + STANDALONE_ARM64_V8A}`.to_i
+armeabi_v7a_bugsnag_size = `stat -f "%z" #{STANDALONE_DIR + STANDALONE_ARMEABI_V7A}`.to_i
+x86_64_bugsnag_size = `stat -f "%z" #{STANDALONE_DIR + STANDALONE_X86_64}`.to_i
+x86_bugsnag_size = `stat -f "%z" #{STANDALONE_DIR + STANDALONE_X86}`.to_i
 
 buildOutputs(bugsnag: true, minified: true)
 
-min_apk_bugsnag_size = `stat --printf="%s" #{RELEASE_APK}`.to_i
-min_arm64_bugsnag_size = `stat --printf "%s" #{STANDALONE_DIR + STANDALONE_ARM64_V8A}`.to_i
-min_armeabi_v7a_bugsnag_size = `stat --printf "%s" #{STANDALONE_DIR + STANDALONE_ARMEABI_V7A}`.to_i
-min_x86_64_bugsnag_size = `stat --print "%s" #{STANDALONE_DIR + STANDALONE_X86_64}`.to_i
-min_x86_bugsnag_size = `stat --print "%s" #{STANDALONE_DIR + STANDALONE_X86}`.to_i
+min_apk_bugsnag_size = `stat -f "%z" #{RELEASE_APK}`.to_i
+min_arm64_bugsnag_size = `stat -f "%z" #{STANDALONE_DIR + STANDALONE_ARM64_V8A}`.to_i
+min_armeabi_v7a_bugsnag_size = `stat -f "%z" #{STANDALONE_DIR + STANDALONE_ARMEABI_V7A}`.to_i
+min_x86_64_bugsnag_size = `stat -f "%z" #{STANDALONE_DIR + STANDALONE_X86_64}`.to_i
+min_x86_bugsnag_size = `stat -f "%z" #{STANDALONE_DIR + STANDALONE_X86}`.to_i
 
 calculated_sizes = {
   :arm64 => arm64_bugsnag_size - aab_size,

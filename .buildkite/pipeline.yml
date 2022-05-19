@@ -69,13 +69,7 @@ steps:
     timeout_in_minutes: 10
     agents:
       queue: macos-12-arm
-    commands:
-      - cd features/fixtures/minimalapp
-      - rm -rf .git
-      - ln -s ../../../.git
-      - bundle install
-      - bundle exec danger
-      - rm -f .git
+    command: scripts/run-sizer.sh
 
   - label: ':android: JVM tests'
     timeout_in_minutes: 10
