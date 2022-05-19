@@ -67,7 +67,7 @@ class MainActivity : Activity() {
         log("MainActivity.onResume complete")
     }
 
-        // Checks general internet and secure tunnel connectivity
+    // Checks general internet and secure tunnel connectivity
     private fun checkNetwork() {
         log("Checking network connectivity")
         try {
