@@ -284,6 +284,6 @@ Then("the error is correct for {string} or I allow a retry") do |scenario|
   case scenario
   when 'MultiThreadedStartupScenario'
     Maze.dynamic_retry = true if message == 'You must call Bugsnag.start before any other Bugsnag methods'
-    assert_equal 'Scenario complete', message
+    Maze.check.equal 'Scenario complete', message
   end
 end
