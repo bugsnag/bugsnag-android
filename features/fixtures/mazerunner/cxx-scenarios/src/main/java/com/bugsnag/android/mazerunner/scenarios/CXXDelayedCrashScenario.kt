@@ -2,6 +2,8 @@ package com.bugsnag.android.mazerunner.scenarios
 
 import android.app.Activity
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.mazerunner.log
 
@@ -25,8 +27,9 @@ class CXXDelayedCrashScenario(
     }
 
     override fun onActivityStopped(activity: Activity) {
-        super.onActivityStopped(activity)
-        log("App sent to background, triggering crash.")
-        activate(405)
+        Handler(Looper.getMainLooper()).post {
+            log("App sent to background, triggering crash.")
+            activate(405)
+        }
     }
 }
