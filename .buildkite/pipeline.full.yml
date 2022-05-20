@@ -128,7 +128,7 @@ steps:
           - "--app=/app/build/fixture-r16.apk"
           - "--farm=bs"
           - "--device=ANDROID_6_0_GOOGLE_NEXUS_6"
-            - "--device=ANDROID_6_0_MOTOROLA_MOTO_X_2ND_GEN"
+          - "--device=ANDROID_6_0_MOTOROLA_MOTO_X_2ND_GEN"
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r16"
