@@ -36,23 +36,24 @@ fixture-r16: notifier
 	# Build the r16 test fixture
 	@./gradlew -PTEST_FIXTURE_NDK_VERSION=16.1.4479499 \
                -PTEST_FIXTURE_NAME=fixture-r16.apk \
+               -PUSE_LEGACY_AGP=true \
                -PUSE_LEGACY_OKHTTP=true \
 	           -p=features/fixtures/mazerunner assembleRelease -x check
-	@scripts/copy-build-files.sh release fixture-r16
+	@ruby scripts/copy-build-files.rb release r16
 
 fixture-r19: notifier
 	# Build the r19 test fixture
 	@./gradlew -PTEST_FIXTURE_NDK_VERSION=19.2.5345600 \
                -PTEST_FIXTURE_NAME=fixture-r19.apk \
 	           -p=features/fixtures/mazerunner assembleRelease -x check
-	@scripts/copy-build-files.sh release fixture-r19
+	@ruby scripts/copy-build-files.rb release r19
 
 fixture-r21: notifier
 	# Build the minimal test fixture
 	@./gradlew -PTEST_FIXTURE_NDK_VERSION=21.4.7075529 \
                -PTEST_FIXTURE_NAME=fixture-r21.apk \
                -p=features/fixtures/mazerunner assembleRelease -x check
-	@scripts/copy-build-files.sh release fixture-r21
+	@ruby scripts/copy-build-files.rb release r21
 
 fixture-minimal: notifier
 	# Build the minimal test fixture
@@ -60,14 +61,19 @@ fixture-minimal: notifier
 	           -PTEST_FIXTURE_NDK_VERSION=17.2.4988734 \
                -PTEST_FIXTURE_NAME=fixture-minimal.apk \
                -p=features/fixtures/mazerunner assembleRelease -x check
-	@scripts/copy-build-files.sh release fixture-minimal
+	@ruby scripts/copy-build-files.rb release minimal
 
 fixture-debug: notifier
 	# Build the minimal test fixture
 	@./gradlew -PTEST_FIXTURE_NDK_VERSION=17.2.4988734 \
                -PTEST_FIXTURE_NAME=fixture-debug.apk \
                -p=features/fixtures/mazerunner assembleDebug -x check
-	@scripts/copy-build-files.sh debug fixture-debug
+	@ruby scripts/copy-build-files.rb debug debug
+
+example-app:
+	@./gradlew assembleRelease publishToMavenLocal -x check
+	# Build Android example app
+	@./gradlew -pexamples/sdk-app-example clean assembleRelease
 
 bump:
 ifneq ($(shell git diff --staged),)

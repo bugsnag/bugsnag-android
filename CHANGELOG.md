@@ -1,5 +1,14 @@
 # Changelog
 
+## 5.22.4 (2022-05-24)
+
+### Bug fixes
+
+* Reverted [#1680](https://github.com/bugsnag/bugsnag-android/pull/1680) to avoid deadlocks during startup
+  [#1696](https://github.com/bugsnag/bugsnag-android/pull/1696)
+* Improved `app.inForeground` reporting for NDK errors
+  [#1690](https://github.com/bugsnag/bugsnag-android/pull/1690)
+
 ## 5.22.3 (2022-05-12)
 
 ### Bug fixes

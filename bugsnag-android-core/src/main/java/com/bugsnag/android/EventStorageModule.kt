@@ -21,24 +21,19 @@ internal class EventStorageModule(
 
     private val cfg = configModule.config
 
-    private val delegate = InternalReportDelegate(
-        contextModule.ctx,
-        cfg.logger,
-        cfg,
-        systemServiceModule.storageManager,
-        dataCollectionModule.appDataCollector,
-        dataCollectionModule.deviceDataCollector,
-        trackerModule.sessionTracker,
-        notifier,
-        bgTaskService
-    )
+    private val delegate by future {
+        InternalReportDelegate(
+            contextModule.ctx,
+            cfg.logger,
+            cfg,
+            systemServiceModule.storageManager,
+            dataCollectionModule.appDataCollector,
+            dataCollectionModule.deviceDataCollector,
+            trackerModule.sessionTracker,
+            notifier,
+            bgTaskService
+        )
+    }
 
-    val eventStore = EventStore(
-        cfg,
-        cfg.logger,
-        notifier,
-        bgTaskService,
-        delegate,
-        callbackState
-    )
+    val eventStore by future { EventStore(cfg, cfg.logger, notifier, bgTaskService, delegate, callbackState) }
 }

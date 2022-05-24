@@ -15,9 +15,9 @@ internal class DataCollectionModule(
     configModule: ConfigModule,
     systemServiceModule: SystemServiceModule,
     trackerModule: TrackerModule,
-    private val bgTaskService: BackgroundTaskService,
-    private val connectivity: Connectivity,
-    private val deviceId: String?,
+    bgTaskService: BackgroundTaskService,
+    connectivity: Connectivity,
+    deviceId: String?,
     memoryTrimState: MemoryTrimState
 ) : DependencyModule() {
 
@@ -27,25 +27,24 @@ internal class DataCollectionModule(
     private val deviceBuildInfo: DeviceBuildInfo = DeviceBuildInfo.defaultInfo()
     private val dataDir = Environment.getDataDirectory()
 
-    val appDataCollector = AppDataCollector(
-        ctx,
-        ctx.packageManager,
-        cfg,
-        trackerModule.sessionTracker,
-        systemServiceModule.activityManager,
-        trackerModule.launchCrashTracker,
-        memoryTrimState
-    )
+    val appDataCollector by future {
+        AppDataCollector(
+            ctx,
+            ctx.packageManager,
+            cfg,
+            trackerModule.sessionTracker,
+            systemServiceModule.activityManager,
+            trackerModule.launchCrashTracker,
+            memoryTrimState
+        )
+    }
 
-    private lateinit var rootDetector: RootDetector
-    private lateinit var _deviceDataCollector: DeviceDataCollector
+    private val rootDetector by future {
+        RootDetector(logger = logger, deviceBuildInfo = deviceBuildInfo)
+    }
 
-    val deviceDataCollector: DeviceDataCollector
-        get() = resolvedValueOf { _deviceDataCollector }
-
-    override fun resolveDependencies() {
-        rootDetector = RootDetector(logger = logger, deviceBuildInfo = deviceBuildInfo)
-        _deviceDataCollector = DeviceDataCollector(
+    val deviceDataCollector by future {
+        DeviceDataCollector(
             connectivity,
             ctx,
             ctx.resources,

@@ -22,10 +22,11 @@ class MainActivity : Activity() {
     lateinit var prefs: SharedPreferences
 
     var scenario: Scenario? = null
+    var polling = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        log("MainActivity.onCreate started")
+        log("MainActivity.onCreate called")
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_main)
         prefs = getPreferences(Context.MODE_PRIVATE)
@@ -53,10 +54,17 @@ class MainActivity : Activity() {
             apiKeyField.text.clear()
             apiKeyField.text.append(apiKey)
         }
-
-        log("startCommandRunner")
-        startCommandRunner()
         log("MainActivity.onCreate complete")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        log("MainActivity.onResume called")
+
+        if (!polling) {
+            startCommandRunner()
+        }
+        log("MainActivity.onResume complete")
     }
 
     // Checks general internet and secure tunnel connectivity
@@ -80,7 +88,7 @@ class MainActivity : Activity() {
     // Starts a thread to poll for Maze Runner actions to perform
     private fun startCommandRunner() {
         // Get the next maze runner command
-        var polling = true
+        polling = true
         thread(start = true) {
             checkNetwork()
 

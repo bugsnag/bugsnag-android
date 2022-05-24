@@ -32,8 +32,20 @@ internal class SessionLifecycleCallbackTest {
     }
 
     @Test
+    fun onActivityPostStarted() {
+        callbacks.onActivityPostStarted(activity)
+        verify(tracker, times(1)).onActivityStarted("Activity")
+    }
+
+    @Test
     fun onActivityStopped() {
         callbacks.onActivityStopped(activity)
+        verify(tracker, times(1)).onActivityStopped("Activity")
+    }
+
+    @Test
+    fun onActivityPostStopped() {
+        callbacks.onActivityPostStopped(activity)
         verify(tracker, times(1)).onActivityStopped("Activity")
     }
 }
