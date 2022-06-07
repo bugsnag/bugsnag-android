@@ -52,6 +52,7 @@ services:
       SAUCE_LABS_ACCESS_KEY:
       TEST_FIXTURE_SYMBOL_DIR:
       MAZE_TMS_URI:
+      MAZE_TMS_TOKEN:
     volumes:
       - ./build:/app/build
       - ./features/:/app/features/
