@@ -29,8 +29,19 @@ public class CXXRemoveDataScenario extends Scenario {
     public void startScenario() {
         super.startScenario();
         Bugsnag.addMetadata("persist", "keep", "foo");
+        Bugsnag.addMetadata("persist", "remove", "not bar");
+        Bugsnag.addMetadata("persist", "overwrite", "value1");
+        Bugsnag.addMetadata("persist", "overwrite", "value2");
+
+        // repetatively overwrite the "remove" attribute enough times to cause the metadata
+        // to require cleaning, and ensure that the existing values are not dropped
+        for (int overload = 0; overload < 256; overload++) {
+            Bugsnag.addMetadata("persist", "remove", overload);
+        }
+
         Bugsnag.addMetadata("persist", "remove", "bar");
         Bugsnag.addMetadata("remove", "foo", "bar");
+
         activate();
         Handler main = new Handler(Looper.getMainLooper());
         main.postDelayed(new Runnable() {
