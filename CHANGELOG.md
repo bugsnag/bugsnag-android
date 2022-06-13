@@ -1,5 +1,14 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* Fixed Bugsnag interactions with the Google ANR handler on newer versions of Android
+  [#1699](https://github.com/bugsnag/bugsnag-android/pull/1699)
+* Overwriting & clearing event metadata in the NDK plugin will no longer leave phantom values
+  [#1700](https://github.com/bugsnag/bugsnag-android/pull/1700)
+
 ## 5.22.4 (2022-05-24)
 
 ### Bug fixes

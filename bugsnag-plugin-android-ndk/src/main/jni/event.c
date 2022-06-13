@@ -1,9 +1,78 @@
 #include "event.h"
 #include "utils/string.h"
 #include <string.h>
+#include <utils/logger.h>
+
+/**
+ * Compact the given metadata array by removing all duplicate entries and NONE
+ * values. This will retain the order of the values. After this function
+ * returns, all values with `index >= value_count` will have type
+ * `BSG_METADATA_NONE`
+ *
+ * @return true if there is space for new values in the metadata
+ */
+static bool bsg_metadata_compact(bugsnag_metadata *const metadata) {
+  int toRemove = 0;
+
+  // first mark any duplicates as NONE, and count up all the empty (NONE) values
+  // we find scan the array backwards to make retaining order simple
+  for (int primaryIndex = metadata->value_count - 1; primaryIndex >= 0;
+       primaryIndex--) {
+    if (metadata->values[primaryIndex].type == BSG_METADATA_NONE_VALUE) {
+      toRemove++;
+      continue;
+    }
+
+    const char *section = metadata->values[primaryIndex].section;
+    const char *name = metadata->values[primaryIndex].name;
+
+    for (int searchIndex = primaryIndex - 1; searchIndex >= 0; searchIndex--) {
+      if (strcmp(metadata->values[searchIndex].section, section) == 0 &&
+          strcmp(metadata->values[searchIndex].name, name) == 0) {
+
+        // this will be picked up by our primaryIndex search on a future
+        // iteration
+        metadata->values[searchIndex].type = BSG_METADATA_NONE_VALUE;
+      }
+    }
+  }
+
+  if (toRemove == 0) {
+    return metadata->value_count < BUGSNAG_METADATA_MAX;
+  }
+
+  // now compact the array by closing all of the gaps where there are NONE
+  // values
+  for (int i = 0; i < metadata->value_count; i++) {
+    if (metadata->values[i].type != BSG_METADATA_NONE_VALUE) {
+      continue;
+    }
+
+    // scan "forwards" to find the extent of this gap
+    int gapEnd = i + 1;
+    while (gapEnd < metadata->value_count &&
+           metadata->values[gapEnd].type == BSG_METADATA_NONE_VALUE)
+      gapEnd++;
+
+    memmove(&metadata->values[i], &metadata->values[gapEnd],
+            sizeof(bsg_metadata_value) * (metadata->value_count - gapEnd));
+  }
+
+  // mark all of the "extra" slots a NONE for clarity
+  for (int i = metadata->value_count - toRemove; i < metadata->value_count;
+       i++) {
+    metadata->values[i].type = BSG_METADATA_NONE_VALUE;
+  }
+
+  metadata->value_count -= toRemove;
+
+  // if we got here there is space in the array
+  return true;
+}
 
 static int find_next_free_metadata_index(bugsnag_metadata *const metadata) {
-  if (metadata->value_count < BUGSNAG_METADATA_MAX) {
+  if (metadata->value_count < BUGSNAG_METADATA_MAX ||
+      bsg_metadata_compact(metadata)) {
     return metadata->value_count;
   } else {
     for (int i = 0; i < metadata->value_count; i++) {
@@ -15,11 +84,38 @@ static int find_next_free_metadata_index(bugsnag_metadata *const metadata) {
   return -1;
 }
 
+static bool bsg_event_clear_metadata(bugsnag_metadata *metadata,
+                                     const char *section, const char *name) {
+  int clearedCount = 0;
+  // remove *all* values for the given key, and then compact the entire dataset
+  for (int i = 0; i < metadata->value_count; ++i) {
+    if (strcmp(metadata->values[i].section, section) == 0 &&
+        strcmp(metadata->values[i].name, name) == 0) {
+      metadata->values[i].type = BSG_METADATA_NONE_VALUE;
+      clearedCount++;
+    }
+  }
+
+  if (clearedCount > 0) {
+    bsg_metadata_compact(metadata);
+    return true;
+  }
+
+  return false;
+}
+
 static int allocate_metadata_index(bugsnag_metadata *metadata,
                                    const char *section, const char *name) {
   int index = find_next_free_metadata_index(metadata);
   if (index < 0) {
-    return index;
+    // we possibly have duplicates of this key we can remove before giving up
+    if (bsg_event_clear_metadata(metadata, section, name)) {
+      index = find_next_free_metadata_index(metadata);
+    }
+
+    if (index < 0) {
+      return index;
+    }
   }
   bsg_strncpy(metadata->values[index].section, section,
               sizeof(metadata->values[index].section));
@@ -82,18 +178,7 @@ void bugsnag_event_add_metadata_bool(void *event_ptr, const char *section,
 void bugsnag_event_clear_metadata(void *event_ptr, const char *section,
                                   const char *name) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
-  for (int i = 0; i < event->metadata.value_count; ++i) {
-    if (strcmp(event->metadata.values[i].section, section) == 0 &&
-        strcmp(event->metadata.values[i].name, name) == 0) {
-      memcpy(&event->metadata.values[i],
-             &event->metadata.values[event->metadata.value_count - 1],
-             sizeof(bsg_metadata_value));
-      event->metadata.values[event->metadata.value_count - 1].type =
-          BSG_METADATA_NONE_VALUE;
-      event->metadata.value_count--;
-      break;
-    }
-  }
+  bsg_event_clear_metadata(&event->metadata, section, name);
 }
 
 void bugsnag_event_clear_metadata_section(void *event_ptr,
