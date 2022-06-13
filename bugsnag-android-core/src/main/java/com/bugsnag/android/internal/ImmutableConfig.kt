@@ -18,6 +18,7 @@ import com.bugsnag.android.EventPayload
 import com.bugsnag.android.Logger
 import com.bugsnag.android.ManifestConfigLoader.Companion.BUILD_UUID
 import com.bugsnag.android.NoopLogger
+import com.bugsnag.android.Telemetry
 import com.bugsnag.android.ThreadSendPolicy
 import com.bugsnag.android.errorApiHeaders
 import com.bugsnag.android.safeUnrollCauses
@@ -34,6 +35,7 @@ data class ImmutableConfig(
     val enabledReleaseStages: Collection<String>?,
     val projectPackages: Collection<String>,
     val enabledBreadcrumbTypes: Set<BreadcrumbType>?,
+    val telemetry: Set<Telemetry>,
     val releaseStage: String?,
     val buildUuid: String?,
     val appVersion: String?,
@@ -162,6 +164,7 @@ internal fun convertToImmutableConfig(
         maxPersistedSessions = config.maxPersistedSessions,
         maxReportedThreads = config.maxReportedThreads,
         enabledBreadcrumbTypes = config.enabledBreadcrumbTypes?.toSet(),
+        telemetry = config.telemetry.toSet(),
         persistenceDirectory = persistenceDir,
         sendLaunchCrashesSynchronously = config.sendLaunchCrashesSynchronously,
         packageInfo = packageInfo,

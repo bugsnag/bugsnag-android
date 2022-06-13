@@ -27,6 +27,7 @@ internal class DeviceDataCollector(
     private val appContext: Context,
     resources: Resources,
     private val deviceId: String?,
+    private val internalDeviceId: String?,
     private val buildInfo: DeviceBuildInfo,
     private val dataDirectory: File,
     rootDetector: RootDetector,
@@ -79,6 +80,19 @@ internal class DeviceDataCollector(
         buildInfo,
         checkIsRooted(),
         deviceId,
+        locale,
+        totalMemoryFuture.runCatching { this?.get() }.getOrNull(),
+        runtimeVersions.toMutableMap(),
+        calculateFreeDisk(),
+        calculateFreeMemory(),
+        getOrientationAsString(),
+        Date(now)
+    )
+
+    fun generateInternalDeviceWithState(now: Long) = DeviceWithState(
+        buildInfo,
+        checkIsRooted(),
+        internalDeviceId,
         locale,
         totalMemoryFuture.runCatching { this?.get() }.getOrNull(),
         runtimeVersions.toMutableMap(),

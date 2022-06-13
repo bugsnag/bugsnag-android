@@ -52,6 +52,7 @@ internal class ConfigInternal(
     var discardClasses: Set<String> = emptySet()
     var enabledReleaseStages: Set<String>? = null
     var enabledBreadcrumbTypes: Set<BreadcrumbType>? = null
+    var telemetry: Set<Telemetry> = setOf(Telemetry.INTERNAL_ERRORS)
     var projectPackages: Set<String> = emptySet()
     var persistenceDirectory: File? = null
 

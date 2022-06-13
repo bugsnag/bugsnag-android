@@ -54,6 +54,7 @@ internal class DeviceMetadataSerializationTest {
                 context,
                 res,
                 "123",
+                "456",
                 buildInfo,
                 File(""),
                 rootDetector,
