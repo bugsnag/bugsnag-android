@@ -39,13 +39,13 @@ internal class SharedPrefMigratorTest {
     @Test
     fun nullDeviceId() {
         `when`(prefs.getString("install.iud", null)).thenReturn(null)
-        assertNull(prefMigrator.loadDeviceId())
+        assertNull(prefMigrator.loadDeviceId(true))
     }
 
     @Test
     fun validDeviceId() {
         `when`(prefs.getString("install.iud", null)).thenReturn("f09asdfb")
-        assertEquals("f09asdfb", prefMigrator.loadDeviceId())
+        assertEquals("f09asdfb", prefMigrator.loadDeviceId(true))
     }
 
     @Test

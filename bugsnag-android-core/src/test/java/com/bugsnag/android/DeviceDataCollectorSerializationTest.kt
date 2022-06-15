@@ -54,6 +54,7 @@ internal class DeviceDataCollectorSerializationTest {
                 context,
                 res,
                 "123",
+                "456",
                 buildInfo,
                 File(""),
                 rootDetector,

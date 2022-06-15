@@ -25,6 +25,7 @@ class DataCollectorTest {
             Mockito.mock(Context::class.java),
             res,
             "fakeDevice",
+            "internalFakeDevice",
             Mockito.mock(DeviceBuildInfo::class.java),
             File("/tmp/javatest"),
             Mockito.mock(RootDetector::class.java),

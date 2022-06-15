@@ -51,6 +51,7 @@ internal class ConfigChangeReceiverTest {
         appContext,
         resources,
         "",
+        "",
         buildInfo,
         dataDirectory,
         rootDetector,

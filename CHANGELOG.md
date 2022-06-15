@@ -2,6 +2,11 @@
 
 ## TBD
 
+### Enhancements
+
+* Added configuration option to control whether internal errors are sent to Bugsnag
+  [#1701](https://github.com/bugsnag/bugsnag-android/pull/1701)
+
 ### Bug fixes
 
 * Fixed Bugsnag interactions with the Google ANR handler on newer versions of Android

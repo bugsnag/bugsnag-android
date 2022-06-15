@@ -746,6 +746,22 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
         impl.setEnabledBreadcrumbTypes(enabledBreadcrumbTypes);
     }
 
+    @NonNull
+    public Set<Telemetry> getTelemetry() {
+        return impl.getTelemetry();
+    }
+
+    /**
+     * Set which telemetry will be sent to Bugsnag. By default, all telemetry is enabled.
+     *
+     * The following telemetry can be enabled:
+     *
+     * - internal errors: Errors in the Bugsnag SDK itself.
+     */
+    public void setTelemetry(@NonNull Set<Telemetry> telemetry) {
+        impl.setTelemetry(telemetry);
+    }
+
     /**
      * Sets which package names Bugsnag should consider as a part of the
      * running application. We mark stacktrace lines as in-project if they
