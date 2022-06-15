@@ -759,7 +759,11 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
      * - internal errors: Errors in the Bugsnag SDK itself.
      */
     public void setTelemetry(@NonNull Set<Telemetry> telemetry) {
-        impl.setTelemetry(telemetry);
+        if (telemetry != null) {
+            impl.setTelemetry(telemetry);
+        } else {
+            logNull("telemetry");
+        }
     }
 
     /**
