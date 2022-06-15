@@ -12,7 +12,22 @@
 
 #define SERIALIZE_TEST_FILE "/data/data/com.bugsnag.android.ndk.test/cache/foo.crash"
 
-bugsnag_breadcrumb *init_breadcrumb(const char *name, char *message, bugsnag_breadcrumb_type type);
+bugsnag_breadcrumb *init_breadcrumb(const char *name, const char *message, bugsnag_breadcrumb_type type);
+
+bugsnag_breadcrumb_v2 *init_breadcrumb_v2(const char *name, const char *message, bugsnag_breadcrumb_type type) {
+  bugsnag_breadcrumb_v2 *crumb = calloc(1, sizeof(bugsnag_breadcrumb_v2));
+  crumb->type = type;
+  strcpy(crumb->name, name);
+  strcpy(crumb->timestamp, "2018-08-29T21:41:39Z");
+  crumb->metadata.values[0] = (bsg_metadata_value_v1) {
+      .name = {"message"},
+      .section = {"metaData"},
+      .type = BSG_METADATA_CHAR_VALUE,
+      .char_value = {*message},
+  };
+  crumb->metadata.value_count = 1;
+  return crumb;
+}
 
 bool bsg_report_header_write(bsg_report_header *header, int fd);
 
@@ -199,12 +214,12 @@ bugsnag_report_v5 *bsg_generate_report_v5(void) {
   bugsnag_event_add_metadata_string(event, "app", "weather", "rain");
   bugsnag_event_add_metadata_double(event, "metrics", "counter", 47.8);
 
-  bugsnag_breadcrumb *crumb1 = init_breadcrumb("decrease torque", "Moving laterally 26º",
+  bugsnag_breadcrumb_v2 *crumb1 = init_breadcrumb_v2("decrease torque", "Moving laterally 26º",
                                                BSG_CRUMB_STATE);
-  bugsnag_breadcrumb *crumb2 = init_breadcrumb("enable blasters", "this is a drill.",
+  bugsnag_breadcrumb_v2 *crumb2 = init_breadcrumb_v2("enable blasters", "this is a drill.",
                                                BSG_CRUMB_USER);
-  memcpy(&event->breadcrumbs[0], crumb1, sizeof(bugsnag_breadcrumb));
-  memcpy(&event->breadcrumbs[1], crumb2, sizeof(bugsnag_breadcrumb));
+  memcpy(&event->breadcrumbs[0], crumb1, sizeof(bugsnag_breadcrumb_v2));
+  memcpy(&event->breadcrumbs[1], crumb2, sizeof(bugsnag_breadcrumb_v2));
   event->crumb_count = 2;
   event->crumb_first_index = 0;
 
@@ -249,12 +264,12 @@ bugsnag_report_v4 *bsg_generate_report_v4(void) {
   bugsnag_event_add_metadata_string(event, "app", "weather", "rain");
   bugsnag_event_add_metadata_double(event, "metrics", "counter", 47.8);
 
-  bugsnag_breadcrumb *crumb1 = init_breadcrumb("decrease torque", "Moving laterally 26º",
+  bugsnag_breadcrumb_v2 *crumb1 = init_breadcrumb_v2("decrease torque", "Moving laterally 26º",
                                                BSG_CRUMB_STATE);
-  bugsnag_breadcrumb *crumb2 = init_breadcrumb("enable blasters", "this is a drill.",
+  bugsnag_breadcrumb_v2 *crumb2 = init_breadcrumb_v2("enable blasters", "this is a drill.",
                                                BSG_CRUMB_USER);
-  memcpy(&event->breadcrumbs[0], crumb1, sizeof(bugsnag_breadcrumb));
-  memcpy(&event->breadcrumbs[1], crumb2, sizeof(bugsnag_breadcrumb));
+  memcpy(&event->breadcrumbs[0], crumb1, sizeof(bugsnag_breadcrumb_v2));
+  memcpy(&event->breadcrumbs[1], crumb2, sizeof(bugsnag_breadcrumb_v2));
   event->crumb_count = 2;
   event->crumb_first_index = 0;
 
@@ -298,12 +313,12 @@ bugsnag_report_v3 *bsg_generate_report_v3(void) {
   bugsnag_event_add_metadata_string(event, "app", "weather", "rain");
   bugsnag_event_add_metadata_double(event, "metrics", "counter", 47.8);
 
-  bugsnag_breadcrumb *crumb1 = init_breadcrumb("decrease torque", "Moving laterally 26º",
+  bugsnag_breadcrumb_v2 *crumb1 = init_breadcrumb_v2("decrease torque", "Moving laterally 26º",
                                                BSG_CRUMB_STATE);
-  bugsnag_breadcrumb *crumb2 = init_breadcrumb("enable blasters", "this is a drill.",
+  bugsnag_breadcrumb_v2 *crumb2 = init_breadcrumb_v2("enable blasters", "this is a drill.",
                                                BSG_CRUMB_USER);
-  memcpy(&event->breadcrumbs[0], crumb1, sizeof(bugsnag_breadcrumb));
-  memcpy(&event->breadcrumbs[1], crumb2, sizeof(bugsnag_breadcrumb));
+  memcpy(&event->breadcrumbs[0], crumb1, sizeof(bugsnag_breadcrumb_v2));
+  memcpy(&event->breadcrumbs[1], crumb2, sizeof(bugsnag_breadcrumb_v2));
   event->crumb_count = 2;
   event->crumb_first_index = 0;
 
@@ -334,25 +349,25 @@ bugsnag_report_v2 *bsg_generate_report_v2(void) {
   event->device.total_memory = 234678100;
   event->app.duration = 6502;
   event->metadata.value_count = 4;
-  event->metadata.values[0] = (bsg_metadata_value) {
+  event->metadata.values[0] = (bsg_metadata_value_v1) {
     .name = {"weather"},
     .section = {"app"},
     .type = BSG_METADATA_CHAR_VALUE,
     .char_value = {"rain"},
   };
-  event->metadata.values[1] = (bsg_metadata_value) {
+  event->metadata.values[1] = (bsg_metadata_value_v1) {
     .name = {"experimentX"},
     .section = {"metrics"},
     .type = BSG_METADATA_BOOL_VALUE,
     .bool_value = false,
   };
-  event->metadata.values[2] = (bsg_metadata_value) {
+  event->metadata.values[2] = (bsg_metadata_value_v1) {
     .name = {"subject"},
     .section = {"metrics"},
     .type = BSG_METADATA_CHAR_VALUE,
     .char_value = {"percy"},
   };
-  event->metadata.values[3] = (bsg_metadata_value) {
+  event->metadata.values[3] = (bsg_metadata_value_v1) {
     .name = {"counter"},
     .section = {"metrics"},
     .type = BSG_METADATA_NUMBER_VALUE,
@@ -540,7 +555,7 @@ TEST test_file_to_report(void) {
 
 TEST test_report_with_feature_flags_from_file(void) {
   bsg_environment *env = calloc(1, sizeof(bsg_environment));
-  env->report_header.version = 8;
+  env->report_header.version = BSG_MIGRATOR_CURRENT_VERSION;
   env->report_header.big_endian = 1;
   bugsnag_event *report = bsg_generate_event();
   memcpy(&env->next_event, report, sizeof(bugsnag_event));
@@ -711,8 +726,8 @@ void prepare_v5_report(bsg_environment *env, bugsnag_report_v5 *generated_report
     int index = k % V2_BUGSNAG_CRUMBS_MAX;
     char *str = calloc(1, sizeof(char) * 64);
     sprintf(str, "%d", k);
-    bugsnag_breadcrumb *crumb = init_breadcrumb(str, "Oh crumbs", BSG_CRUMB_STATE);
-    memcpy(&generated_report->breadcrumbs[index], crumb, sizeof(bugsnag_breadcrumb));
+    bugsnag_breadcrumb_v2 *crumb = init_breadcrumb_v2(str, "Oh crumbs", BSG_CRUMB_STATE);
+    memcpy(&generated_report->breadcrumbs[index], crumb, sizeof(bugsnag_breadcrumb_v2));
     free(crumb);
     free(str);
   }
