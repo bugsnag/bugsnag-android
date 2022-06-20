@@ -49,7 +49,7 @@ fixture-r19: notifier
 	@ruby scripts/copy-build-files.rb release r19
 
 fixture-r21: notifier
-	# Build the minimal test fixture
+	# Build the r21 test fixture
 	@./gradlew -PTEST_FIXTURE_NDK_VERSION=21.4.7075529 \
                -PTEST_FIXTURE_NAME=fixture-r21.apk \
                -p=features/fixtures/mazerunner assembleRelease -x check

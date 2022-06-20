@@ -104,6 +104,13 @@ When("I tap the screen {int} times") do |count|
   }
 end
 
+When("I tap the back-button {int} times") do |count|
+  (1..count).each { |i|
+    Maze.driver.back
+    sleep(0.5)
+  }
+end
+
 When("I configure the app to run in the {string} state") do |scenario_mode|
   $scenario_mode = scenario_mode
 end

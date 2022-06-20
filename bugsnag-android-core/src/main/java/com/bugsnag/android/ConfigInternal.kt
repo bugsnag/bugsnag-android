@@ -2,6 +2,7 @@ package com.bugsnag.android
 
 import android.content.Context
 import java.io.File
+import java.util.EnumSet
 
 internal class ConfigInternal(
     var apiKey: String
@@ -52,6 +53,7 @@ internal class ConfigInternal(
     var discardClasses: Set<String> = emptySet()
     var enabledReleaseStages: Set<String>? = null
     var enabledBreadcrumbTypes: Set<BreadcrumbType>? = null
+    var telemetry: Set<Telemetry> = EnumSet.of(Telemetry.INTERNAL_ERRORS)
     var projectPackages: Set<String> = emptySet()
     var persistenceDirectory: File? = null
 

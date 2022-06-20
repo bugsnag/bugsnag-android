@@ -96,8 +96,11 @@ static bool is_thread_named_signal_catcher(pid_t tid) {
   return success;
 }
 
+static inline uint64_t sigmask_for_signal(uint64_t sig) {
+  return (((uint64_t)1) << (sig - 1));
+}
+
 static bool is_thread_signal_catcher_sigblk(pid_t tid) {
-  static const uint64_t SIGNAL_CATCHER_THREAD_SIGBLK = 0x1000;
   static const char *SIGBLK_HEADER = "SigBlk:\t";
   const size_t SIGBLK_HEADER_LENGTH = strlen(SIGBLK_HEADER);
 
@@ -117,7 +120,9 @@ static bool is_thread_signal_catcher_sigblk(pid_t tid) {
     }
   }
   fclose(fp);
-  return sigblk == SIGNAL_CATCHER_THREAD_SIGBLK;
+
+  // The signal catcher thread will not have SIGQUIT blocked
+  return (sigblk & sigmask_for_signal(SIGQUIT)) == 0;
 }
 
 bool bsg_google_anr_init() {

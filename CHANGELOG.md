@@ -1,5 +1,19 @@
 # Changelog
 
+## 5.23.0 (2022-06-20)
+
+### Enhancements
+
+* Added configuration option to control whether internal errors are sent to Bugsnag
+  [#1701](https://github.com/bugsnag/bugsnag-android/pull/1701)
+
+### Bug fixes
+
+* Fixed Bugsnag interactions with the Google ANR handler on newer versions of Android
+  [#1699](https://github.com/bugsnag/bugsnag-android/pull/1699)
+* Overwriting & clearing event metadata in the NDK plugin will no longer leave phantom values
+  [#1700](https://github.com/bugsnag/bugsnag-android/pull/1700)
+
 ## 5.22.4 (2022-05-24)
 
 ### Bug fixes

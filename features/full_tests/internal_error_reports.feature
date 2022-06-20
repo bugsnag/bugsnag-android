@@ -72,3 +72,7 @@ Feature: Cached Error Reports
     And the event "threads.0.stacktrace.0.method" is not null
     And the event "threads.0.stacktrace.0.file" is not null
     And the event "threads.0.stacktrace.0.lineNumber" is not null
+
+  Scenario: If an exception is thrown when sending errors/sessions but telemetry is disabled then internal error reports should not be sent
+    When I run "InternalErrorDisabledScenario"
+    And I should receive no errors
