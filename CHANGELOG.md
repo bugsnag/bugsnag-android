@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 5.23.0 (2022-06-20)
 
 ### Enhancements
 
