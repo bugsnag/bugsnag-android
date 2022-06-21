@@ -226,6 +226,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
   jbyteArray jstage = NULL;
   char *payload = NULL;
   jstring japi_key = NULL;
+  jstring errorClass = NULL;
 
   if (!bsg_jni_cache->initialized) {
     BUGSNAG_LOG("deliverReportAtPath failed: JNI cache not initialized.");
@@ -244,6 +245,13 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
 
   if (event == NULL) {
     BUGSNAG_LOG("Failed to read event at file: %s", event_path);
+    goto exit;
+  }
+
+  errorClass = bsg_safe_new_string_utf(env, event->error.errorClass);
+  if (bsg_safe_call_static_boolean_method(
+          env, bsg_jni_cache->NativeInterface,
+          bsg_jni_cache->NativeInterface_isDiscardErrorClass, errorClass)) {
     goto exit;
   }
 
@@ -276,6 +284,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
   }
 
 exit:
+  bsg_safe_delete_local_ref(env, errorClass);
   bsg_safe_release_string_utf_chars(env, _report_path, event_path);
   if (event != NULL) {
     bsg_safe_release_byte_array_elements(env, jstage,
