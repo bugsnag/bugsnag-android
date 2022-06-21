@@ -268,6 +268,9 @@ void bsg_add_metadata_value_str(bugsnag_metadata *metadata, const char *section,
 void bsg_add_metadata_value_bool(bugsnag_metadata *metadata,
                                  const char *section, const char *name,
                                  bool value);
+void bsg_add_metadata_value_opaque(bugsnag_metadata *metadata,
+                                   const char *section, const char *name,
+                                   const char *json);
 
 /*********************************
  * (end) NDK-SPECIFIC BITS
