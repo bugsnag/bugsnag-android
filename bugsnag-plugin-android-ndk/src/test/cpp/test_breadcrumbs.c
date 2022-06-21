@@ -2,13 +2,20 @@
 #include <greatest/greatest.h>
 #include <time.h>
 #include <utils/serializer/json_writer.h>
+#include <utils/serializer/migrate.h>
 
-bugsnag_breadcrumb *init_breadcrumb(const char *name, char *message, bugsnag_breadcrumb_type type) {
+bugsnag_breadcrumb *init_breadcrumb(const char *name, const char *message, bugsnag_breadcrumb_type type) {
   bugsnag_breadcrumb *crumb = calloc(1, sizeof(bugsnag_breadcrumb));
   crumb->type = type;
   strcpy(crumb->name, name);
   strcpy(crumb->timestamp, "2018-08-29T21:41:39Z");
-  bsg_add_metadata_value_str(&crumb->metadata, "metaData", "message", message);
+  crumb->metadata.values[0] = (bsg_metadata_value) {
+    .name = {"message"},
+    .section = {"metaData"},
+    .type = BSG_METADATA_CHAR_VALUE,
+  };
+  strcpy(crumb->metadata.values[0].char_value, message);
+  crumb->metadata.value_count = 1;
   return crumb;
 }
 

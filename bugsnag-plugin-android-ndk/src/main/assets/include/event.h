@@ -61,6 +61,7 @@ typedef enum {
   BSG_METADATA_BOOL_VALUE,
   BSG_METADATA_CHAR_VALUE,
   BSG_METADATA_NUMBER_VALUE,
+  BSG_METADATA_OPAQUE_VALUE,
 } bugsnag_metadata_type;
 
 typedef struct {

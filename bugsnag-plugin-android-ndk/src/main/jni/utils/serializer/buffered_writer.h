@@ -12,6 +12,10 @@
 
 #define BSG_BUFFER_SIZE 128
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct bsg_buffered_writer {
   int fd;
   size_t pos;
@@ -82,5 +86,9 @@ typedef struct bsg_buffered_writer {
  */
 bool bsg_buffered_writer_open(struct bsg_buffered_writer *writer,
                               const char *path);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -5,7 +5,7 @@
 #include "utils.hpp"
 
 static void *create_payload_info_event() {
-  auto event = (bugsnag_report_v7 *)calloc(1, sizeof(bugsnag_report_v7));
+  auto event = (bugsnag_event *)calloc(1, sizeof(bugsnag_event));
 
   strcpy(event->api_key, "5d1e5fbd39a74caa1200142706a90b20");
   strcpy(event->notifier.name, "Test Library");
@@ -16,10 +16,10 @@ static void *create_payload_info_event() {
 }
 
 /**
- * Create a new event in v7 format
+ * Create a new event in v9 format
  */
 static void *create_full_event() {
-  auto event = (bugsnag_report_v7 *)calloc(1, sizeof(bugsnag_report_v7));
+  auto event = (bugsnag_event *)calloc(1, sizeof(bugsnag_event));
 
   strcpy(event->context,
          "00000000000m0r3.61ee9e6e099d3dd7448f740d395768da6b2df55d5.m4g1c");
@@ -30,15 +30,15 @@ static void *create_full_event() {
   // app
   strcpy(event->app.binary_arch, "mips");
   strcpy(event->app.build_uuid, "1234-9876-adfe");
-  event->app.duration = 6502;
-  event->app.duration_in_foreground = 12;
+  event->app.duration = 81395165021;
+  event->app.duration_in_foreground = 81395165010;
   event->app.in_foreground = true;
   event->app.is_launching = true;
   strcpy(event->app.id, "com.example.PhotoSnapPlus");
   strcpy(event->app.release_stage, "リリース");
   strcpy(event->app.type, "red");
   strcpy(event->app.version, "2.0.52");
-  event->app.version_code = 57;
+  event->app.version_code = 8139512718;
 
   // breadcrumbs
   auto max = 50;
@@ -46,12 +46,12 @@ static void *create_full_event() {
   char name[30];
   for (int i = event->crumb_first_index; i < max; i++) {
     sprintf(name, "mission %d", i - event->crumb_first_index);
-    insert_crumb_v2(event->breadcrumbs, i, name, BSG_CRUMB_STATE, 1638992630014,
+    insert_crumb(event->breadcrumbs, i, name, BSG_CRUMB_STATE, 1638992630014,
                  "Now we know what they mean by 'advanced' tactical training.");
   }
   for (int i = 0; i < event->crumb_first_index; i++) {
     sprintf(name, "mission %d", (max - event->crumb_first_index) + i);
-    insert_crumb_v2(event->breadcrumbs, i, name, BSG_CRUMB_STATE, 1638992630014,
+    insert_crumb(event->breadcrumbs, i, name, BSG_CRUMB_STATE, 1638992630014,
                  "Now we know what they mean by 'advanced' tactical training.");
   }
   event->crumb_count = max;
@@ -72,47 +72,40 @@ static void *create_full_event() {
     event->device.api_level = 32;
   }
   event->device.time = 1638992630;
-  event->device.total_memory = 3278623;
+  event->device.total_memory = 3839512576;
+
+  // feature flags
+  event->feature_flag_count = 4;
+  event->feature_flags =
+      (bsg_feature_flag *)calloc(4, sizeof(bsg_feature_flag));
+  event->feature_flags[0].name = strdup("bluebutton");
+  event->feature_flags[0].variant = strdup("on");
+  event->feature_flags[1].name = strdup("redbutton");
+  event->feature_flags[1].variant = strdup("off");
+  event->feature_flags[2].name = strdup("nobutton");
+  event->feature_flags[3].name = strdup("switch");
+  event->feature_flags[3].variant = strdup("left");
 
   // exceptions
   strcpy(event->error.errorClass, "SIGBUS");
   strcpy(event->error.errorMessage, "POSIX is serious about oncoming traffic");
   strcpy(event->error.type, "C");
   event->error.frame_count = 2;
-  event->error.stacktrace[0].frame_address = 454379;
-  event->error.stacktrace[0].load_address = 2367523;
+  event->error.stacktrace[0].frame_address = (uintptr_t)4294967294;
+  event->error.stacktrace[0].load_address = (uintptr_t)2367523;
   event->error.stacktrace[0].symbol_address = 776;
+  event->error.stacktrace[0].line_number = (uintptr_t)4194967233;
   strcpy(event->error.stacktrace[0].method, "makinBacon");
   strcpy(event->error.stacktrace[0].filename, "lib64/libfoo.so");
-  event->error.stacktrace[1].frame_address = 342334; // will become method hex
+  event->error.stacktrace[1].frame_address =
+      (uintptr_t)3011142731; // will become method hex
 
   // metadata
   strcpy(event->app.active_screen, "Menu");
-  event->metadata.value_count = 4;
-  event->metadata.values[0] = {
-    .name = {"weather"},
-    .section = {"app"},
-    .type = BSG_METADATA_CHAR_VALUE,
-    .char_value = {"rain"},
-  };
-  event->metadata.values[1] = {
-    .name = {"experimentX"},
-    .section = {"metrics"},
-    .type = BSG_METADATA_BOOL_VALUE,
-    .bool_value = false,
-  };
-  event->metadata.values[2] = {
-    .name = {"subject"},
-    .section = {"metrics"},
-    .type = BSG_METADATA_CHAR_VALUE,
-    .char_value = {"percy"},
-  };
-  event->metadata.values[3] = {
-    .name = {"counter"},
-    .section = {"metrics"},
-    .type = BSG_METADATA_NUMBER_VALUE,
-    .double_value = 47.5,
-  };
+  bugsnag_event_add_metadata_bool(event, "metrics", "experimentX", false);
+  bugsnag_event_add_metadata_string(event, "metrics", "subject", "percy");
+  bugsnag_event_add_metadata_string(event, "app", "weather", "rain");
+  bugsnag_event_add_metadata_double(event, "metrics", "counter", 47.5);
 
   // session info
   event->handled_events = 5;
@@ -136,20 +129,34 @@ static void *create_full_event() {
   return event;
 }
 
+static const char *write_event_v9(JNIEnv *env, jstring temp_file,
+                                  void *(event_generator)()) {
+  auto event_ctx = (bsg_environment *)calloc(1, sizeof(bsg_environment));
+  event_ctx->report_header.version = 9;
+  const char *path = (*env).GetStringUTFChars(temp_file, nullptr);
+  sprintf(event_ctx->next_event_path, "%s", path);
+
+  // (old format) event struct -> file on disk
+  void *old_event = event_generator();
+  memcpy(&event_ctx->next_event, old_event, sizeof(bugsnag_event));
+  free(old_event);
+  // FUTURE(df): whenever migration v10 rolls around, the v8 version of
+  // bsg_serialize_event_to_file() function should be moved into this file to
+  // preserve the migration test behavior. The good news is—if this doesn't
+  // happen—the test will probably start failing loudly.
+  bsg_serialize_event_to_file(event_ctx);
+  free(event_ctx);
+  return path;
+}
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 JNIEXPORT jstring JNICALL
-Java_com_bugsnag_android_ndk_migrations_EventMigrationV7Tests_migratePayloadInfo(
+Java_com_bugsnag_android_ndk_migrations_EventMigrationV9Tests_migratePayloadInfo(
     JNIEnv *env, jobject _this, jstring temp_file) {
-  const char *path = (*env).GetStringUTFChars(temp_file, nullptr);
-
-  // (old format) event struct -> file on disk
-  void *old_event = create_payload_info_event();
-  bool success =
-      write_struct_to_file(old_event, 7, sizeof(bugsnag_report_v7), path);
-  free(old_event);
+  const char *path = write_event_v9(env, temp_file, create_payload_info_event);
 
   // file on disk -> latest event type
   bugsnag_event *parsed_event = bsg_deserialize_event_from_file((char *)path);
@@ -163,15 +170,31 @@ Java_com_bugsnag_android_ndk_migrations_EventMigrationV7Tests_migratePayloadInfo
   json_object_set_string(event_obj, "notifierURL", parsed_event->notifier.url);
   json_object_set_string(event_obj, "notifierVersion",
                          parsed_event->notifier.version);
-  char *result = json_serialize_to_string(event_val);
-  return (*env).NewStringUTF(result);
+  char *json_str = json_serialize_to_string(event_val);
+  auto result = (*env).NewStringUTF(json_str);
+  free(json_str);
+
+  return result;
 }
 
 JNIEXPORT void JNICALL
-Java_com_bugsnag_android_ndk_migrations_EventMigrationV7Tests_migrateEvent(
+Java_com_bugsnag_android_ndk_migrations_EventMigrationV9Tests_migrateEvent(
     JNIEnv *env, jobject _this, jstring temp_file) {
-  write_json_for_event(env, create_full_event, 7, sizeof(bugsnag_report_v7),
-                       temp_file);
+  const char *path = write_event_v9(env, temp_file, create_full_event);
+
+  // file on disk -> latest event type
+  bugsnag_event *parsed_event = bsg_deserialize_event_from_file((char *)path);
+  char *output = bsg_serialize_event_to_json_string(parsed_event);
+  for (int i = 0; i < parsed_event->feature_flag_count; i++) {
+    free(parsed_event->feature_flags[i].name);
+    free(parsed_event->feature_flags[i].variant);
+  }
+  free(parsed_event->feature_flags);
+  free(parsed_event);
+
+  // latest event type -> temp file
+  write_str_to_file(output, path);
+  free(output);
 }
 
 #ifdef __cplusplus
