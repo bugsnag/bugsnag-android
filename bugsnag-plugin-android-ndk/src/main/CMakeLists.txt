@@ -24,6 +24,7 @@ add_library( # Specifies the name of the library.
     jni/utils/serializer.c
     jni/utils/string.c
     jni/utils/threads.c
+    jni/utils/memory.c
     jni/deps/parson/parson.c
              )
 

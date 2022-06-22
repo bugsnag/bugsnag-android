@@ -358,6 +358,15 @@ static void populate_metadata_value(JNIEnv *env, bugsnag_metadata *dst,
     if (value != NULL) {
       bsg_add_metadata_value_str(dst, section, name, value);
     }
+  } else if (bsg_safe_is_instance_of(env, _value, bsg_jni_cache->OpaqueValue)) {
+    jstring _json = bsg_safe_call_object_method(
+        env, _value, bsg_jni_cache->OpaqueValue_getJson);
+    const char *json = bsg_safe_get_string_utf_chars(env, _json);
+
+    if (json != NULL) {
+      bsg_add_metadata_value_opaque(dst, section, name, json);
+      bsg_safe_release_string_utf_chars(env, _json, json);
+    }
   }
 }
 

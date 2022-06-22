@@ -2,6 +2,7 @@
 #include "utils/string.h"
 #include <string.h>
 #include <utils/logger.h>
+#include <utils/memory.h>
 
 /**
  * Compact the given metadata array by removing all duplicate entries and NONE
@@ -27,12 +28,19 @@ static bool bsg_metadata_compact(bugsnag_metadata *const metadata) {
     const char *name = metadata->values[primaryIndex].name;
 
     for (int searchIndex = primaryIndex - 1; searchIndex >= 0; searchIndex--) {
-      if (strcmp(metadata->values[searchIndex].section, section) == 0 &&
-          strcmp(metadata->values[searchIndex].name, name) == 0) {
+      bsg_metadata_value *value = &(metadata->values[searchIndex]);
+      if (strcmp(value->section, section) == 0 &&
+          strcmp(value->name, name) == 0) {
+
+        // ensure we free any OPAQUE values we're going to remove
+        if (value->type == BSG_METADATA_OPAQUE_VALUE) {
+          bsg_free(value->opaque_value);
+          value->opaque_value_size = 0;
+        }
 
         // this will be picked up by our primaryIndex search on a future
         // iteration
-        metadata->values[searchIndex].type = BSG_METADATA_NONE_VALUE;
+        value->type = BSG_METADATA_NONE_VALUE;
       }
     }
   }
@@ -89,9 +97,16 @@ static bool bsg_event_clear_metadata(bugsnag_metadata *metadata,
   int clearedCount = 0;
   // remove *all* values for the given key, and then compact the entire dataset
   for (int i = 0; i < metadata->value_count; ++i) {
-    if (strcmp(metadata->values[i].section, section) == 0 &&
-        strcmp(metadata->values[i].name, name) == 0) {
-      metadata->values[i].type = BSG_METADATA_NONE_VALUE;
+    bsg_metadata_value *value = &(metadata->values[i]);
+    if (strcmp(value->section, section) == 0 &&
+        strcmp(value->name, name) == 0) {
+
+      if (value->type == BSG_METADATA_OPAQUE_VALUE) {
+        bsg_free(value->opaque_value);
+        value->opaque_value_size = 0;
+      }
+
+      value->type = BSG_METADATA_NONE_VALUE;
       clearedCount++;
     }
   }
@@ -154,6 +169,23 @@ void bsg_add_metadata_value_bool(bugsnag_metadata *metadata,
   if (index >= 0) {
     metadata->values[index].type = BSG_METADATA_BOOL_VALUE;
     metadata->values[index].bool_value = value;
+  }
+}
+
+void bsg_add_metadata_value_opaque(bugsnag_metadata *metadata,
+                                   const char *section, const char *name,
+                                   const char *json) {
+  int index = allocate_metadata_index(metadata, section, name);
+  if (index >= 0) {
+    char *duplicate = strdup(json);
+
+    if (duplicate == NULL) {
+      return;
+    }
+
+    metadata->values[index].opaque_value = duplicate;
+    metadata->values[index].type = BSG_METADATA_OPAQUE_VALUE;
+    metadata->values[index].opaque_value_size = bsg_strlen(json);
   }
 }
 

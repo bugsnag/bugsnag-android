@@ -1,11 +1,17 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
+import static java.lang.Math.PI;
+
 import com.bugsnag.android.Configuration;
 
 import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CXXConfigurationMetadataNativeCrashScenario extends Scenario {
 
@@ -26,6 +32,28 @@ public class CXXConfigurationMetadataNativeCrashScenario extends Scenario {
             config.addMetadata("fruit", "apple", "gala");
             config.addMetadata("fruit", "counters", 47);
             config.addMetadata("fruit", "ripe", true);
+
+            config.addMetadata("complex", "message",
+                    "That might've been one of the shortest assignments in the history of "
+                            + "Starfleet. The Enterprise computer system is controlled by three "
+                            + "primary main processor cores, cross-linked with a redundant "
+                            + "melacortz ramistat, fourteen kiloquad interface modules.");
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("location", "you are here");
+            map.put("inventory", Arrays.asList(
+                    "lots of string",
+                    PI,
+                    true
+            ));
+
+            config.addMetadata("complex", "maps", map);
+            config.addMetadata("complex", "list", Arrays.asList(
+                    "summer",
+                    "winter",
+                    "spring",
+                    "autumn"
+            ));
         }
     }
 

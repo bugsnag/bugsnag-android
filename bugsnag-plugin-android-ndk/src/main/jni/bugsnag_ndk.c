@@ -668,6 +668,26 @@ Java_com_bugsnag_android_ndk_NativeBridge_addMetadataBoolean(
 }
 
 JNIEXPORT void JNICALL
+Java_com_bugsnag_android_ndk_NativeBridge_addMetadataOpaque(
+    JNIEnv *env, jobject _this, jstring tab_, jstring key_, jstring value_) {
+  if (bsg_global_env == NULL) {
+    return;
+  }
+  char *tab = (char *)bsg_safe_get_string_utf_chars(env, tab_);
+  char *key = (char *)bsg_safe_get_string_utf_chars(env, key_);
+  char *value = (char *)bsg_safe_get_string_utf_chars(env, value_);
+  if (tab != NULL && key != NULL) {
+    request_env_write_lock();
+    bsg_add_metadata_value_opaque(&bsg_global_env->next_event.metadata, tab,
+                                  key, value);
+    release_env_write_lock();
+  }
+  bsg_safe_release_string_utf_chars(env, tab_, tab);
+  bsg_safe_release_string_utf_chars(env, key_, key);
+  bsg_safe_release_string_utf_chars(env, value_, value);
+}
+
+JNIEXPORT void JNICALL
 Java_com_bugsnag_android_ndk_NativeBridge_clearMetadataTab(JNIEnv *env,
                                                            jobject _this,
                                                            jstring tab_) {

@@ -16,9 +16,12 @@ Feature: Native Metadata API
     And the event "metaData.fruit.apple" equals "gala"
     And the event "metaData.fruit.ripe" is true
     And the event "metaData.fruit.counters" equals 47
+    And the event "metaData.complex.message" is null
+    And the event "metaData.complex.maps.location" is null
+    And the event "metaData.complex.maps.inventory" is null
+    And the event "metaData.complex.list" is null
     And the event "unhandled" is true
 
-#TODO up to here
   Scenario: Remove MetaData from the NDK layer
     When I run "CXXRemoveDataScenario"
     And I wait to receive 2 errors
