@@ -9,6 +9,7 @@
 #include <utils/serializer.h>
 #include <utils/serializer/migrate.h>
 #include <utils/serializer/event_reader.h>
+#include <utils/serializer/buffered_writer.h>
 
 #define SERIALIZE_TEST_FILE "/data/data/com.bugsnag.android.ndk.test/cache/foo.crash"
 
@@ -519,7 +520,7 @@ TEST test_report_to_file(void) {
 
 TEST test_report_with_feature_flags_to_file(void) {
   bsg_environment *env = calloc(1, sizeof(bsg_environment));
-  env->report_header.version = 8;
+  env->report_header.version = BSG_MIGRATOR_CURRENT_VERSION;
   env->report_header.big_endian = 1;
   bugsnag_event *report = bsg_generate_event();
   memcpy(&env->next_event, report, sizeof(bugsnag_event));
@@ -568,6 +569,31 @@ TEST test_report_with_feature_flags_from_file(void) {
   bugsnag_event *event = bsg_deserialize_event_from_file("/data/data/com.bugsnag.android.ndk.test/cache/features.crash");
 
   ASSERT_EQ(2, event->feature_flag_count);
+
+  free(report);
+  free(env);
+  free(event);
+  PASS();
+}
+
+TEST test_report_with_opaque_metadata_from_file(void) {
+  bsg_environment *env = calloc(1, sizeof(bsg_environment));
+  env->report_header.version = BSG_MIGRATOR_CURRENT_VERSION;
+  env->report_header.big_endian = 1;
+  bugsnag_event *report = bsg_generate_event();
+  memcpy(&env->next_event, report, sizeof(bugsnag_event));
+  bsg_add_metadata_value_opaque(&env->next_event.metadata, "opaque", "map", "{\"user\": \"Bobby Tables\"}");
+  bsg_add_metadata_value_opaque(&env->next_event.metadata, "opaque", "list", "[1,2,3,4]");
+  strcpy(env->report_header.os_build, "macOS Sierra");
+  strcpy(env->next_event_path, "/data/data/com.bugsnag.android.ndk.test/cache/features.crash");
+  ASSERT(bsg_serialize_event_to_file(env));
+
+  bugsnag_event *event = bsg_deserialize_event_from_file("/data/data/com.bugsnag.android.ndk.test/cache/features.crash");
+
+  ASSERT_EQ(6, event->metadata.value_count);
+
+  ASSERT_EQ(BSG_METADATA_OPAQUE_VALUE, bugsnag_event_has_metadata(event, "opaque", "map"));
+  ASSERT_EQ(BSG_METADATA_OPAQUE_VALUE, bugsnag_event_has_metadata(event, "opaque", "list"));
 
   free(report);
   free(env);
@@ -1015,6 +1041,7 @@ SUITE(suite_struct_to_file) {
   RUN_TEST(test_file_to_report);
   RUN_TEST(test_report_with_feature_flags_to_file);
   RUN_TEST(test_report_with_feature_flags_from_file);
+  RUN_TEST(test_report_with_opaque_metadata_from_file);
 }
 
 SUITE(suite_struct_migration) {

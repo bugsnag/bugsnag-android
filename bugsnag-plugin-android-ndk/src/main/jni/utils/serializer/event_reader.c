@@ -89,6 +89,12 @@ void migrate_app_v3(bsg_app_info *output, bsg_app_info_v3 *input);
 void bsg_read_feature_flags(int fd, bsg_feature_flag **out_feature_flags,
                             size_t *out_feature_flag_count);
 
+void bsg_read_opaque_metadata(int fd, bugsnag_metadata *metadata);
+
+void bsg_read_opaque_breadcrumb_metadata(int fd,
+                                         bugsnag_breadcrumb *breadcrumbs,
+                                         int crumb_count);
+
 bsg_report_header *bsg_report_header_read(int fd) {
   bsg_report_header *header = calloc(1, sizeof(bsg_report_header));
   ssize_t len = read(fd, header, sizeof(bsg_report_header));
@@ -250,7 +256,9 @@ bugsnag_event *bsg_report_v9_read(int fd) {
 
   // read the feature flags, if possible
   bsg_read_feature_flags(fd, &event->feature_flags, &event->feature_flag_count);
-  // TODO: read the opaque data, if possible
+  bsg_read_opaque_metadata(fd, &event->metadata);
+  bsg_read_opaque_breadcrumb_metadata(fd, event->breadcrumbs,
+                                      event->crumb_count);
 
   return event;
 }
@@ -920,4 +928,51 @@ feature_flags_error:
   // clear the out fields to indicate no feature-flags are available
   *out_feature_flag_count = 0;
   *out_feature_flags = NULL;
+}
+
+void bsg_read_opaque_metadata(int fd, bugsnag_metadata *metadata) {
+  size_t read_index = 0;
+  for (; read_index < metadata->value_count; read_index++) {
+    if (metadata->values[read_index].type == BSG_METADATA_OPAQUE_VALUE &&
+        metadata->values[read_index].opaque_value_size > 0) {
+
+      size_t opaque_value_size = metadata->values[read_index].opaque_value_size;
+
+      void *opaque_value = calloc(1, opaque_value_size);
+      if (opaque_value == NULL) {
+        goto opaque_metadata_fail;
+      }
+
+      if (read(fd, opaque_value, opaque_value_size) != opaque_value_size) {
+        free(opaque_value);
+        goto opaque_metadata_fail;
+      }
+
+      metadata->values[read_index].opaque_value_size = opaque_value_size;
+      metadata->values[read_index].opaque_value = opaque_value;
+    }
+  }
+
+opaque_metadata_fail:
+  // ensure that only the OPAQUE values we read successfully are considered
+  // "valid" this allows for a partial recovery of the OPAQUE data
+  for (; read_index < metadata->value_count; read_index++) {
+    if (metadata->values[read_index].type == BSG_METADATA_OPAQUE_VALUE) {
+      // set all unread OPAQUE values to NONE as their opaque_values are invalid
+      metadata->values[read_index].type = BSG_METADATA_NONE_VALUE;
+      metadata->values[read_index].opaque_value_size = 0;
+      metadata->values[read_index].opaque_value = NULL;
+    }
+  }
+}
+
+void bsg_read_opaque_breadcrumb_metadata(int fd,
+                                         bugsnag_breadcrumb *breadcrumbs,
+                                         int crumb_count) {
+
+  for (int breadcrumb_index = 0; breadcrumb_index < crumb_count;
+       breadcrumb_index++) {
+
+    bsg_read_opaque_metadata(fd, &breadcrumbs->metadata);
+  }
 }
