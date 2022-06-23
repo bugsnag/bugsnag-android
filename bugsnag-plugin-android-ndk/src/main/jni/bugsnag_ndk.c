@@ -5,6 +5,7 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <string.h>
+#include <utils/memory.h>
 
 #include "event.h"
 #include "featureflags.h"
@@ -176,6 +177,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
                                     last_run_info_path);
 
   if ((bool)auto_detect_ndk_crashes) {
+    bsg_init_memory(bugsnag_env);
     bsg_handler_install_signal(bugsnag_env);
     bsg_handler_install_cpp(bugsnag_env);
   }

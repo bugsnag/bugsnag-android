@@ -17,6 +17,7 @@ bool __attribute__((noinline)) make_dirty_stack() {
 }
 
 bool on_err_true(void *event_ptr) {
+  bugsnag_event_clear_metadata_section(event_ptr, "removeMe");
   bugsnag_event_set_context(event_ptr, (char *) "Some custom context");
   return true;
 }

@@ -4,6 +4,9 @@
 #include <utils/logger.h>
 #include <utils/memory.h>
 
+static void bsg_clear_metadata_value(bsg_metadata_value *value);
+static void bsg_free_opaque_metadata(bugsnag_metadata *metadata);
+
 /**
  * Compact the given metadata array by removing all duplicate entries and NONE
  * values. This will retain the order of the values. After this function
@@ -32,15 +35,9 @@ static bool bsg_metadata_compact(bugsnag_metadata *const metadata) {
       if (strcmp(value->section, section) == 0 &&
           strcmp(value->name, name) == 0) {
 
-        // ensure we free any OPAQUE values we're going to remove
-        if (value->type == BSG_METADATA_OPAQUE_VALUE) {
-          bsg_free(value->opaque_value);
-          value->opaque_value_size = 0;
-        }
-
         // this will be picked up by our primaryIndex search on a future
         // iteration
-        value->type = BSG_METADATA_NONE_VALUE;
+        bsg_clear_metadata_value(value);
       }
     }
   }
@@ -101,12 +98,7 @@ static bool bsg_event_clear_metadata(bugsnag_metadata *metadata,
     if (strcmp(value->section, section) == 0 &&
         strcmp(value->name, name) == 0) {
 
-      if (value->type == BSG_METADATA_OPAQUE_VALUE) {
-        bsg_free(value->opaque_value);
-        value->opaque_value_size = 0;
-      }
-
-      value->type = BSG_METADATA_NONE_VALUE;
+      bsg_clear_metadata_value(value);
       clearedCount++;
     }
   }
@@ -140,6 +132,28 @@ static int allocate_metadata_index(bugsnag_metadata *metadata,
     metadata->value_count = index + 1;
   }
   return index;
+}
+
+void bsg_clear_metadata_value(bsg_metadata_value *value) {
+  if (value->type == BSG_METADATA_OPAQUE_VALUE &&
+      value->opaque_value_size > 0) {
+    bsg_free(value->opaque_value);
+
+    value->opaque_value = NULL;
+    value->opaque_value_size = 0;
+  }
+
+  value->type = BSG_METADATA_NONE_VALUE;
+}
+
+/**
+ * Release any memory held by OPAQUE values in the given bugsnag_metadata. This
+ * does *not* mark the metadata as cleared, or compact the metadata.
+ */
+void bsg_free_opaque_metadata(bugsnag_metadata *metadata) {
+  for (int i = 0; i < metadata->value_count; ++i) {
+    bsg_clear_metadata_value(&(metadata->values[i]));
+  }
 }
 
 void bsg_add_metadata_value_double(bugsnag_metadata *metadata,
@@ -215,11 +229,17 @@ void bugsnag_event_clear_metadata(void *event_ptr, const char *section,
 
 void bugsnag_event_clear_metadata_section(void *event_ptr,
                                           const char *section) {
+  size_t clearedCount = 0;
   bugsnag_event *event = (bugsnag_event *)event_ptr;
   for (int i = 0; i < event->metadata.value_count; ++i) {
     if (strcmp(event->metadata.values[i].section, section) == 0) {
-      event->metadata.values[i].type = BSG_METADATA_NONE_VALUE;
+      bsg_clear_metadata_value(&(event->metadata.values[i]));
+      clearedCount++;
     }
+  }
+
+  if (clearedCount > 0) {
+    bsg_metadata_compact(&(event->metadata));
   }
 }
 
@@ -328,10 +348,17 @@ void bugsnag_event_add_breadcrumb(bugsnag_event *event,
     event->crumb_first_index =
         (event->crumb_first_index + 1) % BUGSNAG_CRUMBS_MAX;
   }
+
+  bsg_free_opaque_metadata(&(event->breadcrumbs[crumb_index].metadata));
   memcpy(&event->breadcrumbs[crumb_index], crumb, sizeof(bugsnag_breadcrumb));
 }
 
 void bugsnag_event_clear_breadcrumbs(bugsnag_event *event) {
+  for (int index = 0; index < event->crumb_count; index++) {
+    int crumb_index = (index + event->crumb_first_index) % BUGSNAG_CRUMBS_MAX;
+    bsg_free_opaque_metadata(&(event->breadcrumbs[crumb_index].metadata));
+  }
+
   event->crumb_count = 0;
   event->crumb_first_index = 0;
 }

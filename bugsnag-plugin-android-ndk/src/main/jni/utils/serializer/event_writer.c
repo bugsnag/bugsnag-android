@@ -95,7 +95,7 @@ static bool bsg_write_opaque_metadata_unit(bugsnag_metadata *metadata,
     uint32_t value_size = metadata->values[index].opaque_value_size;
     if (metadata->values[index].type == BSG_METADATA_OPAQUE_VALUE &&
         value_size > 0) {
-      if (!writer->write(writer, &(metadata->values[index].opaque_value),
+      if (!writer->write(writer, metadata->values[index].opaque_value,
                          value_size)) {
         return false;
       }
