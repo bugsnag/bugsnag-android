@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.23.1 (2022-06-23)
+
+### Bug fixes
+
+* Report the correct filename for native-libs that are loaded from within apk files
+  [#1705](https://github.com/bugsnag/bugsnag-android/pull/1705)
+
 ## 5.23.0 (2022-06-20)
 
 ### Enhancements
