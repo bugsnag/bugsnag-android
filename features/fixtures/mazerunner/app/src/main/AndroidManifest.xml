@@ -9,6 +9,7 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:gwpAsanMode="always"
         android:name=".MazerunnerApp"
+        android:extractNativeLibs="false"
         >
         <activity
             android:name=".MainActivity"
