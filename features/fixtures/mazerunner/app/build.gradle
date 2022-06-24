@@ -54,6 +54,7 @@ android {
     // picking SO file. see https://developer.android.com/studio/releases/gradle-plugin#cmake-imported-targets
     packagingOptions {
         pickFirst "**/*.so"
+        jniLibs.useLegacyPackaging = null
     }
     lintOptions {
         abortOnError false
