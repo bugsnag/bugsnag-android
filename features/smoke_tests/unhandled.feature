@@ -174,16 +174,40 @@ Feature: Unhandled smoke tests
     # Breadcrumbs
     And the event has a "manual" breadcrumb named "CXXSignalSmokeScenario"
     And the event has a "request" breadcrumb named "Substandard nacho error"
+    And the breadcrumb named "CXXSignalSmokeScenario" has "metaData.number" equal to 12345
+    And the breadcrumb named "CXXSignalSmokeScenario" has "metaData.boolean" is true
+    And the breadcrumb named "CXXSignalSmokeScenario" has "metaData.list.0" equal to 1
+    And the breadcrumb named "CXXSignalSmokeScenario" has "metaData.list.1" equal to 2
+    And the breadcrumb named "CXXSignalSmokeScenario" has "metaData.list.2" equal to 3
+    And the breadcrumb named "CXXSignalSmokeScenario" has "metaData.list.3" equal to 4
+    And the breadcrumb named "CXXSignalSmokeScenario" has "metaData.list.4" equal to "five"
+    And the breadcrumb named "CXXSignalSmokeScenario" has "metaData.nestedMap.nestedMapKey" equal to "this is valuable data"
+    And the breadcrumb named "CXXSignalSmokeScenario" has "metaData.nestedList.0.nestedMapKey" equal to "this is valuable data"
+    And the breadcrumb named "CXXSignalSmokeScenario" has "metaData.nestedList.1" equal to "one"
+    And the breadcrumb named "CXXSignalSmokeScenario" has "metaData.nestedList.2" equal to "two"
+    And the breadcrumb named "CXXSignalSmokeScenario" has "metaData.nestedList.3" equal to "three"
 
     # Native context override
     And the event "context" equals "Some custom context"
 
     # Metadata
-    # Riker Ipsum is null until PLAT-8581 (store / load opaque metadata) is complete
-    And the event "metaData.Riker Ipsum.examples" is null
+    And the event "metaData.Riker Ipsum.examples" equals "I'll be sure to note that in my log. You enjoyed that. They were just sucked into space. How long can two people talk about nothing? I've had twelve years to think about it. And if I had it to do over again, I would have grabbed the phaser and pointed it at you instead of them."
     And the event "metaData.fruit.apple" equals "gala"
     And the event "metaData.fruit.ripe" is true
     And the event "metaData.fruit.counters" equals 47
+    And the event "metaData.removeMe" is null
+    And the event "metaData.opaque.number" equals 12345
+    And the event "metaData.opaque.boolean" is true
+    And the event "metaData.opaque.list.0" equals 1
+    And the event "metaData.opaque.list.1" equals 2
+    And the event "metaData.opaque.list.2" equals 3
+    And the event "metaData.opaque.list.3" equals 4
+    And the event "metaData.opaque.list.4" equals "five"
+    And the event "metaData.opaque.nestedMap.nestedMapKey" equals "this is valuable data"
+    And the event "metaData.opaque.nestedList.0.nestedMapKey" equals "this is valuable data"
+    And the event "metaData.opaque.nestedList.1" equals "one"
+    And the event "metaData.opaque.nestedList.2" equals "two"
+    And the event "metaData.opaque.nestedList.3" equals "three"
 
   @debug-safe
   Scenario: C++ exception thrown with overwritten config

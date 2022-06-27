@@ -973,6 +973,6 @@ void bsg_read_opaque_breadcrumb_metadata(int fd,
   for (int breadcrumb_index = 0; breadcrumb_index < crumb_count;
        breadcrumb_index++) {
 
-    bsg_read_opaque_metadata(fd, &breadcrumbs->metadata);
+    bsg_read_opaque_metadata(fd, &(breadcrumbs[breadcrumb_index].metadata));
   }
 }

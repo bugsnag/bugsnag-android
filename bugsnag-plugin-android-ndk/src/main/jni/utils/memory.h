@@ -1,6 +1,8 @@
 #ifndef BUGSNAG_ANDROID_MEMORY_H
 #define BUGSNAG_ANDROID_MEMORY_H
 
+#include "bugsnag_ndk.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -10,6 +12,8 @@ extern "C" {
  * @param ptr
  */
 void bsg_free(void *ptr);
+
+void bsg_init_memory(bsg_environment *env);
 
 #ifdef __cplusplus
 }

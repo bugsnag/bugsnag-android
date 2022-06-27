@@ -138,6 +138,13 @@ void bsg_serialize_device(const bsg_device_info device,
 void bsg_serialize_device_metadata(const bsg_device_info device,
                                    JSON_Object *event_obj) {}
 
+static JSON_Value *
+bsg_json_for_opaque_metadata(const bsg_metadata_value *metadata) {
+  return (metadata->opaque_value_size > 0)
+             ? json_parse_string(metadata->opaque_value)
+             : NULL;
+}
+
 void bsg_serialize_custom_metadata(const bugsnag_metadata metadata,
                                    JSON_Object *event_obj) {
   for (int i = 0; i < metadata.value_count; i++) {
@@ -156,6 +163,11 @@ void bsg_serialize_custom_metadata(const bugsnag_metadata metadata,
     case BSG_METADATA_NUMBER_VALUE:
       sprintf(format, "metaData.%s.%s", value.section, value.name);
       json_object_dotset_number(event_obj, format, value.double_value);
+      break;
+    case BSG_METADATA_OPAQUE_VALUE:
+      sprintf(format, "metaData.%s.%s", value.section, value.name);
+      JSON_Value *metadata_json_value = bsg_json_for_opaque_metadata(&value);
+      json_object_dotset_value(event_obj, format, metadata_json_value);
       break;
     default:
       break;
@@ -182,6 +194,11 @@ void bsg_serialize_breadcrumb_metadata(const bugsnag_metadata metadata,
     case BSG_METADATA_NUMBER_VALUE:
       sprintf(format, "metaData.%s", value.name);
       json_object_dotset_number(event_obj, format, value.double_value);
+      break;
+    case BSG_METADATA_OPAQUE_VALUE:
+      sprintf(format, "metaData.%s", value.name);
+      JSON_Value *metadata_json_value = bsg_json_for_opaque_metadata(&value);
+      json_object_dotset_value(event_obj, format, metadata_json_value);
       break;
     default:
       break;

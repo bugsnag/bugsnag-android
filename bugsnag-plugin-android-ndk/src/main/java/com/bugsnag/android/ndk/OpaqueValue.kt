@@ -26,8 +26,11 @@ internal class OpaqueValue(val json: String) {
             return value.toByteArray().size < MAX_NDK_STRING_LENGTH
         }
 
-        private fun encode(value: Any): String =
-            StringWriter().use { JsonStream(it).value(value, true) }.toString()
+        private fun encode(value: Any): String {
+            val writer = StringWriter()
+            writer.use { JsonStream(it).value(value, true) }
+            return writer.toString()
+        }
 
         /**
          * Ensure that the given `value` is compatible with the Bugsnag C layer by ensuring it

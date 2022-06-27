@@ -1,6 +1,5 @@
 #include <malloc.h>
 
-#include "bugsnag_ndk.h"
 #include "memory.h"
 
 #ifdef __cplusplus
@@ -11,6 +10,8 @@ extern "C" {
  * Global shared context for Bugsnag reports
  */
 static bsg_environment *bsg_global_env;
+
+void bsg_init_memory(bsg_environment *env) { bsg_global_env = env; }
 
 void bsg_free(void *ptr) {
   /*

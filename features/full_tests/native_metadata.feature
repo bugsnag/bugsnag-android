@@ -16,10 +16,15 @@ Feature: Native Metadata API
     And the event "metaData.fruit.apple" equals "gala"
     And the event "metaData.fruit.ripe" is true
     And the event "metaData.fruit.counters" equals 47
-    And the event "metaData.complex.message" is null
-    And the event "metaData.complex.maps.location" is null
-    And the event "metaData.complex.maps.inventory" is null
-    And the event "metaData.complex.list" is null
+    And the event "metaData.complex.message" equals "That might've been one of the shortest assignments in the history of Starfleet. The Enterprise computer system is controlled by three primary main processor cores, cross-linked with a redundant melacortz ramistat, fourteen kiloquad interface modules."
+    And the event "metaData.complex.maps.location" equals "you are here"
+    And the event "metaData.complex.maps.inventory.0" equals "lots of string"
+    And the error payload field "events.0.metaData.complex.maps.inventory.1" is a number
+    And the error payload field "events.0.metaData.complex.maps.inventory.2" is true
+    And the event "metaData.complex.list.0" equals "summer"
+    And the event "metaData.complex.list.1" equals "winter"
+    And the event "metaData.complex.list.2" equals "spring"
+    And the event "metaData.complex.list.3" equals "autumn"
     And the event "unhandled" is true
 
   Scenario: Remove MetaData from the NDK layer
