@@ -1,32 +1,32 @@
 steps:
 
-  - label: 'Audit current licenses'
-    timeout_in_minutes: 30
-    agents:
-      queue: macos-12-arm
-    command: ./scripts/audit-dependency-licenses.sh
+  # - label: 'Audit current licenses'
+  #   timeout_in_minutes: 30
+  #   agents:
+  #     queue: macos-12-arm
+  #   command: ./scripts/audit-dependency-licenses.sh
 
-  - label: ':android: Build fixture APK r16'
-    key: "fixture-r16"
-    timeout_in_minutes: 30
-    agents:
-      queue: macos-12-arm
-    artifact_paths:
-      - "build/fixture-r16.apk"
-      - "build/fixture-r16/*"
-    commands:
-      - make fixture-r16
+  # - label: ':android: Build fixture APK r16'
+  #   key: "fixture-r16"
+  #   timeout_in_minutes: 30
+  #   agents:
+  #     queue: macos-12-arm
+  #   artifact_paths:
+  #     - "build/fixture-r16.apk"
+  #     - "build/fixture-r16/*"
+  #   commands:
+  #     - make fixture-r16
 
-  - label: ':android: Build fixture APK r19'
-    key: "fixture-r19"
-    timeout_in_minutes: 30
-    agents:
-      queue: macos-12-arm
-    artifact_paths:
-      - "build/fixture-r19.apk"
-      - "build/fixture-r19/*"
-    commands:
-      - make fixture-r19
+  # - label: ':android: Build fixture APK r19'
+  #   key: "fixture-r19"
+  #   timeout_in_minutes: 30
+  #   agents:
+  #     queue: macos-12-arm
+  #   artifact_paths:
+  #     - "build/fixture-r19.apk"
+  #     - "build/fixture-r19/*"
+  #   commands:
+  #     - make fixture-r19
 
   - label: ':android: Build fixture APK r21'
     key: "fixture-r21"
@@ -39,43 +39,43 @@ steps:
     commands:
       - make fixture-r21
 
-  - label: ':android: Coding standards checks'
-    timeout_in_minutes: 20
-    agents:
-      queue: macos-12-arm
-    command: './gradlew --continue checkstyle detekt lint ktlintCheck'
+  # - label: ':android: Coding standards checks'
+  #   timeout_in_minutes: 20
+  #   agents:
+  #     queue: macos-12-arm
+  #   command: './gradlew --continue checkstyle detekt lint ktlintCheck'
 
-  - label: ':android: CppCheck'
-    timeout_in_minutes: 10
-    agents:
-      queue: macos-12-arm
-    command: 'bash ./scripts/run-cpp-check.sh'
+  # - label: ':android: CppCheck'
+  #   timeout_in_minutes: 10
+  #   agents:
+  #     queue: macos-12-arm
+  #   command: 'bash ./scripts/run-cpp-check.sh'
 
-  - label: ':android: ClangFormat'
-    timeout_in_minutes: 10
-    agents:
-      queue: macos-12-arm
-    command: 'bash ./scripts/run-clang-format-ci-check.sh'
+  # - label: ':android: ClangFormat'
+  #   timeout_in_minutes: 10
+  #   agents:
+  #     queue: macos-12-arm
+  #   command: 'bash ./scripts/run-clang-format-ci-check.sh'
 
-  - label: ':android: Lint mazerunner scenarios'
-    timeout_in_minutes: 10
-    agents:
-      queue: macos-12-arm
-    commands:
-      - cd features/fixtures/mazerunner
-      - ./gradlew ktlintCheck detekt checkstyle
+  # - label: ':android: Lint mazerunner scenarios'
+  #   timeout_in_minutes: 10
+  #   agents:
+  #     queue: macos-12-arm
+  #   commands:
+  #     - cd features/fixtures/mazerunner
+  #     - ./gradlew ktlintCheck detekt checkstyle
 
-  - label: ':android: Android size reporting'
-    timeout_in_minutes: 10
-    agents:
-      queue: macos-12-arm
-    command: scripts/run-sizer.sh
+  # - label: ':android: Android size reporting'
+  #   timeout_in_minutes: 10
+  #   agents:
+  #     queue: macos-12-arm
+  #   command: scripts/run-sizer.sh
 
-  - label: ':android: JVM tests'
-    timeout_in_minutes: 10
-    agents:
-      queue: macos-12-arm
-    command: './gradlew test'
+  # - label: ':android: JVM tests'
+  #   timeout_in_minutes: 10
+  #   agents:
+  #     queue: macos-12-arm
+  #   command: './gradlew test'
 
   # - label: ':android: Android 4.4 NDK r16 smoke tests'
   #   key: 'android-4-4-smoke'
