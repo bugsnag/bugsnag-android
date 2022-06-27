@@ -1,6 +1,6 @@
-<?xml version="1.0" ?>
+<?xml version='1.0' encoding='UTF-8'?>
 <SmellBaseline>
-  <ManuallySuppressedIssues></ManuallySuppressedIssues>
+  <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>MagicNumber:MainActivity.kt$MainActivity$1000</ID>
   </CurrentIssues>

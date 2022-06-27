@@ -51,6 +51,7 @@ typedef struct {
   jmethodID NativeInterface_getContext;
   jmethodID NativeInterface_notify;
   jmethodID NativeInterface_leaveBreadcrumb;
+  jmethodID NativeInterface_isDiscardErrorClass;
   jmethodID NativeInterface_deliverReport;
 
   jclass StackTraceElement;
