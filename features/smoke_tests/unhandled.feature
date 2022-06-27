@@ -124,10 +124,10 @@ Feature: Unhandled smoke tests
     And the event stacktrace identifies the program counter
     And the event "exceptions.0.stacktrace.0.method" is not null
     And the event "exceptions.0.stacktrace.0.file" is not null
-    And the error payload field "events.0.exceptions.0.stacktrace.0.frameAddress" is greater than 0
-    And the error payload field "events.0.exceptions.0.stacktrace.0.symbolAddress" is greater than 0
-    And the error payload field "events.0.exceptions.0.stacktrace.0.loadAddress" is greater than 0
-    And the error payload field "events.0.exceptions.0.stacktrace.0.lineNumber" is greater than 0
+    And the error payload field "events.0.exceptions.0.stacktrace.0.frameAddress" is not null
+    And the error payload field "events.0.exceptions.0.stacktrace.0.symbolAddress" is not null
+    And the error payload field "events.0.exceptions.0.stacktrace.0.loadAddress" is not null
+    And the error payload field "events.0.exceptions.0.stacktrace.0.lineNumber" is not null
 
     # App data
     And the event binary arch field is valid

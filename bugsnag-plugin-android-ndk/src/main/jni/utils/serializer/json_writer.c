@@ -246,13 +246,20 @@ void bsg_serialize_error(bsg_error exc, JSON_Object *exception,
   }
 }
 
+static void set_hex_number(JSON_Object *frame, const char *name,
+                           unsigned long value) {
+  char hex_str[20];
+  sprintf(hex_str, "0x%lx", value);
+  json_object_set_string(frame, name, hex_str);
+}
+
 void bsg_serialize_stackframe(bugsnag_stackframe *stackframe, bool is_pc,
                               JSON_Array *stacktrace) {
   JSON_Value *frame_val = json_value_init_object();
   JSON_Object *frame = json_value_get_object(frame_val);
-  json_object_set_number(frame, "frameAddress", (*stackframe).frame_address);
-  json_object_set_number(frame, "symbolAddress", (*stackframe).symbol_address);
-  json_object_set_number(frame, "loadAddress", (*stackframe).load_address);
+  set_hex_number(frame, "frameAddress", (*stackframe).frame_address);
+  set_hex_number(frame, "symbolAddress", (*stackframe).symbol_address);
+  set_hex_number(frame, "loadAddress", (*stackframe).load_address);
   json_object_set_number(frame, "lineNumber", (*stackframe).line_number);
   if (is_pc) {
     // only necessary to set to true, false is the default value and omitting
@@ -263,10 +270,7 @@ void bsg_serialize_stackframe(bugsnag_stackframe *stackframe, bool is_pc,
     json_object_set_string(frame, "file", (*stackframe).filename);
   }
   if (strlen((*stackframe).method) == 0) {
-    char *frame_address = calloc(1, sizeof(char) * 32);
-    sprintf(frame_address, "0x%lx", (unsigned long)(*stackframe).frame_address);
-    json_object_set_string(frame, "method", frame_address);
-    free(frame_address);
+    set_hex_number(frame, "method", (*stackframe).frame_address);
   } else {
     json_object_set_string(frame, "method", (*stackframe).method);
   }

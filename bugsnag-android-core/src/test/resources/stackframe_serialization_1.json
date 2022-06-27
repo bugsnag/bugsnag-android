@@ -2,8 +2,8 @@
   "method": "aMethod",
   "file": "aFile",
   "lineNumber": 1,
-  "frameAddress": 2,
-  "symbolAddress": 3,
-  "loadAddress": 4,
+  "frameAddress": "0x2",
+  "symbolAddress": "0x3",
+  "loadAddress": "0x4",
   "type": "c"
 }
