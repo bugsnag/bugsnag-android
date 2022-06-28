@@ -6,6 +6,8 @@
 
 * Added configuration option to control whether internal errors are sent to Bugsnag
   [#1701](https://github.com/bugsnag/bugsnag-android/pull/1701)
+* Complex metadata (nested structures such as maps & lists) added in Java/Kotlin is now fully preserved in NDK errors
+  []()
 
 ### Bug fixes
 
