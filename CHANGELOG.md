@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+* Complex metadata (nested structures such as maps & lists) added in Java/Kotlin is now fully preserved in NDK errors
+  [#1715](https://github.com/bugsnag/bugsnag-android/pull/1715)
+
 ## 5.23.1 (2022-06-23)
 
 ### Bug fixes
@@ -13,8 +20,6 @@
 
 * Added configuration option to control whether internal errors are sent to Bugsnag
   [#1701](https://github.com/bugsnag/bugsnag-android/pull/1701)
-* Complex metadata (nested structures such as maps & lists) added in Java/Kotlin is now fully preserved in NDK errors
-  [#1715](https://github.com/bugsnag/bugsnag-android/pull/1715)
 
 ### Bug fixes
 
