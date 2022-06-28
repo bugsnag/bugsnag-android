@@ -145,6 +145,8 @@ bool bsg_jni_cache_init(JNIEnv *env) {
   CACHE_STATIC_METHOD(
       NativeInterface, NativeInterface_notify, "notify",
       "([B[BLcom/bugsnag/android/Severity;[Ljava/lang/StackTraceElement;)V");
+  CACHE_STATIC_METHOD(NativeInterface, NativeInterface_isDiscardErrorClass,
+                      "isDiscardErrorClass", "(Ljava/lang/String;)Z");
   CACHE_STATIC_METHOD(NativeInterface, NativeInterface_deliverReport,
                       "deliverReport", "([B[BLjava/lang/String;Z)V");
   CACHE_STATIC_METHOD(NativeInterface, NativeInterface_leaveBreadcrumb,

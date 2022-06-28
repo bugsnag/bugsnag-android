@@ -22,6 +22,30 @@ static unwindstack::LocalUnwinder *current_time_unwinder;
 
 static bool attempted_init;
 
+static void bsg_fallback_symbols(const uint64_t addr,
+                                 bugsnag_stackframe *dst_frame) {
+  Dl_info info;
+  if (dladdr((void *)addr, &info) != 0) {
+    if (info.dli_fname != nullptr) {
+      bsg_strncpy(dst_frame->filename, (char *)info.dli_fname,
+                  sizeof(dst_frame->filename));
+    }
+    if (info.dli_sname != nullptr) {
+      bsg_strncpy(dst_frame->method, (char *)info.dli_sname,
+                  sizeof(dst_frame->method));
+    }
+  }
+}
+
+static bool bsg_check_invalid_libname(const std::string &filename) {
+  return filename.empty() ||
+         // if the filename ends-in ".apk" then the lib was loaded without
+         // extracting it from the apk we consider these as "invalid" to trigger
+         // the use of a fallback filename
+         (filename.length() >= 4 &&
+          filename.substr(filename.length() - 4, 4) == ".apk");
+}
+
 void bsg_unwinder_init() {
   if (attempted_init) {
     // already initialized or failed to init, cannot be done more than once
@@ -66,29 +90,22 @@ ssize_t bsg_unwind_crash_stack(bugsnag_stackframe stack[BUGSNAG_FRAMES_MAX],
   crash_time_unwinder->Unwind();
   int frame_count = 0;
   for (auto &frame : crash_time_unwinder->frames()) {
-    stack[frame_count].frame_address = frame.pc;
-    stack[frame_count].line_number = frame.rel_pc;
-    stack[frame_count].load_address = frame.map_start;
-    stack[frame_count].symbol_address = frame.pc - frame.function_offset;
-    bsg_strncpy(stack[frame_count].filename, frame.map_name.c_str(),
-                sizeof(stack[frame_count].filename));
-    bsg_strncpy(stack[frame_count].method, frame.function_name.c_str(),
-                sizeof(stack[frame_count].method));
+    auto &dst_frame = stack[frame_count];
+    dst_frame.frame_address = frame.pc;
+    dst_frame.line_number = frame.rel_pc;
+    dst_frame.load_address = frame.map_start;
+    dst_frame.symbol_address = frame.pc - frame.function_offset;
 
-    // if the filename or method name cannot be found - try fallback to dladdr
-    // to find them
-    static Dl_info info;
-    if ((frame.map_name.empty() || frame.function_name.empty()) &&
-        dladdr((void *)frame.pc, &info) != 0) {
-
-      if (info.dli_fname != nullptr) {
-        bsg_strncpy(stack[frame_count].filename, (char *)info.dli_fname,
-                    sizeof(stack[frame_count].filename));
-      }
-      if (info.dli_sname != nullptr) {
-        bsg_strncpy(stack[frame_count].method, (char *)info.dli_sname,
-                    sizeof(stack[frame_count].method));
-      }
+    // if the filename or method name cannot be found (or are considered
+    // invalid) - fallback to dladdr to find them
+    if (bsg_check_invalid_libname(frame.map_name) ||
+        frame.function_name.empty()) {
+      bsg_fallback_symbols(frame.pc, &dst_frame);
+    } else {
+      bsg_strncpy(dst_frame.filename, frame.map_name.c_str(),
+                  sizeof(dst_frame.filename));
+      bsg_strncpy(dst_frame.method, frame.function_name.c_str(),
+                  sizeof(dst_frame.method));
     }
 
     frame_count++;
@@ -108,32 +125,33 @@ bsg_unwind_concurrent_stack(bugsnag_stackframe stack[BUGSNAG_FRAMES_MAX],
   current_time_unwinder->Unwind(&frames, BUGSNAG_FRAMES_MAX);
   int frame_count = 0;
   for (auto &frame : frames) {
-    stack[frame_count].frame_address = frame.pc;
+    bugsnag_stackframe &dst_frame = stack[frame_count];
+    dst_frame.frame_address = frame.pc;
     if (frame.map_info != nullptr) {
-      stack[frame_count].line_number = frame.rel_pc;
-      stack[frame_count].load_address = frame.map_info->start();
-      stack[frame_count].symbol_address = frame.pc - frame.map_info->offset();
-      bsg_strncpy(stack[frame_count].filename, frame.map_info->name().c_str(),
-                  sizeof(stack[frame_count].filename));
+      dst_frame.line_number = frame.rel_pc;
+      dst_frame.load_address = frame.map_info->start();
+      dst_frame.symbol_address = frame.pc - frame.map_info->offset();
 
-      // if the filename or method name cannot be found - try fallback to dladdr
-      // to find them
-      static Dl_info info;
-      if ((frame.map_info->name().empty() || frame.function_name.empty()) &&
-          dladdr((void *)frame.pc, &info) != 0) {
+      // if the filename is empty or invalid, use the `Elf` info to get the
+      // correct Soname if the function_name is empty as well, fallback to
+      // dladdr for the symbol data
+      if (bsg_check_invalid_libname(frame.map_info->name()) &&
+          !frame.function_name.empty()) {
 
-        if (info.dli_fname != nullptr) {
-          bsg_strncpy(stack[frame_count].filename, (char *)info.dli_fname,
-                      sizeof(stack[frame_count].filename));
-        }
-        if (info.dli_sname != nullptr) {
-          bsg_strncpy(stack[frame_count].method, (char *)info.dli_sname,
-                      sizeof(stack[frame_count].method));
-        }
+        bsg_strncpy(dst_frame.filename,
+                    frame.map_info->elf()->GetSoname().c_str(),
+                    sizeof(dst_frame.filename));
+        bsg_strncpy(dst_frame.method, frame.function_name.c_str(),
+                    sizeof(dst_frame.method));
+      } else if (frame.function_name.empty()) {
+        bsg_fallback_symbols(frame.pc, &dst_frame);
+      } else {
+        bsg_strncpy(dst_frame.filename, frame.map_info->name().c_str(),
+                    sizeof(dst_frame.filename));
+        bsg_strncpy(dst_frame.method, frame.function_name.c_str(),
+                    sizeof(dst_frame.method));
       }
     }
-    bsg_strncpy(stack[frame_count].method, frame.function_name.c_str(),
-                sizeof(stack[frame_count].method));
     frame_count++;
   }
   return frame_count;

@@ -156,6 +156,14 @@ jobject bsg_safe_call_static_object_method(JNIEnv *env, jclass clz,
                                            jmethodID method, ...);
 
 /**
+ * A safe wrapper for the JNI's CallStaticBooleanMethod. This method checks if
+ * an exception is pending and if so clears it so that execution can continue.
+ * On failure or exception, this function return false.
+ */
+jboolean bsg_safe_call_static_boolean_method(JNIEnv *env, jclass clz,
+                                             jmethodID method, ...);
+
+/**
  * A safe wrapper for the JNI's DeleteLocalRef. This method checks if the env
  * is NULL and no-ops if so.
  */

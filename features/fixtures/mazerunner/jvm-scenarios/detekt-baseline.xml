@@ -1,14 +1,13 @@
-<?xml version="1.0" ?>
+<?xml version='1.0' encoding='UTF-8'?>
 <SmellBaseline>
-  <ManuallySuppressedIssues></ManuallySuppressedIssues>
+  <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>MagicNumber:AnrHelper.kt$1000</ID>
-    <ID>MagicNumber:AnrHelper.kt$&lt;no name provided&gt;$60000</ID>
+    <ID>MagicNumber:AnrHelper.kt$&lt;no name provided>$60000</ID>
     <ID>MagicNumber:AutoDetectAnrsFalseScenario.kt$AutoDetectAnrsFalseScenario$100000</ID>
     <ID>MagicNumber:AutoDetectAnrsTrueScenario.kt$AutoDetectAnrsTrueScenario$100000</ID>
     <ID>MagicNumber:BugsnagInitScenario.kt$BugsnagInitScenario$25</ID>
     <ID>MagicNumber:DiscardBigEventsScenario.kt$DiscardBigEventsScenario$1024</ID>
-    <ID>MagicNumber:DiscardOldEventsScenario.kt$DiscardOldEventsScenario$2000</ID>
     <ID>MagicNumber:DiscardOldEventsScenario.kt$DiscardOldEventsScenario$60</ID>
     <ID>MagicNumber:DiscardOldSessionScenario.kt$DiscardOldSessionScenario$100</ID>
     <ID>MagicNumber:DiscardOldSessionScenario.kt$DiscardOldSessionScenario$35</ID>
@@ -23,9 +22,9 @@
     <ID>MagicNumber:Scenario.kt$Scenario$100</ID>
     <ID>MagicNumber:Scenario.kt$Scenario$1000</ID>
     <ID>MagicNumber:StartupCrashFlushScenario.kt$StartupCrashFlushScenario$6000</ID>
-    <ID>MagicNumber:TestHarnessHooks.kt$&lt;no name provided&gt;$500</ID>
+    <ID>MagicNumber:TestHarnessHooks.kt$&lt;no name provided>$500</ID>
     <ID>MagicNumber:TrimmedStacktraceScenario.kt$TrimmedStacktraceScenario$100000</ID>
-    <ID>ThrowingExceptionsWithoutMessageOrCause:AnrHelper.kt$&lt;no name provided&gt;$IllegalStateException()</ID>
+    <ID>ThrowingExceptionsWithoutMessageOrCause:AnrHelper.kt$&lt;no name provided>$IllegalStateException()</ID>
     <ID>ThrowingExceptionsWithoutMessageOrCause:BugsnagInitScenario.kt$BugsnagInitScenario$RuntimeException()</ID>
     <ID>ThrowingExceptionsWithoutMessageOrCause:CustomPluginNotifierDescriptionScenario.kt$CustomPluginNotifierDescriptionScenario$RuntimeException()</ID>
     <ID>ThrowingExceptionsWithoutMessageOrCause:TestHarnessHooks.kt$RuntimeException()</ID>
