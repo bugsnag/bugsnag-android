@@ -34,7 +34,7 @@
 /**
  * Version of the bugsnag_event struct. Serialized to report header.
  */
-#define BUGSNAG_EVENT_VERSION 8
+#define BUGSNAG_EVENT_VERSION 9
 
 #ifdef __cplusplus
 extern "C" {
@@ -118,11 +118,11 @@ typedef struct {
   /**
    * The key identifying this metadata entry
    */
-  char name[32];
+  char name[64];
   /**
    * The metadata tab
    */
-  char section[32];
+  char section[64];
   /**
    * The value type from bool, char, number
    */
@@ -140,6 +140,16 @@ typedef struct {
    * Value if type is BSG_DOUBLE_VALUE
    */
   double double_value;
+
+  /**
+   * Value if type is BSG_METADATA_OPAQUE_VALUE
+   */
+  void *opaque_value;
+
+  /**
+   * Length of the opaque_value cached here for performance
+   */
+  size_t opaque_value_size;
 } bsg_metadata_value;
 
 typedef struct {
@@ -258,6 +268,9 @@ void bsg_add_metadata_value_str(bugsnag_metadata *metadata, const char *section,
 void bsg_add_metadata_value_bool(bugsnag_metadata *metadata,
                                  const char *section, const char *name,
                                  bool value);
+void bsg_add_metadata_value_opaque(bugsnag_metadata *metadata,
+                                   const char *section, const char *name,
+                                   const char *json);
 
 /*********************************
  * (end) NDK-SPECIFIC BITS

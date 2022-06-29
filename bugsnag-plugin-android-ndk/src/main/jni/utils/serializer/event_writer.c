@@ -8,6 +8,9 @@
 
 bool bsg_write_feature_flags(bugsnag_event *event, bsg_buffered_writer *writer);
 
+bool bsg_write_opaque_metadata(bugsnag_event *event,
+                               bsg_buffered_writer *writer);
+
 bool bsg_report_header_write(bsg_report_header *header, int fd) {
   ssize_t len = write(fd, header, sizeof(bsg_report_header));
 
@@ -26,7 +29,9 @@ bool bsg_event_write(bsg_environment *env) {
       // add cached event info
       writer.write(&writer, &env->next_event, sizeof(bugsnag_event)) &&
       // append feature flags after event structure
-      bsg_write_feature_flags(&env->next_event, &writer);
+      bsg_write_feature_flags(&env->next_event, &writer) &&
+      // append opaque metadata after the feature flags
+      bsg_write_opaque_metadata(&env->next_event, &writer);
 
   writer.dispose(&writer);
   return result;
@@ -76,6 +81,41 @@ bool bsg_write_feature_flags(bugsnag_event *event,
 
   for (uint32_t index = 0; index < feature_flag_count; index++) {
     if (!write_feature_flag(writer, &event->feature_flags[index])) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+static bool bsg_write_opaque_metadata_unit(bugsnag_metadata *metadata,
+                                           bsg_buffered_writer *writer) {
+
+  for (size_t index = 0; index < metadata->value_count; index++) {
+    uint32_t value_size = metadata->values[index].opaque_value_size;
+    if (metadata->values[index].type == BSG_METADATA_OPAQUE_VALUE &&
+        value_size > 0) {
+      if (!writer->write(writer, metadata->values[index].opaque_value,
+                         value_size)) {
+        return false;
+      }
+    }
+  }
+
+  return true;
+}
+
+bool bsg_write_opaque_metadata(bugsnag_event *event,
+                               bsg_buffered_writer *writer) {
+
+  if (!bsg_write_opaque_metadata_unit(&event->metadata, writer)) {
+    return false;
+  }
+
+  for (int breadcrumb_index = 0; breadcrumb_index < event->crumb_count;
+       breadcrumb_index++) {
+    if (!bsg_write_opaque_metadata_unit(
+            &event->breadcrumbs[breadcrumb_index].metadata, writer)) {
       return false;
     }
   }

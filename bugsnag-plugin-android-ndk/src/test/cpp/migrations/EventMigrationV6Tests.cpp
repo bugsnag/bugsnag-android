@@ -46,12 +46,12 @@ static void *create_full_event() {
   char name[30];
   for (int i = event->crumb_first_index; i < max; i++) {
     sprintf(name, "mission %d", i - event->crumb_first_index);
-    insert_crumb(event->breadcrumbs, i, name, BSG_CRUMB_STATE, 1638992630014,
+    insert_crumb_v2(event->breadcrumbs, i, name, BSG_CRUMB_STATE, 1638992630014,
                  "Now we know what they mean by 'advanced' tactical training.");
   }
   for (int i = 0; i < event->crumb_first_index; i++) {
     sprintf(name, "mission %d", (max - event->crumb_first_index) + i);
-    insert_crumb(event->breadcrumbs, i, name, BSG_CRUMB_STATE, 1638992630014,
+    insert_crumb_v2(event->breadcrumbs, i, name, BSG_CRUMB_STATE, 1638992630014,
                  "Now we know what they mean by 'advanced' tactical training.");
   }
   event->crumb_count = max;

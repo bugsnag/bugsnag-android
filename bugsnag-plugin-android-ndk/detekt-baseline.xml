@@ -8,6 +8,7 @@
     <ID>LongMethod:EventMigrationV6Tests.kt$EventMigrationV6Tests$@Test fun testMigrateEventToLatest()</ID>
     <ID>LongMethod:EventMigrationV7Tests.kt$EventMigrationV7Tests$@Test fun testMigrateEventToLatest()</ID>
     <ID>LongMethod:EventMigrationV8Tests.kt$EventMigrationV8Tests$@Test fun testMigrateEventToLatest()</ID>
+    <ID>LongMethod:EventMigrationV9Tests.kt$EventMigrationV9Tests$@Test fun testMigrateEventToLatest()</ID>
     <ID>LongParameterList:NativeBridge.kt$NativeBridge$( apiKey: String, reportingDirectory: String, lastRunInfoPath: String, consecutiveLaunchCrashes: Int, autoDetectNdkCrashes: Boolean, apiLevel: Int, is32bit: Boolean, threadSendPolicy: Int )</ID>
     <ID>NestedBlockDepth:NativeBridge.kt$NativeBridge$private fun deliverPendingReports()</ID>
     <ID>TooManyFunctions:NativeBridge.kt$NativeBridge : StateObserver</ID>

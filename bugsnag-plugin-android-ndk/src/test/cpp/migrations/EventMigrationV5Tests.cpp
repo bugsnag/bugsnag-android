@@ -41,9 +41,9 @@ static void *create_full_event() {
   event->app.version_code = 57;
 
   // breadcrumbs
-  insert_crumb(event->breadcrumbs, 0, "decrease torque", BSG_CRUMB_STATE,
+  insert_crumb_v2(event->breadcrumbs, 0, "decrease torque", BSG_CRUMB_STATE,
                1638992630014, "Moving laterally 26º");
-  insert_crumb(event->breadcrumbs, 1, "enable blasters", BSG_CRUMB_USER,
+  insert_crumb_v2(event->breadcrumbs, 1, "enable blasters", BSG_CRUMB_USER,
                1638992630301, "this is a drill.");
   event->crumb_count = 2;
   event->crumb_first_index = 0;

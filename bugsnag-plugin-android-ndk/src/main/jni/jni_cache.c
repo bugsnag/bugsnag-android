@@ -161,6 +161,10 @@ bool bsg_jni_cache_init(JNIEnv *env) {
 
   CACHE_CLASS(BreadcrumbType, "com/bugsnag/android/BreadcrumbType");
 
+  CACHE_CLASS(OpaqueValue, "com/bugsnag/android/ndk/OpaqueValue");
+  CACHE_METHOD(OpaqueValue, OpaqueValue_getJson, "getJson",
+               "()Ljava/lang/String;");
+
   pthread_key_create(&jni_cleanup_key, detach_java_env);
 
   bsg_jni_cache->initialized = true;

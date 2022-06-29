@@ -71,6 +71,27 @@ typedef struct {
 } bugsnag_breadcrumb_v1;
 
 typedef struct {
+  char name[32];
+  char section[32];
+  bugsnag_metadata_type type;
+  bool bool_value;
+  char char_value[64];
+  double double_value;
+} bsg_metadata_value_v1;
+
+typedef struct {
+  int value_count;
+  bsg_metadata_value_v1 values[BUGSNAG_METADATA_MAX];
+} bugsnag_metadata_v1;
+
+typedef struct {
+  char name[64];
+  char timestamp[37];
+  bugsnag_breadcrumb_type type;
+  bugsnag_metadata_v1 metadata;
+} bugsnag_breadcrumb_v2;
+
+typedef struct {
   char name[64];
   char id[64];
   char package_name[64];
@@ -171,7 +192,7 @@ typedef struct {
   bsg_device_info_v1 device;
   bugsnag_user user;
   bsg_exception exception;
-  bugsnag_metadata metadata;
+  bugsnag_metadata_v1 metadata;
 
   int crumb_count;
   // Breadcrumbs are a ring; the first index moves as the
@@ -193,7 +214,7 @@ typedef struct {
   bsg_device_info_v1 device;
   bugsnag_user user;
   bsg_exception exception;
-  bugsnag_metadata metadata;
+  bugsnag_metadata_v1 metadata;
 
   int crumb_count;
   // Breadcrumbs are a ring; the first index moves as the
@@ -216,13 +237,13 @@ typedef struct {
   bsg_device_info_v2 device;
   bugsnag_user user;
   bsg_error error;
-  bugsnag_metadata metadata;
+  bugsnag_metadata_v1 metadata;
 
   int crumb_count;
   // Breadcrumbs are a ring; the first index moves as the
   // structure is filled and replaced.
   int crumb_first_index;
-  bugsnag_breadcrumb breadcrumbs[V2_BUGSNAG_CRUMBS_MAX];
+  bugsnag_breadcrumb_v2 breadcrumbs[V2_BUGSNAG_CRUMBS_MAX];
 
   char context[64];
   bugsnag_severity severity;
@@ -241,13 +262,13 @@ typedef struct {
   bsg_device_info_v2 device;
   bugsnag_user user;
   bsg_error error;
-  bugsnag_metadata metadata;
+  bugsnag_metadata_v1 metadata;
 
   int crumb_count;
   // Breadcrumbs are a ring; the first index moves as the
   // structure is filled and replaced.
   int crumb_first_index;
-  bugsnag_breadcrumb breadcrumbs[V2_BUGSNAG_CRUMBS_MAX];
+  bugsnag_breadcrumb_v2 breadcrumbs[V2_BUGSNAG_CRUMBS_MAX];
 
   char context[64];
   bugsnag_severity severity;
@@ -267,13 +288,13 @@ typedef struct {
   bsg_device_info_v2 device;
   bugsnag_user user;
   bsg_error error;
-  bugsnag_metadata metadata;
+  bugsnag_metadata_v1 metadata;
 
   int crumb_count;
   // Breadcrumbs are a ring; the first index moves as the
   // structure is filled and replaced.
   int crumb_first_index;
-  bugsnag_breadcrumb breadcrumbs[V2_BUGSNAG_CRUMBS_MAX];
+  bugsnag_breadcrumb_v2 breadcrumbs[V2_BUGSNAG_CRUMBS_MAX];
 
   char context[64];
   bugsnag_severity severity;
@@ -293,13 +314,13 @@ typedef struct {
   bsg_device_info_v2 device;
   bugsnag_user user;
   bsg_error error;
-  bugsnag_metadata metadata;
+  bugsnag_metadata_v1 metadata;
 
   int crumb_count;
   // Breadcrumbs are a ring; the first index moves as the
   // structure is filled and replaced.
   int crumb_first_index;
-  bugsnag_breadcrumb breadcrumbs[BUGSNAG_CRUMBS_MAX];
+  bugsnag_breadcrumb_v2 breadcrumbs[BUGSNAG_CRUMBS_MAX];
 
   char context[64];
   bugsnag_severity severity;
@@ -319,13 +340,13 @@ typedef struct {
   bsg_device_info_v2 device;
   bugsnag_user user;
   bsg_error error;
-  bugsnag_metadata metadata;
+  bugsnag_metadata_v1 metadata;
 
   int crumb_count;
   // Breadcrumbs are a ring; the first index moves as the
   // structure is filled and replaced.
   int crumb_first_index;
-  bugsnag_breadcrumb breadcrumbs[BUGSNAG_CRUMBS_MAX];
+  bugsnag_breadcrumb_v2 breadcrumbs[BUGSNAG_CRUMBS_MAX];
 
   char context[64];
   bugsnag_severity severity;
@@ -341,6 +362,38 @@ typedef struct {
   int thread_count;
   bsg_thread threads[BUGSNAG_THREADS_MAX];
 } bugsnag_report_v7;
+
+typedef struct {
+  bsg_notifier notifier;
+  bsg_app_info app;
+  bsg_device_info device;
+  bugsnag_user user;
+  bsg_error error;
+  bugsnag_metadata_v1 metadata;
+
+  int crumb_count;
+  // Breadcrumbs are a ring; the first index moves as the
+  // structure is filled and replaced.
+  int crumb_first_index;
+  bugsnag_breadcrumb_v2 breadcrumbs[BUGSNAG_CRUMBS_MAX];
+
+  char context[64];
+  bugsnag_severity severity;
+
+  char session_id[33];
+  char session_start[33];
+  int handled_events;
+  int unhandled_events;
+  char grouping_hash[64];
+  bool unhandled;
+  char api_key[64];
+
+  int thread_count;
+  bsg_thread threads[BUGSNAG_THREADS_MAX];
+
+  size_t feature_flag_count;
+  bsg_feature_flag *feature_flags;
+} bugsnag_report_v8;
 
 #ifdef __cplusplus
 }

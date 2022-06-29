@@ -63,6 +63,7 @@ class NativeBridge : StateObserver {
     external fun addMetadataString(tab: String, key: String, value: String)
     external fun addMetadataDouble(tab: String, key: String, value: Double)
     external fun addMetadataBoolean(tab: String, key: String, value: Boolean)
+    external fun addMetadataOpaque(tab: String, key: String, value: String)
     external fun addHandledEvent()
     external fun addUnhandledEvent()
     external fun clearMetadataTab(tab: String)
@@ -98,7 +99,7 @@ class NativeBridge : StateObserver {
                 makeSafe(event.message),
                 makeSafe(event.type.toString()),
                 makeSafe(event.timestamp),
-                event.metadata
+                makeSafeMetadata(event.metadata)
             )
             NotifyHandled -> addHandledEvent()
             NotifyUnhandled -> addUnhandledEvent()
@@ -122,13 +123,23 @@ class NativeBridge : StateObserver {
                 updateUserName(makeSafe(event.user.name ?: ""))
                 updateUserEmail(makeSafe(event.user.email ?: ""))
             }
-            is StateEvent.UpdateMemoryTrimEvent -> updateLowMemory(event.isLowMemory, event.memoryTrimLevelDescription)
+            is StateEvent.UpdateMemoryTrimEvent -> updateLowMemory(
+                event.isLowMemory,
+                event.memoryTrimLevelDescription
+            )
             is StateEvent.AddFeatureFlag -> addFeatureFlag(
                 makeSafe(event.name),
                 event.variant?.let { makeSafe(it) }
             )
             is StateEvent.ClearFeatureFlag -> clearFeatureFlag(makeSafe(event.name))
             is StateEvent.ClearFeatureFlags -> clearFeatureFlags()
+        }
+    }
+
+    private fun makeSafeMetadata(metadata: Map<String, Any?>): Map<String, Any?> {
+        if (metadata.isEmpty()) return metadata
+        return object : Map<String, Any?> by metadata {
+            override fun get(key: String): Any? = OpaqueValue.makeSafe(metadata[key])
         }
     }
 
@@ -190,10 +201,11 @@ class NativeBridge : StateObserver {
 
     private fun handleAddMetadata(arg: AddMetadata) {
         if (arg.key != null) {
-            when (val newValue = arg.value) {
+            when (val newValue = OpaqueValue.makeSafe(arg.value)) {
                 is String -> addMetadataString(arg.section, arg.key!!, makeSafe(newValue))
                 is Boolean -> addMetadataBoolean(arg.section, arg.key!!, newValue)
                 is Number -> addMetadataDouble(arg.section, arg.key!!, newValue.toDouble())
+                is OpaqueValue -> addMetadataOpaque(arg.section, arg.key!!, newValue.json)
                 else -> Unit
             }
         }
