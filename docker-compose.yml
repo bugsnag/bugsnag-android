@@ -31,7 +31,7 @@ services:
       PUBLISH_PASS:
 
   android-maze-runner:
-    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner-releases:latest-v6-cli
+    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner:integration-bitbar-cli
     environment:
       DEBUG:
       BUILDKITE:
@@ -51,6 +51,12 @@ services:
       SAUCE_LABS_USERNAME:
       SAUCE_LABS_ACCESS_KEY:
       TEST_FIXTURE_SYMBOL_DIR:
+      MAZE_TMS_URI:
+      MAZE_TMS_TOKEN:
+    env_file:
+      - ${DOCKER_ENV_FILE}
+    extra_hosts:
+      - "maze-local:127.0.0.1"
     volumes:
       - ./build:/app/build
       - ./features/:/app/features/

@@ -78,7 +78,7 @@ class MainActivity : Activity() {
         }
 
         try {
-            URL("http://bs-local.com:9339").readText()
+            URL("http://maze-local:9339").readText()
             log("Connection to Maze Runner seems ok")
         } catch (e: Exception) {
             log("Connection to Maze Runner FAILED", e)
@@ -96,7 +96,7 @@ class MainActivity : Activity() {
                 Thread.sleep(1000)
                 try {
                     // Get the next command from Maze Runner
-                    val commandUrl: String = "http://bs-local.com:9339/command"
+                    val commandUrl: String = "http://maze-local:9339/command"
                     val commandStr = URL(commandUrl).readText()
                     if (commandStr == "null") {
                         log("No Maze Runner commands queued")

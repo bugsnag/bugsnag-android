@@ -14,8 +14,8 @@ def execute_command(action, scenario_name = '')
 
   # Reset values to defaults
   $scenario_mode = ''
-  $sessions_endpoint = 'http://bs-local.com:9339/sessions'
-  $notify_endpoint = 'http://bs-local.com:9339/notify'
+  $sessions_endpoint = 'http://maze-local:9339/sessions'
+  $notify_endpoint = 'http://maze-local:9339/notify'
 
   # Ensure fixture has read the command
   count = 600
@@ -56,8 +56,8 @@ When("I configure Bugsnag for {string}") do |event_type|
 end
 
 When("I set the endpoints to the terminating server") do
-  $notify_endpoint = 'http://bs-local.com:9341'
-  $sessions_endpoint = 'http://bs-local.com:9341'
+  $notify_endpoint = 'http://maze-local:9341'
+  $sessions_endpoint = 'http://maze-local:9341'
 end
 
 When("I close and relaunch the app") do
