@@ -301,6 +301,18 @@ public class NativeInterface {
     }
 
     /**
+     * Ask if an error class is on the configurable discard list.
+     * This is used by the native layer to decide whether to pass an event to
+     * deliverReport() or not.
+     *
+     * @param name The error class to ask about.
+     */
+    @SuppressWarnings("unused")
+    public static boolean isDiscardErrorClass(@NonNull String name) {
+        return getClient().getConfig().getDiscardClasses().contains(name);
+    }
+
+    /**
      * Deliver a report, serialized as an event JSON payload.
      *
      * @param releaseStageBytes The release stage in which the event was

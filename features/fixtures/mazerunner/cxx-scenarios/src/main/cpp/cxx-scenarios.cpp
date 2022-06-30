@@ -125,6 +125,18 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXSigabrtScenario_crash(JNIEnv *e
   return value / x / 8;
 }
 
+JNIEXPORT jint JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXIgnoredSigabrtScenario_crash(JNIEnv *env,
+                                                                               jobject thiz,
+                                                                               jint value) {
+  int x = 38;
+  if (value > 0) {
+    raise(SIGABRT);
+  }
+  printf("Yeah, Steve, I remember. You said Wolf 359 was an inside job.\n");
+  return value / x / 8;
+}
+
 JNIEXPORT int JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXSigfpeScenario_crash(JNIEnv *env,
                                                                       jobject instance,

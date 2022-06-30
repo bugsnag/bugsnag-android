@@ -1,5 +1,14 @@
 # Changelog
 
+## 5.24.0 (2022-06-30)
+
+### Enhancements
+
+* Complex metadata (nested structures such as maps & lists) added in Java/Kotlin is now fully preserved in NDK errors
+  [#1715](https://github.com/bugsnag/bugsnag-android/pull/1715)
+* Configuration.discardClasses now applies to NDK errors
+  [#1710](https://github.com/bugsnag/bugsnag-android/pull/1710)
+
 ## 5.23.1 (2022-06-23)
 
 ### Bug fixes

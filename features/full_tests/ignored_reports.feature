@@ -25,3 +25,19 @@ Feature: Reports are ignored
     When I run "CXXThrowSomethingOutsideReleaseStagesScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXThrowSomethingOutsideReleaseStagesScenario"
     Then Bugsnag confirms it has no errors to send
+
+  Scenario: SIGABRT ignored
+    When I run "CXXIgnoredSigabrtScenario"
+    And I relaunch the app after a crash
+    And I configure the app to run in the "SIGABRT" state
+    And I configure Bugsnag for "CXXIgnoredSigabrtScenario"
+    And I should receive no errors
+
+  Scenario: SIGABRT not ignored
+    When I run "CXXIgnoredSigabrtScenario"
+    And I relaunch the app after a crash
+    And I configure the app to run in the "SIGBUS" state
+    And I configure Bugsnag for "CXXIgnoredSigabrtScenario"
+    And I wait to receive an error
+    Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And the exception "errorClass" equals "SIGABRT"

@@ -51,6 +51,7 @@ typedef struct {
   jmethodID NativeInterface_getContext;
   jmethodID NativeInterface_notify;
   jmethodID NativeInterface_leaveBreadcrumb;
+  jmethodID NativeInterface_isDiscardErrorClass;
   jmethodID NativeInterface_deliverReport;
 
   jclass StackTraceElement;
@@ -59,6 +60,9 @@ typedef struct {
   jclass Severity;
 
   jclass BreadcrumbType;
+
+  jclass OpaqueValue;
+  jmethodID OpaqueValue_getJson;
 } bsg_jni_cache_t;
 
 extern bsg_jni_cache_t *const bsg_jni_cache;

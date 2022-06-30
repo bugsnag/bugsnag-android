@@ -244,6 +244,21 @@ jobject bsg_safe_call_static_object_method(JNIEnv *env, jclass clz,
   return obj;
 }
 
+jboolean bsg_safe_call_static_boolean_method(JNIEnv *env, jclass clz,
+                                             jmethodID method, ...) {
+  if (env == NULL || clz == NULL || method == NULL) {
+    return false;
+  }
+  va_list args;
+  va_start(args, method);
+  jboolean result = (*env)->CallStaticBooleanMethodV(env, clz, method, args);
+  va_end(args);
+  if (bsg_check_and_clear_exc(env)) {
+    return false;
+  }
+  return result;
+}
+
 void bsg_safe_delete_local_ref(JNIEnv *env, jobject obj) {
   if (env == NULL || obj == NULL) {
     return;

@@ -145,6 +145,8 @@ bool bsg_jni_cache_init(JNIEnv *env) {
   CACHE_STATIC_METHOD(
       NativeInterface, NativeInterface_notify, "notify",
       "([B[BLcom/bugsnag/android/Severity;[Ljava/lang/StackTraceElement;)V");
+  CACHE_STATIC_METHOD(NativeInterface, NativeInterface_isDiscardErrorClass,
+                      "isDiscardErrorClass", "(Ljava/lang/String;)Z");
   CACHE_STATIC_METHOD(NativeInterface, NativeInterface_deliverReport,
                       "deliverReport", "([B[BLjava/lang/String;Z)V");
   CACHE_STATIC_METHOD(NativeInterface, NativeInterface_leaveBreadcrumb,
@@ -158,6 +160,10 @@ bool bsg_jni_cache_init(JNIEnv *env) {
   CACHE_CLASS(Severity, "com/bugsnag/android/Severity");
 
   CACHE_CLASS(BreadcrumbType, "com/bugsnag/android/BreadcrumbType");
+
+  CACHE_CLASS(OpaqueValue, "com/bugsnag/android/ndk/OpaqueValue");
+  CACHE_METHOD(OpaqueValue, OpaqueValue_getJson, "getJson",
+               "()Ljava/lang/String;");
 
   pthread_key_create(&jni_cleanup_key, detach_java_env);
 

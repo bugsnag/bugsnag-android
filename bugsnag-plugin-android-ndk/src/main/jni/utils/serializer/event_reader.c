@@ -9,7 +9,7 @@
 #include <string.h>
 #include <unistd.h>
 
-const int BSG_MIGRATOR_CURRENT_VERSION = 8;
+const int BSG_MIGRATOR_CURRENT_VERSION = 9;
 
 #ifdef __cplusplus
 extern "C" {
@@ -17,8 +17,11 @@ extern "C" {
 
 // Symbols exported for unit test access
 void migrate_app_v1(bugsnag_report_v2 *report_v2, bugsnag_report_v3 *event);
+
 void migrate_app_v2(bugsnag_report_v4 *report_v4, bugsnag_event *event);
+
 void migrate_device_v1(bugsnag_report_v2 *report_v2, bugsnag_report_v3 *event);
+
 #ifdef __cplusplus
 }
 #endif
@@ -29,13 +32,22 @@ void migrate_device_v1(bugsnag_report_v2 *report_v2, bugsnag_report_v3 *event);
  */
 
 bugsnag_report_v1 *bsg_report_v1_read(int fd);
+
 bugsnag_report_v2 *bsg_report_v2_read(int fd);
+
 bugsnag_report_v3 *bsg_report_v3_read(int fd);
+
 bugsnag_report_v4 *bsg_report_v4_read(int fd);
+
 bugsnag_report_v5 *bsg_report_v5_read(int fd);
+
 bugsnag_report_v6 *bsg_report_v6_read(int fd);
+
 bugsnag_report_v7 *bsg_report_v7_read(int fd);
-bugsnag_event *bsg_report_v8_read(int fd);
+
+bugsnag_report_v8 *bsg_report_v8_read(int fd);
+
+bugsnag_event *bsg_report_v9_read(int fd);
 
 /**
  * the map_*() functions convert a structure of an older format into the latest.
@@ -43,23 +55,45 @@ bugsnag_event *bsg_report_v8_read(int fd);
  * complete.
  */
 
+bugsnag_event *bsg_map_v8_to_report(bugsnag_report_v8 *report_v8);
+
 bugsnag_event *bsg_map_v7_to_report(bugsnag_report_v7 *report_v7);
+
 bugsnag_event *bsg_map_v6_to_report(bugsnag_report_v6 *report_v6);
+
 bugsnag_event *bsg_map_v5_to_report(bugsnag_report_v5 *report_v5);
+
 bugsnag_event *bsg_map_v4_to_report(bugsnag_report_v4 *report_v4);
+
 bugsnag_event *bsg_map_v3_to_report(bugsnag_report_v3 *report_v3);
+
 bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2);
+
 bugsnag_event *bsg_map_v1_to_report(bugsnag_report_v1 *report_v1);
+
+void migrate_metadata_v1(bugsnag_metadata_v1 *metadata_v1,
+                         bugsnag_metadata *metadata);
 
 void migrate_breadcrumb_v1(bugsnag_report_v2 *report_v2,
                            bugsnag_report_v3 *event);
+
 void migrate_breadcrumb_v2(bugsnag_report_v5 *report_v5, bugsnag_event *event);
 
+void migrate_breadcrumb_v3(bugsnag_breadcrumb_v2 *breadcrumbs,
+                           bugsnag_event *event, size_t breadcrumb_count);
+
 void migrate_device_v2(bsg_device_info *output, bsg_device_info_v2 *input);
+
 void migrate_app_v3(bsg_app_info *output, bsg_app_info_v3 *input);
 
 void bsg_read_feature_flags(int fd, bsg_feature_flag **out_feature_flags,
                             size_t *out_feature_flag_count);
+
+void bsg_read_opaque_metadata(int fd, bugsnag_metadata *metadata);
+
+void bsg_read_opaque_breadcrumb_metadata(int fd,
+                                         bugsnag_breadcrumb *breadcrumbs,
+                                         int crumb_count);
 
 bsg_report_header *bsg_report_header_read(int fd) {
   bsg_report_header *header = calloc(1, sizeof(bsg_report_header));
@@ -85,7 +119,6 @@ bugsnag_event *bsg_read_event(char *filepath) {
 
   int version = header->version;
   free(header);
-  bugsnag_event *event = NULL;
 
   switch (version) {
   case 1:
@@ -102,8 +135,10 @@ bugsnag_event *bsg_read_event(char *filepath) {
     return bsg_map_v6_to_report(bsg_report_v6_read(fildes));
   case 7:
     return bsg_map_v7_to_report(bsg_report_v7_read(fildes));
+  case 8:
+    return bsg_map_v8_to_report(bsg_report_v8_read(fildes));
   case BSG_MIGRATOR_CURRENT_VERSION:
-    return bsg_report_v8_read(fildes);
+    return bsg_report_v9_read(fildes);
   default:
     return NULL;
   }
@@ -193,9 +228,9 @@ bugsnag_report_v7 *bsg_report_v7_read(int fd) {
   return event;
 }
 
-bugsnag_event *bsg_report_v8_read(int fd) {
-  size_t event_size = sizeof(bugsnag_event);
-  bugsnag_event *event = calloc(1, event_size);
+bugsnag_report_v8 *bsg_report_v8_read(int fd) {
+  size_t event_size = sizeof(bugsnag_report_v8);
+  bugsnag_report_v8 *event = calloc(1, event_size);
 
   ssize_t len = read(fd, event, event_size);
   if (len != event_size) {
@@ -209,37 +244,64 @@ bugsnag_event *bsg_report_v8_read(int fd) {
   return event;
 }
 
-bugsnag_event *bsg_map_v6_to_report(bugsnag_report_v6 *report_v6) {
-  if (report_v6 == NULL) {
+bugsnag_event *bsg_report_v9_read(int fd) {
+  size_t event_size = sizeof(bugsnag_event);
+  bugsnag_event *event = calloc(1, event_size);
+
+  ssize_t len = read(fd, event, event_size);
+  if (len != event_size) {
+    free(event);
+    return NULL;
+  }
+
+  // read the feature flags, if possible
+  bsg_read_feature_flags(fd, &event->feature_flags, &event->feature_flag_count);
+  bsg_read_opaque_metadata(fd, &event->metadata);
+  bsg_read_opaque_breadcrumb_metadata(fd, event->breadcrumbs,
+                                      event->crumb_count);
+
+  return event;
+}
+
+bugsnag_event *bsg_map_v8_to_report(bugsnag_report_v8 *report_v8) {
+  if (report_v8 == NULL) {
     return NULL;
   }
   bugsnag_event *event = calloc(1, sizeof(bugsnag_event));
 
   if (event != NULL) {
-    event->notifier = report_v6->notifier;
-    event->metadata = report_v6->metadata;
-    migrate_app_v3(&event->app, &report_v6->app);
-    migrate_device_v2(&event->device, &report_v6->device);
-    event->user = report_v6->user;
-    event->error = report_v6->error;
-    event->crumb_count = report_v6->crumb_count;
-    event->crumb_first_index = report_v6->crumb_first_index;
-    memcpy(&event->breadcrumbs, report_v6->breadcrumbs,
-           sizeof(report_v6->breadcrumbs));
-    memcpy(&event->context, report_v6->context, sizeof(report_v6->context));
-    event->severity = report_v6->severity;
-    memcpy(&event->session_id, report_v6->session_id,
-           sizeof(report_v6->session_id));
-    memcpy(&event->session_start, report_v6->session_start,
-           sizeof(report_v6->session_start));
-    event->handled_events = report_v6->handled_events;
-    event->unhandled_events = report_v6->unhandled_events;
-    memcpy(&event->grouping_hash, report_v6->grouping_hash,
-           sizeof(report_v6->grouping_hash));
-    event->unhandled = report_v6->unhandled;
-    memcpy(&event->api_key, report_v6->api_key, sizeof(report_v6->api_key));
+    event->notifier = report_v8->notifier;
+    migrate_metadata_v1(&report_v8->metadata, &event->metadata);
+    memcpy(&event->app, &report_v8->app, sizeof(bsg_app_info));
+    memcpy(&event->device, &report_v8->device, sizeof(bsg_device_info));
+    event->user = report_v8->user;
+    event->error = report_v8->error;
+    event->crumb_count = report_v8->crumb_count;
+    event->crumb_first_index = report_v8->crumb_first_index;
+    migrate_breadcrumb_v3(report_v8->breadcrumbs, event,
+                          report_v8->crumb_count);
+    memcpy(&event->context, report_v8->context, sizeof(report_v8->context));
+    event->severity = report_v8->severity;
+    memcpy(&event->session_id, report_v8->session_id,
+           sizeof(report_v8->session_id));
+    memcpy(&event->session_start, report_v8->session_start,
+           sizeof(report_v8->session_start));
+    event->handled_events = report_v8->handled_events;
+    event->unhandled_events = report_v8->unhandled_events;
+    memcpy(&event->grouping_hash, report_v8->grouping_hash,
+           sizeof(report_v8->grouping_hash));
+    event->unhandled = report_v8->unhandled;
+    memcpy(&event->api_key, report_v8->api_key, sizeof(report_v8->api_key));
+    event->thread_count = report_v8->thread_count;
+    memcpy(&event->threads, report_v8->threads, sizeof(report_v8->threads));
 
-    free(report_v6);
+    // copy the feature-flags ref over, but don't free the actual data
+    // this is effectively a change of ownership from bugsnag_report_v8 ->
+    // bugsnag_event
+    event->feature_flags = report_v8->feature_flags;
+    event->feature_flag_count = report_v8->feature_flag_count;
+
+    free(report_v8);
   }
   return event;
 }
@@ -252,15 +314,15 @@ bugsnag_event *bsg_map_v7_to_report(bugsnag_report_v7 *report_v7) {
 
   if (event != NULL) {
     event->notifier = report_v7->notifier;
-    event->metadata = report_v7->metadata;
+    migrate_metadata_v1(&report_v7->metadata, &event->metadata);
     migrate_app_v3(&event->app, &report_v7->app);
     migrate_device_v2(&event->device, &report_v7->device);
     event->user = report_v7->user;
     event->error = report_v7->error;
     event->crumb_count = report_v7->crumb_count;
     event->crumb_first_index = report_v7->crumb_first_index;
-    memcpy(&event->breadcrumbs, report_v7->breadcrumbs,
-           sizeof(report_v7->breadcrumbs));
+    migrate_breadcrumb_v3(report_v7->breadcrumbs, event,
+                          report_v7->crumb_count);
     memcpy(&event->context, report_v7->context, sizeof(report_v7->context));
     event->severity = report_v7->severity;
     memcpy(&event->session_id, report_v7->session_id,
@@ -281,6 +343,41 @@ bugsnag_event *bsg_map_v7_to_report(bugsnag_report_v7 *report_v7) {
   return event;
 }
 
+bugsnag_event *bsg_map_v6_to_report(bugsnag_report_v6 *report_v6) {
+  if (report_v6 == NULL) {
+    return NULL;
+  }
+  bugsnag_event *event = calloc(1, sizeof(bugsnag_event));
+
+  if (event != NULL) {
+    event->notifier = report_v6->notifier;
+    migrate_metadata_v1(&report_v6->metadata, &event->metadata);
+    migrate_app_v3(&event->app, &report_v6->app);
+    migrate_device_v2(&event->device, &report_v6->device);
+    event->user = report_v6->user;
+    event->error = report_v6->error;
+    event->crumb_count = report_v6->crumb_count;
+    event->crumb_first_index = report_v6->crumb_first_index;
+    migrate_breadcrumb_v3(report_v6->breadcrumbs, event,
+                          report_v6->crumb_count);
+    memcpy(&event->context, report_v6->context, sizeof(report_v6->context));
+    event->severity = report_v6->severity;
+    memcpy(&event->session_id, report_v6->session_id,
+           sizeof(report_v6->session_id));
+    memcpy(&event->session_start, report_v6->session_start,
+           sizeof(report_v6->session_start));
+    event->handled_events = report_v6->handled_events;
+    event->unhandled_events = report_v6->unhandled_events;
+    memcpy(&event->grouping_hash, report_v6->grouping_hash,
+           sizeof(report_v6->grouping_hash));
+    event->unhandled = report_v6->unhandled;
+    memcpy(&event->api_key, report_v6->api_key, sizeof(report_v6->api_key));
+
+    free(report_v6);
+  }
+  return event;
+}
+
 bugsnag_event *bsg_map_v5_to_report(bugsnag_report_v5 *report_v5) {
   if (report_v5 == NULL) {
     return NULL;
@@ -289,7 +386,7 @@ bugsnag_event *bsg_map_v5_to_report(bugsnag_report_v5 *report_v5) {
 
   if (event != NULL) {
     event->notifier = report_v5->notifier;
-    event->metadata = report_v5->metadata;
+    migrate_metadata_v1(&report_v5->metadata, &event->metadata);
     migrate_app_v3(&event->app, &report_v5->app);
     migrate_device_v2(&event->device, &report_v5->device);
     bsg_strcpy(event->context, report_v5->context);
@@ -321,14 +418,13 @@ bugsnag_event *bsg_map_v4_to_report(bugsnag_report_v4 *report_v4) {
 
   if (event != NULL) {
     event->notifier = report_v4->notifier;
-    event->metadata = report_v4->metadata;
+    migrate_metadata_v1(&report_v4->metadata, &event->metadata);
     migrate_device_v2(&event->device, &report_v4->device);
     event->user = report_v4->user;
     event->error = report_v4->error;
     event->crumb_count = report_v4->crumb_count;
     event->crumb_first_index = report_v4->crumb_first_index;
-    memcpy(event->breadcrumbs, report_v4->breadcrumbs,
-           sizeof(report_v4->breadcrumbs));
+    migrate_breadcrumb_v3(report_v4->breadcrumbs, event, V2_BUGSNAG_CRUMBS_MAX);
     event->severity = report_v4->severity;
     bsg_strncpy(event->context, report_v4->context, sizeof(report_v4->context));
     bsg_strncpy(event->session_id, report_v4->session_id,
@@ -422,10 +518,10 @@ bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2) {
   return bsg_map_v3_to_report(event);
 }
 
-static void add_metadata_string(bugsnag_metadata *meta, char *section,
+static void add_metadata_string(bugsnag_metadata_v1 *meta, char *section,
                                 char *name, char *value) {
   if (meta->value_count < BUGSNAG_METADATA_MAX) {
-    bsg_metadata_value *item = &meta->values[meta->value_count];
+    bsg_metadata_value_v1 *item = &meta->values[meta->value_count];
     strncpy(item->section, section, sizeof(item->section));
     strncpy(item->name, name, sizeof(item->name));
     strncpy(item->char_value, value, sizeof(item->char_value));
@@ -434,10 +530,10 @@ static void add_metadata_string(bugsnag_metadata *meta, char *section,
   }
 }
 
-static void add_metadata_double(bugsnag_metadata *meta, char *section,
+static void add_metadata_double(bugsnag_metadata_v1 *meta, char *section,
                                 char *name, double value) {
   if (meta->value_count < BUGSNAG_METADATA_MAX) {
-    bsg_metadata_value *item = &meta->values[meta->value_count];
+    bsg_metadata_value_v1 *item = &meta->values[meta->value_count];
     strncpy(item->section, section, sizeof(item->section));
     strncpy(item->name, name, sizeof(item->name));
     item->type = BSG_METADATA_NUMBER_VALUE;
@@ -446,10 +542,10 @@ static void add_metadata_double(bugsnag_metadata *meta, char *section,
   }
 }
 
-static void add_metadata_bool(bugsnag_metadata *meta, char *section, char *name,
-                              bool value) {
+static void add_metadata_bool(bugsnag_metadata_v1 *meta, char *section,
+                              char *name, bool value) {
   if (meta->value_count < BUGSNAG_METADATA_MAX) {
-    bsg_metadata_value *item = &meta->values[meta->value_count];
+    bsg_metadata_value_v1 *item = &meta->values[meta->value_count];
     strncpy(item->section, section, sizeof(item->section));
     strncpy(item->name, name, sizeof(item->name));
     item->type = BSG_METADATA_BOOL_VALUE;
@@ -533,6 +629,26 @@ void bugsnag_report_v3_add_breadcrumb(bugsnag_report_v3 *event,
   memcpy(&event->breadcrumbs[crumb_index], crumb, sizeof(bugsnag_breadcrumb));
 }
 
+void migrate_metadata_v1(bugsnag_metadata_v1 *metadata_v1,
+                         bugsnag_metadata *metadata) {
+
+  metadata->value_count = metadata_v1->value_count;
+
+  for (int i = 0; i < metadata->value_count; i++) {
+    metadata->values[i].type = metadata_v1->values[i].type;
+    metadata->values[i].bool_value = metadata_v1->values[i].bool_value;
+    metadata->values[i].double_value = metadata_v1->values[i].double_value;
+
+    bsg_strncpy(metadata->values[i].name, metadata_v1->values[i].name,
+                sizeof(metadata->values[i].name));
+    bsg_strncpy(metadata->values[i].section, metadata_v1->values[i].section,
+                sizeof(metadata->values[i].section));
+    bsg_strncpy(metadata->values[i].char_value,
+                metadata_v1->values[i].char_value,
+                sizeof(metadata->values[i].char_value));
+  }
+}
+
 int bsg_calculate_total_crumbs(int old_count) {
   return old_count < BUGSNAG_CRUMBS_MAX ? old_count : BUGSNAG_CRUMBS_MAX;
 }
@@ -585,6 +701,21 @@ void migrate_breadcrumb_v1(bugsnag_report_v2 *report_v2,
   }
 }
 
+void migrate_breadcrumb_v3(bugsnag_breadcrumb_v2 *breadcrumbs,
+                           bugsnag_event *event, size_t breadcrumb_count) {
+  for (int index = 0; index < breadcrumb_count; index++) {
+    bugsnag_breadcrumb_v2 *crumb = &breadcrumbs[index];
+    bugsnag_breadcrumb *new_crumb = &event->breadcrumbs[index];
+
+    new_crumb->type = crumb->type;
+    bsg_strncpy(new_crumb->name, crumb->name, sizeof(new_crumb->name));
+    bsg_strncpy(new_crumb->timestamp, crumb->timestamp,
+                sizeof(new_crumb->timestamp));
+
+    migrate_metadata_v1(&crumb->metadata, &new_crumb->metadata);
+  }
+}
+
 void migrate_breadcrumb_v2(bugsnag_report_v5 *report_v5, bugsnag_event *event) {
   int old_first_index = report_v5->crumb_first_index;
   event->crumb_count = report_v5->crumb_count;
@@ -593,8 +724,15 @@ void migrate_breadcrumb_v2(bugsnag_report_v5 *report_v5, bugsnag_event *event) {
   // rationalize order of breadcrumbs while copying over to new struct
   for (int new_index = 0; new_index < event->crumb_count; new_index++) {
     int old_index = (new_index + old_first_index) % V2_BUGSNAG_CRUMBS_MAX;
-    bugsnag_breadcrumb crumb = report_v5->breadcrumbs[old_index];
-    memcpy(&event->breadcrumbs[new_index], &crumb, sizeof(bugsnag_breadcrumb));
+    bugsnag_breadcrumb_v2 *crumb = &report_v5->breadcrumbs[old_index];
+    bugsnag_breadcrumb *new_crumb = &event->breadcrumbs[new_index];
+
+    new_crumb->type = crumb->type;
+    bsg_strncpy(new_crumb->name, crumb->name, sizeof(new_crumb->name));
+    bsg_strncpy(new_crumb->timestamp, crumb->timestamp,
+                sizeof(new_crumb->timestamp));
+
+    migrate_metadata_v1(&crumb->metadata, &new_crumb->metadata);
   }
 }
 
@@ -787,7 +925,54 @@ feature_flags_error:
 
   free(flags);
 
-  // clear the out fields to indicate no feature-flags are availables
+  // clear the out fields to indicate no feature-flags are available
   *out_feature_flag_count = 0;
   *out_feature_flags = NULL;
+}
+
+void bsg_read_opaque_metadata(int fd, bugsnag_metadata *metadata) {
+  size_t read_index = 0;
+  for (; read_index < metadata->value_count; read_index++) {
+    if (metadata->values[read_index].type == BSG_METADATA_OPAQUE_VALUE &&
+        metadata->values[read_index].opaque_value_size > 0) {
+
+      size_t opaque_value_size = metadata->values[read_index].opaque_value_size;
+
+      void *opaque_value = calloc(1, opaque_value_size);
+      if (opaque_value == NULL) {
+        goto opaque_metadata_fail;
+      }
+
+      if (read(fd, opaque_value, opaque_value_size) != opaque_value_size) {
+        free(opaque_value);
+        goto opaque_metadata_fail;
+      }
+
+      metadata->values[read_index].opaque_value_size = opaque_value_size;
+      metadata->values[read_index].opaque_value = opaque_value;
+    }
+  }
+
+opaque_metadata_fail:
+  // ensure that only the OPAQUE values we read successfully are considered
+  // "valid" this allows for a partial recovery of the OPAQUE data
+  for (; read_index < metadata->value_count; read_index++) {
+    if (metadata->values[read_index].type == BSG_METADATA_OPAQUE_VALUE) {
+      // set all unread OPAQUE values to NONE as their opaque_values are invalid
+      metadata->values[read_index].type = BSG_METADATA_NONE_VALUE;
+      metadata->values[read_index].opaque_value_size = 0;
+      metadata->values[read_index].opaque_value = NULL;
+    }
+  }
+}
+
+void bsg_read_opaque_breadcrumb_metadata(int fd,
+                                         bugsnag_breadcrumb *breadcrumbs,
+                                         int crumb_count) {
+
+  for (int breadcrumb_index = 0; breadcrumb_index < crumb_count;
+       breadcrumb_index++) {
+
+    bsg_read_opaque_metadata(fd, &(breadcrumbs[breadcrumb_index].metadata));
+  }
 }

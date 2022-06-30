@@ -5,6 +5,7 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <string.h>
+#include <utils/memory.h>
 
 #include "event.h"
 #include "featureflags.h"
@@ -176,6 +177,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
                                     last_run_info_path);
 
   if ((bool)auto_detect_ndk_crashes) {
+    bsg_init_memory(bugsnag_env);
     bsg_handler_install_signal(bugsnag_env);
     bsg_handler_install_cpp(bugsnag_env);
   }
@@ -226,6 +228,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
   jbyteArray jstage = NULL;
   char *payload = NULL;
   jstring japi_key = NULL;
+  jstring errorClass = NULL;
 
   if (!bsg_jni_cache->initialized) {
     BUGSNAG_LOG("deliverReportAtPath failed: JNI cache not initialized.");
@@ -244,6 +247,13 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
 
   if (event == NULL) {
     BUGSNAG_LOG("Failed to read event at file: %s", event_path);
+    goto exit;
+  }
+
+  errorClass = bsg_safe_new_string_utf(env, event->error.errorClass);
+  if (bsg_safe_call_static_boolean_method(
+          env, bsg_jni_cache->NativeInterface,
+          bsg_jni_cache->NativeInterface_isDiscardErrorClass, errorClass)) {
     goto exit;
   }
 
@@ -276,6 +286,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
   }
 
 exit:
+  bsg_safe_delete_local_ref(env, errorClass);
   bsg_safe_release_string_utf_chars(env, _report_path, event_path);
   if (event != NULL) {
     bsg_safe_release_byte_array_elements(env, jstage,
@@ -665,6 +676,26 @@ Java_com_bugsnag_android_ndk_NativeBridge_addMetadataBoolean(
   }
   bsg_safe_release_string_utf_chars(env, tab_, tab);
   bsg_safe_release_string_utf_chars(env, key_, key);
+}
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_ndk_NativeBridge_addMetadataOpaque(
+    JNIEnv *env, jobject _this, jstring tab_, jstring key_, jstring value_) {
+  if (bsg_global_env == NULL) {
+    return;
+  }
+  char *tab = (char *)bsg_safe_get_string_utf_chars(env, tab_);
+  char *key = (char *)bsg_safe_get_string_utf_chars(env, key_);
+  char *value = (char *)bsg_safe_get_string_utf_chars(env, value_);
+  if (tab != NULL && key != NULL) {
+    request_env_write_lock();
+    bsg_add_metadata_value_opaque(&bsg_global_env->next_event.metadata, tab,
+                                  key, value);
+    release_env_write_lock();
+  }
+  bsg_safe_release_string_utf_chars(env, tab_, tab);
+  bsg_safe_release_string_utf_chars(env, key_, key);
+  bsg_safe_release_string_utf_chars(env, value_, value);
 }
 
 JNIEXPORT void JNICALL

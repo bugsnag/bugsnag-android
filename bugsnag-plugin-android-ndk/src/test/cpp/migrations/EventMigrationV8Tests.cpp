@@ -1,11 +1,12 @@
 #include <cstring>
 
 #include <parson/parson.h>
+#include <utils/serializer/buffered_writer.h>
 
 #include "utils.hpp"
 
 static void *create_payload_info_event() {
-  auto event = (bugsnag_event *)calloc(1, sizeof(bugsnag_event));
+  auto event = (bugsnag_report_v8 *) calloc(1, sizeof(bugsnag_report_v8));
 
   strcpy(event->api_key, "5d1e5fbd39a74caa1200142706a90b20");
   strcpy(event->notifier.name, "Test Library");
@@ -19,7 +20,7 @@ static void *create_payload_info_event() {
  * Create a new event in v8 format
  */
 static void *create_full_event() {
-  auto event = (bugsnag_event *)calloc(1, sizeof(bugsnag_event));
+  auto event = (bugsnag_report_v8 *) calloc(1, sizeof(bugsnag_report_v8));
 
   strcpy(event->context,
          "00000000000m0r3.61ee9e6e099d3dd7448f740d395768da6b2df55d5.m4g1c");
@@ -46,13 +47,13 @@ static void *create_full_event() {
   char name[30];
   for (int i = event->crumb_first_index; i < max; i++) {
     sprintf(name, "mission %d", i - event->crumb_first_index);
-    insert_crumb(event->breadcrumbs, i, name, BSG_CRUMB_STATE, 1638992630014,
-                 "Now we know what they mean by 'advanced' tactical training.");
+    insert_crumb_v2(event->breadcrumbs, i, name, BSG_CRUMB_STATE, 1638992630014,
+                    "Now we know what they mean by 'advanced' tactical training.");
   }
   for (int i = 0; i < event->crumb_first_index; i++) {
     sprintf(name, "mission %d", (max - event->crumb_first_index) + i);
-    insert_crumb(event->breadcrumbs, i, name, BSG_CRUMB_STATE, 1638992630014,
-                 "Now we know what they mean by 'advanced' tactical training.");
+    insert_crumb_v2(event->breadcrumbs, i, name, BSG_CRUMB_STATE, 1638992630014,
+                    "Now we know what they mean by 'advanced' tactical training.");
   }
   event->crumb_count = max;
 
@@ -77,7 +78,7 @@ static void *create_full_event() {
   // feature flags
   event->feature_flag_count = 4;
   event->feature_flags =
-      (bsg_feature_flag *)calloc(4, sizeof(bsg_feature_flag));
+      (bsg_feature_flag *) calloc(4, sizeof(bsg_feature_flag));
   event->feature_flags[0].name = strdup("bluebutton");
   event->feature_flags[0].variant = strdup("on");
   event->feature_flags[1].name = strdup("redbutton");
@@ -91,21 +92,43 @@ static void *create_full_event() {
   strcpy(event->error.errorMessage, "POSIX is serious about oncoming traffic");
   strcpy(event->error.type, "C");
   event->error.frame_count = 2;
-  event->error.stacktrace[0].frame_address = (uintptr_t)4294967294;
-  event->error.stacktrace[0].load_address = (uintptr_t)2367523;
+  event->error.stacktrace[0].frame_address = (uintptr_t) 4294967294;
+  event->error.stacktrace[0].load_address = (uintptr_t) 2367523;
   event->error.stacktrace[0].symbol_address = 776;
-  event->error.stacktrace[0].line_number = (uintptr_t)4194967233;
+  event->error.stacktrace[0].line_number = (uintptr_t) 4194967233;
   strcpy(event->error.stacktrace[0].method, "makinBacon");
   strcpy(event->error.stacktrace[0].filename, "lib64/libfoo.so");
   event->error.stacktrace[1].frame_address =
-      (uintptr_t)3011142731; // will become method hex
+      (uintptr_t) 3011142731; // will become method hex
 
   // metadata
   strcpy(event->app.active_screen, "Menu");
-  bugsnag_event_add_metadata_bool(event, "metrics", "experimentX", false);
-  bugsnag_event_add_metadata_string(event, "metrics", "subject", "percy");
-  bugsnag_event_add_metadata_string(event, "app", "weather", "rain");
-  bugsnag_event_add_metadata_double(event, "metrics", "counter", 47.5);
+
+  event->metadata.value_count = 4;
+  event->metadata.values[0] = {
+      .name = {"experimentX"},
+      .section = {"metrics"},
+      .type = BSG_METADATA_BOOL_VALUE,
+      .bool_value = false,
+  };
+  event->metadata.values[1] = {
+      .name = {"subject"},
+      .section = {"metrics"},
+      .type = BSG_METADATA_CHAR_VALUE,
+      .char_value = {"percy"},
+  };
+  event->metadata.values[2] = {
+      .name = {"weather"},
+      .section = {"app"},
+      .type = BSG_METADATA_CHAR_VALUE,
+      .char_value = {"rain"},
+  };
+  event->metadata.values[3] = {
+      .name = {"counter"},
+      .section = {"metrics"},
+      .type = BSG_METADATA_NUMBER_VALUE,
+      .double_value = 47.5,
+  };
 
   // session info
   event->handled_events = 5;
@@ -129,22 +152,75 @@ static void *create_full_event() {
   return event;
 }
 
+static bool write_feature_flag(bsg_buffered_writer *writer,
+                               bsg_feature_flag *flag) {
+  if (!writer->write_string(writer, flag->name)) {
+    return false;
+  }
+
+  if (flag->variant) {
+    if (!writer->write_byte(writer, 1)) {
+      return false;
+    }
+
+    if (!writer->write_string(writer, flag->variant)) {
+      return false;
+    }
+  } else {
+    if (!writer->write_byte(writer, 0)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+static bool bsg_write_feature_flags(bugsnag_report_v8 *event,
+                             bsg_buffered_writer *writer) {
+  const uint32_t feature_flag_count = event->feature_flag_count;
+  if (!writer->write(writer, &feature_flag_count, sizeof(feature_flag_count))) {
+    return false;
+  }
+
+  for (uint32_t index = 0; index < feature_flag_count; index++) {
+    if (!write_feature_flag(writer, &event->feature_flags[index])) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+static bool bsg_event_write_v8(bsg_environment *env) {
+  bsg_buffered_writer writer;
+  if (!bsg_buffered_writer_open(&writer, env->next_event_path)) {
+    return false;
+  }
+
+  bool result =
+      // write header - determines format version, etc
+      bsg_report_header_write(&env->report_header, writer.fd) &&
+      // add cached event info
+      writer.write(&writer, &env->next_event, sizeof(bugsnag_report_v8)) &&
+      // append feature flags after event structure
+      bsg_write_feature_flags((bugsnag_report_v8*)(&env->next_event), &writer);
+
+  writer.dispose(&writer);
+  return result;
+}
+
 static const char *write_event_v8(JNIEnv *env, jstring temp_file,
                                   void *(event_generator)()) {
-  auto event_ctx = (bsg_environment *)calloc(1, sizeof(bsg_environment));
+  auto event_ctx = (bsg_environment *) calloc(1, sizeof(bsg_environment));
   event_ctx->report_header.version = 8;
   const char *path = (*env).GetStringUTFChars(temp_file, nullptr);
   sprintf(event_ctx->next_event_path, "%s", path);
 
   // (old format) event struct -> file on disk
   void *old_event = event_generator();
-  memcpy(&event_ctx->next_event, old_event, sizeof(bugsnag_event));
+  memcpy(&event_ctx->next_event, old_event, sizeof(bugsnag_report_v8));
   free(old_event);
-  // FUTURE(df): whenever migration v9 rolls around, the v8 version of
-  // bsg_serialize_event_to_file() function should be moved into this file to
-  // preserve the migration test behavior. The good news is—if this doesn't
-  // happen—the test will probably start failing loudly.
-  bsg_serialize_event_to_file(event_ctx);
+  bsg_event_write_v8(event_ctx);
   free(event_ctx);
   return path;
 }
@@ -159,7 +235,7 @@ Java_com_bugsnag_android_ndk_migrations_EventMigrationV8Tests_migratePayloadInfo
   const char *path = write_event_v8(env, temp_file, create_payload_info_event);
 
   // file on disk -> latest event type
-  bugsnag_event *parsed_event = bsg_deserialize_event_from_file((char *)path);
+  bugsnag_event *parsed_event = bsg_deserialize_event_from_file((char *) path);
 
   // write json object
   JSON_Value *event_val = json_value_init_object();
@@ -183,7 +259,7 @@ Java_com_bugsnag_android_ndk_migrations_EventMigrationV8Tests_migrateEvent(
   const char *path = write_event_v8(env, temp_file, create_full_event);
 
   // file on disk -> latest event type
-  bugsnag_event *parsed_event = bsg_deserialize_event_from_file((char *)path);
+  bugsnag_event *parsed_event = bsg_deserialize_event_from_file((char *) path);
   char *output = bsg_serialize_event_to_json_string(parsed_event);
   for (int i = 0; i < parsed_event->feature_flag_count; i++) {
     free(parsed_event->feature_flags[i].name);

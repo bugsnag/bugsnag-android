@@ -1,6 +1,7 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
 import com.bugsnag.android.Breadcrumb;
+import com.bugsnag.android.BreadcrumbType;
 import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.Configuration;
 import com.bugsnag.android.Event;
@@ -12,10 +13,13 @@ import com.bugsnag.android.mazerunner.BugsnagConfigKt;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -85,8 +89,16 @@ public class CXXSignalSmokeScenario extends Scenario {
                 + "it at you instead of them.");
         Bugsnag.addMetadata("fruit", "apple", "gala");
 
+        Bugsnag.addMetadata("opaque", createComplexMetadata());
+        Bugsnag.addMetadata("removeMe", createComplexMetadata());
+
         Bugsnag.startSession();
-        Bugsnag.leaveBreadcrumb("CXXSignalSmokeScenario");
+        Bugsnag.leaveBreadcrumb(
+                "CXXSignalSmokeScenario",
+                createComplexMetadata(),
+                BreadcrumbType.MANUAL
+        );
+
         Handler main = new Handler(Looper.getMainLooper());
         main.postDelayed(new Runnable() {
             @Override
@@ -94,5 +106,20 @@ public class CXXSignalSmokeScenario extends Scenario {
                 crash(2726);
             }
         }, 500);
+    }
+
+    private Map<String, Object> createComplexMetadata() {
+        Map<String, Object> metadata = new HashMap<>();
+        metadata.put("number", 12345);
+        metadata.put("boolean", true);
+        metadata.put("list", Arrays.asList(1, 2, 3, 4, "five"));
+
+        Map<String, Object> nestedMap = new HashMap<>();
+        nestedMap.put("nestedMapKey", "this is valuable data");
+        metadata.put("nestedList", Arrays.asList(nestedMap, "one", "two", "three"));
+
+        metadata.put("nestedMap", nestedMap);
+
+        return metadata;
     }
 }
