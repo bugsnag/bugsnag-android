@@ -6,8 +6,8 @@ end
 
 Before do
   $scenario_mode = ''
-  $sessions_endpoint = 'http://maze-local:9339/sessions'
-  $notify_endpoint = 'http://maze-local:9339/notify'
+  $sessions_endpoint = 'http://local:9339/sessions'
+  $notify_endpoint = 'http://local:9339/notify'
 end
 
 Before('@skip') do |scenario|
