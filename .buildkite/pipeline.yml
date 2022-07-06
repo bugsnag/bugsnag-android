@@ -186,7 +186,9 @@ steps:
         download:
           - "build/fixture-r21.apk"
           - "build/fixture-r21/*"
-        upload: "maze_output/failed/**/*"
+        upload:
+          - "maze_output/failed/**/*"
+          - "maze_output/sb_tunnel.log"
       docker-compose#v3.7.0:
         pull: android-maze-runner
         run: android-maze-runner
@@ -197,8 +199,8 @@ steps:
           - "--os=android"
           - "--os-version=10"
           - "--device=ANDROID_10_0"
-    concurrency: 24
-    concurrency_group: 'browserstack-app'
+    concurrency: 2
+    concurrency_group: 'bitbar-android-10'
     concurrency_method: eager
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
