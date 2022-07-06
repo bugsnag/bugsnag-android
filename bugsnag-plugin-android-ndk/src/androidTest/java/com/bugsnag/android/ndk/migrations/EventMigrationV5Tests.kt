@@ -119,19 +119,19 @@ class EventMigrationV5Tests : EventMigrationTest() {
                     "type" to "c",
                     "stacktrace" to listOf(
                         mapOf(
-                            "frameAddress" to 454379L,
+                            "frameAddress" to "0x6eeeb",
                             "lineNumber" to 0L,
-                            "loadAddress" to 2367523L,
-                            "symbolAddress" to 776L,
+                            "loadAddress" to "0x242023",
+                            "symbolAddress" to "0x308",
                             "method" to "makinBacon",
                             "file" to "lib64/libfoo.so",
                             "isPC" to true
                         ),
                         mapOf(
-                            "frameAddress" to 342334L,
+                            "frameAddress" to "0x5393e",
                             "lineNumber" to 0L,
-                            "loadAddress" to 0L,
-                            "symbolAddress" to 0L,
+                            "loadAddress" to "0x0",
+                            "symbolAddress" to "0x0",
                             "method" to "0x5393e" // test address to method hex
                         )
                     )

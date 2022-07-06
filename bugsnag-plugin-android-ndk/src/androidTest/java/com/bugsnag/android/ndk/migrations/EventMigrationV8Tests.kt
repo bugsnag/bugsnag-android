@@ -135,19 +135,19 @@ class EventMigrationV8Tests : EventMigrationTest() {
                     "type" to "c",
                     "stacktrace" to listOf(
                         mapOf(
-                            "frameAddress" to 4294967294L,
+                            "frameAddress" to "0xfffffffe",
                             "lineNumber" to 4194967233L,
-                            "loadAddress" to 2367523L,
-                            "symbolAddress" to 776L,
+                            "loadAddress" to "0x242023",
+                            "symbolAddress" to "0x308",
                             "method" to "makinBacon",
                             "file" to "lib64/libfoo.so",
                             "isPC" to true
                         ),
                         mapOf(
-                            "frameAddress" to 3011142731L,
+                            "frameAddress" to "0xb37a644b",
                             "lineNumber" to 0L,
-                            "loadAddress" to 0L,
-                            "symbolAddress" to 0L,
+                            "loadAddress" to "0x0",
+                            "symbolAddress" to "0x0",
                             "method" to "0xb37a644b" // test address to method hex
                         )
                     )

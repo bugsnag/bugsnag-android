@@ -184,31 +184,7 @@ internal class BugsnagEventMapper(
     }
 
     internal fun convertStacktrace(trace: List<Map<String, Any?>>): Stacktrace {
-        return Stacktrace(trace.map { convertStackframe(it) })
-    }
-
-    internal fun convertStackframe(frame: Map<String, Any?>): Stackframe {
-        val copy: MutableMap<String, Any?> = frame.toMutableMap()
-        val lineNumber = frame["lineNumber"] as? Number
-        copy["lineNumber"] = lineNumber?.toLong()
-
-        (frame["frameAddress"] as? String)?.let {
-            copy["frameAddress"] = java.lang.Long.decode(it)
-        }
-
-        (frame["symbolAddress"] as? String)?.let {
-            copy["symbolAddress"] = java.lang.Long.decode(it)
-        }
-
-        (frame["loadAddress"] as? String)?.let {
-            copy["loadAddress"] = java.lang.Long.decode(it)
-        }
-
-        (frame["isPC"] as? Boolean)?.let {
-            copy["isPC"] = it
-        }
-
-        return Stackframe(copy)
+        return Stacktrace(trace.map { Stackframe(it) })
     }
 
     internal fun deserializeSeverityReason(
