@@ -11,131 +11,110 @@ extern "C" {
 /*
  * Implementation notes:
  *
- * We store Feature Flags in a dynamically allocated array, sorted by the
- * feature flag 'name' string, allowing us to binary-search the array for
- * duplicates.
+ * We store Feature Flags in a dynamically allocated array, maintaining the
+ * insertion order. Modifying an existing entry causes a reinsertion
+ * (moving it to the end of the array).
+ *
+ * Searches are linear, but the impact should be negligible up to tens of
+ * thousands of entries.
  *
  * This provides a reasonable compromise between speed and size, since the array
  * is no larger than the number of feature flags (not counting malloc padding)
- * and is unlikely to be modified often. It also keeps testing simple, as the
- * keys will always be in a known order.
+ * and is unlikely to be modified often.
  *
  * We resize the array using 'realloc' and 'memmove' to try and keep the
  * overhead reasonable.
  */
 
-static int feature_flag_index(const bugsnag_event *env, const char *name) {
-  // simple binary search for a feature-flag by name
-  int low = 0;
-  int high = env->feature_flag_count - 1;
+static const int INDEX_NOT_FOUND = -1;
 
-  while (low <= high) {
-    int mid = (low + high) >> 1;
-    int cmp = strcmp(env->feature_flags[mid].name, name);
-
-    if (cmp < 0) {
-      low = mid + 1;
-    } else if (cmp > 0) {
-      high = mid - 1;
-    } else {
-      return mid; // found it
+static int index_of_flag_named(const bugsnag_event *const event,
+                               const char *const name) {
+  for (int i = 0; i < event->feature_flag_count; i++) {
+    if (strcmp(event->feature_flags[i].name, name) == 0) {
+      return i;
     }
   }
-
-  return -(low + 1);
+  return INDEX_NOT_FOUND;
 }
 
-static void *grow_array_for_index(void *array, const size_t element_count,
-                                  const size_t element_size,
-                                  const unsigned int index) {
-  void *new_array = realloc(array, (element_count + 1) * element_size);
-
-  if (!new_array) {
-    return NULL;
-  }
-
-  // if we need to: shift the "end" of the array by 1 element so 'index' has a
-  // space
-  memmove(new_array + ((index + 1) * element_size),
-          new_array + (index * element_size),
-          (element_count - index) * element_size);
-
-  return new_array;
-}
-
-void bsg_set_feature_flag(bugsnag_event *event, const char *name,
-                          const char *variant) {
-  int expected_index = feature_flag_index(event, name);
-
-  if (expected_index >= 0) {
-    // feature flag already exists, so we overwrite the variant
-    bsg_feature_flag *flag = &event->feature_flags[expected_index];
-
-    // make sure we release the existing variant, if one exists
-    free(flag->variant);
-
-    if (variant) {
-      // make a copy of the variant, so that the JVM can have it's memory back
-      flag->variant = strdup(variant);
-    } else {
-      flag->variant = NULL;
-    }
-  } else {
-    int new_flag_index = -expected_index - 1;
-
-    // this is a new feature flag, we need to insert it - which means we also
-    // need a new array
-    bsg_feature_flag *new_flags =
-        grow_array_for_index(event->feature_flags, event->feature_flag_count,
-                             sizeof(bsg_feature_flag), new_flag_index);
-
-    // we cannot grow the feature flag array, so we return
-    if (!new_flags) {
-      return;
-    }
-
-    new_flags[new_flag_index].name = strdup(name);
-
-    if (variant) {
-      new_flags[new_flag_index].variant = strdup(variant);
-    } else {
-      new_flags[new_flag_index].variant = NULL;
-    }
-
-    event->feature_flags = new_flags;
-    event->feature_flag_count = event->feature_flag_count + 1;
+static void remove_at_index_and_compact(bugsnag_event *const event,
+                                        const int index) {
+  if (event->feature_flag_count > 1 && index < event->feature_flag_count - 1) {
+    memmove(&event->feature_flags[index], &event->feature_flags[index + 1],
+            (event->feature_flag_count - index) *
+                sizeof(event->feature_flags[0]));
   }
 }
 
-void bsg_clear_feature_flag(bugsnag_event *event, const char *name) {
-  int flag_index = feature_flag_index(event, name);
-
-  if (flag_index < 0) {
-    // no such feature flag - early exit
-    return;
-  }
-
-  bsg_feature_flag *flag = &event->feature_flags[flag_index];
-
-  // release the memory held for name and possibly the variant
+static void free_flag_contents(bsg_feature_flag *const flag) {
   free(flag->name);
   free(flag->variant);
-
-  // pack the array elements down to fill in the "gap"
-  // we don't resize the array down by one, that gets handled when elements are
-  // added
-  memmove(
-      &event->feature_flags[flag_index], &event->feature_flags[flag_index + 1],
-      (event->feature_flag_count - flag_index - 1) * sizeof(bsg_feature_flag));
-
-  // mark the array as having one-less flag
-  event->feature_flag_count = event->feature_flag_count - 1;
 }
 
-void bsg_free_feature_flags(bugsnag_event *event) {
+static void set_flag_variant(bsg_feature_flag *const flag,
+                             const char *const variant) {
+  if (variant == NULL) {
+    flag->variant = NULL;
+  } else {
+    flag->variant = strdup(variant);
+  }
+}
+
+static void insert_new(bugsnag_event *const event, const char *const name,
+                       const char *const variant) {
+  bsg_feature_flag *new_flags =
+      realloc(event->feature_flags, (event->feature_flag_count + 1) *
+                                        sizeof(event->feature_flags[0]));
+  if (!new_flags) {
+    return;
+  }
+  event->feature_flags = new_flags;
+
+  bsg_feature_flag *flag = &new_flags[event->feature_flag_count];
+  flag->name = strdup(name);
+  if (flag->name == NULL) {
+    return;
+  }
+  set_flag_variant(flag, variant);
+
+  event->feature_flag_count++;
+}
+
+static void modify_at_index_and_reinsert(bugsnag_event *const event,
+                                         const int index,
+                                         const char *const variant) {
+  bsg_feature_flag flag = event->feature_flags[index];
+  free(flag.variant);
+  set_flag_variant(&flag, variant);
+
+  remove_at_index_and_compact(event, index);
+  event->feature_flags[event->feature_flag_count - 1] = flag;
+}
+
+void bsg_set_feature_flag(bugsnag_event *event, const char *const name,
+                          const char *const variant) {
+  const int index = index_of_flag_named(event, name);
+  if (index == INDEX_NOT_FOUND) {
+    insert_new(event, name, variant);
+  } else {
+    modify_at_index_and_reinsert(event, index, variant);
+  }
+}
+
+void bsg_clear_feature_flag(bugsnag_event *const event,
+                            const char *const name) {
+  const int index = index_of_flag_named(event, name);
+  if (index != INDEX_NOT_FOUND) {
+    free_flag_contents(&event->feature_flags[index]);
+    remove_at_index_and_compact(event, index);
+    event->feature_flag_count--;
+  }
+}
+
+void bsg_free_feature_flags(bugsnag_event *const event) {
   for (int index = 0; index < event->feature_flag_count; index++) {
-    free(event->feature_flags[index].name);
-    free(event->feature_flags[index].variant);
+    free_flag_contents(&event->feature_flags[index]);
   }
 
   free(event->feature_flags);
