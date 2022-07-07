@@ -4,10 +4,10 @@
     "variant": "a"
   },
   {
-    "featureFlag": "view_mode",
-    "variant": "modern"
+    "featureFlag": "demo_mode"
   },
   {
-    "featureFlag": "demo_mode"
+    "featureFlag": "view_mode",
+    "variant": "modern"
   }
 ]
