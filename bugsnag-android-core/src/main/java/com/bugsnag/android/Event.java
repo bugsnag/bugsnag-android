@@ -92,6 +92,15 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware, F
     }
 
     /**
+     * A list of feature flags active at the time of the event.
+     * See {@link FeatureFlag} for details of the data available.
+     */
+    @NonNull
+    public List<FeatureFlag> getFeatureFlags() {
+        return impl.getFeatureFlags().toList();
+    }
+
+    /**
      * Information set by the notifier about your app can be found in this field. These values
      * can be accessed and amended if necessary.
      */

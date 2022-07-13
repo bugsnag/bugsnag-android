@@ -12,6 +12,8 @@ Feature: OnSend Callbacks can alter Events before upload
     And the error payload field "apiKey" equals "99999999999999909999999999999999"
     And the exception "message" equals "Unhandled Error"
     And the event "metaData.mazerunner.onSendCallback" equals "true"
+    And the event "featureFlags.0.featureFlag" equals "fromStartup"
+    And the event "featureFlags.0.variant" equals "b"
 
   Scenario: Handled exception altered by OnSendCallback
     When I run "HandledOnSendCallbackScenario"
