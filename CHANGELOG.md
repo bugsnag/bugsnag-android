@@ -4,7 +4,7 @@
 
 ### Enhancements
 
-* Feature flags can now be accessed in the onSend callbacks.
+* Feature flags can now be accessed in the onSend and onError callbacks.
   [#1720](https://github.com/bugsnag/bugsnag-android/pull/1720)
 
 ## 5.24.0 (2022-06-30)
