@@ -4,15 +4,14 @@
 
 ### Enhancements
 
-* Feature flags can now be accessed in the onSend and onError callbacks.
+* Feature flags can now be accessed in the onSend and onError callbacks
   [#1720](https://github.com/bugsnag/bugsnag-android/pull/1720)
+* Feature flags are now kept in and trimmed in order of insertion or modification rather than in alphabetical order
+  [#1718](https://github.com/bugsnag/bugsnag-android/pull/1718)
 
 ## 5.24.0 (2022-06-30)
 
 ### Enhancements
-
-* Feature flags are now kept in and trimmed in order of insertion or modification rather than in alphabetical order.
-  [#1718](https://github.com/bugsnag/bugsnag-android/pull/1718)
 
 * Complex metadata (nested structures such as maps & lists) added in Java/Kotlin is now fully preserved in NDK errors
   [#1715](https://github.com/bugsnag/bugsnag-android/pull/1715)
