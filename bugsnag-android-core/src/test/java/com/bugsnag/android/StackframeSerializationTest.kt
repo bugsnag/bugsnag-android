@@ -43,14 +43,12 @@ internal class StackframeSerializationTest {
     @Parameter
     lateinit var testCase: Pair<Stackframe, String>
 
-    private val eventMapper = BugsnagEventMapper(NoopLogger)
-
     @Test
     fun testJsonSerialisation() = verifyJsonMatches(testCase.first, testCase.second)
 
     @Test
     fun testJsonDeserialisation() =
         verifyJsonParser(testCase.first, testCase.second) {
-            eventMapper.convertStackframe(it)
+            Stackframe(it)
         }
 }

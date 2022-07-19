@@ -17,14 +17,14 @@ internal class FeatureFlagsSerializationTest {
         )
 
         private fun basic() = FeatureFlags().apply {
-            addFeatureFlag("demo_mode")
             addFeatureFlag("sample_group", "a")
+            addFeatureFlag("demo_mode")
             addFeatureFlag("view_mode", "modern")
         }
 
         private fun overrideVariants() = FeatureFlags().apply {
-            addFeatureFlag("demo_mode")
             addFeatureFlag("sample_group", "a")
+            addFeatureFlag("demo_mode")
             addFeatureFlag("sample_group", "b")
         }
 

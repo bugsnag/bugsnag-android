@@ -11,6 +11,7 @@
 #include <utils/serializer/event_reader.h>
 #include <utils/serializer/buffered_writer.h>
 
+
 #define SERIALIZE_TEST_FILE "/data/data/com.bugsnag.android.ndk.test/cache/foo.crash"
 
 bugsnag_breadcrumb *init_breadcrumb(const char *name, const char *message, bugsnag_breadcrumb_type type);
@@ -956,9 +957,9 @@ TEST test_exception_to_json(void) {
   ASSERT(stacktrace != NULL);
   ASSERT_EQ(2, json_array_get_count(stacktrace));
   ASSERT(strcmp("makinBacon", json_object_get_string(json_array_get_object(stacktrace, 0), "method")) == 0);
-  ASSERT_EQ(454379, json_object_get_number(json_array_get_object(stacktrace, 0), "frameAddress"));
+  ASSERT_STR_EQ("0x6eeeb", json_object_get_string(json_array_get_object(stacktrace, 0), "frameAddress"));
   ASSERT(strcmp("0x5393e", json_object_get_string(json_array_get_object(stacktrace, 1), "method")) == 0);
-  ASSERT_EQ(342334, json_object_get_number(json_array_get_object(stacktrace, 1), "frameAddress"));
+  ASSERT_STR_EQ("0x5393e", json_object_get_string(json_array_get_object(stacktrace, 1), "frameAddress"));
   json_value_free(root_value);
   PASS();
 }

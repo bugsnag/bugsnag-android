@@ -1,5 +1,14 @@
 # Changelog
 
+## 5.25.0 (2022-07-19)
+
+### Enhancements
+
+* Feature flags can now be accessed in the onSend and onError callbacks
+  [#1720](https://github.com/bugsnag/bugsnag-android/pull/1720)
+* Feature flags are now kept in and trimmed in order of insertion or modification rather than in alphabetical order
+  [#1718](https://github.com/bugsnag/bugsnag-android/pull/1718)
+
 ## 5.24.0 (2022-06-30)
 
 ### Enhancements
