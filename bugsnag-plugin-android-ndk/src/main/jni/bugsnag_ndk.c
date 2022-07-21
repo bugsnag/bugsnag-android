@@ -41,6 +41,7 @@ static void release_env_write_lock(void) {
 
 void bugsnag_add_on_error(bsg_on_error on_error) {
   if (bsg_global_env != NULL) {
+    bsg_notify_api_called(&bsg_global_env->next_event, BSG_API_ADD_ON_ERROR);
     bsg_global_env->on_error = on_error;
   }
 }
@@ -311,7 +312,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_addHandledEvent(JNIEnv *env,
   request_env_write_lock();
   bugsnag_event *event = &bsg_global_env->next_event;
 
-  if (bugsnag_event_has_session(event)) {
+  if (bsg_event_has_session(event)) {
     event->handled_events++;
   }
   release_env_write_lock();
@@ -326,7 +327,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_addUnhandledEvent(JNIEnv *env,
   request_env_write_lock();
   bugsnag_event *event = &bsg_global_env->next_event;
 
-  if (bugsnag_event_has_session(event)) {
+  if (bsg_event_has_session(event)) {
     event->unhandled_events++;
   }
   release_env_write_lock();
@@ -342,8 +343,8 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_startedSession(
   char *started_at = (char *)bsg_safe_get_string_utf_chars(env, start_date_);
   if (session_id != NULL && started_at != NULL) {
     request_env_write_lock();
-    bugsnag_event_start_session(&bsg_global_env->next_event, session_id,
-                                started_at, handled_count, unhandled_count);
+    bsg_event_start_session(&bsg_global_env->next_event, session_id, started_at,
+                            handled_count, unhandled_count);
     release_env_write_lock();
   }
   bsg_safe_release_string_utf_chars(env, session_id_, session_id);
@@ -400,7 +401,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_addBreadcrumb(
 
     bsg_populate_crumb_metadata(env, crumb, metadata);
     request_env_write_lock();
-    bugsnag_event_add_breadcrumb(&bsg_global_env->next_event, crumb);
+    bsg_event_add_breadcrumb(&bsg_global_env->next_event, crumb);
     release_env_write_lock();
 
     free(crumb);
@@ -816,6 +817,38 @@ JNIEXPORT void JNICALL
 Java_com_bugsnag_android_ndk_NativeBridge_refreshSymbolTable(JNIEnv *env,
                                                              jobject thiz) {
   bugsnag_refresh_symbol_table();
+}
+
+JNIEXPORT jobject JNICALL
+Java_com_bugsnag_android_ndk_NativeBridge_getCalledNativeFunctions(
+    JNIEnv *env, jobject thiz) {
+  if (bsg_global_env == NULL) {
+    return NULL;
+  }
+
+  jobject keylist =
+      bsg_safe_new_object(env, bsg_jni_cache->ArrayList,
+                          bsg_jni_cache->ArrayList_constructor_default);
+  if (keylist == NULL) {
+    return NULL;
+  }
+
+  const int api_call_block_count =
+      sizeof(bsg_global_env->next_event.called_apis) /
+      sizeof(*bsg_global_env->next_event.called_apis);
+
+  for (int i = 0; i < api_call_block_count; i++) {
+    jobject block = bsg_safe_new_object(
+        env, bsg_jni_cache->Long, bsg_jni_cache->Long_constructor,
+        (jlong)bsg_global_env->next_event.called_apis[i]);
+    if (block == NULL) {
+      return NULL;
+    }
+    bsg_safe_call_void_method(env, bsg_jni_cache->ArrayList,
+                              bsg_jni_cache->ArrayList_add, block);
+  }
+
+  return keylist;
 }
 
 #ifdef __cplusplus

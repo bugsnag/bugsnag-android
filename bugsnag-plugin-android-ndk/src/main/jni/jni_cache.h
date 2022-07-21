@@ -20,14 +20,15 @@ typedef struct {
   jclass Boolean;
   jmethodID Boolean_booleanValue;
 
+  jclass Long;
+  jmethodID Long_constructor;
+  jmethodID Long_valueOf;
+
   jclass Float;
   jmethodID Float_floatValue;
 
   jclass number;
   jmethodID number_double_value;
-
-  jclass Long;
-  jmethodID Long_valueOf;
 
   jclass String;
 
@@ -42,8 +43,10 @@ typedef struct {
   jmethodID HashMap_keySet;
 
   jclass ArrayList;
-  jmethodID ArrayList_constructor;
+  jmethodID ArrayList_constructor_default;
+  jmethodID ArrayList_constructor_collection;
   jmethodID ArrayList_get;
+  jmethodID ArrayList_add;
 
   jclass NativeInterface;
   jmethodID NativeInterface_getApp;

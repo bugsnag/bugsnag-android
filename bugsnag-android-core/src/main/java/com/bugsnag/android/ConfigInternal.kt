@@ -53,7 +53,7 @@ internal class ConfigInternal(
     var discardClasses: Set<String> = emptySet()
     var enabledReleaseStages: Set<String>? = null
     var enabledBreadcrumbTypes: Set<BreadcrumbType>? = null
-    var telemetry: Set<Telemetry> = EnumSet.of(Telemetry.INTERNAL_ERRORS)
+    var telemetry: Set<Telemetry> = EnumSet.of(Telemetry.INTERNAL_ERRORS, Telemetry.USAGE)
     var projectPackages: Set<String> = emptySet()
     var persistenceDirectory: File? = null
 
@@ -98,6 +98,69 @@ internal class ConfigInternal(
         plugins.add(plugin)
     }
 
+    private fun toCommaSeparated(coll: Collection<Any>?): String {
+        if (coll == null) {
+            return ""
+        }
+        val sb = StringBuilder()
+        coll.map { it.toString() }.sorted().forEachIndexed { index, s ->
+            if (index > 0) {
+                sb.append(',')
+            }
+            sb.append(s)
+        }
+        return sb.toString()
+    }
+
+    fun createUsageTelemetry(): Map<String, Any?> {
+        return mapOf(
+            "callbacks" to listOfNotNull(
+                if (callbackState.onBreadcrumbTasks.count() > 0)
+                    "onBreadcrumb" to callbackState.onBreadcrumbTasks.count() else null,
+                if (callbackState.onErrorTasks.count() > 0)
+                    "onError" to callbackState.onErrorTasks.count() else null,
+                if (callbackState.onSendTasks.count() > 0)
+                    "onSendError" to callbackState.onSendTasks.count() else null,
+                if (callbackState.onSessionTasks.count() > 0)
+                    "onSession" to callbackState.onSessionTasks.count() else null,
+            ).toMap(),
+            "config" to listOfNotNull(
+                if (plugins.count() > 0) "pluginCount" to plugins.count() else null,
+                if (autoDetectErrors != defaultConfig.autoDetectErrors)
+                    "autoDetectErrors" to autoDetectErrors else null,
+                if (autoTrackSessions != defaultConfig.autoTrackSessions)
+                    "autoTrackSessions" to autoTrackSessions else null,
+                if (discardClasses.count() > 0)
+                    "discardClassesCount" to discardClasses.count() else null,
+                if (enabledBreadcrumbTypes != defaultConfig.enabledBreadcrumbTypes)
+                    "enabledBreadcrumbTypes" to toCommaSeparated(enabledBreadcrumbTypes) else null,
+                if (enabledErrorTypes != defaultConfig.enabledErrorTypes)
+                    "enabledErrorTypes" to toCommaSeparated(
+                        listOfNotNull(
+                            if (enabledErrorTypes.anrs) "anrs" else null,
+                            if (enabledErrorTypes.ndkCrashes) "ndkCrashes" else null,
+                            if (enabledErrorTypes.unhandledExceptions) "unhandledExceptions" else null,
+                            if (enabledErrorTypes.unhandledRejections) "unhandledRejections" else null,
+                        )
+                    ) else null,
+                if (launchDurationMillis != 0L) "launchDurationMillis" to launchDurationMillis else null,
+                if (logger != NoopLogger) "logger" to true else null,
+                if (maxBreadcrumbs != defaultConfig.maxBreadcrumbs)
+                    "maxBreadcrumbs" to maxBreadcrumbs else null,
+                if (maxPersistedEvents != defaultConfig.maxPersistedEvents)
+                    "maxPersistedEvents" to maxPersistedEvents else null,
+                if (maxPersistedSessions != defaultConfig.maxPersistedSessions)
+                    "maxPersistedSessions" to maxPersistedSessions else null,
+                if (maxReportedThreads != defaultConfig.maxReportedThreads)
+                    "maxReportedThreads" to maxReportedThreads else null,
+                if (persistenceDirectory != null)
+                    "persistenceDirectorySet" to true else null,
+                if (sendThreads != defaultConfig.sendThreads)
+                    "sendThreads" to sendThreads else null,
+            ).toMap()
+        )
+    }
+
     companion object {
         private const val DEFAULT_MAX_BREADCRUMBS = 50
         private const val DEFAULT_MAX_PERSISTED_SESSIONS = 128
@@ -112,5 +175,7 @@ internal class ConfigInternal(
         protected fun load(context: Context, apiKey: String?): Configuration {
             return ManifestConfigLoader().load(context, apiKey)
         }
+
+        private val defaultConfig = ConfigInternal("")
     }
 }

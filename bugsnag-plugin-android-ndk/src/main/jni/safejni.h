@@ -2,6 +2,7 @@
 #define BUGSNAG_SAFEJNI_H
 
 #include <jni.h>
+#include <stdbool.h>
 
 /**
  * This provides safe JNI calls by wrapping functions and calling
@@ -48,6 +49,14 @@ jmethodID bsg_safe_get_static_method_id(JNIEnv *env, jclass clz,
  * @return the java string or NULL if it could not be created
  */
 jstring bsg_safe_new_string_utf(JNIEnv *env, const char *str);
+
+/**
+ * A safe wrapper for the JNI's CallVoidMethod. This method checks if an
+ * exception is pending and if so clears it so that execution can continue.
+ * If an exception was thrown this method returns false.
+ */
+bool bsg_safe_call_void_method(JNIEnv *env, jobject _value, jmethodID method,
+                               ...);
 
 /**
  * A safe wrapper for the JNI's CallBooleanMethod. This method checks if an

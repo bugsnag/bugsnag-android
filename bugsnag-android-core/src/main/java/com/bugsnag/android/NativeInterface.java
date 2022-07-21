@@ -1,6 +1,8 @@
 package com.bugsnag.android;
 
 import com.bugsnag.android.internal.ImmutableConfig;
+import com.bugsnag.android.repackaged.dslplatform.json.DslJson;
+import com.bugsnag.android.repackaged.dslplatform.json.JsonReader;
 
 import android.annotation.SuppressLint;
 
@@ -8,6 +10,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Writer;
+import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,6 +24,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -26,6 +36,157 @@ public class NativeInterface {
 
     // The default charset on Android is always UTF-8
     private static Charset UTF8Charset = Charset.defaultCharset();
+
+    private enum NativeApiCall {
+        BSG_API_ADD_ON_ERROR,
+        BSG_API_APP_GET_BINARY_ARCH,
+        BSG_API_APP_GET_BUILD_UUID,
+        BSG_API_APP_GET_DURATION,
+        BSG_API_APP_GET_DURATION_IN_FOREGROUND,
+        BSG_API_APP_GET_ID,
+        BSG_API_APP_GET_IN_FOREGROUND,
+        BSG_API_APP_GET_IS_LAUNCHING,
+        BSG_API_APP_GET_RELEASE_STAGE,
+        BSG_API_APP_GET_TYPE,
+        BSG_API_APP_GET_VERSION,
+        BSG_API_APP_GET_VERSION_CODE,
+        BSG_API_APP_SET_BINARY_ARCH,
+        BSG_API_APP_SET_BUILD_UUID,
+        BSG_API_APP_SET_DURATION,
+        BSG_API_APP_SET_DURATION_IN_FOREGROUND,
+        BSG_API_APP_SET_ID,
+        BSG_API_APP_SET_IN_FOREGROUND,
+        BSG_API_APP_SET_IS_LAUNCHING,
+        BSG_API_APP_SET_RELEASE_STAGE,
+        BSG_API_APP_SET_TYPE,
+        BSG_API_APP_SET_VERSION,
+        BSG_API_APP_SET_VERSION_CODE,
+        BSG_API_DEVICE_GET_ID,
+        BSG_API_DEVICE_GET_JAILBROKEN,
+        BSG_API_DEVICE_GET_LOCALE,
+        BSG_API_DEVICE_GET_MANUFACTURER,
+        BSG_API_DEVICE_GET_MODEL,
+        BSG_API_DEVICE_GET_ORIENTATION,
+        BSG_API_DEVICE_GET_OS_NAME,
+        BSG_API_DEVICE_GET_OS_VERSION,
+        BSG_API_DEVICE_GET_TIME,
+        BSG_API_DEVICE_GET_TOTAL_MEMORY,
+        BSG_API_DEVICE_SET_ID,
+        BSG_API_DEVICE_SET_JAILBROKEN,
+        BSG_API_DEVICE_SET_LOCALE,
+        BSG_API_DEVICE_SET_MANUFACTURER,
+        BSG_API_DEVICE_SET_MODEL,
+        BSG_API_DEVICE_SET_ORIENTATION,
+        BSG_API_DEVICE_SET_OS_NAME,
+        BSG_API_DEVICE_SET_OS_VERSION,
+        BSG_API_DEVICE_SET_TIME,
+        BSG_API_DEVICE_SET_TOTAL_MEMORY,
+        BSG_API_ERROR_GET_ERROR_CLASS,
+        BSG_API_ERROR_GET_ERROR_MESSAGE,
+        BSG_API_ERROR_GET_ERROR_TYPE,
+        BSG_API_ERROR_SET_ERROR_CLASS,
+        BSG_API_ERROR_SET_ERROR_MESSAGE,
+        BSG_API_ERROR_SET_ERROR_TYPE,
+        BSG_API_EVENT_ADD_METADATA_BOOL,
+        BSG_API_EVENT_ADD_METADATA_DOUBLE,
+        BSG_API_EVENT_ADD_METADATA_STRING,
+        BSG_API_EVENT_CLEAR_METADATA,
+        BSG_API_EVENT_CLEAR_METADATA_SECTION,
+        BSG_API_EVENT_GET_API_KEY,
+        BSG_API_EVENT_GET_CONTEXT,
+        BSG_API_EVENT_GET_GROUPING_HASH,
+        BSG_API_EVENT_GET_METADATA_BOOL,
+        BSG_API_EVENT_GET_METADATA_DOUBLE,
+        BSG_API_EVENT_GET_METADATA_STRING,
+        BSG_API_EVENT_GET_SEVERITY,
+        BSG_API_EVENT_GET_STACKFRAME,
+        BSG_API_EVENT_GET_STACKTRACE_SIZE,
+        BSG_API_EVENT_GET_USER,
+        BSG_API_EVENT_HAS_METADATA,
+        BSG_API_EVENT_IS_UNHANDLED,
+        BSG_API_EVENT_SET_API_KEY,
+        BSG_API_EVENT_SET_CONTEXT,
+        BSG_API_EVENT_SET_GROUPING_HASH,
+        BSG_API_EVENT_SET_SEVERITY,
+        BSG_API_EVENT_SET_UNHANDLED,
+        BSG_API_EVENT_SET_USER,
+        END_MARKER
+    }
+
+    private static final String[] nativeApiCallNames = {
+        "ndkOnError", // Specially named according to ROAD-1449 PD
+        "app_get_binary_arch",
+        "app_get_build_uuid",
+        "app_get_duration",
+        "app_get_duration_in_foreground",
+        "app_get_id",
+        "app_get_in_foreground",
+        "app_get_is_launching",
+        "app_get_release_stage",
+        "app_get_type",
+        "app_get_version",
+        "app_get_version_code",
+        "app_set_binary_arch",
+        "app_set_build_uuid",
+        "app_set_duration",
+        "app_set_duration_in_foreground",
+        "app_set_id",
+        "app_set_in_foreground",
+        "app_set_is_launching",
+        "app_set_release_stage",
+        "app_set_type",
+        "app_set_version",
+        "app_set_version_code",
+        "device_get_id",
+        "device_get_jailbroken",
+        "device_get_locale",
+        "device_get_manufacturer",
+        "device_get_model",
+        "device_get_orientation",
+        "device_get_os_name",
+        "device_get_os_version",
+        "device_get_time",
+        "device_get_total_memory",
+        "device_set_id",
+        "device_set_jailbroken",
+        "device_set_locale",
+        "device_set_manufacturer",
+        "device_set_model",
+        "device_set_orientation",
+        "device_set_os_name",
+        "device_set_os_version",
+        "device_set_time",
+        "device_set_total_memory",
+        "error_get_error_class",
+        "error_get_error_message",
+        "error_get_error_type",
+        "error_set_error_class",
+        "error_set_error_message",
+        "error_set_error_type",
+        "event_add_metadata_bool",
+        "event_add_metadata_double",
+        "event_add_metadata_string",
+        "event_clear_metadata",
+        "event_clear_metadata_section",
+        "event_get_api_key",
+        "event_get_context",
+        "event_get_grouping_hash",
+        "event_get_metadata_bool",
+        "event_get_metadata_double",
+        "event_get_metadata_string",
+        "event_get_severity",
+        "event_get_stackframe",
+        "event_get_stacktrace_size",
+        "event_get_user",
+        "event_has_metadata",
+        "event_is_unhandled",
+        "event_set_api_key",
+        "event_set_context",
+        "event_set_grouping_hash",
+        "event_set_severity",
+        "event_set_unhandled",
+        "event_set_user",
+    };
 
     /**
      * Static reference used if not using Bugsnag.start()
@@ -79,9 +240,125 @@ public class NativeInterface {
      */
     @NonNull
     public static String getNativeReportPath() {
+        return getNativeReportPathAsFile().getAbsolutePath();
+    }
+
+    private static @NonNull File getNativeReportPathAsFile() {
         ImmutableConfig config = getClient().getConfig();
         File persistenceDirectory = config.getPersistenceDirectory().getValue();
-        return new File(persistenceDirectory, "bugsnag-native").getAbsolutePath();
+        return new File(persistenceDirectory, "bugsnag-native");
+    }
+
+    @SuppressWarnings("all")
+    private static void createNativeReportPath() {
+        getNativeReportPathAsFile().mkdirs();
+    }
+
+    private static @NonNull File getConfigUsageFilePath() {
+        return new File(getNativeReportPathAsFile(), "last_run.config.json");
+    }
+
+    private static @NonNull Map<String, Object> emptyConfigUsage() {
+        return new ConfigInternal("").createUsageTelemetry();
+    }
+
+    /**
+     * Load configuration usage from disk
+     * @return The loaded usage data
+     */
+    @SuppressWarnings("unchecked")
+    public static @NonNull Map<String, Object> loadConfigUsage() {
+        Map<String, Object> usage = emptyConfigUsage();
+        File usageFile = getConfigUsageFilePath();
+        try {
+            InputStream is = new FileInputStream(usageFile);
+            DslJson<Map<String, Object>> dslJson = new DslJson<>();
+            Map<String, Object> result = (Map<String, Object>)dslJson.deserialize(Map.class, is);
+            if (result != null) {
+                usage = result;
+            }
+        } catch (FileNotFoundException exc) {
+            // Ignore
+        } catch (IOException exc) {
+            // Ignore
+        }
+
+        addNativeApiCallUsage((Map<String, Object>)usage.get("callbacks"));
+        return usage;
+    }
+
+    private static boolean isNdkCallIndexSet(@NonNull List<Long> bitfield, int index) {
+        int element = index / 64;
+        int bit = index & 63;
+        return (bitfield.get(element) & (1L << bit)) != 0;
+    }
+
+    private static void addNativeApiCallUsage(@NonNull Map<String, Object> calls) {
+        List<Long> nativeApiUsage = getCalledNativeFunctions();
+
+        // Index 0 is a special case because it sets an integer instead of a
+        // boolean to match the expectations of ROAD-1449 PD
+        if (isNdkCallIndexSet(nativeApiUsage, 0)) {
+            calls.put(nativeApiCallNames[0], 1L);
+        }
+        for (int i = 1; i < NativeApiCall.END_MARKER.ordinal(); i++) {
+            if (isNdkCallIndexSet(nativeApiUsage, i)) {
+                calls.put(nativeApiCallNames[i], true);
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static @NonNull List<Long> getCalledNativeFunctions() {
+        try {
+            Class<Plugin> clz = (Class<Plugin>)Class.forName("com.bugsnag.android.NdkPlugin");
+            Plugin ndkPlugin = client.getPlugin(clz);
+            if (ndkPlugin != null) {
+                Method method = ndkPlugin.getClass().getMethod("getCalledNativeFunctions");
+                return (List<Long>)method.invoke(ndkPlugin);
+            }
+        } catch (Exception exc) {
+            // Ignored
+        }
+        return new LinkedList<Long>() {{
+                add(0L);
+                add(0L);
+            }
+        };
+    }
+
+    /**
+     * Persist config usage to disk
+     * @param config The configuration whose usage to persist
+     */
+    public static void persistConfigUsage(@NonNull ConfigInternal config) {
+        Writer writer = null;
+        JsonStream stream = null;
+        try {
+            createNativeReportPath();
+            Map<String, Object> usageTelemetry = config.createUsageTelemetry();
+            File usageFile = getConfigUsageFilePath();
+            writer = new FileWriter(usageFile);
+            stream = new JsonStream(writer);
+            stream.value(usageTelemetry);
+        } catch (IOException exc) {
+            // Ignore
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException exc) {
+                    // Ignore
+                }
+            }
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException exc) {
+                    // Ignore
+                }
+            }
+        }
     }
 
     /**

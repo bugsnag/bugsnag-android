@@ -22,7 +22,7 @@ bugsnag_breadcrumb *init_breadcrumb(const char *name, const char *message, bugsn
 TEST test_add_breadcrumb(void) {
   bugsnag_event *event = calloc(1, sizeof(bugsnag_event));
   bugsnag_breadcrumb *crumb = init_breadcrumb("stroll", "this is a drill.", BSG_CRUMB_USER);
-  bugsnag_event_add_breadcrumb(event, crumb);
+  bsg_event_add_breadcrumb(event, crumb);
   ASSERT_EQ(1, event->crumb_count);
   ASSERT_EQ(0, event->crumb_first_index);
   ASSERT(strcmp("stroll", event->breadcrumbs[0].name) == 0);
@@ -30,7 +30,7 @@ TEST test_add_breadcrumb(void) {
   ASSERT(strcmp("this is a drill.", event->breadcrumbs[0].metadata.values[0].char_value) == 0);
   free(crumb);
   bugsnag_breadcrumb *crumb2 = init_breadcrumb("walking...", "this is not a drill.", BSG_CRUMB_USER);
-  bugsnag_event_add_breadcrumb(event, crumb2);
+  bsg_event_add_breadcrumb(event, crumb2);
   ASSERT_EQ(2, event->crumb_count);
   ASSERT_EQ(0, event->crumb_first_index);
   ASSERT(strcmp("stroll", event->breadcrumbs[0].name) == 0);
@@ -54,7 +54,7 @@ TEST test_add_breadcrumbs_over_max(void) {
     memset(format, 0, sizeof(char) * breadcrumb_count);
     sprintf(format, "crumb: %d", i);
     bugsnag_breadcrumb *crumb = init_breadcrumb(format, "go go go", BSG_CRUMB_USER);
-    bugsnag_event_add_breadcrumb(event, crumb);
+    bsg_event_add_breadcrumb(event, crumb);
     free(crumb);
     free(format);
   }

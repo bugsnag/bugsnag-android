@@ -128,6 +128,9 @@ bool bsg_jni_cache_init(JNIEnv *env) {
   CACHE_CLASS(Boolean, "java/lang/Boolean");
   CACHE_METHOD(Boolean, Boolean_booleanValue, "booleanValue", "()Z");
 
+  CACHE_CLASS(Long, "java/lang/Long");
+  CACHE_METHOD(Long, Long_constructor, "<init>", "(J)V");
+
   CACHE_CLASS(Float, "java/lang/Float");
   CACHE_METHOD(Float, Float_floatValue, "floatValue", "()F");
 
@@ -140,9 +143,11 @@ bool bsg_jni_cache_init(JNIEnv *env) {
   CACHE_CLASS(String, "java/lang/String");
 
   CACHE_CLASS(ArrayList, "java/util/ArrayList");
-  CACHE_METHOD(ArrayList, ArrayList_constructor, "<init>",
+  CACHE_METHOD(ArrayList, ArrayList_constructor_default, "<init>", "()V");
+  CACHE_METHOD(ArrayList, ArrayList_constructor_collection, "<init>",
                "(Ljava/util/Collection;)V");
   CACHE_METHOD(ArrayList, ArrayList_get, "get", "(I)Ljava/lang/Object;");
+  CACHE_METHOD(ArrayList, ArrayList_add, "add", "(Ljava/lang/Object;)Z");
 
   CACHE_CLASS(Map, "java/util/Map");
   CACHE_METHOD(Map, Map_keySet, "keySet", "()Ljava/util/Set;");

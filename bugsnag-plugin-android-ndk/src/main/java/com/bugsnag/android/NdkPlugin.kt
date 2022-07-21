@@ -73,6 +73,14 @@ internal class NdkPlugin : Plugin {
         }
         return 0
     }
+
+    fun getCalledNativeFunctions(): List<Long> {
+        val bridge = nativeBridge
+        if (bridge != null) {
+            return bridge.getCalledNativeFunctions()
+        }
+        return listOf()
+    }
 }
 
 internal val Client.ndkPlugin: NdkPlugin?

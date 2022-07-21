@@ -440,9 +440,9 @@ static void populate_metadata_section(JNIEnv *env, bugsnag_metadata *dst,
     goto exit;
   }
 
-  section_keylist =
-      bsg_safe_new_object(env, bsg_jni_cache->ArrayList,
-                          bsg_jni_cache->ArrayList_constructor, section_keyset);
+  section_keylist = bsg_safe_new_object(
+      env, bsg_jni_cache->ArrayList,
+      bsg_jni_cache->ArrayList_constructor_collection, section_keyset);
   if (section_keylist == NULL) {
     goto exit;
   }
@@ -495,7 +495,8 @@ void bsg_populate_metadata(JNIEnv *env, bugsnag_metadata *dst,
     goto exit;
   }
   keylist = bsg_safe_new_object(env, bsg_jni_cache->ArrayList,
-                                bsg_jni_cache->ArrayList_constructor, keyset);
+                                bsg_jni_cache->ArrayList_constructor_collection,
+                                keyset);
   if (keylist == NULL) {
     goto exit;
   }
@@ -536,7 +537,8 @@ void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,
     goto exit;
   }
   keylist = bsg_safe_new_object(env, bsg_jni_cache->ArrayList,
-                                bsg_jni_cache->ArrayList_constructor, keyset);
+                                bsg_jni_cache->ArrayList_constructor_collection,
+                                keyset);
   if (keylist == NULL) {
     goto exit;
   }
