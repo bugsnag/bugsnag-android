@@ -50,7 +50,7 @@ class DeliveryDelegate extends BaseObservable {
             }
         }
 
-        if (event.getImpl().getOriginalUnhandled()) {
+        if (event.isUnhandled() || event.getImpl().getOriginalUnhandled()) {
             // should only send unhandled errors if they don't terminate the process (i.e. ANRs)
             String severityReasonType = event.getImpl().getSeverityReasonType();
             boolean promiseRejection = REASON_PROMISE_REJECTION.equals(severityReasonType);
