@@ -91,8 +91,7 @@ steps:
         pull: android-maze-runner
         run: android-maze-runner
         command:
-          - "features/smoke_tests/anr"
-          - "features/smoke_tests/non-anr"
+          - "features/smoke_tests"
           - "--app=/app/build/fixture-r16.apk"
           - "--farm=bs"
           - "--device=ANDROID_4_4"
