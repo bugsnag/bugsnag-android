@@ -3,6 +3,7 @@
   <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>ComplexMethod:NativeBridge.kt$NativeBridge$override fun onStateChange(event: StateEvent)</ID>
+    <ID>LongMethod:EventMigrationV10Tests.kt$EventMigrationV10Tests$@Test fun testMigrateEventToLatest()</ID>
     <ID>LongMethod:EventMigrationV4Tests.kt$EventMigrationV4Tests$@Test fun testMigrateEventToLatest()</ID>
     <ID>LongMethod:EventMigrationV5Tests.kt$EventMigrationV5Tests$@Test fun testMigrateEventToLatest()</ID>
     <ID>LongMethod:EventMigrationV6Tests.kt$EventMigrationV6Tests$@Test fun testMigrateEventToLatest()</ID>
