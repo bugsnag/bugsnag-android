@@ -24,3 +24,20 @@ void bsg_strncpy(char *dst, const char *src, size_t dst_size) {
     strncat(dst, src, dst_size - 1);
   }
 }
+
+void bsg_hex_encode(char *dst, const void *src, size_t byte_count,
+                    size_t max_chars) __asyncsafe {
+  static const char *hex = "0123456789abcdef";
+
+  const size_t byte_copy_count =
+      (max_chars > byte_count * 2) ? byte_count : (max_chars - 1) / 2;
+
+  char *cursor = (char *)src;
+  char *outCursor = dst;
+  for (size_t i = 0; i < byte_copy_count; ++i) {
+    *outCursor++ = hex[(*cursor >> 4) & 0xF];
+    *outCursor++ = hex[(*cursor++) & 0xF];
+  }
+
+  *outCursor = 0;
+}

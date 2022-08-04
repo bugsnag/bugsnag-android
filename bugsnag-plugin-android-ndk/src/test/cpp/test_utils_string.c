@@ -56,6 +56,41 @@ TEST length_null_string(void) {
     PASS();
 }
 
+TEST hex_encode(void) {
+    char out_buffer[16];
+    char *bytes = "bytes";
+    bsg_hex_encode(out_buffer, bytes, strlen(bytes), sizeof(out_buffer));
+    ASSERT_STR_EQ("6279746573", out_buffer);
+    PASS();
+}
+
+TEST hex_encode_zero(void) {
+    char out_buffer[256];
+    out_buffer[0] = '1';
+
+    bsg_hex_encode(out_buffer, NULL, 0, sizeof(out_buffer));
+    ASSERT_EQ(0, *out_buffer);
+    PASS();
+}
+
+TEST hex_encode_overflow(void) {
+    char out_buffer[7];
+    char *bytes = "bytes";
+    bsg_hex_encode(out_buffer, bytes, strlen(bytes), sizeof(out_buffer));
+    // the output must still be zero-terminated
+    ASSERT_STR_EQ("627974", out_buffer);
+    PASS();
+}
+
+TEST hex_encode_exact_length(void) {
+    char out_buffer[10];
+    char *bytes = "bytes";
+    bsg_hex_encode(out_buffer, bytes, strlen(bytes), sizeof(out_buffer));
+    // we expect the entire last byte of *input* to be dropped
+    ASSERT_STR_EQ("62797465", out_buffer);
+    PASS();
+}
+
 SUITE(suite_string_utils) {
     RUN_TEST(test_copy_empty_string);
     RUN_TEST(test_copy_null_string);
@@ -63,5 +98,9 @@ SUITE(suite_string_utils) {
     RUN_TEST(length_empty_string);
     RUN_TEST(length_literal_string);
     RUN_TEST(length_null_string);
+    RUN_TEST(hex_encode);
+    RUN_TEST(hex_encode_zero);
+    RUN_TEST(hex_encode_overflow);
+    RUN_TEST(hex_encode_exact_length);
 }
 

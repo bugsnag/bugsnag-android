@@ -1,5 +1,6 @@
 #include "stack_unwinder.h"
 
+#include "logger.h"
 #include "string.h"
 
 #include <dlfcn.h>
@@ -96,6 +97,16 @@ ssize_t bsg_unwind_crash_stack(bugsnag_stackframe stack[BUGSNAG_FRAMES_MAX],
     dst_frame.load_address = frame.map_start;
     dst_frame.symbol_address = frame.pc - frame.function_offset;
 
+    auto mapInfo = crash_time_unwinder->GetMaps()->Find(frame.pc);
+
+    if (mapInfo != nullptr && !mapInfo->GetBuildID().empty()) {
+      // MapInfo.GetPrintableBuildID is *not* async-safe so we need our own safe
+      // hex encoder to copy BuildID into code_identifier.
+      std::string_view build_id = mapInfo->GetBuildID();
+      bsg_hex_encode(dst_frame.code_identifier, build_id.data(),
+                     build_id.length(), sizeof(dst_frame.code_identifier));
+    }
+
     // if the filename or method name cannot be found (or are considered
     // invalid) - fallback to dladdr to find them
     if (bsg_check_invalid_libname(frame.map_name) ||
@@ -131,6 +142,10 @@ bsg_unwind_concurrent_stack(bugsnag_stackframe stack[BUGSNAG_FRAMES_MAX],
       dst_frame.line_number = frame.rel_pc;
       dst_frame.load_address = frame.map_info->start();
       dst_frame.symbol_address = frame.pc - frame.map_info->offset();
+
+      bsg_strncpy(dst_frame.code_identifier,
+                  frame.map_info->GetPrintableBuildID().c_str(),
+                  sizeof(dst_frame.code_identifier));
 
       // if the filename is empty or invalid, use the `Elf` info to get the
       // correct Soname if the function_name is empty as well, fallback to

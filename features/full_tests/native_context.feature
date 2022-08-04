@@ -18,3 +18,5 @@ Feature: Native Context API
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "message" equals "CXXAutoContextScenario"
     And the event "context" equals "SecondActivity"
+
+    And the "codeIdentifier" of stack frame 0 is not null
