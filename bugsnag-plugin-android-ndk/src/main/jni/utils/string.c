@@ -39,5 +39,5 @@ void bsg_hex_encode(char *dst, const void *src, size_t byte_count,
     *outCursor++ = hex[(*cursor++) & 0xF];
   }
 
-  *outCursor = 0;
+  *outCursor = '\0';
 }

@@ -104,11 +104,31 @@ static void populate_notify_stacktrace(JNIEnv *env,
       goto exit;
     }
 
-    // create StackTraceElement object
-    jobject jframe =
-        bsg_safe_new_object(env, bsg_jni_cache->StackTraceElement,
-                            bsg_jni_cache->StackTraceElement_constructor, class,
-                            method, filename, frame.line_number);
+    jobject line_number = bsg_safe_call_static_object_method(
+        env, bsg_jni_cache->Long, bsg_jni_cache->Long_valueOf,
+        frame.line_number);
+    jobject frame_address = bsg_safe_call_static_object_method(
+        env, bsg_jni_cache->Long, bsg_jni_cache->Long_valueOf,
+        frame.frame_address);
+    jobject symbol_address = bsg_safe_call_static_object_method(
+        env, bsg_jni_cache->Long, bsg_jni_cache->Long_valueOf,
+        frame.symbol_address);
+    jobject load_address = bsg_safe_call_static_object_method(
+        env, bsg_jni_cache->Long, bsg_jni_cache->Long_valueOf,
+        frame.load_address);
+
+    jstring code_identifier =
+        bsg_safe_new_string_utf(env, frame.code_identifier);
+    if (code_identifier == NULL) {
+      goto exit;
+    }
+
+    // create NativeStackframe object
+    jobject jframe = bsg_safe_new_object(
+        env, bsg_jni_cache->NativeStackframe,
+        bsg_jni_cache->NativeStackframe_constructor, method, filename,
+        line_number, frame_address, symbol_address, load_address, NULL,
+        bsg_jni_cache->ErrorType_C, code_identifier);
     if (jframe == NULL) {
       goto exit;
     }
@@ -140,7 +160,7 @@ void bugsnag_notify_env(JNIEnv *env, const char *name, const char *message,
 
   // create StackTraceElement array
   jtrace = bsg_safe_new_object_array(env, frame_count,
-                                     bsg_jni_cache->StackTraceElement);
+                                     bsg_jni_cache->NativeStackframe);
   if (jtrace == NULL) {
     goto exit;
   }
