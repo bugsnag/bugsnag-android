@@ -6,13 +6,16 @@ import com.bugsnag.android.BugsnagTestUtils.generateDeviceWithState
 import com.bugsnag.android.internal.ImmutableConfig
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.ArgumentMatchers.eq
+import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
@@ -48,22 +51,30 @@ internal class NativeInterfaceApiTest {
     @Mock
     lateinit var eventStore: EventStore
 
+    @Captor
+    lateinit var eventCapture: ArgumentCaptor<Event>
+
     @Before
     fun setUp() {
         NativeInterface.setClient(client)
         `when`(client.config).thenReturn(immutableConfig)
         `when`(client.getSessionTracker()).thenReturn(sessionTracker)
         `when`(client.getEventStore()).thenReturn(eventStore)
+        `when`(immutableConfig.apiKey).thenReturn("test-api-key")
         `when`(immutableConfig.endpoints).thenReturn(
             EndpointConfiguration(
                 "http://notify.bugsnag.com",
                 "http://sessions.bugsnag.com"
             )
         )
+        `when`(immutableConfig.redactedKeys).thenReturn(emptySet())
+        `when`(immutableConfig.sendThreads).thenReturn(ThreadSendPolicy.NEVER)
+        `when`(immutableConfig.logger).thenReturn(NoopLogger)
 
         `when`(client.getAppDataCollector()).thenReturn(appDataCollector)
         `when`(client.getDeviceDataCollector()).thenReturn(deviceDataCollector)
         `when`(client.getUser()).thenReturn(User("123", "tod@example.com", "Tod"))
+        `when`(client.getMetadataState()).thenReturn(MetadataState())
     }
 
     @Test
@@ -89,14 +100,24 @@ internal class NativeInterfaceApiTest {
     @Test
     fun getAppData() {
         `when`(appDataCollector.generateAppWithState()).thenReturn(generateAppWithState())
-        `when`(appDataCollector.getAppDataMetadata()).thenReturn(mutableMapOf(Pair("metadata", true)))
-        val expected = mapOf(Pair("metadata", true), Pair("type", "android"), Pair("versionCode", 0))
+        `when`(appDataCollector.getAppDataMetadata()).thenReturn(
+            mutableMapOf(
+                Pair(
+                    "metadata",
+                    true
+                )
+            )
+        )
+        val expected =
+            mapOf(Pair("metadata", true), Pair("type", "android"), Pair("versionCode", 0))
         assertEquals(expected, NativeInterface.getApp().filter { it.value != null })
     }
 
     @Test
     fun getDeviceData() {
-        `when`(deviceDataCollector.generateDeviceWithState(anyLong())).thenReturn(generateDeviceWithState())
+        `when`(deviceDataCollector.generateDeviceWithState(anyLong())).thenReturn(
+            generateDeviceWithState()
+        )
         `when`(deviceDataCollector.getDeviceMetadata()).thenReturn(mapOf(Pair("metadata", true)))
         assertTrue(NativeInterface.getDevice()["metadata"] as Boolean)
     }
@@ -220,9 +241,48 @@ internal class NativeInterfaceApiTest {
     }
 
     @Test
-    fun notifyCall() {
-        NativeInterface.notify("SIGPIPE", "SIGSEGV 11", Severity.ERROR, arrayOf())
+    fun notifyJVMStackTraceCall() {
+        NativeInterface.notify(
+            "SIGPIPE",
+            "SIGSEGV 11",
+            Severity.ERROR,
+            arrayOf<StackTraceElement>()
+        )
         verify(client, times(1)).notify(any(), any())
+    }
+
+    @Test
+    fun notifyNativeTraceCall() {
+        val nativeStackframe = NativeStackframe(
+            "someMethod",
+            "libtest.so",
+            null,
+            98765,
+            null,
+            null,
+            false,
+            ErrorType.C,
+            "no identifying characteristics"
+        )
+
+        NativeInterface.notify("SIGPIPE", "SIGSEGV 11", Severity.ERROR, arrayOf(nativeStackframe))
+        verify(client, times(1)).populateAndNotifyAndroidEvent(eventCapture.capture(), any())
+
+        val notifiedEvent = eventCapture.value
+        assertNotNull(notifiedEvent)
+        assertEquals(1, notifiedEvent.errors.size)
+
+        val error = notifiedEvent.errors.single()
+        assertEquals("SIGPIPE", error.errorClass)
+        assertEquals("SIGSEGV 11", error.errorMessage)
+
+        assertEquals(1, error.stacktrace.size)
+        val stackframe = error.stacktrace.single()
+        assertEquals(nativeStackframe.method, stackframe.method)
+        assertEquals(nativeStackframe.file, stackframe.file)
+        assertEquals(nativeStackframe.frameAddress, stackframe.frameAddress)
+        assertEquals(nativeStackframe.type, stackframe.type)
+        assertEquals(nativeStackframe.codeIdentifier, stackframe.codeIdentifier)
     }
 
     @Test

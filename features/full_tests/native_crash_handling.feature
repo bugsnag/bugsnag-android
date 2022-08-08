@@ -19,6 +19,7 @@ Feature: Native crash reporting
     And the error payload field "events.0.metaData.app.memoryLimit" is greater than 0
     And the first significant stack frames match:
       | get_the_null_value() | CXXDereferenceNullScenario.cpp | 7 |
+    And the "codeIdentifier" of stack frame 0 is not null
 
   # This scenario will not pass on API levels < 18, as stack corruption
   # is handled without calling atexit handlers, etc.
@@ -40,6 +41,7 @@ Feature: Native crash reporting
     And the event "unhandled" is true
     And the first significant stack frames match:
       | crash_stack_overflow | CXXStackoverflowScenario.cpp |
+    And the "codeIdentifier" of stack frame 0 is not null
 
   Scenario: Program trap()
     When I run "CXXTrapScenario" and relaunch the crashed app
@@ -57,6 +59,7 @@ Feature: Native crash reporting
     And the event "unhandled" is true
     And the first significant stack frames match:
       | trap_it() | CXXTrapScenario.cpp | 12 |
+    And the "codeIdentifier" of stack frame 0 is not null
 
   Scenario: Write to read-only memory
     When I run "CXXWriteReadOnlyMemoryScenario" and relaunch the crashed app
@@ -70,6 +73,7 @@ Feature: Native crash reporting
     And the first significant stack frames match:
       | crash_write_read_only_mem(int)                                                     | CXXWriteReadOnlyMemoryScenario.cpp | 12 |
       | Java_com_bugsnag_android_mazerunner_scenarios_CXXWriteReadOnlyMemoryScenario_crash | CXXWriteReadOnlyMemoryScenario.cpp | 22 |
+    And the "codeIdentifier" of stack frame 0 is not null
 
   Scenario: Improper object type cast
     When I run "CXXImproperTypecastScenario" and relaunch the crashed app
@@ -83,6 +87,7 @@ Feature: Native crash reporting
     And the first significant stack frames match:
       | crash_improper_cast(void*)                                                      | CXXImproperTypecastScenario.cpp | 12 |
       | Java_com_bugsnag_android_mazerunner_scenarios_CXXImproperTypecastScenario_crash | CXXImproperTypecastScenario.cpp | 20 |
+    And the "codeIdentifier" of stack frame 0 is not null
 
   Scenario: Program abort()
     When I run "CXXAbortScenario" and relaunch the crashed app
@@ -101,6 +106,7 @@ Feature: Native crash reporting
     And the first significant stack frames match:
       | evictor::exit_with_style()                                           | CXXAbortScenario.cpp | 5  |
       | Java_com_bugsnag_android_mazerunner_scenarios_CXXAbortScenario_crash | CXXAbortScenario.cpp | 13 |
+    And the "codeIdentifier" of stack frame 0 is not null
 
   Scenario: Undefined JNI method
     When I run "UnsatisfiedLinkErrorScenario" and relaunch the crashed app
