@@ -25,6 +25,8 @@ Feature: Native Metadata API
     And the event "metaData.complex.list.1" equals "winter"
     And the event "metaData.complex.list.2" equals "spring"
     And the event "metaData.complex.list.3" equals "autumn"
+    And the event "metaData.complex.set.0" equals "value1"
+    And the event "metaData.complex.set.1" equals "2value"
     And the event "unhandled" is true
 
   Scenario: Remove MetaData from the NDK layer

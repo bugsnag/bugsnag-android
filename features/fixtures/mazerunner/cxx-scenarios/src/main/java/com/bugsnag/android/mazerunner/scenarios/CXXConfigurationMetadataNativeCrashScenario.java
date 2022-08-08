@@ -11,7 +11,9 @@ import androidx.annotation.Nullable;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class CXXConfigurationMetadataNativeCrashScenario extends Scenario {
 
@@ -54,6 +56,11 @@ public class CXXConfigurationMetadataNativeCrashScenario extends Scenario {
                     "spring",
                     "autumn"
             ));
+
+            Set<String> set = new LinkedHashSet<>();
+            set.add("value1");
+            set.add("2value");
+            config.addMetadata("complex", "set", set);
         }
     }
 
