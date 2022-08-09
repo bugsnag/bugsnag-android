@@ -12,9 +12,11 @@ import android.widget.EditText
 import com.bugsnag.android.mazerunner.scenarios.Scenario
 import org.json.JSONObject
 import java.io.File
-import java.lang.IllegalArgumentException
+import java.io.IOException
+import java.net.HttpURLConnection
 import java.net.URL
 import kotlin.concurrent.thread
+import kotlin.math.max
 
 class MainActivity : Activity() {
 
@@ -96,8 +98,7 @@ class MainActivity : Activity() {
                 Thread.sleep(1000)
                 try {
                     // Get the next command from Maze Runner
-                    val commandUrl: String = "http://bs-local.com:9339/command"
-                    val commandStr = URL(commandUrl).readText()
+                    val commandStr = readCommand()
                     if (commandStr == "null") {
                         log("No Maze Runner commands queued")
                         continue
@@ -145,14 +146,47 @@ class MainActivity : Activity() {
         }
     }
 
+    private fun readCommand(): String {
+        val commandUrl = "http://bs-local.com:9339/command"
+        val urlConnection = URL(commandUrl).openConnection() as HttpURLConnection
+        try {
+            return urlConnection.inputStream.use { it.reader().readText() }
+        } catch (ioe: IOException) {
+            try {
+                val errorMessage = urlConnection.errorStream.use { it.reader().readText() }
+                log(
+                    "Failed to GET $commandUrl (HTTP ${urlConnection.responseCode} " +
+                        "${urlConnection.responseMessage}):\n" +
+                        "${"-".repeat(errorMessage.width)}\n" +
+                        "$errorMessage\n" +
+                        "-".repeat(errorMessage.width)
+                )
+            } catch (e: Exception) {
+                log("Failed to retrieve error message from connection", e)
+            }
+
+            throw ioe
+        }
+    }
+
     // load the scenario first, which initialises bugsnag without running any crashy code
-    private fun startBugsnag(eventType: String, mode: String, sessionsUrl: String, notifyUrl: String) {
+    private fun startBugsnag(
+        eventType: String,
+        mode: String,
+        sessionsUrl: String,
+        notifyUrl: String
+    ) {
         scenario = loadScenario(eventType, mode, sessionsUrl, notifyUrl)
         scenario?.startBugsnag(true)
     }
 
     // execute the pre-loaded scenario, or load it then execute it if needed
-    private fun runScenario(eventType: String, mode: String, sessionsUrl: String, notifyUrl: String) {
+    private fun runScenario(
+        eventType: String,
+        mode: String,
+        sessionsUrl: String,
+        notifyUrl: String
+    ) {
         if (scenario == null) {
             scenario = loadScenario(eventType, mode, sessionsUrl, notifyUrl)
             scenario?.startBugsnag(false)
@@ -188,7 +222,12 @@ class MainActivity : Activity() {
         folder.deleteRecursively()
     }
 
-    private fun loadScenario(eventType: String, mode: String, sessionsUrl: String, notifyUrl: String): Scenario {
+    private fun loadScenario(
+        eventType: String,
+        mode: String,
+        sessionsUrl: String,
+        notifyUrl: String
+    ): Scenario {
 
         val apiKeyField = findViewById<EditText>(R.id.manualApiKey)
 
@@ -229,4 +268,7 @@ class MainActivity : Activity() {
     }
 
     private fun getStoredApiKey() = prefs.getString(apiKeyKey, "")
+
+    private val String.width get() =
+        lineSequence().fold(0) { maxWidth, line -> max(maxWidth, line.length) }
 }
