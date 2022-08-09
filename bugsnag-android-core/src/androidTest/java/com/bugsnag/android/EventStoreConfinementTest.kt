@@ -2,6 +2,7 @@ package com.bugsnag.android
 
 import androidx.test.core.app.ApplicationProvider
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import java.io.File
@@ -74,9 +75,13 @@ internal class EventStoreConfinementTest {
         assertEquals(EVENT_CONFINEMENT_ATTEMPTS, filenames.size)
         assertEquals(EVENT_CONFINEMENT_ATTEMPTS, filenames.toSet().size)
 
+        val remainingExpectedApiKeys = filenames.indices.mapTo(hashSetOf()) { "$it" }
         retainingDelivery.files.forEachIndexed { index, file ->
             val eventInfo = EventFilenameInfo.fromFile(file, client.immutableConfig)
-            assertEquals("$index", eventInfo.apiKey)
+            assertTrue(
+                "unexpected file: $file ($index), expected one of $remainingExpectedApiKeys",
+                remainingExpectedApiKeys.remove(eventInfo.apiKey)
+            )
         }
     }
 
