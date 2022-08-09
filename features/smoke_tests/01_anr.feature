@@ -5,7 +5,9 @@ Feature: ANR smoke test
   Scenario: ANR detection
     When I clear any error dialogue
     And I run "JvmAnrLoopScenario"
-    And I wait for 2 seconds
+    And I wait for 1 seconds
+    And I tap the screen 3 times
+    And I wait for 5 seconds
     And I tap the back-button 3 times
     And I wait to receive an error
 
