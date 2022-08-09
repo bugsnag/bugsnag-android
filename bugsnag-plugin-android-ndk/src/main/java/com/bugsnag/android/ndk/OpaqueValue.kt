@@ -41,7 +41,7 @@ internal class OpaqueValue(val json: String) {
             value is Boolean -> value
             value is Number -> value
             value is String && isStringNDKSupported(value) -> value
-            value is String || value is Map<*, *> || value is List<*> -> OpaqueValue(encode(value))
+            value is String || value is Map<*, *> || value is Collection<*> -> OpaqueValue(encode(value))
             else -> null
         }
     }

@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* Non-List Collections are now correctly handled as OPAQUE values for NDK metadata
+  [#1728](https://github.com/bugsnag/bugsnag-android/pull/1728)
+
 ## 5.25.0 (2022-07-19)
 
 ### Enhancements
