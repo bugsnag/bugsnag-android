@@ -91,6 +91,29 @@ JNIEnv *bsg_jni_cache_get_env() {
     bsg_jni_cache->METHOD = mtd;                                               \
   } while (0)
 
+#define CACHE_ENUM_CONSTANT(ENUM, CLASS, NAME)                                 \
+  do {                                                                         \
+    jclass cls = bsg_safe_find_class(env, CLASS);                              \
+    if (cls == NULL) {                                                         \
+      BUGSNAG_LOG("JNI Cache Init Error: JNI enum class " CLASS " is NULL");   \
+      goto failed;                                                             \
+    }                                                                          \
+    jfieldID fld =                                                             \
+        bsg_safe_get_static_field_id(env, cls, NAME, "L" CLASS ";");           \
+    if (fld == NULL) {                                                         \
+      BUGSNAG_LOG("JNI Cache Init Error: JNI enum const " CLASS "." NAME       \
+                  "  is NULL");                                                \
+      goto failed;                                                             \
+    }                                                                          \
+    jobject value = bsg_safe_get_static_object_field(env, cls, fld);           \
+    if (value == NULL) {                                                       \
+      BUGSNAG_LOG("JNI Cache Init Error: JNI enum value " CLASS "." NAME       \
+                  " is NULL");                                                 \
+      goto failed;                                                             \
+    }                                                                          \
+    bsg_jni_cache->ENUM = (*env)->NewGlobalRef(env, value);                    \
+  } while (0)
+
 bool bsg_jni_cache_init(JNIEnv *env) {
   if (bsg_jni_cache->initialized) {
     return true;
@@ -110,6 +133,9 @@ bool bsg_jni_cache_init(JNIEnv *env) {
 
   CACHE_CLASS(number, "java/lang/Number");
   CACHE_METHOD(number, number_double_value, "doubleValue", "()D");
+
+  CACHE_CLASS(Long, "java/lang/Long");
+  CACHE_STATIC_METHOD(Long, Long_valueOf, "valueOf", "(J)Ljava/lang/Long;");
 
   CACHE_CLASS(String, "java/lang/String");
 
@@ -142,9 +168,9 @@ bool bsg_jni_cache_init(JNIEnv *env) {
                       "getMetadata", "()Ljava/util/Map;");
   CACHE_STATIC_METHOD(NativeInterface, NativeInterface_getContext, "getContext",
                       "()Ljava/lang/String;");
-  CACHE_STATIC_METHOD(
-      NativeInterface, NativeInterface_notify, "notify",
-      "([B[BLcom/bugsnag/android/Severity;[Ljava/lang/StackTraceElement;)V");
+  CACHE_STATIC_METHOD(NativeInterface, NativeInterface_notify, "notify",
+                      "([B[BLcom/bugsnag/android/Severity;[Lcom/bugsnag/"
+                      "android/NativeStackframe;)V");
   CACHE_STATIC_METHOD(NativeInterface, NativeInterface_isDiscardErrorClass,
                       "isDiscardErrorClass", "(Ljava/lang/String;)Z");
   CACHE_STATIC_METHOD(NativeInterface, NativeInterface_deliverReport,
@@ -153,9 +179,12 @@ bool bsg_jni_cache_init(JNIEnv *env) {
                       "leaveBreadcrumb",
                       "([BLcom/bugsnag/android/BreadcrumbType;)V");
 
-  CACHE_CLASS(StackTraceElement, "java/lang/StackTraceElement");
-  CACHE_METHOD(StackTraceElement, StackTraceElement_constructor, "<init>",
-               "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V");
+  CACHE_CLASS(NativeStackframe, "com/bugsnag/android/NativeStackframe");
+  CACHE_METHOD(
+      NativeStackframe, NativeStackframe_constructor, "<init>",
+      "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Number;"
+      "Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Boolean;"
+      "Lcom/bugsnag/android/ErrorType;Ljava/lang/String;)V");
 
   CACHE_CLASS(Severity, "com/bugsnag/android/Severity");
 
@@ -164,6 +193,8 @@ bool bsg_jni_cache_init(JNIEnv *env) {
   CACHE_CLASS(OpaqueValue, "com/bugsnag/android/ndk/OpaqueValue");
   CACHE_METHOD(OpaqueValue, OpaqueValue_getJson, "getJson",
                "()Ljava/lang/String;");
+
+  CACHE_ENUM_CONSTANT(ErrorType_C, "com/bugsnag/android/ErrorType", "C");
 
   pthread_key_create(&jni_cleanup_key, detach_java_env);
 

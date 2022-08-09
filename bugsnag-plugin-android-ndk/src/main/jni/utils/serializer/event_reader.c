@@ -9,7 +9,7 @@
 #include <string.h>
 #include <unistd.h>
 
-const int BSG_MIGRATOR_CURRENT_VERSION = 9;
+const int BSG_MIGRATOR_CURRENT_VERSION = 10;
 
 #ifdef __cplusplus
 extern "C" {
@@ -47,13 +47,17 @@ bugsnag_report_v7 *bsg_report_v7_read(int fd);
 
 bugsnag_report_v8 *bsg_report_v8_read(int fd);
 
-bugsnag_event *bsg_report_v9_read(int fd);
+bugsnag_report_v9 *bsg_report_v9_read(int fd);
+
+bugsnag_event *bsg_report_v10_read(int fd);
 
 /**
  * the map_*() functions convert a structure of an older format into the latest.
  * This frees the parameter provided to the function once conversion is
  * complete.
  */
+
+bugsnag_event *bsg_map_v9_to_report(bugsnag_report_v9 *report_v9);
 
 bugsnag_event *bsg_map_v8_to_report(bugsnag_report_v8 *report_v8);
 
@@ -70,6 +74,8 @@ bugsnag_event *bsg_map_v3_to_report(bugsnag_report_v3 *report_v3);
 bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2);
 
 bugsnag_event *bsg_map_v1_to_report(bugsnag_report_v1 *report_v1);
+
+void migrate_error_v1(bsg_error *error, bsg_error_v1 *error_v1);
 
 void migrate_metadata_v1(bugsnag_metadata_v1 *metadata_v1,
                          bugsnag_metadata *metadata);
@@ -137,8 +143,10 @@ bugsnag_event *bsg_read_event(char *filepath) {
     return bsg_map_v7_to_report(bsg_report_v7_read(fildes));
   case 8:
     return bsg_map_v8_to_report(bsg_report_v8_read(fildes));
+  case 9:
+    return bsg_map_v9_to_report(bsg_report_v9_read(fildes));
   case BSG_MIGRATOR_CURRENT_VERSION:
-    return bsg_report_v9_read(fildes);
+    return bsg_report_v10_read(fildes);
   default:
     return NULL;
   }
@@ -244,7 +252,26 @@ bugsnag_report_v8 *bsg_report_v8_read(int fd) {
   return event;
 }
 
-bugsnag_event *bsg_report_v9_read(int fd) {
+bugsnag_report_v9 *bsg_report_v9_read(int fd) {
+  size_t event_size = sizeof(bugsnag_report_v9);
+  bugsnag_report_v9 *event = calloc(1, event_size);
+
+  ssize_t len = read(fd, event, event_size);
+  if (len != event_size) {
+    free(event);
+    return NULL;
+  }
+
+  // read the feature flags, if possible
+  bsg_read_feature_flags(fd, &event->feature_flags, &event->feature_flag_count);
+  bsg_read_opaque_metadata(fd, &event->metadata);
+  bsg_read_opaque_breadcrumb_metadata(fd, event->breadcrumbs,
+                                      event->crumb_count);
+
+  return event;
+}
+
+bugsnag_event *bsg_report_v10_read(int fd) {
   size_t event_size = sizeof(bugsnag_event);
   bugsnag_event *event = calloc(1, event_size);
 
@@ -263,6 +290,49 @@ bugsnag_event *bsg_report_v9_read(int fd) {
   return event;
 }
 
+bugsnag_event *bsg_map_v9_to_report(bugsnag_report_v9 *report_v9) {
+  if (report_v9 == NULL) {
+    return NULL;
+  }
+  bugsnag_event *event = calloc(1, sizeof(bugsnag_event));
+
+  if (event != NULL) {
+    event->notifier = report_v9->notifier;
+    memcpy(&event->metadata, &report_v9->metadata, sizeof(bugsnag_metadata));
+    memcpy(&event->app, &report_v9->app, sizeof(bsg_app_info));
+    memcpy(&event->device, &report_v9->device, sizeof(bsg_device_info));
+    event->user = report_v9->user;
+    migrate_error_v1(&event->error, &report_v9->error);
+    event->crumb_count = report_v9->crumb_count;
+    event->crumb_first_index = report_v9->crumb_first_index;
+    memcpy(&event->breadcrumbs, &report_v9->breadcrumbs,
+           sizeof(report_v9->breadcrumbs));
+    memcpy(&event->context, report_v9->context, sizeof(report_v9->context));
+    event->severity = report_v9->severity;
+    memcpy(&event->session_id, report_v9->session_id,
+           sizeof(report_v9->session_id));
+    memcpy(&event->session_start, report_v9->session_start,
+           sizeof(report_v9->session_start));
+    event->handled_events = report_v9->handled_events;
+    event->unhandled_events = report_v9->unhandled_events;
+    memcpy(&event->grouping_hash, report_v9->grouping_hash,
+           sizeof(report_v9->grouping_hash));
+    event->unhandled = report_v9->unhandled;
+    memcpy(&event->api_key, report_v9->api_key, sizeof(report_v9->api_key));
+    event->thread_count = report_v9->thread_count;
+    memcpy(&event->threads, report_v9->threads, sizeof(report_v9->threads));
+
+    // copy the feature-flags ref over, but don't free the actual data
+    // this is effectively a change of ownership from bugsnag_report_v8 ->
+    // bugsnag_event
+    event->feature_flags = report_v9->feature_flags;
+    event->feature_flag_count = report_v9->feature_flag_count;
+
+    free(report_v9);
+  }
+  return event;
+}
+
 bugsnag_event *bsg_map_v8_to_report(bugsnag_report_v8 *report_v8) {
   if (report_v8 == NULL) {
     return NULL;
@@ -275,7 +345,7 @@ bugsnag_event *bsg_map_v8_to_report(bugsnag_report_v8 *report_v8) {
     memcpy(&event->app, &report_v8->app, sizeof(bsg_app_info));
     memcpy(&event->device, &report_v8->device, sizeof(bsg_device_info));
     event->user = report_v8->user;
-    event->error = report_v8->error;
+    migrate_error_v1(&event->error, &report_v8->error);
     event->crumb_count = report_v8->crumb_count;
     event->crumb_first_index = report_v8->crumb_first_index;
     migrate_breadcrumb_v3(report_v8->breadcrumbs, event,
@@ -318,7 +388,7 @@ bugsnag_event *bsg_map_v7_to_report(bugsnag_report_v7 *report_v7) {
     migrate_app_v3(&event->app, &report_v7->app);
     migrate_device_v2(&event->device, &report_v7->device);
     event->user = report_v7->user;
-    event->error = report_v7->error;
+    migrate_error_v1(&event->error, &report_v7->error);
     event->crumb_count = report_v7->crumb_count;
     event->crumb_first_index = report_v7->crumb_first_index;
     migrate_breadcrumb_v3(report_v7->breadcrumbs, event,
@@ -355,7 +425,7 @@ bugsnag_event *bsg_map_v6_to_report(bugsnag_report_v6 *report_v6) {
     migrate_app_v3(&event->app, &report_v6->app);
     migrate_device_v2(&event->device, &report_v6->device);
     event->user = report_v6->user;
-    event->error = report_v6->error;
+    migrate_error_v1(&event->error, &report_v6->error);
     event->crumb_count = report_v6->crumb_count;
     event->crumb_first_index = report_v6->crumb_first_index;
     migrate_breadcrumb_v3(report_v6->breadcrumbs, event,
@@ -391,7 +461,7 @@ bugsnag_event *bsg_map_v5_to_report(bugsnag_report_v5 *report_v5) {
     migrate_device_v2(&event->device, &report_v5->device);
     bsg_strcpy(event->context, report_v5->context);
     event->user = report_v5->user;
-    event->error = report_v5->error;
+    migrate_error_v1(&event->error, &report_v5->error);
     event->severity = report_v5->severity;
     bsg_strncpy(event->session_id, report_v5->session_id,
                 sizeof(report_v5->session_id));
@@ -421,7 +491,7 @@ bugsnag_event *bsg_map_v4_to_report(bugsnag_report_v4 *report_v4) {
     migrate_metadata_v1(&report_v4->metadata, &event->metadata);
     migrate_device_v2(&event->device, &report_v4->device);
     event->user = report_v4->user;
-    event->error = report_v4->error;
+    migrate_error_v1(&event->error, &report_v4->error);
     event->crumb_count = report_v4->crumb_count;
     event->crumb_first_index = report_v4->crumb_first_index;
     migrate_breadcrumb_v3(report_v4->breadcrumbs, event, V2_BUGSNAG_CRUMBS_MAX);
@@ -506,7 +576,7 @@ bugsnag_event *bsg_map_v2_to_report(bugsnag_report_v2 *report_v2) {
     strcpy(event->error.errorMessage, report_v2->exception.message);
     strcpy(event->error.type, report_v2->exception.type);
     event->error.frame_count = report_v2->exception.frame_count;
-    size_t error_size = sizeof(bugsnag_stackframe) * BUGSNAG_FRAMES_MAX;
+    size_t error_size = sizeof(bugsnag_stackframe_v1) * BUGSNAG_FRAMES_MAX;
     memcpy(&event->error.stacktrace, report_v2->exception.stacktrace,
            error_size);
 
@@ -646,6 +716,22 @@ void migrate_metadata_v1(bugsnag_metadata_v1 *metadata_v1,
     bsg_strncpy(metadata->values[i].char_value,
                 metadata_v1->values[i].char_value,
                 sizeof(metadata->values[i].char_value));
+  }
+}
+
+void migrate_error_v1(bsg_error *error, bsg_error_v1 *error_v1) {
+  memcpy(error->errorClass, error_v1->errorClass, sizeof(error_v1->errorClass));
+  memcpy(error->errorMessage, error_v1->errorMessage,
+         sizeof(error_v1->errorMessage));
+  memcpy(error->type, error_v1->type, sizeof(error_v1->type));
+
+  error->frame_count = error_v1->frame_count;
+
+  for (int i = 0; i < error_v1->frame_count; i++) {
+    bugsnag_stackframe *frame = &error->stacktrace[i];
+    bugsnag_stackframe_v1 *frame_v1 = &error_v1->stacktrace[i];
+
+    memcpy(frame, frame_v1, sizeof(bugsnag_stackframe_v1));
   }
 }
 

@@ -5,8 +5,8 @@ import org.junit.Assert.assertNotEquals
 import org.junit.Assert.fail
 import org.junit.Test
 
-/** Migration v9 added opaque metadata */
-class EventMigrationV9Tests : EventMigrationTest() {
+/** Migration v10 added codeIdentifier to stack frames */
+class EventMigrationV10Tests : EventMigrationTest() {
 
     @Test
     /** check notifier and api key, since they aren't included in event JSON */

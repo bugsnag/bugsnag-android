@@ -34,6 +34,16 @@ typedef struct {
   char url[64];
 } bsg_library;
 
+typedef struct {
+  uintptr_t frame_address;
+  uintptr_t symbol_address;
+  uintptr_t load_address;
+  uintptr_t line_number;
+
+  char filename[256];
+  char method[256];
+} bugsnag_stackframe_v1;
+
 /** a Bugsnag exception */
 typedef struct {
   /** The exception name or stringified code */
@@ -51,8 +61,28 @@ typedef struct {
   /**
    * An ordered list of stack frames from the oldest to the most recent
    */
-  bugsnag_stackframe stacktrace[BUGSNAG_FRAMES_MAX];
+  bugsnag_stackframe_v1 stacktrace[BUGSNAG_FRAMES_MAX];
 } bsg_exception;
+
+/** a Bugsnag exception */
+typedef struct {
+  /** The exception name or stringified code */
+  char errorClass[64];
+  /** A description of what went wrong */
+  char errorMessage[256];
+  /** The variety of exception which needs to be processed by the pipeline */
+  char type[32];
+
+  /**
+   * The number of frames used in the stacktrace. Must be less than
+   * BUGSNAG_FRAMES_MAX.
+   */
+  ssize_t frame_count;
+  /**
+   * An ordered list of stack frames from the oldest to the most recent
+   */
+  bugsnag_stackframe_v1 stacktrace[BUGSNAG_FRAMES_MAX];
+} bsg_error_v1;
 
 typedef struct {
   char key[64];
@@ -236,7 +266,7 @@ typedef struct {
   bsg_app_info_v2 app;
   bsg_device_info_v2 device;
   bugsnag_user user;
-  bsg_error error;
+  bsg_error_v1 error;
   bugsnag_metadata_v1 metadata;
 
   int crumb_count;
@@ -261,7 +291,7 @@ typedef struct {
   bsg_app_info_v2 app;
   bsg_device_info_v2 device;
   bugsnag_user user;
-  bsg_error error;
+  bsg_error_v1 error;
   bugsnag_metadata_v1 metadata;
 
   int crumb_count;
@@ -287,7 +317,7 @@ typedef struct {
   bsg_app_info_v3 app;
   bsg_device_info_v2 device;
   bugsnag_user user;
-  bsg_error error;
+  bsg_error_v1 error;
   bugsnag_metadata_v1 metadata;
 
   int crumb_count;
@@ -313,7 +343,7 @@ typedef struct {
   bsg_app_info_v3 app;
   bsg_device_info_v2 device;
   bugsnag_user user;
-  bsg_error error;
+  bsg_error_v1 error;
   bugsnag_metadata_v1 metadata;
 
   int crumb_count;
@@ -339,7 +369,7 @@ typedef struct {
   bsg_app_info_v3 app;
   bsg_device_info_v2 device;
   bugsnag_user user;
-  bsg_error error;
+  bsg_error_v1 error;
   bugsnag_metadata_v1 metadata;
 
   int crumb_count;
@@ -368,7 +398,7 @@ typedef struct {
   bsg_app_info app;
   bsg_device_info device;
   bugsnag_user user;
-  bsg_error error;
+  bsg_error_v1 error;
   bugsnag_metadata_v1 metadata;
 
   int crumb_count;
@@ -394,6 +424,46 @@ typedef struct {
   size_t feature_flag_count;
   bsg_feature_flag *feature_flags;
 } bugsnag_report_v8;
+
+typedef struct {
+  bsg_notifier notifier;
+  bsg_app_info app;
+  bsg_device_info device;
+  bugsnag_user user;
+  bsg_error_v1 error;
+  bugsnag_metadata metadata;
+
+  int crumb_count;
+  // Breadcrumbs are a ring; the first index moves as the
+  // structure is filled and replaced.
+  int crumb_first_index;
+  bugsnag_breadcrumb breadcrumbs[BUGSNAG_CRUMBS_MAX];
+
+  char context[64];
+  bugsnag_severity severity;
+
+  char session_id[33];
+  char session_start[33];
+  int handled_events;
+  int unhandled_events;
+  char grouping_hash[64];
+  bool unhandled;
+  char api_key[64];
+
+  int thread_count;
+  bsg_thread threads[BUGSNAG_THREADS_MAX];
+
+  /**
+   * The number of feature flags currently specified.
+   */
+  size_t feature_flag_count;
+
+  /**
+   * Pointer to the current feature flags. This is dynamically allocated and
+   * serialized/deserialized separately to the rest of the struct.
+   */
+  bsg_feature_flag *feature_flags;
+} bugsnag_report_v9;
 
 #ifdef __cplusplus
 }

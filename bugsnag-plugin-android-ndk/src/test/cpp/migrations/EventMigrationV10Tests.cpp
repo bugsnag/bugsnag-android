@@ -1,12 +1,11 @@
 #include <cstring>
 
 #include <parson/parson.h>
-#include <utils/serializer/buffered_writer.h>
 
 #include "utils.hpp"
 
 static void *create_payload_info_event() {
-  auto event = (bugsnag_report_v9 *)calloc(1, sizeof(bugsnag_report_v9));
+  auto event = (bugsnag_event *)calloc(1, sizeof(bugsnag_event));
 
   strcpy(event->api_key, "5d1e5fbd39a74caa1200142706a90b20");
   strcpy(event->notifier.name, "Test Library");
@@ -20,7 +19,7 @@ static void *create_payload_info_event() {
  * Create a new event in v9 format
  */
 static void *create_full_event() {
-  auto event = (bugsnag_report_v9 *)calloc(1, sizeof(bugsnag_report_v9));
+  auto event = (bugsnag_event *)calloc(1, sizeof(bugsnag_event));
 
   strcpy(event->context,
          "00000000000m0r3.61ee9e6e099d3dd7448f740d395768da6b2df55d5.m4g1c");
@@ -103,10 +102,10 @@ static void *create_full_event() {
 
   // metadata
   strcpy(event->app.active_screen, "Menu");
-  bsg_add_metadata_value_bool(&event->metadata, "metrics", "experimentX", false);
-  bsg_add_metadata_value_str(&event->metadata, "metrics", "subject", "percy");
-  bsg_add_metadata_value_str(&event->metadata, "app", "weather", "rain");
-  bsg_add_metadata_value_double(&event->metadata, "metrics", "counter", 47.5);
+  bugsnag_event_add_metadata_bool(event, "metrics", "experimentX", false);
+  bugsnag_event_add_metadata_string(event, "metrics", "subject", "percy");
+  bugsnag_event_add_metadata_string(event, "app", "weather", "rain");
+  bugsnag_event_add_metadata_double(event, "metrics", "counter", 47.5);
 
   // session info
   event->handled_events = 5;
@@ -130,112 +129,22 @@ static void *create_full_event() {
   return event;
 }
 
-static bool write_feature_flag(bsg_buffered_writer *writer,
-                               bsg_feature_flag *flag) {
-  if (!writer->write_string(writer, flag->name)) {
-    return false;
-  }
-
-  if (flag->variant) {
-    if (!writer->write_byte(writer, 1)) {
-      return false;
-    }
-
-    if (!writer->write_string(writer, flag->variant)) {
-      return false;
-    }
-  } else {
-    if (!writer->write_byte(writer, 0)) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-static bool bsg_write_feature_flags(bugsnag_report_v9 *event,
-                                    bsg_buffered_writer *writer) {
-  const uint32_t feature_flag_count = event->feature_flag_count;
-  if (!writer->write(writer, &feature_flag_count, sizeof(feature_flag_count))) {
-    return false;
-  }
-
-  for (uint32_t index = 0; index < feature_flag_count; index++) {
-    if (!write_feature_flag(writer, &event->feature_flags[index])) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-static bool bsg_write_opaque_metadata_unit(bugsnag_metadata *metadata,
-                                           bsg_buffered_writer *writer) {
-
-  for (size_t index = 0; index < metadata->value_count; index++) {
-    uint32_t value_size = metadata->values[index].opaque_value_size;
-    if (metadata->values[index].type == BSG_METADATA_OPAQUE_VALUE &&
-        value_size > 0) {
-      if (!writer->write(writer, metadata->values[index].opaque_value,
-                         value_size)) {
-        return false;
-      }
-    }
-  }
-
-  return true;
-}
-
-bool bsg_write_opaque_metadata(bugsnag_report_v9 *event,
-                               bsg_buffered_writer *writer) {
-
-  if (!bsg_write_opaque_metadata_unit(&event->metadata, writer)) {
-    return false;
-  }
-
-  for (int breadcrumb_index = 0; breadcrumb_index < event->crumb_count;
-       breadcrumb_index++) {
-    if (!bsg_write_opaque_metadata_unit(
-        &event->breadcrumbs[breadcrumb_index].metadata, writer)) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-bool bsg_event_write_v9(bsg_environment *env) {
-  bsg_buffered_writer writer;
-  if (!bsg_buffered_writer_open(&writer, env->next_event_path)) {
-    return false;
-  }
-
-  bool result =
-      // write header - determines format version, etc
-      bsg_report_header_write(&env->report_header, writer.fd) &&
-      // add cached event info
-      writer.write(&writer, &env->next_event, sizeof(bugsnag_report_v9)) &&
-      // append feature flags after event structure
-      bsg_write_feature_flags((bugsnag_report_v9*)(&env->next_event), &writer) &&
-      // append opaque metadata after the feature flags
-      bsg_write_opaque_metadata((bugsnag_report_v9*)(&env->next_event), &writer);
-
-  writer.dispose(&writer);
-  return result;
-}
-
 static const char *write_event_v9(JNIEnv *env, jstring temp_file,
                                   void *(event_generator)()) {
   auto event_ctx = (bsg_environment *)calloc(1, sizeof(bsg_environment));
-  event_ctx->report_header.version = 9;
+  event_ctx->report_header.version = 10;
   const char *path = (*env).GetStringUTFChars(temp_file, nullptr);
   sprintf(event_ctx->next_event_path, "%s", path);
 
   // (old format) event struct -> file on disk
   void *old_event = event_generator();
-  memcpy(&event_ctx->next_event, old_event, sizeof(bugsnag_report_v9));
+  memcpy(&event_ctx->next_event, old_event, sizeof(bugsnag_event));
   free(old_event);
-  bsg_event_write_v9(event_ctx);
+  // FUTURE(df): whenever migration v11 rolls around, the v10 version of
+  // bsg_serialize_event_to_file() function should be moved into this file to
+  // preserve the migration test behavior. The good news is—if this doesn't
+  // happen—the test will probably start failing loudly.
+  bsg_serialize_event_to_file(event_ctx);
   free(event_ctx);
   return path;
 }
@@ -245,7 +154,7 @@ extern "C" {
 #endif
 
 JNIEXPORT jstring JNICALL
-Java_com_bugsnag_android_ndk_migrations_EventMigrationV9Tests_migratePayloadInfo(
+Java_com_bugsnag_android_ndk_migrations_EventMigrationV10Tests_migratePayloadInfo(
     JNIEnv *env, jobject _this, jstring temp_file) {
   const char *path = write_event_v9(env, temp_file, create_payload_info_event);
 
@@ -269,7 +178,7 @@ Java_com_bugsnag_android_ndk_migrations_EventMigrationV9Tests_migratePayloadInfo
 }
 
 JNIEXPORT void JNICALL
-Java_com_bugsnag_android_ndk_migrations_EventMigrationV9Tests_migrateEvent(
+Java_com_bugsnag_android_ndk_migrations_EventMigrationV10Tests_migrateEvent(
     JNIEnv *env, jobject _this, jstring temp_file) {
   const char *path = write_event_v9(env, temp_file, create_full_event);
 
