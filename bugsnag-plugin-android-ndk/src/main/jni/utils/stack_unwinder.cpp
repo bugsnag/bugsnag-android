@@ -73,6 +73,46 @@ void bsg_unwinder_init() {
   }
 }
 
+static void populate_code_identifier(const unwindstack::FrameData &frame,
+                                     bugsnag_stackframe &dst_frame) {
+  auto maps = crash_time_unwinder->GetMaps();
+  if (maps == nullptr) {
+    return;
+  }
+
+  auto map_info = maps->Find(frame.pc);
+  if (map_info == nullptr) {
+    return;
+  }
+
+  auto elf_fields = map_info->elf_fields();
+  if (elf_fields == nullptr) {
+    return;
+  }
+
+  auto shared_build_id = elf_fields->build_id_.load();
+  std::string_view build_id;
+  if (shared_build_id == nullptr) {
+    auto elf = elf_fields->elf_.get();
+    if (elf == nullptr) {
+      return;
+    }
+
+    build_id = elf->GetBuildID();
+  } else {
+    build_id = *shared_build_id;
+  }
+
+  if (build_id.empty()) {
+    return;
+  }
+
+  // MapInfo.GetPrintableBuildID is *not* async-safe so we need our own
+  // safe hex encoder to copy BuildID into code_identifier.
+  bsg_hex_encode(dst_frame.code_identifier, build_id.data(), build_id.length(),
+                 sizeof(dst_frame.code_identifier));
+}
+
 void bsg_unwinder_refresh(void) {
   if (crash_time_unwinder == nullptr) {
     return;
@@ -109,15 +149,7 @@ ssize_t bsg_unwind_crash_stack(bugsnag_stackframe stack[BUGSNAG_FRAMES_MAX],
     dst_frame.load_address = frame.map_start;
     dst_frame.symbol_address = frame.pc - frame.function_offset;
 
-    auto mapInfo = crash_time_unwinder->GetMaps()->Find(frame.pc);
-
-    if (mapInfo != nullptr && !mapInfo->GetBuildID().empty()) {
-      // MapInfo.GetPrintableBuildID is *not* async-safe so we need our own safe
-      // hex encoder to copy BuildID into code_identifier.
-      std::string_view build_id = mapInfo->GetBuildID();
-      bsg_hex_encode(dst_frame.code_identifier, build_id.data(),
-                     build_id.length(), sizeof(dst_frame.code_identifier));
-    }
+    populate_code_identifier(frame, dst_frame);
 
     // if the filename or method name cannot be found (or are considered
     // invalid) - fallback to dladdr to find them
