@@ -54,7 +54,7 @@ void bsg_unwinder_init() {
   }
   attempted_init = true;
 
-  auto crash_time_maps = new unwindstack::LocalMaps();
+  auto crash_time_maps = new unwindstack::LocalUpdatableMaps();
   if (crash_time_maps->Parse()) {
     std::shared_ptr<unwindstack::Memory> crash_time_memory(
         new unwindstack::MemoryLocal);
@@ -70,6 +70,18 @@ void bsg_unwinder_init() {
   if (!current_time_unwinder->Init()) {
     delete current_time_unwinder;
     current_time_unwinder = nullptr;
+  }
+}
+
+void bsg_unwinder_refresh(void) {
+  if (crash_time_unwinder == nullptr) {
+    return;
+  }
+
+  auto *crash_time_maps = dynamic_cast<unwindstack::LocalUpdatableMaps *>(
+      crash_time_unwinder->GetMaps());
+  if (crash_time_maps != nullptr) {
+    crash_time_maps->Reparse(nullptr);
   }
 }
 

@@ -5,7 +5,6 @@ add_library(cxx-scenarios SHARED
         src/main/cpp/CXXAbortScenario.cpp
         src/main/cpp/CXXCallNullFunctionPointerScenario.cpp
         src/main/cpp/CXXDereferenceNullScenario.cpp
-        src/main/cpp/CXXExternalStackElementScenario.cpp
         src/main/cpp/CXXImproperTypecastScenario.cpp
         src/main/cpp/CXXInvalidRethrow.cpp
         src/main/cpp/CXXStackoverflowScenario.cpp
