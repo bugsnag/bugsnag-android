@@ -70,33 +70,20 @@ class MainActivity : Activity() {
     }
 
     // Checks general internet and secure tunnel connectivity
-    private fun checkNetwork() {
-        log("Checking network connectivity")
-        try {
-            URL("https://www.google.com").readText()
-            log("Connection to www.google.com seems ok")
-        } catch (e: Exception) {
-            log("Connection to www.google.com FAILED", e)
-        }
-
-        try {
-            URL("http://bs-local.com:9339").readText()
-            log("Connection to Maze Runner seems ok")
-        } catch (e: Exception) {
-            log("Connection to Maze Runner FAILED", e)
-        }
-    }
+    private fun checkNetwork() = NetworkCheck().apply { start() }
 
     // Starts a thread to poll for Maze Runner actions to perform
     private fun startCommandRunner() {
         // Get the next maze runner command
         polling = true
         thread(start = true) {
-            checkNetwork()
+            val networkCheck = checkNetwork()
 
             while (polling) {
                 Thread.sleep(1000)
                 try {
+                    networkCheck.report()
+
                     // Get the next command from Maze Runner
                     val commandStr = readCommand()
                     if (commandStr == "null") {
@@ -269,6 +256,7 @@ class MainActivity : Activity() {
 
     private fun getStoredApiKey() = prefs.getString(apiKeyKey, "")
 
-    private val String.width get() =
-        lineSequence().fold(0) { maxWidth, line -> max(maxWidth, line.length) }
+    private val String.width
+        get() =
+            lineSequence().fold(0) { maxWidth, line -> max(maxWidth, line.length) }
 }
