@@ -14,6 +14,12 @@ extern "C" {
 void bsg_unwinder_init(void);
 
 /**
+ * Refresh the stack unwinder. This can be called to force a refresh of any
+ * cached data within the unwinder.
+ */
+void bsg_unwinder_refresh(void);
+
+/**
  * Unwind a stack in a terminating context. If info and a user context pointer
  * are provided, the exception stack will be walked. Otherwise, the current
  * stack will be walked. The results will populate the stack.

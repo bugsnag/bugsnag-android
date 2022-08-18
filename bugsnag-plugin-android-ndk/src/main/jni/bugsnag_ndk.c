@@ -51,6 +51,8 @@ void bugsnag_remove_on_error() {
   }
 }
 
+void bugsnag_refresh_symbol_table() { bsg_unwinder_refresh(); }
+
 bool bsg_run_on_error() {
   bsg_on_error on_error = bsg_global_env->on_error;
   if (on_error != NULL) {
@@ -495,6 +497,10 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateIsLaunching(
   bugsnag_app_set_is_launching(&bsg_global_env->next_event, new_value);
   bsg_update_next_run_info(bsg_global_env);
   release_env_write_lock();
+
+  if (!new_value) {
+    bugsnag_refresh_symbol_table();
+  }
 }
 
 JNIEXPORT void JNICALL
@@ -804,6 +810,12 @@ Java_com_bugsnag_android_ndk_NativeBridge_clearFeatureFlags(JNIEnv *env,
   request_env_write_lock();
   bsg_free_feature_flags(&bsg_global_env->next_event);
   release_env_write_lock();
+}
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_ndk_NativeBridge_refreshSymbolTable(JNIEnv *env,
+                                                             jobject thiz) {
+  bugsnag_refresh_symbol_table();
 }
 
 #ifdef __cplusplus

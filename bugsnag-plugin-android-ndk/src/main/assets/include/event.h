@@ -72,6 +72,7 @@ typedef struct {
 
   char filename[256];
   char method[256];
+  char code_identifier[65];
 } bugsnag_stackframe;
 
 #ifdef __cplusplus

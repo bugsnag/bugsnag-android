@@ -63,6 +63,14 @@ void bugsnag_add_on_error(bsg_on_error on_error);
  */
 void bugsnag_remove_on_error();
 
+/**
+ * Refresh cached symbol tables within Bugsnag. This can be used to force a
+ * refresh of the cached symbols used during stack unwinding. This is only
+ * useful if you are using `System.loadLibrary` or `dlopen` after your
+ * application startup is complete.
+ */
+void bugsnag_refresh_symbol_table();
+
 #ifdef __cplusplus
 }
 #endif

@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.4.1)
 
 add_library(cxx-scenarios-bugsnag SHARED
         src/main/cpp/cxx-scenarios-bugsnag.cpp
+        src/main/cpp/CXXExternalStackElementScenario.cpp
         src/main/cpp/CXXExceptionSmokeScenario.cpp)
 
 set_target_properties(cxx-scenarios-bugsnag PROPERTIES

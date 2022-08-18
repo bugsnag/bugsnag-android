@@ -26,6 +26,9 @@ typedef struct {
   jclass number;
   jmethodID number_double_value;
 
+  jclass Long;
+  jmethodID Long_valueOf;
+
   jclass String;
 
   jclass Map;
@@ -54,8 +57,8 @@ typedef struct {
   jmethodID NativeInterface_isDiscardErrorClass;
   jmethodID NativeInterface_deliverReport;
 
-  jclass StackTraceElement;
-  jmethodID StackTraceElement_constructor;
+  jclass NativeStackframe;
+  jmethodID NativeStackframe_constructor;
 
   jclass Severity;
 
@@ -63,6 +66,8 @@ typedef struct {
 
   jclass OpaqueValue;
   jmethodID OpaqueValue_getJson;
+
+  jobject ErrorType_C;
 } bsg_jni_cache_t;
 
 extern bsg_jni_cache_t *const bsg_jni_cache;

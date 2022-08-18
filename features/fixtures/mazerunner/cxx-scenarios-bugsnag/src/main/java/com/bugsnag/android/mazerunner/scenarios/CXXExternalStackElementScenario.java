@@ -10,7 +10,8 @@ import androidx.annotation.Nullable;
 public class CXXExternalStackElementScenario extends Scenario {
 
     static {
-        System.loadLibrary("cxx-scenarios");
+        System.loadLibrary("bugsnag-ndk");
+        System.loadLibrary("cxx-scenarios-bugsnag");
     }
 
     public native void crash(int counter);

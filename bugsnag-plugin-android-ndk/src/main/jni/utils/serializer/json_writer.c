@@ -275,6 +275,15 @@ void bsg_serialize_stackframe(bugsnag_stackframe *stackframe, bool is_pc,
     json_object_set_string(frame, "method", (*stackframe).method);
   }
 
+  if (*stackframe->code_identifier != 0) {
+    char code_identifier[sizeof(stackframe->code_identifier) + 1];
+    code_identifier[sizeof(stackframe->code_identifier)] =
+        0; // force zero terminator
+    strncpy(code_identifier, stackframe->code_identifier,
+            sizeof(stackframe->code_identifier));
+    json_object_set_string(frame, "codeIdentifier", code_identifier);
+  }
+
   json_array_append_value(stacktrace, frame_val);
 }
 
@@ -287,6 +296,7 @@ void bsg_serialize_stackframe(bugsnag_stackframe *stackframe, bool is_pc,
 #define TIMESTAMP_DECODE atol
 #define TIMESTAMP_MILLIS_FORMAT "%s.%03ldZ"
 #endif
+
 /**
  * Convert a string representing the number of milliseconds since the epoch
  * into the date format "yyyy-MM-ddTHH:mm:ss.SSSZ". Safe for all dates earlier
@@ -322,6 +332,7 @@ static bool timestamp_to_iso8601_millis(const char *source, char *dest) {
   }
   return false;
 }
+
 #undef TIMESTAMP_T
 #undef TIMESTAMP_DECODE
 #undef TIMESTAMP_MILLIS_FORMAT

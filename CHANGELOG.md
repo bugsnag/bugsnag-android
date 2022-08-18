@@ -1,5 +1,19 @@
 # Changelog
 
+## 5.26.0 (2022-08-18)
+
+### Enhancements
+
+* Introduced `bugsnag_refresh_symbol_table` and `BugsnagNDK.refreshSymbolTable` to allow NDK apps to force a refresh of cached
+  debug information used during a native crash. This new API is only applicable if you are using `dlopen` or `System.loadLibrary`
+  after startup, and experiencing native crashes with missing symbols.
+  [#1731](https://github.com/bugsnag/bugsnag-android/pull/1731)
+
+### Bug fixes
+
+* Non-List Collections are now correctly handled as OPAQUE values for NDK metadata
+  [#1728](https://github.com/bugsnag/bugsnag-android/pull/1728)
+
 ## 5.25.0 (2022-07-19)
 
 ### Enhancements

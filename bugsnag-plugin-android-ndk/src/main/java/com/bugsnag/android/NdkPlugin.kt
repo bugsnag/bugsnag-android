@@ -18,8 +18,10 @@ internal class NdkPlugin : Plugin {
 
     private external fun getBinaryArch(): String
 
-    private var nativeBridge: NativeBridge? = null
     private var client: Client? = null
+
+    var nativeBridge: NativeBridge? = null
+        private set
 
     private fun initNativeBridge(client: Client): NativeBridge {
         val nativeBridge = NativeBridge()
@@ -72,3 +74,6 @@ internal class NdkPlugin : Plugin {
         return 0
     }
 }
+
+internal val Client.ndkPlugin: NdkPlugin?
+    get() = getPlugin(NdkPlugin::class.java) as NdkPlugin?
