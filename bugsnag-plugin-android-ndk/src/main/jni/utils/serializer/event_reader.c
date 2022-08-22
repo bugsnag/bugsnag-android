@@ -9,7 +9,7 @@
 #include <string.h>
 #include <unistd.h>
 
-const int BSG_MIGRATOR_CURRENT_VERSION = 10;
+const int BSG_MIGRATOR_CURRENT_VERSION = 11;
 
 #ifdef __cplusplus
 extern "C" {
@@ -49,13 +49,17 @@ bugsnag_report_v8 *bsg_report_v8_read(int fd);
 
 bugsnag_report_v9 *bsg_report_v9_read(int fd);
 
-bugsnag_event *bsg_report_v10_read(int fd);
+bugsnag_report_v10 *bsg_report_v10_read(int fd);
+
+bugsnag_event *bsg_report_v11_read(int fd);
 
 /**
  * the map_*() functions convert a structure of an older format into the latest.
  * This frees the parameter provided to the function once conversion is
  * complete.
  */
+
+bugsnag_event *bsg_map_v10_to_report(bugsnag_report_v10 *report_v10);
 
 bugsnag_event *bsg_map_v9_to_report(bugsnag_report_v9 *report_v9);
 
@@ -145,8 +149,10 @@ bugsnag_event *bsg_read_event(char *filepath) {
     return bsg_map_v8_to_report(bsg_report_v8_read(fildes));
   case 9:
     return bsg_map_v9_to_report(bsg_report_v9_read(fildes));
+  case 10:
+    return bsg_map_v10_to_report(bsg_report_v10_read(fildes));
   case BSG_MIGRATOR_CURRENT_VERSION:
-    return bsg_report_v10_read(fildes);
+    return bsg_report_v11_read(fildes);
   default:
     return NULL;
   }
@@ -271,7 +277,26 @@ bugsnag_report_v9 *bsg_report_v9_read(int fd) {
   return event;
 }
 
-bugsnag_event *bsg_report_v10_read(int fd) {
+bugsnag_report_v10 *bsg_report_v10_read(int fd) {
+  size_t event_size = sizeof(bugsnag_report_v10);
+  bugsnag_report_v10 *event = calloc(1, event_size);
+
+  ssize_t len = read(fd, event, event_size);
+  if (len != event_size) {
+    free(event);
+    return NULL;
+  }
+
+  // read the feature flags, if possible
+  bsg_read_feature_flags(fd, &event->feature_flags, &event->feature_flag_count);
+  bsg_read_opaque_metadata(fd, &event->metadata);
+  bsg_read_opaque_breadcrumb_metadata(fd, event->breadcrumbs,
+                                      event->crumb_count);
+
+  return event;
+}
+
+bugsnag_event *bsg_report_v11_read(int fd) {
   size_t event_size = sizeof(bugsnag_event);
   bugsnag_event *event = calloc(1, event_size);
 
@@ -287,6 +312,49 @@ bugsnag_event *bsg_report_v10_read(int fd) {
   bsg_read_opaque_breadcrumb_metadata(fd, event->breadcrumbs,
                                       event->crumb_count);
 
+  return event;
+}
+
+bugsnag_event *bsg_map_v10_to_report(bugsnag_report_v10 *report_v10) {
+  if (report_v10 == NULL) {
+    return NULL;
+  }
+  bugsnag_event *event = calloc(1, sizeof(bugsnag_event));
+
+  if (event != NULL) {
+    event->notifier = report_v10->notifier;
+    memcpy(&event->metadata, &report_v10->metadata, sizeof(bugsnag_metadata));
+    memcpy(&event->app, &report_v10->app, sizeof(bsg_app_info));
+    memcpy(&event->device, &report_v10->device, sizeof(bsg_device_info));
+    event->user = report_v10->user;
+    memcpy(&event->error, &report_v10->error, sizeof(bsg_error));
+    event->crumb_count = report_v10->crumb_count;
+    event->crumb_first_index = report_v10->crumb_first_index;
+    memcpy(&event->breadcrumbs, &report_v10->breadcrumbs,
+           sizeof(report_v10->breadcrumbs));
+    memcpy(&event->context, report_v10->context, sizeof(report_v10->context));
+    event->severity = report_v10->severity;
+    memcpy(&event->session_id, report_v10->session_id,
+           sizeof(report_v10->session_id));
+    memcpy(&event->session_start, report_v10->session_start,
+           sizeof(report_v10->session_start));
+    event->handled_events = report_v10->handled_events;
+    event->unhandled_events = report_v10->unhandled_events;
+    memcpy(&event->grouping_hash, report_v10->grouping_hash,
+           sizeof(report_v10->grouping_hash));
+    event->unhandled = report_v10->unhandled;
+    memcpy(&event->api_key, report_v10->api_key, sizeof(report_v10->api_key));
+    event->thread_count = report_v10->thread_count;
+    memcpy(&event->threads, report_v10->threads, sizeof(report_v10->threads));
+
+    // copy the feature-flags ref over, but don't free the actual data
+    // this is effectively a change of ownership from bugsnag_report_v8 ->
+    // bugsnag_event
+    event->feature_flags = report_v10->feature_flags;
+    event->feature_flag_count = report_v10->feature_flag_count;
+
+    free(report_v10);
+  }
   return event;
 }
 
