@@ -16,7 +16,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
 
 import java.io.File;
@@ -45,6 +44,7 @@ import java.util.concurrent.RejectedExecutionException;
 public class Client implements MetadataAware, CallbackAware, UserAware, FeatureFlagAware {
 
     final ImmutableConfig immutableConfig;
+    final Map<String, Object> configDifferences;
 
     final MetadataState metadataState;
     final FeatureFlagState featureFlagState;
@@ -117,6 +117,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
      */
     public Client(@NonNull Context androidContext, @NonNull final Configuration configuration) {
         ContextModule contextModule = new ContextModule(androidContext);
+        configDifferences = configuration.impl.getConfigDifferences();
         appContext = contextModule.getCtx();
 
         notifier = configuration.getNotifier();
@@ -161,6 +162,10 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
         // block until storage module has resolved everything
         storageModule.resolveDependencies(bgTaskService, TaskType.IO);
+
+        // Save user-supplied configuration differences from default
+        NativeInterface.persistConfigDifferences(immutableConfig.getPersistenceDirectory().getValue(),
+                configDifferences);
 
         // setup further state trackers and data collection
         TrackerModule trackerModule = new TrackerModule(configModule,
@@ -223,6 +228,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
     @VisibleForTesting
     Client(
             ImmutableConfig immutableConfig,
+            Map<String, Object> configDifferences,
             MetadataState metadataState,
             ContextState contextState,
             CallbackState callbackState,
@@ -245,6 +251,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
             Notifier notifier
     ) {
         this.immutableConfig = immutableConfig;
+        this.configDifferences = configDifferences;
         this.metadataState = metadataState;
         this.contextState = contextState;
         this.callbackState = callbackState;
@@ -390,7 +397,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
             return bgTaskService.submitTask(TaskType.IO, new Callable<Boolean>() {
                 @Override
                 public Boolean call() {
-                    File outFile = new File(NativeInterface.getNativeReportPath());
+                    File outFile = NativeInterface.getNativeReportPath();
                     return outFile.exists() || outFile.mkdirs();
                 }
             }).get();
@@ -746,6 +753,10 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
         // Attach context to the event
         event.setContext(contextState.getContext());
+
+        event.setCallbackState(callbackState);
+        event.setConfigDifferences(configDifferences);
+
         notifyInternal(event, onError);
     }
 

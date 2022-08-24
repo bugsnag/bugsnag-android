@@ -405,6 +405,14 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware, F
         impl.setBreadcrumbs(breadcrumbs);
     }
 
+    void setCallbackState(@NonNull CallbackState callbackState) {
+        impl.setCallbackState(callbackState);
+    }
+
+    void setConfigDifferences(@NonNull Map<String, Object> configDifferences) {
+        impl.setConfigDifferences(configDifferences);
+    }
+
     @Nullable
     Session getSession() {
         return impl.session;

@@ -1,14 +1,16 @@
 package com.bugsnag.android;
 
 import com.bugsnag.android.internal.ImmutableConfig;
+import com.bugsnag.android.internal.JsonHelper;
 import com.bugsnag.android.repackaged.dslplatform.json.DslJson;
-import com.bugsnag.android.repackaged.dslplatform.json.JsonReader;
 
 import android.annotation.SuppressLint;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -20,10 +22,8 @@ import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -239,52 +239,36 @@ public class NativeInterface {
      * Retrieves the directory used to store native crash reports
      */
     @NonNull
-    public static String getNativeReportPath() {
-        return getNativeReportPathAsFile().getAbsolutePath();
+    public static File getNativeReportPath() {
+        return getNativeReportPath(getPersistenceDirectory());
     }
 
-    private static @NonNull File getNativeReportPathAsFile() {
-        ImmutableConfig config = getClient().getConfig();
-        File persistenceDirectory = config.getPersistenceDirectory().getValue();
+    private static @NonNull File getNativeReportPath(@NonNull File persistenceDirectory) {
         return new File(persistenceDirectory, "bugsnag-native");
     }
 
-    @SuppressWarnings("all")
-    private static void createNativeReportPath() {
-        getNativeReportPathAsFile().mkdirs();
+    private static @NonNull File getPersistenceDirectory() {
+        return getClient().getConfig().getPersistenceDirectory().getValue();
     }
 
-    private static @NonNull File getConfigUsageFilePath() {
-        return new File(getNativeReportPathAsFile(), "last_run.config.json");
+    private static @NonNull File getConfigDifferencesFilePath(@NonNull File persistenceDirectory) {
+        return new File(persistenceDirectory, "bugsnag_last_run.config_differences.json");
     }
 
-    private static @NonNull Map<String, Object> emptyConfigUsage() {
-        return new ConfigInternal("").createUsageTelemetry();
-    }
+    static Map<String, Object> previousConfigDifferences;
 
-    /**
-     * Load configuration usage from disk
-     * @return The loaded usage data
-     */
     @SuppressWarnings("unchecked")
-    public static @NonNull Map<String, Object> loadConfigUsage() {
-        Map<String, Object> usage = emptyConfigUsage();
-        File usageFile = getConfigUsageFilePath();
+    static void loadPreviousConfigDifferences(@NonNull File persistenceDirectory) {
+        File configDifferencesFile = getConfigDifferencesFilePath(persistenceDirectory);
         try {
-            InputStream is = new FileInputStream(usageFile);
+            InputStream is = new FileInputStream(configDifferencesFile);
             DslJson<Map<String, Object>> dslJson = new DslJson<>();
-            Map<String, Object> result = (Map<String, Object>)dslJson.deserialize(Map.class, is);
-            if (result != null) {
-                usage = result;
-            }
+            previousConfigDifferences = (Map<String, Object>)dslJson.deserialize(Map.class, is);
         } catch (FileNotFoundException exc) {
             // Ignore
         } catch (IOException exc) {
             // Ignore
         }
-
-        addNativeApiCallUsage((Map<String, Object>)usage.get("callbacks"));
-        return usage;
     }
 
     private static boolean isNdkCallIndexSet(@NonNull List<Long> bitfield, int index) {
@@ -293,19 +277,21 @@ public class NativeInterface {
         return (bitfield.get(element) & (1L << bit)) != 0;
     }
 
-    private static void addNativeApiCallUsage(@NonNull Map<String, Object> calls) {
+    static @NonNull Map<String, Object> getNativeApiCallUsage() {
         List<Long> nativeApiUsage = getCalledNativeFunctions();
+        Map<String, Object> callUsage = new HashMap<>();
 
         // Index 0 is a special case because it sets an integer instead of a
         // boolean to match the expectations of ROAD-1449 PD
         if (isNdkCallIndexSet(nativeApiUsage, 0)) {
-            calls.put(nativeApiCallNames[0], 1L);
+            callUsage.put(nativeApiCallNames[0], 1L);
         }
         for (int i = 1; i < NativeApiCall.END_MARKER.ordinal(); i++) {
             if (isNdkCallIndexSet(nativeApiUsage, i)) {
-                calls.put(nativeApiCallNames[i], true);
+                callUsage.put(nativeApiCallNames[i], true);
             }
         }
+        return callUsage;
     }
 
     @SuppressWarnings("unchecked")
@@ -329,18 +315,20 @@ public class NativeInterface {
 
     /**
      * Persist config usage to disk
-     * @param config The configuration whose usage to persist
+     * @param differences The differences to persist
      */
-    public static void persistConfigUsage(@NonNull ConfigInternal config) {
+    public static void persistConfigDifferences(@NonNull File persistenceDirectory,
+                                                @NonNull Map<String, Object> differences) {
+        // Save the old config before overwriting it
+        loadPreviousConfigDifferences(persistenceDirectory);
+
         Writer writer = null;
         JsonStream stream = null;
         try {
-            createNativeReportPath();
-            Map<String, Object> usageTelemetry = config.createUsageTelemetry();
-            File usageFile = getConfigUsageFilePath();
-            writer = new FileWriter(usageFile);
+            File configDifferencesFile = getConfigDifferencesFilePath(persistenceDirectory);
+            writer = new FileWriter(configDifferencesFile);
             stream = new JsonStream(writer);
-            stream.value(usageTelemetry);
+            stream.value(differences);
         } catch (IOException exc) {
             // Ignore
         } finally {
@@ -629,9 +617,17 @@ public class NativeInterface {
                                      @NonNull byte[] payloadBytes,
                                      @NonNull String apiKey,
                                      boolean isLaunching) {
-        if (payloadBytes == null) {
-            return;
+        // Since this is a native event, add the previous config usage to it.
+        if (previousConfigDifferences != null) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> payloadMap = (Map<String, Object>) JsonHelper.INSTANCE.deserialize(
+                    new ByteArrayInputStream(payloadBytes));
+            payloadMap.put("config", previousConfigDifferences);
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            JsonHelper.INSTANCE.serialize(payloadMap, os);
+            payloadBytes = os.toByteArray();
         }
+
         String payload = new String(payloadBytes, UTF8Charset);
         String releaseStage = releaseStageBytes == null
                 ? null
@@ -784,7 +780,7 @@ public class NativeInterface {
 
     @NonNull
     public static Logger getLogger() {
-        return getClient().getConfig().getLogger();
+        return getClient().getLogger();
     }
 
     /**

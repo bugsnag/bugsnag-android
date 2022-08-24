@@ -109,6 +109,7 @@ public class ClientFacadeTest {
         logger = new InterceptingLogger();
         client = new Client(
                 immutableConfig,
+                new HashMap<String, Object>(),
                 metadataState,
                 contextState,
                 callbackState,

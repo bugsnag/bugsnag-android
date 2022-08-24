@@ -31,7 +31,7 @@ class NativeBridge : StateObserver {
 
     private val lock = ReentrantLock()
     private val installed = AtomicBoolean(false)
-    private val reportDirectory: String = NativeInterface.getNativeReportPath()
+    private val reportDirectory: File = NativeInterface.getNativeReportPath()
     private val logger = NativeInterface.getLogger()
 
     private val is32bit: Boolean
@@ -159,7 +159,7 @@ class NativeBridge : StateObserver {
     private fun deliverPendingReports() {
         lock.lock()
         try {
-            val outDir = File(reportDirectory)
+            val outDir = reportDirectory
             if (outDir.exists()) {
                 val fileList = outDir.listFiles()
                 if (fileList != null) {

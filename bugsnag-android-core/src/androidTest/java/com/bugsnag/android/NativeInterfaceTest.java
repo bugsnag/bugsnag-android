@@ -9,8 +9,12 @@ import androidx.annotation.NonNull;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -29,6 +33,9 @@ public class NativeInterfaceTest {
         client.close();
     }
 
+    @Rule
+    public TemporaryFolder tempFolder = new TemporaryFolder();
+
     @Test
     public void getMetadata() {
         NativeInterface.setClient(client);
@@ -36,48 +43,39 @@ public class NativeInterfaceTest {
     }
 
     @Test
-    public void configUsagePersistenceDefault() {
-        Map<String, Object> expected = new HashMap<String, Object>() {{
-                put("callbacks", new HashMap<String, Object>());
-                put("config", new HashMap<String, Object>() {{
-                        put("launchDurationMillis", (long)5000);
-                        put("logger", true);
-                    }
-                });
+    public void configUsagePersistenceDefault() throws IOException {
+        final Map<String, Object> expected = new HashMap<String, Object>() {
+            {
+                put("launchDurationMillis", (long)5000);
+                put("logger", true);
             }
         };
 
         Client client = BugsnagTestUtils.generateClient();
         NativeInterface.setClient(client);
         Configuration config = new Configuration("x");
-        NativeInterface.persistConfigUsage(config.impl);
-        Map<String, Object> actual = NativeInterface.loadConfigUsage();
+        File persistencePath = tempFolder.newFolder();
+        NativeInterface.persistConfigDifferences(persistencePath,
+                config.impl.getConfigDifferences());
+        NativeInterface.loadPreviousConfigDifferences(persistencePath);
+        Map<String, Object> actual = NativeInterface.previousConfigDifferences;
         assertEquals(expected, actual);
     }
 
     @Test
-    public void configUsagePersistence() {
-        final Map<String, Object> expected = new HashMap<String, Object>() {{
-                put("callbacks", new HashMap<String, Object>() {{
-                        put("onBreadcrumb", 2L);
-                        put("onError", 1L);
-                    }
-                });
-                put("config", new HashMap<String, Object>() {{
-                        put("autoTrackSessions", false);
-                        put("enabledBreadcrumbTypes", "navigation,state");
-                        put("enabledErrorTypes", "ndkCrashes,unhandledRejections");
-                        put("launchDurationMillis", 5000L);
-                        put("logger", true);
-                        put("maxBreadcrumbs", 30L);
-                        put("maxPersistedSessions", 10L);
-                    }
-                });
+    public void configUsagePersistence() throws IOException {
+        final Map<String, Object> expected = new HashMap<String, Object>() {
+            {
+                put("autoTrackSessions", false);
+                put("enabledBreadcrumbTypes", "navigation,state");
+                put("enabledErrorTypes", "ndkCrashes,unhandledRejections");
+                put("launchDurationMillis", 5000L);
+                put("logger", true);
+                put("maxBreadcrumbs", 30L);
+                put("maxPersistedSessions", 10L);
             }
         };
 
-        Client client = BugsnagTestUtils.generateClient();
-        NativeInterface.setClient(client);
         Configuration config = new Configuration("x");
         ErrorTypes errorTypes = new ErrorTypes();
         errorTypes.setAnrs(false);
@@ -109,8 +107,11 @@ public class NativeInterfaceTest {
                 return false;
             }
         });
-        NativeInterface.persistConfigUsage(config.impl);
-        Map<String, Object> actual = NativeInterface.loadConfigUsage();
+        File persistencePath = tempFolder.newFolder();
+        NativeInterface.persistConfigDifferences(persistencePath,
+                config.impl.getConfigDifferences());
+        NativeInterface.loadPreviousConfigDifferences(persistencePath);
+        Map<String, Object> actual = NativeInterface.previousConfigDifferences;
         assertEquals(expected, actual);
     }
 

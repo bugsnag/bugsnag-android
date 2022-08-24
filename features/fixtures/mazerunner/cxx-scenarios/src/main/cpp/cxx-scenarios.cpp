@@ -162,6 +162,18 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXSigsegvScenario_crash(JNIEnv *e
 }
 
 JNIEXPORT int JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXSigsegvWithUsageScenario_crash(JNIEnv *env,
+                                                                       jobject instance,
+                                                                       jint value) {
+  int x = 38;
+  if (value > 0) {
+    raise(SIGSEGV);
+  }
+  printf("That might've been one of the shortest assignments in the history of Starfleet.\n");
+  return value / x / 8;
+}
+
+JNIEXPORT int JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXSigillScenario_crash(JNIEnv *env,
                                                                       jobject instance,
                                                                       jint value) {
@@ -200,6 +212,13 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXExceptionScenario_crash(JNIEnv 
   int x = 61;
   printf("This one here: %ld\n", (long) trigger_an_exception(x > 0));
   printf("This one here: %ld\n", (long) throw_an_object(x > 0, x));
+}
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXExceptionWithUsageScenario_crash(JNIEnv *env,
+                                                                         jobject instance) {
+  int x = 61;
+  printf("This one here: %ld\n", (long) trigger_an_exception(x > 0));
 }
 
 JNIEXPORT void JNICALL

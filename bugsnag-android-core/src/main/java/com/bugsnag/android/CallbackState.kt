@@ -1,5 +1,7 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.JsonStream.Streamable
+import java.io.IOException
 import java.util.concurrent.CopyOnWriteArrayList
 
 internal data class CallbackState(
@@ -7,7 +9,7 @@ internal data class CallbackState(
     val onBreadcrumbTasks: MutableCollection<OnBreadcrumbCallback> = CopyOnWriteArrayList(),
     val onSessionTasks: MutableCollection<OnSessionCallback> = CopyOnWriteArrayList(),
     val onSendTasks: MutableCollection<OnSendCallback> = CopyOnWriteArrayList()
-) : CallbackAware {
+) : CallbackAware, Streamable {
 
     override fun addOnError(onError: OnErrorCallback) {
         onErrorTasks.add(onError)
@@ -120,4 +122,35 @@ internal data class CallbackState(
         onSessionTasks = onSessionTasks,
         onSendTasks = onSendTasks
     )
+
+    @Throws(IOException::class)
+    override fun toStream(writer: JsonStream) {
+        writer.beginObject()
+        if (onBreadcrumbTasks.count() > 0) {
+            writer.name("onBreadcrumb").value(onBreadcrumbTasks.count())
+        }
+        if (onErrorTasks.count() > 0) {
+            writer.name("onError").value(onErrorTasks.count())
+        }
+        if (onSendTasks.count() > 0) {
+            writer.name("onSendError").value(onSendTasks.count())
+        }
+        if (onSessionTasks.count() > 0) {
+            writer.name("onSession").value(onSessionTasks.count())
+        }
+        writer.endObject()
+    }
+
+    fun getTaskCounts(): Map<String, Any> {
+        return listOfNotNull(
+            if (onBreadcrumbTasks.count() > 0)
+                "onBreadcrumb" to onBreadcrumbTasks.count() else null,
+            if (onErrorTasks.count() > 0)
+                "onError" to onErrorTasks.count() else null,
+            if (onSendTasks.count() > 0)
+                "onSendError" to onSendTasks.count() else null,
+            if (onSessionTasks.count() > 0)
+                "onSession" to onSessionTasks.count() else null,
+        ).toMap()
+    }
 }
