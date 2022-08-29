@@ -11,7 +11,7 @@ class CXXExceptionWithUsageScenario(
 
     companion object {
         init {
-            System.loadLibrary("cxx-scenarios")
+            System.loadLibrary("cxx-scenarios-bugsnag")
         }
     }
 

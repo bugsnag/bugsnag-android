@@ -98,6 +98,9 @@ public class ClientFacadeTest {
     @Mock
     Notifier notifier;
 
+    @Mock
+    InternalMetrics internalMetrics;
+
     private Client client;
     private InterceptingLogger logger;
 
@@ -129,7 +132,8 @@ public class ClientFacadeTest {
                 lastRunInfoStore,
                 launchCrashTracker,
                 exceptionHandler,
-                notifier
+                notifier,
+                internalMetrics
         );
 
         // required fields for generating an event

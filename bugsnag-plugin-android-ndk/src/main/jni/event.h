@@ -252,6 +252,12 @@ typedef struct {
   bsg_feature_flag *feature_flags;
 
   /**
+   * Counters to count how many times a callback was set.
+   * There are actually less than 10 callbacks, but leave room for expansion.
+   */
+  uint32_t set_callback_counts[30];
+
+  /**
    * Flags to denote which native APIs have been called (see bsg_called_api).
    * This only records that at least one call was made per API; it doesn't tally
    * how many calls occurred.
@@ -264,15 +270,14 @@ typedef struct {
  * The high bits (call / 64) represent the index into event->called_apis.
  * The low bits (call & 63) represent the bit index.
  *
- * The ordering of this enum must be consistent between the JNI and JVM side.
+ * This enum must remain consistent with called_api_names in bugsnag_ndk.c.
  * The ordering must not be changed. Add new APIs to the end, not in
  * alphabetical order. Naming of enums can be changed to denote deprecation
  * (e.g. BSG_API_APP_GET_ID_DEPRECATED), but their enum values must not be
  * re-used.
  */
 typedef enum {
-  BSG_API_ADD_ON_ERROR = 0,
-  BSG_API_APP_GET_BINARY_ARCH,
+  BSG_API_APP_GET_BINARY_ARCH = 0,
   BSG_API_APP_GET_BUILD_UUID,
   BSG_API_APP_GET_DURATION,
   BSG_API_APP_GET_DURATION_IN_FOREGROUND,
@@ -345,7 +350,14 @@ typedef enum {
   BSG_API_EVENT_SET_USER,
 } bsg_called_api;
 
+#define BSG_CALLBACK_NDK_ON_ERROR 0
+
 void bsg_notify_api_called(void *event_ptr, bsg_called_api api);
+bool bsg_was_api_called(void *event_ptr, bsg_called_api api);
+
+#define BSG_CALLBACK_API_ON_NDK_ERROR 0
+
+void bsg_notify_callback_added(void *event_ptr, int api);
 
 void bsg_event_add_breadcrumb(bugsnag_event *event, bugsnag_breadcrumb *crumb);
 void bsg_event_start_session(bugsnag_event *event, const char *session_id,

@@ -112,7 +112,7 @@ internal class ConfigInternal(
         return sb.toString()
     }
 
-    fun getConfigDifferences(): Map<String, Any?> {
+    fun getConfigDifferences(): Map<String, Any> {
         return listOfNotNull(
             if (plugins.count() > 0) "pluginCount" to plugins.count() else null,
             if (autoDetectErrors != defaultConfig.autoDetectErrors)

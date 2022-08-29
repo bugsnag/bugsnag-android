@@ -141,7 +141,7 @@ internal data class CallbackState(
         writer.endObject()
     }
 
-    fun getTaskCounts(): Map<String, Any> {
+    fun getCallbackCounts(): Map<String, Int> {
         return listOfNotNull(
             if (onBreadcrumbTasks.count() > 0)
                 "onBreadcrumb" to onBreadcrumbTasks.count() else null,

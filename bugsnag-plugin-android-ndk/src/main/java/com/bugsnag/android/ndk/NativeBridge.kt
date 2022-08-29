@@ -83,7 +83,9 @@ class NativeBridge : StateObserver {
     external fun clearFeatureFlag(name: String)
     external fun clearFeatureFlags()
     external fun refreshSymbolTable()
-    external fun getCalledNativeFunctions(): List<Long>
+    external fun notifySetCallback(callback: Int)
+    external fun getCurrentCallbackSetCounts(): List<Long>
+    external fun getCurrentNativeApiCallUsage(): List<Boolean>
 
     override fun onStateChange(event: StateEvent) {
         if (isInvalidMessage(event)) return

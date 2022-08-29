@@ -96,8 +96,6 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
     var threads: MutableList<Thread>
     var groupingHash: String? = null
     var context: String? = null
-    var callbackState: CallbackState? = null
-    var configDifferences: Map<String, Any?>? = null
 
     var redactedKeys: Collection<String>
         get() = jsonStreamer.redactedKeys
@@ -105,6 +103,7 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
             jsonStreamer.redactedKeys = value.toSet()
             metadata.redactedKeys = value.toSet()
         }
+    var internalMetrics: InternalMetrics? = null
 
     /**
      * @return user information associated with this Event
@@ -164,8 +163,9 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
         writer.name("device").value(device)
         writer.name("breadcrumbs").value(breadcrumbs)
         writer.name("groupingHash").value(groupingHash)
-        writer.name("callbacks").value(callbackState)
-        writer.name("config").value(configDifferences)
+        internalMetrics?.toJsonableMap()?.forEach { entry ->
+            writer.name(entry.key).value(entry.value)
+        }
 
         writer.name("threads")
         writer.beginArray()

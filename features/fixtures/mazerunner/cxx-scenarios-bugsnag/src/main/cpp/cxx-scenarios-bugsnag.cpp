@@ -329,4 +329,23 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXCaptureThreadsNotifyScenario_ac
     (char *)"CXXCaptureThreadStatesNotifyScenario", BSG_SEVERITY_ERR);
 }
 
+JNIEXPORT jint JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXSigsegvWithUsageScenario_crash(JNIEnv *env,
+                                                                                jobject thiz,
+                                                                                jint value) {
+  int x = 38;
+  if (value > 0) {
+    raise(SIGSEGV);
+  }
+  printf("In thousands of simulations, that's literally never happened before.\n");
+  return value / x / 8;
+}
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXExceptionWithUsageScenario_crash(JNIEnv *env,
+                                                                                  jobject instance) {
+  int x = 61;
+  printf("This one here: %ld\n", (long) f_trigger_an_exception(x > 0));
+}
+
 }

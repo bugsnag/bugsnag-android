@@ -32,8 +32,6 @@ Feature: Reporting Errors with usage info
     Then I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the error payload field "events" is an array with 1 elements
-    And the exception "errorClass" equals "SIGABRT"
-    And the event "exceptions.0.message" equals "Abort program"
     And the error payload field "events.0.device.cpuAbi" is a non-empty array
     And the event "config.maxBreadcrumbs" equals 10
     And the event "config.autoTrackSessions" is false

@@ -15,7 +15,7 @@ public class CXXJavaBreadcrumbNativeBreadcrumbScenario extends Scenario {
         System.loadLibrary("cxx-scenarios-bugsnag");
     }
 
-    public native void activate();
+    public native int activate();
 
     public CXXJavaBreadcrumbNativeBreadcrumbScenario(@NonNull Configuration config,
                                                      @NonNull Context context,

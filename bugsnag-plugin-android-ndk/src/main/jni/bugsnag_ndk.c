@@ -24,6 +24,81 @@ extern "C" {
 static bsg_environment *bsg_global_env;
 static pthread_mutex_t bsg_global_env_write_mutex = PTHREAD_MUTEX_INITIALIZER;
 
+// This MUST remain consistent with bsg_called_api in event.h
+static const char *called_api_names[] = {
+    "app_get_binary_arch",
+    "app_get_build_uuid",
+    "app_get_duration",
+    "app_get_duration_in_foreground",
+    "app_get_id",
+    "app_get_in_foreground",
+    "app_get_is_launching",
+    "app_get_release_stage",
+    "app_get_type",
+    "app_get_version",
+    "app_get_version_code",
+    "app_set_binary_arch",
+    "app_set_build_uuid",
+    "app_set_duration",
+    "app_set_duration_in_foreground",
+    "app_set_id",
+    "app_set_in_foreground",
+    "app_set_is_launching",
+    "app_set_release_stage",
+    "app_set_type",
+    "app_set_version",
+    "app_set_version_code",
+    "device_get_id",
+    "device_get_jailbroken",
+    "device_get_locale",
+    "device_get_manufacturer",
+    "device_get_model",
+    "device_get_orientation",
+    "device_get_os_name",
+    "device_get_os_version",
+    "device_get_time",
+    "device_get_total_memory",
+    "device_set_id",
+    "device_set_jailbroken",
+    "device_set_locale",
+    "device_set_manufacturer",
+    "device_set_model",
+    "device_set_orientation",
+    "device_set_os_name",
+    "device_set_os_version",
+    "device_set_time",
+    "device_set_total_memory",
+    "error_get_error_class",
+    "error_get_error_message",
+    "error_get_error_type",
+    "error_set_error_class",
+    "error_set_error_message",
+    "error_set_error_type",
+    "event_add_metadata_bool",
+    "event_add_metadata_double",
+    "event_add_metadata_string",
+    "event_clear_metadata",
+    "event_clear_metadata_section",
+    "event_get_api_key",
+    "event_get_context",
+    "event_get_grouping_hash",
+    "event_get_metadata_bool",
+    "event_get_metadata_double",
+    "event_get_metadata_string",
+    "event_get_severity",
+    "event_get_stackframe",
+    "event_get_stacktrace_size",
+    "event_get_user",
+    "event_has_metadata",
+    "event_is_unhandled",
+    "event_set_api_key",
+    "event_set_context",
+    "event_set_grouping_hash",
+    "event_set_severity",
+    "event_set_unhandled",
+    "event_set_user",
+};
+
 /**
  * All functions which will edit the environment (unless they are handling a
  * crash) must first request the lock
@@ -41,14 +116,17 @@ static void release_env_write_lock(void) {
 
 void bugsnag_add_on_error(bsg_on_error on_error) {
   if (bsg_global_env != NULL) {
-    bsg_notify_api_called(&bsg_global_env->next_event, BSG_API_ADD_ON_ERROR);
     bsg_global_env->on_error = on_error;
+    bsg_global_env->next_event.set_callback_counts[BSG_CALLBACK_NDK_ON_ERROR] =
+        1;
   }
 }
 
 void bugsnag_remove_on_error() {
   if (bsg_global_env != NULL) {
     bsg_global_env->on_error = NULL;
+    bsg_global_env->next_event.set_callback_counts[BSG_CALLBACK_NDK_ON_ERROR] =
+        0;
   }
 }
 
@@ -820,7 +898,40 @@ Java_com_bugsnag_android_ndk_NativeBridge_refreshSymbolTable(JNIEnv *env,
 }
 
 JNIEXPORT jobject JNICALL
-Java_com_bugsnag_android_ndk_NativeBridge_getCalledNativeFunctions(
+Java_com_bugsnag_android_ndk_NativeBridge_getCurrentCallbackSetCounts(
+    JNIEnv *env, jobject thiz) {
+
+  if (bsg_global_env == NULL) {
+    return NULL;
+  }
+
+  jobject counts =
+      bsg_safe_new_object(env, bsg_jni_cache->ArrayList,
+                          bsg_jni_cache->ArrayList_constructor_default);
+  if (counts == NULL) {
+    return NULL;
+  }
+
+  const int counts_count =
+      sizeof(bsg_global_env->next_event.set_callback_counts) /
+      sizeof(*bsg_global_env->next_event.set_callback_counts);
+
+  for (int i = 0; i < counts_count; i++) {
+    jobject count = bsg_safe_new_object(
+        env, bsg_jni_cache->Long, bsg_jni_cache->Long_constructor,
+        (jlong)bsg_global_env->next_event.set_callback_counts[i]);
+    if (count == NULL) {
+      return NULL;
+    }
+    bsg_safe_call_void_method(env, bsg_jni_cache->ArrayList,
+                              bsg_jni_cache->ArrayList_add, count);
+  }
+
+  return counts;
+}
+
+JNIEXPORT jobject JNICALL
+Java_com_bugsnag_android_ndk_NativeBridge_getCurrentNativeApiCallUsage(
     JNIEnv *env, jobject thiz) {
   if (bsg_global_env == NULL) {
     return NULL;
@@ -837,18 +948,22 @@ Java_com_bugsnag_android_ndk_NativeBridge_getCalledNativeFunctions(
       sizeof(bsg_global_env->next_event.called_apis) /
       sizeof(*bsg_global_env->next_event.called_apis);
 
-  for (int i = 0; i < api_call_block_count; i++) {
-    jobject block = bsg_safe_new_object(
-        env, bsg_jni_cache->Long, bsg_jni_cache->Long_constructor,
-        (jlong)bsg_global_env->next_event.called_apis[i]);
-    if (block == NULL) {
-      return NULL;
+  for (bsg_called_api i = 0; i < api_call_block_count; i++) {
+    if (bsg_was_api_called(bsg_global_env, i)) {
+      jstring str = bsg_safe_new_string_utf(env, called_api_names[i]);
+      bsg_safe_call_void_method(env, bsg_jni_cache->ArrayList,
+                                bsg_jni_cache->ArrayList_add, str);
     }
-    bsg_safe_call_void_method(env, bsg_jni_cache->ArrayList,
-                              bsg_jni_cache->ArrayList_add, block);
   }
 
   return keylist;
+}
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_ndk_NativeBridge_notifySetCallback(JNIEnv *env,
+                                                            jobject thiz,
+                                                            jint callback) {
+  bsg_notify_callback_added(bsg_global_env, callback);
 }
 
 #ifdef __cplusplus

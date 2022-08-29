@@ -74,12 +74,27 @@ internal class NdkPlugin : Plugin {
         return 0
     }
 
-    fun getCalledNativeFunctions(): List<Long> {
+    fun getCurrentCallbackSetCounts(): List<Long> {
         val bridge = nativeBridge
         if (bridge != null) {
-            return bridge.getCalledNativeFunctions()
+            return bridge.getCurrentCallbackSetCounts()
         }
         return listOf()
+    }
+
+    fun getCurrentNativeApiCallUsage(): List<Boolean> {
+        val bridge = nativeBridge
+        if (bridge != null) {
+            return bridge.getCurrentNativeApiCallUsage()
+        }
+        return listOf()
+    }
+
+    fun notifySetCallback(callback: Int) {
+        val bridge = nativeBridge
+        if (bridge != null) {
+            bridge.notifySetCallback(callback)
+        }
     }
 }
 

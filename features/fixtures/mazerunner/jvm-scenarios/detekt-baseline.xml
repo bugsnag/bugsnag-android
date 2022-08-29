@@ -14,6 +14,7 @@
     <ID>MagicNumber:DiscardOldSessionScenario.kt$DiscardOldSessionScenario$60</ID>
     <ID>MagicNumber:DiscardOldSessionScenarioPart2.kt$DiscardOldSessionScenarioPart2$1000</ID>
     <ID>MagicNumber:HandledExceptionMaxThreadsScenario.kt$HandledExceptionMaxThreadsScenario$3</ID>
+    <ID>MagicNumber:HandledExceptionWithUsageScenario.kt$HandledExceptionWithUsageScenario$10</ID>
     <ID>MagicNumber:HandledKotlinSmokeScenario.kt$HandledKotlinSmokeScenario$999</ID>
     <ID>MagicNumber:JvmAnrSleepScenario.kt$JvmAnrSleepScenario$100000</ID>
     <ID>MagicNumber:LoadConfigurationKotlinScenario.kt$LoadConfigurationKotlinScenario$10000</ID>
@@ -24,6 +25,7 @@
     <ID>MagicNumber:StartupCrashFlushScenario.kt$StartupCrashFlushScenario$6000</ID>
     <ID>MagicNumber:TestHarnessHooks.kt$&lt;no name provided>$500</ID>
     <ID>MagicNumber:TrimmedStacktraceScenario.kt$TrimmedStacktraceScenario$100000</ID>
+    <ID>MagicNumber:UnhandledExceptionWithUsageScenario.kt$UnhandledExceptionWithUsageScenario$10</ID>
     <ID>ThrowingExceptionsWithoutMessageOrCause:AnrHelper.kt$&lt;no name provided>$IllegalStateException()</ID>
     <ID>ThrowingExceptionsWithoutMessageOrCause:BugsnagInitScenario.kt$BugsnagInitScenario$RuntimeException()</ID>
     <ID>ThrowingExceptionsWithoutMessageOrCause:CustomPluginNotifierDescriptionScenario.kt$CustomPluginNotifierDescriptionScenario$RuntimeException()</ID>

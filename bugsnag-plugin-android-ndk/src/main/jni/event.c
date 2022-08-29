@@ -721,13 +721,35 @@ bugsnag_stackframe *bugsnag_event_get_stackframe(void *event_ptr, int index) {
   }
 }
 
+static int get_called_api_array_slot_index(bsg_called_api api) {
+  return api / 64;
+}
+
+static uint64_t get_called_api_array_slot_bit(bsg_called_api api) {
+  int bit_index = api & 63;
+  return ((uint64_t)1) << bit_index;
+}
+
 void bsg_notify_api_called(void *event_ptr, bsg_called_api api) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
   const int slot_count =
       sizeof(event->called_apis) / sizeof(*event->called_apis);
-  int slot_index = api / 64;
-  int bit_index = api & 63;
+  int slot_index = get_called_api_array_slot_index(api);
   if (slot_index < slot_count) {
-    event->called_apis[slot_index] |= ((uint64_t)1) << bit_index;
+    event->called_apis[slot_index] |= get_called_api_array_slot_bit(api);
   }
 }
+
+bool bsg_was_api_called(void *event_ptr, bsg_called_api api) {
+  bugsnag_event *event = (bugsnag_event *)event_ptr;
+  const int slot_count =
+      sizeof(event->called_apis) / sizeof(*event->called_apis);
+  int slot_index = get_called_api_array_slot_index(api);
+  if (slot_index < slot_count) {
+    return (event->called_apis[slot_index] &
+            get_called_api_array_slot_bit(api)) != 0;
+  }
+  return false;
+}
+
+void bsg_notify_callback_added(void *event_ptr, int api) {}
