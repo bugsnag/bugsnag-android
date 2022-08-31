@@ -48,7 +48,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
     final MetadataState metadataState;
     final FeatureFlagState featureFlagState;
 
-    private final InternalMetrics internalMetrics;
+    private final InternalMetrics internalMetrics = new InternalMetrics();
     private final ContextState contextState;
     private final CallbackState callbackState;
     private final UserState userState;
@@ -140,8 +140,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         ConfigModule configModule = new ConfigModule(contextModule, configuration, connectivity);
         immutableConfig = configModule.getConfig();
         logger = immutableConfig.getLogger();
-        internalMetrics = new InternalMetrics(configuration.impl.getConfigDifferences(),
-                configuration.impl.callbackState.getCallbackCounts());
         warnIfNotAppContext(androidContext);
 
         // setup storage as soon as possible
@@ -163,11 +161,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
         // block until storage module has resolved everything
         storageModule.resolveDependencies(bgTaskService, TaskType.IO);
-
-        // Save user-supplied configuration differences from default
-        NativeInterface.persistConfigDifferences(
-                immutableConfig.getPersistenceDirectory().getValue(),
-                configuration.impl.getConfigDifferences());
 
         // setup further state trackers and data collection
         TrackerModule trackerModule = new TrackerModule(configModule,
@@ -211,6 +204,13 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         // initialise plugins before attempting to flush any errors
         loadPlugins(configuration);
 
+        NdkPluginCaller.INSTANCE.setNdkPlugin(pluginClient.getNdkPlugin());
+
+        // InternalMetrics uses NdkPluginCaller
+        internalMetrics.applyTelemetryConfig(immutableConfig.getTelemetry());
+        internalMetrics.setConfigDifferences(configuration.impl.getConfigDifferences());
+        configuration.impl.callbackState.setInternalMetrics(internalMetrics);
+
         // Flush any on-disk errors and sessions
         eventStore.flushOnLaunch();
         eventStore.flushAsync();
@@ -230,7 +230,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
     @VisibleForTesting
     Client(
             ImmutableConfig immutableConfig,
-            Map<String, Object> configDifferences,
             MetadataState metadataState,
             ContextState contextState,
             CallbackState callbackState,
@@ -250,8 +249,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
             LastRunInfoStore lastRunInfoStore,
             LaunchCrashTracker launchCrashTracker,
             ExceptionHandler exceptionHandler,
-            Notifier notifier,
-            InternalMetrics internalMetrics
+            Notifier notifier
     ) {
         this.immutableConfig = immutableConfig;
         this.metadataState = metadataState;
@@ -275,7 +273,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         this.lastRunInfo = null;
         this.exceptionHandler = exceptionHandler;
         this.notifier = notifier;
-        this.internalMetrics = internalMetrics;
     }
 
     void registerLifecycleCallbacks() {

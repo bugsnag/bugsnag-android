@@ -1,57 +1,92 @@
 package com.bugsnag.android
 
+import java.util.Collections
+
 /**
  * Stores internal metrics for Bugsnag use.
  */
-internal class InternalMetrics(
-    private val configDifferences: Map<String, Any>,
-    private val callbackCounts: Map<String, Int>
-) {
+internal class InternalMetrics {
+    private var enabled = false
+    private val configDifferences = mutableMapOf<String, Any>()
+    private val callbackCounts = mutableMapOf<String, Int>()
+
+    fun applyTelemetryConfig(telemetry: Set<Telemetry>) {
+        enabled = telemetry.contains(Telemetry.USAGE)
+        NdkPluginCaller.setInternalMetricsEnabled(enabled)
+    }
+
     fun toJsonableMap(): Map<String, Any> {
-        val callbacks = mutableMapOf<String, Any>()
-        addCurrentCallbackSetCounts(callbacks)
-        addCurrentNativeApiCallUsage(callbacks)
-        return mapOf(
-            "config" to configDifferences,
-            "callbacks" to callbacks
-        )
+        return if (enabled) {
+            mapOf(
+                "config" to configDifferences,
+                "callbacks" to allCallbacks()
+            )
+        } else {
+            mapOf()
+        }
     }
 
-    private fun addCurrentCallbackSetCounts(callbacks: MutableMap<String, Any>) {
-        val countsIndexNdkOnError = 0
+    fun setConfigDifferences(differences: Map<String, Any>) {
+        if (enabled) {
+            configDifferences.clear()
+            configDifferences.putAll(differences)
+            NdkPluginCaller.setStaticData(Collections.singletonMap("config", configDifferences))
+        }
+    }
 
-        callbacks.putAll(callbackCounts)
-        @Suppress("UNCHECKED_CAST")
-        val counts = invokeNdkPlugin("getCurrentCallbackSetCounts") as List<Long>?
-        if (counts != null && !counts.isEmpty()) {
+    fun setCallbackCounts(newCallbackCounts: Map<String, Int>) {
+        if (enabled) {
+            callbackCounts.clear()
+            callbackCounts.putAll(newCallbackCounts)
+            NdkPluginCaller.initCallbackCounts(newCallbackCounts)
+        }
+    }
+
+    fun notifyAddCallback(callback: String) {
+        if (enabled) {
+            modifyCallback(callback, 1)
+            NdkPluginCaller.notifyAddCallback(callback)
+        }
+    }
+
+    fun notifyRemoveCallback(callback: String) {
+        if (enabled) {
+            modifyCallback(callback, -1)
+            NdkPluginCaller.notifyRemoveCallback(callback)
+        }
+    }
+
+    private fun modifyCallback(callback: String, delta: Int) {
+        var currentValue = callbackCounts[callback]
+        if (currentValue == null) {
+            currentValue = delta
+        } else {
+            currentValue += delta
+        }
+        if (currentValue < 0) {
+            currentValue = 0
+        }
+        callbackCounts[callback] = currentValue
+    }
+
+    private fun allCallbacks(): Map<String, Any> {
+        val result = mutableMapOf<String, Any>()
+        result.putAll(callbackCounts)
+
+        val counts = NdkPluginCaller.getCurrentCallbackSetCounts()
+        if (counts != null) {
             // ndkOnError comes from the native side. The rest we already have.
-            callbacks["ndkOnError"] = counts[countsIndexNdkOnError]
+            val ndkOnError = counts["ndkOnError"]
+            if (ndkOnError != null) {
+                result["ndkOnError"] = ndkOnError
+            }
         }
-    }
 
-    private fun addCurrentNativeApiCallUsage(callbacks: MutableMap<String, Any>) {
-        @Suppress("UNCHECKED_CAST")
-        val usage = invokeNdkPlugin("getCurrentNativeApiCallUsage") as List<String>?
+        val usage = NdkPluginCaller.getCurrentNativeApiCallUsage()
         if (usage != null) {
-            for (api in usage) {
-                callbacks[api] = true
-            }
+            result.putAll(usage)
         }
-    }
 
-    private fun invokeNdkPlugin(methodName: String, vararg args: Any): Any? {
-        return try {
-            @Suppress("UNCHECKED_CAST")
-            val clz = Class.forName("com.bugsnag.android.NdkPlugin") as Class<Plugin>
-            val plugin = Bugsnag.getClient().getPlugin(clz)
-            if (plugin != null) {
-                val method = plugin.javaClass.getMethod(methodName)
-                method.invoke(plugin, *args)
-            } else {
-                null
-            }
-        } catch (exc: Exception) {
-            null
-        }
+        return result
     }
 }

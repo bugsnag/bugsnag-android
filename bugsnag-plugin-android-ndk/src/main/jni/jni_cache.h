@@ -18,7 +18,12 @@ typedef struct {
   JavaVM *jvm;
 
   jclass Boolean;
+  jmethodID Boolean_constructor;
   jmethodID Boolean_booleanValue;
+
+  jclass Int;
+  jmethodID Int_constructor;
+  jmethodID Int_intValue;
 
   jclass Long;
   jmethodID Long_constructor;
@@ -32,13 +37,28 @@ typedef struct {
 
   jclass String;
 
+  jclass Set;
+  jmethodID Set_iterator;
+
+  jclass Iterator;
+  jmethodID Iterator_hasNext;
+  jmethodID Iterator_next;
+
   jclass Map;
   jmethodID Map_get;
+  jmethodID Map_put;
   jmethodID Map_size;
   jmethodID Map_keySet;
+  jmethodID Map_entrySet;
+
+  jclass MapEntry;
+  jmethodID MapEntry_getKey;
+  jmethodID MapEntry_getValue;
 
   jclass HashMap;
+  jmethodID HashMap_constructor;
   jmethodID HashMap_get;
+  jmethodID HashMap_put;
   jmethodID HashMap_size;
   jmethodID HashMap_keySet;
 

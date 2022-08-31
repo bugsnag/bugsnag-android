@@ -7,6 +7,7 @@
 #include <fcntl.h>
 #include <malloc.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 const int BSG_MIGRATOR_CURRENT_VERSION = 11;
@@ -1129,4 +1130,52 @@ void bsg_read_opaque_breadcrumb_metadata(int fd,
 
     bsg_read_opaque_metadata(fd, &(breadcrumbs[breadcrumb_index].metadata));
   }
+}
+
+static bool read_from_file(int fd, ssize_t length, char *buffer) {
+  ssize_t bytes_read = 0;
+  ssize_t total_bytes_read = 0;
+  while (total_bytes_read < length) {
+    ssize_t bytes_to_read = length - total_bytes_read;
+    if ((bytes_read = read(fd, buffer + total_bytes_read, bytes_to_read)) < 0) {
+      return false;
+    }
+    total_bytes_read += bytes_read;
+  }
+  return true;
+}
+
+ssize_t bsg_read_text_file(const char *filename, char **buffer_pointer) {
+  char *data = NULL;
+  ssize_t length = 0;
+  struct stat stats;
+  int fd = open(filename, O_RDONLY);
+  if (fd < 0) {
+    goto fail;
+  }
+  if (fstat(fd, &stats) < 0) {
+    goto fail;
+  }
+  length = (ssize_t)stats.st_size;
+  data = malloc(length + 1);
+  if (data == NULL) {
+    goto fail;
+  }
+  if (!read_from_file(fd, length, data)) {
+    goto fail;
+  }
+  data[length] = 0;
+  *buffer_pointer = data;
+  goto success;
+
+fail:
+  length = -1;
+success:
+  if (fd > 0) {
+    close(fd);
+  }
+  if (length < 0) {
+    free(data);
+  }
+  return length;
 }

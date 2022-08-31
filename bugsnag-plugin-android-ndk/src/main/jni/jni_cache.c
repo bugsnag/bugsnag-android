@@ -126,10 +126,8 @@ bool bsg_jni_cache_init(JNIEnv *env) {
   }
 
   CACHE_CLASS(Boolean, "java/lang/Boolean");
+  CACHE_METHOD(Boolean, Boolean_constructor, "<init>", "(Z)V");
   CACHE_METHOD(Boolean, Boolean_booleanValue, "booleanValue", "()Z");
-
-  CACHE_CLASS(Long, "java/lang/Long");
-  CACHE_METHOD(Long, Long_constructor, "<init>", "(J)V");
 
   CACHE_CLASS(Float, "java/lang/Float");
   CACHE_METHOD(Float, Float_floatValue, "floatValue", "()F");
@@ -137,8 +135,13 @@ bool bsg_jni_cache_init(JNIEnv *env) {
   CACHE_CLASS(number, "java/lang/Number");
   CACHE_METHOD(number, number_double_value, "doubleValue", "()D");
 
+  CACHE_CLASS(Int, "java/lang/Integer");
+  CACHE_METHOD(Int, Int_constructor, "<init>", "(I)V");
+  CACHE_METHOD(Int, Int_intValue, "intValue", "()I");
+
   CACHE_CLASS(Long, "java/lang/Long");
   CACHE_STATIC_METHOD(Long, Long_valueOf, "valueOf", "(J)Ljava/lang/Long;");
+  CACHE_METHOD(Long, Long_constructor, "<init>", "(J)V");
 
   CACHE_CLASS(String, "java/lang/String");
 
@@ -149,16 +152,33 @@ bool bsg_jni_cache_init(JNIEnv *env) {
   CACHE_METHOD(ArrayList, ArrayList_get, "get", "(I)Ljava/lang/Object;");
   CACHE_METHOD(ArrayList, ArrayList_add, "add", "(Ljava/lang/Object;)Z");
 
+  CACHE_CLASS(Set, "java/util/Set");
+  CACHE_METHOD(Set, Set_iterator, "iterator", "()Ljava/util/Iterator;");
+
+  CACHE_CLASS(Iterator, "java/util/Iterator");
+  CACHE_METHOD(Iterator, Iterator_hasNext, "hasNext", "()Z");
+  CACHE_METHOD(Iterator, Iterator_next, "next", "()Ljava/lang/Object;");
+
   CACHE_CLASS(Map, "java/util/Map");
   CACHE_METHOD(Map, Map_keySet, "keySet", "()Ljava/util/Set;");
   CACHE_METHOD(Map, Map_size, "size", "()I");
   CACHE_METHOD(Map, Map_get, "get", "(Ljava/lang/Object;)Ljava/lang/Object;");
+  CACHE_METHOD(Map, Map_put, "put",
+               "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;");
+  CACHE_METHOD(Map, Map_entrySet, "entrySet", "()Ljava/util/Set;");
+
+  CACHE_CLASS(MapEntry, "java/util/Map$Entry");
+  CACHE_METHOD(MapEntry, MapEntry_getKey, "getKey", "()Ljava/lang/Object;");
+  CACHE_METHOD(MapEntry, MapEntry_getValue, "getValue", "()Ljava/lang/Object;");
 
   CACHE_CLASS(HashMap, "java/util/HashMap");
+  CACHE_METHOD(HashMap, HashMap_constructor, "<init>", "()V");
   CACHE_METHOD(HashMap, HashMap_keySet, "keySet", "()Ljava/util/Set;");
   CACHE_METHOD(HashMap, HashMap_size, "size", "()I");
   CACHE_METHOD(HashMap, HashMap_get, "get",
                "(Ljava/lang/Object;)Ljava/lang/Object;");
+  CACHE_METHOD(HashMap, HashMap_put, "put",
+               "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;");
 
   CACHE_CLASS(NativeInterface, "com/bugsnag/android/NativeInterface");
   CACHE_STATIC_METHOD(NativeInterface, NativeInterface_getApp, "getApp",
@@ -179,7 +199,7 @@ bool bsg_jni_cache_init(JNIEnv *env) {
   CACHE_STATIC_METHOD(NativeInterface, NativeInterface_isDiscardErrorClass,
                       "isDiscardErrorClass", "(Ljava/lang/String;)Z");
   CACHE_STATIC_METHOD(NativeInterface, NativeInterface_deliverReport,
-                      "deliverReport", "([B[BLjava/lang/String;Z)V");
+                      "deliverReport", "([B[B[BLjava/lang/String;Z)V");
   CACHE_STATIC_METHOD(NativeInterface, NativeInterface_leaveBreadcrumb,
                       "leaveBreadcrumb",
                       "([BLcom/bugsnag/android/BreadcrumbType;)V");

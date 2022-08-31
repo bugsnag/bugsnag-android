@@ -8,10 +8,10 @@ import com.bugsnag.android.OnErrorCallback
 import com.bugsnag.android.OnSessionCallback
 import com.bugsnag.android.Telemetry
 
-class CXXExceptionWithUsageScenario(
+internal class HandledExceptionWithUsageScenario(
     config: Configuration,
     context: Context,
-    eventMetadata: String?
+    eventMetadata: String
 ) : Scenario(config, context, eventMetadata) {
 
     companion object {
@@ -28,8 +28,7 @@ class CXXExceptionWithUsageScenario(
         }
         config.maxBreadcrumbs = 10
         config.autoTrackSessions = false
-        config.discardClasses = setOf<String>("one", "two", "three")
-        config.maxPersistedSessions = 1000
+        config.addOnSend { true }
         val breadcrumbCb = OnBreadcrumbCallback { true }
         config.addOnBreadcrumb(breadcrumbCb)
         config.removeOnBreadcrumb(breadcrumbCb)
@@ -42,11 +41,12 @@ class CXXExceptionWithUsageScenario(
         config.addOnSession(OnSessionCallback { true })
     }
 
-    external fun crash()
+    external fun cxxsetup()
 
     override fun startScenario() {
         super.startScenario()
-        Bugsnag.addOnSession { true }
-        crash()
+        cxxsetup()
+        Bugsnag.addOnError { true }
+        Bugsnag.notify(generateException())
     }
 }

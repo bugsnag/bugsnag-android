@@ -83,9 +83,13 @@ class NativeBridge : StateObserver {
     external fun clearFeatureFlag(name: String)
     external fun clearFeatureFlags()
     external fun refreshSymbolTable()
-    external fun notifySetCallback(callback: Int)
-    external fun getCurrentCallbackSetCounts(): List<Long>
-    external fun getCurrentNativeApiCallUsage(): List<Boolean>
+    external fun initCallbackCounts(counts: Map<String, Int>)
+    external fun notifyAddCallback(callback: String)
+    external fun notifyRemoveCallback(callback: String)
+    external fun getCurrentCallbackSetCounts(): Map<String, Int>
+    external fun getCurrentNativeApiCallUsage(): Map<String, Boolean>
+    external fun setStaticJsonData(data: String)
+    external fun setInternalMetricsEnabled(enabled: Boolean)
 
     override fun onStateChange(event: StateEvent) {
         if (isInvalidMessage(event)) return
@@ -160,10 +164,13 @@ class NativeBridge : StateObserver {
 
     private fun deliverPendingReports() {
         lock.lock()
+        val filenameRegex = """.*\.crash$""".toRegex()
         try {
             val outDir = reportDirectory
             if (outDir.exists()) {
-                val fileList = outDir.listFiles()
+                val fileList = outDir.listFiles()?.filter {
+                    filenameRegex.containsMatchIn(it.name)
+                }
                 if (fileList != null) {
                     for (file in fileList) {
                         deliverReportAtPath(file.absolutePath)

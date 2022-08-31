@@ -31,7 +31,7 @@ bool my_on_error_b(void *event) {
 JNIEXPORT void JNICALL
 Java_com_example_bugsnag_android_ExampleApplication_performNativeBugsnagSetup(
     JNIEnv *env, jobject instance) {
-  bugsnag_add_on_error(&my_on_error_b);
+  bugsnag_add_on_error(my_on_error_b);
 }
 
 JNIEXPORT void JNICALL

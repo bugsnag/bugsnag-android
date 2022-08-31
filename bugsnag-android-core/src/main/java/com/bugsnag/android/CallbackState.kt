@@ -1,7 +1,5 @@
 package com.bugsnag.android
 
-import com.bugsnag.android.JsonStream.Streamable
-import java.io.IOException
 import java.util.concurrent.CopyOnWriteArrayList
 
 internal data class CallbackState(
@@ -9,38 +7,68 @@ internal data class CallbackState(
     val onBreadcrumbTasks: MutableCollection<OnBreadcrumbCallback> = CopyOnWriteArrayList(),
     val onSessionTasks: MutableCollection<OnSessionCallback> = CopyOnWriteArrayList(),
     val onSendTasks: MutableCollection<OnSendCallback> = CopyOnWriteArrayList()
-) : CallbackAware, Streamable {
+) : CallbackAware {
+
+    private var internalMetrics: InternalMetrics? = null
+
+    companion object {
+        private const val onBreadcrumbName = "onBreadcrumb"
+        private const val onErrorName = "onError"
+        private const val onSendName = "onSendError"
+        private const val onSessionName = "onSession"
+    }
+
+    fun setInternalMetrics(metrics: InternalMetrics) {
+        internalMetrics = metrics
+        internalMetrics?.setCallbackCounts(getCallbackCounts())
+    }
 
     override fun addOnError(onError: OnErrorCallback) {
-        onErrorTasks.add(onError)
+        if (onErrorTasks.add(onError)) {
+            internalMetrics?.notifyAddCallback(onErrorName)
+        }
     }
 
     override fun removeOnError(onError: OnErrorCallback) {
-        onErrorTasks.remove(onError)
+        if (onErrorTasks.remove(onError)) {
+            internalMetrics?.notifyRemoveCallback(onErrorName)
+        }
     }
 
     override fun addOnBreadcrumb(onBreadcrumb: OnBreadcrumbCallback) {
-        onBreadcrumbTasks.add(onBreadcrumb)
+        if (onBreadcrumbTasks.add(onBreadcrumb)) {
+            internalMetrics?.notifyAddCallback(onBreadcrumbName)
+        }
     }
 
     override fun removeOnBreadcrumb(onBreadcrumb: OnBreadcrumbCallback) {
-        onBreadcrumbTasks.remove(onBreadcrumb)
+        if (onBreadcrumbTasks.remove(onBreadcrumb)) {
+            internalMetrics?.notifyRemoveCallback(onBreadcrumbName)
+        }
     }
 
     override fun addOnSession(onSession: OnSessionCallback) {
-        onSessionTasks.add(onSession)
+        if (onSessionTasks.add(onSession)) {
+            internalMetrics?.notifyAddCallback(onSessionName)
+        }
     }
 
     override fun removeOnSession(onSession: OnSessionCallback) {
-        onSessionTasks.remove(onSession)
+        if (onSessionTasks.remove(onSession)) {
+            internalMetrics?.notifyRemoveCallback(onSessionName)
+        }
     }
 
     fun addOnSend(onSend: OnSendCallback) {
-        onSendTasks.add(onSend)
+        if (onSendTasks.add(onSend)) {
+            internalMetrics?.notifyAddCallback(onSendName)
+        }
     }
 
     fun removeOnSend(onSend: OnSendCallback) {
-        onSendTasks.remove(onSend)
+        if (onSendTasks.remove(onSend)) {
+            internalMetrics?.notifyRemoveCallback(onSendName)
+        }
     }
 
     fun runOnErrorTasks(event: Event, logger: Logger): Boolean {
@@ -123,34 +151,16 @@ internal data class CallbackState(
         onSendTasks = onSendTasks
     )
 
-    @Throws(IOException::class)
-    override fun toStream(writer: JsonStream) {
-        writer.beginObject()
-        if (onBreadcrumbTasks.count() > 0) {
-            writer.name("onBreadcrumb").value(onBreadcrumbTasks.count())
-        }
-        if (onErrorTasks.count() > 0) {
-            writer.name("onError").value(onErrorTasks.count())
-        }
-        if (onSendTasks.count() > 0) {
-            writer.name("onSendError").value(onSendTasks.count())
-        }
-        if (onSessionTasks.count() > 0) {
-            writer.name("onSession").value(onSessionTasks.count())
-        }
-        writer.endObject()
-    }
-
-    fun getCallbackCounts(): Map<String, Int> {
+    private fun getCallbackCounts(): Map<String, Int> {
         return listOfNotNull(
             if (onBreadcrumbTasks.count() > 0)
-                "onBreadcrumb" to onBreadcrumbTasks.count() else null,
+                onBreadcrumbName to onBreadcrumbTasks.count() else null,
             if (onErrorTasks.count() > 0)
-                "onError" to onErrorTasks.count() else null,
+                onErrorName to onErrorTasks.count() else null,
             if (onSendTasks.count() > 0)
-                "onSendError" to onSendTasks.count() else null,
+                onSendName to onSendTasks.count() else null,
             if (onSessionTasks.count() > 0)
-                "onSession" to onSessionTasks.count() else null,
+                onSessionName to onSessionTasks.count() else null,
         ).toMap()
     }
 }

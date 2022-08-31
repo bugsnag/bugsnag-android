@@ -329,10 +329,19 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXCaptureThreadsNotifyScenario_ac
     (char *)"CXXCaptureThreadStatesNotifyScenario", BSG_SEVERITY_ERR);
 }
 
+static bool on_error_sigsegv_with_usage(void* event) {
+  bugsnag_app_set_binary_arch(event, "something weird");
+  bugsnag_device_get_model(event);
+  bugsnag_event_get_severity(event);
+  return true;
+}
+
 JNIEXPORT jint JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXSigsegvWithUsageScenario_crash(JNIEnv *env,
                                                                                 jobject thiz,
                                                                                 jint value) {
+  bugsnag_add_on_error(on_error_sigsegv_with_usage);
+  bugsnag_set_user("id", "email", "name");
   int x = 38;
   if (value > 0) {
     raise(SIGSEGV);
@@ -346,6 +355,27 @@ Java_com_bugsnag_android_mazerunner_scenarios_CXXExceptionWithUsageScenario_cras
                                                                                   jobject instance) {
   int x = 61;
   printf("This one here: %ld\n", (long) f_trigger_an_exception(x > 0));
+}
+
+static bool on_error_do_nothing(void* event) {
+    return true;
+}
+
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_HandledExceptionWithUsageScenario_cxxsetup(
+        JNIEnv *env, jobject thiz) {
+    bugsnag_set_user("id", "email", "name");
+    bugsnag_add_on_error(on_error_do_nothing);
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_UnhandledExceptionWithUsageScenario_cxxsetup(
+        JNIEnv *env, jobject thiz) {
+    bugsnag_set_user("id", "email", "name");
+    bugsnag_add_on_error(on_error_do_nothing);
 }
 
 }

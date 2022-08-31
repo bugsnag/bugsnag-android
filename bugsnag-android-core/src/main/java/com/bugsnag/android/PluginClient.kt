@@ -45,6 +45,10 @@ internal class PluginClient(
         }
     }
 
+    fun getNdkPlugin(): Plugin? {
+        return ndkPlugin
+    }
+
     fun loadPlugins(client: Client) {
         plugins.forEach { plugin ->
             try {

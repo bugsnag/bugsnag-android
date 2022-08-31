@@ -1,6 +1,9 @@
 package com.bugsnag.android
 
 import com.bugsnag.android.ndk.NativeBridge
+import java.io.IOException
+import java.io.StringWriter
+import java.io.Writer
 import java.util.concurrent.atomic.AtomicBoolean
 
 internal class NdkPlugin : Plugin {
@@ -66,34 +69,59 @@ internal class NdkPlugin : Plugin {
         }
     }
 
+    fun setInternalMetricsEnabled(enabled: Boolean) {
+        nativeBridge?.setInternalMetricsEnabled(enabled)
+    }
+
     fun getSignalUnwindStackFunction(): Long {
-        val bridge = nativeBridge
-        if (bridge != null) {
-            return bridge.getSignalUnwindStackFunction()
-        }
-        return 0
+        return nativeBridge?.getSignalUnwindStackFunction() ?: 0
     }
 
-    fun getCurrentCallbackSetCounts(): List<Long> {
-        val bridge = nativeBridge
-        if (bridge != null) {
-            return bridge.getCurrentCallbackSetCounts()
-        }
-        return listOf()
+    fun getCurrentCallbackSetCounts(): Map<String, Int> {
+        return nativeBridge?.getCurrentCallbackSetCounts() ?: mapOf()
     }
 
-    fun getCurrentNativeApiCallUsage(): List<Boolean> {
-        val bridge = nativeBridge
-        if (bridge != null) {
-            return bridge.getCurrentNativeApiCallUsage()
-        }
-        return listOf()
+    fun getCurrentNativeApiCallUsage(): Map<String, Boolean> {
+        return nativeBridge?.getCurrentNativeApiCallUsage() ?: mapOf()
     }
 
-    fun notifySetCallback(callback: Int) {
-        val bridge = nativeBridge
-        if (bridge != null) {
-            bridge.notifySetCallback(callback)
+    fun initCallbackCounts(counts: Map<String, Int>) {
+        nativeBridge?.initCallbackCounts(counts)
+    }
+
+    fun notifyAddCallback(callback: String) {
+        nativeBridge?.notifyAddCallback(callback)
+    }
+
+    fun notifyRemoveCallback(callback: String) {
+        nativeBridge?.notifyRemoveCallback(callback)
+    }
+
+    fun setStaticData(data: Map<String, Any>) {
+        var writer: Writer? = null
+        var stream: JsonStream? = null
+        try {
+            writer = StringWriter()
+            stream = JsonStream(writer)
+            stream.value(data)
+            nativeBridge?.setStaticJsonData(writer.toString())
+        } catch (exc: IOException) {
+            // Ignore
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.close()
+                } catch (exc: IOException) {
+                    // Ignore
+                }
+            }
+            if (writer != null) {
+                try {
+                    writer.close()
+                } catch (exc: IOException) {
+                    // Ignore
+                }
+            }
         }
     }
 }

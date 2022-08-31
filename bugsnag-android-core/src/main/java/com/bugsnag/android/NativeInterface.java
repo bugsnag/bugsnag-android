@@ -2,7 +2,6 @@ package com.bugsnag.android;
 
 import com.bugsnag.android.internal.ImmutableConfig;
 import com.bugsnag.android.internal.JsonHelper;
-import com.bugsnag.android.repackaged.dslplatform.json.DslJson;
 
 import android.annotation.SuppressLint;
 
@@ -12,19 +11,11 @@ import androidx.annotation.Nullable;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Writer;
-import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -98,63 +89,6 @@ public class NativeInterface {
 
     private static @NonNull File getPersistenceDirectory() {
         return getClient().getConfig().getPersistenceDirectory().getValue();
-    }
-
-    private static @NonNull File getConfigDifferencesFilePath(@NonNull File persistenceDirectory) {
-        return new File(persistenceDirectory, "bugsnag_last_run.config_differences.json");
-    }
-
-    static Map<String, Object> previousConfigDifferences;
-
-    @SuppressWarnings("unchecked")
-    static void loadPreviousConfigDifferences(@NonNull File persistenceDirectory) {
-        File configDifferencesFile = getConfigDifferencesFilePath(persistenceDirectory);
-        try {
-            InputStream is = new FileInputStream(configDifferencesFile);
-            DslJson<Map<String, Object>> dslJson = new DslJson<>();
-            previousConfigDifferences = (Map<String, Object>)dslJson.deserialize(Map.class, is);
-        } catch (FileNotFoundException exc) {
-            // Ignore
-        } catch (IOException exc) {
-            // Ignore
-        }
-    }
-
-
-    /**
-     * Persist config usage to disk
-     * @param differences The differences to persist
-     */
-    public static void persistConfigDifferences(@NonNull File persistenceDirectory,
-                                                @NonNull Map<String, Object> differences) {
-        // Save the old config before overwriting it
-        loadPreviousConfigDifferences(persistenceDirectory);
-
-        Writer writer = null;
-        JsonStream stream = null;
-        try {
-            File configDifferencesFile = getConfigDifferencesFilePath(persistenceDirectory);
-            writer = new FileWriter(configDifferencesFile);
-            stream = new JsonStream(writer);
-            stream.value(differences);
-        } catch (IOException exc) {
-            // Ignore
-        } finally {
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException exc) {
-                    // Ignore
-                }
-            }
-            if (writer != null) {
-                try {
-                    writer.close();
-                } catch (IOException exc) {
-                    // Ignore
-                }
-            }
-        }
     }
 
     /**
@@ -423,14 +357,19 @@ public class NativeInterface {
     @SuppressWarnings("unused")
     public static void deliverReport(@Nullable byte[] releaseStageBytes,
                                      @NonNull byte[] payloadBytes,
+                                     @Nullable byte[] staticDataBytes,
                                      @NonNull String apiKey,
                                      boolean isLaunching) {
-        // Since this is a native event, add the previous config usage to it.
-        if (previousConfigDifferences != null) {
+        // If there's saved static data, merge it directly into the payload map.
+        if (staticDataBytes != null) {
             @SuppressWarnings("unchecked")
             Map<String, Object> payloadMap = (Map<String, Object>) JsonHelper.INSTANCE.deserialize(
                     new ByteArrayInputStream(payloadBytes));
-            payloadMap.put("config", previousConfigDifferences);
+            @SuppressWarnings("unchecked")
+            Map<String, Object> staticDataMap =
+                    (Map<String, Object>) JsonHelper.INSTANCE.deserialize(
+                    new ByteArrayInputStream(staticDataBytes));
+            payloadMap.putAll(staticDataMap);
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             JsonHelper.INSTANCE.serialize(payloadMap, os);
             payloadBytes = os.toByteArray();
@@ -642,5 +581,4 @@ public class NativeInterface {
     public static LastRunInfo getLastRunInfo() {
         return getClient().getLastRunInfo();
     }
-
 }

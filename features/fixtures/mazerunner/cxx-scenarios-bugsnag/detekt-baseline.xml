@@ -4,5 +4,10 @@
   <CurrentIssues>
     <ID>MagicNumber:CXXExceptionSmokeScenario.kt$CXXExceptionSmokeScenario$500</ID>
     <ID>MagicNumber:CXXExceptionSmokeScenario.kt$CXXExceptionSmokeScenario$999</ID>
+    <ID>MagicNumber:CXXExceptionWithUsageScenario.kt$CXXExceptionWithUsageScenario$10</ID>
+    <ID>MagicNumber:CXXExceptionWithUsageScenario.kt$CXXExceptionWithUsageScenario$1000</ID>
+    <ID>MagicNumber:CXXSigsegvWithUsageScenario.kt$CXXSigsegvWithUsageScenario$10</ID>
+    <ID>MagicNumber:HandledExceptionWithUsageScenario.kt$HandledExceptionWithUsageScenario$10</ID>
+    <ID>MagicNumber:UnhandledExceptionWithUsageScenario.kt$UnhandledExceptionWithUsageScenario$10</ID>
   </CurrentIssues>
 </SmellBaseline>

@@ -112,7 +112,6 @@ public class ClientFacadeTest {
         logger = new InterceptingLogger();
         client = new Client(
                 immutableConfig,
-                new HashMap<String, Object>(),
                 metadataState,
                 contextState,
                 callbackState,
@@ -132,8 +131,7 @@ public class ClientFacadeTest {
                 lastRunInfoStore,
                 launchCrashTracker,
                 exceptionHandler,
-                notifier,
-                internalMetrics
+                notifier
         );
 
         // required fields for generating an event
