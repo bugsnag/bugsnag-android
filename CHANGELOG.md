@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 5.26.0 (2022-08-18)
 
 ### Enhancements
 
