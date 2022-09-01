@@ -31,7 +31,7 @@ services:
       PUBLISH_PASS:
 
   android-maze-runner:
-    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner-releases:latest-v6-cli
+    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner:command-uuid-cli
     environment:
       DEBUG:
       BUILDKITE:

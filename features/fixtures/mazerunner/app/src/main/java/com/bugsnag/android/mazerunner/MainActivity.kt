@@ -112,6 +112,8 @@ class MainActivity : Activity() {
                     val scenarioMode = command.getString("scenario_mode")
                     val sessionsUrl = command.getString("sessions_endpoint")
                     val notifyUrl = command.getString("notify_endpoint")
+                    val uuid = command.getString("uuid")
+                    log("command.uuid: $uuid")
                     log("command.action: $action")
                     log("command.scenarioName: $scenarioName")
                     log("command.scenarioMode: $scenarioMode")
