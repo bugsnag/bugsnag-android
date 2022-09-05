@@ -1,1 +1,1 @@
-{"stacktrace":[{"frameAddress":"0x20000000","symbolAddress":"0x16000000","loadAddress":"0x12000000","lineNumber":52,"isPC":true,"file":"foo.c","method":"bar()"}],"errorClass":"signal","message":"whoops something went wrong","type":"c"}
+{"stacktrace":[{"frameAddress":"0x20000000","symbolAddress":"0x16000000","loadAddress":"0x12000000","lineNumber":"0x34","isPC":true,"file":"foo.c","method":"bar()"}],"errorClass":"signal","message":"whoops something went wrong","type":"c"}

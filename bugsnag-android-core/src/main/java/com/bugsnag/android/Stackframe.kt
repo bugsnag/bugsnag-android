@@ -123,7 +123,7 @@ class Stackframe : JsonStream.Streamable {
         writer.beginObject()
         writer.name("method").value(method)
         writer.name("file").value(file)
-        writer.name("lineNumber").value(lineNumber)
+        writer.name("lineNumber").value(lineNumber?.let { JsonHelper.ulongToHex(it.toLong()) })
 
         inProject?.let { writer.name("inProject").value(it) }
 

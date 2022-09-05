@@ -2,7 +2,7 @@
   {
     "method": "foo()",
     "file": "Bar.kt",
-    "lineNumber": 55,
+    "lineNumber": "0x37",
     "inProject": true,
     "columnNumber": 99,
     "code": {

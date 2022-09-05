@@ -88,7 +88,7 @@ def demangle symbol
 end
 
 def lookup_address binary, address
-  info = `addr2line --exe '#{binary}' --inlines --basenames --functions --demangle 0x#{address.to_s(16)}`.chomp
+  info = `addr2line --exe '#{binary}' --inlines --basenames --functions --demangle #{address}`.chomp
   return nil if info.start_with? '??' # failed to resolve
   # can return multiple if there are inlined frames
   frames = info.split("\n").each_slice(2).map do |function_name, location|
