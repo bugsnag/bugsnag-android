@@ -1,7 +1,7 @@
 {
   "method": "aMethod",
   "file": "aFile",
-  "lineNumber": 1,
+  "lineNumber": "0x1",
   "frameAddress": "0x2",
   "symbolAddress": "0x3",
   "loadAddress": "0x4",

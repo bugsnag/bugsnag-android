@@ -261,7 +261,7 @@ void bsg_serialize_stackframe(bugsnag_stackframe *stackframe, bool is_pc,
   set_hex_number(frame, "frameAddress", (*stackframe).frame_address);
   set_hex_number(frame, "symbolAddress", (*stackframe).symbol_address);
   set_hex_number(frame, "loadAddress", (*stackframe).load_address);
-  json_object_set_number(frame, "lineNumber", (*stackframe).line_number);
+  set_hex_number(frame, "lineNumber", (*stackframe).line_number);
   if (is_pc) {
     // only necessary to set to true, false is the default value and omitting
     // the field keeps payload sizes smaller.
