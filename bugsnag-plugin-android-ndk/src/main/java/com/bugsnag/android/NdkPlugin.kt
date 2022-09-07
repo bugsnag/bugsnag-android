@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import com.bugsnag.android.ndk.NativeBridge
+import java.io.StringWriter
 import java.util.concurrent.atomic.AtomicBoolean
 
 internal class NdkPlugin : Plugin {
@@ -66,12 +67,37 @@ internal class NdkPlugin : Plugin {
         }
     }
 
+    fun setInternalMetricsEnabled(enabled: Boolean) {
+        nativeBridge?.setInternalMetricsEnabled(enabled)
+    }
+
     fun getSignalUnwindStackFunction(): Long {
-        val bridge = nativeBridge
-        if (bridge != null) {
-            return bridge.getSignalUnwindStackFunction()
-        }
-        return 0
+        return nativeBridge?.getSignalUnwindStackFunction() ?: 0
+    }
+
+    fun getCurrentCallbackSetCounts(): Map<String, Int> {
+        return nativeBridge?.getCurrentCallbackSetCounts() ?: mapOf()
+    }
+
+    fun getCurrentNativeApiCallUsage(): Map<String, Boolean> {
+        return nativeBridge?.getCurrentNativeApiCallUsage() ?: mapOf()
+    }
+
+    fun initCallbackCounts(counts: Map<String, Int>) {
+        nativeBridge?.initCallbackCounts(counts)
+    }
+
+    fun notifyAddCallback(callback: String) {
+        nativeBridge?.notifyAddCallback(callback)
+    }
+
+    fun notifyRemoveCallback(callback: String) {
+        nativeBridge?.notifyRemoveCallback(callback)
+    }
+
+    fun setStaticData(data: Map<String, Any>) {
+        val encoded = StringWriter().apply { use { writer -> JsonStream(writer).use { it.value(data) } } }.toString()
+        nativeBridge?.setStaticJsonData(encoded)
     }
 }
 

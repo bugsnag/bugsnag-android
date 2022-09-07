@@ -16,7 +16,7 @@ internal class BugsnagStateModule(
 
     val clientObservable = ClientObservable()
 
-    val callbackState = configuration.impl.callbackState.copy()
+    val callbackState = configuration.impl.callbackState
 
     val contextState = ContextState().apply {
         if (configuration.context != null) {

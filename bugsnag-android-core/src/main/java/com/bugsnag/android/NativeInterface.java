@@ -1,20 +1,21 @@
 package com.bugsnag.android;
 
 import com.bugsnag.android.internal.ImmutableConfig;
+import com.bugsnag.android.internal.JsonHelper;
 
 import android.annotation.SuppressLint;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -78,10 +79,16 @@ public class NativeInterface {
      * Retrieves the directory used to store native crash reports
      */
     @NonNull
-    public static String getNativeReportPath() {
-        ImmutableConfig config = getClient().getConfig();
-        File persistenceDirectory = config.getPersistenceDirectory().getValue();
-        return new File(persistenceDirectory, "bugsnag-native").getAbsolutePath();
+    public static File getNativeReportPath() {
+        return getNativeReportPath(getPersistenceDirectory());
+    }
+
+    private static @NonNull File getNativeReportPath(@NonNull File persistenceDirectory) {
+        return new File(persistenceDirectory, "bugsnag-native");
+    }
+
+    private static @NonNull File getPersistenceDirectory() {
+        return getClient().getConfig().getPersistenceDirectory().getValue();
     }
 
     /**
@@ -350,11 +357,24 @@ public class NativeInterface {
     @SuppressWarnings("unused")
     public static void deliverReport(@Nullable byte[] releaseStageBytes,
                                      @NonNull byte[] payloadBytes,
+                                     @Nullable byte[] staticDataBytes,
                                      @NonNull String apiKey,
                                      boolean isLaunching) {
-        if (payloadBytes == null) {
-            return;
+        // If there's saved static data, merge it directly into the payload map.
+        if (staticDataBytes != null) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> payloadMap = (Map<String, Object>) JsonHelper.INSTANCE.deserialize(
+                    new ByteArrayInputStream(payloadBytes));
+            @SuppressWarnings("unchecked")
+            Map<String, Object> staticDataMap =
+                    (Map<String, Object>) JsonHelper.INSTANCE.deserialize(
+                    new ByteArrayInputStream(staticDataBytes));
+            payloadMap.putAll(staticDataMap);
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            JsonHelper.INSTANCE.serialize(payloadMap, os);
+            payloadBytes = os.toByteArray();
         }
+
         String payload = new String(payloadBytes, UTF8Charset);
         String releaseStage = releaseStageBytes == null
                 ? null
@@ -561,5 +581,4 @@ public class NativeInterface {
     public static LastRunInfo getLastRunInfo() {
         return getClient().getLastRunInfo();
     }
-
 }

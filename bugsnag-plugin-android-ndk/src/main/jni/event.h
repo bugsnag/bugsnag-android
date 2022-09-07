@@ -34,7 +34,7 @@
 /**
  * Version of the bugsnag_event struct. Serialized to report header.
  */
-#define BUGSNAG_EVENT_VERSION 10
+#define BUGSNAG_EVENT_VERSION 11
 
 #ifdef __cplusplus
 extern "C" {
@@ -213,6 +213,11 @@ typedef struct {
 } bsg_feature_flag;
 
 typedef struct {
+  char name[30];
+  int32_t count;
+} set_callback_count;
+
+typedef struct {
   bsg_notifier notifier;
   bsg_app_info app;
   bsg_device_info device;
@@ -250,15 +255,30 @@ typedef struct {
    * serialized/deserialized separately to the rest of the struct.
    */
   bsg_feature_flag *feature_flags;
+
+  /**
+   * Counters to count how many times a callback was set.
+   * There are actually less than 10 callbacks, but leave room for expansion.
+   */
+  set_callback_count set_callback_counts[10];
+
+  /**
+   * Flags to denote which native APIs have been called (see bsg_called_api).
+   * This only records that at least one call was made per API; it doesn't tally
+   * how many calls occurred.
+   *
+   * Implemented as a bit array:
+   *   The high bits (call / 64) represent the index into event->called_apis.
+   *   The low bits (call & 63) represent the bit index.
+   */
+  uint64_t called_apis[2];
 } bugsnag_event;
 
-void bugsnag_event_add_breadcrumb(bugsnag_event *event,
-                                  bugsnag_breadcrumb *crumb);
-void bugsnag_event_clear_breadcrumbs(bugsnag_event *event);
-void bugsnag_event_start_session(bugsnag_event *event, const char *session_id,
-                                 const char *started_at, int handled_count,
-                                 int unhandled_count);
-bool bugsnag_event_has_session(const bugsnag_event *event);
+void bsg_event_add_breadcrumb(bugsnag_event *event, bugsnag_breadcrumb *crumb);
+void bsg_event_start_session(bugsnag_event *event, const char *session_id,
+                             const char *started_at, int handled_count,
+                             int unhandled_count);
+bool bsg_event_has_session(const bugsnag_event *event);
 
 void bsg_add_metadata_value_double(bugsnag_metadata *metadata,
                                    const char *section, const char *name,

@@ -1,6 +1,8 @@
 package com.bugsnag.android
 
 import com.bugsnag.android.internal.ImmutableConfig
+import com.bugsnag.android.internal.InternalMetrics
+import com.bugsnag.android.internal.InternalMetricsNoop
 import java.io.IOException
 
 internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, MetadataAware, UserAware {
@@ -103,6 +105,7 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
             jsonStreamer.redactedKeys = value.toSet()
             metadata.redactedKeys = value.toSet()
         }
+    var internalMetrics: InternalMetrics = InternalMetricsNoop()
 
     /**
      * @return user information associated with this Event
@@ -162,6 +165,9 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
         writer.name("device").value(device)
         writer.name("breadcrumbs").value(breadcrumbs)
         writer.name("groupingHash").value(groupingHash)
+        internalMetrics.toJsonableMap().forEach { entry ->
+            writer.name(entry.key).value(entry.value)
+        }
 
         writer.name("threads")
         writer.beginArray()

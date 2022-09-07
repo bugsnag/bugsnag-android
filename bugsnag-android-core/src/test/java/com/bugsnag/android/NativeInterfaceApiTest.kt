@@ -21,6 +21,7 @@ import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
+import java.io.File
 import java.nio.file.Files
 
 /**
@@ -88,7 +89,8 @@ internal class NativeInterfaceApiTest {
         val customDir = Files.createTempDirectory("custom").toFile()
         `when`(immutableConfig.persistenceDirectory).thenReturn(lazy { customDir })
         val observed = NativeInterface.getNativeReportPath()
-        assertEquals("${customDir.absolutePath}/bugsnag-native", observed)
+        val expected = File(customDir, "bugsnag-native")
+        assertEquals(expected, observed)
     }
 
     @Test
@@ -236,7 +238,10 @@ internal class NativeInterfaceApiTest {
 
     @Test
     fun deliverReport() {
-        NativeInterface.deliverReport(null, "{}".toByteArray(), "", false)
+        NativeInterface.deliverReport(
+            null, "{}".toByteArray(), "{}".toByteArray(),
+            "", false
+        )
         verify(eventStore, times(1)).enqueueContentForDelivery(eq("{}"), any())
     }
 

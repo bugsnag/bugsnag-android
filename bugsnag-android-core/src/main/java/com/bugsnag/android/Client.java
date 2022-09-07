@@ -3,6 +3,9 @@ package com.bugsnag.android;
 import static com.bugsnag.android.SeverityReason.REASON_HANDLED_EXCEPTION;
 
 import com.bugsnag.android.internal.ImmutableConfig;
+import com.bugsnag.android.internal.InternalMetrics;
+import com.bugsnag.android.internal.InternalMetricsImpl;
+import com.bugsnag.android.internal.InternalMetricsNoop;
 import com.bugsnag.android.internal.StateObserver;
 import com.bugsnag.android.internal.dag.ConfigModule;
 import com.bugsnag.android.internal.dag.ContextModule;
@@ -16,7 +19,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
 
 import java.io.File;
@@ -49,6 +51,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
     final MetadataState metadataState;
     final FeatureFlagState featureFlagState;
 
+    private final InternalMetrics internalMetrics;
     private final ContextState contextState;
     private final CallbackState callbackState;
     private final UserState userState;
@@ -204,6 +207,18 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         // initialise plugins before attempting to flush any errors
         loadPlugins(configuration);
 
+        NdkPluginCaller.INSTANCE.setNdkPlugin(pluginClient.getNdkPlugin());
+
+        // InternalMetrics uses NdkPluginCaller
+        if (configuration.getTelemetry().contains(Telemetry.USAGE)) {
+            internalMetrics = new InternalMetricsImpl();
+            NdkPluginCaller.INSTANCE.setInternalMetricsEnabled(true);
+        } else {
+            internalMetrics = new InternalMetricsNoop();
+        }
+        internalMetrics.setConfigDifferences(configuration.impl.getConfigDifferences());
+        configuration.impl.callbackState.setInternalMetrics(internalMetrics);
+
         // Flush any on-disk errors and sessions
         eventStore.flushOnLaunch();
         eventStore.flushAsync();
@@ -266,6 +281,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         this.lastRunInfo = null;
         this.exceptionHandler = exceptionHandler;
         this.notifier = notifier;
+        internalMetrics = new InternalMetricsNoop();
     }
 
     void registerLifecycleCallbacks() {
@@ -390,7 +406,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
             return bgTaskService.submitTask(TaskType.IO, new Callable<Boolean>() {
                 @Override
                 public Boolean call() {
-                    File outFile = new File(NativeInterface.getNativeReportPath());
+                    File outFile = NativeInterface.getNativeReportPath();
                     return outFile.exists() || outFile.mkdirs();
                 }
             }).get();
@@ -746,6 +762,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
         // Attach context to the event
         event.setContext(contextState.getContext());
+
+        event.setInternalMetrics(internalMetrics);
+
         notifyInternal(event, onError);
     }
 

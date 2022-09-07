@@ -1,6 +1,7 @@
 #include "event_writer.h"
 
 #include <fcntl.h>
+#include <string.h>
 #include <unistd.h>
 
 #include "../string.h"
@@ -34,6 +35,17 @@ bool bsg_event_write(bsg_environment *env) {
       bsg_write_opaque_metadata(&env->next_event, &writer);
 
   writer.dispose(&writer);
+
+  if (result && env->static_json_data != NULL) {
+    // Attempt to write the static data, but don't worry if it fails.
+    // We'll check for truncated/missing static data on load.
+    if (bsg_buffered_writer_open(&writer, env->next_event_static_data_path)) {
+      writer.write(&writer, env->static_json_data,
+                   strlen(env->static_json_data));
+      writer.dispose(&writer);
+    }
+  }
+
   return result;
 }
 

@@ -26,6 +26,11 @@ typedef struct {
    */
   char next_event_path[384];
   /**
+   * File path on disk where the next crash report static data will be written
+   * if needed.
+   */
+  char next_event_static_data_path[384];
+  /**
    * File path on disk where the last run info will be written if needed.
    */
   char last_run_info_path[384];
@@ -67,6 +72,17 @@ typedef struct {
    * at the time of an error.
    */
   bsg_thread_send_policy send_threads;
+
+  /**
+   * Static data set on app launch and never again modified.
+   * Allocated dynamically, in JSON format.
+   * On crash, this data gets dumped to a new file with the same name as the
+   * event file + ".staticData.json".
+   * On delivery, this data gets sent to the JVM alongside of the JSONified
+   * event object.
+   */
+  const char *static_json_data;
+
 } bsg_environment;
 
 /**

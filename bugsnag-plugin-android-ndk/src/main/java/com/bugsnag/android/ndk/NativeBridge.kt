@@ -19,6 +19,7 @@ import com.bugsnag.android.StateEvent.UpdateOrientation
 import com.bugsnag.android.StateEvent.UpdateUser
 import com.bugsnag.android.internal.StateObserver
 import java.io.File
+import java.io.FileFilter
 import java.nio.charset.Charset
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
@@ -31,7 +32,7 @@ class NativeBridge : StateObserver {
 
     private val lock = ReentrantLock()
     private val installed = AtomicBoolean(false)
-    private val reportDirectory: String = NativeInterface.getNativeReportPath()
+    private val reportDirectory: File = NativeInterface.getNativeReportPath()
     private val logger = NativeInterface.getLogger()
 
     private val is32bit: Boolean
@@ -83,6 +84,13 @@ class NativeBridge : StateObserver {
     external fun clearFeatureFlag(name: String)
     external fun clearFeatureFlags()
     external fun refreshSymbolTable()
+    external fun initCallbackCounts(counts: Map<String, Int>)
+    external fun notifyAddCallback(callback: String)
+    external fun notifyRemoveCallback(callback: String)
+    external fun getCurrentCallbackSetCounts(): Map<String, Int>?
+    external fun getCurrentNativeApiCallUsage(): Map<String, Boolean>?
+    external fun setStaticJsonData(data: String)
+    external fun setInternalMetricsEnabled(enabled: Boolean)
 
     override fun onStateChange(event: StateEvent) {
         if (isInvalidMessage(event)) return
@@ -157,10 +165,11 @@ class NativeBridge : StateObserver {
 
     private fun deliverPendingReports() {
         lock.lock()
+        val filenameRegex = """.*\.crash$""".toRegex()
         try {
-            val outDir = File(reportDirectory)
+            val outDir = reportDirectory
             if (outDir.exists()) {
-                val fileList = outDir.listFiles()
+                val fileList = outDir.listFiles(FileFilter { filenameRegex.containsMatchIn(it.name) })
                 if (fileList != null) {
                     for (file in fileList) {
                         deliverReportAtPath(file.absolutePath)

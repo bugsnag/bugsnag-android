@@ -11,15 +11,19 @@
 #include "featureflags.h"
 #include "handlers/cpp_handler.h"
 #include "handlers/signal_handler.h"
+#include "internal_metrics.h"
 #include "jni_cache.h"
 #include "metadata.h"
 #include "safejni.h"
 #include "utils/serializer.h"
+#include "utils/serializer/event_reader.h"
 #include "utils/string.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#define STATIC_DATA_FILENAME_EXTENSION ".static_data.json"
 
 static bsg_environment *bsg_global_env;
 static pthread_mutex_t bsg_global_env_write_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -42,12 +46,14 @@ static void release_env_write_lock(void) {
 void bugsnag_add_on_error(bsg_on_error on_error) {
   if (bsg_global_env != NULL) {
     bsg_global_env->on_error = on_error;
+    bsg_notify_add_callback(&bsg_global_env->next_event, "ndkOnError");
   }
 }
 
 void bugsnag_remove_on_error() {
   if (bsg_global_env != NULL) {
     bsg_global_env->on_error = NULL;
+    bsg_notify_remove_callback(&bsg_global_env->next_event, "ndkOnError");
   }
 }
 
@@ -165,6 +171,8 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
     goto error;
   }
   sprintf(bugsnag_env->next_event_path, "%s", event_path);
+  sprintf(bugsnag_env->next_event_static_data_path, "%s%s", event_path,
+          STATIC_DATA_FILENAME_EXTENSION);
   bsg_safe_release_string_utf_chars(env, _event_path, event_path);
 
   // copy last run info path to env struct
@@ -225,10 +233,13 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
   pthread_mutex_lock(&bsg_native_delivery_mutex);
 
   const char *event_path = NULL;
+  char static_data_path[384];
   bugsnag_event *event = NULL;
   jbyteArray jpayload = NULL;
   jbyteArray jstage = NULL;
   char *payload = NULL;
+  char *static_data = NULL;
+  jbyteArray jstatic_data = NULL;
   jstring japi_key = NULL;
   jstring errorClass = NULL;
 
@@ -243,9 +254,16 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
   }
   event = bsg_deserialize_event_from_file((char *)event_path);
 
+  snprintf(static_data_path, sizeof(static_data_path), "%s%s", event_path,
+           STATIC_DATA_FILENAME_EXTENSION);
+  if (bsg_read_text_file(static_data_path, &static_data) > 0) {
+    jstatic_data = bsg_byte_ary_from_string(env, static_data);
+  }
+
   // remove persisted NDK struct early - this reduces the chance of crash loops
   // in delivery.
   remove(event_path);
+  remove(static_data_path);
 
   if (event == NULL) {
     BUGSNAG_LOG("Failed to read event at file: %s", event_path);
@@ -284,7 +302,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
     bsg_safe_call_static_void_method(
         env, bsg_jni_cache->NativeInterface,
         bsg_jni_cache->NativeInterface_deliverReport, jstage, jpayload,
-        japi_key, is_launching);
+        jstatic_data, japi_key, is_launching);
   }
 
 exit:
@@ -298,6 +316,8 @@ exit:
   }
   bsg_safe_release_byte_array_elements(env, jpayload, (jbyte *)payload);
   free(payload);
+  bsg_safe_release_byte_array_elements(env, jstatic_data, (jbyte *)static_data);
+  free(static_data);
 
   pthread_mutex_unlock(&bsg_native_delivery_mutex);
 }
@@ -311,7 +331,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_addHandledEvent(JNIEnv *env,
   request_env_write_lock();
   bugsnag_event *event = &bsg_global_env->next_event;
 
-  if (bugsnag_event_has_session(event)) {
+  if (bsg_event_has_session(event)) {
     event->handled_events++;
   }
   release_env_write_lock();
@@ -326,7 +346,7 @@ Java_com_bugsnag_android_ndk_NativeBridge_addUnhandledEvent(JNIEnv *env,
   request_env_write_lock();
   bugsnag_event *event = &bsg_global_env->next_event;
 
-  if (bugsnag_event_has_session(event)) {
+  if (bsg_event_has_session(event)) {
     event->unhandled_events++;
   }
   release_env_write_lock();
@@ -342,8 +362,8 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_startedSession(
   char *started_at = (char *)bsg_safe_get_string_utf_chars(env, start_date_);
   if (session_id != NULL && started_at != NULL) {
     request_env_write_lock();
-    bugsnag_event_start_session(&bsg_global_env->next_event, session_id,
-                                started_at, handled_count, unhandled_count);
+    bsg_event_start_session(&bsg_global_env->next_event, session_id, started_at,
+                            handled_count, unhandled_count);
     release_env_write_lock();
   }
   bsg_safe_release_string_utf_chars(env, session_id_, session_id);
@@ -400,7 +420,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_addBreadcrumb(
 
     bsg_populate_crumb_metadata(env, crumb, metadata);
     request_env_write_lock();
-    bugsnag_event_add_breadcrumb(&bsg_global_env->next_event, crumb);
+    bsg_event_add_breadcrumb(&bsg_global_env->next_event, crumb);
     release_env_write_lock();
 
     free(crumb);
@@ -816,6 +836,139 @@ JNIEXPORT void JNICALL
 Java_com_bugsnag_android_ndk_NativeBridge_refreshSymbolTable(JNIEnv *env,
                                                              jobject thiz) {
   bugsnag_refresh_symbol_table();
+}
+
+JNIEXPORT jobject JNICALL
+Java_com_bugsnag_android_ndk_NativeBridge_getCurrentCallbackSetCounts(
+    JNIEnv *env, jobject thiz) {
+
+  if (bsg_global_env == NULL) {
+    return NULL;
+  }
+
+  static const int total_callbacks =
+      sizeof(bsg_global_env->next_event.set_callback_counts) /
+      sizeof(*bsg_global_env->next_event.set_callback_counts);
+
+  jobject counts = bsg_safe_new_object(env, bsg_jni_cache->HashMap,
+                                       bsg_jni_cache->HashMap_constructor);
+  if (counts == NULL) {
+    return NULL;
+  }
+
+  for (int i = 0; i < total_callbacks; i++) {
+    jstring key = bsg_safe_new_string_utf(
+        env, bsg_global_env->next_event.set_callback_counts[i].name);
+    jobject value = bsg_safe_new_object(
+        env, bsg_jni_cache->Int, bsg_jni_cache->Int_constructor,
+        (jint)bsg_global_env->next_event.set_callback_counts[i].count);
+    if (value == NULL) {
+      return NULL;
+    }
+    bsg_safe_call_object_method(env, counts, bsg_jni_cache->HashMap_put, key,
+                                value);
+    bsg_safe_delete_local_ref(env, value);
+  }
+
+  return counts;
+}
+
+JNIEXPORT jobject JNICALL
+Java_com_bugsnag_android_ndk_NativeBridge_getCurrentNativeApiCallUsage(
+    JNIEnv *env, jobject thiz) {
+  if (bsg_global_env == NULL) {
+    return NULL;
+  }
+
+  jobject map = bsg_safe_new_object(env, bsg_jni_cache->HashMap,
+                                    bsg_jni_cache->HashMap_constructor);
+  if (map == NULL) {
+    return NULL;
+  }
+
+  jobject trueValue = bsg_safe_new_object(
+      env, bsg_jni_cache->Boolean, bsg_jni_cache->Boolean_constructor, true);
+  if (trueValue == NULL) {
+    return NULL;
+  }
+  for (bsg_called_api i = 0; i < bsg_called_apis_count; i++) {
+    if (bsg_was_api_called(&bsg_global_env->next_event, i)) {
+      jstring key = bsg_safe_new_string_utf(env, bsg_called_api_names[i]);
+      bsg_safe_call_object_method(env, map, bsg_jni_cache->HashMap_put, key,
+                                  trueValue);
+    }
+  }
+  bsg_safe_delete_local_ref(env, trueValue);
+
+  return map;
+}
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_ndk_NativeBridge_setStaticJsonData(JNIEnv *env,
+                                                            jobject thiz,
+                                                            jstring data_) {
+  const char *data = bsg_safe_get_string_utf_chars(env, data_);
+  if (data == NULL) {
+    return;
+  }
+
+  size_t length = strlen(data);
+  if (length == 0) {
+    goto done;
+  }
+
+  const char *data_old = bsg_global_env->static_json_data;
+  bsg_global_env->static_json_data = strdup(data);
+  free((void *)data_old);
+
+done:
+  bsg_safe_release_string_utf_chars(env, data_, data);
+}
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_ndk_NativeBridge_initCallbackCounts(JNIEnv *env,
+                                                             jobject thiz,
+                                                             jobject counts) {
+  jobject entrySet =
+      bsg_safe_call_object_method(env, counts, bsg_jni_cache->Map_entrySet);
+  jobject iterator =
+      bsg_safe_call_object_method(env, entrySet, bsg_jni_cache->Set_iterator);
+
+  while (bsg_safe_call_boolean_method(env, iterator,
+                                      bsg_jni_cache->Iterator_hasNext)) {
+    jobject entry = bsg_safe_call_object_method(env, iterator,
+                                                bsg_jni_cache->Iterator_next);
+    jstring name =
+        bsg_safe_call_object_method(env, entry, bsg_jni_cache->MapEntry_getKey);
+    jobject value = bsg_safe_call_object_method(
+        env, entry, bsg_jni_cache->MapEntry_getValue);
+    const char *nameString = bsg_safe_get_string_utf_chars(env, name);
+    jint intValue =
+        (jint)bsg_safe_call_int_method(env, value, bsg_jni_cache->Int_intValue);
+    bsg_set_callback_count(&bsg_global_env->next_event, nameString,
+                           (int32_t)intValue);
+  }
+}
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_ndk_NativeBridge_notifyAddCallback(JNIEnv *env,
+                                                            jobject thiz,
+                                                            jstring callback_) {
+  const char *callback = bsg_safe_get_string_utf_chars(env, callback_);
+  bsg_notify_add_callback(&bsg_global_env->next_event, callback);
+}
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_ndk_NativeBridge_notifyRemoveCallback(
+    JNIEnv *env, jobject thiz, jstring callback_) {
+  const char *callback = bsg_safe_get_string_utf_chars(env, callback_);
+  bsg_notify_remove_callback(&bsg_global_env->next_event, callback);
+}
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_ndk_NativeBridge_setInternalMetricsEnabled(
+    JNIEnv *env, jobject thiz, jboolean enabled) {
+  bsg_set_internal_metrics_enabled(enabled);
 }
 
 #ifdef __cplusplus

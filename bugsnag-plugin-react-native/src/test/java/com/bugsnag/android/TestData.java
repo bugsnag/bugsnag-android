@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 
@@ -24,7 +25,7 @@ class TestData {
                 Collections.singleton("production"),
                 Collections.singleton("com.example"),
                 new HashSet<>(Collections.singletonList(BreadcrumbType.MANUAL)),
-                new HashSet<>(Collections.singletonList(Telemetry.INTERNAL_ERRORS)),
+                EnumSet.of(Telemetry.INTERNAL_ERRORS, Telemetry.USAGE),
                 "production",
                 "builduuid-123",
                 "1.4.3",

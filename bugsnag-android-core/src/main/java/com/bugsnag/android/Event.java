@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import com.bugsnag.android.internal.ImmutableConfig;
+import com.bugsnag.android.internal.InternalMetrics;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -9,7 +10,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * An Event object represents a Throwable captured by Bugsnag and is available as a parameter on
@@ -420,5 +420,9 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware, F
 
     void setRedactedKeys(Collection<String> redactedKeys) {
         impl.setRedactedKeys(redactedKeys);
+    }
+
+    void setInternalMetrics(InternalMetrics metrics) {
+        impl.setInternalMetrics(metrics);
     }
 }

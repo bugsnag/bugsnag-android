@@ -273,4 +273,5 @@ JNIEXPORT void JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_UnhandledNdkAutoNotifyFalseScenario_crash(JNIEnv *env) {
   abort();
 }
+
 }

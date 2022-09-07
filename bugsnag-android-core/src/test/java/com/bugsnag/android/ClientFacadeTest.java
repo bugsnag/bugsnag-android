@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.bugsnag.android.internal.ImmutableConfig;
+import com.bugsnag.android.internal.InternalMetrics;
 import com.bugsnag.android.internal.StateObserver;
 
 import android.content.Context;
@@ -97,6 +98,9 @@ public class ClientFacadeTest {
 
     @Mock
     Notifier notifier;
+
+    @Mock
+    InternalMetrics internalMetrics;
 
     private Client client;
     private InterceptingLogger logger;
