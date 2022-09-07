@@ -19,6 +19,7 @@ import com.bugsnag.android.StateEvent.UpdateOrientation
 import com.bugsnag.android.StateEvent.UpdateUser
 import com.bugsnag.android.internal.StateObserver
 import java.io.File
+import java.io.FileFilter
 import java.nio.charset.Charset
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
@@ -86,8 +87,8 @@ class NativeBridge : StateObserver {
     external fun initCallbackCounts(counts: Map<String, Int>)
     external fun notifyAddCallback(callback: String)
     external fun notifyRemoveCallback(callback: String)
-    external fun getCurrentCallbackSetCounts(): Map<String, Int>
-    external fun getCurrentNativeApiCallUsage(): Map<String, Boolean>
+    external fun getCurrentCallbackSetCounts(): Map<String, Int>?
+    external fun getCurrentNativeApiCallUsage(): Map<String, Boolean>?
     external fun setStaticJsonData(data: String)
     external fun setInternalMetricsEnabled(enabled: Boolean)
 
@@ -168,9 +169,7 @@ class NativeBridge : StateObserver {
         try {
             val outDir = reportDirectory
             if (outDir.exists()) {
-                val fileList = outDir.listFiles()?.filter {
-                    filenameRegex.containsMatchIn(it.name)
-                }
+                val fileList = outDir.listFiles(FileFilter { filenameRegex.containsMatchIn(it.name) })
                 if (fileList != null) {
                     for (file in fileList) {
                         deliverReportAtPath(file.absolutePath)

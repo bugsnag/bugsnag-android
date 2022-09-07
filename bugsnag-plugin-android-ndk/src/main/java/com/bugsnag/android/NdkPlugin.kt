@@ -1,9 +1,7 @@
 package com.bugsnag.android
 
 import com.bugsnag.android.ndk.NativeBridge
-import java.io.IOException
 import java.io.StringWriter
-import java.io.Writer
 import java.util.concurrent.atomic.AtomicBoolean
 
 internal class NdkPlugin : Plugin {
@@ -98,31 +96,8 @@ internal class NdkPlugin : Plugin {
     }
 
     fun setStaticData(data: Map<String, Any>) {
-        var writer: Writer? = null
-        var stream: JsonStream? = null
-        try {
-            writer = StringWriter()
-            stream = JsonStream(writer)
-            stream.value(data)
-            nativeBridge?.setStaticJsonData(writer.toString())
-        } catch (exc: IOException) {
-            // Ignore
-        } finally {
-            if (stream != null) {
-                try {
-                    stream.close()
-                } catch (exc: IOException) {
-                    // Ignore
-                }
-            }
-            if (writer != null) {
-                try {
-                    writer.close()
-                } catch (exc: IOException) {
-                    // Ignore
-                }
-            }
-        }
+        val encoded = StringWriter().apply { use { writer -> JsonStream(writer).use { it.value(data) } } }.toString()
+        nativeBridge?.setStaticJsonData(encoded)
     }
 }
 

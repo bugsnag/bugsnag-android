@@ -1,5 +1,7 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.internal.InternalMetrics
+import com.bugsnag.android.internal.InternalMetricsNoop
 import java.util.concurrent.CopyOnWriteArrayList
 
 internal data class CallbackState(
@@ -9,7 +11,7 @@ internal data class CallbackState(
     val onSendTasks: MutableCollection<OnSendCallback> = CopyOnWriteArrayList()
 ) : CallbackAware {
 
-    private var internalMetrics: InternalMetrics? = null
+    private var internalMetrics: InternalMetrics = InternalMetricsNoop()
 
     companion object {
         private const val onBreadcrumbName = "onBreadcrumb"
@@ -20,54 +22,54 @@ internal data class CallbackState(
 
     fun setInternalMetrics(metrics: InternalMetrics) {
         internalMetrics = metrics
-        internalMetrics?.setCallbackCounts(getCallbackCounts())
+        internalMetrics.setCallbackCounts(getCallbackCounts())
     }
 
     override fun addOnError(onError: OnErrorCallback) {
         if (onErrorTasks.add(onError)) {
-            internalMetrics?.notifyAddCallback(onErrorName)
+            internalMetrics.notifyAddCallback(onErrorName)
         }
     }
 
     override fun removeOnError(onError: OnErrorCallback) {
         if (onErrorTasks.remove(onError)) {
-            internalMetrics?.notifyRemoveCallback(onErrorName)
+            internalMetrics.notifyRemoveCallback(onErrorName)
         }
     }
 
     override fun addOnBreadcrumb(onBreadcrumb: OnBreadcrumbCallback) {
         if (onBreadcrumbTasks.add(onBreadcrumb)) {
-            internalMetrics?.notifyAddCallback(onBreadcrumbName)
+            internalMetrics.notifyAddCallback(onBreadcrumbName)
         }
     }
 
     override fun removeOnBreadcrumb(onBreadcrumb: OnBreadcrumbCallback) {
         if (onBreadcrumbTasks.remove(onBreadcrumb)) {
-            internalMetrics?.notifyRemoveCallback(onBreadcrumbName)
+            internalMetrics.notifyRemoveCallback(onBreadcrumbName)
         }
     }
 
     override fun addOnSession(onSession: OnSessionCallback) {
         if (onSessionTasks.add(onSession)) {
-            internalMetrics?.notifyAddCallback(onSessionName)
+            internalMetrics.notifyAddCallback(onSessionName)
         }
     }
 
     override fun removeOnSession(onSession: OnSessionCallback) {
         if (onSessionTasks.remove(onSession)) {
-            internalMetrics?.notifyRemoveCallback(onSessionName)
+            internalMetrics.notifyRemoveCallback(onSessionName)
         }
     }
 
     fun addOnSend(onSend: OnSendCallback) {
         if (onSendTasks.add(onSend)) {
-            internalMetrics?.notifyAddCallback(onSendName)
+            internalMetrics.notifyAddCallback(onSendName)
         }
     }
 
     fun removeOnSend(onSend: OnSendCallback) {
         if (onSendTasks.remove(onSend)) {
-            internalMetrics?.notifyRemoveCallback(onSendName)
+            internalMetrics.notifyRemoveCallback(onSendName)
         }
     }
 
@@ -152,15 +154,11 @@ internal data class CallbackState(
     )
 
     private fun getCallbackCounts(): Map<String, Int> {
-        return listOfNotNull(
-            if (onBreadcrumbTasks.count() > 0)
-                onBreadcrumbName to onBreadcrumbTasks.count() else null,
-            if (onErrorTasks.count() > 0)
-                onErrorName to onErrorTasks.count() else null,
-            if (onSendTasks.count() > 0)
-                onSendName to onSendTasks.count() else null,
-            if (onSessionTasks.count() > 0)
-                onSessionName to onSessionTasks.count() else null,
-        ).toMap()
+        return hashMapOf<String, Int>().also { map ->
+            if (onBreadcrumbTasks.count() > 0) map[onBreadcrumbName] = onBreadcrumbTasks.count()
+            if (onErrorTasks.count() > 0) map[onErrorName] = onErrorTasks.count()
+            if (onSendTasks.count() > 0) map[onSendName] = onSendTasks.count()
+            if (onSessionTasks.count() > 0) map[onSessionName] = onSessionTasks.count()
+        }
     }
 }

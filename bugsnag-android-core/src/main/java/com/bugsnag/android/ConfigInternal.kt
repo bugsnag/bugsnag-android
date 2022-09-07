@@ -99,17 +99,7 @@ internal class ConfigInternal(
     }
 
     private fun toCommaSeparated(coll: Collection<Any>?): String {
-        if (coll == null) {
-            return ""
-        }
-        val sb = StringBuilder()
-        coll.map { it.toString() }.sorted().forEachIndexed { index, s ->
-            if (index > 0) {
-                sb.append(',')
-            }
-            sb.append(s)
-        }
-        return sb.toString()
+        return coll?.map { it.toString() }?.sorted()?.joinToString(",") ?: ""
     }
 
     fun getConfigDifferences(): Map<String, Any> {

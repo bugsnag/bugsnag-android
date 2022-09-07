@@ -25,7 +25,7 @@ class TestData {
                 Collections.singleton("production"),
                 Collections.singleton("com.example"),
                 new HashSet<>(Collections.singletonList(BreadcrumbType.MANUAL)),
-                new HashSet<>(EnumSet.of(Telemetry.INTERNAL_ERRORS, Telemetry.USAGE)),
+                EnumSet.of(Telemetry.INTERNAL_ERRORS, Telemetry.USAGE),
                 "production",
                 "builduuid-123",
                 "1.4.3",

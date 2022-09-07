@@ -45,9 +45,7 @@ internal class PluginClient(
         }
     }
 
-    fun getNdkPlugin(): Plugin? {
-        return ndkPlugin
-    }
+    fun getNdkPlugin(): Plugin? = ndkPlugin
 
     fun loadPlugins(client: Client) {
         plugins.forEach { plugin ->

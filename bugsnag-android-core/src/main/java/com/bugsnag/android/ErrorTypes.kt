@@ -35,14 +35,11 @@ class ErrorTypes(
     internal fun copy() = ErrorTypes(anrs, ndkCrashes, unhandledExceptions, unhandledRejections)
 
     override fun equals(other: Any?): Boolean {
-        if (other is ErrorTypes) {
-            return anrs == other.anrs &&
-                ndkCrashes == other.ndkCrashes &&
-                unhandledExceptions == other.unhandledExceptions &&
-                unhandledRejections == other.unhandledRejections
-        } else {
-            return false
-        }
+        return other is ErrorTypes &&
+            anrs == other.anrs &&
+            ndkCrashes == other.ndkCrashes &&
+            unhandledExceptions == other.unhandledExceptions &&
+            unhandledRejections == other.unhandledRejections
     }
 
     override fun hashCode(): Int {

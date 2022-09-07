@@ -3,6 +3,9 @@ package com.bugsnag.android;
 import static com.bugsnag.android.SeverityReason.REASON_HANDLED_EXCEPTION;
 
 import com.bugsnag.android.internal.ImmutableConfig;
+import com.bugsnag.android.internal.InternalMetrics;
+import com.bugsnag.android.internal.InternalMetricsImpl;
+import com.bugsnag.android.internal.InternalMetricsNoop;
 import com.bugsnag.android.internal.StateObserver;
 import com.bugsnag.android.internal.dag.ConfigModule;
 import com.bugsnag.android.internal.dag.ContextModule;
@@ -48,7 +51,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
     final MetadataState metadataState;
     final FeatureFlagState featureFlagState;
 
-    private final InternalMetrics internalMetrics = new InternalMetrics();
+    private final InternalMetrics internalMetrics;
     private final ContextState contextState;
     private final CallbackState callbackState;
     private final UserState userState;
@@ -207,7 +210,12 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         NdkPluginCaller.INSTANCE.setNdkPlugin(pluginClient.getNdkPlugin());
 
         // InternalMetrics uses NdkPluginCaller
-        internalMetrics.applyTelemetryConfig(immutableConfig.getTelemetry());
+        if (configuration.getTelemetry().contains(Telemetry.USAGE)) {
+            internalMetrics = new InternalMetricsImpl();
+            NdkPluginCaller.INSTANCE.setInternalMetricsEnabled(true);
+        } else {
+            internalMetrics = new InternalMetricsNoop();
+        }
         internalMetrics.setConfigDifferences(configuration.impl.getConfigDifferences());
         configuration.impl.callbackState.setInternalMetrics(internalMetrics);
 
@@ -273,6 +281,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         this.lastRunInfo = null;
         this.exceptionHandler = exceptionHandler;
         this.notifier = notifier;
+        internalMetrics = new InternalMetricsNoop();
     }
 
     void registerLifecycleCallbacks() {
