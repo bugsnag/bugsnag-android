@@ -38,6 +38,10 @@ Before('@skip_below_android_5') do |scenario|
   skip_this_scenario("Skipping scenario") if Maze.config.os_version < 5
 end
 
+Before('@skip_android_13') do |scenario|
+  skip_this_scenario("Skipping scenario") if Maze.config.os_version == 13
+end
+
 Before('@skip_android_10') do |scenario|
   skip_this_scenario("Skipping scenario") if Maze.config.os_version == 10
 end

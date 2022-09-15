@@ -24,6 +24,7 @@ fun Application.triggerStartupAnrIfRequired() {
 
         // wait for Bugsnag's ANR handler to install first
         Handler(Looper.getMainLooper()).post {
+            Log.i("StartupANR", "Going to sleep for $startupDelay seconds to trigger a startup ANR")
             thread {
                 // This is a dirty hack to work around the limitations of our current testing
                 // systems - where external key-events are pushed through our main thread (which we
