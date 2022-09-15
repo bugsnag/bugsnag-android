@@ -3,6 +3,7 @@ package com.bugsnag.android
 import com.android.build.gradle.BaseExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.add
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.dependencies
 import java.io.File
@@ -138,10 +139,13 @@ class BugsnagBuildPlugin : Plugin<Project> {
      */
     private fun Project.addExternalDependencies() {
         project.dependencies {
-            // needs to be kept as 'compile' for license checking to work
-            // as otherwise the downloadLicenses task misses these deps
             add("api", "androidx.annotation:annotation:${Versions.supportLib}")
-            add("api", "org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}")
+            add("api", "org.jetbrains.kotlin:kotlin-stdlib") {
+                version {
+                    strictly("[${Versions.kotlin},${Versions.kotlinMax})")
+                    prefer(Versions.kotlin)
+                }
+            }
 
             add("testImplementation", "junit:junit:${Versions.junitTestLib}")
             add("testImplementation", "org.mockito:mockito-core:${Versions.mockitoTestLib}")

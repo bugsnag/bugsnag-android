@@ -12,6 +12,7 @@ object Versions {
     val ndk = "23.1.7779620"
     val java = JavaVersion.VERSION_1_7
     val kotlin = "1.4.32"
+    val kotlinMax = "2.0.0"
 
     // plugins
     val androidGradlePlugin = "7.0.4"
