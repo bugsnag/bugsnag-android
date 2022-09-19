@@ -108,11 +108,15 @@ class BugsnagOkHttpPluginTest {
      */
     @Test
     fun loadedClientCallEnd() {
-        val request = Request.Builder().url("https://example.com?debug=true").build()
+        val request = Request.Builder().url(
+            "https://example.com?debug=true&latitude=10.55&longitude=11.33"
+        ).build()
         `when`(call.request()).thenReturn(request)
 
         val duration = AtomicLong()
-        val plugin = BugsnagOkHttpPlugin { duration.incrementAndGet() }.apply {
+        val plugin = BugsnagOkHttpPlugin(
+            sensitiveQueryParamList = listOf("latitude", "longitude")
+        ) { duration.incrementAndGet() }.apply {
             load(client)
             callStart(call)
             callEnd(call)

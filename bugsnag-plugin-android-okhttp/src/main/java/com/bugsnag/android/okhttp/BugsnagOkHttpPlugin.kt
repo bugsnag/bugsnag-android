@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap
  * https://square.github.io/okhttp/4.x/okhttp/okhttp3/-response-body/#the-response-body-must-be-closed
  */
 class BugsnagOkHttpPlugin @JvmOverloads constructor(
+    val sensitiveQueryParamList: List<String> = emptyList(),
     internal val timeProvider: () -> Long = { System.currentTimeMillis() }
 ) : Plugin, EventListener() {
 
@@ -112,10 +113,12 @@ class BugsnagOkHttpPlugin @JvmOverloads constructor(
         val params = mutableMapOf<String, Any?>()
 
         url.queryParameterNames.forEach { name ->
-            val values = url.queryParameterValues(name)
-            when (values.size) {
-                1 -> params[name] = values.first()
-                else -> params[name] = url.queryParameterValues(name)
+            if (name !in sensitiveQueryParamList) {
+                val values = url.queryParameterValues(name)
+                when (values.size) {
+                    1 -> params[name] = values.first()
+                    else -> params[name] = url.queryParameterValues(name)
+                }
             }
         }
         return params
