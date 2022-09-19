@@ -23,6 +23,8 @@ import java.util.concurrent.ConcurrentHashMap
  * You *must* close the [Response] body as documented by OkHttp. Failing to do so will leak the
  * OkHttp connection and prevent breadcrumbs from being collected. For further information, see:
  * https://square.github.io/okhttp/4.x/okhttp/okhttp3/-response-body/#the-response-body-must-be-closed
+ *
+ * @param sensitiveQueryParamList a list of sensitive query params that shouldn't be captured
  */
 class BugsnagOkHttpPlugin @JvmOverloads constructor(
     val sensitiveQueryParamList: List<String> = emptyList(),
