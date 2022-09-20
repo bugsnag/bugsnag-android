@@ -183,7 +183,7 @@ Then("the error payload contains a completed unhandled native report") do
 
       frameAddress = frame['frameAddress'].to_i(16)
       loadAddress = frame['loadAddress'].to_i(16)
-      Maze.check.equal(frame['lineNumber'].to_i(16),
+      Maze.check.equal(frame['lineNumber'],
                        frameAddress - loadAddress,
                         "lineNumber does not match frameAddress - loadAddress at frame #{index}")
     end

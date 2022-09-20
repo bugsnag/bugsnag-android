@@ -2,1001 +2,1001 @@
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x0"
+    "lineNumber": 0
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x1"
+    "lineNumber": 1
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x2"
+    "lineNumber": 2
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x3"
+    "lineNumber": 3
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x4"
+    "lineNumber": 4
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x5"
+    "lineNumber": 5
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x6"
+    "lineNumber": 6
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x7"
+    "lineNumber": 7
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x8"
+    "lineNumber": 8
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x9"
+    "lineNumber": 9
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xa"
+    "lineNumber": 10
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xb"
+    "lineNumber": 11
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xc"
+    "lineNumber": 12
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xd"
+    "lineNumber": 13
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xe"
+    "lineNumber": 14
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xf"
+    "lineNumber": 15
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x10"
+    "lineNumber": 16
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x11"
+    "lineNumber": 17
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x12"
+    "lineNumber": 18
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x13"
+    "lineNumber": 19
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x14"
+    "lineNumber": 20
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x15"
+    "lineNumber": 21
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x16"
+    "lineNumber": 22
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x17"
+    "lineNumber": 23
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x18"
+    "lineNumber": 24
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x19"
+    "lineNumber": 25
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x1a"
+    "lineNumber": 26
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x1b"
+    "lineNumber": 27
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x1c"
+    "lineNumber": 28
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x1d"
+    "lineNumber": 29
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x1e"
+    "lineNumber": 30
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x1f"
+    "lineNumber": 31
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x20"
+    "lineNumber": 32
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x21"
+    "lineNumber": 33
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x22"
+    "lineNumber": 34
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x23"
+    "lineNumber": 35
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x24"
+    "lineNumber": 36
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x25"
+    "lineNumber": 37
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x26"
+    "lineNumber": 38
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x27"
+    "lineNumber": 39
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x28"
+    "lineNumber": 40
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x29"
+    "lineNumber": 41
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x2a"
+    "lineNumber": 42
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x2b"
+    "lineNumber": 43
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x2c"
+    "lineNumber": 44
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x2d"
+    "lineNumber": 45
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x2e"
+    "lineNumber": 46
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x2f"
+    "lineNumber": 47
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x30"
+    "lineNumber": 48
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x31"
+    "lineNumber": 49
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x32"
+    "lineNumber": 50
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x33"
+    "lineNumber": 51
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x34"
+    "lineNumber": 52
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x35"
+    "lineNumber": 53
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x36"
+    "lineNumber": 54
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x37"
+    "lineNumber": 55
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x38"
+    "lineNumber": 56
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x39"
+    "lineNumber": 57
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x3a"
+    "lineNumber": 58
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x3b"
+    "lineNumber": 59
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x3c"
+    "lineNumber": 60
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x3d"
+    "lineNumber": 61
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x3e"
+    "lineNumber": 62
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x3f"
+    "lineNumber": 63
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x40"
+    "lineNumber": 64
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x41"
+    "lineNumber": 65
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x42"
+    "lineNumber": 66
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x43"
+    "lineNumber": 67
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x44"
+    "lineNumber": 68
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x45"
+    "lineNumber": 69
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x46"
+    "lineNumber": 70
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x47"
+    "lineNumber": 71
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x48"
+    "lineNumber": 72
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x49"
+    "lineNumber": 73
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x4a"
+    "lineNumber": 74
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x4b"
+    "lineNumber": 75
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x4c"
+    "lineNumber": 76
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x4d"
+    "lineNumber": 77
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x4e"
+    "lineNumber": 78
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x4f"
+    "lineNumber": 79
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x50"
+    "lineNumber": 80
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x51"
+    "lineNumber": 81
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x52"
+    "lineNumber": 82
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x53"
+    "lineNumber": 83
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x54"
+    "lineNumber": 84
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x55"
+    "lineNumber": 85
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x56"
+    "lineNumber": 86
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x57"
+    "lineNumber": 87
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x58"
+    "lineNumber": 88
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x59"
+    "lineNumber": 89
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x5a"
+    "lineNumber": 90
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x5b"
+    "lineNumber": 91
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x5c"
+    "lineNumber": 92
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x5d"
+    "lineNumber": 93
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x5e"
+    "lineNumber": 94
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x5f"
+    "lineNumber": 95
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x60"
+    "lineNumber": 96
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x61"
+    "lineNumber": 97
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x62"
+    "lineNumber": 98
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x63"
+    "lineNumber": 99
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x64"
+    "lineNumber": 100
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x65"
+    "lineNumber": 101
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x66"
+    "lineNumber": 102
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x67"
+    "lineNumber": 103
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x68"
+    "lineNumber": 104
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x69"
+    "lineNumber": 105
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x6a"
+    "lineNumber": 106
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x6b"
+    "lineNumber": 107
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x6c"
+    "lineNumber": 108
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x6d"
+    "lineNumber": 109
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x6e"
+    "lineNumber": 110
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x6f"
+    "lineNumber": 111
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x70"
+    "lineNumber": 112
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x71"
+    "lineNumber": 113
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x72"
+    "lineNumber": 114
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x73"
+    "lineNumber": 115
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x74"
+    "lineNumber": 116
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x75"
+    "lineNumber": 117
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x76"
+    "lineNumber": 118
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x77"
+    "lineNumber": 119
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x78"
+    "lineNumber": 120
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x79"
+    "lineNumber": 121
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x7a"
+    "lineNumber": 122
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x7b"
+    "lineNumber": 123
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x7c"
+    "lineNumber": 124
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x7d"
+    "lineNumber": 125
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x7e"
+    "lineNumber": 126
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x7f"
+    "lineNumber": 127
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x80"
+    "lineNumber": 128
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x81"
+    "lineNumber": 129
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x82"
+    "lineNumber": 130
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x83"
+    "lineNumber": 131
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x84"
+    "lineNumber": 132
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x85"
+    "lineNumber": 133
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x86"
+    "lineNumber": 134
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x87"
+    "lineNumber": 135
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x88"
+    "lineNumber": 136
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x89"
+    "lineNumber": 137
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x8a"
+    "lineNumber": 138
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x8b"
+    "lineNumber": 139
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x8c"
+    "lineNumber": 140
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x8d"
+    "lineNumber": 141
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x8e"
+    "lineNumber": 142
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x8f"
+    "lineNumber": 143
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x90"
+    "lineNumber": 144
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x91"
+    "lineNumber": 145
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x92"
+    "lineNumber": 146
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x93"
+    "lineNumber": 147
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x94"
+    "lineNumber": 148
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x95"
+    "lineNumber": 149
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x96"
+    "lineNumber": 150
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x97"
+    "lineNumber": 151
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x98"
+    "lineNumber": 152
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x99"
+    "lineNumber": 153
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x9a"
+    "lineNumber": 154
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x9b"
+    "lineNumber": 155
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x9c"
+    "lineNumber": 156
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x9d"
+    "lineNumber": 157
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x9e"
+    "lineNumber": 158
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0x9f"
+    "lineNumber": 159
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xa0"
+    "lineNumber": 160
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xa1"
+    "lineNumber": 161
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xa2"
+    "lineNumber": 162
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xa3"
+    "lineNumber": 163
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xa4"
+    "lineNumber": 164
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xa5"
+    "lineNumber": 165
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xa6"
+    "lineNumber": 166
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xa7"
+    "lineNumber": 167
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xa8"
+    "lineNumber": 168
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xa9"
+    "lineNumber": 169
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xaa"
+    "lineNumber": 170
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xab"
+    "lineNumber": 171
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xac"
+    "lineNumber": 172
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xad"
+    "lineNumber": 173
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xae"
+    "lineNumber": 174
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xaf"
+    "lineNumber": 175
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xb0"
+    "lineNumber": 176
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xb1"
+    "lineNumber": 177
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xb2"
+    "lineNumber": 178
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xb3"
+    "lineNumber": 179
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xb4"
+    "lineNumber": 180
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xb5"
+    "lineNumber": 181
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xb6"
+    "lineNumber": 182
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xb7"
+    "lineNumber": 183
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xb8"
+    "lineNumber": 184
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xb9"
+    "lineNumber": 185
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xba"
+    "lineNumber": 186
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xbb"
+    "lineNumber": 187
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xbc"
+    "lineNumber": 188
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xbd"
+    "lineNumber": 189
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xbe"
+    "lineNumber": 190
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xbf"
+    "lineNumber": 191
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xc0"
+    "lineNumber": 192
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xc1"
+    "lineNumber": 193
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xc2"
+    "lineNumber": 194
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xc3"
+    "lineNumber": 195
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xc4"
+    "lineNumber": 196
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xc5"
+    "lineNumber": 197
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xc6"
+    "lineNumber": 198
   },
   {
     "method": "SomeClass.someMethod",
     "file": "someFile",
-    "lineNumber": "0xc7"
+    "lineNumber": 199
   }
 ]

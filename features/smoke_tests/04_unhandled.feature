@@ -26,7 +26,7 @@ Feature: Unhandled smoke tests
     And the event "exceptions.0.stacktrace.0.method" ends with "UnhandledJavaLoadedConfigScenario.startScenario"
     And the exception "stacktrace.0.file" equals "UnhandledJavaLoadedConfigScenario.java"
     # R8 minification alters the lineNumber, see the mapping file/source code for the original value
-    And the event "exceptions.0.stacktrace.0.lineNumber" equals "0x7"
+    And the event "exceptions.0.stacktrace.0.lineNumber" equals 7
     And the event "exceptions.0.stacktrace.0.inProject" is true
 
     And the thread with name "main" contains the error reporting flag

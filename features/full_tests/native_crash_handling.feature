@@ -154,6 +154,6 @@ Feature: Native crash reporting
     And the event "severity" equals "error"
     And the event "unhandled" is true
     And the "method" of stack frame 0 equals "0x0"
-    And the "lineNumber" of stack frame 0 equals "0x0"
+    And the "lineNumber" of stack frame 0 equals 0
     And the first significant stack frames match:
       | dispatch::Handler::handle(_jobject*) | CXXCallNullFunctionPointerScenario.cpp | 9 |

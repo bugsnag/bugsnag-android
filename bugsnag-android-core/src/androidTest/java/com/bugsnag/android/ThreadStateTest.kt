@@ -3,7 +3,6 @@ package com.bugsnag.android
 import androidx.test.filters.SmallTest
 import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
 import com.bugsnag.android.BugsnagTestUtils.streamableToJsonArray
-import com.bugsnag.android.internal.JsonHelper
 import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
@@ -142,8 +141,7 @@ class ThreadStateTest {
 
             expectedTrace.forEachIndexed { index, element ->
                 val jsonObject = serialisedTrace.getJSONObject(index + traceOffset)
-                val expectedLineNumber = JsonHelper.ulongToHex(element.lineNumber.toLong())
-                assertEquals(expectedLineNumber, jsonObject.getString("lineNumber"))
+                assertEquals(element.lineNumber, jsonObject.getInt("lineNumber"))
             }
         }
     }
@@ -180,8 +178,7 @@ class ThreadStateTest {
 
             expectedTrace.forEachIndexed { index, element ->
                 val jsonObject = serialisedTrace.getJSONObject(index)
-                val expectedLineNumber = JsonHelper.ulongToHex(element.lineNumber.toLong())
-                assertEquals(expectedLineNumber, jsonObject.getString("lineNumber"))
+                assertEquals(element.lineNumber, jsonObject.getInt("lineNumber"))
             }
         }
 

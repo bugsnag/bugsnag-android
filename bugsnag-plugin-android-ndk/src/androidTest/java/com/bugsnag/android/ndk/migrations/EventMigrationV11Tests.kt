@@ -136,7 +136,7 @@ class EventMigrationV11Tests : EventMigrationTest() {
                     "stacktrace" to listOf(
                         mapOf(
                             "frameAddress" to "0xfffffffe",
-                            "lineNumber" to "0xfa0a1ec1",
+                            "lineNumber" to 4194967233L,
                             "loadAddress" to "0x242023",
                             "symbolAddress" to "0x308",
                             "method" to "makinBacon",
@@ -145,7 +145,7 @@ class EventMigrationV11Tests : EventMigrationTest() {
                         ),
                         mapOf(
                             "frameAddress" to "0xb37a644b",
-                            "lineNumber" to "0x0",
+                            "lineNumber" to 0L,
                             "loadAddress" to "0x0",
                             "symbolAddress" to "0x0",
                             "method" to "0xb37a644b" // test address to method hex
