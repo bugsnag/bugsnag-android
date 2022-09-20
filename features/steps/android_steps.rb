@@ -180,12 +180,6 @@ Then("the error payload contains a completed unhandled native report") do
       Maze.check.not_nil(frame['symbolAddress'], "The symbolAddress of frame #{index} is nil")
       Maze.check.not_nil(frame['frameAddress'], "The frameAddress of frame #{index} is nil")
       Maze.check.not_nil(frame['loadAddress'], "The loadAddress of frame #{index} is nil")
-
-      frameAddress = frame['frameAddress'].to_i(16)
-      loadAddress = frame['loadAddress'].to_i(16)
-      Maze.check.equal(frame['lineNumber'],
-                       frameAddress - loadAddress,
-                        "lineNumber does not match frameAddress - loadAddress at frame #{index}")
     end
 end
 
