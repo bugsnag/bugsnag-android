@@ -144,7 +144,8 @@ ssize_t bsg_unwind_crash_stack(bugsnag_stackframe stack[BUGSNAG_FRAMES_MAX],
   int frame_count = 0;
   for (auto &frame : crash_time_unwinder->frames()) {
     auto &dst_frame = stack[frame_count];
-    dst_frame.frame_address = frame.map_start + frame.rel_pc;
+    dst_frame.frame_address =
+        frame.pc + (frame.map_exact_offset - frame.map_elf_start_offset);
     dst_frame.line_number = frame.rel_pc;
     dst_frame.load_address = frame.map_start;
     dst_frame.symbol_address = frame.pc - frame.function_offset;
@@ -181,11 +182,9 @@ bsg_unwind_concurrent_stack(bugsnag_stackframe stack[BUGSNAG_FRAMES_MAX],
   int frame_count = 0;
   for (auto &frame : frames) {
     bugsnag_stackframe &dst_frame = stack[frame_count];
-    dst_frame.frame_address = frame.pc;
+    dst_frame.frame_address = frame.pc + (frame.map_info->offset() -
+                                          frame.map_info->elf_start_offset());
     if (frame.map_info != nullptr) {
-      // if we have valid map info we overwrite the frame_address so that
-      // lineNumber == frameAddress - loadAddress
-      dst_frame.frame_address = frame.map_info->start() + frame.rel_pc;
       dst_frame.line_number = frame.rel_pc;
       dst_frame.load_address = frame.map_info->start();
       dst_frame.symbol_address = frame.pc - frame.map_info->offset();
