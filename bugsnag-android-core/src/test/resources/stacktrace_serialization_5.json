@@ -2,1400 +2,1400 @@
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x0",
+    "lineNumber": 0,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x1",
+    "lineNumber": 1,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x2",
+    "lineNumber": 2,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x3",
+    "lineNumber": 3,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x4",
+    "lineNumber": 4,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x5",
+    "lineNumber": 5,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x6",
+    "lineNumber": 6,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x7",
+    "lineNumber": 7,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x8",
+    "lineNumber": 8,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x9",
+    "lineNumber": 9,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xa",
+    "lineNumber": 10,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xb",
+    "lineNumber": 11,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xc",
+    "lineNumber": 12,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xd",
+    "lineNumber": 13,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xe",
+    "lineNumber": 14,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xf",
+    "lineNumber": 15,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x10",
+    "lineNumber": 16,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x11",
+    "lineNumber": 17,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x12",
+    "lineNumber": 18,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x13",
+    "lineNumber": 19,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x14",
+    "lineNumber": 20,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x15",
+    "lineNumber": 21,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x16",
+    "lineNumber": 22,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x17",
+    "lineNumber": 23,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x18",
+    "lineNumber": 24,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x19",
+    "lineNumber": 25,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x1a",
+    "lineNumber": 26,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x1b",
+    "lineNumber": 27,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x1c",
+    "lineNumber": 28,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x1d",
+    "lineNumber": 29,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x1e",
+    "lineNumber": 30,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x1f",
+    "lineNumber": 31,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x20",
+    "lineNumber": 32,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x21",
+    "lineNumber": 33,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x22",
+    "lineNumber": 34,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x23",
+    "lineNumber": 35,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x24",
+    "lineNumber": 36,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x25",
+    "lineNumber": 37,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x26",
+    "lineNumber": 38,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x27",
+    "lineNumber": 39,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x28",
+    "lineNumber": 40,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x29",
+    "lineNumber": 41,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x2a",
+    "lineNumber": 42,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x2b",
+    "lineNumber": 43,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x2c",
+    "lineNumber": 44,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x2d",
+    "lineNumber": 45,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x2e",
+    "lineNumber": 46,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x2f",
+    "lineNumber": 47,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x30",
+    "lineNumber": 48,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x31",
+    "lineNumber": 49,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x32",
+    "lineNumber": 50,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x33",
+    "lineNumber": 51,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x34",
+    "lineNumber": 52,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x35",
+    "lineNumber": 53,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x36",
+    "lineNumber": 54,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x37",
+    "lineNumber": 55,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x38",
+    "lineNumber": 56,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x39",
+    "lineNumber": 57,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x3a",
+    "lineNumber": 58,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x3b",
+    "lineNumber": 59,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x3c",
+    "lineNumber": 60,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x3d",
+    "lineNumber": 61,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x3e",
+    "lineNumber": 62,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x3f",
+    "lineNumber": 63,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x40",
+    "lineNumber": 64,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x41",
+    "lineNumber": 65,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x42",
+    "lineNumber": 66,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x43",
+    "lineNumber": 67,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x44",
+    "lineNumber": 68,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x45",
+    "lineNumber": 69,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x46",
+    "lineNumber": 70,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x47",
+    "lineNumber": 71,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x48",
+    "lineNumber": 72,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x49",
+    "lineNumber": 73,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x4a",
+    "lineNumber": 74,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x4b",
+    "lineNumber": 75,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x4c",
+    "lineNumber": 76,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x4d",
+    "lineNumber": 77,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x4e",
+    "lineNumber": 78,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x4f",
+    "lineNumber": 79,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x50",
+    "lineNumber": 80,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x51",
+    "lineNumber": 81,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x52",
+    "lineNumber": 82,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x53",
+    "lineNumber": 83,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x54",
+    "lineNumber": 84,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x55",
+    "lineNumber": 85,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x56",
+    "lineNumber": 86,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x57",
+    "lineNumber": 87,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x58",
+    "lineNumber": 88,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x59",
+    "lineNumber": 89,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x5a",
+    "lineNumber": 90,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x5b",
+    "lineNumber": 91,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x5c",
+    "lineNumber": 92,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x5d",
+    "lineNumber": 93,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x5e",
+    "lineNumber": 94,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x5f",
+    "lineNumber": 95,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x60",
+    "lineNumber": 96,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x61",
+    "lineNumber": 97,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x62",
+    "lineNumber": 98,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x63",
+    "lineNumber": 99,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x64",
+    "lineNumber": 100,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x65",
+    "lineNumber": 101,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x66",
+    "lineNumber": 102,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x67",
+    "lineNumber": 103,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x68",
+    "lineNumber": 104,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x69",
+    "lineNumber": 105,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x6a",
+    "lineNumber": 106,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x6b",
+    "lineNumber": 107,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x6c",
+    "lineNumber": 108,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x6d",
+    "lineNumber": 109,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x6e",
+    "lineNumber": 110,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x6f",
+    "lineNumber": 111,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x70",
+    "lineNumber": 112,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x71",
+    "lineNumber": 113,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x72",
+    "lineNumber": 114,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x73",
+    "lineNumber": 115,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x74",
+    "lineNumber": 116,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x75",
+    "lineNumber": 117,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x76",
+    "lineNumber": 118,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x77",
+    "lineNumber": 119,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x78",
+    "lineNumber": 120,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x79",
+    "lineNumber": 121,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x7a",
+    "lineNumber": 122,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x7b",
+    "lineNumber": 123,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x7c",
+    "lineNumber": 124,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x7d",
+    "lineNumber": 125,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x7e",
+    "lineNumber": 126,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x7f",
+    "lineNumber": 127,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x80",
+    "lineNumber": 128,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x81",
+    "lineNumber": 129,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x82",
+    "lineNumber": 130,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x83",
+    "lineNumber": 131,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x84",
+    "lineNumber": 132,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x85",
+    "lineNumber": 133,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x86",
+    "lineNumber": 134,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x87",
+    "lineNumber": 135,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x88",
+    "lineNumber": 136,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x89",
+    "lineNumber": 137,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x8a",
+    "lineNumber": 138,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x8b",
+    "lineNumber": 139,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x8c",
+    "lineNumber": 140,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x8d",
+    "lineNumber": 141,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x8e",
+    "lineNumber": 142,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x8f",
+    "lineNumber": 143,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x90",
+    "lineNumber": 144,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x91",
+    "lineNumber": 145,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x92",
+    "lineNumber": 146,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x93",
+    "lineNumber": 147,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x94",
+    "lineNumber": 148,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x95",
+    "lineNumber": 149,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x96",
+    "lineNumber": 150,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x97",
+    "lineNumber": 151,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x98",
+    "lineNumber": 152,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x99",
+    "lineNumber": 153,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x9a",
+    "lineNumber": 154,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x9b",
+    "lineNumber": 155,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x9c",
+    "lineNumber": 156,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x9d",
+    "lineNumber": 157,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x9e",
+    "lineNumber": 158,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0x9f",
+    "lineNumber": 159,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xa0",
+    "lineNumber": 160,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xa1",
+    "lineNumber": 161,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xa2",
+    "lineNumber": 162,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xa3",
+    "lineNumber": 163,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xa4",
+    "lineNumber": 164,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xa5",
+    "lineNumber": 165,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xa6",
+    "lineNumber": 166,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xa7",
+    "lineNumber": 167,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xa8",
+    "lineNumber": 168,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xa9",
+    "lineNumber": 169,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xaa",
+    "lineNumber": 170,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xab",
+    "lineNumber": 171,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xac",
+    "lineNumber": 172,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xad",
+    "lineNumber": 173,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xae",
+    "lineNumber": 174,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xaf",
+    "lineNumber": 175,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xb0",
+    "lineNumber": 176,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xb1",
+    "lineNumber": 177,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xb2",
+    "lineNumber": 178,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xb3",
+    "lineNumber": 179,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xb4",
+    "lineNumber": 180,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xb5",
+    "lineNumber": 181,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xb6",
+    "lineNumber": 182,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xb7",
+    "lineNumber": 183,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xb8",
+    "lineNumber": 184,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xb9",
+    "lineNumber": 185,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xba",
+    "lineNumber": 186,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xbb",
+    "lineNumber": 187,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xbc",
+    "lineNumber": 188,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xbd",
+    "lineNumber": 189,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xbe",
+    "lineNumber": 190,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xbf",
+    "lineNumber": 191,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xc0",
+    "lineNumber": 192,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xc1",
+    "lineNumber": 193,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xc2",
+    "lineNumber": 194,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xc3",
+    "lineNumber": 195,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xc4",
+    "lineNumber": 196,
     "inProject": true,
     "type": "android"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xc5",
+    "lineNumber": 197,
     "inProject": true,
     "type": "reactnativejs"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xc6",
+    "lineNumber": 198,
     "inProject": true,
     "type": "c"
   },
   {
     "method": "Foo",
     "file": "Bar.kt",
-    "lineNumber": "0xc7",
+    "lineNumber": 199,
     "inProject": true,
     "type": "android"
   }

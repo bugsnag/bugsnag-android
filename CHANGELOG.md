@@ -1,12 +1,5 @@
 # Changelog
 
-## TBD
-
-### Bug fixes
-
-* Fixed the offset of `frameAddress` in native crashes
-  [#1737](https://github.com/bugsnag/bugsnag-android/pull/1737)
-
 ## 5.26.0 (2022-08-18)
 
 ### Enhancements

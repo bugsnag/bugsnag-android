@@ -7,17 +7,17 @@
     {
       "method": "run_func",
       "file": "librunner.so",
-      "lineNumber": "0x13ae"
+      "lineNumber": 5038
     },
     {
       "method": "Runner.runFunc",
       "file": "Runner.java",
-      "lineNumber": "0xe"
+      "lineNumber": 14
     },
     {
       "method": "App.launch",
       "file": "App.java",
-      "lineNumber": "0x46"
+      "lineNumber": 70
     }
   ],
   "errorReportingThread": true
