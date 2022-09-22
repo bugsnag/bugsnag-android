@@ -421,8 +421,4 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware, F
     void setRedactedKeys(Collection<String> redactedKeys) {
         impl.setRedactedKeys(redactedKeys);
     }
-
-    void setInternalMetrics(InternalMetrics metrics) {
-        impl.setInternalMetrics(metrics);
-    }
 }

@@ -2,6 +2,7 @@
 
 package com.bugsnag.android
 
+import com.bugsnag.android.internal.StringUtils
 import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
 
@@ -136,5 +137,16 @@ internal data class Metadata @JvmOverloads constructor(
     fun copy(): Metadata {
         return this.copy(store = toMap())
             .also { it.redactedKeys = redactedKeys.toSet() }
+    }
+
+    fun trimMetadataStringsTo(maxStringLength: Int): Pair<Int, Int> {
+        var stringCount = 0
+        var charCount = 0
+        store.forEach { entry ->
+            val stringAndCharCounts = StringUtils.trimStringValuesTo(maxStringLength, entry.value)
+            stringCount += stringAndCharCounts.first
+            charCount += stringAndCharCounts.second
+        }
+        return Pair(stringCount, charCount)
     }
 }

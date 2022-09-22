@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
+import kotlin.Pair;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function2;
 
@@ -763,8 +764,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         // Attach context to the event
         event.setContext(contextState.getContext());
 
-        event.setInternalMetrics(internalMetrics);
-
         notifyInternal(event, onError);
     }
 
@@ -793,6 +792,13 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
         // leave an error breadcrumb of this event - for the next event
         leaveErrorBreadcrumb(event);
+
+        Pair<Integer, Integer> stringAndCharCounts =
+                event.getImpl().trimMetadataStringsTo(immutableConfig.getMaxStringValueLength());
+        internalMetrics.setMetadataTrimMetrics(stringAndCharCounts.component1(),
+                stringAndCharCounts.component2());
+
+        event.getImpl().setInternalMetrics(internalMetrics);
 
         deliveryDelegate.deliver(event);
     }

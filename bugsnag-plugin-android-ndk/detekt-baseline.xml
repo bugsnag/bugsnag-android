@@ -13,7 +13,6 @@
     <ID>LongMethod:EventMigrationV9Tests.kt$EventMigrationV9Tests$@Test fun testMigrateEventToLatest()</ID>
     <ID>LongParameterList:NativeBridge.kt$NativeBridge$( apiKey: String, reportingDirectory: String, lastRunInfoPath: String, consecutiveLaunchCrashes: Int, autoDetectNdkCrashes: Boolean, apiLevel: Int, is32bit: Boolean, threadSendPolicy: Int )</ID>
     <ID>NestedBlockDepth:NativeBridge.kt$NativeBridge$private fun deliverPendingReports()</ID>
-    <ID>SwallowedException:NdkPlugin.kt$NdkPlugin$catch (exc: IOException) { // Ignore }</ID>
     <ID>TooManyFunctions:NativeBridge.kt$NativeBridge : StateObserver</ID>
   </CurrentIssues>
 </SmellBaseline>

@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.internal.StringUtils
 import java.io.IOException
 import java.util.Date
 
@@ -31,5 +32,14 @@ internal class BreadcrumbInternal internal constructor(
         writer.name("metaData")
         writer.value(metadata, true)
         writer.endObject()
+    }
+
+    internal fun trimMetadataStringsTo(maxStringLength: Int): Pair<Int, Int> {
+        val metadata = this.metadata
+        return if (metadata != null) {
+            StringUtils.trimNullableStringValuesTo(maxStringLength, metadata)
+        } else {
+            Pair(0, 0)
+        }
     }
 }

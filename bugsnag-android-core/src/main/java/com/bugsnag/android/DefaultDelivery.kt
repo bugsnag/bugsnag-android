@@ -25,6 +25,11 @@ internal class DefaultDelivery(
     val logger: Logger
 ) : Delivery {
 
+    companion object {
+        // 1MB with some fiddle room in case of encoding overhead
+        const val maxPayloadSize = 999700
+    }
+
     override fun deliver(payload: Session, deliveryParams: DeliveryParams): DeliveryStatus {
         val status = deliver(deliveryParams.endpoint, payload, deliveryParams.headers)
         logger.i("Session API request finished with status $status")
@@ -39,18 +44,53 @@ internal class DefaultDelivery(
 
     fun deliver(
         urlString: String,
-        streamable: JsonStream.Streamable,
+        eventPayload: EventPayload,
         headers: Map<String, String?>
     ): DeliveryStatus {
-
         TrafficStats.setThreadStatsTag(1)
         if (connectivity != null && !connectivity.hasNetworkConnection()) {
             return DeliveryStatus.UNDELIVERED
         }
+
+        var json = serializeJsonPayload(eventPayload)
+        if (json.size > maxPayloadSize) {
+            val breadcrumbAndBytesRemovedCounts =
+                eventPayload.event?.impl?.trimBreadcrumbsBy(json.size - maxPayloadSize)
+            if (breadcrumbAndBytesRemovedCounts != null) {
+                eventPayload.event.impl.internalMetrics.setBreadcrumbTrimMetrics(
+                    breadcrumbAndBytesRemovedCounts.first,
+                    breadcrumbAndBytesRemovedCounts.second
+                )
+            }
+            json = serializeJsonPayload(eventPayload)
+        }
+
+        return deliver(urlString, json, headers)
+    }
+
+    fun deliver(
+        urlString: String,
+        streamable: JsonStream.Streamable,
+        headers: Map<String, String?>
+    ): DeliveryStatus {
+        TrafficStats.setThreadStatsTag(1)
+        if (connectivity != null && !connectivity.hasNetworkConnection()) {
+            return DeliveryStatus.UNDELIVERED
+        }
+
+        val json = serializeJsonPayload(streamable)
+        return deliver(urlString, json, headers)
+    }
+
+    fun deliver(
+        urlString: String,
+        json: ByteArray,
+        headers: Map<String, String?>
+    ): DeliveryStatus {
+
         var conn: HttpURLConnection? = null
 
         try {
-            val json = serializeJsonPayload(streamable)
             conn = makeRequest(URL(urlString), json, headers)
 
             // End the request, get the response code

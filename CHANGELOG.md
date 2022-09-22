@@ -1,5 +1,16 @@
 # Changelog
 
+### TBD
+
+### Enhancements
+
+* Increased max breadcrumbs to 500 and default max breadcrumbs to 100
+  [1744](https://github.com/bugsnag/bugsnag-android/pull/1744)
+* Added a new config maxStringValueLength, which truncates metadata strings that are too big (default 10,000)
+  [1744](https://github.com/bugsnag/bugsnag-android/pull/1744)
+* Breadcrumbs are now trimmed from an event if it's too big (oldest first)
+  [1744](https://github.com/bugsnag/bugsnag-android/pull/1744)
+
 ## 5.26.0 (2022-08-18)
 
 ### Enhancements
