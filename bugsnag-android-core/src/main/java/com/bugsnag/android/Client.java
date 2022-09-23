@@ -7,6 +7,7 @@ import com.bugsnag.android.internal.InternalMetrics;
 import com.bugsnag.android.internal.InternalMetricsImpl;
 import com.bugsnag.android.internal.InternalMetricsNoop;
 import com.bugsnag.android.internal.StateObserver;
+import com.bugsnag.android.internal.TrimMetrics;
 import com.bugsnag.android.internal.dag.ConfigModule;
 import com.bugsnag.android.internal.dag.ContextModule;
 import com.bugsnag.android.internal.dag.SystemServiceModule;
@@ -793,10 +794,10 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         // leave an error breadcrumb of this event - for the next event
         leaveErrorBreadcrumb(event);
 
-        Pair<Integer, Integer> stringAndCharCounts =
+        TrimMetrics stringAndCharCounts =
                 event.getImpl().trimMetadataStringsTo(immutableConfig.getMaxStringValueLength());
-        internalMetrics.setMetadataTrimMetrics(stringAndCharCounts.component1(),
-                stringAndCharCounts.component2());
+        internalMetrics.setMetadataTrimMetrics(stringAndCharCounts.getItemsTrimmed(),
+                stringAndCharCounts.getDataTrimmed());
 
         event.getImpl().setInternalMetrics(internalMetrics);
 

@@ -1,6 +1,8 @@
 package com.bugsnag.android
 
 import android.net.TrafficStats
+import com.bugsnag.android.internal.JsonHelper
+import com.bugsnag.android.internal.TrimMetrics
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.PrintWriter
@@ -9,6 +11,7 @@ import java.net.HttpURLConnection.HTTP_BAD_REQUEST
 import java.net.HttpURLConnection.HTTP_CLIENT_TIMEOUT
 import java.net.HttpURLConnection.HTTP_OK
 import java.net.URL
+import java.util.Date
 
 /**
  * Converts a [JsonStream.Streamable] into JSON, placing it in a [ByteArray]
@@ -54,18 +57,68 @@ internal class DefaultDelivery(
 
         var json = serializeJsonPayload(eventPayload)
         if (json.size > maxPayloadSize) {
-            val breadcrumbAndBytesRemovedCounts =
-                eventPayload.event?.impl?.trimBreadcrumbsBy(json.size - maxPayloadSize)
-            if (breadcrumbAndBytesRemovedCounts != null) {
-                eventPayload.event.impl.internalMetrics.setBreadcrumbTrimMetrics(
-                    breadcrumbAndBytesRemovedCounts.first,
-                    breadcrumbAndBytesRemovedCounts.second
+            val event = eventPayload.event
+            eventPayload.eventFile
+            if (event != null) {
+                val breadcrumbAndBytesRemovedCounts =
+                    event.impl.trimBreadcrumbsBy(json.size - maxPayloadSize)
+                event.impl.internalMetrics.setBreadcrumbTrimMetrics(
+                    breadcrumbAndBytesRemovedCounts.itemsTrimmed,
+                    breadcrumbAndBytesRemovedCounts.dataTrimmed
                 )
+                json = serializeJsonPayload(eventPayload)
+            } else {
+                json = trimBreadcrumbsBy(json, json.size - maxPayloadSize)
             }
-            json = serializeJsonPayload(eventPayload)
         }
 
         return deliver(urlString, json, headers)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun trimBreadcrumbsBy(eventJson: ByteArray, trimBy: Int): ByteArray {
+        val deserialized = JsonHelper.deserialize(eventJson) as MutableMap<String, Any>?
+        val events = deserialized?.get("events") as MutableList<MutableMap<String, Any>>?
+        val event = events?.get(0)
+        val breadcrumbs = event?.get("breadcrumbs") as MutableList<MutableMap<String, Any>>?
+        if (deserialized != null && breadcrumbs != null) {
+            val breadcrumbAndBytesRemovedCounts =
+                trimBreadcrumbsBy(breadcrumbs, trimBy)
+            val usage = JsonHelper.getOrAddMap(event!!, "usage")
+            val system = JsonHelper.getOrAddMap(usage, "system")
+            system["breadcrumbsRemoved"] = breadcrumbAndBytesRemovedCounts.itemsTrimmed
+            system["breadcrumbBytesRemoved"] = breadcrumbAndBytesRemovedCounts.dataTrimmed
+            return JsonHelper.serialize(deserialized)
+        }
+        return eventJson
+    }
+
+    private fun trimBreadcrumbsBy(breadcrumbs: MutableList<MutableMap<String, Any>>, byteCount: Int): TrimMetrics {
+        var removedBreadcrumbCount = 0
+        var removedByteCount = 0
+        while (removedByteCount < byteCount && breadcrumbs.isNotEmpty()) {
+            val breadcrumb = breadcrumbs.removeAt(0)
+            removedByteCount += JsonHelper.serialize(breadcrumb).size
+            removedBreadcrumbCount++
+        }
+        when {
+            removedBreadcrumbCount == 1 -> breadcrumbs.add(
+                mutableMapOf(
+                    "name" to "Removed to reduce payload size",
+                    "type" to BreadcrumbType.MANUAL,
+                    "timestamp" to Date()
+                )
+            )
+            removedBreadcrumbCount > 1 -> breadcrumbs.add(
+                mutableMapOf(
+                    "name" to "Removed, along with ${removedBreadcrumbCount - 1} older breadcrumbs," +
+                        " to reduce payload size",
+                    "type" to BreadcrumbType.MANUAL,
+                    "timestamp" to Date()
+                )
+            )
+        }
+        return TrimMetrics(removedBreadcrumbCount, removedByteCount)
     }
 
     fun deliver(

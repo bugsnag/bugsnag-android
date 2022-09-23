@@ -21,3 +21,8 @@ interface InternalMetrics {
 
     fun setBreadcrumbTrimMetrics(breadcrumbsRemoved: Int, bytesRemoved: Int)
 }
+
+internal data class TrimMetrics(
+    val itemsTrimmed: Int, // breadcrumbs, strings, whatever
+    val dataTrimmed: Int // chars, bytes, whatever
+)

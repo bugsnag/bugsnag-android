@@ -2,6 +2,7 @@ package com.bugsnag.android.internal
 
 import com.bugsnag.android.repackaged.dslplatform.json.DslJson
 import com.bugsnag.android.repackaged.dslplatform.json.JsonWriter
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -29,6 +30,12 @@ internal object JsonHelper {
                 writer.writeString(timestamp)
             }
         }
+    }
+
+    fun serialize(value: Any): ByteArray {
+        val os = ByteArrayOutputStream()
+        dslJson.serialize(value, os)
+        return os.toByteArray()
     }
 
     fun serialize(value: Any, stream: OutputStream) {
@@ -75,6 +82,16 @@ internal object JsonHelper {
         } catch (ex: IOException) {
             throw IOException("Could not deserialize from $file", ex)
         }
+    }
+
+    fun getOrAddMap(map: MutableMap<String, Any>, key: String): MutableMap<String, Any> {
+        @Suppress("UNCHECKED_CAST")
+        var submap = map.get(key) as MutableMap<String, Any>?
+        if (submap == null) {
+            submap = mutableMapOf()
+            map.put(key, submap)
+        }
+        return submap
     }
 
     /**

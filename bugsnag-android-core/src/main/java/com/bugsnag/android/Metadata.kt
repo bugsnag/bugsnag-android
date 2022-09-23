@@ -3,6 +3,7 @@
 package com.bugsnag.android
 
 import com.bugsnag.android.internal.StringUtils
+import com.bugsnag.android.internal.TrimMetrics
 import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
 
@@ -139,14 +140,14 @@ internal data class Metadata @JvmOverloads constructor(
             .also { it.redactedKeys = redactedKeys.toSet() }
     }
 
-    fun trimMetadataStringsTo(maxStringLength: Int): Pair<Int, Int> {
+    fun trimMetadataStringsTo(maxStringLength: Int): TrimMetrics {
         var stringCount = 0
         var charCount = 0
         store.forEach { entry ->
             val stringAndCharCounts = StringUtils.trimStringValuesTo(maxStringLength, entry.value)
-            stringCount += stringAndCharCounts.first
-            charCount += stringAndCharCounts.second
+            stringCount += stringAndCharCounts.itemsTrimmed
+            charCount += stringAndCharCounts.dataTrimmed
         }
-        return Pair(stringCount, charCount)
+        return TrimMetrics(stringCount, charCount)
     }
 }

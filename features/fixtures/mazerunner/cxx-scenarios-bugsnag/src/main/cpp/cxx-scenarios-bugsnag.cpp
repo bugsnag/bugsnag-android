@@ -379,3 +379,29 @@ Java_com_bugsnag_android_mazerunner_scenarios_UnhandledExceptionWithUsageScenari
 }
 
 }
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_MetadataStringsTooLargeScenario_nativeCrash(
+        JNIEnv *env, jobject thiz, jint value) {
+  int x = 38;
+  if (value > 0) {
+    raise(SIGSEGV);
+  }
+  printf("SHE FOLDS! You all fold! Every time, you all fold! You fold!\n");
+  return value / x / 8;
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_EventTooBigScenario_nativeCrash(JNIEnv *env,
+                                                                              jobject thiz,
+                                                                              jint value) {
+  int x = 38;
+  if (value > 0) {
+    raise(SIGSEGV);
+  }
+  printf("Phasers locked onto their warp core, captain."
+         " Please, please let me shoot their warp core! I have been very good this month!\n");
+  return value / x / 8;
+}

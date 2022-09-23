@@ -3,6 +3,7 @@ package com.bugsnag.android
 import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.InternalMetrics
 import com.bugsnag.android.internal.InternalMetricsNoop
+import com.bugsnag.android.internal.TrimMetrics
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.PrintWriter
@@ -248,29 +249,29 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
 
     fun getSeverityReasonType(): String = severityReason.severityReasonType
 
-    fun trimMetadataStringsTo(maxLength: Int): Pair<Int, Int> {
+    fun trimMetadataStringsTo(maxLength: Int): TrimMetrics {
         var stringCount = 0
         var charCount = 0
 
         var stringAndCharCounts = metadata.trimMetadataStringsTo(maxLength)
-        stringCount += stringAndCharCounts.first
-        charCount += stringAndCharCounts.second
+        stringCount += stringAndCharCounts.itemsTrimmed
+        charCount += stringAndCharCounts.dataTrimmed
         for (breadcrumb in breadcrumbs) {
             stringAndCharCounts = breadcrumb.impl.trimMetadataStringsTo(maxLength)
-            stringCount += stringAndCharCounts.first
-            charCount += stringAndCharCounts.second
+            stringCount += stringAndCharCounts.itemsTrimmed
+            charCount += stringAndCharCounts.dataTrimmed
         }
-        return Pair(stringCount, charCount)
+        return TrimMetrics(stringCount, charCount)
     }
 
     internal fun serializeJsonPayload(streamable: JsonStream.Streamable): ByteArray {
         return ByteArrayOutputStream().use { baos ->
-            JsonStream(PrintWriter(baos).buffered()).use(streamable::toStream)
+            JsonStream(PrintWriter(baos)).use(streamable::toStream)
             baos.toByteArray()
         }
     }
 
-    fun trimBreadcrumbsBy(byteCount: Int): Pair<Int, Int> {
+    fun trimBreadcrumbsBy(byteCount: Int): TrimMetrics {
         var removedBreadcrumbCount = 0
         var removedByteCount = 0
         while (removedByteCount < byteCount && breadcrumbs.isNotEmpty()) {
@@ -287,7 +288,7 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
                 )
             )
         }
-        return Pair(removedBreadcrumbCount, removedByteCount)
+        return TrimMetrics(removedBreadcrumbCount, removedByteCount)
     }
 
     override fun setUser(id: String?, email: String?, name: String?) {

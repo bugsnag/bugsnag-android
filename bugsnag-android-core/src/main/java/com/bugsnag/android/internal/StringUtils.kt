@@ -10,27 +10,33 @@ internal object StringUtils {
         }
     }
 
-    fun trimNullableStringValuesTo(maxStringLength: Int, map: MutableMap<String, Any?>): Pair<Int, Int> {
+    fun trimNullableStringValuesTo(maxStringLength: Int, map: MutableMap<String, Any?>): TrimMetrics {
+        var stringCount = 0
         var charCount = 0
-        @Suppress("UNCHECKED_CAST")
-        val toTrim = map.filterValues { it is String && it.length > maxStringLength } as Map<String, String>
-        toTrim.forEach {
-            charCount += it.value.length - maxStringLength
-            map[it.key] = stringTrimmedTo(maxStringLength, it.value)
+        for (entry in map.entries) {
+            val value = entry.value
+            if (value is String && value.length > maxStringLength) {
+                entry.setValue(stringTrimmedTo(maxStringLength, value))
+                charCount += value.length - maxStringLength
+                stringCount++
+            }
         }
 
-        return Pair(toTrim.size, charCount)
+        return TrimMetrics(stringCount, charCount)
     }
 
-    fun trimStringValuesTo(maxStringLength: Int, map: MutableMap<String, Any>): Pair<Int, Int> {
+    fun trimStringValuesTo(maxStringLength: Int, map: MutableMap<String, Any>): TrimMetrics {
+        var stringCount = 0
         var charCount = 0
-        @Suppress("UNCHECKED_CAST")
-        val toTrim = map.filterValues { it is String && it.length > maxStringLength } as Map<String, String>
-        toTrim.forEach {
-            charCount += it.value.length - maxStringLength
-            map[it.key] = stringTrimmedTo(maxStringLength, it.value)
+        for (entry in map.entries) {
+            val value = entry.value
+            if (value is String && value.length > maxStringLength) {
+                entry.setValue(stringTrimmedTo(maxStringLength, value))
+                charCount += value.length - maxStringLength
+                stringCount++
+            }
         }
 
-        return Pair(toTrim.size, charCount)
+        return TrimMetrics(stringCount, charCount)
     }
 }
