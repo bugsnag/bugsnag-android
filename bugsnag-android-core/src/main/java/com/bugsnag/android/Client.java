@@ -55,6 +55,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
     private final ContextState contextState;
     private final CallbackState callbackState;
     private final UserState userState;
+    private final Map<String, Object> configDifferences;
 
     final Context appContext;
 
@@ -194,8 +195,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         userState = storageModule.getUserStore().load(configuration.getUser());
         storageModule.getSharedPrefMigrator().deleteLegacyPrefs();
 
-        registerLifecycleCallbacks();
-
         EventStorageModule eventStorageModule = new EventStorageModule(contextModule, configModule,
                 dataCollectionModule, bgTaskService, trackerModule, systemServiceModule, notifier,
                 callbackState);
@@ -205,45 +204,25 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         deliveryDelegate = new DeliveryDelegate(logger, eventStore,
                 immutableConfig, callbackState, notifier, bgTaskService);
 
-        // Install a default exception handler with this client
         exceptionHandler = new ExceptionHandler(this, logger);
-        if (immutableConfig.getEnabledErrorTypes().getUnhandledExceptions()) {
-            exceptionHandler.install();
-        }
 
         // load last run info
         lastRunInfoStore = storageModule.getLastRunInfoStore();
         lastRunInfo = storageModule.getLastRunInfo();
 
-        // initialise plugins before attempting to flush any errors
-        loadPlugins(configuration);
+        Set<Plugin> userPlugins = configuration.getPlugins();
+        pluginClient = new PluginClient(userPlugins, immutableConfig, logger);
 
-        NdkPluginCaller.INSTANCE.setNdkPlugin(pluginClient.getNdkPlugin());
-
-        // InternalMetrics uses NdkPluginCaller
         if (configuration.getTelemetry().contains(Telemetry.USAGE)) {
             internalMetrics = new InternalMetricsImpl();
-            NdkPluginCaller.INSTANCE.setInternalMetricsEnabled(true);
         } else {
             internalMetrics = new InternalMetricsNoop();
         }
-        internalMetrics.setConfigDifferences(configuration.impl.getConfigDifferences());
-        configuration.impl.callbackState.setInternalMetrics(internalMetrics);
 
-        // Flush any on-disk errors and sessions
-        eventStore.flushOnLaunch();
-        eventStore.flushAsync();
-        sessionTracker.flushAsync();
-
-        // register listeners for system events in the background.
+        configDifferences = configuration.impl.getConfigDifferences();
         systemBroadcastReceiver = new SystemBroadcastReceiver(this, logger);
-        registerComponentCallbacks();
-        registerListenersInBackground();
 
-        // leave auto breadcrumb
-        Map<String, Object> data = Collections.emptyMap();
-        leaveAutoBreadcrumb("Bugsnag loaded", BreadcrumbType.STATE, data);
-        logger.d("Bugsnag loaded");
+        start();
     }
 
     @VisibleForTesting
@@ -293,6 +272,41 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         this.exceptionHandler = exceptionHandler;
         this.notifier = notifier;
         internalMetrics = new InternalMetricsNoop();
+        configDifferences = new HashMap<>();
+    }
+
+    private void start() {
+        if (immutableConfig.getEnabledErrorTypes().getUnhandledExceptions()) {
+            exceptionHandler.install();
+        }
+
+        // Initialise plugins before attempting anything else
+        NativeInterface.setClient(Client.this);
+        pluginClient.loadPlugins(Client.this);
+        NdkPluginCaller.INSTANCE.setNdkPlugin(pluginClient.getNdkPlugin());
+        if (immutableConfig.getTelemetry().contains(Telemetry.USAGE)) {
+            NdkPluginCaller.INSTANCE.setInternalMetricsEnabled(true);
+        }
+
+        // Flush any on-disk errors and sessions
+        eventStore.flushOnLaunch();
+        eventStore.flushAsync();
+        sessionTracker.flushAsync();
+
+        // These call into NdkPluginCaller to sync with the native side, so they must happen later
+        internalMetrics.setConfigDifferences(configDifferences);
+        callbackState.setInternalMetrics(internalMetrics);
+
+        // Register listeners for system events in the background
+        registerLifecycleCallbacks();
+        registerComponentCallbacks();
+        registerListenersInBackground();
+
+        // Leave auto breadcrumb
+        Map<String, Object> data = Collections.emptyMap();
+        leaveAutoBreadcrumb("Bugsnag loaded", BreadcrumbType.STATE, data);
+
+        logger.d("Bugsnag loaded");
     }
 
     void registerLifecycleCallbacks() {
@@ -352,13 +366,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         } catch (RejectedExecutionException exc) {
             logger.w("Failed to persist last run info", exc);
         }
-    }
-
-    private void loadPlugins(@NonNull final Configuration configuration) {
-        NativeInterface.setClient(Client.this);
-        Set<Plugin> userPlugins = configuration.getPlugins();
-        pluginClient = new PluginClient(userPlugins, immutableConfig, logger);
-        pluginClient.loadPlugins(Client.this);
     }
 
     private void logNull(String property) {
