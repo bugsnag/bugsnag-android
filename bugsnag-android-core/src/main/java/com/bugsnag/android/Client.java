@@ -213,9 +213,11 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
         // InternalMetrics uses NdkPluginCaller
         if (configuration.getTelemetry().contains(Telemetry.USAGE)) {
+            logger.e("### Client(): creating InternalMetricsImpl");
             internalMetrics = new InternalMetricsImpl();
             NdkPluginCaller.INSTANCE.setInternalMetricsEnabled(true);
         } else {
+            logger.e("### Client(): creating InternalMetricsNoop");
             internalMetrics = new InternalMetricsNoop();
         }
         internalMetrics.setConfigDifferences(configuration.impl.getConfigDifferences());
@@ -793,11 +795,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
         // leave an error breadcrumb of this event - for the next event
         leaveErrorBreadcrumb(event);
-
-        TrimMetrics stringAndCharCounts =
-                event.getImpl().trimMetadataStringsTo(immutableConfig.getMaxStringValueLength());
-        internalMetrics.setMetadataTrimMetrics(stringAndCharCounts.getItemsTrimmed(),
-                stringAndCharCounts.getDataTrimmed());
 
         event.getImpl().setInternalMetrics(internalMetrics);
 

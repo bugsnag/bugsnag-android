@@ -1,8 +1,7 @@
 package com.bugsnag.android
 
 import android.net.TrafficStats
-import com.bugsnag.android.internal.JsonHelper
-import com.bugsnag.android.internal.TrimMetrics
+import com.bugsnag.android.internal.ImmutableConfig
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.PrintWriter
@@ -11,7 +10,7 @@ import java.net.HttpURLConnection.HTTP_BAD_REQUEST
 import java.net.HttpURLConnection.HTTP_CLIENT_TIMEOUT
 import java.net.HttpURLConnection.HTTP_OK
 import java.net.URL
-import java.util.Date
+
 
 /**
  * Converts a [JsonStream.Streamable] into JSON, placing it in a [ByteArray]
@@ -25,12 +24,22 @@ internal fun serializeJsonPayload(streamable: JsonStream.Streamable): ByteArray 
 
 internal class DefaultDelivery(
     private val connectivity: Connectivity?,
-    val logger: Logger
+    config: Configuration
 ) : Delivery {
+    val logger: Logger
+    val maxMetadataStringLength: Int
 
     companion object {
         // 1MB with some fiddle room in case of encoding overhead
         const val maxPayloadSize = 999700
+    }
+
+    init {
+        logger = config.logger!!
+        // Must grab this value here, because it will be changed back to the default of
+        // 10000 later for some reason.
+        maxMetadataStringLength = config.maxStringValueLength
+        logger.e("### DefaultDelivery: max string length = ${config.maxStringValueLength}")
     }
 
     override fun deliver(payload: Session, deliveryParams: DeliveryParams): DeliveryStatus {
@@ -55,70 +64,43 @@ internal class DefaultDelivery(
             return DeliveryStatus.UNDELIVERED
         }
 
-        var json = serializeJsonPayload(eventPayload)
-        if (json.size > maxPayloadSize) {
-            val event = eventPayload.event
-            eventPayload.eventFile
-            if (event != null) {
-                val breadcrumbAndBytesRemovedCounts =
-                    event.impl.trimBreadcrumbsBy(json.size - maxPayloadSize)
-                event.impl.internalMetrics.setBreadcrumbTrimMetrics(
-                    breadcrumbAndBytesRemovedCounts.itemsTrimmed,
-                    breadcrumbAndBytesRemovedCounts.dataTrimmed
+        var mustReserialize = false
+        val event = eventPayload.event
+        logger.e("### DefaultDelivery.deliver: Event = ${event}")
+
+        logger.e("### DefaultDelivery.deliver: max string length = ${maxMetadataStringLength}")
+        if (event != null) {
+            val (itemsTrimmed, dataTrimmed) = event.impl.trimMetadataStringsTo(maxMetadataStringLength)
+            logger.e("### DefaultDelivery.deliver: Trimmed ${itemsTrimmed} ${dataTrimmed}")
+            if (itemsTrimmed > 0) {
+                logger.e("### DefaultDelivery.deliver: internal metrics = ${event.impl.internalMetrics}")
+                event.impl.internalMetrics.setMetadataTrimMetrics(
+                    itemsTrimmed,
+                    dataTrimmed
                 )
-                json = serializeJsonPayload(eventPayload)
-            } else {
-                json = trimBreadcrumbsBy(json, json.size - maxPayloadSize)
+                logger.e("### must reserialize")
+                mustReserialize = true
             }
         }
 
-        return deliver(urlString, json, headers)
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun trimBreadcrumbsBy(eventJson: ByteArray, trimBy: Int): ByteArray {
-        val deserialized = JsonHelper.deserialize(eventJson) as MutableMap<String, Any>?
-        val events = deserialized?.get("events") as MutableList<MutableMap<String, Any>>?
-        val event = events?.get(0)
-        val breadcrumbs = event?.get("breadcrumbs") as MutableList<MutableMap<String, Any>>?
-        if (deserialized != null && breadcrumbs != null) {
+        var json = serializeJsonPayload(eventPayload)
+        if (json.size > maxPayloadSize && event != null) {
             val breadcrumbAndBytesRemovedCounts =
-                trimBreadcrumbsBy(breadcrumbs, trimBy)
-            val usage = JsonHelper.getOrAddMap(event!!, "usage")
-            val system = JsonHelper.getOrAddMap(usage, "system")
-            system["breadcrumbsRemoved"] = breadcrumbAndBytesRemovedCounts.itemsTrimmed
-            system["breadcrumbBytesRemoved"] = breadcrumbAndBytesRemovedCounts.dataTrimmed
-            return JsonHelper.serialize(deserialized)
+                event.impl.trimBreadcrumbsBy(json.size - maxPayloadSize)
+            event.impl.internalMetrics.setBreadcrumbTrimMetrics(
+                breadcrumbAndBytesRemovedCounts.itemsTrimmed,
+                breadcrumbAndBytesRemovedCounts.dataTrimmed
+            )
+            logger.e("### must reserialize")
+            mustReserialize = true
         }
-        return eventJson
-    }
 
-    private fun trimBreadcrumbsBy(breadcrumbs: MutableList<MutableMap<String, Any>>, byteCount: Int): TrimMetrics {
-        var removedBreadcrumbCount = 0
-        var removedByteCount = 0
-        while (removedByteCount < byteCount && breadcrumbs.isNotEmpty()) {
-            val breadcrumb = breadcrumbs.removeAt(0)
-            removedByteCount += JsonHelper.serialize(breadcrumb).size
-            removedBreadcrumbCount++
+        if (mustReserialize) {
+            logger.e("### Reserializing")
+            json = serializeJsonPayload(eventPayload)
         }
-        when {
-            removedBreadcrumbCount == 1 -> breadcrumbs.add(
-                mutableMapOf(
-                    "name" to "Removed to reduce payload size",
-                    "type" to BreadcrumbType.MANUAL,
-                    "timestamp" to Date()
-                )
-            )
-            removedBreadcrumbCount > 1 -> breadcrumbs.add(
-                mutableMapOf(
-                    "name" to "Removed, along with ${removedBreadcrumbCount - 1} older breadcrumbs," +
-                        " to reduce payload size",
-                    "type" to BreadcrumbType.MANUAL,
-                    "timestamp" to Date()
-                )
-            )
-        }
-        return TrimMetrics(removedBreadcrumbCount, removedByteCount)
+        // TODO: json = postprocess.process(json) - do all the trimming in here.
+        return deliver(urlString, json, headers)
     }
 
     fun deliver(

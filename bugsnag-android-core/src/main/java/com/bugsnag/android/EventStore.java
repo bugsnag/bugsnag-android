@@ -217,22 +217,29 @@ class EventStore extends FileStore {
 
     @Nullable
     private EventPayload createEventPayload(File eventFile, String apiKey) {
+        logger.e("### EventPayload.createEventPayload: Begin");
         MarshalledEventSource eventSource = new MarshalledEventSource(eventFile, apiKey, logger);
+        eventSource.invoke();
 
         try {
             if (!callbackState.runOnSendTasks(eventSource, logger)) {
                 // do not send the payload at all, we must block sending
+                logger.e("### EventPayload.createEventPayload: runOnSendTasks returned false");
                 return null;
             }
         } catch (Exception ioe) {
+            logger.e("### EventPayload.createEventPayload: Exception " + ioe);
+            ioe.printStackTrace();
             eventSource.clear();
         }
 
         Event processedEvent = eventSource.getEvent();
         if (processedEvent != null) {
+            logger.e("### EventPayload.createEventPayload: Did deserialize");
             apiKey = processedEvent.getApiKey();
             return new EventPayload(apiKey, processedEvent, null, notifier, config);
         } else {
+            logger.e("### EventPayload.createEventPayload: Did not deserialize");
             return new EventPayload(apiKey, null, eventFile, notifier, config);
         }
     }

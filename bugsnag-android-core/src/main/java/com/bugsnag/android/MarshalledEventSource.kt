@@ -21,6 +21,7 @@ internal class MarshalledEventSource(
         var unmarshalledEvent = event
         if (unmarshalledEvent == null) {
             unmarshalledEvent = unmarshall()
+            logger.e("### MarshalledEventSource.invoke: ${unmarshalledEvent}")
             event = unmarshalledEvent
         }
 

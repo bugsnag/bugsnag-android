@@ -222,7 +222,8 @@ internal fun sanitiseConfiguration(
 
     @Suppress("SENSELESS_COMPARISON")
     if (configuration.delivery == null) {
-        configuration.delivery = DefaultDelivery(connectivity, configuration.logger!!)
+        // TODO: Inject postprocess
+        configuration.delivery = DefaultDelivery(connectivity, configuration)
     }
     return convertToImmutableConfig(
         configuration,

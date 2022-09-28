@@ -15,6 +15,9 @@ import java.util.List;
 
 class TestData {
     static ImmutableConfig generateConfig() throws IOException {
+        Configuration config = new Configuration("123456abcdeabcde");
+        config.setLogger(null);
+        Delivery delivery = new DefaultDelivery(null, config);
         return new ImmutableConfig(
                 "123456abcdeabcde",
                 true,
@@ -31,7 +34,7 @@ class TestData {
                 "1.4.3",
                 55,
                 "android",
-                new DefaultDelivery(null, NoopLogger.INSTANCE),
+                delivery,
                 new EndpointConfiguration(),
                 true,
                 55,

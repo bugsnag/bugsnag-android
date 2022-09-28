@@ -256,8 +256,11 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
         var stringAndCharCounts = metadata.trimMetadataStringsTo(maxLength)
         stringCount += stringAndCharCounts.itemsTrimmed
         charCount += stringAndCharCounts.dataTrimmed
+        logger.e("### EventInternal.trimMetadataStringsTo: Trimmed metadata ${stringCount}, ${charCount}")
         for (breadcrumb in breadcrumbs) {
             stringAndCharCounts = breadcrumb.impl.trimMetadataStringsTo(maxLength)
+            logger.e("### EventInternal.trimMetadataStringsTo: Trimmed breadcrumb" +
+                    " ${stringAndCharCounts.itemsTrimmed}, ${stringAndCharCounts.dataTrimmed}")
             stringCount += stringAndCharCounts.itemsTrimmed
             charCount += stringAndCharCounts.dataTrimmed
         }

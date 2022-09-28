@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import android.util.Log
 import com.bugsnag.android.internal.InternalMetrics
 import com.bugsnag.android.internal.InternalMetricsNoop
 import java.util.concurrent.CopyOnWriteArrayList
@@ -12,6 +13,9 @@ internal data class CallbackState(
 ) : CallbackAware {
 
     private var internalMetrics: InternalMetrics = InternalMetricsNoop()
+    init {
+        Log.e("###", "### CallbackState: internalMetrics initialized to noop ${internalMetrics}")
+    }
 
     companion object {
         private const val onBreadcrumbName = "onBreadcrumb"
@@ -21,6 +25,7 @@ internal data class CallbackState(
     }
 
     fun setInternalMetrics(metrics: InternalMetrics) {
+        Log.e("###", "### CallbackState.setInternalMetrics ${metrics}")
         internalMetrics = metrics
         internalMetrics.setCallbackCounts(getCallbackCounts())
     }

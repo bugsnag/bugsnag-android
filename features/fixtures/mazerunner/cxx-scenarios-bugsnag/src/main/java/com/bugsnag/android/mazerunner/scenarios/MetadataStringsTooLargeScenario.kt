@@ -49,6 +49,7 @@ class MetadataStringsTooLargeScenario(
             "handled" -> Bugsnag.notify(generateException())
             "jvm" -> jvmCrash()
             "native" -> nativeCrash(1)
+            "none" -> {}
             else -> throw IllegalArgumentException(
                 "Maze Runner configuration error: Unknown crash type \"${crashType}\""
             )

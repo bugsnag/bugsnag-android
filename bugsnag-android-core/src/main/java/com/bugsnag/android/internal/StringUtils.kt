@@ -1,5 +1,7 @@
 package com.bugsnag.android.internal
 
+import android.util.Log
+
 internal object StringUtils {
     fun stringTrimmedTo(maxLength: Int, str: String): String {
         val excessCharCount = str.length - maxLength
@@ -16,6 +18,7 @@ internal object StringUtils {
         for (entry in map.entries) {
             val value = entry.value
             if (value is String && value.length > maxStringLength) {
+                Log.e("###", "### StringUtils.trimNullableStringValuesTo Trimmed down to ${stringTrimmedTo(maxStringLength, value)}")
                 entry.setValue(stringTrimmedTo(maxStringLength, value))
                 charCount += value.length - maxStringLength
                 stringCount++
@@ -31,12 +34,14 @@ internal object StringUtils {
         for (entry in map.entries) {
             val value = entry.value
             if (value is String && value.length > maxStringLength) {
+                Log.e("###", "### StringUtils.trimStringValuesTo Trimmed down to ${stringTrimmedTo(maxStringLength, value)}")
                 entry.setValue(stringTrimmedTo(maxStringLength, value))
                 charCount += value.length - maxStringLength
                 stringCount++
             }
         }
 
+        Log.e("###", "### StringUtils.trimStringValuesTo ${maxStringLength}: Returning ${stringCount}, ${charCount}")
         return TrimMetrics(stringCount, charCount)
     }
 }

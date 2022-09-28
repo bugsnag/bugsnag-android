@@ -17,6 +17,7 @@ Feature: Metadata is trimmed
   Scenario: 1 metadata char truncated, JVM exception
     When I configure the app to run in the "jvm, 39, abcdefghijklmnopqrstuvwxyzabcdefghijklmn" state
     And I run "MetadataStringsTooLargeScenario" and relaunch the crashed app
+    And I configure the app to run in the "none, 39, abcdefghijklmnopqrstuvwxyzabcdefghijklmn" state
     And I configure Bugsnag for "MetadataStringsTooLargeScenario"
     Then I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
@@ -29,6 +30,7 @@ Feature: Metadata is trimmed
   Scenario: 1 metadata char truncated, native exception
     When I configure the app to run in the "native, 39, abcdefghijklmnopqrstuvwxyzabcdefghijklmn" state
     And I run "MetadataStringsTooLargeScenario" and relaunch the crashed app
+    And I configure the app to run in the "none, 39, abcdefghijklmnopqrstuvwxyzabcdefghijklmn" state
     And I configure Bugsnag for "MetadataStringsTooLargeScenario"
     Then I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
@@ -53,7 +55,9 @@ Feature: Metadata is trimmed
 
   Scenario: 2 metadata chars truncated, jvm exception
     When I configure the app to run in the "jvm, 38, abcdefghijklmnopqrstuvwxyzabcdefghijklmn" state
-    And I run "MetadataStringsTooLargeScenario"
+    And I run "MetadataStringsTooLargeScenario" and relaunch the crashed app
+    And I configure the app to run in the "none, 38, abcdefghijklmnopqrstuvwxyzabcdefghijklmn" state
+    And I configure Bugsnag for "MetadataStringsTooLargeScenario"
     Then I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "message" equals "MetadataStringsTooLargeScenario"
@@ -64,7 +68,9 @@ Feature: Metadata is trimmed
 
   Scenario: 2 metadata chars truncated, native crash
     When I configure the app to run in the "native, 38, abcdefghijklmnopqrstuvwxyzabcdefghijklmn" state
-    And I run "MetadataStringsTooLargeScenario"
+    And I run "MetadataStringsTooLargeScenario" and relaunch the crashed app
+    And I configure the app to run in the "none, 38, abcdefghijklmnopqrstuvwxyzabcdefghijklmn" state
+    And I configure Bugsnag for "MetadataStringsTooLargeScenario"
     Then I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "message" equals "Segmentation violation (invalid memory reference)"
@@ -94,7 +100,9 @@ Feature: Metadata is trimmed
 
   Scenario: Payload is too big by 3 breadcrumbs, jvm exception
     When I configure the app to run in the "jvm, 10000, 100" state
-    And I run "EventTooBigScenario"
+    And I run "EventTooBigScenario" and relaunch the crashed app
+    And I configure the app to run in the "none, 10000, 100" state
+    And I configure Bugsnag for "EventTooBigScenario"
     Then I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "message" equals "EventTooBigScenario"
@@ -105,7 +113,9 @@ Feature: Metadata is trimmed
 
   Scenario: Payload is too big by 3 breadcrumbs, native crash
     When I configure the app to run in the "native, 10000, 100" state
-    And I run "EventTooBigScenario"
+    And I run "EventTooBigScenario" and relaunch the crashed app
+    And I configure the app to run in the "none, 10000, 100" state
+    And I configure Bugsnag for "EventTooBigScenario"
     Then I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "message" equals "Segmentation violation (invalid memory reference)"
@@ -129,7 +139,9 @@ Feature: Metadata is trimmed
 
   Scenario: Breadcrumb is too big, jvm exception
     When I configure the app to run in the "jvm, 1100000, 1" state
-    And I run "EventTooBigScenario"
+    And I run "EventTooBigScenario" and relaunch the crashed app
+    And I configure the app to run in the "none, 1100000, 1" state
+    And I configure Bugsnag for "EventTooBigScenario"
     Then I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "message" equals "EventTooBigScenario"
@@ -140,7 +152,9 @@ Feature: Metadata is trimmed
 
   Scenario: Breadcrumb is too big, native crash
     When I configure the app to run in the "native, 1100000, 1" state
-    And I run "EventTooBigScenario"
+    And I run "EventTooBigScenario" and relaunch the crashed app
+    And I configure the app to run in the "none, 1100000, 1" state
+    And I configure Bugsnag for "EventTooBigScenario"
     Then I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "message" equals "Segmentation violation (invalid memory reference)"

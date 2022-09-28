@@ -7,7 +7,9 @@ class DeliveryTest {
 
     @Test
     fun testResponseCodeMapping() {
-        val delivery = DefaultDelivery(null, NoopLogger)
+        val config = Configuration("blank-key")
+        config.logger = null
+        val delivery = DefaultDelivery(null, config)
         assertEquals(DeliveryStatus.DELIVERED, delivery.getDeliveryStatus(202))
         assertEquals(DeliveryStatus.UNDELIVERED, delivery.getDeliveryStatus(503))
         assertEquals(DeliveryStatus.UNDELIVERED, delivery.getDeliveryStatus(0))

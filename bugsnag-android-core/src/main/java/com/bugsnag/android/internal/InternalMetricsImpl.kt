@@ -1,5 +1,6 @@
 package com.bugsnag.android.internal
 
+import android.util.Log
 import com.bugsnag.android.NdkPluginCaller
 
 class InternalMetricsImpl : InternalMetrics {
@@ -11,6 +12,9 @@ class InternalMetricsImpl : InternalMetrics {
     private var breadcrumbBytesRemovedCount = 0
 
     override fun toJsonableMap(): Map<String, Any> {
+        Log.e("###", "### InternalMetricsImpl.toJsonableMap" +
+                " ${metadataStringsTrimmedCount}, ${metadataCharsTruncatedCount}," +
+                "${breadcrumbsRemovedCount}, ${breadcrumbBytesRemovedCount}")
         val system = listOfNotNull(
             if (metadataStringsTrimmedCount > 0) "stringsTruncated" to metadataStringsTrimmedCount else null,
             if (metadataCharsTruncatedCount > 0) "stringCharsTruncated" to metadataCharsTruncatedCount else null,
@@ -49,6 +53,7 @@ class InternalMetricsImpl : InternalMetrics {
     }
 
     override fun setMetadataTrimMetrics(stringsTrimmed: Int, charsRemoved: Int) {
+        Log.e("###", "### InternalMetricsImpl.setMetadataTrimMetrics ${stringsTrimmed}, ${charsRemoved}")
         metadataStringsTrimmedCount = stringsTrimmed
         metadataCharsTruncatedCount = charsRemoved
     }
