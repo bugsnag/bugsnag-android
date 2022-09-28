@@ -143,7 +143,18 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         ConfigModule configModule = new ConfigModule(contextModule, configuration, connectivity);
         immutableConfig = configModule.getConfig();
         logger = immutableConfig.getLogger();
-        warnIfNotAppContext(androidContext);
+
+        if (!(androidContext instanceof Application)) {
+            logger.w("You should initialize Bugsnag from the onCreate() callback of your "
+                    + "Application subclass, as this guarantees errors are captured as early "
+                    + "as possible. "
+                    + "If a custom Application subclass is not possible in your app then you "
+                    + "should suppress this warning by passing the Application context instead: "
+                    + "Bugsnag.start(context.getApplicationContext()). "
+                    + "For further info see: "
+                    + "https://docs.bugsnag.com/platforms/android/#basic-configuration");
+
+        }
 
         // setup storage as soon as possible
         final StorageModule storageModule = new StorageModule(appContext,
@@ -151,7 +162,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
         // setup state trackers for bugsnag
         BugsnagStateModule bugsnagStateModule = new BugsnagStateModule(
-                configModule, configuration);
+                immutableConfig, configuration);
         clientObservable = bugsnagStateModule.getClientObservable();
         callbackState = bugsnagStateModule.getCallbackState();
         breadcrumbState = bugsnagStateModule.getBreadcrumbState();
@@ -1081,20 +1092,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
             }
         }
         super.finalize();
-    }
-
-    private void warnIfNotAppContext(Context androidContext) {
-        if (!(androidContext instanceof Application)) {
-            logger.w("You should initialize Bugsnag from the onCreate() callback of your "
-                    + "Application subclass, as this guarantees errors are captured as early "
-                    + "as possible. "
-                    + "If a custom Application subclass is not possible in your app then you "
-                    + "should suppress this warning by passing the Application context instead: "
-                    + "Bugsnag.start(context.getApplicationContext()). "
-                    + "For further info see: "
-                    + "https://docs.bugsnag.com/platforms/android/#basic-configuration");
-
-        }
     }
 
     ImmutableConfig getConfig() {
