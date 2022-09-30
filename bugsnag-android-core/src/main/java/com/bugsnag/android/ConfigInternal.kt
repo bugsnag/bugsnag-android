@@ -57,6 +57,8 @@ internal class ConfigInternal(
     var projectPackages: Set<String> = emptySet()
     var persistenceDirectory: File? = null
 
+    var attemptDeliveryOnCrash: Boolean = false
+
     val notifier: Notifier = Notifier()
 
     protected val plugins = HashSet<Plugin>()
