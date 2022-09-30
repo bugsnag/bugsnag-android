@@ -343,6 +343,24 @@ public class NativeInterface {
         return getClient().getConfig().getDiscardClasses().contains(name);
     }
 
+    @SuppressWarnings("unchecked")
+    private static void deepMerge(Map<String, Object> src, Map<String, Object> dst) {
+        for (Map.Entry<String, Object> entry: src.entrySet()) {
+            String key = entry.getKey();
+            Object srcValue = entry.getValue();
+            Object dstValue = dst.get(key);
+            if (srcValue instanceof Map && (dstValue instanceof Map)) {
+                deepMerge((Map<String, Object>)srcValue, (Map<String, Object>)dstValue);
+            } else if (srcValue instanceof Collection && dstValue instanceof Collection) {
+                // Just append everything because we don't know enough about the context or
+                // provenance of the data to make an intelligent decision about this.
+                ((Collection<Object>)dstValue).addAll((Collection<Object>)srcValue);
+            } else {
+                dst.put(key, srcValue);
+            }
+        }
+    }
+
     /**
      * Deliver a report, serialized as an event JSON payload.
      *
@@ -369,7 +387,7 @@ public class NativeInterface {
             Map<String, Object> staticDataMap =
                     (Map<String, Object>) JsonHelper.INSTANCE.deserialize(
                     new ByteArrayInputStream(staticDataBytes));
-            payloadMap.putAll(staticDataMap);
+            deepMerge(staticDataMap, payloadMap);
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             JsonHelper.INSTANCE.serialize(payloadMap, os);
             payloadBytes = os.toByteArray();

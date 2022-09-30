@@ -410,8 +410,8 @@ void bsg_serialize_feature_flags(const bugsnag_event *event,
   }
 }
 
-static void bsg_serialize_calls(const bugsnag_event *event,
-                                JSON_Object *callbacks_obj) {
+static void bsg_serialize_callbacks(const bugsnag_event *event,
+                                    JSON_Object *callbacks_obj) {
   static const int callbacks_count =
       sizeof(event->set_callback_counts) / sizeof(*event->set_callback_counts);
 
@@ -429,6 +429,18 @@ static void bsg_serialize_calls(const bugsnag_event *event,
   }
 }
 
+static void bsg_serialize_usage(const bugsnag_event *event,
+                                JSON_Object *event_obj) {
+  JSON_Value *usage_val = json_value_init_object();
+  JSON_Object *usage_obj = json_value_get_object(usage_val);
+  json_object_set_value(event_obj, "usage", usage_val);
+
+  JSON_Value *callbacks_val = json_value_init_object();
+  JSON_Object *callbacks = json_value_get_object(callbacks_val);
+  json_object_set_value(usage_obj, "callbacks", callbacks_val);
+  bsg_serialize_callbacks(event, callbacks);
+}
+
 char *bsg_event_to_json(bugsnag_event *event) {
   JSON_Value *event_val = json_value_init_object();
   JSON_Object *event_obj = json_value_get_object(event_val);
@@ -444,14 +456,11 @@ char *bsg_event_to_json(bugsnag_event *event) {
   JSON_Array *stacktrace = json_value_get_array(stack_val);
   JSON_Value *feature_flags_val = json_value_init_array();
   JSON_Array *feature_flags = json_value_get_array(feature_flags_val);
-  JSON_Value *callbacks_val = json_value_init_object();
-  JSON_Object *callbacks = json_value_get_object(callbacks_val);
   json_object_set_value(event_obj, "exceptions", exceptions_val);
   json_object_set_value(event_obj, "breadcrumbs", crumbs_val);
   json_object_set_value(event_obj, "threads", threads_val);
   json_object_set_value(exception, "stacktrace", stack_val);
   json_object_set_value(event_obj, "featureFlags", feature_flags_val);
-  json_object_set_value(event_obj, "callbacks", callbacks_val);
   json_array_append_value(exceptions, ex_val);
   char *serialized_string = NULL;
   {
@@ -469,7 +478,7 @@ char *bsg_event_to_json(bugsnag_event *event) {
     bsg_serialize_breadcrumbs(event, crumbs);
     bsg_serialize_threads(event, threads);
     bsg_serialize_feature_flags(event, feature_flags);
-    bsg_serialize_calls(event, callbacks);
+    bsg_serialize_usage(event, event_obj);
 
     serialized_string = json_serialize_to_string(event_val);
     json_value_free(event_val);

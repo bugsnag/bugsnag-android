@@ -7,16 +7,21 @@ class InternalMetricsImpl : InternalMetrics {
     private val callbackCounts = hashMapOf<String, Int>()
 
     override fun toJsonableMap(): Map<String, Any> {
-        return mapOf(
-            "config" to configDifferences,
-            "callbacks" to allCallbacks()
-        )
+        val callbacks = allCallbacks()
+
+        return listOfNotNull(
+            if (configDifferences.isNotEmpty()) "config" to configDifferences else null,
+            if (callbacks.isNotEmpty()) "callbacks" to callbacks else null,
+        ).toMap()
     }
 
     override fun setConfigDifferences(differences: Map<String, Any>) {
         configDifferences.clear()
         configDifferences.putAll(differences)
-        NdkPluginCaller.setStaticData(mapOf("config" to configDifferences))
+        // This is currently the only place where we set static data.
+        // When that changes in future, we'll need a StaticData object to properly merge data
+        // coming from multiple sources.
+        NdkPluginCaller.setStaticData(mapOf("usage" to mapOf("config" to configDifferences)))
     }
 
     override fun setCallbackCounts(newCallbackCounts: Map<String, Int>) {

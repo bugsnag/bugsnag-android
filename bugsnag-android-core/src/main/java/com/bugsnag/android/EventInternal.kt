@@ -165,8 +165,14 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
         writer.name("device").value(device)
         writer.name("breadcrumbs").value(breadcrumbs)
         writer.name("groupingHash").value(groupingHash)
-        internalMetrics.toJsonableMap().forEach { entry ->
-            writer.name(entry.key).value(entry.value)
+        val usage = internalMetrics.toJsonableMap()
+        if (usage.isNotEmpty()) {
+            writer.name("usage")
+            writer.beginObject()
+            usage.forEach { entry ->
+                writer.name(entry.key).value(entry.value)
+            }
+            writer.endObject()
         }
 
         writer.name("threads")
