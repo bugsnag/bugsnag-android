@@ -20,3 +20,4 @@ Feature: Reporting with other exception handlers installed
     And the error payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "DeliverOnCrashScenario"
+    And the event "usage.config.attemptDeliveryOnCrash" is true

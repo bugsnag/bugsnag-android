@@ -105,6 +105,9 @@ internal class ConfigInternal(
     }
 
     fun getConfigDifferences(): Map<String, Any> {
+        // allocate a local ConfigInternal with all-defaults to compare against
+        val defaultConfig = ConfigInternal("")
+
         return listOfNotNull(
             if (plugins.count() > 0) "pluginCount" to plugins.count() else null,
             if (autoDetectErrors != defaultConfig.autoDetectErrors)
@@ -138,6 +141,8 @@ internal class ConfigInternal(
                 "persistenceDirectorySet" to true else null,
             if (sendThreads != defaultConfig.sendThreads)
                 "sendThreads" to sendThreads else null,
+            if (attemptDeliveryOnCrash != defaultConfig.attemptDeliveryOnCrash)
+                "attemptDeliveryOnCrash" to attemptDeliveryOnCrash else null
         ).toMap()
     }
 
@@ -155,7 +160,5 @@ internal class ConfigInternal(
         protected fun load(context: Context, apiKey: String?): Configuration {
             return ManifestConfigLoader().load(context, apiKey)
         }
-
-        private val defaultConfig = ConfigInternal("")
     }
 }
