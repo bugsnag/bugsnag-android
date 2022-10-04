@@ -29,7 +29,9 @@ Feature: Native crash reporting
   # https://android.googlesource.com/platform/bionic/+/d0f2b7e7e65f19f978c59abcbb522c08e76b1508/libc/bionic/ssp.c
   # Refactored here to use abort() on newer versions:
   # https://android.googlesource.com/platform/bionic/+/fb7eb5e07f43587c2bedf2aaa53b21fa002417bb
+  # Also skipped on Android 7.1 (Google Pixel) pending PLAT-9011
   @skip_below_api18
+  @skip_android_7
   Scenario: Stack buffer overflow
     When I run "CXXStackoverflowScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXStackoverflowScenario"
