@@ -1,5 +1,13 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+* Setting `Configuration.attemptDeliveryOnCrash` will cause Bugsnag to attempt error delivery during some crashes.
+  Use of this feature is discouraged, see the method JavaDoc for more information.
+  [#1749](https://github.com/bugsnag/bugsnag-android/pull/1749)
+
 ## 5.26.0 (2022-08-18)
 
 ### Enhancements

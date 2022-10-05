@@ -92,6 +92,7 @@ class ManifestConfigLoaderTest {
             putBoolean("com.bugsnag.android.SEND_LAUNCH_CRASHES_SYNCHRONOUSLY", false)
             putString("com.bugsnag.android.APP_TYPE", "react-native")
             putString("com.bugsnag.android.CODE_BUNDLE_ID", "123")
+            putBoolean("com.bugsnag.android.ATTEMPT_DELIVERY_ON_CRASH", true)
         }
 
         val config = configLoader.load(data, null)
@@ -128,6 +129,7 @@ class ManifestConfigLoaderTest {
             assertEquals(launchDurationMillis, 7000)
             assertFalse(sendLaunchCrashesSynchronously)
             assertEquals("react-native", appType)
+            assertTrue(isAttemptDeliveryOnCrash)
         }
     }
 
