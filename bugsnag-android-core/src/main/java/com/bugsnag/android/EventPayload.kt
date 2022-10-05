@@ -12,7 +12,7 @@ import java.io.IOException
  */
 class EventPayload @JvmOverloads internal constructor(
     var apiKey: String?,
-    val event: Event? = null,
+    var event: Event? = null,
     internal val eventFile: File? = null,
     notifier: Notifier,
     private val config: ImmutableConfig
@@ -23,6 +23,7 @@ class EventPayload @JvmOverloads internal constructor(
     }
 
     internal fun getErrorTypes(): Set<ErrorType> {
+        val event = this.event
         return when {
             event != null -> event.impl.getErrorTypesFromStackframes()
             eventFile != null -> EventFilenameInfo.fromFile(eventFile, config).errorTypes

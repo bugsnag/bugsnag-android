@@ -1,5 +1,13 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+* Bugsnag now supports up to 500 breadcrumbs, with a default max of 100. Note that breadcrumbs will be trimmed
+  (oldest first) if the payload exceeds 1MB.
+  [#1751](https://github.com/bugsnag/bugsnag-android/pull/1751)
+
 ## 5.26.0 (2022-08-18)
 
 ### Enhancements

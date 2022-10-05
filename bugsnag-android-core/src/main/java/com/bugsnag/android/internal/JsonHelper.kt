@@ -1,7 +1,9 @@
 package com.bugsnag.android.internal
 
+import com.bugsnag.android.JsonStream
 import com.bugsnag.android.repackaged.dslplatform.json.DslJson
 import com.bugsnag.android.repackaged.dslplatform.json.JsonWriter
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -9,6 +11,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
+import java.io.PrintWriter
 import java.util.Date
 
 internal object JsonHelper {
@@ -28,6 +31,20 @@ internal object JsonHelper {
                 val timestamp = DateUtils.toIso8601(it)
                 writer.writeString(timestamp)
             }
+        }
+    }
+
+    fun serialize(streamable: JsonStream.Streamable): ByteArray {
+        return ByteArrayOutputStream().use { baos ->
+            JsonStream(PrintWriter(baos).buffered()).use(streamable::toStream)
+            baos.toByteArray()
+        }
+    }
+
+    fun serialize(value: Any): ByteArray {
+        return ByteArrayOutputStream().use { baos ->
+            serialize(value, baos)
+            baos.toByteArray()
         }
     }
 
