@@ -6,4 +6,5 @@ class InternalMetricsNoop : InternalMetrics {
     override fun setCallbackCounts(newCallbackCounts: Map<String, Int>) = Unit
     override fun notifyAddCallback(callback: String) = Unit
     override fun notifyRemoveCallback(callback: String) = Unit
+    override fun setBreadcrumbTrimMetrics(breadcrumbsRemoved: Int, bytesRemoved: Int) = Unit
 }

@@ -18,7 +18,7 @@ import java.util.Set;
 public class Configuration implements CallbackAware, MetadataAware, UserAware, FeatureFlagAware {
 
     private static final int MIN_BREADCRUMBS = 0;
-    private static final int MAX_BREADCRUMBS = 100;
+    private static final int MAX_BREADCRUMBS = 500;
     private static final int VALID_API_KEY_LEN = 32;
     private static final long MIN_LAUNCH_CRASH_THRESHOLD_MS = 0;
 
@@ -512,7 +512,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
      * Sets the maximum number of breadcrumbs which will be stored. Once the threshold is reached,
      * the oldest breadcrumbs will be deleted.
      *
-     * By default, 50 breadcrumbs are stored: this can be amended up to a maximum of 100.
+     * By default, 100 breadcrumbs are stored: this can be amended up to a maximum of 500.
      */
     public int getMaxBreadcrumbs() {
         return impl.getMaxBreadcrumbs();
@@ -522,7 +522,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
      * Sets the maximum number of breadcrumbs which will be stored. Once the threshold is reached,
      * the oldest breadcrumbs will be deleted.
      *
-     * By default, 50 breadcrumbs are stored: this can be amended up to a maximum of 100.
+     * By default, 100 breadcrumbs are stored: this can be amended up to a maximum of 500.
      */
     public void setMaxBreadcrumbs(int maxBreadcrumbs) {
         if (maxBreadcrumbs >= MIN_BREADCRUMBS && maxBreadcrumbs <= MAX_BREADCRUMBS) {
