@@ -6,4 +6,5 @@ git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
 
 # gem "rails"
 
-gem "danger", "~> 6.1"
+gem "danger", "~> 9"
+gem "git", ">= 1.11.0" # Force update of git gem to avoid CVE-2022-25648
