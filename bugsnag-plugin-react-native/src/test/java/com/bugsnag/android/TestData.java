@@ -51,6 +51,7 @@ class TestData {
                     }
                 }),
                 true,
+                true,
                 null,
                 null,
                 Collections.singleton("password")
