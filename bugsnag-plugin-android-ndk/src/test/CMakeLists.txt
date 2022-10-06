@@ -19,6 +19,7 @@ add_library(bugsnag-ndk-test SHARED
     cpp/migrations/EventMigrationV8Tests.cpp
     cpp/migrations/EventMigrationV9Tests.cpp
     cpp/migrations/EventMigrationV10Tests.cpp
+    cpp/migrations/EventMigrationV11Tests.cpp
     cpp/UnwindTest.cpp
 )
 target_link_libraries(bugsnag-ndk-test bugsnag-ndk)

@@ -151,7 +151,7 @@ steps:
           - "--exclude=features/full_tests/[^a-k].*.feature"
           - "--app=/app/build/fixture-r19.apk"
           - "--farm=bs"
-          - "--device=ANDROID_7_1_SAMSUNG_GALAXY_NOTE_8"
+          - "--device=ANDROID_7_1"
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
@@ -176,7 +176,7 @@ steps:
           - "--exclude=features/full_tests/[^l-z].*.feature"
           - "--app=/app/build/fixture-r19.apk"
           - "--farm=bs"
-          - "--device=ANDROID_7_1_SAMSUNG_GALAXY_NOTE_8"
+          - "--device=ANDROID_7_1"
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
@@ -381,6 +381,56 @@ steps:
           - "--app=/app/build/fixture-r21.apk"
           - "--farm=bs"
           - "--device=ANDROID_11_0"
+          - "--fail-fast"
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
+    concurrency: 24
+    concurrency_group: 'browserstack-app'
+    concurrency_method: eager
+
+  - label: ':android: Android 13 Beta NDK r21 end-to-end tests - batch 1'
+    depends_on: "fixture-r21"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download:
+          - "build/fixture-r21.apk"
+          - "build/fixture-r21/*"
+        upload: "maze_output/failed/**/*"
+      docker-compose#v3.7.0:
+        pull: android-maze-runner
+        run: android-maze-runner
+        command:
+          - "features/full_tests"
+          - "--exclude=features/full_tests/[^a-k].*.feature"
+          - "--app=/app/build/fixture-r21.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_13_0_BETA"
+          - "--fail-fast"
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
+    concurrency: 24
+    concurrency_group: 'browserstack-app'
+    concurrency_method: eager
+
+  - label: ':android: Android 13 Beta NDK r21 end-to-end tests - batch 2'
+    depends_on: "fixture-r21"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.2.0:
+        download:
+          - "build/fixture-r21.apk"
+          - "build/fixture-r21/*"
+        upload: "maze_output/failed/**/*"
+      docker-compose#v3.7.0:
+        pull: android-maze-runner
+        run: android-maze-runner
+        command:
+          - "features/full_tests"
+          - "--exclude=features/full_tests/[^l-z].*.feature"
+          - "--app=/app/build/fixture-r21.apk"
+          - "--farm=bs"
+          - "--device=ANDROID_13_0_BETA"
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"

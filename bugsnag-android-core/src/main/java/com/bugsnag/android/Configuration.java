@@ -7,7 +7,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import java.io.File;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -1110,6 +1109,39 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
         } else {
             logNull("addPlugin");
         }
+    }
+
+    /**
+     * Whether Bugsnag should try to send crashing errors prior to app termination.
+     *
+     * Delivery will only be attempted for uncaught Java / Kotlin exceptions or errors, and
+     * while in progress will block the crashing thread for up to 3 seconds.
+     *
+     * Delivery on crash should be considered unreliable due to the necessary short timeout and
+     * potential for generating "errors on errors".
+     *
+     * Use of this feature is discouraged because it:
+     * - may cause Application Not Responding (ANR) errors on-top of existing crashes
+     * - will result in duplicate errors in your Dashboard when errors are not detected as sent
+     *   before termination
+     * - may prevent other error handlers from detecting or reporting a crash
+     *
+     * By default this value is {@code false}.
+     *
+     * @param attemptDeliveryOnCrash {@code true} if Bugsnag should try to send crashing errors
+     *                               prior to app termination
+     */
+    public void setAttemptDeliveryOnCrash(boolean attemptDeliveryOnCrash) {
+        impl.setAttemptDeliveryOnCrash(attemptDeliveryOnCrash);
+    }
+
+    /**
+     * Whether Bugsnag should try to send crashing errors prior to app termination.
+     * 
+     * @see #setAttemptDeliveryOnCrash(boolean)
+     */
+    public boolean isAttemptDeliveryOnCrash() {
+        return impl.getAttemptDeliveryOnCrash();
     }
 
     Set<Plugin> getPlugins() {

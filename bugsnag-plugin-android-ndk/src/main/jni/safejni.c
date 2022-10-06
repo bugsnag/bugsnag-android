@@ -74,6 +74,18 @@ jstring bsg_safe_new_string_utf(JNIEnv *env, const char *str) {
   return jstr;
 }
 
+bool bsg_safe_call_void_method(JNIEnv *env, jobject _value, jmethodID method,
+                               ...) {
+  if (env == NULL || _value == NULL || method == NULL) {
+    return false;
+  }
+  va_list args;
+  va_start(args, method);
+  (*env)->CallVoidMethodV(env, _value, method, args);
+  va_end(args);
+  return !bsg_check_and_clear_exc(env);
+}
+
 jboolean bsg_safe_call_boolean_method(JNIEnv *env, jobject _value,
                                       jmethodID method) {
   if (env == NULL || _value == NULL || method == NULL) {

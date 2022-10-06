@@ -23,6 +23,8 @@ Feature: Native crash reporting with thrown objects
     And the exception "errorClass" equals "SIGABRT"
     And the exception "message" equals "Abort program"
 
+  # TODO: Pending PLAT-9011
+  @skip_android_7
   Scenario: Rethrow in C++ without initial exception
     When I run "CXXInvalidRethrow" and relaunch the crashed app
     And I configure Bugsnag for "CXXInvalidRethrow"
@@ -35,6 +37,8 @@ Feature: Native crash reporting with thrown objects
     And the first significant stack frames match:
       | print_last_exception() | CXXInvalidRethrow.cpp | 7 |
 
+  # TODO: Pending PLAT-9011
+  @skip_android_7
   Scenario: Throw from C++ noexcept function
     When I run "CXXThrowFromNoexcept" and relaunch the crashed app
     And I configure Bugsnag for "CXXThrowFromNoexcept"

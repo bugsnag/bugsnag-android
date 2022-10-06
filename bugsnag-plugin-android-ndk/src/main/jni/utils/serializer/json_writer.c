@@ -8,6 +8,7 @@
 #include <parson/parson.h>
 
 #include "../logger.h"
+#include "internal_metrics.h"
 
 const char *bsg_crumb_type_string(bugsnag_breadcrumb_type type) {
   switch (type) {
@@ -217,7 +218,7 @@ void bsg_serialize_user(const bugsnag_user user, JSON_Object *event_obj) {
 }
 
 void bsg_serialize_session(bugsnag_event *event, JSON_Object *event_obj) {
-  if (bugsnag_event_has_session(event)) {
+  if (bsg_event_has_session(event)) {
     json_object_dotset_string(event_obj, "session.startedAt",
                               event->session_start);
     json_object_dotset_string(event_obj, "session.id", event->session_id);
@@ -409,6 +410,37 @@ void bsg_serialize_feature_flags(const bugsnag_event *event,
   }
 }
 
+static void bsg_serialize_callbacks(const bugsnag_event *event,
+                                    JSON_Object *callbacks_obj) {
+  static const int callbacks_count =
+      sizeof(event->set_callback_counts) / sizeof(*event->set_callback_counts);
+
+  for (int i = 0; i < callbacks_count; i++) {
+    if (event->set_callback_counts[i].count > 0) {
+      json_object_set_number(callbacks_obj, event->set_callback_counts[i].name,
+                             event->set_callback_counts[i].count);
+    }
+  }
+
+  for (int i = 0; i < bsg_called_apis_count; i++) {
+    if (bsg_was_api_called(event, i)) {
+      json_object_set_boolean(callbacks_obj, bsg_called_api_names[i], true);
+    }
+  }
+}
+
+static void bsg_serialize_usage(const bugsnag_event *event,
+                                JSON_Object *event_obj) {
+  JSON_Value *usage_val = json_value_init_object();
+  JSON_Object *usage_obj = json_value_get_object(usage_val);
+  json_object_set_value(event_obj, "usage", usage_val);
+
+  JSON_Value *callbacks_val = json_value_init_object();
+  JSON_Object *callbacks = json_value_get_object(callbacks_val);
+  json_object_set_value(usage_obj, "callbacks", callbacks_val);
+  bsg_serialize_callbacks(event, callbacks);
+}
+
 char *bsg_event_to_json(bugsnag_event *event) {
   JSON_Value *event_val = json_value_init_object();
   JSON_Object *event_obj = json_value_get_object(event_val);
@@ -446,6 +478,7 @@ char *bsg_event_to_json(bugsnag_event *event) {
     bsg_serialize_breadcrumbs(event, crumbs);
     bsg_serialize_threads(event, threads);
     bsg_serialize_feature_flags(event, feature_flags);
+    bsg_serialize_usage(event, event_obj);
 
     serialized_string = json_serialize_to_string(event_val);
     json_value_free(event_val);

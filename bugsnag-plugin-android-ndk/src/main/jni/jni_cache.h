@@ -18,7 +18,16 @@ typedef struct {
   JavaVM *jvm;
 
   jclass Boolean;
+  jmethodID Boolean_constructor;
   jmethodID Boolean_booleanValue;
+
+  jclass Int;
+  jmethodID Int_constructor;
+  jmethodID Int_intValue;
+
+  jclass Long;
+  jmethodID Long_constructor;
+  jmethodID Long_valueOf;
 
   jclass Float;
   jmethodID Float_floatValue;
@@ -26,24 +35,38 @@ typedef struct {
   jclass number;
   jmethodID number_double_value;
 
-  jclass Long;
-  jmethodID Long_valueOf;
-
   jclass String;
+
+  jclass Set;
+  jmethodID Set_iterator;
+
+  jclass Iterator;
+  jmethodID Iterator_hasNext;
+  jmethodID Iterator_next;
 
   jclass Map;
   jmethodID Map_get;
+  jmethodID Map_put;
   jmethodID Map_size;
   jmethodID Map_keySet;
+  jmethodID Map_entrySet;
+
+  jclass MapEntry;
+  jmethodID MapEntry_getKey;
+  jmethodID MapEntry_getValue;
 
   jclass HashMap;
+  jmethodID HashMap_constructor;
   jmethodID HashMap_get;
+  jmethodID HashMap_put;
   jmethodID HashMap_size;
   jmethodID HashMap_keySet;
 
   jclass ArrayList;
-  jmethodID ArrayList_constructor;
+  jmethodID ArrayList_constructor_default;
+  jmethodID ArrayList_constructor_collection;
   jmethodID ArrayList_get;
+  jmethodID ArrayList_add;
 
   jclass NativeInterface;
   jmethodID NativeInterface_getApp;
