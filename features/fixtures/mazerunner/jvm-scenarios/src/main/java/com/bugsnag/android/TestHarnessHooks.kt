@@ -57,22 +57,7 @@ internal fun createCustomHeaderDelivery(): Delivery {
     }
 }
 
-fun createDefaultDelivery(): Delivery { // use reflection as DefaultDelivery is internal
-    val clz = Class.forName("com.bugsnag.android.DefaultDelivery")
-    return clz.constructors[0].newInstance(
-        null,
-        object : Logger {
-            override fun e(msg: String) = Unit
-            override fun e(msg: String, throwable: Throwable) = Unit
-            override fun w(msg: String) = Unit
-            override fun w(msg: String, throwable: Throwable) = Unit
-            override fun i(msg: String) = Unit
-            override fun i(msg: String, throwable: Throwable) = Unit
-            override fun d(msg: String) = Unit
-            override fun d(msg: String, throwable: Throwable) = Unit
-        }
-    ) as Delivery
-}
+fun createDefaultDelivery(): Delivery = JavaHooks.createDefaultDelivery()
 
 internal fun writeErrorToStore(client: Client, event: Event) {
     client.eventStore.write(event)
