@@ -151,7 +151,7 @@ steps:
           - "--exclude=features/full_tests/[^a-k].*.feature"
           - "--app=/app/build/fixture-r19.apk"
           - "--farm=bs"
-          - "--device=ANDROID_7_1_SAMSUNG_GALAXY_NOTE_8"
+          - "--device=ANDROID_7_1"
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
@@ -176,7 +176,7 @@ steps:
           - "--exclude=features/full_tests/[^l-z].*.feature"
           - "--app=/app/build/fixture-r19.apk"
           - "--farm=bs"
-          - "--device=ANDROID_7_1_SAMSUNG_GALAXY_NOTE_8"
+          - "--device=ANDROID_7_1"
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"

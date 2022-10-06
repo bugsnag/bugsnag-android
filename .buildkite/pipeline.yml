@@ -144,7 +144,7 @@ steps:
           - "features/smoke_tests"
           - "--app=/app/build/fixture-r19.apk"
           - "--farm=bs"
-          - "--device=ANDROID_7_1_SAMSUNG_GALAXY_NOTE_8"
+          - "--device=ANDROID_7_1"
           - "--fail-fast"
     concurrency: 24
     concurrency_group: 'browserstack-app'
