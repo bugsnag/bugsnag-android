@@ -50,4 +50,9 @@ public class JavaHooks {
             }
         };
     }
+
+    @NonNull
+    public static Delivery createDefaultDelivery() {
+        return new DefaultDelivery(null, NoopLogger.INSTANCE);
+    }
 }
