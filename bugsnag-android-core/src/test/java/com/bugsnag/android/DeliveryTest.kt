@@ -7,7 +7,7 @@ class DeliveryTest {
 
     @Test
     fun testResponseCodeMapping() {
-        val delivery = DefaultDelivery(null, "myApiKey", NoopLogger)
+        val delivery = DefaultDelivery(null, "myApiKey", 10000, NoopLogger)
         assertEquals(DeliveryStatus.DELIVERED, delivery.getDeliveryStatus(202))
         assertEquals(DeliveryStatus.UNDELIVERED, delivery.getDeliveryStatus(503))
         assertEquals(DeliveryStatus.UNDELIVERED, delivery.getDeliveryStatus(0))

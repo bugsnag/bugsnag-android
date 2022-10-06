@@ -5,6 +5,8 @@ import com.bugsnag.android.NdkPluginCaller
 class InternalMetricsImpl(source: Map<String, Any>? = null) : InternalMetrics {
     private val configDifferences: MutableMap<String, Any>
     private val callbackCounts: MutableMap<String, Int>
+    private var metadataStringsTrimmedCount = 0
+    private var metadataCharsTruncatedCount = 0
     private var breadcrumbsRemovedCount = 0
     private var breadcrumbBytesRemovedCount = 0
 
@@ -17,6 +19,8 @@ class InternalMetricsImpl(source: Map<String, Any>? = null) : InternalMetrics {
             @Suppress("UNCHECKED_CAST")
             val system = source["system"] as MutableMap<String, Any>?
             if (system != null) {
+                metadataStringsTrimmedCount = (system["stringsTruncated"] as Number?)?.toInt() ?: 0
+                metadataCharsTruncatedCount = (system["stringCharsTruncated"] as Number?)?.toInt() ?: 0
                 breadcrumbsRemovedCount = (system["breadcrumbsRemovedCount"] as Number?)?.toInt() ?: 0
                 breadcrumbBytesRemovedCount = (system["breadcrumbBytesRemoved"] as Number?)?.toInt() ?: 0
             }
@@ -30,6 +34,8 @@ class InternalMetricsImpl(source: Map<String, Any>? = null) : InternalMetrics {
         val callbacks = allCallbacks()
 
         val system = listOfNotNull(
+            if (metadataStringsTrimmedCount > 0) "stringsTruncated" to metadataStringsTrimmedCount else null,
+            if (metadataCharsTruncatedCount > 0) "stringCharsTruncated" to metadataCharsTruncatedCount else null,
             if (breadcrumbsRemovedCount > 0) "breadcrumbsRemoved" to breadcrumbsRemovedCount else null,
             if (breadcrumbBytesRemovedCount > 0) "breadcrumbBytesRemoved" to breadcrumbBytesRemovedCount else null,
         ).toMap()
@@ -91,6 +97,11 @@ class InternalMetricsImpl(source: Map<String, Any>? = null) : InternalMetrics {
         }
 
         return result
+    }
+
+    override fun setMetadataTrimMetrics(stringsTrimmed: Int, charsRemoved: Int) {
+        metadataStringsTrimmedCount = stringsTrimmed
+        metadataCharsTruncatedCount = charsRemoved
     }
 
     override fun setBreadcrumbTrimMetrics(breadcrumbsRemoved: Int, bytesRemoved: Int) {

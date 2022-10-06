@@ -247,6 +247,21 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
 
     fun getSeverityReasonType(): String = severityReason.severityReasonType
 
+    fun trimMetadataStringsTo(maxLength: Int): TrimMetrics {
+        var stringCount = 0
+        var charCount = 0
+
+        var stringAndCharCounts = metadata.trimMetadataStringsTo(maxLength)
+        stringCount += stringAndCharCounts.itemsTrimmed
+        charCount += stringAndCharCounts.dataTrimmed
+        for (breadcrumb in breadcrumbs) {
+            stringAndCharCounts = breadcrumb.impl.trimMetadataStringsTo(maxLength)
+            stringCount += stringAndCharCounts.itemsTrimmed
+            charCount += stringAndCharCounts.dataTrimmed
+        }
+        return TrimMetrics(stringCount, charCount)
+    }
+
     fun trimBreadcrumbsBy(byteCount: Int): TrimMetrics {
         var removedBreadcrumbCount = 0
         var removedByteCount = 0

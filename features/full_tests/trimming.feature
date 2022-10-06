@@ -3,6 +3,46 @@ Feature: Excess data is trimmed when the payload is too big
   Background:
     Given I clear all persistent data
 
+  Scenario: metadata truncated, handled exception
+    When I configure the app to run in the "handled, 100, 1000" state
+    And I run "MetadataStringsTooLargeScenario"
+    Then I wait to receive an error
+    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And the exception "message" equals "MetadataStringsTooLargeScenario"
+    And the event "metaData.custom.foo" matches ".*\*\*\*<\d+> CHARS? TRUNCATED\*\*\*"
+    And the breadcrumb named "test" has "metaData.a" matching ".*\*\*\*<\d+> CHARS? TRUNCATED\*\*\*"
+    And the event "usage.system.stringsTruncated" equals 2
+    And the event "usage.system.stringCharsTruncated" is greater than 0
+
+  Scenario: metadata truncated, JVM exception
+    When I configure the app to run in the "jvm, 100, 1000" state
+    And I run "MetadataStringsTooLargeScenario" and relaunch the crashed app
+    And I configure the app to run in the "none, 100, 1000" state
+    And I configure Bugsnag for "MetadataStringsTooLargeScenario"
+    Then I wait to receive an error
+    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And the exception "message" equals "Empty list doesn't contain element at index 0."
+    And the event "metaData.custom.foo" matches ".*\*\*\*<\d+> CHARS? TRUNCATED\*\*\*"
+    And the breadcrumb named "test" has "metaData.a" matching ".*\*\*\*<\d+> CHARS? TRUNCATED\*\*\*"
+    And the event "usage.system.stringsTruncated" equals 2
+    And the event "usage.system.stringCharsTruncated" is greater than 0
+
+  # Note: Disabled until native hard limits are removed.
+  # Scenario: metadata truncated, native exception
+  #   When I configure the app to run in the "native, 100, 1000" state
+  #   And I run "MetadataStringsTooLargeScenario" and relaunch the crashed app
+  #   And I configure the app to run in the "none, 100, 1000" state
+  #   And I configure Bugsnag for "MetadataStringsTooLargeScenario"
+  #   Then I wait to receive an error
+  #   And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+  #   And the exception "message" equals "Segmentation violation (invalid memory reference)"
+  #   And the event "metaData.custom.foo" matches ".*\*\*\*<\d+> CHARS? TRUNCATED\*\*\*"
+  #   And the breadcrumb named "test" has "metaData.a" matching ".*\*\*\*<\d+> CHARS? TRUNCATED\*\*\*"
+  #   And the event "usage.system.stringsTruncated" equals 2
+  #   And the event "usage.system.stringCharsTruncated" is greater than 0
+
+  # ===========================================================================
+
   # This scenario may flake if the payload structure changes significantly because it relies upon overflowing
   # the max payload size by a certain amount. If it fails after a structural change, verify
   # maze_output/failed/Payload_is_too_big_by_3_breadcrumbs/errors.log to make sure it's behaving as expected,

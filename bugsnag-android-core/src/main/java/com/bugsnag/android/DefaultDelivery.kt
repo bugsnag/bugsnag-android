@@ -12,6 +12,7 @@ import java.net.URL
 internal class DefaultDelivery(
     private val connectivity: Connectivity?,
     private val apiKey: String,
+    private val maxStringValueLength: Int,
     private val logger: Logger
 ) : Delivery {
 
@@ -32,23 +33,35 @@ internal class DefaultDelivery(
 
     private fun serializePayload(payload: EventPayload): ByteArray {
         var json = JsonHelper.serialize(payload)
-
-        if (json.size > maxPayloadSize) {
-            var event = payload.event
-            if (event == null) {
-                event = MarshalledEventSource(payload.eventFile!!, apiKey, logger).invoke()
-                payload.event = event
-                payload.apiKey = apiKey
-            }
-            val breadcrumbAndBytesRemovedCounts =
-                event.impl.trimBreadcrumbsBy(json.size - maxPayloadSize)
-            event.impl.internalMetrics.setBreadcrumbTrimMetrics(
-                breadcrumbAndBytesRemovedCounts.itemsTrimmed,
-                breadcrumbAndBytesRemovedCounts.dataTrimmed
-            )
-            json = JsonHelper.serialize(payload)
+        if (json.size <= maxPayloadSize) {
+            return json
         }
-        return json
+
+        var event = payload.event
+        if (event == null) {
+            event = MarshalledEventSource(payload.eventFile!!, apiKey, logger).invoke()
+            payload.event = event
+            payload.apiKey = apiKey
+        }
+
+        val (itemsTrimmed, dataTrimmed) = event.impl.trimMetadataStringsTo(maxStringValueLength)
+        event.impl.internalMetrics.setMetadataTrimMetrics(
+            itemsTrimmed,
+            dataTrimmed
+        )
+
+        json = JsonHelper.serialize(payload)
+        if (json.size <= maxPayloadSize) {
+            return json
+        }
+
+        val breadcrumbAndBytesRemovedCounts =
+            event.impl.trimBreadcrumbsBy(json.size - maxPayloadSize)
+        event.impl.internalMetrics.setBreadcrumbTrimMetrics(
+            breadcrumbAndBytesRemovedCounts.itemsTrimmed,
+            breadcrumbAndBytesRemovedCounts.dataTrimmed
+        )
+        return JsonHelper.serialize(payload)
     }
 
     override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {

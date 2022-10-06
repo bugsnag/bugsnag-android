@@ -2,6 +2,11 @@ Then("the breadcrumb named {string} has {string} equal to {string}") do |message
   match_breadcrumb_metadata(message, path) { |v| Maze.check.equal(expected_value, v) }
 end
 
+Then("the breadcrumb named {string} has {string} matching {string}") do |message, path, message_regex|
+  regex = Regexp.new(message_regex)
+  match_breadcrumb_metadata(message, path) { |v| Maze.check.match(regex, v) }
+end
+
 Then("the breadcrumb named {string} has {string} equal to {int}") do |message, path, expected_value|
   match_breadcrumb_metadata(message, path) { |v| Maze.check.equal(expected_value, v) }
 end
