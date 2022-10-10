@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* Fixed very rare crashes when attempting to unwind NDK stacks over protected memory pages
+  [#1761](https://github.com/bugsnag/bugsnag-android/pull/1761)
+
 ## 5.27.0 (2022-10-06)
 
 ### Enhancements
