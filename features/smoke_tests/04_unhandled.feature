@@ -4,7 +4,8 @@ Feature: Unhandled smoke tests
     Given I clear all persistent data
 
   Scenario: Unhandled Java Exception with loaded configuration
-    When I run "UnhandledJavaLoadedConfigScenario" and relaunch the crashed app
+    When I set the screen orientation to portrait
+    And I run "UnhandledJavaLoadedConfigScenario" and relaunch the crashed app
     And I configure Bugsnag for "UnhandledJavaLoadedConfigScenario"
     And I wait to receive an error
     Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
@@ -99,7 +100,8 @@ Feature: Unhandled smoke tests
     And the event "threads.0.stacktrace.0.lineNumber" is not null
 
   Scenario: Signal raised with overwritten config
-    When I run "CXXSignalSmokeScenario" and relaunch the crashed app
+    When I set the screen orientation to portrait
+    And I run "CXXSignalSmokeScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXSignalSmokeScenario"
     And I wait to receive an error
     Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
@@ -211,7 +213,8 @@ Feature: Unhandled smoke tests
 
   @debug-safe
   Scenario: C++ exception thrown with overwritten config
-    When I run "CXXExceptionSmokeScenario" and relaunch the crashed app
+    When I set the screen orientation to portrait
+    And I run "CXXExceptionSmokeScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXExceptionSmokeScenario"
     And I wait to receive an error
     Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier

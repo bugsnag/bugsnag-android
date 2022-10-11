@@ -4,7 +4,8 @@ Feature: Handled smoke tests
     Given I clear all persistent data
 
   Scenario: Notify caught Java exception with default configuration
-    When I run "HandledJavaSmokeScenario"
+    When I set the screen orientation to portrait
+    And I run "HandledJavaSmokeScenario"
     And I wait to receive an error
     Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
 

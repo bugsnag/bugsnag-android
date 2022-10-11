@@ -3,7 +3,8 @@ Feature: ANR smoke test
 
   @skip_android_8_1
   Scenario: ANR detection
-    When I clear any error dialogue
+    When I set the screen orientation to portrait
+    And I clear any error dialogue
     And I run "JvmAnrLoopScenario"
     And I wait for 1 seconds
     And I tap the screen 3 times
