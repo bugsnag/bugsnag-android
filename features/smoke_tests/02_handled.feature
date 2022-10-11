@@ -170,7 +170,8 @@ Feature: Handled smoke tests
 
   @debug-safe
   Scenario: Handled C functionality
-    When I run "CXXNotifySmokeScenario"
+    When I set the screen orientation to portrait
+    And I run "CXXNotifySmokeScenario"
     And I wait to receive an error
 
     # Exception details
