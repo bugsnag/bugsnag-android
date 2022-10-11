@@ -88,8 +88,8 @@ steps:
           - "build/fixture-r16/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v3.7.0:
-        pull: android-maze-runner
-        run: android-maze-runner
+        pull: android-maze-runner-legacy
+        run: android-maze-runner-legacy
         command:
           - "features/smoke_tests"
           - "--app=/app/build/fixture-r16.apk"
