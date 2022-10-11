@@ -97,7 +97,7 @@ When("I tap the screen {int} times") do |count|
   (1..count).each { |i|
     begin
       tap_at 500, 300
-    rescue Selenium::WebDriver::Error::ElementNotInteractableError
+    rescue Selenium::WebDriver::Error::ElementNotInteractableError, Selenium::WebDriver::Error::InvalidElementStateError
       # Ignore it§
     end
     sleep(1)
