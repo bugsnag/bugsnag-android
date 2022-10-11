@@ -61,7 +61,7 @@ When("I set the endpoints to the terminating server") do
 end
 
 When("I close and relaunch the app") do
-  if Maze.driver.legacy_driver?
+  if Maze.config.legacy_driver?
     Maze.driver.close_app
     Maze.driver.launch_app
   else
@@ -95,7 +95,7 @@ end
 
 When("I relaunch the app after a crash") do
   step 'the app is not running'
-  if Maze.driver.legacy_driver?
+  if Maze.config.legacy_driver?
     Maze.driver.launch_app
   else
     Maze.driver.activate_app Maze.driver.app_id
