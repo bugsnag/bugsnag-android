@@ -61,8 +61,13 @@ When("I set the endpoints to the terminating server") do
 end
 
 When("I close and relaunch the app") do
-  Maze.driver.close_app
-  Maze.driver.launch_app
+  if Maze.driver.legacy_driver?
+    Maze.driver.close_app
+    Maze.driver.launch_app
+  else
+    Maze.driver.terminate_app Maze.driver.app_id
+    Maze.driver.activate_app Maze.driver.app_id
+  end
 end
 
 When('I set the screen orientation to portrait') do
@@ -90,7 +95,11 @@ end
 
 When("I relaunch the app after a crash") do
   step 'the app is not running'
-  Maze.driver.launch_app
+  if Maze.driver.legacy_driver?
+    Maze.driver.launch_app
+  else
+    Maze.driver.activate_app Maze.driver.app_id
+  end
 end
 
 When("I tap the screen {int} times") do |count|
