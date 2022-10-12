@@ -9,6 +9,8 @@
     <ID>MagicNumber:CXXSigsegvWithUsageScenario.kt$CXXSigsegvWithUsageScenario$10</ID>
     <ID>MagicNumber:EventTooBigScenario.kt$EventTooBigScenario$3</ID>
     <ID>MagicNumber:HandledExceptionWithUsageScenario.kt$HandledExceptionWithUsageScenario$10</ID>
+    <ID>MagicNumber:MetadataStringsTooLargeScenario.kt$MetadataStringsTooLargeScenario$3</ID>
+    <ID>MagicNumber:MetadataStringsTooLargeScenario.kt$MetadataStringsTooLargeScenario$995000</ID>
     <ID>MagicNumber:UnhandledExceptionWithUsageScenario.kt$UnhandledExceptionWithUsageScenario$10</ID>
   </CurrentIssues>
 </SmellBaseline>

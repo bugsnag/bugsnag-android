@@ -613,6 +613,32 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
     }
 
     /**
+     * Gets the maximum string length in any metadata field. Once the threshold is
+     * reached in a particular string, all excess characters will be deleted.
+     *
+     * By default, the limit is 10,000.
+     */
+    public int getMaxStringValueLength() {
+        return impl.getMaxStringValueLength();
+    }
+
+    /**
+     * Sets the maximum string length in any metadata field. Once the threshold is
+     * reached in a particular string, all excess characters will be deleted.
+     *
+     * By default, the limit is 10,000.
+     */
+    public void setMaxStringValueLength(int maxStringValueLength) {
+        if (maxStringValueLength >= 0) {
+            impl.setMaxStringValueLength(maxStringValueLength);
+        } else {
+            getLogger().e("Invalid configuration value detected. "
+                    + "Option maxStringValueLength should be a positive integer."
+                    + "Supplied value is " + maxStringValueLength);
+        }
+    }
+
+    /**
      * Bugsnag uses the concept of "contexts" to help display and group your errors. Contexts
      * represent what was happening in your application at the time an error occurs.
      *

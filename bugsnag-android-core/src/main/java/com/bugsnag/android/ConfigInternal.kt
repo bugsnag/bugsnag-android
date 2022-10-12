@@ -42,6 +42,7 @@ internal class ConfigInternal(
     var maxPersistedEvents: Int = DEFAULT_MAX_PERSISTED_EVENTS
     var maxPersistedSessions: Int = DEFAULT_MAX_PERSISTED_SESSIONS
     var maxReportedThreads: Int = DEFAULT_MAX_REPORTED_THREADS
+    var maxStringValueLength: Int = DEFAULT_MAX_STRING_VALUE_LENGTH
     var context: String? = null
 
     var redactedKeys: Set<String>
@@ -152,6 +153,7 @@ internal class ConfigInternal(
         private const val DEFAULT_MAX_PERSISTED_EVENTS = 32
         private const val DEFAULT_MAX_REPORTED_THREADS = 200
         private const val DEFAULT_LAUNCH_CRASH_THRESHOLD_MS: Long = 5000
+        private const val DEFAULT_MAX_STRING_VALUE_LENGTH = 10000
 
         @JvmStatic
         fun load(context: Context): Configuration = load(context, null)

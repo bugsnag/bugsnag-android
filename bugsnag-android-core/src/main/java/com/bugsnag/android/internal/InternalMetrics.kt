@@ -17,6 +17,8 @@ interface InternalMetrics {
 
     fun notifyRemoveCallback(callback: String)
 
+    fun setMetadataTrimMetrics(stringsTrimmed: Int, charsRemoved: Int)
+
     fun setBreadcrumbTrimMetrics(breadcrumbsRemoved: Int, bytesRemoved: Int)
 }
 
