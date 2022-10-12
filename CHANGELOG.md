@@ -11,6 +11,9 @@
 
 ### Enhancements
 
+* Bugsnag now supports up to 500 breadcrumbs, with a default max of 100. Note that breadcrumbs will be trimmed
+  (oldest first) if the payload exceeds 1MB.
+  [#1751](https://github.com/bugsnag/bugsnag-android/pull/1751)
 * Setting `Configuration.attemptDeliveryOnCrash` will cause Bugsnag to attempt error delivery during some crashes.
   Use of this feature is discouraged, see the method JavaDoc for more information.
   [#1749](https://github.com/bugsnag/bugsnag-android/pull/1749)

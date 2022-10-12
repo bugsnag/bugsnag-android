@@ -378,4 +378,18 @@ Java_com_bugsnag_android_mazerunner_scenarios_UnhandledExceptionWithUsageScenari
     bugsnag_add_on_error(on_error_do_nothing);
 }
 
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_EventTooBigScenario_nativeCrash(JNIEnv *env,
+                                                                              jobject thiz,
+                                                                              jint value) {
+  int x = 38;
+  if (value > 0) {
+    raise(SIGSEGV);
+  }
+  printf("Phasers locked onto their warp core, captain."
+         " Please, please let me shoot their warp core! I have been very good this month!\n");
+  return value / x / 8;
+}
+
 }

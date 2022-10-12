@@ -222,7 +222,7 @@ internal fun sanitiseConfiguration(
 
     @Suppress("SENSELESS_COMPARISON")
     if (configuration.delivery == null) {
-        configuration.delivery = DefaultDelivery(connectivity, configuration.logger!!)
+        configuration.delivery = DefaultDelivery(connectivity, configuration.apiKey, configuration.logger!!)
     }
     return convertToImmutableConfig(
         configuration,

@@ -147,7 +147,7 @@ internal class ConfigInternal(
     }
 
     companion object {
-        private const val DEFAULT_MAX_BREADCRUMBS = 50
+        private const val DEFAULT_MAX_BREADCRUMBS = 100
         private const val DEFAULT_MAX_PERSISTED_SESSIONS = 128
         private const val DEFAULT_MAX_PERSISTED_EVENTS = 32
         private const val DEFAULT_MAX_REPORTED_THREADS = 200
