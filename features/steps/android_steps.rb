@@ -19,8 +19,9 @@ def execute_command(action, scenario_name = '')
 
   # Ensure fixture has read the command
   count = 600
-  sleep 0.1 until Maze::Server.commands.remaining.empty? || (count -= 1) < 1
-  raise 'Test fixture did not GET /command' unless Maze::Server.commands.remaining.empty?
+  sleep 0.1 until Maze::Server.commands.size_remaining == 0 || (count -= 1) < 1
+
+  raise 'Test fixture did not GET /command' unless Maze::Server.commands.size_remaining == 0
 end
 
 def tap_at(x, y)
@@ -87,17 +88,24 @@ def wait_for_app_state(expected_state)
     sleep 0.5
   end
   $logger.warn "App state #{state} instead of #{expected_state} after 10s" unless state == expected_state
+  state
 end
 
 When('the app is not running') do
-  time = wait_for_app_state(:not_running)
+  wait_for_app_state(:not_running)
 end
 
 When("I relaunch the app after a crash") do
-  step 'the app is not running'
+  state = wait_for_app_state :not_running
   if Maze.config.legacy_driver?
+    if state != :not_running
+      Maze.driver.close_app
+    end
     Maze.driver.launch_app
   else
+    if state != :not_running
+      Maze.driver.terminate_app Maze.driver.app_id
+    end
     Maze.driver.activate_app Maze.driver.app_id
   end
 end
