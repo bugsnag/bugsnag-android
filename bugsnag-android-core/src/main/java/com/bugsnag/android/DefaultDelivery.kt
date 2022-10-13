@@ -1,45 +1,79 @@
 package com.bugsnag.android
 
 import android.net.TrafficStats
-import java.io.ByteArrayOutputStream
+import com.bugsnag.android.internal.JsonHelper
 import java.io.IOException
-import java.io.PrintWriter
 import java.net.HttpURLConnection
 import java.net.HttpURLConnection.HTTP_BAD_REQUEST
 import java.net.HttpURLConnection.HTTP_CLIENT_TIMEOUT
 import java.net.HttpURLConnection.HTTP_OK
 import java.net.URL
 
-/**
- * Converts a [JsonStream.Streamable] into JSON, placing it in a [ByteArray]
- */
-internal fun serializeJsonPayload(streamable: JsonStream.Streamable): ByteArray {
-    return ByteArrayOutputStream().use { baos ->
-        JsonStream(PrintWriter(baos).buffered()).use(streamable::toStream)
-        baos.toByteArray()
-    }
-}
-
 internal class DefaultDelivery(
     private val connectivity: Connectivity?,
-    val logger: Logger
+    private val apiKey: String,
+    private val maxStringValueLength: Int,
+    private val logger: Logger
 ) : Delivery {
 
+    companion object {
+        // 1MB with some fiddle room in case of encoding overhead
+        const val maxPayloadSize = 999700
+    }
+
     override fun deliver(payload: Session, deliveryParams: DeliveryParams): DeliveryStatus {
-        val status = deliver(deliveryParams.endpoint, payload, deliveryParams.headers)
+        val status = deliver(
+            deliveryParams.endpoint,
+            JsonHelper.serialize(payload),
+            deliveryParams.headers
+        )
         logger.i("Session API request finished with status $status")
         return status
     }
 
+    private fun serializePayload(payload: EventPayload): ByteArray {
+        var json = JsonHelper.serialize(payload)
+        if (json.size <= maxPayloadSize) {
+            return json
+        }
+
+        var event = payload.event
+        if (event == null) {
+            event = MarshalledEventSource(payload.eventFile!!, apiKey, logger).invoke()
+            payload.event = event
+            payload.apiKey = apiKey
+        }
+
+        val (itemsTrimmed, dataTrimmed) = event.impl.trimMetadataStringsTo(maxStringValueLength)
+        event.impl.internalMetrics.setMetadataTrimMetrics(
+            itemsTrimmed,
+            dataTrimmed
+        )
+
+        json = JsonHelper.serialize(payload)
+        if (json.size <= maxPayloadSize) {
+            return json
+        }
+
+        val breadcrumbAndBytesRemovedCounts =
+            event.impl.trimBreadcrumbsBy(json.size - maxPayloadSize)
+        event.impl.internalMetrics.setBreadcrumbTrimMetrics(
+            breadcrumbAndBytesRemovedCounts.itemsTrimmed,
+            breadcrumbAndBytesRemovedCounts.dataTrimmed
+        )
+        return JsonHelper.serialize(payload)
+    }
+
     override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
-        val status = deliver(deliveryParams.endpoint, payload, deliveryParams.headers)
+        val json = serializePayload(payload)
+        val status = deliver(deliveryParams.endpoint, json, deliveryParams.headers)
         logger.i("Error API request finished with status $status")
         return status
     }
 
     fun deliver(
         urlString: String,
-        streamable: JsonStream.Streamable,
+        json: ByteArray,
         headers: Map<String, String?>
     ): DeliveryStatus {
 
@@ -50,7 +84,6 @@ internal class DefaultDelivery(
         var conn: HttpURLConnection? = null
 
         try {
-            val json = serializeJsonPayload(streamable)
             conn = makeRequest(URL(urlString), json, headers)
 
             // End the request, get the response code

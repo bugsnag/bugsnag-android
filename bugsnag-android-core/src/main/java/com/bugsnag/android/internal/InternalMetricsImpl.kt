@@ -2,16 +2,48 @@ package com.bugsnag.android.internal
 
 import com.bugsnag.android.NdkPluginCaller
 
-class InternalMetricsImpl : InternalMetrics {
-    private val configDifferences = hashMapOf<String, Any>()
-    private val callbackCounts = hashMapOf<String, Int>()
+class InternalMetricsImpl(source: Map<String, Any>? = null) : InternalMetrics {
+    private val configDifferences: MutableMap<String, Any>
+    private val callbackCounts: MutableMap<String, Int>
+    private var metadataStringsTrimmedCount = 0
+    private var metadataCharsTruncatedCount = 0
+    private var breadcrumbsRemovedCount = 0
+    private var breadcrumbBytesRemovedCount = 0
+
+    init {
+        if (source != null) {
+            @Suppress("UNCHECKED_CAST")
+            configDifferences = (source["config"] as MutableMap<String, Any>?) ?: hashMapOf()
+            @Suppress("UNCHECKED_CAST")
+            callbackCounts = (source["callbacks"] as MutableMap<String, Int>?) ?: hashMapOf()
+            @Suppress("UNCHECKED_CAST")
+            val system = source["system"] as MutableMap<String, Any>?
+            if (system != null) {
+                metadataStringsTrimmedCount = (system["stringsTruncated"] as Number?)?.toInt() ?: 0
+                metadataCharsTruncatedCount = (system["stringCharsTruncated"] as Number?)?.toInt() ?: 0
+                breadcrumbsRemovedCount = (system["breadcrumbsRemovedCount"] as Number?)?.toInt() ?: 0
+                breadcrumbBytesRemovedCount = (system["breadcrumbBytesRemoved"] as Number?)?.toInt() ?: 0
+            }
+        } else {
+            configDifferences = hashMapOf()
+            callbackCounts = hashMapOf()
+        }
+    }
 
     override fun toJsonableMap(): Map<String, Any> {
         val callbacks = allCallbacks()
 
+        val system = listOfNotNull(
+            if (metadataStringsTrimmedCount > 0) "stringsTruncated" to metadataStringsTrimmedCount else null,
+            if (metadataCharsTruncatedCount > 0) "stringCharsTruncated" to metadataCharsTruncatedCount else null,
+            if (breadcrumbsRemovedCount > 0) "breadcrumbsRemoved" to breadcrumbsRemovedCount else null,
+            if (breadcrumbBytesRemovedCount > 0) "breadcrumbBytesRemoved" to breadcrumbBytesRemovedCount else null,
+        ).toMap()
+
         return listOfNotNull(
             if (configDifferences.isNotEmpty()) "config" to configDifferences else null,
             if (callbacks.isNotEmpty()) "callbacks" to callbacks else null,
+            if (system.isNotEmpty()) "system" to system else null,
         ).toMap()
     }
 
@@ -65,5 +97,15 @@ class InternalMetricsImpl : InternalMetrics {
         }
 
         return result
+    }
+
+    override fun setMetadataTrimMetrics(stringsTrimmed: Int, charsRemoved: Int) {
+        metadataStringsTrimmedCount = stringsTrimmed
+        metadataCharsTruncatedCount = charsRemoved
+    }
+
+    override fun setBreadcrumbTrimMetrics(breadcrumbsRemoved: Int, bytesRemoved: Int) {
+        breadcrumbsRemovedCount = breadcrumbsRemoved
+        breadcrumbBytesRemovedCount = bytesRemoved
     }
 }

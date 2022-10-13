@@ -388,7 +388,7 @@ steps:
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
-  - label: ':android: Android 13 Beta NDK r21 end-to-end tests - batch 1'
+  - label: ':android: Android 13 NDK r21 end-to-end tests - batch 1'
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
@@ -405,7 +405,7 @@ steps:
           - "--exclude=features/full_tests/[^a-k].*.feature"
           - "--app=/app/build/fixture-r21.apk"
           - "--farm=bs"
-          - "--device=ANDROID_13_0_BETA"
+          - "--device=ANDROID_13_0"
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
@@ -413,7 +413,7 @@ steps:
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
-  - label: ':android: Android 13 Beta NDK r21 end-to-end tests - batch 2'
+  - label: ':android: Android 13 NDK r21 end-to-end tests - batch 2'
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
@@ -430,7 +430,7 @@ steps:
           - "--exclude=features/full_tests/[^l-z].*.feature"
           - "--app=/app/build/fixture-r21.apk"
           - "--farm=bs"
-          - "--device=ANDROID_13_0_BETA"
+          - "--device=ANDROID_13_0"
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"

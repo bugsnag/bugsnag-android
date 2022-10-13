@@ -31,7 +31,7 @@ class TestData {
                 "1.4.3",
                 55,
                 "android",
-                new DefaultDelivery(null, NoopLogger.INSTANCE),
+                new DefaultDelivery(null, "myApiKey", 10000, NoopLogger.INSTANCE),
                 new EndpointConfiguration(),
                 true,
                 55,

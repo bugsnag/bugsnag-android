@@ -6,6 +6,8 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.Window
 import android.widget.Button
 import android.widget.EditText
@@ -19,6 +21,8 @@ import kotlin.concurrent.thread
 import kotlin.math.max
 
 class MainActivity : Activity() {
+
+    private val mainHandler = Handler(Looper.getMainLooper())
 
     private val apiKeyKey = "BUGSNAG_API_KEY"
     lateinit var prefs: SharedPreferences
@@ -118,7 +122,7 @@ class MainActivity : Activity() {
                     log("command.sessionsUrl: $sessionsUrl")
                     log("command.notifyUrl: $notifyUrl")
 
-                    runOnUiThread {
+                    mainHandler.post {
                         // Display some feedback of the action being run on he UI
                         val actionField = findViewById<EditText>(R.id.command_action)
                         val scenarioField = findViewById<EditText>(R.id.command_scenario)
@@ -196,13 +200,10 @@ class MainActivity : Activity() {
          * Enqueues the test case with a delay on the main thread. This avoids the Activity wrapping
          * unhandled Exceptions
          */
-        window.decorView.postDelayed(
-            {
-                log("Executing scenario")
-                scenario?.startScenario()
-            },
-            1
-        )
+        mainHandler.post {
+            log("Executing scenario")
+            scenario?.startScenario()
+        }
     }
 
     // Clear persistent data (used to stop scenarios bleeding into each other)
@@ -269,6 +270,7 @@ class MainActivity : Activity() {
 
     private fun getStoredApiKey() = prefs.getString(apiKeyKey, "")
 
-    private val String.width get() =
-        lineSequence().fold(0) { maxWidth, line -> max(maxWidth, line.length) }
+    private val String.width
+        get() =
+            lineSequence().fold(0) { maxWidth, line -> max(maxWidth, line.length) }
 }

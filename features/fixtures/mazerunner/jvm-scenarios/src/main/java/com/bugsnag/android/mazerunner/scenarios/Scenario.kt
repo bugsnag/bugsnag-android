@@ -114,7 +114,7 @@ abstract class Scenario(
     protected fun waitForEventFile() {
         val dir = errorsDir()
         while (dir.listFiles()!!.isEmpty()) {
-            dir.listFiles().forEach { println(it) }
+            dir.listFiles()?.forEach { println(it) }
             Thread.sleep(100)
         }
     }
@@ -122,7 +122,7 @@ abstract class Scenario(
     protected fun waitForNoEventFiles() {
         val dir = errorsDir()
         while (!dir.listFiles()!!.isEmpty()) {
-            dir.listFiles().forEach { println(it) }
+            dir.listFiles()?.forEach { println(it) }
             Thread.sleep(1000)
         }
     }
@@ -136,20 +136,33 @@ abstract class Scenario(
     override fun onActivityDestroyed(activity: Activity) {}
 
     companion object {
+        private fun loadClass(className: String): Class<*> {
+            try {
+                return Class.forName(className)
+            } catch (exc: Throwable) {
+                throw IllegalStateException(
+                    "Failed to load test case class $className. Is it a valid JVM class?",
+                    exc
+                )
+            }
+        }
+
         fun load(
             context: Context,
             config: Configuration,
             eventType: String,
             eventMetaData: String?
         ): Scenario {
+            log("Loading scenario $eventType with metadata $eventMetaData")
+            val clz = loadClass("com.bugsnag.android.mazerunner.scenarios.$eventType")
+
             try {
-                log("Loading scenario $eventType with metadata $eventMetaData")
-                val clz = Class.forName("com.bugsnag.android.mazerunner.scenarios.$eventType")
                 val constructor = clz.constructors[0]
                 return constructor.newInstance(config, context, eventMetaData) as Scenario
             } catch (exc: Throwable) {
                 throw IllegalStateException(
-                    "Failed to instantiate test case for $eventType. Is it a valid JVM class?",
+                    "Failed to construct test case for $eventType. Please check the nested" +
+                        " exceptions for more details.",
                     exc
                 )
             }

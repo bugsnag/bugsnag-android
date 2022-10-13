@@ -45,7 +45,7 @@ class ManifestConfigLoaderTest {
             assertEquals(setOf("password"), redactedKeys)
 
             // misc
-            assertEquals(maxBreadcrumbs, 50)
+            assertEquals(maxBreadcrumbs, 100)
             assertEquals(maxPersistedEvents, 32)
             assertEquals(maxPersistedSessions, 128)
             assertEquals(maxReportedThreads, 200)
