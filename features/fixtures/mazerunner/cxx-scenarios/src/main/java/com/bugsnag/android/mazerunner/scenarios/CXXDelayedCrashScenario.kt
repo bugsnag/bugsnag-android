@@ -25,9 +25,11 @@ class CXXDelayedCrashScenario(
         super.startScenario()
         registerActivityLifecycleCallbacks()
 
-        onAppBackgrounded {
-            log("App sent to background, triggering crash.")
-            activate(405)
+        Handler(Looper.getMainLooper()).post {
+            onAppBackgrounded {
+                log("App sent to background, triggering crash.")
+                activate(405)
+            }
         }
     }
 }
