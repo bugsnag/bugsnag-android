@@ -1,5 +1,14 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* Fixed rare thread-starvation issue where some internal failures could lead to deadlocks. This was most noticeable
+  when attempting to call Bugsnag.start on an architecture (ABI) that was not packaged in the APK, and lead to an
+  ANR instead of an error report.
+  [#1768](https://github.com/bugsnag/bugsnag-android/pull/1768)
+
 ## 5.28.0 (2022-10-13)
 
 ### Enhancements
