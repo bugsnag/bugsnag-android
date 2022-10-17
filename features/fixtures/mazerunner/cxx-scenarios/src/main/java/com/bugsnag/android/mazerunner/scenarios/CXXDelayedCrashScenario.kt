@@ -24,10 +24,8 @@ class CXXDelayedCrashScenario(
     override fun startScenario() {
         super.startScenario()
         registerActivityLifecycleCallbacks()
-    }
 
-    override fun onActivityStopped(activity: Activity) {
-        Handler(Looper.getMainLooper()).post {
+        onAppBackgrounded {
             log("App sent to background, triggering crash.")
             activate(405)
         }

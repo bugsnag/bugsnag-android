@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Application
 import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.ComponentCallbacks2
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
@@ -125,6 +126,22 @@ abstract class Scenario(
             dir.listFiles()?.forEach { println(it) }
             Thread.sleep(1000)
         }
+    }
+
+    protected fun onAppBackgrounded(listener: () -> Unit) {
+        (context.applicationContext as Application).registerComponentCallbacks(
+            object : ComponentCallbacks2 {
+                override fun onTrimMemory(level: Int) {
+                    if (level == ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN) {
+                        Handler(Looper.getMainLooper()).post(listener)
+                    }
+                }
+
+                override fun onConfigurationChanged(newConfig: android.content.res.Configuration) =
+                    Unit
+
+                override fun onLowMemory() = Unit
+            })
     }
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
