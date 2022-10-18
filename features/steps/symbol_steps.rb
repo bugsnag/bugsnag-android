@@ -9,7 +9,7 @@ IGNORED_VALUE = '(ignore)'
 # Location on disk of native symbol files
 SYMBOL_DIR = ENV['TEST_FIXTURE_SYMBOL_DIR'] || 'build'
 
-# Checks whether the first significant frames in an event match provided frames
+# Checks whether any list of sequential significant frames in an event match provided frames
 #
 # @param expected_values [Array] A table dictating the expected files and methods of the frames
 #   The table is formatted as any of:
@@ -22,30 +22,34 @@ SYMBOL_DIR = ENV['TEST_FIXTURE_SYMBOL_DIR'] || 'build'
 #       | method | (ignore)         |
 #   or
 #       | method | (ignore)         | (ignore)    |
-Then("the first significant stack frames match:") do |expected_values|
+Then("any significant stack frames match:") do |expected_values|
   body = Maze::Server.errors.current[:body]
   arch = Maze::Helper.read_key_path(body, "events.0.app.binaryArch")
   stacktrace = Maze::Helper.read_key_path(body, "events.0.exceptions.0.stacktrace")
 
   significant_frames = stacktrace.map { |frame| symbolicate(arch, frame) }.flatten.compact
 
-  expected_values.raw.each_with_index do |expected_frame, index|
-    raise "No matching significant frame at index #{index}" if significant_frames.length <= index
+  expected_frame = expected_values.raw.first
+  first_matched_frame = significant_frames.find_index { |test_frame| frame_matches? expected_frame, test_frame }
 
-    test_frame = significant_frames[index]
+  expected_values.raw.each_with_index do |expected_frame, index|
+    frame_index = first_matched_frame + index
+    raise "No matching significant frame at index #{frame_index}" if significant_frames.length <= frame_index
+
+    test_frame = significant_frames[frame_index]
     Maze.check.equal(
       expected_frame[0], test_frame[:method],
-      "'#{test_frame[:method]}' in frame #{index} is not equal to '#{expected_frame[0]}'. Significant frames: #{significant_frames}"
+      "'#{test_frame[:method]}' in frame #{frame_index} is not equal to '#{expected_frame[0]}'. Significant frames: #{significant_frames}"
     )
     if expected_frame.length > 1 && expected_frame[1] != IGNORED_VALUE
       Maze.check.true(
         test_frame[:file].end_with?(expected_frame[1]),
-        "'#{test_frame[:file]}' in frame #{index} does not end with '#{expected_frame[1]}'. Significant frames: #{significant_frames}"
+        "'#{test_frame[:file]}' in frame #{frame_index} does not end with '#{expected_frame[1]}'. Significant frames: #{significant_frames}"
       )
     end
     if expected_frame.length > 2 && expected_frame[2] != IGNORED_VALUE
       Maze.check.equal(test_frame[:lineNumber], expected_frame[2],
-        "line number #{test_frame[:lineNumber]} in frame #{index} does not equal #{expected_frame[2]}. Significant frames: #{significant_frames}"
+        "line number #{test_frame[:lineNumber]} in frame #{frame_index} does not equal #{expected_frame[2]}. Significant frames: #{significant_frames}"
       )
     end
   end
@@ -115,4 +119,20 @@ def symbolicate arch, frame
     return sym_info
   end
   [{ :method => method, :file => binary_file }]
+end
+
+def frame_matches? expected_frame, test_frame
+  if expected_frame[0] != test_frame[:method]
+    return false
+  end
+
+  if expected_frame.length > 1 && expected_frame[1] != IGNORED_VALUE && !test_frame[:file].end_with?(expected_frame[1])
+    return false
+  end
+
+  if expected_frame.length > 2 && expected_frame[2] != IGNORED_VALUE && test_frame[:lineNumber] != expected_frame[2]
+    return false
+  end
+
+  return true
 end

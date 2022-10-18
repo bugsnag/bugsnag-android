@@ -209,8 +209,6 @@ Feature: Unhandled smoke tests
     And the event "metaData.opaque.nestedList.2" equals "two"
     And the event "metaData.opaque.nestedList.3" equals "three"
 
-  # TODO: Pending PLAT-9011
-  @skip_android_7
   @debug-safe
   Scenario: C++ exception thrown with overwritten config
     When I run "CXXExceptionSmokeScenario" and relaunch the crashed app
@@ -232,7 +230,7 @@ Feature: Unhandled smoke tests
     # Stacktrace validation
     And the error payload field "events.0.exceptions.0.stacktrace" is a non-empty array
     And the event stacktrace identifies the program counter
-    And the first significant stack frames match:
+    And any significant stack frames match:
       | magicstacks::top()                                                            | CXXExceptionSmokeScenario.cpp | 13 |
       | magicstacks::middle()                                                         | CXXExceptionSmokeScenario.cpp | 16 |
       | magicstacks::start()                                                          | CXXExceptionSmokeScenario.cpp | 18 |

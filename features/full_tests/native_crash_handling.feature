@@ -3,8 +3,6 @@ Feature: Native crash reporting
   Background:
     Given I clear all persistent data
 
-  # TODO: Pending PLAT-9011
-  @skip_android_7
   Scenario: Dereference a null pointer
     When I run "CXXDereferenceNullScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXDereferenceNullScenario"
@@ -19,7 +17,7 @@ Feature: Native crash reporting
     And the event "device.totalMemory" is not null
     And the error payload field "events.0.device.cpuAbi" is a non-empty array
     And the error payload field "events.0.metaData.app.memoryLimit" is greater than 0
-    And the first significant stack frames match:
+    And any significant stack frames match:
       | get_the_null_value() | CXXDereferenceNullScenario.cpp | 7 |
     And the "codeIdentifier" of stack frame 0 is not null
 
@@ -35,8 +33,6 @@ Feature: Native crash reporting
   # Refactored here to use abort() on newer versions:
   # https://android.googlesource.com/platform/bionic/+/fb7eb5e07f43587c2bedf2aaa53b21fa002417bb
   @skip_below_api18
-  # TODO: Pending PLAT-9011
-  @skip_android_7
   Scenario: Stack buffer overflow
     When I run "CXXStackoverflowScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXStackoverflowScenario"
@@ -46,12 +42,10 @@ Feature: Native crash reporting
     And the exception "type" equals "c"
     And the event "severity" equals "error"
     And the event "unhandled" is true
-    And the first significant stack frames match:
+    And any significant stack frames match:
       | crash_stack_overflow | CXXStackoverflowScenario.cpp |
     And the "codeIdentifier" of stack frame 0 is not null
 
-  # TODO: Pending PLAT-9011
-  @skip_android_7
   Scenario: Program trap()
     When I run "CXXTrapScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXTrapScenario"
@@ -66,12 +60,10 @@ Feature: Native crash reporting
     And the exception "type" equals "c"
     And the event "severity" equals "error"
     And the event "unhandled" is true
-    And the first significant stack frames match:
+    And any significant stack frames match:
       | trap_it() | CXXTrapScenario.cpp | 12 |
     And the "codeIdentifier" of stack frame 0 is not null
 
-  # TODO: Pending PLAT-9011
-  @skip_android_7
   Scenario: Write to read-only memory
     When I run "CXXWriteReadOnlyMemoryScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXWriteReadOnlyMemoryScenario"
@@ -81,13 +73,11 @@ Feature: Native crash reporting
     And the exception "type" equals "c"
     And the event "severity" equals "error"
     And the event "unhandled" is true
-    And the first significant stack frames match:
+    And any significant stack frames match:
       | crash_write_read_only_mem(int)                                                     | CXXWriteReadOnlyMemoryScenario.cpp | 12 |
       | Java_com_bugsnag_android_mazerunner_scenarios_CXXWriteReadOnlyMemoryScenario_crash | CXXWriteReadOnlyMemoryScenario.cpp | 22 |
     And the "codeIdentifier" of stack frame 0 is not null
 
-  # TODO: Pending PLAT-9011
-  @skip_android_7
   Scenario: Improper object type cast
     When I run "CXXImproperTypecastScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXImproperTypecastScenario"
@@ -97,13 +87,11 @@ Feature: Native crash reporting
     And the exception "type" equals "c"
     And the event "severity" equals "error"
     And the event "unhandled" is true
-    And the first significant stack frames match:
+    And any significant stack frames match:
       | crash_improper_cast(void*)                                                      | CXXImproperTypecastScenario.cpp | 12 |
       | Java_com_bugsnag_android_mazerunner_scenarios_CXXImproperTypecastScenario_crash | CXXImproperTypecastScenario.cpp | 20 |
     And the "codeIdentifier" of stack frame 0 is not null
 
-  # TODO: Pending PLAT-9011
-  @skip_android_7
   Scenario: Program abort()
     When I run "CXXAbortScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXAbortScenario"
@@ -118,7 +106,7 @@ Feature: Native crash reporting
     And the exception "type" equals "c"
     And the event "severity" equals "error"
     And the event "unhandled" is true
-    And the first significant stack frames match:
+    And any significant stack frames match:
       | evictor::exit_with_style()                                           | CXXAbortScenario.cpp | 5  |
       | Java_com_bugsnag_android_mazerunner_scenarios_CXXAbortScenario_crash | CXXAbortScenario.cpp | 13 |
     And the "codeIdentifier" of stack frame 0 is not null
@@ -136,8 +124,6 @@ Feature: Native crash reporting
   # Android 6 dladdr does report .so files that are not extracted from their .apk file
   # this test cannot pass on these devices with extractNativeLibs=false
   @skip_android_6
-  # TODO: Pending PLAT-9011
-  @skip_android_7
   Scenario: Causing a crash in a separate library
     When I run "CXXExternalStackElementScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXExternalStackElementScenario"
@@ -152,13 +138,11 @@ Feature: Native crash reporting
       | Illegal instruction   |
       | Trace/breakpoint trap |
     And the exception "type" equals "c"
-    And the first significant stack frames match:
+    And any significant stack frames match:
       | something_innocuous                                                                 | libmonochrome.so                    | (ignore) |
       | Java_com_bugsnag_android_mazerunner_scenarios_CXXExternalStackElementScenario_crash | CXXExternalStackElementScenario.cpp | 20       |
     And the "codeIdentifier" of stack frame 0 is not null
 
-  # TODO: Pending PLAT-9011
-  @skip_android_7
   Scenario: Call null function pointer
   A null pointer should be the first element of a stack trace,
   followed by the calling function
@@ -174,5 +158,5 @@ Feature: Native crash reporting
     And the event "unhandled" is true
     And the "method" of stack frame 0 equals "0x0"
     And the "lineNumber" of stack frame 0 equals 0
-    And the first significant stack frames match:
+    And any significant stack frames match:
       | dispatch::Handler::handle(_jobject*) | CXXCallNullFunctionPointerScenario.cpp | 9 |

@@ -23,8 +23,6 @@ Feature: Native crash reporting with thrown objects
     And the exception "errorClass" equals "SIGABRT"
     And the exception "message" equals "Abort program"
 
-  # TODO: Pending PLAT-9011
-  @skip_android_7
   Scenario: Rethrow in C++ without initial exception
     When I run "CXXInvalidRethrow" and relaunch the crashed app
     And I configure Bugsnag for "CXXInvalidRethrow"
@@ -34,11 +32,9 @@ Feature: Native crash reporting with thrown objects
     And the exception "type" equals "c"
     And the event "severity" equals "error"
     And the event "unhandled" is true
-    And the first significant stack frames match:
+    And any significant stack frames match:
       | print_last_exception() | CXXInvalidRethrow.cpp | 7 |
 
-  # TODO: Pending PLAT-9011
-  @skip_android_7
   Scenario: Throw from C++ noexcept function
     When I run "CXXThrowFromNoexcept" and relaunch the crashed app
     And I configure Bugsnag for "CXXThrowFromNoexcept"
@@ -48,7 +44,7 @@ Feature: Native crash reporting with thrown objects
     And the exception "type" equals "c"
     And the event "severity" equals "error"
     And the event "unhandled" is true
-    And on arm64, the first significant stack frames match:
+    And on arm64, any significant stack frames match:
       | FunkError::what() const                                                  | CXXThrowFromNoexcept.cpp | 13 |
       | Java_com_bugsnag_android_mazerunner_scenarios_CXXThrowFromNoexcept_crash | CXXThrowFromNoexcept.cpp | 21 |
 
