@@ -136,6 +136,27 @@ internal class BackgroundTaskServiceTest {
         assertRejectedExecution(service, TaskType.IO)
     }
 
+    /**
+     * Test that tasks submitted to the same queue within a task work without deadlocking the queue.
+     * This has a 5 second timeout since the symptom of a failure is thread-starvation / deadlock.
+     */
+    @Test(timeout = 5_000)
+    fun testSubmitOnSubmit() {
+        val service = BackgroundTaskService()
+
+        TaskType.values().forEach { taskType ->
+            val result = service.submitTask<Pair<TaskType, String>>(taskType) {
+                service.submitTask<Pair<TaskType, String>>(taskType) {
+                    taskType to "done"
+                }.get()
+            }.get()
+
+            assertEquals(taskType to "done", result)
+        }
+
+        service.shutdown()
+    }
+
     private fun submitBlockingJob(
         service: BackgroundTaskService,
         latch: CountDownLatch,
