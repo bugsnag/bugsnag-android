@@ -209,8 +209,6 @@ Feature: Unhandled smoke tests
     And the event "metaData.opaque.nestedList.2" equals "two"
     And the event "metaData.opaque.nestedList.3" equals "three"
 
-  # TODO: Pending PLAT-9011
-  @skip_android_7
   @debug-safe
   Scenario: C++ exception thrown with overwritten config
     When I run "CXXExceptionSmokeScenario" and relaunch the crashed app
