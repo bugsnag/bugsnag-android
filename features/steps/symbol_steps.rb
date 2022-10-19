@@ -80,7 +80,7 @@ def is_out_of_project? file, method
     # sneaky libc functions
     method.start_with?("str") || method.start_with?("abort") ||
     # android built-in libraries
-    file.start_with?("/system/") || file.start_with?("/apex/")
+    file.start_with?("/system/") || file.start_with?("/apex/") || file.start_with?("/system_root/")
 end
 
 def demangle symbol

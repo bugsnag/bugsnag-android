@@ -3,8 +3,6 @@ Feature: Native crash reporting
   Background:
     Given I clear all persistent data
 
-  # TODO: Pending PLAT-9011
-  @skip_android_7
   Scenario: Dereference a null pointer
     When I run "CXXDereferenceNullScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXDereferenceNullScenario"
@@ -35,8 +33,6 @@ Feature: Native crash reporting
   # Refactored here to use abort() on newer versions:
   # https://android.googlesource.com/platform/bionic/+/fb7eb5e07f43587c2bedf2aaa53b21fa002417bb
   @skip_below_api18
-  # TODO: Pending PLAT-9011
-  @skip_android_7
   Scenario: Stack buffer overflow
     When I run "CXXStackoverflowScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXStackoverflowScenario"
@@ -50,8 +46,6 @@ Feature: Native crash reporting
       | crash_stack_overflow | CXXStackoverflowScenario.cpp |
     And the "codeIdentifier" of stack frame 0 is not null
 
-  # TODO: Pending PLAT-9011
-  @skip_android_7
   Scenario: Program trap()
     When I run "CXXTrapScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXTrapScenario"
@@ -70,8 +64,6 @@ Feature: Native crash reporting
       | trap_it() | CXXTrapScenario.cpp | 12 |
     And the "codeIdentifier" of stack frame 0 is not null
 
-  # TODO: Pending PLAT-9011
-  @skip_android_7
   Scenario: Write to read-only memory
     When I run "CXXWriteReadOnlyMemoryScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXWriteReadOnlyMemoryScenario"
@@ -86,8 +78,6 @@ Feature: Native crash reporting
       | Java_com_bugsnag_android_mazerunner_scenarios_CXXWriteReadOnlyMemoryScenario_crash | CXXWriteReadOnlyMemoryScenario.cpp | 22 |
     And the "codeIdentifier" of stack frame 0 is not null
 
-  # TODO: Pending PLAT-9011
-  @skip_android_7
   Scenario: Improper object type cast
     When I run "CXXImproperTypecastScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXImproperTypecastScenario"
@@ -102,8 +92,6 @@ Feature: Native crash reporting
       | Java_com_bugsnag_android_mazerunner_scenarios_CXXImproperTypecastScenario_crash | CXXImproperTypecastScenario.cpp | 20 |
     And the "codeIdentifier" of stack frame 0 is not null
 
-  # TODO: Pending PLAT-9011
-  @skip_android_7
   Scenario: Program abort()
     When I run "CXXAbortScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXAbortScenario"
@@ -136,8 +124,6 @@ Feature: Native crash reporting
   # Android 6 dladdr does report .so files that are not extracted from their .apk file
   # this test cannot pass on these devices with extractNativeLibs=false
   @skip_android_6
-  # TODO: Pending PLAT-9011
-  @skip_android_7
   Scenario: Causing a crash in a separate library
     When I run "CXXExternalStackElementScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXExternalStackElementScenario"
@@ -157,8 +143,6 @@ Feature: Native crash reporting
       | Java_com_bugsnag_android_mazerunner_scenarios_CXXExternalStackElementScenario_crash | CXXExternalStackElementScenario.cpp | 20       |
     And the "codeIdentifier" of stack frame 0 is not null
 
-  # TODO: Pending PLAT-9011
-  @skip_android_7
   Scenario: Call null function pointer
   A null pointer should be the first element of a stack trace,
   followed by the calling function

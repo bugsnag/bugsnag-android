@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import com.bugsnag.android.internal.DateUtils
+import com.bugsnag.android.internal.InternalMetricsImpl
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -17,7 +18,7 @@ internal class BugsnagEventMapper(
 
     @Suppress("UNCHECKED_CAST")
     internal fun convertToEventImpl(map: Map<in String, Any?>, apiKey: String): EventInternal {
-        val event = EventInternal(apiKey)
+        val event = EventInternal(apiKey, logger)
 
         // populate exceptions. check this early to avoid unnecessary serialization if
         // no stacktrace was gathered.
@@ -85,6 +86,9 @@ internal class BugsnagEventMapper(
         val reason = deserializeSeverityReason(map, unhandled, severity)
         event.updateSeverityReasonInternal(reason)
         event.normalizeStackframeErrorTypes()
+
+        // populate internalMetrics
+        event.internalMetrics = InternalMetricsImpl(map["usage"] as MutableMap<String, Any>?)
 
         return event
     }
