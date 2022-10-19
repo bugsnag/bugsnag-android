@@ -21,9 +21,6 @@ Feature: Native crash reporting
       | get_the_null_value() | CXXDereferenceNullScenario.cpp | 7 |
     And the "codeIdentifier" of stack frame 0 is not null
 
-
-  # TODO: Several scenarios skipped on Android 7.1 (Google Pixel) do to additional stack frames. See PLAT-9011
-
   # This scenario will not pass on API levels < 18, as stack corruption
   # is handled without calling atexit handlers, etc.
   # In the device logs you will see:
