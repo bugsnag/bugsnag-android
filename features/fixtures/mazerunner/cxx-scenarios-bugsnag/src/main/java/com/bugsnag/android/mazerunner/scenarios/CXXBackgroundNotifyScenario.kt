@@ -6,7 +6,6 @@ import android.os.Handler
 import android.os.Looper
 import com.bugsnag.android.Configuration
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.concurrent.thread
 
 internal class CXXBackgroundNotifyScenario(
     config: Configuration,
@@ -36,5 +35,4 @@ internal class CXXBackgroundNotifyScenario(
             }
         }
     }
-
 }
