@@ -4,6 +4,21 @@
 
 ### Bug fixes
 
+* Fixed rare thread-starvation issue where some internal failures could lead to deadlocks. This was most noticeable
+  when attempting to call Bugsnag.start on an architecture (ABI) that was not packaged in the APK, and lead to an
+  ANR instead of an error report.
+  [#1768](https://github.com/bugsnag/bugsnag-android/pull/1768)
+
+## 5.28.0 (2022-10-13)
+
+### Enhancements
+
+* Bugsnag now supports up to 500 breadcrumbs, with a default max of 100. Note that breadcrumbs will be trimmed
+  (oldest first) if the payload exceeds 1MB.
+  [#1751](https://github.com/bugsnag/bugsnag-android/pull/1751)
+
+### Bug fixes
+
 * Fixed very rare crashes when attempting to unwind NDK stacks over protected memory pages
   [#1761](https://github.com/bugsnag/bugsnag-android/pull/1761)
 
@@ -11,9 +26,6 @@
 
 ### Enhancements
 
-* Bugsnag now supports up to 500 breadcrumbs, with a default max of 100. Note that breadcrumbs will be trimmed
-  (oldest first) if the payload exceeds 1MB.
-  [#1751](https://github.com/bugsnag/bugsnag-android/pull/1751)
 * Setting `Configuration.attemptDeliveryOnCrash` will cause Bugsnag to attempt error delivery during some crashes.
   Use of this feature is discouraged, see the method JavaDoc for more information.
   [#1749](https://github.com/bugsnag/bugsnag-android/pull/1749)
