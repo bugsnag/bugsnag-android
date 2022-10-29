@@ -141,6 +141,9 @@ class MainActivity : Activity() {
 
                         // Perform the given action on the UI thread
                         when (action) {
+                            "noop" -> {
+                                log("No Maze Runner command queuing, continuing to poll")
+                            }
                             "start_bugsnag" -> {
                                 startBugsnag(scenarioName, scenarioMode, sessionsUrl, notifyUrl)
                             }
