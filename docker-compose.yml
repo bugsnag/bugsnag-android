@@ -31,7 +31,7 @@ services:
       PUBLISH_PASS:
 
   android-maze-runner:
-    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner:tms-android-repo-fixes-cli
+    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner-releases:latest-v7-cli
     environment:
       DEBUG:
       BUILDKITE:
@@ -57,7 +57,7 @@ services:
       - ./maze_output:/app/maze_output
 
   android-maze-runner-legacy:
-    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner:tms-android-repo-fixes-cli-legacy
+    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner-releases:latest-v7-cli-legacy
     environment:
       DEBUG:
       BUILDKITE:
