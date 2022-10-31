@@ -907,6 +907,10 @@ JNIEXPORT void JNICALL
 Java_com_bugsnag_android_ndk_NativeBridge_setStaticJsonData(JNIEnv *env,
                                                             jobject thiz,
                                                             jstring data_) {
+  if (bsg_global_env == NULL) {
+    return;
+  }
+
   const char *data = bsg_safe_get_string_utf_chars(env, data_);
   if (data == NULL) {
     return;
