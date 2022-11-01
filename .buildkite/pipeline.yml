@@ -95,7 +95,7 @@ steps:
           - "--app=/app/build/fixture-r16.apk"
           - "--farm=bs"
           - "--device=ANDROID_4_4"
-          #- "--fail-fast"
+          - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r16"
     concurrency: 24
@@ -121,7 +121,7 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_6_0_GOOGLE_NEXUS_6"
           - "--appium-version=1.20.2"
-          #- "--fail-fast"
+          - "--fail-fast"
     concurrency: 24
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
@@ -147,7 +147,7 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_7_1"
           - "--appium-version=1.20.2"
-          #- "--fail-fast"
+          - "--fail-fast"
     concurrency: 24
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
@@ -173,7 +173,7 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_8_1"
           - "--appium-version=1.20.2"
-          #- "--fail-fast"
+          - "--fail-fast"
     concurrency: 24
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
@@ -199,7 +199,7 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_10_0"
           - "--appium-version=1.20.2"
-          #- "--fail-fast"
+          - "--fail-fast"
     concurrency: 24
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
@@ -225,7 +225,7 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_11_0"
           - "--appium-version=1.20.2"
-          #- "--fail-fast"
+          - "--fail-fast"
     concurrency: 24
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
@@ -256,7 +256,7 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_12_0"
           - "--appium-version=1.20.2"
-          #- "--fail-fast"
+          - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 24
@@ -283,7 +283,7 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_12_0"
           - "--appium-version=1.20.2"
-          #- "--fail-fast"
+          - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 24
