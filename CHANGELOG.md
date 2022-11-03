@@ -1,5 +1,10 @@
 # Changelog
 
+## TBD
+
+* Fixed a bug that could sometimes cause native crashes when adding or clearing feature flags
+  [#1777](https://github.com/bugsnag/bugsnag-android/pull/1777)
+
 ## 5.28.1 (2022-10-19)
 
 ### Bug fixes
