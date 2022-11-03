@@ -4,7 +4,8 @@ Feature: Cached Error Reports
     Given I clear all persistent data
 
   Scenario: If an exception is thrown when sending errors/sessions then internal error reports should be sent
-    When I run "InternalErrorScenario"
+    When I set the screen orientation to portrait
+    And I run "InternalErrorScenario"
     And I wait to receive 1 errors
 
     # Validate internal error report for error serialization

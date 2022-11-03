@@ -19,8 +19,9 @@ def execute_command(action, scenario_name = '')
 
   # Ensure fixture has read the command
   count = 600
-  sleep 0.1 until Maze::Server.commands.remaining.empty? || (count -= 1) < 1
-  raise 'Test fixture did not GET /command' unless Maze::Server.commands.remaining.empty?
+  sleep 0.1 until Maze::Server.commands.size_remaining == 0 || (count -= 1) < 1
+
+  raise 'Test fixture did not GET /command' unless Maze::Server.commands.size_remaining == 0
 end
 
 def tap_at(x, y)
@@ -61,8 +62,13 @@ When("I set the endpoints to the terminating server") do
 end
 
 When("I close and relaunch the app") do
-  Maze.driver.close_app
-  Maze.driver.launch_app
+  if Maze.config.legacy_driver?
+    Maze.driver.close_app
+    Maze.driver.launch_app
+  else
+    Maze.driver.terminate_app Maze.driver.app_id
+    Maze.driver.activate_app Maze.driver.app_id
+  end
 end
 
 When('I set the screen orientation to portrait') do
@@ -82,22 +88,33 @@ def wait_for_app_state(expected_state)
     sleep 0.5
   end
   $logger.warn "App state #{state} instead of #{expected_state} after 10s" unless state == expected_state
+  state
 end
 
 When('the app is not running') do
-  time = wait_for_app_state(:not_running)
+  wait_for_app_state(:not_running)
 end
 
 When("I relaunch the app after a crash") do
-  step 'the app is not running'
-  Maze.driver.launch_app
+  state = wait_for_app_state :not_running
+  if Maze.config.legacy_driver?
+    if state != :not_running
+      Maze.driver.close_app
+    end
+    Maze.driver.launch_app
+  else
+    if state != :not_running
+      Maze.driver.terminate_app Maze.driver.app_id
+    end
+    Maze.driver.activate_app Maze.driver.app_id
+  end
 end
 
 When("I tap the screen {int} times") do |count|
   (1..count).each { |i|
     begin
       tap_at 500, 300
-    rescue Selenium::WebDriver::Error::ElementNotInteractableError
+    rescue Selenium::WebDriver::Error::ElementNotInteractableError, Selenium::WebDriver::Error::InvalidElementStateError
       # Ignore it§
     end
     sleep(1)
