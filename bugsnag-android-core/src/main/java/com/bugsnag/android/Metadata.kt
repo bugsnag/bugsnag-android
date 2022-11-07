@@ -144,7 +144,11 @@ internal data class Metadata @JvmOverloads constructor(
         var stringCount = 0
         var charCount = 0
         store.forEach { entry ->
-            val stringAndCharCounts = StringUtils.trimStringValuesTo(maxStringLength, entry.value)
+            val stringAndCharCounts = StringUtils.trimStringValuesTo(
+                maxStringLength,
+                entry.value as MutableMap<String, Any?>
+            )
+
             stringCount += stringAndCharCounts.itemsTrimmed
             charCount += stringAndCharCounts.dataTrimmed
         }
