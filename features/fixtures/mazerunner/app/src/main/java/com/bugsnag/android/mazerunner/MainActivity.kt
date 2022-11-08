@@ -91,6 +91,11 @@ class MainActivity : Activity() {
         }
     }
 
+    // As per JSONObject.getString but returns and empty string rather than throwing if not present
+    private fun getStringSafely(jsonObject: JSONObject, key: String): String {
+        return if (jsonObject.has(key)) jsonObject.getString(key) else ""
+    }
+
     // Starts a thread to poll for Maze Runner actions to perform
     private fun startCommandRunner() {
         // Get the next maze runner command
@@ -111,16 +116,21 @@ class MainActivity : Activity() {
                     // Log the received command
                     log("Received command: $commandStr")
                     var command = JSONObject(commandStr)
-                    val action = command.getString("action")
-                    val scenarioName = command.getString("scenario_name")
-                    val scenarioMode = command.getString("scenario_mode")
-                    val sessionsUrl = command.getString("sessions_endpoint")
-                    val notifyUrl = command.getString("notify_endpoint")
+                    val action = getStringSafely(command, "action")
+                    val scenarioName = getStringSafely(command, "scenario_name")
+                    val scenarioMode = getStringSafely(command, "scenario_mode")
+                    val sessionsUrl = getStringSafely(command, "sessions_endpoint")
+                    val notifyUrl = getStringSafely(command, "notify_endpoint")
                     log("command.action: $action")
                     log("command.scenarioName: $scenarioName")
                     log("command.scenarioMode: $scenarioMode")
                     log("command.sessionsUrl: $sessionsUrl")
                     log("command.notifyUrl: $notifyUrl")
+
+                    // Stop polling once we have a scenario action
+                    if ("start_bugsnag".equals(action) || "run_scenario".equals(action)) {
+                        polling = false
+                    }
 
                     mainHandler.post {
                         // Display some feedback of the action being run on he UI
@@ -131,12 +141,13 @@ class MainActivity : Activity() {
 
                         // Perform the given action on the UI thread
                         when (action) {
+                            "noop" -> {
+                                log("No Maze Runner command queuing, continuing to poll")
+                            }
                             "start_bugsnag" -> {
-                                polling = false
                                 startBugsnag(scenarioName, scenarioMode, sessionsUrl, notifyUrl)
                             }
                             "run_scenario" -> {
-                                polling = false
                                 runScenario(scenarioName, scenarioMode, sessionsUrl, notifyUrl)
                             }
                             "clear_persistent_data" -> clearPersistentData()

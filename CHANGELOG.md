@@ -1,5 +1,14 @@
 # Changelog
 
+## 5.28.2 (2022-11-08)
+
+### Bug fixes
+
+* Fixed a bug that could sometimes cause native crashes when adding or clearing feature flags
+  [#1777](https://github.com/bugsnag/bugsnag-android/pull/1777)
+* Nested metadata is now correctly subject to the `Configuration.setMaxStringValueLength` setting
+  [#1778](https://github.com/bugsnag/bugsnag-android/pull/1778)
+
 ## 5.28.1 (2022-10-19)
 
 ### Bug fixes

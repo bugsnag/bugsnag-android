@@ -42,8 +42,7 @@ static void remove_at_index_and_compact(bugsnag_event *const event,
                                         const int index) {
   if (event->feature_flag_count > 1 && index < event->feature_flag_count - 1) {
     memmove(&event->feature_flags[index], &event->feature_flags[index + 1],
-            (event->feature_flag_count - index) *
-                sizeof(event->feature_flags[0]));
+            (event->feature_flag_count - index - 1) * sizeof(bsg_feature_flag));
   }
 }
 

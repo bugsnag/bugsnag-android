@@ -12,11 +12,11 @@ Then("the breadcrumb named {string} has {string} equal to {int}") do |message, p
 end
 
 Then("the breadcrumb named {string} has {string} is true") do |message, path|
-  match_breadcrumb_metadata(message, path) { |v| assert_true(v) }
+  match_breadcrumb_metadata(message, path) { |v| Maze.check.true(v) }
 end
 
 Then("the breadcrumb named {string} has {string} is false") do |message, path|
-  match_breadcrumb_metadata(message, path) { |v| assert_false(v) }
+  match_breadcrumb_metadata(message, path) { |v| Maze.check.false(v) }
 end
 
 def match_breadcrumb_metadata message, path

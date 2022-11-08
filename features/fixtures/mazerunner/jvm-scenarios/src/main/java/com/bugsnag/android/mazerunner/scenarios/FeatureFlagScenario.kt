@@ -18,12 +18,12 @@ class FeatureFlagScenario(
                 return@addOnSend true
             }
         }
+
+        config.addFeatureFlag("demo_mode")
     }
 
     override fun startScenario() {
         super.startScenario()
-
-        Bugsnag.addFeatureFlag("demo_mode")
 
         Bugsnag.addFeatureFlags(
             listOf(

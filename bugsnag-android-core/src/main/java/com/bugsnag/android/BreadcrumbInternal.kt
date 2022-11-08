@@ -26,7 +26,7 @@ internal class BreadcrumbInternal internal constructor(
 
     internal fun trimMetadataStringsTo(maxStringLength: Int): TrimMetrics {
         val metadata = this.metadata ?: return TrimMetrics(0, 0)
-        return StringUtils.trimNullableStringValuesTo(maxStringLength, metadata)
+        return StringUtils.trimStringValuesTo(maxStringLength, metadata)
     }
 
     @Throws(IOException::class)
