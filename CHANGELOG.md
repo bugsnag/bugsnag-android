@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 5.28.2 (2022-11-08)
 
 ### Bug fixes
 
