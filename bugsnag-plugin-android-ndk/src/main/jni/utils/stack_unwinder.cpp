@@ -114,35 +114,41 @@ static void populate_code_identifier(const unwindstack::FrameData &frame,
 }
 
 void bsg_unwinder_refresh(void) {
-  if (crash_time_unwinder == nullptr) {
-    return;
-  }
+  auto crash_time_maps = new unwindstack::LocalUpdatableMaps();
+  if (crash_time_maps->Parse()) {
+    std::shared_ptr<unwindstack::Memory> crash_time_memory(
+        new unwindstack::MemoryLocal);
+    auto new_uwinder = new unwindstack::Unwinder(
+        BUGSNAG_FRAMES_MAX, crash_time_maps,
+        unwindstack::Regs::CreateFromLocal(), crash_time_memory);
+    auto arch = unwindstack::Regs::CurrentArch();
+    auto dexfiles_ptr = unwindstack::CreateDexFiles(arch, crash_time_memory);
+    new_uwinder->SetDexFiles(dexfiles_ptr.get());
 
-  auto *crash_time_maps = dynamic_cast<unwindstack::LocalUpdatableMaps *>(
-      crash_time_unwinder->GetMaps());
-  if (crash_time_maps != nullptr) {
-    crash_time_maps->Reparse(nullptr);
+    crash_time_unwinder = new_uwinder;
   }
 }
 
 ssize_t bsg_unwind_crash_stack(bugsnag_stackframe stack[BUGSNAG_FRAMES_MAX],
                                siginfo_t *info, void *user_context) {
-  if (crash_time_unwinder == nullptr || unwinding_crash_stack) {
+
+  auto local_unwinder = crash_time_unwinder;
+  if (local_unwinder == nullptr || unwinding_crash_stack) {
     return 0;
   }
   unwinding_crash_stack = true;
   if (user_context) {
-    crash_time_unwinder->SetRegs(unwindstack::Regs::CreateFromUcontext(
+    local_unwinder->SetRegs(unwindstack::Regs::CreateFromUcontext(
         unwindstack::Regs::CurrentArch(), user_context));
   } else {
     auto regs = unwindstack::Regs::CreateFromLocal();
     unwindstack::RegsGetLocal(regs);
-    crash_time_unwinder->SetRegs(regs);
+    local_unwinder->SetRegs(regs);
   }
 
-  crash_time_unwinder->Unwind();
+  local_unwinder->Unwind();
   int frame_count = 0;
-  for (auto &frame : crash_time_unwinder->frames()) {
+  for (auto &frame : local_unwinder->frames()) {
     auto &dst_frame = stack[frame_count];
     dst_frame.frame_address = frame.pc;
     dst_frame.line_number = frame.rel_pc;
