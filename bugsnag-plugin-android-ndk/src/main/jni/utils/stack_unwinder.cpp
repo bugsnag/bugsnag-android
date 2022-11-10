@@ -16,7 +16,7 @@ static unwindstack::Unwinder *crash_time_unwinder;
 // soft lock for using the crash time unwinder - if active, return without
 // attempting to unwind. This isn't a "real" lock to avoid deadlocking in the
 // event of a crash while handling an ANR or the reverse.
-static bool unwinding_crash_stack;
+static std::atomic_bool unwinding_crash_stack = ATOMIC_VAR_INIT(false);
 
 // Thread-safe, reusable unwinder - uses thread-specific memory caches
 static unwindstack::LocalUnwinder *current_time_unwinder;
@@ -125,18 +125,34 @@ void bsg_unwinder_refresh(void) {
     auto dexfiles_ptr = unwindstack::CreateDexFiles(arch, crash_time_memory);
     new_uwinder->SetDexFiles(dexfiles_ptr.get());
 
+    auto old_unwinder = crash_time_unwinder;
     crash_time_unwinder = new_uwinder;
+
+    // don't destroy an unwinder that is currently in use
+    if (!unwinding_crash_stack.load()) {
+      delete old_unwinder->GetMaps();
+      delete old_unwinder;
+    }
   }
 }
 
 ssize_t bsg_unwind_crash_stack(bugsnag_stackframe stack[BUGSNAG_FRAMES_MAX],
                                siginfo_t *info, void *user_context) {
 
-  auto local_unwinder = crash_time_unwinder;
-  if (local_unwinder == nullptr || unwinding_crash_stack) {
+  // we always check unwinding_crash_stack and set *before* attempting to
+  // retrieve the crash unwinder to avoid picking up an unwinder that is about
+  // to be destroyed by bsg_unwinder_refresh
+  static bool expected = false;
+  if (!std::atomic_compare_exchange_strong(&unwinding_crash_stack, &expected,
+                                           true)) {
     return 0;
   }
-  unwinding_crash_stack = true;
+  auto local_unwinder = crash_time_unwinder;
+  if (local_unwinder == nullptr) {
+    unwinding_crash_stack = false;
+    return 0;
+  }
+
   if (user_context) {
     local_unwinder->SetRegs(unwindstack::Regs::CreateFromUcontext(
         unwindstack::Regs::CurrentArch(), user_context));
