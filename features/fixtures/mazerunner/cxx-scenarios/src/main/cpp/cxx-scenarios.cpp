@@ -275,3 +275,4 @@ Java_com_bugsnag_android_mazerunner_scenarios_UnhandledNdkAutoNotifyFalseScenari
 }
 
 }
+

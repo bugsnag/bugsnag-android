@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* Fixed a very rare race-condition in refreshSymbolTable that could lead to empty native stack traces being reported
+  [#1781](https://github.com/bugsnag/bugsnag-android/pull/1781)
+
 ## 5.28.2 (2022-11-08)
 
 ### Bug fixes
