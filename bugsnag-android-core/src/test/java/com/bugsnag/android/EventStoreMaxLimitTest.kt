@@ -2,6 +2,7 @@ package com.bugsnag.android
 
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import com.bugsnag.android.BugsnagTestUtils.generateEvent
+import com.bugsnag.android.internal.BackgroundTaskService
 import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.convertToImmutableConfig
 import org.junit.After

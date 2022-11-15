@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import com.bugsnag.android.EventStore.EVENT_COMPARATOR
+import com.bugsnag.android.internal.BackgroundTaskService
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
