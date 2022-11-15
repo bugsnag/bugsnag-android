@@ -1,6 +1,5 @@
 package com.bugsnag.android
 
-import com.bugsnag.android.internal.BackgroundTaskService
 import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
