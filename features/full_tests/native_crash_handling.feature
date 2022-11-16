@@ -157,3 +157,18 @@ Feature: Native crash reporting
     And the "lineNumber" of stack frame 0 equals 0
     And the first significant stack frames match:
       | dispatch::Handler::handle(_jobject*) | CXXCallNullFunctionPointerScenario.cpp | 9 |
+
+  Scenario: Refresh symbol table during a crash
+    When I run "CXXRefreshSymbolTableDuringCrashScenario" and relaunch the crashed app
+    And I configure Bugsnag for "CXXRefreshSymbolTableDuringCrashScenario"
+    And I wait to receive an error
+    Then the error payload contains a completed unhandled native report
+    And the exception "errorClass" equals one of:
+      | SIGABRT |
+      | SIGSEGV |
+    And the exception "message" equals one of:
+      | Abort program                                     |
+      | Segmentation violation (invalid memory reference) |
+    And the exception "type" equals "c"
+    And the event "severity" equals "error"
+    And the event "unhandled" is true

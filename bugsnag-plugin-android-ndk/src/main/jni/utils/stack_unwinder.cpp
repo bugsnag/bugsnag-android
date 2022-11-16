@@ -16,7 +16,7 @@ static unwindstack::Unwinder *crash_time_unwinder;
 // soft lock for using the crash time unwinder - if active, return without
 // attempting to unwind. This isn't a "real" lock to avoid deadlocking in the
 // event of a crash while handling an ANR or the reverse.
-static bool unwinding_crash_stack;
+static std::atomic_bool unwinding_crash_stack = ATOMIC_VAR_INIT(false);
 
 // Thread-safe, reusable unwinder - uses thread-specific memory caches
 static unwindstack::LocalUnwinder *current_time_unwinder;
@@ -114,35 +114,57 @@ static void populate_code_identifier(const unwindstack::FrameData &frame,
 }
 
 void bsg_unwinder_refresh(void) {
-  if (crash_time_unwinder == nullptr) {
-    return;
-  }
+  auto crash_time_maps = new unwindstack::LocalUpdatableMaps();
+  if (crash_time_maps->Parse()) {
+    std::shared_ptr<unwindstack::Memory> crash_time_memory(
+        new unwindstack::MemoryLocal);
+    auto new_uwinder = new unwindstack::Unwinder(
+        BUGSNAG_FRAMES_MAX, crash_time_maps,
+        unwindstack::Regs::CreateFromLocal(), crash_time_memory);
+    auto arch = unwindstack::Regs::CurrentArch();
+    auto dexfiles_ptr = unwindstack::CreateDexFiles(arch, crash_time_memory);
+    new_uwinder->SetDexFiles(dexfiles_ptr.get());
 
-  auto *crash_time_maps = dynamic_cast<unwindstack::LocalUpdatableMaps *>(
-      crash_time_unwinder->GetMaps());
-  if (crash_time_maps != nullptr) {
-    crash_time_maps->Reparse(nullptr);
+    auto old_unwinder = crash_time_unwinder;
+    crash_time_unwinder = new_uwinder;
+
+    // don't destroy an unwinder that is currently in use
+    if (!unwinding_crash_stack.load()) {
+      delete old_unwinder->GetMaps();
+      delete old_unwinder;
+    }
   }
 }
 
 ssize_t bsg_unwind_crash_stack(bugsnag_stackframe stack[BUGSNAG_FRAMES_MAX],
                                siginfo_t *info, void *user_context) {
-  if (crash_time_unwinder == nullptr || unwinding_crash_stack) {
+
+  // we always check unwinding_crash_stack and set *before* attempting to
+  // retrieve the crash unwinder to avoid picking up an unwinder that is about
+  // to be destroyed by bsg_unwinder_refresh
+  static bool expected = false;
+  if (!std::atomic_compare_exchange_strong(&unwinding_crash_stack, &expected,
+                                           true)) {
     return 0;
   }
-  unwinding_crash_stack = true;
+  auto local_unwinder = crash_time_unwinder;
+  if (local_unwinder == nullptr) {
+    unwinding_crash_stack = false;
+    return 0;
+  }
+
   if (user_context) {
-    crash_time_unwinder->SetRegs(unwindstack::Regs::CreateFromUcontext(
+    local_unwinder->SetRegs(unwindstack::Regs::CreateFromUcontext(
         unwindstack::Regs::CurrentArch(), user_context));
   } else {
     auto regs = unwindstack::Regs::CreateFromLocal();
     unwindstack::RegsGetLocal(regs);
-    crash_time_unwinder->SetRegs(regs);
+    local_unwinder->SetRegs(regs);
   }
 
-  crash_time_unwinder->Unwind();
+  local_unwinder->Unwind();
   int frame_count = 0;
-  for (auto &frame : crash_time_unwinder->frames()) {
+  for (auto &frame : local_unwinder->frames()) {
     auto &dst_frame = stack[frame_count];
     dst_frame.frame_address = frame.pc;
     dst_frame.line_number = frame.rel_pc;

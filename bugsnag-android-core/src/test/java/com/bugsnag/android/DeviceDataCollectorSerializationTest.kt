@@ -6,6 +6,7 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.util.DisplayMetrics
 import com.bugsnag.android.BugsnagTestUtils.generateDeviceBuildInfo
+import com.bugsnag.android.internal.BackgroundTaskService
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized

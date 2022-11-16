@@ -1,4 +1,4 @@
-package com.bugsnag.android
+package com.bugsnag.android.internal
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull

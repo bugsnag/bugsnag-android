@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
+import com.bugsnag.android.internal.BackgroundTaskService
 import com.bugsnag.android.internal.StateObserver
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull

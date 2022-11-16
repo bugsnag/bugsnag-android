@@ -517,10 +517,6 @@ Java_com_bugsnag_android_ndk_NativeBridge_updateIsLaunching(
   bugsnag_app_set_is_launching(&bsg_global_env->next_event, new_value);
   bsg_update_next_run_info(bsg_global_env);
   release_env_write_lock();
-
-  if (!new_value) {
-    bugsnag_refresh_symbol_table();
-  }
 }
 
 JNIEXPORT void JNICALL
