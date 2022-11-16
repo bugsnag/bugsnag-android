@@ -4,6 +4,7 @@ import android.app.ActivityManager
 import android.content.Context
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import com.bugsnag.android.BugsnagTestUtils.generateDevice
+import com.bugsnag.android.internal.BackgroundTaskService
 import com.bugsnag.android.internal.ImmutableConfig
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse

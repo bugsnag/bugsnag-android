@@ -1,7 +1,9 @@
 package com.bugsnag.android;
 
+import com.bugsnag.android.internal.BackgroundTaskService;
 import com.bugsnag.android.internal.DateUtils;
 import com.bugsnag.android.internal.ImmutableConfig;
+import com.bugsnag.android.internal.TaskType;
 
 import android.os.SystemClock;
 
@@ -18,7 +20,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
 
 class SessionTracker extends BaseObservable {
 

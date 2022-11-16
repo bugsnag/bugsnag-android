@@ -2,11 +2,13 @@ package com.bugsnag.android;
 
 import static com.bugsnag.android.SeverityReason.REASON_HANDLED_EXCEPTION;
 
+import com.bugsnag.android.internal.BackgroundTaskService;
 import com.bugsnag.android.internal.ImmutableConfig;
 import com.bugsnag.android.internal.InternalMetrics;
 import com.bugsnag.android.internal.InternalMetricsImpl;
 import com.bugsnag.android.internal.InternalMetricsNoop;
 import com.bugsnag.android.internal.StateObserver;
+import com.bugsnag.android.internal.TaskType;
 import com.bugsnag.android.internal.dag.ConfigModule;
 import com.bugsnag.android.internal.dag.ContextModule;
 import com.bugsnag.android.internal.dag.SystemServiceModule;
