@@ -17,18 +17,21 @@ import com.bugsnag.android.StateEvent.UpdateContext
 import com.bugsnag.android.StateEvent.UpdateInForeground
 import com.bugsnag.android.StateEvent.UpdateOrientation
 import com.bugsnag.android.StateEvent.UpdateUser
+import com.bugsnag.android.internal.BackgroundTaskService
 import com.bugsnag.android.internal.StateObserver
+import com.bugsnag.android.internal.TaskType
 import java.io.File
 import java.io.FileFilter
 import java.nio.charset.Charset
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 /**
  * Observes changes in the Bugsnag environment, propagating them to the native layer
  */
-class NativeBridge : StateObserver {
+class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObserver {
 
     private val lock = ReentrantLock()
     private val installed = AtomicBoolean(false)
@@ -125,7 +128,14 @@ class NativeBridge : StateObserver {
                 makeSafe(event.contextActivity ?: "")
             )
             is StateEvent.UpdateLastRunInfo -> updateLastRunInfo(event.consecutiveLaunchCrashes)
-            is StateEvent.UpdateIsLaunching -> updateIsLaunching(event.isLaunching)
+            is StateEvent.UpdateIsLaunching -> {
+                updateIsLaunching(event.isLaunching)
+
+                if (!event.isLaunching) {
+                    // we refreshSymbolTable on the background to avoid holding up the main thread
+                    bgTaskService.submitTask(TaskType.DEFAULT, this::refreshSymbolTable)
+                }
+            }
             is UpdateOrientation -> updateOrientation(event.orientation ?: "")
             is UpdateUser -> {
                 updateUserId(makeSafe(event.user.id ?: ""))
@@ -164,12 +174,13 @@ class NativeBridge : StateObserver {
     }
 
     private fun deliverPendingReports() {
-        lock.lock()
         val filenameRegex = """.*\.crash$""".toRegex()
+        lock.lock()
         try {
             val outDir = reportDirectory
             if (outDir.exists()) {
-                val fileList = outDir.listFiles(FileFilter { filenameRegex.containsMatchIn(it.name) })
+                val fileList =
+                    outDir.listFiles(FileFilter { filenameRegex.containsMatchIn(it.name) })
                 if (fileList != null) {
                     for (file in fileList) {
                         deliverReportAtPath(file.absolutePath)
@@ -186,8 +197,7 @@ class NativeBridge : StateObserver {
     }
 
     private fun handleInstallMessage(arg: Install) {
-        lock.lock()
-        try {
+        lock.withLock {
             if (installed.get()) {
                 logger.w("Received duplicate setup message with arg: $arg")
             } else {
@@ -204,8 +214,6 @@ class NativeBridge : StateObserver {
                 )
                 installed.set(true)
             }
-        } finally {
-            lock.unlock()
         }
     }
 
