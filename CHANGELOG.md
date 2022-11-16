@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 5.28.3 (2022-11-16)
 
 ### Bug fixes
 
