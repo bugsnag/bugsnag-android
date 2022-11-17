@@ -4,7 +4,7 @@ import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Client
 import com.bugsnag.android.Configuration
-import java.lang.RuntimeException
+import com.bugsnag.android.mazerunner.reportDuration
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 
@@ -23,9 +23,25 @@ internal class BugsnagInitScenario(
         val callables = mutableListOf<Callable<Client?>>()
 
         IntRange(1, 25).forEach {
-            callables.add(Callable { Bugsnag.start(context) })
-            callables.add(Callable { Bugsnag.start(context, config.apiKey) })
-            callables.add(Callable { Bugsnag.start(context, Configuration(config.apiKey)) })
+            callables.add(
+                Callable {
+                    reportDuration("Bugsnag.start") { Bugsnag.start(context) }
+                }
+            )
+
+            callables.add(
+                Callable {
+                    reportDuration("Bugsnag.start") { Bugsnag.start(context, config.apiKey) }
+                }
+            )
+
+            callables.add(
+                Callable {
+                    reportDuration("Bugsnag.start") {
+                        Bugsnag.start(context, Configuration(config.apiKey))
+                    }
+                }
+            )
         }
 
         val futures = threadPool.invokeAll(callables)
