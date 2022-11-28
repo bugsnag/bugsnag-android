@@ -256,12 +256,6 @@ rescue Selenium::WebDriver::Error::UnknownError
   return false
 end
 
-Then("I sort the errors by {string}") do |comparator|
-  Maze::Server.errors.remaining.sort_by { |request|
-    Maze::Helper.read_key_path(request[:body], comparator)
-  }
-end
-
 Then("the exception stacktrace matches the thread stacktrace") do
   exc_trace = read_key_path(Server.current_request[:body], "events.0.exceptions.0.stacktrace")
   thread_trace = read_key_path(Server.current_request[:body], "events.0.threads.0.stacktrace")

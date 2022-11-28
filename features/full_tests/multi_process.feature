@@ -6,7 +6,7 @@ Feature: Reporting errors in multi process apps
   Scenario: Handled JVM error
     When I run "MultiProcessHandledExceptionScenario"
     Then I wait to receive 2 errors
-    And I sort the errors by "events.0.metaData.app.processName"
+    And I sort the errors by the payload field "events.0.metaData.app.processName"
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the error payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "java.lang.RuntimeException"
@@ -39,7 +39,7 @@ Feature: Reporting errors in multi process apps
     And I run "MultiProcessUnhandledExceptionScenario" and relaunch the crashed app
     And I run "MultiProcessUnhandledExceptionScenario"
     Then I wait to receive 2 errors
-    And I sort the errors by "events.0.metaData.app.processName"
+    And I sort the errors by the payload field "events.0.metaData.app.processName"
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the error payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "java.lang.RuntimeException"
@@ -58,7 +58,7 @@ Feature: Reporting errors in multi process apps
   Scenario: Handled NDK error
     When I run "MultiProcessHandledCXXErrorScenario"
     Then I wait to receive 2 errors
-    And I sort the errors by "events.0.metaData.app.processName"
+    And I sort the errors by the payload field "events.0.metaData.app.processName"
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the error payload contains a completed handled native report
     And the error payload field "events" is an array with 1 elements
@@ -89,7 +89,7 @@ Feature: Reporting errors in multi process apps
     And I run "MultiProcessUnhandledCXXErrorScenario" and relaunch the crashed app
     And I run "MultiProcessUnhandledCXXErrorScenario"
     Then I wait to receive 2 errors
-    And I sort the errors by "events.0.metaData.app.processName"
+    And I sort the errors by the payload field "events.0.metaData.app.processName"
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the error payload contains a completed handled native report
     And the error payload field "events" is an array with 1 elements
@@ -118,7 +118,7 @@ Feature: Reporting errors in multi process apps
   Scenario: User/device information is migrated from SharedPreferences
     When I run "SharedPrefMigrationScenario"
     Then I wait to receive 2 errors
-    And I sort the errors by "events.0.metaData.app.processName"
+    And I sort the errors by the payload field "events.0.metaData.app.processName"
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the error payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "java.lang.RuntimeException"
