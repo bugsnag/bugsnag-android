@@ -127,9 +127,6 @@ steps:
     concurrency_method: eager
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r16"
-    # PLAT-9240: Soft fail pending resolution of BrowserStack secure tunnel outage
-    soft_fail:
-      - exit_status: 2
 
   - label: ':android: Android 7 NDK r19 smoke tests'
     key: 'android-7-smoke'
@@ -156,9 +153,6 @@ steps:
     concurrency_method: eager
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
-    # PLAT-9240: Soft fail pending resolution of BrowserStack secure tunnel outage
-    soft_fail:
-      - exit_status: 2
 
   - label: ':android: Android 8.1 NDK r19 smoke tests'
     key: 'android-8-1-smoke'

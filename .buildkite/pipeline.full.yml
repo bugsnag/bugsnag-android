@@ -101,9 +101,6 @@ steps:
     concurrency: 24
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
-    # PLAT-9240: Soft fail pending resolution of BrowserStack secure tunnel outage
-    soft_fail:
-      - exit_status: 2
 
   - label: ':android: Android 6 NDK r16 end-to-end tests - batch 2'
     depends_on: "fixture-r16"
@@ -130,9 +127,6 @@ steps:
     concurrency: 24
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
-    # PLAT-9240: Soft fail pending resolution of BrowserStack secure tunnel outage
-    soft_fail:
-      - exit_status: 2
 
   - label: ':android: Android 7 NDK r19 end-to-end tests - batch 1'
     depends_on: "fixture-r19"
@@ -159,9 +153,6 @@ steps:
     concurrency: 24
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
-    # PLAT-9240: Soft fail pending resolution of BrowserStack secure tunnel outage
-    soft_fail:
-      - exit_status: 2
 
   - label: ':android: Android 7 NDK r19 end-to-end tests - batch 2'
     depends_on: "fixture-r19"
@@ -188,9 +179,6 @@ steps:
     concurrency: 24
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
-    # PLAT-9240: Soft fail pending resolution of BrowserStack secure tunnel outage
-    soft_fail:
-      - exit_status: 2
 
   - label: ':android: Android 8.1 NDK r19 end-to-end tests - batch 1'
     depends_on: "fixture-r19"
