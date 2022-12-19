@@ -226,8 +226,8 @@ Feature: Handled smoke tests
     And the event "user.name" equals "Jack Mill"
 
     # Breadcrumbs
-    And the event has a "manual" breadcrumb with message "Initiate lift"
-    And the event has a "manual" breadcrumb with message "Disable lift"
+    And the event has a "manual" breadcrumb named "Initiate lift"
+    And the event has a "manual" breadcrumb named "Disable lift"
     And the event has a "log" breadcrumb named "Cold beans detected"
 
     # Context
