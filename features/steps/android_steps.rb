@@ -223,17 +223,6 @@ Then("the event has {int} breadcrumbs") do |expected_count|
   fail("Incorrect number of breadcrumbs found: #{value.length()}, expected: #{expected_count}") if value.length() != expected_count.to_i
 end
 
-Then("the event has a {string} breadcrumb with the message {string}") do |type, message|
-  value = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.breadcrumbs")
-  found = false
-  value.each do |crumb|
-    if crumb["type"] == type and crumb["name"] == message
-      found = true
-    end
-  end
-  fail("No breadcrumb matched: #{value}") unless found
-end
-
 Then("the exception stacktrace matches the thread stacktrace") do
   exc_trace = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.exceptions.0.stacktrace")
   thread_trace = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.threads.0.stacktrace")
