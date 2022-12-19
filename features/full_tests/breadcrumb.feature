@@ -30,7 +30,7 @@ Feature: Reporting Breadcrumbs
     When I run "BreadcrumbAutoScenario"
     And I wait to receive an error
     Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the event has a "state" breadcrumb with the message "Bugsnag loaded"
+    And the event has a "state" breadcrumb named "Bugsnag loaded"
 
   Scenario: Error Breadcrumbs appear in subsequent events
     When I run "ErrorBreadcrumbsScenario" and relaunch the crashed app
