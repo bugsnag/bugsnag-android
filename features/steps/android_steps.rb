@@ -261,5 +261,12 @@ Then("the error is correct for {string} or I allow a retry") do |scenario|
   when 'MultiThreadedStartupScenario'
     Maze.dynamic_retry = true if message == 'You must call Bugsnag.start before any other Bugsnag methods'
     Maze.check.equal 'Scenario complete', message
+  when 'InForegroundScenario', 'CXXBackgroundNotifyScenario', 'CXXDelayedCrashScenario'
+    begin
+      step 'the event "app.inForeground" is false'
+    rescue Test::Unit::AssertionFailedError
+      Maze.dynamic_retry = true
+      raise
+    end
   end
 end
