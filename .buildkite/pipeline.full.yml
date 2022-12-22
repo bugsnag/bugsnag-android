@@ -82,7 +82,7 @@ steps:
     plugins:
       artifacts#v1.2.0:
         download:
-          - "fixture_r16_url.txt"
+          - "build/fixture_r16_url.txt"
           - "build/fixture-r16/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v3.7.0:
@@ -91,7 +91,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "--app=@fixture_r16_url.txt"
+          - "--app=@/app/build/fixture_r16_url.txt"
           - "--farm=bs"
           - "--device=ANDROID_6_0_GOOGLE_NEXUS_6"
           - "--appium-version=1.20.2"
@@ -108,7 +108,7 @@ steps:
     plugins:
       artifacts#v1.2.0:
         download:
-          - "fixture_r16_url.txt"
+          - "build/fixture_r16_url.txt"
           - "build/fixture-r16/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v3.7.0:
@@ -117,7 +117,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=@fixture_r16_url.txt"
+          - "--app=@/app/build/fixture_r16_url.txt"
           - "--farm=bs"
           - "--device=ANDROID_6_0_GOOGLE_NEXUS_6"
           - "--appium-version=1.20.2"
@@ -134,7 +134,7 @@ steps:
     plugins:
       artifacts#v1.2.0:
         download:
-          - "fixture_r19_url.txt"
+          - "build/fixture_r19_url.txt"
           - "build/fixture-r19/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v3.7.0:
@@ -143,7 +143,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "--app=@fixture_r19_url.txt"
+          - "--app=@/app/build/fixture_r19_url.txt"
           - "--farm=bs"
           - "--device=ANDROID_7_1"
           - "--appium-version=1.20.2"
@@ -160,7 +160,7 @@ steps:
     plugins:
       artifacts#v1.2.0:
         download:
-          - "fixture_r19_url.txt"
+          - "build/fixture_r19_url.txt"
           - "build/fixture-r19/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v3.7.0:
@@ -169,7 +169,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=@fixture_r19_url.txt"
+          - "--app=@/app/build/fixture_r19_url.txt"
           - "--farm=bs"
           - "--device=ANDROID_7_1"
           - "--appium-version=1.20.2"
@@ -186,7 +186,7 @@ steps:
     plugins:
       artifacts#v1.2.0:
         download:
-          - "fixture_r19_url.txt"
+          - "build/fixture_r19_url.txt"
           - "build/fixture-r19/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v3.7.0:
@@ -195,7 +195,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "--app=@fixture_r19_url.txt"
+          - "--app=@/app/build/fixture_r19_url.txt"
           - "--farm=bs"
           - "--device=ANDROID_8_1"
           - "--appium-version=1.20.2"
@@ -212,7 +212,7 @@ steps:
     plugins:
       artifacts#v1.2.0:
         download:
-          - "fixture_r19_url.txt"
+          - "build/fixture_r19_url.txt"
           - "build/fixture-r19/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v3.7.0:
@@ -221,7 +221,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=@fixture_r19_url.txt"
+          - "--app=@/app/build/fixture_r19_url.txt"
           - "--farm=bs"
           - "--device=ANDROID_8_1"
           - "--appium-version=1.20.2"
@@ -238,14 +238,14 @@ steps:
     plugins:
       artifacts#v1.2.0:
         download:
-          - "fixture_r21_url.txt"
+          - "build/fixture_r21_url.txt"
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v3.7.0:
         pull: android-maze-runner
         run: android-maze-runner
         command:
-          - "--app=@fixture_r21_url.txt"
+          - "--app=@/app/build/fixture_r21_url.txt"
           - "--farm=bs"
           - "--device=ANDROID_9_0"
           - "--appium-version=1.20.2"
@@ -264,7 +264,7 @@ steps:
     plugins:
       artifacts#v1.2.0:
         download:
-          - "fixture_r21_url.txt"
+          - "build/fixture_r21_url.txt"
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v3.7.0:
@@ -273,7 +273,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=@fixture_r21_url.txt"
+          - "--app=@/app/build/fixture_r21_url.txt"
           - "--farm=bs"
           - "--device=ANDROID_9_0"
           - "--appium-version=1.20.2"
@@ -290,7 +290,7 @@ steps:
     plugins:
       artifacts#v1.2.0:
         download:
-          - "fixture_r21_url.txt"
+          - "build/fixture_r21_url.txt"
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v3.7.0:
@@ -299,7 +299,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "--app=@fixture_r21_url.txt"
+          - "--app=@/app/build/fixture_r21_url.txt"
           - "--farm=bs"
           - "--device=ANDROID_10_0"
           - "--appium-version=1.20.2"
@@ -316,7 +316,7 @@ steps:
     plugins:
       artifacts#v1.2.0:
         download:
-          - "fixture_r21_url.txt"
+          - "build/fixture_r21_url.txt"
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v3.7.0:
@@ -325,7 +325,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=@fixture_r21_url.txt"
+          - "--app=@/app/build/fixture_r21_url.txt"
           - "--farm=bs"
           - "--device=ANDROID_10_0"
           - "--appium-version=1.20.2"
@@ -346,7 +346,7 @@ steps:
     plugins:
       artifacts#v1.2.0:
         download:
-          - "fixture_r21_url.txt"
+          - "build/fixture_r21_url.txt"
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v3.7.0:
@@ -355,7 +355,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "--app=@fixture_r21_url.txt"
+          - "--app=@/app/build/fixture_r21_url.txt"
           - "--farm=bs"
           - "--device=ANDROID_11_0"
           - "--appium-version=1.20.2"
@@ -372,7 +372,7 @@ steps:
     plugins:
       artifacts#v1.2.0:
         download:
-          - "fixture_r21_url.txt"
+          - "build/fixture_r21_url.txt"
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v3.7.0:
@@ -381,7 +381,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=@fixture_r21_url.txt"
+          - "--app=@/app/build/fixture_r21_url.txt"
           - "--farm=bs"
           - "--device=ANDROID_11_0"
           - "--appium-version=1.20.2"
@@ -398,7 +398,7 @@ steps:
     plugins:
       artifacts#v1.2.0:
         download:
-          - "fixture_r21_url.txt"
+          - "build/fixture_r21_url.txt"
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v3.7.0:
@@ -407,7 +407,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "--app=@fixture_r21_url.txt"
+          - "--app=@/app/build/fixture_r21_url.txt"
           - "--farm=bs"
           - "--device=ANDROID_13_0"
           - "--appium-version=1.20.2"
@@ -424,7 +424,7 @@ steps:
     plugins:
       artifacts#v1.2.0:
         download:
-          - "fixture_r21_url.txt"
+          - "build/fixture_r21_url.txt"
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v3.7.0:
@@ -433,7 +433,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=@fixture_r21_url.txt"
+          - "--app=@/app/build/fixture_r21_url.txt"
           - "--farm=bs"
           - "--device=ANDROID_13_0"
           - "--appium-version=1.20.2"
