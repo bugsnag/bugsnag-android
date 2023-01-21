@@ -20,6 +20,8 @@ import java.net.URL
 import kotlin.concurrent.thread
 import kotlin.math.max
 
+const val CONFIG_FILE_TIMEOUT = 5000
+
 class MainActivity : Activity() {
 
     private val mainHandler = Handler(Looper.getMainLooper())
@@ -29,6 +31,7 @@ class MainActivity : Activity() {
 
     var scenario: Scenario? = null
     var polling = false
+    var mazeAddress: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,6 +76,33 @@ class MainActivity : Activity() {
         log("MainActivity.onResume complete")
     }
 
+    private fun setMazeRunnerAddress() {
+        val context = MazerunnerApp.applicationContext()
+        val externalFilesDir = context.getExternalFilesDir(null)
+        val configFile = File(externalFilesDir, "fixture_config.json")
+        log("Attempting to read Maze Runner address from config file ${configFile.path}")
+
+        // Poll for the fixture config file
+        val pollStart = System.currentTimeMillis()
+        while (System.currentTimeMillis() - pollStart < CONFIG_FILE_TIMEOUT) {
+            if (configFile.exists()) {
+                val fileContents = configFile.inputStream().use { it.reader().readText() }
+                val fixtureConfig = JSONObject(fileContents)
+                mazeAddress = getStringSafely(fixtureConfig, "maze_address")
+                log("Maze Runner address set from config file: $mazeAddress")
+                break
+            }
+
+            Thread.sleep(250)
+        }
+
+        // Assume we are running in legacy mode on BrowserStack
+        if (mazeAddress == null) {
+            log("Failed to read Maze Runner address from config file, reverting to legacy BrowserStack address")
+            mazeAddress = "bs-local.com:9339"
+        }
+    }
+
     // Checks general internet and secure tunnel connectivity
     private fun checkNetwork() {
         log("Checking network connectivity")
@@ -84,7 +114,7 @@ class MainActivity : Activity() {
         }
 
         try {
-            URL("http://bs-local.com:9339").readText()
+            URL("http://$mazeAddress").readText()
             log("Connection to Maze Runner seems ok")
         } catch (e: Exception) {
             log("Connection to Maze Runner FAILED", e)
@@ -101,6 +131,7 @@ class MainActivity : Activity() {
         // Get the next maze runner command
         polling = true
         thread(start = true) {
+            if (mazeAddress == null) setMazeRunnerAddress()
             checkNetwork()
 
             while (polling) {
@@ -162,7 +193,7 @@ class MainActivity : Activity() {
     }
 
     private fun readCommand(): String {
-        val commandUrl = "http://bs-local.com:9339/command"
+        val commandUrl = "http://$mazeAddress/command"
         val urlConnection = URL(commandUrl).openConnection() as HttpURLConnection
         try {
             return urlConnection.inputStream.use { it.reader().readText() }
