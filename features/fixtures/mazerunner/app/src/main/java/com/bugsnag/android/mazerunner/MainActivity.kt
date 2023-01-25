@@ -83,21 +83,23 @@ class MainActivity : Activity() {
         log("Attempting to read Maze Runner address from config file ${configFile.path}")
 
         // Poll for the fixture config file
-        val pollStart = System.currentTimeMillis()
-        while (System.currentTimeMillis() - pollStart < CONFIG_FILE_TIMEOUT) {
+        val pollEnd = System.currentTimeMillis() + CONFIG_FILE_TIMEOUT
+        while (System.currentTimeMillis() < pollEnd) {
             if (configFile.exists()) {
-                val fileContents = configFile.inputStream().use { it.reader().readText() }
-                val fixtureConfig = JSONObject(fileContents)
+                val fileContents = configFile.readText()
+                val fixtureConfig = runCatching { JSONObject(fileContents) }.getOrNull()
                 mazeAddress = getStringSafely(fixtureConfig, "maze_address")
-                log("Maze Runner address set from config file: $mazeAddress")
-                break
+                if (!mazeAddress.isNullOrBlank()) {
+                    log("Maze Runner address set from config file: $mazeAddress")
+                    break
+                }
             }
 
             Thread.sleep(250)
         }
 
         // Assume we are running in legacy mode on BrowserStack
-        if (mazeAddress == null) {
+        if (mazeAddress.isNullOrBlank()) {
             log("Failed to read Maze Runner address from config file, reverting to legacy BrowserStack address")
             mazeAddress = "bs-local.com:9339"
         }
@@ -122,8 +124,8 @@ class MainActivity : Activity() {
     }
 
     // As per JSONObject.getString but returns and empty string rather than throwing if not present
-    private fun getStringSafely(jsonObject: JSONObject, key: String): String {
-        return if (jsonObject.has(key)) jsonObject.getString(key) else ""
+    private fun getStringSafely(jsonObject: JSONObject?, key: String): String {
+        return if (jsonObject!!.has(key)) jsonObject.getString(key) else ""
     }
 
     // Starts a thread to poll for Maze Runner actions to perform
