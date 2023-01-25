@@ -12,3 +12,8 @@ else
   buildkite-agent pipeline upload .buildkite/block.step.yml
 fi
 
+if [[ "$BUILDKITE_MESSAGE" == *"[bitbar]"* ||
+  ! -z "$BITBAR" ]]; then
+  # Run BitBar steps
+  buildkite-agent pipeline upload .buildkite/pipeline.bitbar.yml
+fi

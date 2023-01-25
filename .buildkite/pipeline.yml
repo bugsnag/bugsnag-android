@@ -38,6 +38,7 @@ steps:
     agents:
       queue: macos-12-arm
     artifact_paths:
+      - "build/fixture-r21.apk"
       - "build/fixture_r21_url.txt"
       - "build/fixture-r21/*"
     commands:
