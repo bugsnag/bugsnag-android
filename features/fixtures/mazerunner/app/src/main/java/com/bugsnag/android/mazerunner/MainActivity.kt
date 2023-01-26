@@ -125,7 +125,7 @@ class MainActivity : Activity() {
 
     // As per JSONObject.getString but returns and empty string rather than throwing if not present
     private fun getStringSafely(jsonObject: JSONObject?, key: String): String {
-        return if (jsonObject!!.has(key)) jsonObject.getString(key) else ""
+        return jsonObject?.optString(key) ?: ""
     }
 
     // Starts a thread to poll for Maze Runner actions to perform
