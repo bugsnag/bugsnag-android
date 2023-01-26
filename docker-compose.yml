@@ -44,8 +44,8 @@ services:
       BUILDKITE_RETRY_COUNT:
       BUILDKITE_STEP_KEY:
       MAZE_BUGSNAG_API_KEY:
-      BITBAR_USERNAME:
-      BITBAR_ACCESS_KEY:
+      BROWSER_STACK_USERNAME:
+      BROWSER_STACK_ACCESS_KEY:
       TEST_FIXTURE_SYMBOL_DIR:
     volumes:
       - ./build:/app/build
