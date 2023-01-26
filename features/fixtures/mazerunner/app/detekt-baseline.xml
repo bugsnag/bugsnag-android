@@ -2,6 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
+    <ID>MagicNumber:MainActivity.kt$MainActivity$250</ID>
     <ID>MagicNumber:MainActivity.kt$MainActivity$1000</ID>
   </CurrentIssues>
 </SmellBaseline>
