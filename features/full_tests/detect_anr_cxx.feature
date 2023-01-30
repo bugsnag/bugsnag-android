@@ -3,6 +3,8 @@ Feature: ANRs triggered in CXX code are captured
   Background:
     Given I clear all persistent data
 
+  # PLAT-9580
+  @skip_bitbar
   Scenario: ANR triggered in CXX code is captured
     When I run "CXXAnrScenario"
     And I wait for 2 seconds
@@ -17,6 +19,8 @@ Feature: ANRs triggered in CXX code are captured
     And the error payload field "events.0.threads.0.type" equals "android"
     And the error payload field "events.0.threads.0.stacktrace.0.type" is null
 
+  # PLAT-9580
+  @skip_bitbar
   Scenario: ANR triggered in CXX code is captured even when NDK detection is disabled
     When I run "CXXAnrNdkDisabledScenario"
     And I wait for 2 seconds

@@ -53,8 +53,10 @@ Feature: Switching automatic error detection on/off for Unity
     And the event "severityReason.type" equals "signal"
     And the event "severityReason.unhandledOverridden" is false
 
-# PLAT-6620
+  # PLAT-6620
   @skip_android_8_1
+  # PLAT-9580
+  @skip_bitbar
   Scenario: ANR captured with autoDetectAnrs reenabled
     When I clear any error dialogue
     And I run "AutoDetectAnrsTrueScenario"
