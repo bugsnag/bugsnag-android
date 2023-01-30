@@ -12,8 +12,13 @@ else
   buildkite-agent pipeline upload .buildkite/block.step.yml
 fi
 
-if [[ "$BUILDKITE_MESSAGE" == *"[bitbar]"* ||
+# Run BrowserStack steps unless instructed not to
+if [[ "$BUILDKITE_MESSAGE" != *"[notbs]"* ]]; then
+  buildkite-agent pipeline upload .buildkite/pipeline.bs.yml
+fi
+
+# Run BitBar steps if instructed to
+if [[ "$BUILDKITE_MESSAGE" == *"[bb]"* ||
   ! -z "$BITBAR" ]]; then
-  # Run BitBar steps
-  buildkite-agent pipeline upload .buildkite/pipeline.bitbar.yml
+  buildkite-agent pipeline upload .buildkite/pipeline.bb.yml
 fi
