@@ -3,6 +3,8 @@ Feature: Loading values into the configuration
   Background:
     Given I clear all persistent data
 
+  # TODO Pending PLAT-9523
+  @skip_bitbar
   Scenario: Load configuration initialised from the Manifest
     When I run "LoadConfigurationFromManifestScenario"
     Then I wait to receive an error
