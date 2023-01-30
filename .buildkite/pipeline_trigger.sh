@@ -13,7 +13,7 @@ else
 fi
 
 # Run BrowserStack steps unless instructed not to
-if [[ "$BUILDKITE_MESSAGE" != *"[notbs]"* ]]; then
+if [[ "$BUILDKITE_MESSAGE" != *"[nobs]"* ]]; then
   buildkite-agent pipeline upload .buildkite/pipeline.bs.yml
 fi
 

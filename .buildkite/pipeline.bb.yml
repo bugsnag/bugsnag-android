@@ -1,19 +1,5 @@
 steps:
 
-  - label: ':android: Build fixture APK r21'
-    key: "fixture-r21"
-    timeout_in_minutes: 30
-    agents:
-      queue: macos-12-arm
-    artifact_paths:
-      - "build/fixture-r21.apk"
-      - "build/fixture_r21_url.txt"
-      - "build/fixture-r21/*"
-    commands:
-      - bundle install
-      - make fixture-r21
-      - bundle exec upload-app --app=./build/fixture-r21.apk --app-id-file=build/fixture_r21_url.txt
-
   #
   # BitBar PoC
   #

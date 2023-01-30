@@ -1,45 +1,5 @@
 steps:
 
-  - label: ':android: Build fixture APK r16'
-    key: "fixture-r16"
-    timeout_in_minutes: 30
-    agents:
-      queue: macos-12-arm
-    artifact_paths:
-      - "build/fixture_r16_url.txt"
-      - "build/fixture-r16/*"
-    commands:
-      - bundle install
-      - make fixture-r16
-      - bundle exec upload-app --app=./build/fixture-r16.apk --app-id-file=build/fixture_r16_url.txt
-
-  - label: ':android: Build fixture APK r19'
-    key: "fixture-r19"
-    timeout_in_minutes: 30
-    agents:
-      queue: macos-12-arm
-    artifact_paths:
-      - "build/fixture_r19_url.txt"
-      - "build/fixture-r19/*"
-    commands:
-      - bundle install
-      - make fixture-r19
-      - bundle exec upload-app --app=./build/fixture-r19.apk --app-id-file=build/fixture_r19_url.txt
-
-  - label: ':android: Build fixture APK r21'
-    key: "fixture-r21"
-    timeout_in_minutes: 30
-    agents:
-      queue: macos-12-arm
-    artifact_paths:
-      - "build/fixture-r21.apk"
-      - "build/fixture_r21_url.txt"
-      - "build/fixture-r21/*"
-    commands:
-      - bundle install
-      - make fixture-r21
-      - bundle exec upload-app --app=./build/fixture-r21.apk --app-id-file=build/fixture_r21_url.txt
-
   - label: ':android: Android 4.4 NDK r16 smoke tests'
     key: 'android-4-4-smoke'
     depends_on: "fixture-r16"
