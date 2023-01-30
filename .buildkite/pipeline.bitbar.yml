@@ -20,9 +20,7 @@ steps:
           - "--exclude=features/full_tests/[^a-k].*.feature"
           - "--app=build/fixture-r21.apk"
           - "--farm=bb"
-          - "--device=ANDROID_10_0"
-          - "--os=android"
-          - "--os-version=10"
+          - "--device=ANDROID_10"
           - "--no-tunnel"
           - "--aws-public-ip"
     env:
@@ -49,9 +47,7 @@ steps:
           - "--exclude=features/full_tests/[^l-z].*.feature"
           - "--app=build/fixture-r21.apk"
           - "--farm=bb"
-          - "--device=ANDROID_10_0"
-          - "--os=android"
-          - "--os-version=10"
+          - "--device=ANDROID_10"
           - "--no-tunnel"
           - "--aws-public-ip"
     env:
