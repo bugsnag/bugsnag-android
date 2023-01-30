@@ -14,8 +14,18 @@ def execute_command(action, scenario_name = '')
 
   # Reset values to defaults
   $scenario_mode = ''
-  $sessions_endpoint = 'http://bs-local.com:9339/sessions'
-  $notify_endpoint = 'http://bs-local.com:9339/notify'
+  if Maze.config.farm == :bb
+    if Maze.config.aws_public_ip
+      $sessions_endpoint = "http://#{Maze.public_address}/sessions"
+      $notify_endpoint = "http://#{Maze.public_address}/notify"
+    else
+      $sessions_endpoint = "http://local:9339/sessions"
+      $notify_endpoint = "http://local:9339/notify"
+    end
+  else
+    $sessions_endpoint = 'http://bs-local.com:9339/sessions'
+    $notify_endpoint = 'http://bs-local.com:9339/notify'
+  end
 
   # Ensure fixture has read the command
   count = 600

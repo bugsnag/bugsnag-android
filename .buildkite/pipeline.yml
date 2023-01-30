@@ -38,6 +38,7 @@ steps:
     agents:
       queue: macos-12-arm
     artifact_paths:
+      - "build/fixture-r21.apk"
       - "build/fixture_r21_url.txt"
       - "build/fixture-r21/*"
     commands:
@@ -88,12 +89,12 @@ steps:
     depends_on: "fixture-r16"
     timeout_in_minutes: 60
     plugins:
-      artifacts#v1.2.0:
+      artifacts#v1.9.0:
         download:
           - "build/fixture_r16_url.txt"
           - "build/fixture-r16/*"
         upload: "maze_output/failed/**/*"
-      docker-compose#v3.7.0:
+      docker-compose#v4.7.0:
         pull: android-maze-runner-legacy
         run: android-maze-runner-legacy
         command:
@@ -113,12 +114,12 @@ steps:
     depends_on: "fixture-r16"
     timeout_in_minutes: 60
     plugins:
-      artifacts#v1.2.0:
+      artifacts#v1.9.0:
         download:
           - "build/fixture_r16_url.txt"
           - "build/fixture-r16/*"
         upload: "maze_output/failed/**/*"
-      docker-compose#v3.7.0:
+      docker-compose#v4.7.0:
         pull: android-maze-runner
         run: android-maze-runner
         command:
@@ -139,12 +140,12 @@ steps:
     depends_on: "fixture-r19"
     timeout_in_minutes: 60
     plugins:
-      artifacts#v1.2.0:
+      artifacts#v1.9.0:
         download:
           - "build/fixture_r19_url.txt"
           - "build/fixture-r19/*"
         upload: "maze_output/failed/**/*"
-      docker-compose#v3.7.0:
+      docker-compose#v4.7.0:
         pull: android-maze-runner
         run: android-maze-runner
         command:
@@ -165,12 +166,12 @@ steps:
     depends_on: "fixture-r19"
     timeout_in_minutes: 60
     plugins:
-      artifacts#v1.2.0:
+      artifacts#v1.9.0:
         download:
           - "build/fixture_r19_url.txt"
           - "build/fixture-r19/*"
         upload: "maze_output/failed/**/*"
-      docker-compose#v3.7.0:
+      docker-compose#v4.7.0:
         pull: android-maze-runner
         run: android-maze-runner
         command:
@@ -191,12 +192,12 @@ steps:
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
-      artifacts#v1.2.0:
+      artifacts#v1.9.0:
         download:
           - "build/fixture_r21_url.txt"
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
-      docker-compose#v3.7.0:
+      docker-compose#v4.7.0:
         pull: android-maze-runner
         run: android-maze-runner
         command:
@@ -217,12 +218,12 @@ steps:
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
-      artifacts#v1.2.0:
+      artifacts#v1.9.0:
         download:
           - "build/fixture_r21_url.txt"
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
-      docker-compose#v3.7.0:
+      docker-compose#v4.7.0:
         pull: android-maze-runner
         run: android-maze-runner
         command:
@@ -247,12 +248,12 @@ steps:
       - "fixture-r21"
     timeout_in_minutes: 60
     plugins:
-      artifacts#v1.2.0:
+      artifacts#v1.9.0:
         download:
           - "build/fixture_r21_url.txt"
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
-      docker-compose#v3.7.0:
+      docker-compose#v4.7.0:
         pull: android-maze-runner
         run: android-maze-runner
         command:
@@ -274,12 +275,12 @@ steps:
       - "fixture-r21"
     timeout_in_minutes: 60
     plugins:
-      artifacts#v1.2.0:
+      artifacts#v1.9.0:
         download:
           - "build/fixture_r21_url.txt"
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
-      docker-compose#v3.7.0:
+      docker-compose#v4.7.0:
         pull: android-maze-runner
         run: android-maze-runner
         command:
