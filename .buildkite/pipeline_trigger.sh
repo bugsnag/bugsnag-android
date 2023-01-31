@@ -13,12 +13,13 @@ else
 fi
 
 # Run BrowserStack steps unless instructed not to
-if [[ "$BUILDKITE_MESSAGE" != *"[nobs]"* ]]; then
+if [[ "$BUILDKITE_MESSAGE" != *"[nobs]"* &&
+      "$DEVICE_FARM" != *"NO_BS"* ]]; then
   buildkite-agent pipeline upload .buildkite/pipeline.bs.yml
 fi
 
 # Run BitBar steps if instructed to
 if [[ "$BUILDKITE_MESSAGE" == *"[bb]"* ||
-  ! -z "$BITBAR" ]]; then
+      "$DEVICE_FARM" == *"BB"* ]]; then
   buildkite-agent pipeline upload .buildkite/pipeline.bb.yml
 fi
