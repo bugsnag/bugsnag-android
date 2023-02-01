@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* Fixed a rare race-condition in libunwindstack where reading memory-maps could buffer-overrun
+  [#1798](https://github.com/bugsnag/bugsnag-android/pull/1798)
+
 ## 5.28.3 (2022-11-16)
 
 ### Bug fixes
