@@ -1,9 +1,9 @@
 GIT
   remote: https://github.com/bugsnag/maze-runner
-  revision: fd138ad8bf0feb2fd83617798f6527303ec514aa
-  tag: v7.16.0
+  revision: 01596b90f65a11759e4bd307242e46b1f4c240b2
+  tag: v7.17.0
   specs:
-    bugsnag-maze-runner (7.16.0)
+    bugsnag-maze-runner (7.17.0)
       appium_lib (~> 12.0.0)
       appium_lib_core (~> 5.4.0)
       bugsnag (~> 6.24)
@@ -92,7 +92,7 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2022.0105)
     multi_test (0.1.2)
-    nokogiri (1.14.0-x86_64-darwin)
+    nokogiri (1.14.1-x86_64-darwin)
       racc (~> 1.4)
     optimist (3.0.1)
     os (1.0.1)
