@@ -76,57 +76,7 @@ steps:
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
-  - label: ':android: Android 6 NDK r16 end-to-end tests - batch 1'
-    depends_on: "fixture-r16"
-    timeout_in_minutes: 90
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/fixture_r16_url.txt"
-          - "build/fixture-r16/*"
-        upload: "maze_output/failed/**/*"
-      docker-compose#v4.7.0:
-        pull: android-maze-runner
-        run: android-maze-runner
-        command:
-          - "features/full_tests"
-          - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "--app=@/app/build/fixture_r16_url.txt"
-          - "--farm=bs"
-          - "--device=ANDROID_6_0_GOOGLE_NEXUS_6"
-          - "--appium-version=1.20.2"
-          - "--fail-fast"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r16"
-    concurrency: 24
-    concurrency_group: 'browserstack-app'
-    concurrency_method: eager
-
-  - label: ':android: Android 6 NDK r16 end-to-end tests - batch 2'
-    depends_on: "fixture-r16"
-    timeout_in_minutes: 90
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/fixture_r16_url.txt"
-          - "build/fixture-r16/*"
-        upload: "maze_output/failed/**/*"
-      docker-compose#v4.7.0:
-        pull: android-maze-runner
-        run: android-maze-runner
-        command:
-          - "features/full_tests"
-          - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=@/app/build/fixture_r16_url.txt"
-          - "--farm=bs"
-          - "--device=ANDROID_6_0_GOOGLE_NEXUS_6"
-          - "--appium-version=1.20.2"
-          - "--fail-fast"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r16"
-    concurrency: 24
-    concurrency_group: 'browserstack-app'
-    concurrency_method: eager
+  # No Android 6 devices available on BrowserStack
 
   - label: ':android: Android 7 NDK r19 end-to-end tests - batch 1'
     depends_on: "fixture-r19"

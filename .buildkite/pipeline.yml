@@ -12,6 +12,7 @@ steps:
     agents:
       queue: macos-12-arm
     artifact_paths:
+      - "build/fixture-r16.apk"
       - "build/fixture_r16_url.txt"
       - "build/fixture-r16/*"
     commands:
@@ -25,6 +26,7 @@ steps:
     agents:
       queue: macos-12-arm
     artifact_paths:
+      - "build/fixture-r19.apk"
       - "build/fixture_r19_url.txt"
       - "build/fixture-r19/*"
     commands:

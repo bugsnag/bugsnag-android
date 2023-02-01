@@ -25,31 +25,7 @@ steps:
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
-  - label: ':android: Android 6 NDK r16 smoke tests'
-    key: 'android-6-smoke'
-    depends_on: "fixture-r16"
-    timeout_in_minutes: 60
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/fixture_r16_url.txt"
-          - "build/fixture-r16/*"
-        upload: "maze_output/failed/**/*"
-      docker-compose#v4.7.0:
-        pull: android-maze-runner
-        run: android-maze-runner
-        command:
-          - "features/smoke_tests"
-          - "--app=@/app/build/fixture_r16_url.txt"
-          - "--farm=bs"
-          - "--device=ANDROID_6_0_GOOGLE_NEXUS_6"
-          - "--appium-version=1.20.2"
-          - "--fail-fast"
-    concurrency: 24
-    concurrency_group: 'browserstack-app'
-    concurrency_method: eager
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r16"
+  # No Android 6 devices available on BrowserStack
 
   - label: ':android: Android 7 NDK r19 smoke tests'
     key: 'android-7-smoke'
