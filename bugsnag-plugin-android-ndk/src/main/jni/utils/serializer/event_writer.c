@@ -6,6 +6,7 @@
 
 #include "../string.h"
 #include "buffered_writer.h"
+#include "utils/seqlock.h"
 
 bool bsg_write_feature_flags(bugsnag_event *event, bsg_buffered_writer *writer);
 
@@ -84,8 +85,12 @@ static bool write_feature_flag(bsg_buffered_writer *writer,
   return true;
 }
 
+extern bsg_seqlock_t bsg_feature_flag_lock;
+
 bool bsg_write_feature_flags(bugsnag_event *event,
                              bsg_buffered_writer *writer) {
+  bsg_seqlock_status_t lock_status =
+      bsg_seqlock_optimistic_read(&bsg_feature_flag_lock);
   const uint32_t feature_flag_count = event->feature_flag_count;
   if (!writer->write(writer, &feature_flag_count, sizeof(feature_flag_count))) {
     return false;
@@ -96,6 +101,11 @@ bool bsg_write_feature_flags(bugsnag_event *event,
       return false;
     }
   }
+
+  // write a single byte to indicate whether the feature flags were modified
+  // when writing them out
+  writer->write_byte(writer,
+                     bsg_seqlock_validate(&bsg_feature_flag_lock, lock_status));
 
   return true;
 }

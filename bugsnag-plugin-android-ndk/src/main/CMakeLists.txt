@@ -22,6 +22,7 @@ add_library( # Specifies the name of the library.
     jni/utils/serializer/event_writer.c
     jni/utils/serializer/json_writer.c
     jni/utils/stack_unwinder.cpp
+        jni/utils/seqlock.c
     jni/utils/serializer.c
     jni/utils/string.c
     jni/utils/threads.c
