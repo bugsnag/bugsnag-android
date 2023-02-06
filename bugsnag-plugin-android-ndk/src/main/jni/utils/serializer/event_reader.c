@@ -10,7 +10,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-const int BSG_MIGRATOR_CURRENT_VERSION = 11;
+const int BSG_MIGRATOR_CURRENT_VERSION = 12;
 
 #ifdef __cplusplus
 extern "C" {
@@ -52,13 +52,17 @@ bugsnag_report_v9 *bsg_report_v9_read(int fd);
 
 bugsnag_report_v10 *bsg_report_v10_read(int fd);
 
-bugsnag_event *bsg_report_v11_read(int fd);
+bugsnag_report_v11 *bsg_report_v11_read(int fd);
+
+bugsnag_event *bsg_report_v12_read(int fd);
 
 /**
  * the map_*() functions convert a structure of an older format into the latest.
  * This frees the parameter provided to the function once conversion is
  * complete.
  */
+
+bugsnag_event *bsg_map_v11_to_report(bugsnag_report_v11 *report_v11);
 
 bugsnag_event *bsg_map_v10_to_report(bugsnag_report_v10 *report_v10);
 
@@ -97,7 +101,8 @@ void migrate_device_v2(bsg_device_info *output, bsg_device_info_v2 *input);
 
 void migrate_app_v3(bsg_app_info *output, bsg_app_info_v3 *input);
 
-void bsg_read_feature_flags(int fd, bsg_feature_flag **out_feature_flags,
+void bsg_read_feature_flags(int fd, bool expect_verification,
+                            bsg_feature_flag **out_feature_flags,
                             size_t *out_feature_flag_count);
 
 void bsg_read_opaque_metadata(int fd, bugsnag_metadata *metadata);
@@ -152,8 +157,10 @@ bugsnag_event *bsg_read_event(char *filepath) {
     return bsg_map_v9_to_report(bsg_report_v9_read(fildes));
   case 10:
     return bsg_map_v10_to_report(bsg_report_v10_read(fildes));
+  case 11:
+    return bsg_map_v11_to_report(bsg_report_v11_read(fildes));
   case BSG_MIGRATOR_CURRENT_VERSION:
-    return bsg_report_v11_read(fildes);
+    return bsg_report_v12_read(fildes);
   default:
     return NULL;
   }
@@ -254,7 +261,8 @@ bugsnag_report_v8 *bsg_report_v8_read(int fd) {
   }
 
   // read the feature flags, if possible
-  bsg_read_feature_flags(fd, &event->feature_flags, &event->feature_flag_count);
+  bsg_read_feature_flags(fd, false, &event->feature_flags,
+                         &event->feature_flag_count);
 
   return event;
 }
@@ -270,7 +278,8 @@ bugsnag_report_v9 *bsg_report_v9_read(int fd) {
   }
 
   // read the feature flags, if possible
-  bsg_read_feature_flags(fd, &event->feature_flags, &event->feature_flag_count);
+  bsg_read_feature_flags(fd, false, &event->feature_flags,
+                         &event->feature_flag_count);
   bsg_read_opaque_metadata(fd, &event->metadata);
   bsg_read_opaque_breadcrumb_metadata(fd, event->breadcrumbs,
                                       event->crumb_count);
@@ -289,7 +298,8 @@ bugsnag_report_v10 *bsg_report_v10_read(int fd) {
   }
 
   // read the feature flags, if possible
-  bsg_read_feature_flags(fd, &event->feature_flags, &event->feature_flag_count);
+  bsg_read_feature_flags(fd, false, &event->feature_flags,
+                         &event->feature_flag_count);
   bsg_read_opaque_metadata(fd, &event->metadata);
   bsg_read_opaque_breadcrumb_metadata(fd, event->breadcrumbs,
                                       event->crumb_count);
@@ -297,7 +307,27 @@ bugsnag_report_v10 *bsg_report_v10_read(int fd) {
   return event;
 }
 
-bugsnag_event *bsg_report_v11_read(int fd) {
+bugsnag_report_v11 *bsg_report_v11_read(int fd) {
+  size_t event_size = sizeof(bugsnag_report_v11);
+  bugsnag_report_v11 *event = calloc(1, event_size);
+
+  ssize_t len = read(fd, event, event_size);
+  if (len != event_size) {
+    free(event);
+    return NULL;
+  }
+
+  // read the feature flags, if possible
+  bsg_read_feature_flags(fd, false, &event->feature_flags,
+                         &event->feature_flag_count);
+  bsg_read_opaque_metadata(fd, &event->metadata);
+  bsg_read_opaque_breadcrumb_metadata(fd, event->breadcrumbs,
+                                      event->crumb_count);
+
+  return event;
+}
+
+bugsnag_event *bsg_report_v12_read(int fd) {
   size_t event_size = sizeof(bugsnag_event);
   bugsnag_event *event = calloc(1, event_size);
 
@@ -308,11 +338,55 @@ bugsnag_event *bsg_report_v11_read(int fd) {
   }
 
   // read the feature flags, if possible
-  bsg_read_feature_flags(fd, &event->feature_flags, &event->feature_flag_count);
+  bsg_read_feature_flags(fd, true, &event->feature_flags,
+                         &event->feature_flag_count);
   bsg_read_opaque_metadata(fd, &event->metadata);
   bsg_read_opaque_breadcrumb_metadata(fd, event->breadcrumbs,
                                       event->crumb_count);
 
+  return event;
+}
+
+bugsnag_event *bsg_map_v11_to_report(bugsnag_report_v11 *report_v11) {
+  if (report_v11 == NULL) {
+    return NULL;
+  }
+  bugsnag_event *event = calloc(1, sizeof(bugsnag_event));
+
+  if (event != NULL) {
+    event->notifier = report_v11->notifier;
+    memcpy(&event->metadata, &report_v11->metadata, sizeof(bugsnag_metadata));
+    memcpy(&event->app, &report_v11->app, sizeof(bsg_app_info));
+    memcpy(&event->device, &report_v11->device, sizeof(bsg_device_info));
+    event->user = report_v11->user;
+    memcpy(&event->error, &report_v11->error, sizeof(bsg_error));
+    event->crumb_count = report_v11->crumb_count;
+    event->crumb_first_index = report_v11->crumb_first_index;
+    memcpy(&event->breadcrumbs, &report_v11->breadcrumbs,
+           sizeof(report_v11->breadcrumbs));
+    memcpy(&event->context, report_v11->context, sizeof(report_v11->context));
+    event->severity = report_v11->severity;
+    memcpy(&event->session_id, report_v11->session_id,
+           sizeof(report_v11->session_id));
+    memcpy(&event->session_start, report_v11->session_start,
+           sizeof(report_v11->session_start));
+    event->handled_events = report_v11->handled_events;
+    event->unhandled_events = report_v11->unhandled_events;
+    memcpy(&event->grouping_hash, report_v11->grouping_hash,
+           sizeof(report_v11->grouping_hash));
+    event->unhandled = report_v11->unhandled;
+    memcpy(&event->api_key, report_v11->api_key, sizeof(report_v11->api_key));
+    event->thread_count = report_v11->thread_count;
+    memcpy(&event->threads, report_v11->threads, sizeof(report_v11->threads));
+
+    // copy the feature-flags ref over, but don't free the actual data
+    // this is effectively a change of ownership from bugsnag_report_v8 ->
+    // bugsnag_event
+    event->feature_flags = report_v11->feature_flags;
+    event->feature_flag_count = report_v11->feature_flag_count;
+
+    free(report_v11);
+  }
   return event;
 }
 
@@ -1026,7 +1100,8 @@ int read_byte(int fd) {
   return value;
 }
 
-void bsg_read_feature_flags(int fd, bsg_feature_flag **out_feature_flags,
+void bsg_read_feature_flags(int fd, bool expect_verification,
+                            bsg_feature_flag **out_feature_flags,
                             size_t *out_feature_flag_count) {
 
   ssize_t len;
@@ -1059,6 +1134,13 @@ void bsg_read_feature_flags(int fd, bsg_feature_flag **out_feature_flags,
 
     flags[index].name = name;
     flags[index].variant = variant;
+  }
+
+  if (expect_verification) {
+    const bool feature_flags_valid = read_byte(fd);
+    if (!feature_flags_valid) {
+      goto feature_flags_error;
+    }
   }
 
   *out_feature_flag_count = feature_flag_count;
@@ -1107,6 +1189,8 @@ void bsg_read_opaque_metadata(int fd, bugsnag_metadata *metadata) {
       metadata->values[read_index].opaque_value = opaque_value;
     }
   }
+
+  return;
 
 opaque_metadata_fail:
   // ensure that only the OPAQUE values we read successfully are considered

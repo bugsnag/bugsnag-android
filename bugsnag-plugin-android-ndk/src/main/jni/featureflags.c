@@ -2,8 +2,8 @@
 
 #include "bugsnag_ndk.h"
 #include "featureflags.h"
-#include "utils/string.h"
 #include "utils/seqlock.h"
+#include "utils/string.h"
 
 #ifdef __cplusplus
 extern "C" {
