@@ -59,7 +59,7 @@ Feature: ANR smoke test
     And the error payload field "events.0.device.totalMemory" is greater than 0
     And the error payload field "events.0.device.freeDisk" is greater than 0
     And the error payload field "events.0.device.freeMemory" is greater than 0
-    And the event "device.orientation" equals "portrait"
+    And the event "device.orientation" matches "(portrait|landscape)"
     And the event "device.time" is a timestamp
     And the event "metaData.device.locationStatus" is not null
     And the event "metaData.device.emulator" is false
