@@ -7,7 +7,7 @@
 * Fixed a rare race-condition in libunwindstack where reading memory-maps could buffer-overrun
   [#1798](https://github.com/bugsnag/bugsnag-android/pull/1798)
 * Fixed an extremely rare NDK race-condition where feature flags in native crashes would be corrupted
-  []()
+  [#1801](https://github.com/bugsnag/bugsnag-android/pull/1801)
 
 ## 5.28.3 (2022-11-16)
 
