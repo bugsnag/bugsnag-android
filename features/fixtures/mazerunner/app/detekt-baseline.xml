@@ -2,7 +2,8 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>MagicNumber:MainActivity.kt$MainActivity$250</ID>
     <ID>MagicNumber:MainActivity.kt$MainActivity$1000</ID>
+    <ID>MagicNumber:MainActivity.kt$MainActivity$250</ID>
+    <ID>SwallowedException:NetworkStatus.kt$catch (e: Exception) { NetworkStatus.NO_INTERNET }</ID>
   </CurrentIssues>
 </SmellBaseline>
