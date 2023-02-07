@@ -27,6 +27,7 @@
 void bsg_seqlock_init(bsg_seqlock_t *lock) { atomic_init(lock, 0uLL); }
 
 void bsg_seqlock_acquire_write(bsg_seqlock_t *lock) {
+  atomic_thread_fence(memory_order_acquire);
   bsg_seqlock_status_t current = atomic_load(lock);
 
   for (;;) {
@@ -36,8 +37,6 @@ void bsg_seqlock_acquire_write(bsg_seqlock_t *lock) {
       break;
     }
   }
-
-  atomic_thread_fence(memory_order_acquire);
 }
 
 void bsg_seqlock_release_write(bsg_seqlock_t *lock) {
