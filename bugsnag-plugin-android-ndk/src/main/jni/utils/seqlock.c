@@ -54,7 +54,10 @@ void bsg_seqlock_release_write(bsg_seqlock_t *lock) {
 }
 
 bsg_seqlock_status_t bsg_seqlock_optimistic_read(bsg_seqlock_t *lock) {
-  return atomic_load(lock);
+  bsg_seqlock_status_t status = atomic_load(lock);
+  // optimistic reads are never valid during a write, and we return 0 in these cases
+  // validate will always return `false` in these cases
+  return bsg_seqlock_is_write_locked(status) ? 0 : status;
 }
 
 bool bsg_seqlock_validate(bsg_seqlock_t *lock, bsg_seqlock_status_t expected) {
