@@ -103,9 +103,11 @@ bool bsg_write_feature_flags(bugsnag_event *event,
   }
 
   // write a single byte to indicate whether the feature flags were modified
-  // when writing them out
-  writer->write_byte(writer,
-                     bsg_seqlock_validate(&bsg_feature_flag_lock, lock_status));
+  // when writing them out, 0 indicates "valid", anything else indicates
+  // "invalid"
+  writer->write_byte(
+      writer,
+      bsg_seqlock_validate(&bsg_feature_flag_lock, lock_status) ? 0 : 1);
 
   return true;
 }

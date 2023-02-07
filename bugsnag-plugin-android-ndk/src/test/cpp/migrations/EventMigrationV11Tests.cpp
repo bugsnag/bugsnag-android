@@ -221,8 +221,8 @@ bool bsg_write_feature_flags(bugsnag_event *event,
   }
 
   // write a single byte to indicate whether the feature flags were modified
-  // when writing them out, we always write 1 here to mark them as valid
-  writer->write_byte(writer, 1);
+  // when writing them out, we always write 0 here to mark them as valid
+  writer->write_byte(writer, 0);
 
   return true;
 }

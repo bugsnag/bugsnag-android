@@ -1137,8 +1137,8 @@ void bsg_read_feature_flags(int fd, bool expect_verification,
   }
 
   if (expect_verification) {
-    const bool feature_flags_valid = read_byte(fd);
-    if (!feature_flags_valid) {
+    const uint8_t feature_flags_valid = read_byte(fd);
+    if (feature_flags_valid != 0) {
       goto feature_flags_error;
     }
   }
