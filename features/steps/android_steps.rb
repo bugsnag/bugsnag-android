@@ -14,8 +14,18 @@ def execute_command(action, scenario_name = '')
 
   # Reset values to defaults
   $scenario_mode = ''
-  $sessions_endpoint = 'http://bs-local.com:9339/sessions'
-  $notify_endpoint = 'http://bs-local.com:9339/notify'
+  if Maze.config.farm == :bb
+    if Maze.config.aws_public_ip
+      $sessions_endpoint = "http://#{Maze.public_address}/sessions"
+      $notify_endpoint = "http://#{Maze.public_address}/notify"
+    else
+      $sessions_endpoint = "http://local:9339/sessions"
+      $notify_endpoint = "http://local:9339/notify"
+    end
+  else
+    $sessions_endpoint = 'http://bs-local.com:9339/sessions'
+    $notify_endpoint = 'http://bs-local.com:9339/notify'
+  end
 
   # Ensure fixture has read the command
   count = 600
@@ -218,35 +228,6 @@ Then("the stacktrace contains native frame information") do
   end
 end
 
-Then("the event has {int} breadcrumbs") do |expected_count|
-  value = Maze::Server.errors.current[:body]["events"].first["breadcrumbs"]
-  fail("Incorrect number of breadcrumbs found: #{value.length()}, expected: #{expected_count}") if value.length() != expected_count.to_i
-end
-
-Then("the event has a {string} breadcrumb with the message {string}") do |type, message|
-  value = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.breadcrumbs")
-  found = false
-  value.each do |crumb|
-    if crumb["type"] == type and crumb["name"] == message
-      found = true
-    end
-  end
-  fail("No breadcrumb matched: #{value}") unless found
-end
-
-Then("the exception stacktrace matches the thread stacktrace") do
-  exc_trace = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.exceptions.0.stacktrace")
-  thread_trace = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.threads.0.stacktrace")
-  Maze.check.equal(exc_trace.length(),
-                   thread_trace.length(),
-                   "Exception and thread stacktraces are different lengths.")
-
-  thread_trace.each_with_index do |thread_frame, index|
-    exc_frame = exc_trace[index]
-    Maze.check.equal(exc_frame, thread_frame)
-  end
-end
-
 def click_if_present(element)
   return false unless Maze.driver.wait_for_element(element, 1)
 
@@ -254,25 +235,6 @@ def click_if_present(element)
 rescue Selenium::WebDriver::Error::UnknownError
   # Ignore Appium errors (e.g. during an ANR)
   return false
-end
-
-Then("I sort the errors by {string}") do |comparator|
-  Maze::Server.errors.remaining.sort_by { |request|
-    Maze::Helper.read_key_path(request[:body], comparator)
-  }
-end
-
-Then("the exception stacktrace matches the thread stacktrace") do
-  exc_trace = read_key_path(Server.current_request[:body], "events.0.exceptions.0.stacktrace")
-  thread_trace = read_key_path(Server.current_request[:body], "events.0.threads.0.stacktrace")
-  Maze.check.equal(exc_trace.length(),
-                   thread_trace.length(),
-                   "Exception and thread stacktraces are different lengths.")
-
-  thread_trace.each_with_index do |thread_frame, index|
-    exc_frame = exc_trace[index]
-    Maze.check.equal(exc_frame, thread_frame)
-  end
 end
 
 Then("the event binary arch field is valid") do
@@ -309,5 +271,12 @@ Then("the error is correct for {string} or I allow a retry") do |scenario|
   when 'MultiThreadedStartupScenario'
     Maze.dynamic_retry = true if message == 'You must call Bugsnag.start before any other Bugsnag methods'
     Maze.check.equal 'Scenario complete', message
+  when 'InForegroundScenario', 'CXXBackgroundNotifyScenario', 'CXXDelayedCrashScenario'
+    begin
+      step 'the event "app.inForeground" is false'
+    rescue Test::Unit::AssertionFailedError
+      Maze.dynamic_retry = true
+      raise
+    end
   end
 end

@@ -2,6 +2,7 @@
 
 #include "bugsnag_ndk.h"
 #include "featureflags.h"
+#include "utils/seqlock.h"
 #include "utils/string.h"
 
 #ifdef __cplusplus
@@ -26,7 +27,9 @@ extern "C" {
  * overhead reasonable.
  */
 
-static const int INDEX_NOT_FOUND = -1;
+#define INDEX_NOT_FOUND (-1)
+
+bsg_seqlock_t bsg_feature_flag_lock;
 
 static int index_of_flag_named(const bugsnag_event *const event,
                                const char *const name) {
@@ -93,33 +96,43 @@ static void modify_at_index_and_reinsert(bugsnag_event *const event,
 
 void bsg_set_feature_flag(bugsnag_event *event, const char *const name,
                           const char *const variant) {
+  bsg_seqlock_acquire_write(&bsg_feature_flag_lock);
   const int index = index_of_flag_named(event, name);
   if (index == INDEX_NOT_FOUND) {
     insert_new(event, name, variant);
   } else {
     modify_at_index_and_reinsert(event, index, variant);
   }
+  bsg_seqlock_release_write(&bsg_feature_flag_lock);
 }
 
 void bsg_clear_feature_flag(bugsnag_event *const event,
                             const char *const name) {
+  bsg_seqlock_acquire_write(&bsg_feature_flag_lock);
   const int index = index_of_flag_named(event, name);
   if (index != INDEX_NOT_FOUND) {
     free_flag_contents(&event->feature_flags[index]);
     remove_at_index_and_compact(event, index);
     event->feature_flag_count--;
   }
+  bsg_seqlock_release_write(&bsg_feature_flag_lock);
 }
 
 void bsg_free_feature_flags(bugsnag_event *const event) {
-  for (int index = 0; index < event->feature_flag_count; index++) {
-    free_flag_contents(&event->feature_flags[index]);
+  bsg_seqlock_acquire_write(&bsg_feature_flag_lock);
+  const size_t old_flag_count = event->feature_flag_count;
+  bsg_feature_flag *old_flags = event->feature_flags;
+
+  event->feature_flag_count = 0;
+  event->feature_flags = NULL;
+  bsg_seqlock_release_write(&bsg_feature_flag_lock);
+
+  // we release the actual memory outside of the lock
+  for (int index = 0; index < old_flag_count; index++) {
+    free_flag_contents(&old_flags[index]);
   }
 
-  free(event->feature_flags);
-
-  event->feature_flags = NULL;
-  event->feature_flag_count = 0;
+  free(old_flags);
 }
 
 #ifdef __cplusplus

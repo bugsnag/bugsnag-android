@@ -33,10 +33,10 @@ steps:
     depends_on: "fixture-minimal"
     timeout_in_minutes: 30
     plugins:
-      artifacts#v1.2.0:
+      artifacts#v1.9.0:
         download: "build/fixture-minimal.apk"
         upload: "maze_output/failed/**/*"
-      docker-compose#v3.7.0:
+      docker-compose#v4.7.0:
         pull: android-maze-runner
         run: android-maze-runner
         command:
@@ -54,12 +54,12 @@ steps:
     depends_on: "fixture-debug"
     timeout_in_minutes: 30
     plugins:
-      artifacts#v1.2.0:
+      artifacts#v1.9.0:
         download:
           - "build/fixture-debug.apk"
           - "build/fixture-debug/*"
         upload: "maze_output/failed/**/*"
-      docker-compose#v3.7.0:
+      docker-compose#v4.7.0:
         pull: android-maze-runner
         run: android-maze-runner
         command:
@@ -76,74 +76,24 @@ steps:
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
-  - label: ':android: Android 6 NDK r16 end-to-end tests - batch 1'
-    depends_on: "fixture-r16"
-    timeout_in_minutes: 90
-    plugins:
-      artifacts#v1.2.0:
-        download:
-          - "build/fixture-r16.apk"
-          - "build/fixture-r16/*"
-        upload: "maze_output/failed/**/*"
-      docker-compose#v3.7.0:
-        pull: android-maze-runner
-        run: android-maze-runner
-        command:
-          - "features/full_tests"
-          - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "--app=/app/build/fixture-r16.apk"
-          - "--farm=bs"
-          - "--device=ANDROID_6_0_GOOGLE_NEXUS_6"
-          - "--appium-version=1.20.2"
-          - "--fail-fast"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r16"
-    concurrency: 24
-    concurrency_group: 'browserstack-app'
-    concurrency_method: eager
-
-  - label: ':android: Android 6 NDK r16 end-to-end tests - batch 2'
-    depends_on: "fixture-r16"
-    timeout_in_minutes: 90
-    plugins:
-      artifacts#v1.2.0:
-        download:
-          - "build/fixture-r16.apk"
-          - "build/fixture-r16/*"
-        upload: "maze_output/failed/**/*"
-      docker-compose#v3.7.0:
-        pull: android-maze-runner
-        run: android-maze-runner
-        command:
-          - "features/full_tests"
-          - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=/app/build/fixture-r16.apk"
-          - "--farm=bs"
-          - "--device=ANDROID_6_0_GOOGLE_NEXUS_6"
-          - "--appium-version=1.20.2"
-          - "--fail-fast"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r16"
-    concurrency: 24
-    concurrency_group: 'browserstack-app'
-    concurrency_method: eager
+  # No Android 6 devices available on BrowserStack
 
   - label: ':android: Android 7 NDK r19 end-to-end tests - batch 1'
     depends_on: "fixture-r19"
     timeout_in_minutes: 60
     plugins:
-      artifacts#v1.2.0:
+      artifacts#v1.9.0:
         download:
-          - "build/fixture-r19.apk"
+          - "build/fixture_r19_url.txt"
           - "build/fixture-r19/*"
         upload: "maze_output/failed/**/*"
-      docker-compose#v3.7.0:
+      docker-compose#v4.7.0:
         pull: android-maze-runner
         run: android-maze-runner
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "--app=/app/build/fixture-r19.apk"
+          - "--app=@/app/build/fixture_r19_url.txt"
           - "--farm=bs"
           - "--device=ANDROID_7_1"
           - "--appium-version=1.20.2"
@@ -158,18 +108,18 @@ steps:
     depends_on: "fixture-r19"
     timeout_in_minutes: 60
     plugins:
-      artifacts#v1.2.0:
+      artifacts#v1.9.0:
         download:
-          - "build/fixture-r19.apk"
+          - "build/fixture_r19_url.txt"
           - "build/fixture-r19/*"
         upload: "maze_output/failed/**/*"
-      docker-compose#v3.7.0:
+      docker-compose#v4.7.0:
         pull: android-maze-runner
         run: android-maze-runner
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=/app/build/fixture-r19.apk"
+          - "--app=@/app/build/fixture_r19_url.txt"
           - "--farm=bs"
           - "--device=ANDROID_7_1"
           - "--appium-version=1.20.2"
@@ -184,18 +134,18 @@ steps:
     depends_on: "fixture-r19"
     timeout_in_minutes: 60
     plugins:
-      artifacts#v1.2.0:
+      artifacts#v1.9.0:
         download:
-          - "build/fixture-r19.apk"
+          - "build/fixture_r19_url.txt"
           - "build/fixture-r19/*"
         upload: "maze_output/failed/**/*"
-      docker-compose#v3.7.0:
+      docker-compose#v4.7.0:
         pull: android-maze-runner
         run: android-maze-runner
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "--app=/app/build/fixture-r19.apk"
+          - "--app=@/app/build/fixture_r19_url.txt"
           - "--farm=bs"
           - "--device=ANDROID_8_1"
           - "--appium-version=1.20.2"
@@ -210,18 +160,18 @@ steps:
     depends_on: "fixture-r19"
     timeout_in_minutes: 60
     plugins:
-      artifacts#v1.2.0:
+      artifacts#v1.9.0:
         download:
-          - "build/fixture-r19.apk"
+          - "build/fixture_r19_url.txt"
           - "build/fixture-r19/*"
         upload: "maze_output/failed/**/*"
-      docker-compose#v3.7.0:
+      docker-compose#v4.7.0:
         pull: android-maze-runner
         run: android-maze-runner
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=/app/build/fixture-r19.apk"
+          - "--app=@/app/build/fixture_r19_url.txt"
           - "--farm=bs"
           - "--device=ANDROID_8_1"
           - "--appium-version=1.20.2"
@@ -236,16 +186,16 @@ steps:
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
-      artifacts#v1.2.0:
+      artifacts#v1.9.0:
         download:
-          - "build/fixture-r21.apk"
+          - "build/fixture_r21_url.txt"
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
-      docker-compose#v3.7.0:
+      docker-compose#v4.7.0:
         pull: android-maze-runner
         run: android-maze-runner
         command:
-          - "--app=/app/build/fixture-r21.apk"
+          - "--app=@/app/build/fixture_r21_url.txt"
           - "--farm=bs"
           - "--device=ANDROID_9_0"
           - "--appium-version=1.20.2"
@@ -262,18 +212,18 @@ steps:
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
-      artifacts#v1.2.0:
+      artifacts#v1.9.0:
         download:
-          - "build/fixture-r21.apk"
+          - "build/fixture_r21_url.txt"
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
-      docker-compose#v3.7.0:
+      docker-compose#v4.7.0:
         pull: android-maze-runner
         run: android-maze-runner
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=/app/build/fixture-r21.apk"
+          - "--app=@/app/build/fixture_r21_url.txt"
           - "--farm=bs"
           - "--device=ANDROID_9_0"
           - "--appium-version=1.20.2"
@@ -288,18 +238,18 @@ steps:
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
-      artifacts#v1.2.0:
+      artifacts#v1.9.0:
         download:
-          - "build/fixture-r21.apk"
+          - "build/fixture_r21_url.txt"
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
-      docker-compose#v3.7.0:
+      docker-compose#v4.7.0:
         pull: android-maze-runner
         run: android-maze-runner
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "--app=/app/build/fixture-r21.apk"
+          - "--app=@/app/build/fixture_r21_url.txt"
           - "--farm=bs"
           - "--device=ANDROID_10_0"
           - "--appium-version=1.20.2"
@@ -314,18 +264,18 @@ steps:
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
-      artifacts#v1.2.0:
+      artifacts#v1.9.0:
         download:
-          - "build/fixture-r21.apk"
+          - "build/fixture_r21_url.txt"
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
-      docker-compose#v3.7.0:
+      docker-compose#v4.7.0:
         pull: android-maze-runner
         run: android-maze-runner
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=/app/build/fixture-r21.apk"
+          - "--app=@/app/build/fixture_r21_url.txt"
           - "--farm=bs"
           - "--device=ANDROID_10_0"
           - "--appium-version=1.20.2"
@@ -344,18 +294,18 @@ steps:
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
-      artifacts#v1.2.0:
+      artifacts#v1.9.0:
         download:
-          - "build/fixture-r21.apk"
+          - "build/fixture_r21_url.txt"
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
-      docker-compose#v3.7.0:
+      docker-compose#v4.7.0:
         pull: android-maze-runner
         run: android-maze-runner
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "--app=/app/build/fixture-r21.apk"
+          - "--app=@/app/build/fixture_r21_url.txt"
           - "--farm=bs"
           - "--device=ANDROID_11_0"
           - "--appium-version=1.20.2"
@@ -370,18 +320,18 @@ steps:
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
-      artifacts#v1.2.0:
+      artifacts#v1.9.0:
         download:
-          - "build/fixture-r21.apk"
+          - "build/fixture_r21_url.txt"
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
-      docker-compose#v3.7.0:
+      docker-compose#v4.7.0:
         pull: android-maze-runner
         run: android-maze-runner
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=/app/build/fixture-r21.apk"
+          - "--app=@/app/build/fixture_r21_url.txt"
           - "--farm=bs"
           - "--device=ANDROID_11_0"
           - "--appium-version=1.20.2"
@@ -396,18 +346,18 @@ steps:
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
-      artifacts#v1.2.0:
+      artifacts#v1.9.0:
         download:
-          - "build/fixture-r21.apk"
+          - "build/fixture_r21_url.txt"
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
-      docker-compose#v3.7.0:
+      docker-compose#v4.7.0:
         pull: android-maze-runner
         run: android-maze-runner
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "--app=/app/build/fixture-r21.apk"
+          - "--app=@/app/build/fixture_r21_url.txt"
           - "--farm=bs"
           - "--device=ANDROID_13_0"
           - "--appium-version=1.20.2"
@@ -422,18 +372,18 @@ steps:
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
-      artifacts#v1.2.0:
+      artifacts#v1.9.0:
         download:
-          - "build/fixture-r21.apk"
+          - "build/fixture_r21_url.txt"
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
-      docker-compose#v3.7.0:
+      docker-compose#v4.7.0:
         pull: android-maze-runner
         run: android-maze-runner
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=/app/build/fixture-r21.apk"
+          - "--app=@/app/build/fixture_r21_url.txt"
           - "--farm=bs"
           - "--device=ANDROID_13_0"
           - "--appium-version=1.20.2"
@@ -457,13 +407,13 @@ steps:
     timeout_in_minutes: 30
     depends_on: 'trigger-publish'
     plugins:
-      - docker-compose#v3.7.0:
+      - docker-compose#v4.7.0:
           build:
             - android-common
           image-repository: 855461928731.dkr.ecr.us-west-1.amazonaws.com/android
           cache-from:
             - android-common:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:latest
-      - docker-compose#v3.7.0:
+      - docker-compose#v4.7.0:
           push:
             - android-common:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:latest
 
@@ -473,6 +423,6 @@ steps:
     env:
       BUILDKITE_PLUGIN_S3_SECRETS_BUCKET_PREFIX: bugsnag-android-publish
     plugins:
-      docker-compose#v3.7.0:
+      docker-compose#v4.7.0:
         no-cache: true
         run: android-publisher

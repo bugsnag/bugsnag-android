@@ -28,7 +28,7 @@ Remote tests can be run against real devices provided by BrowserStack. In order 
     bundle exec maze-runner --app=build/fixture-r21.apk                 \
                             --farm=bs                               \
                             --device=ANDROID_9_0                    \
-                            features/smoke_tests/unhandled.feature
+                            features/smoke_tests/04_unhandled.feature
     ```
 1. To run all features, omit the final argument, but be wary of how many tests you run locally as we have a limited number of parallel tests and local running subverts the controls we have in place.  For a full test run it is generally best to push your branch to Github and let CI run them.
 1. Maze Runner also supports all options that Cucumber does.  Run `bundle exec maze-runner --help` for full details.

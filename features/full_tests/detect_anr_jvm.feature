@@ -3,6 +3,8 @@ Feature: ANRs triggered in JVM code are captured
   Background:
     Given I clear all persistent data
 
+  # PLAT-9580
+  @skip_bitbar
   Scenario: ANR triggered in JVM loop code is captured
     When I clear any error dialogue
     And I run "JvmAnrLoopScenario"
@@ -19,8 +21,10 @@ Feature: ANRs triggered in JVM code are captured
     And the error payload field "events.0.threads.0.stacktrace.0.type" is null
 
 # Other scenarios use a deadlock to generate an ANR, which works on Samsung devices. This scenario remains skipped
-# on Samsung as it is explicitly design to test ANRs caused by a sleeping thread.
+# on Samsung as it is explicitly designed to test ANRs caused by a sleeping thread.
   @skip_samsung
+  # PLAT-9580
+  @skip_bitbar
   Scenario: ANR triggered in JVM sleep code is captured
     When I clear any error dialogue
     And I run "JvmAnrSleepScenario"

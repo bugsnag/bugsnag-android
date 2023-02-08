@@ -17,6 +17,7 @@ import com.bugsnag.android.mazerunner.BugsnagIntentParams
 import com.bugsnag.android.mazerunner.log
 import com.bugsnag.android.mazerunner.multiprocess.MultiProcessService
 import com.bugsnag.android.mazerunner.multiprocess.findCurrentProcessName
+import com.bugsnag.android.mazerunner.reportDuration
 import java.io.File
 
 abstract class Scenario(
@@ -46,7 +47,7 @@ abstract class Scenario(
      */
     open fun startBugsnag(startBugsnagOnly: Boolean) {
         this.startBugsnagOnly = startBugsnagOnly
-        Bugsnag.start(context, config)
+        reportDuration("Bugsnag.start") { Bugsnag.start(context, config) }
     }
 
     /**

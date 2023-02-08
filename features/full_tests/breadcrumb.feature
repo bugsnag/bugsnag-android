@@ -30,18 +30,15 @@ Feature: Reporting Breadcrumbs
     When I run "BreadcrumbAutoScenario"
     And I wait to receive an error
     Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the event has a "state" breadcrumb with the message "Bugsnag loaded"
+    And the event has a "state" breadcrumb named "Bugsnag loaded"
 
   Scenario: Error Breadcrumbs appear in subsequent events
     When I run "ErrorBreadcrumbsScenario" and relaunch the crashed app
     And I configure Bugsnag for "ErrorBreadcrumbsScenario"
     Then I wait to receive 2 errors
-    And the exception "errorClass" equals "java.lang.RuntimeException"
-    And the exception "message" equals "first error"
-    And the event "unhandled" is false
-    And the event has 0 breadcrumbs
-    Then I discard the oldest error
-    And the exception "errorClass" equals "java.lang.NullPointerException"
+    And I sort the errors by the payload field "events.0.exceptions.0.errorClass"
+
+    Then the exception "errorClass" equals "java.lang.NullPointerException"
     And the exception "message" equals "something broke"
     And the event "unhandled" is true
     And the event has 1 breadcrumbs
@@ -52,3 +49,9 @@ Feature: Reporting Breadcrumbs
     And the event "breadcrumbs.0.metaData.message" equals "first error"
     And the event "breadcrumbs.0.metaData.unhandled" equals "false"
     And the event "breadcrumbs.0.metaData.severity" equals "WARNING"
+
+    Then I discard the oldest error
+    And the exception "errorClass" equals "java.lang.RuntimeException"
+    And the exception "message" equals "first error"
+    And the event "unhandled" is false
+    And the event has 0 breadcrumbs
