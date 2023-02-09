@@ -16,8 +16,16 @@ internal class LoadConfigurationFromManifestScenario(
     override fun startBugsnag(startBugsnagOnly: Boolean) {
         this.startBugsnagOnly = startBugsnagOnly
         val testConfig = Configuration.load(this.context)
+
+        // Record the endpoints loaded from the manifest as metadata
+        // and use the endpoints configured for the scenario
+        val manifestEndpoints = testConfig.endpoints
+        testConfig.endpoints = this.config.endpoints
+
         testConfig.addOnError(
             OnErrorCallback { event ->
+                event.addMetadata("endpoints", "notify", manifestEndpoints.notify)
+                event.addMetadata("endpoints", "sessions", manifestEndpoints.sessions)
                 event.addMetadata("test", "foo", "bar")
                 event.addMetadata("test", "filter_me", "foobar")
                 true
