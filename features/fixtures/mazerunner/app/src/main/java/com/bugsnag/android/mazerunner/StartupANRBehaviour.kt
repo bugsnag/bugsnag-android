@@ -6,6 +6,8 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import com.bugsnag.android.Bugsnag
+import com.bugsnag.android.Configuration
+import com.bugsnag.android.EndpointConfiguration
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
@@ -14,13 +16,24 @@ fun Application.triggerStartupAnrIfRequired() {
     val startupDelay = prefs.getLong("onCreateDelay", 0)
 
     if (startupDelay > 0L) {
-        // we remove the preference so that we don't affect any future startup
+        // Check if an endpoint configuration was added to the preferences
+        val notifyEndpoint = prefs.getString("notify", null)
+        val sessionsEndpoint = prefs.getString("sessions", null)
+
+        // we remove the preferences so that we don't affect any future startup
         prefs.edit()
             .remove("onCreateDelay")
+            .remove("notify")
+            .remove("sessions")
             .commit()
 
         // we have to startup Bugsnag at this point
-        Bugsnag.start(this)
+        val config = Configuration.load(this)
+        if (!notifyEndpoint.isNullOrBlank() && !sessionsEndpoint.isNullOrBlank()) {
+            config.endpoints = EndpointConfiguration(notifyEndpoint, sessionsEndpoint)
+        }
+
+        Bugsnag.start(this, config)
 
         // wait for Bugsnag's ANR handler to install first
         Handler(Looper.getMainLooper()).post {

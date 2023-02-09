@@ -14,6 +14,8 @@ class ConfigureStartupAnrScenario(
             .getSharedPreferences("AnrPreferences", Context.MODE_PRIVATE)
             .edit()
             .putLong("onCreateDelay", STARTUP_DELAY)
+            .putString("notify", config.endpoints.notify)
+            .putString("sessions", config.endpoints.sessions)
             .commit()
 
         exitProcess(0)
