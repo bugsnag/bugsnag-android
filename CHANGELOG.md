@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 5.28.4 (2023-02-08)
 
 ### Bug fixes
 
