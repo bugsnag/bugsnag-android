@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+* Added numeric range annotations to Configuration
+  [#1808](https://github.com/bugsnag/bugsnag-android/pull/1808)
+
 ## 5.28.4 (2023-02-08)
 
 ### Bug fixes
