@@ -3,8 +3,6 @@ Feature: Loading values into the configuration
   Background:
     Given I clear all persistent data
 
-  # TODO Pending PLAT-9523
-  @skip_bitbar
   Scenario: Load configuration initialised from the Manifest
     When I run "LoadConfigurationFromManifestScenario"
     Then I wait to receive an error
@@ -12,6 +10,8 @@ Feature: Loading values into the configuration
     And the exception "message" equals "LoadConfigurationFromManifestScenario"
     And the event "app.releaseStage" equals "testing"
     And the error payload field "events.0.breadcrumbs" is an array with 1 elements
+    And the event "metaData.endpoints.notify" equals "manifest-notify-endpoint"
+    And the event "metaData.endpoints.sessions" equals "manifest-sessions-endpoint"
     And the event "metaData.test.foo" equals "bar"
     And the event "metaData.test.filter_me" equals "[REDACTED]"
     And the event "app.versionCode" equals 753
