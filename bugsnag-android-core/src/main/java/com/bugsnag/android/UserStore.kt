@@ -1,8 +1,10 @@
 package com.bugsnag.android
 
+import android.util.Log
 import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.StateObserver
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.IOException
 import java.util.concurrent.atomic.AtomicReference
 
@@ -18,14 +20,21 @@ internal class UserStore @JvmOverloads constructor(
 ) {
 
     private val synchronizedStreamableStore: SynchronizedStreamableStore<User>
+    private val previousLaunchFile: SynchronizedStreamableStore<User>
     private val persist = config.persistUser
     private val previousUser = AtomicReference<User?>(null)
 
     init {
-        try {
-            file.createNewFile()
-        } catch (exc: IOException) {
-            logger.w("Failed to created device ID file", exc)
+        // check whether or not a user-info file exists from the previous launch
+        this.previousLaunchFile = SynchronizedStreamableStore(file)
+
+        // only create a user-info file if config.persistUser = true, so that we don't just have an empty file when config.persistUser = false
+        if (persist) {
+            try {
+                file.createNewFile()
+            } catch (exc: IOException) {
+                logger.w("Failed to create device ID file", exc)
+            }
         }
         this.synchronizedStreamableStore = SynchronizedStreamableStore(file)
     }
@@ -83,6 +92,12 @@ internal class UserStore @JvmOverloads constructor(
         user.id != null || user.name != null || user.email != null
 
     private fun loadPersistedUser(): User? {
+        try {
+            previousLaunchFile.load(User.Companion::fromReader)
+        } catch (exc: Exception) {
+            logger.w("No persisted user info has been found from the previous launch", exc)
+        }
+
         return if (sharedPrefMigrator.hasPrefs()) {
             val legacyUser = sharedPrefMigrator.loadUser(deviceId)
             save(legacyUser)
@@ -91,7 +106,8 @@ internal class UserStore @JvmOverloads constructor(
             return try {
                 synchronizedStreamableStore.load(User.Companion::fromReader)
             } catch (exc: Exception) {
-                logger.w("Failed to load user info", exc)
+                // when config.persistUser is first set to true, the file will have been created but not yet filled
+                logger.w("No persisted user info has been loaded from the previous launch", exc)
                 null
             }
         }
