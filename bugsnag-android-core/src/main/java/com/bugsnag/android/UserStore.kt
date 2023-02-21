@@ -1,10 +1,8 @@
 package com.bugsnag.android
 
-import android.util.Log
 import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.StateObserver
 import java.io.File
-import java.io.FileNotFoundException
 import java.io.IOException
 import java.util.concurrent.atomic.AtomicReference
 
@@ -25,7 +23,6 @@ internal class UserStore @JvmOverloads constructor(
     private val previousUser = AtomicReference<User?>(null)
 
     init {
-        // check whether or not a user-info file exists from the previous launch
         this.previousLaunchFile = SynchronizedStreamableStore(file)
 
         // only create a user-info file if config.persistUser = true, so that we don't just have an empty file when config.persistUser = false
@@ -95,9 +92,14 @@ internal class UserStore @JvmOverloads constructor(
         try {
             previousLaunchFile.load(User.Companion::fromReader)
         } catch (exc: Exception) {
+            // If previousLaunchFile doesn't load, this is probably because config.persistUser was false on the previous launch
+            // and we are not expecting there to be any persisted user data to load (in the new file), so return null in order to
+            // not proceed with loading the new file
             logger.w("No persisted user info has been found from the previous launch", exc)
+            return null
         }
 
+        // Continue with previously existing code that checks the newly written file, as this shouldn't be empty now.
         return if (sharedPrefMigrator.hasPrefs()) {
             val legacyUser = sharedPrefMigrator.loadUser(deviceId)
             save(legacyUser)
