@@ -32,18 +32,18 @@ This contains a prompt of checks which you may want to test, depending on the ex
 ## Making the release
 
 - Check the performance benchmarks against the [baseline](BENCHMARKS.md) to confirm there are no serious regressions
-- Make a PR from `next` to `master` (or from a bug fix branch for urgent hot fixes):
+- Create a new release branch from `next` -> `release/vN.N.N`
+- Pull the release branch and update it locally:
   - [ ] Update the version number with `make VERSION=[number] bump`
   - [ ] Inspect the updated CHANGELOG, README, and version files to ensure they are correct
+- Open a Pull Request from the release branch to `master`
 - Once merged:
-  - Pull the latest changes (checking out master if necessary)
-  - Tag on github and push the branch to github
-    - [ ] Run `git tag vX.X.X && git push origin --tags`
+  - Pull the latest changes (checking out `master` if necessary)
   - On CI:
     - Trigger the release step by allowing the `Trigger package publish` step to continue
     - Verify the `Publish` step runs correctly and the artefacts are upload to sonatype.
   - Release to GitHub:
-    - [ ] Create a release from your new tag on [GitHub Releases](https://github.com/bugsnag/bugsnag-android/releases)
+    - [ ] Create *and tag* the release from `master` on [GitHub Releases](https://github.com/bugsnag/bugsnag-android/releases)
   - Checkout `master` and pull the latest changes
   - [ ] Test the Sonatype artefacts in the example app by adding the newly created 'combugsnag-XXXX' repository to the build.gradle:  `maven {url "https://oss.sonatype.org/service/local/repositories/combugsnag-XXXX/content/"}`
   - [ ] "Promote" the release build on Maven Central:
@@ -56,7 +56,7 @@ This contains a prompt of checks which you may want to test, depending on the ex
     - Select the com.bugsnag closed repository
     - Click the “release” button in the toolbar
   - Merge outstanding docs PRs related to this release
-  - Raise PRs to update the bugsnag-android dependency for [bugsnag-js](https://github.com/bugsnag/bugsnag-js), [bugsnag-unity](https://github.com/bugsnag/bugsnag-unity) and bugsnag-unreal (https://github.com/bugsnag/bugsnag-unreal)
+  - Raise PRs to update the bugsnag-android dependency for [bugsnag-js](https://github.com/bugsnag/bugsnag-js), [bugsnag-unity](https://github.com/bugsnag/bugsnag-unity), [bugsnag-flutter](https://github.com/bugsnag/bugsnag-flutter) and [bugsnag-unreal](https://github.com/bugsnag/bugsnag-unreal)
     - Also consider a PR for [bugsnag-cocos2dx](https://github.com/bugsnag/bugsnag-cocos2dx) if there is a critical fix
 
 ## Post-release checklist
