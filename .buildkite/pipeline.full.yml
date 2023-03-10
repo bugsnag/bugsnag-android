@@ -76,7 +76,66 @@ steps:
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
-  # No Android 6 devices available on BrowserStack
+  #
+  # BitBar steps
+  #
+  - label: ':android: Android 10 NDK r21 end-to-end tests - batch 1'
+    depends_on: "fixture-r21"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.9.0:
+        download:
+          - "build/fixture-r21.apk"
+          - "build/fixture-r21/*"
+        upload: "maze_output/failed/**/*"
+      docker-compose#v4.7.0:
+        pull: android-maze-runner-bitbar
+        run: android-maze-runner-bitbar
+        service-ports: true
+        command:
+          - "features/full_tests"
+          - "--exclude=features/full_tests/[^a-k].*.feature"
+          - "--app=build/fixture-r21.apk"
+          - "--farm=bb"
+          - "--device=ANDROID_10"
+          - "--no-tunnel"
+          - "--aws-public-ip"
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
+    concurrency: 5
+    concurrency_group: 'bitbar-android-10'
+    concurrency_method: eager
+
+  - label: ':android: Android 10 NDK r21 end-to-end tests - batch 2'
+    depends_on: "fixture-r21"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.9.0:
+        download:
+          - "build/fixture-r21.apk"
+          - "build/fixture-r21/*"
+        upload: "maze_output/failed/**/*"
+      docker-compose#v4.7.0:
+        pull: android-maze-runner-bitbar
+        run: android-maze-runner-bitbar
+        service-ports: true
+        command:
+          - "features/full_tests"
+          - "--exclude=features/full_tests/[^l-z].*.feature"
+          - "--app=build/fixture-r21.apk"
+          - "--farm=bb"
+          - "--device=ANDROID_10"
+          - "--no-tunnel"
+          - "--aws-public-ip"
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
+    concurrency: 5
+    concurrency_group: 'bitbar-android-10'
+    concurrency_method: eager
+
+  #
+  # BrowserStack steps
+  #
 
   - label: ':android: Android 7 NDK r19 end-to-end tests - batch 1'
     depends_on: "fixture-r19"
