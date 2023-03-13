@@ -248,6 +248,8 @@ class MainActivity : Activity() {
         log("Clearing persistent data")
         clearFolder("last-run-info")
         clearFolder("bugsnag-errors")
+        clearFolder("bugsnag-native")
+        clearFolder("bugsnag-sessions")
         clearFolder("device-id")
         clearFolder("user-info")
         clearFolder("fake")
