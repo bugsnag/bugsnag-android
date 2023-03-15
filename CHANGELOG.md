@@ -9,6 +9,11 @@
 * Small improvements to the root detection overhead
   [#1815](https://github.com/bugsnag/bugsnag-android/pull/1815)
 
+### Bug fixes
+
+* Activity breadcrumbs now report the correct "previous" state
+  [#1818](https://github.com/bugsnag/bugsnag-android/pull/1818)
+
 ## 5.28.4 (2023-02-08)
 
 ### Bug fixes
