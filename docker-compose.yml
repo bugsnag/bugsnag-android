@@ -1,6 +1,22 @@
 version: '3.6'
-services:
 
+x-common-environment: &common-environment
+  DEBUG:
+  BUILDKITE:
+  BUILDKITE_BRANCH:
+  BUILDKITE_BUILD_CREATOR:
+  BUILDKITE_BUILD_NUMBER:
+  BUILDKITE_BUILD_URL:
+  BUILDKITE_LABEL:
+  BUILDKITE_MESSAGE:
+  BUILDKITE_PIPELINE_NAME:
+  BUILDKITE_REPO:
+  BUILDKITE_RETRY_COUNT:
+  BUILDKITE_STEP_KEY:
+  MAZE_BUGSNAG_API_KEY:
+  TEST_FIXTURE_SYMBOL_DIR:
+
+services:
   android-common:
     build:
       context: .
@@ -31,46 +47,20 @@ services:
   android-maze-runner:
     image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner-releases:latest-v7-cli
     environment:
-      DEBUG:
-      BUILDKITE:
-      BUILDKITE_BRANCH:
-      BUILDKITE_BUILD_CREATOR:
-      BUILDKITE_BUILD_NUMBER:
-      BUILDKITE_BUILD_URL:
-      BUILDKITE_LABEL:
-      BUILDKITE_MESSAGE:
-      BUILDKITE_PIPELINE_NAME:
-      BUILDKITE_REPO:
-      BUILDKITE_RETRY_COUNT:
-      BUILDKITE_STEP_KEY:
-      MAZE_BUGSNAG_API_KEY:
+      <<: *common-environment
       BROWSER_STACK_USERNAME:
       BROWSER_STACK_ACCESS_KEY:
-      TEST_FIXTURE_SYMBOL_DIR:
     volumes:
       - ./build:/app/build
       - ./features/:/app/features/
       - ./maze_output:/app/maze_output
 
   android-maze-runner-bitbar:
-    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner:integration-bitbar-improvements-cli
+    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner-releases:latest-v7-cli-legacy
     environment:
-      DEBUG:
-      BUILDKITE:
-      BUILDKITE_BRANCH:
-      BUILDKITE_BUILD_CREATOR:
-      BUILDKITE_BUILD_NUMBER:
-      BUILDKITE_BUILD_URL:
-      BUILDKITE_LABEL:
-      BUILDKITE_MESSAGE:
-      BUILDKITE_PIPELINE_NAME:
-      BUILDKITE_REPO:
-      BUILDKITE_RETRY_COUNT:
-      BUILDKITE_STEP_KEY:
-      MAZE_BUGSNAG_API_KEY:
+      <<: *common-environment
       BITBAR_USERNAME:
       BITBAR_ACCESS_KEY:
-      TEST_FIXTURE_SYMBOL_DIR:
     ports:
       - "9000-9499:9339"
     volumes:
@@ -78,31 +68,6 @@ services:
       - ./features/:/app/features/
       - ./maze_output:/app/maze_output
       - /var/run/docker.sock:/var/run/docker.sock
-
-  android-maze-runner-legacy:
-    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner-releases:latest-v7-cli-legacy
-    environment:
-      DEBUG:
-      BUILDKITE:
-      BUILDKITE_BRANCH:
-      BUILDKITE_BUILD_CREATOR:
-      BUILDKITE_BUILD_NUMBER:
-      BUILDKITE_BUILD_URL:
-      BUILDKITE_LABEL:
-      BUILDKITE_MESSAGE:
-      BUILDKITE_PIPELINE_NAME:
-      BUILDKITE_REPO:
-      BUILDKITE_RETRY_COUNT:
-      BUILDKITE_STEP_KEY:
-      MAZE_BUGSNAG_API_KEY:
-      BROWSER_STACK_USERNAME:
-      BROWSER_STACK_ACCESS_KEY:
-      TEST_FIXTURE_SYMBOL_DIR:
-      USE_LEGACY_DRIVER: 1
-    volumes:
-      - ./build:/app/build
-      - ./features/:/app/features/
-      - ./maze_output:/app/maze_output
 
   android-license-audit:
     build:
