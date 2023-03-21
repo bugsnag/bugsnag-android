@@ -112,8 +112,8 @@ steps:
           - "--aws-public-ip"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 5
-    concurrency_group: 'bitbar-android-10'
+    concurrency: 25
+    concurrency_group: 'bitbar-app'
     concurrency_method: eager
 
   #
