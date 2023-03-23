@@ -107,14 +107,7 @@ class MainActivity : Activity() {
 
     // Checks general internet and secure tunnel connectivity
     private fun checkNetwork() {
-        log("Checking network connectivity")
-        try {
-            URL("https://www.google.com").readText()
-            log("Connection to www.google.com seems ok")
-        } catch (e: Exception) {
-            log("Connection to www.google.com FAILED", e)
-        }
-
+        log("Network connectivity: $networkStatus")
         try {
             URL("http://$mazeAddress").readText()
             log("Connection to Maze Runner seems ok")
@@ -255,6 +248,8 @@ class MainActivity : Activity() {
         log("Clearing persistent data")
         clearFolder("last-run-info")
         clearFolder("bugsnag-errors")
+        clearFolder("bugsnag-native")
+        clearFolder("bugsnag-sessions")
         clearFolder("device-id")
         clearFolder("user-info")
         clearFolder("fake")

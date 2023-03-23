@@ -24,10 +24,6 @@ Before('@skip') do |scenario|
   skip_this_scenario("Skipping scenario")
 end
 
-Before('@skip_bitbar') do |scenario|
-  skip_this_scenario("Skipping scenario") if Maze.config.farm == :bb
-end
-
 Before('@skip_above_android_8') do |scenario|
   skip_this_scenario("Skipping scenario") if Maze.config.os_version >= 9
 end

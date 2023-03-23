@@ -21,6 +21,9 @@ internal class ActivityLifecycleBreadcrumbTest {
     lateinit var activity: Activity
 
     @Mock
+    lateinit var activity2: Activity
+
+    @Mock
     lateinit var bundle: Bundle
 
     var resultActivity: String? = null
@@ -99,6 +102,22 @@ internal class ActivityLifecycleBreadcrumbTest {
         assertNull(resultMetadata!!["previous"])
 
         tracker.onActivityStarted(activity)
+        assertEquals("onCreate()", resultMetadata!!["previous"])
+    }
+
+    @Test
+    fun interleavedStateChanges() {
+        tracker.onActivityCreated(activity, null)
+        assertNull(resultMetadata!!["previous"])
+        tracker.onActivityCreated(activity2, null)
+        assertNull(resultMetadata!!["previous"])
+
+        tracker.onActivityStarted(activity)
+        assertEquals("onCreate()", resultMetadata!!["previous"])
+        tracker.onActivityResumed(activity)
+        assertEquals("onStart()", resultMetadata!!["previous"])
+
+        tracker.onActivityStarted(activity2)
         assertEquals("onCreate()", resultMetadata!!["previous"])
     }
 }

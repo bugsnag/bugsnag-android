@@ -53,6 +53,18 @@ class RootDetectorTest {
     }
 
     /**
+     * The method returns false if 'which su' returns a blank string
+     */
+    @Test
+    fun checkSuNotFoundBlank() {
+        val emptyStream = ByteArrayInputStream("\n  \n".toByteArray())
+        `when`(process.inputStream).thenReturn(emptyStream)
+        assertFalse(rootDetector.checkSuExists(processBuilder))
+        verify(processBuilder, times(1)).command(listOf("which", "su"))
+        verify(process, times(1)).destroy()
+    }
+
+    /**
      * The method returns true if 'which su' returns a non-empty string
      */
     @Test
