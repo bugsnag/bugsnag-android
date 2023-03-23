@@ -131,8 +131,8 @@ steps:
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
-        pull: android-maze-runner
-        run: android-maze-runner
+        pull: android-maze-runner-bitbar
+        run: android-maze-runner-bitbar
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^a-k].*.feature"
@@ -159,8 +159,8 @@ steps:
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
-        pull: android-maze-runner
-        run: android-maze-runner
+        pull: android-maze-runner-bitbar
+        run: android-maze-runner-bitbar
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
