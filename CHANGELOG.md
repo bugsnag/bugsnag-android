@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 5.29.0 (2023-03-23)
 
 ### Enhancements
 
