@@ -133,6 +133,7 @@ steps:
       docker-compose#v4.7.0:
         pull: android-maze-runner-bitbar
         run: android-maze-runner-bitbar
+        service-ports: true
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^a-k].*.feature"
@@ -161,6 +162,7 @@ steps:
       docker-compose#v4.7.0:
         pull: android-maze-runner-bitbar
         run: android-maze-runner-bitbar
+        service-ports: true
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
