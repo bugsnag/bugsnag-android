@@ -198,6 +198,11 @@ steps:
           - "--device=ANDROID_13"
           - "--no-tunnel"
           - "--aws-public-ip"
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
+    concurrency: 25
+    concurrency_group: 'bitbar-app'
+    concurrency_method: eager
 
   #
   # BrowserStack steps
