@@ -123,7 +123,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture_r21.apk"
+          - "build/fixture-r21.apk"
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
@@ -132,7 +132,7 @@ steps:
         service-ports: true
         command:
           - "features/smoke_tests"
-          - "--app=build/fixture_r21.apk"
+          - "--app=build/fixture-r21.apk"
           - "--farm=bb"
           - "--device=ANDROID_11"
           - "--no-tunnel"

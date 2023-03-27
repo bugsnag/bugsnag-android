@@ -89,7 +89,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture_r21.apk"
+          - "build/fixture-r21.apk"
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
@@ -97,7 +97,7 @@ steps:
         run: android-maze-runner-bitbar
         service-ports: true
         command:
-          - "--app=build/fixture_r21.apk"
+          - "--app=build/fixture-r21.apk"
           - "--farm=bb"
           - "--device=ANDROID_9"
           - "--no-tunnel"
@@ -117,7 +117,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture_r21.apk"
+          - "build/fixture-r21.apk"
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
@@ -127,7 +127,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=build/fixture_r21.apk"
+          - "--app=build/fixture-r21.apk"
           - "--farm=bb"
           - "--device=ANDROID_9"
           - "--no-tunnel"
@@ -261,7 +261,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture_r21.apk"
+          - "build/fixture-r21.apk"
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
@@ -271,7 +271,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "--app=build/fixture_r21.apk"
+          - "--app=build/fixture-r21.apk"
           - "--farm=bb"
           - "--device=ANDROID_11"
           - "--no-tunnel"
@@ -289,7 +289,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture_r21.apk"
+          - "build/fixture-r21.apk"
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
@@ -299,7 +299,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=build/fixture_r21.apk"
+          - "--app=build/fixture-r21.apk"
           - "--farm=bb"
           - "--device=ANDROID_11"
           - "--no-tunnel"
