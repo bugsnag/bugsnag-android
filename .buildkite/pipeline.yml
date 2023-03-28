@@ -116,7 +116,7 @@ steps:
     concurrency_group: 'bitbar-app'
     concurrency_method: eager
 
-  - label: ':android: Android 11 NDK r21 smoke tests'
+  - label: ':bitbar: Android 11 NDK r21 smoke tests'
     key: 'android-11-smoke'
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
