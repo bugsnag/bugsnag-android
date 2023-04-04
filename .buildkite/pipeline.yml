@@ -90,7 +90,33 @@ steps:
   # BitBar steps
   #
 
-  - label: ':android: Android 10 NDK r21 smoke tests'
+  - label: ':bitbar: Android 9 NDK r21 smoke tests'
+    depends_on: "fixture-r21"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.9.0:
+        download:
+          - "build/fixture-r21.apk"
+          - "build/fixture-r21/*"
+        upload: "maze_output/failed/**/*"
+      docker-compose#v4.7.0:
+        pull: android-maze-runner-bitbar
+        run: android-maze-runner-bitbar
+        service-ports: true
+        command:
+          - "features/smoke_tests"
+          - "--app=build/fixture-r21.apk"
+          - "--farm=bb"
+          - "--device=ANDROID_9"
+          - "--no-tunnel"
+          - "--aws-public-ip"
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
+    concurrency: 25
+    concurrency_group: 'bitbar-app'
+    concurrency_method: eager
+
+  - label: ':bitbar: Android 10 NDK r21 smoke tests'
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
@@ -110,6 +136,34 @@ steps:
           - "--device=ANDROID_10"
           - "--no-tunnel"
           - "--aws-public-ip"
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
+    concurrency: 25
+    concurrency_group: 'bitbar-app'
+    concurrency_method: eager
+
+  - label: ':bitbar: Android 11 NDK r21 smoke tests'
+    key: 'android-11-smoke'
+    depends_on: "fixture-r21"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.9.0:
+        download:
+          - "build/fixture-r21.apk"
+          - "build/fixture-r21/*"
+        upload: "maze_output/failed/**/*"
+      docker-compose#v4.7.0:
+        pull: android-maze-runner-bitbar
+        run: android-maze-runner-bitbar
+        service-ports: true
+        command:
+          - "features/smoke_tests"
+          - "--app=build/fixture-r21.apk"
+          - "--farm=bb"
+          - "--device=ANDROID_11"
+          - "--no-tunnel"
+          - "--aws-public-ip"
+          - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -258,32 +312,6 @@ steps:
     concurrency_method: eager
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
-
-  - label: ':android: Android 11 NDK r21 smoke tests'
-    key: 'android-11-smoke'
-    depends_on: "fixture-r21"
-    timeout_in_minutes: 60
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/fixture_r21_url.txt"
-          - "build/fixture-r21/*"
-        upload: "maze_output/failed/**/*"
-      docker-compose#v4.7.0:
-        pull: android-maze-runner
-        run: android-maze-runner
-        command:
-          - "features/smoke_tests"
-          - "--app=@/app/build/fixture_r21_url.txt"
-          - "--farm=bs"
-          - "--device=ANDROID_11_0"
-          - "--appium-version=1.20.2"
-          - "--fail-fast"
-    concurrency: 24
-    concurrency_group: 'browserstack-app'
-    concurrency_method: eager
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
 
   - label: 'Conditionally include device farms/full tests'
     agents:
