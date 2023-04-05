@@ -11,6 +11,7 @@ import com.bugsnag.android.Configuration
 import com.bugsnag.android.Severity
 import com.example.foo.CrashyClass
 import com.google.android.material.snackbar.Snackbar
+import java.sql.Timestamp
 import java.util.HashMap
 
 open class BaseCrashyActivity : AppCompatActivity() {
@@ -49,7 +50,18 @@ open class BaseCrashyActivity : AppCompatActivity() {
             anrFromCXX()
             showSnackbar()
         }
+        Bugsnag.addMetadata("Custom Time Stamp", "TimeStamp", Timestamp(System.currentTimeMillis()))
     }
+
+    override fun onResume() {
+        val users = listOf(mapOf("Test User 1" to "Adam"), mapOf("Test User 2" to "Alice"))
+        val timestamp = mapOf("Timestamp" to Timestamp(System.currentTimeMillis()))
+        val data = listOf(users, timestamp)
+
+        Bugsnag.addMetadata("Custom Data", "Details", data)
+        super.onResume()
+    }
+
 
     /**
      * Throws an unhandled Exception. Bugsnag will automatically capture any uncaught exceptions
