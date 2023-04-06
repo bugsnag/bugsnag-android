@@ -51,7 +51,7 @@ open class BaseCrashyActivity : AppCompatActivity() {
             anrFromCXX()
             showSnackbar()
         }
-        Bugsnag.addMetadata("Custom Time Stamp", "TimeStamp", Timestamp(System.currentTimeMillis()))
+        Bugsnag.addMetadata("Last Resume Time", "Last Resume Time", Date())
     }
 
     override fun onResume() {
