@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+* Example app demonstrates global metadata.
+  [#1827](https://github.com/bugsnag/bugsnag-android/pull/1827)
+
 ## 5.29.0 (2023-03-23)
 
 ### Enhancements
