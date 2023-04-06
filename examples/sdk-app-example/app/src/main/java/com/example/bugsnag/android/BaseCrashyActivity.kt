@@ -11,9 +11,7 @@ import com.bugsnag.android.Configuration
 import com.bugsnag.android.Severity
 import com.example.foo.CrashyClass
 import com.google.android.material.snackbar.Snackbar
-import java.sql.Timestamp
-import java.util.Date
-import java.util.HashMap
+import java.util.*
 
 open class BaseCrashyActivity : AppCompatActivity() {
 
@@ -51,15 +49,16 @@ open class BaseCrashyActivity : AppCompatActivity() {
             anrFromCXX()
             showSnackbar()
         }
-        Bugsnag.addMetadata("Last Resume Time", "Last Resume Time", Date())
     }
 
     override fun onResume() {
-        val members = listOf(mapOf("Group Members 1" to "Adam"), mapOf("Group Members 2" to "Alice"))
-        val lastResumeTime = mapOf("Last Resume Time" to Date() )
-        val data = listOf(members, lastResumeTime)
+        val members =
+            listOf(mapOf("Group Members 1" to "Adam"), mapOf("Group Members 2" to "Alice"))
+        val lastResumeTime = mapOf("Last Resume Time" to Date())
 
-        Bugsnag.addMetadata("Custom Data", "Details", data)
+        Bugsnag.addMetadata("Custom Data", "members", members)
+        Bugsnag.addMetadata("Last Resume Time", "Member Last Resume Time", lastResumeTime)
+
         super.onResume()
     }
 
