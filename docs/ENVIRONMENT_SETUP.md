@@ -5,6 +5,7 @@ This contains information on first-time setup required to develop bugsnag-androi
 ## Pre-requisites
 
 - Java 11 JDK, this can be installed with [sdkman](https://sdkman.io/)
+    - If using Apple silicon, use Zulu 11.0.18 `sdk install java 11.0.18-zulu`
 - A working [git](https://git-scm.com/) installation
 - A ruby installation (can be skipped until running E2E tests)
 - A docker installation (only for E2E tests/debugging CI images)
