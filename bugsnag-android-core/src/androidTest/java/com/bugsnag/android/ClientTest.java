@@ -284,4 +284,13 @@ public class ClientTest {
 
         assertEquals(clientExpected, clientActual);
     }
+
+    @Test
+    public void testClientCanAddMetadataToBreadCrumb() {
+        client = generateClient();
+        client.breadcrumbState.copy().get(0).getMetadata().put("test", 0);
+        assertEquals(1, client.getBreadcrumbs().size());
+        client.leaveBreadcrumb("test2");
+        assertEquals(2, client.getBreadcrumbs().size());
+    }
 }
