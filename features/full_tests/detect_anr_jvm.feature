@@ -19,8 +19,6 @@ Feature: ANRs triggered in JVM code are captured
     And the error payload field "events.0.threads.0.type" equals "android"
     And the error payload field "events.0.threads.0.stacktrace.0.type" is null
 
-# Other scenarios use a deadlock to generate an ANR, which works on Samsung devices. This scenario remains skipped
-# on Samsung as it is explicitly designed to test ANRs caused by a sleeping thread.
   @skip_samsung
   @anr
   Scenario: ANR triggered in JVM sleep code is captured

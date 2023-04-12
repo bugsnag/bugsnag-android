@@ -19,7 +19,7 @@ Feature: Switching automatic error detection on/off for Unity
     And I configure Bugsnag for "UnhandledNdkAutoNotifyFalseScenario"
     Then Bugsnag confirms it has no errors to send
 
-  @skip_android_8_1
+  @skip_samsung
   @anr
   Scenario: ANR not captured with autoDetectAnrs=false
     When I run "AutoDetectAnrsFalseScenario"
@@ -55,7 +55,7 @@ Feature: Switching automatic error detection on/off for Unity
     And the event "severityReason.unhandledOverridden" is false
 
   # PLAT-6620
-  @skip_android_8_1
+  @skip_samsung
   @anr
   Scenario: ANR captured with autoDetectAnrs reenabled
     When I clear any error dialogue
