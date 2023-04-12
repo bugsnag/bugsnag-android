@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.filters.SmallTest;
 
@@ -287,10 +288,16 @@ public class ClientTest {
 
     @Test
     public void testClientCanAddMetadataToBreadCrumb() {
-        client = generateClient();
-        client.breadcrumbState.copy().get(0).getMetadata().put("test", 0);
-        assertEquals(1, client.getBreadcrumbs().size());
-        client.leaveBreadcrumb("test2");
-        assertEquals(2, client.getBreadcrumbs().size());
+        Configuration config = new Configuration("5d1ec5bd39a74caa1267142706a7fb21");
+        config.addOnBreadcrumb(new OnBreadcrumbCallback() {
+            @Override
+            public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
+                breadcrumb.getMetadata().put("Test",1);
+                return true;
+            }
+        });
+        client = BugsnagTestUtils.generateClient(config);
+        client.leaveBreadcrumb("Test2");
+        assertTrue( client.getBreadcrumbs().get(0).getMetadata().containsKey("Test"));
     }
 }
