@@ -287,17 +287,20 @@ public class ClientTest {
     }
 
     @Test
-    public void testClientCanAddMetadataToBreadCrumb() {
-        Configuration config = new Configuration("5d1ec5bd39a74caa1267142706a7fb21");
+    public void testMetadataIsMutableInBreadCrumb() {
+        Configuration config = new Configuration("api keys");
         config.addOnBreadcrumb(new OnBreadcrumbCallback() {
             @Override
             public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
                 breadcrumb.getMetadata().put("Test",1);
+                breadcrumb.getMetadata().put("Test2", 2);
+                breadcrumb.getMetadata().remove("Test");
+                breadcrumb.getMetadata().clear();
+                breadcrumb.getMetadata().put("Test3", 3);
                 return true;
             }
         });
         client = BugsnagTestUtils.generateClient(config);
-        client.leaveBreadcrumb("Test2");
-        assertTrue( client.getBreadcrumbs().get(0).getMetadata().containsKey("Test"));
+        assertTrue( client.getBreadcrumbs().get(0).getMetadata().containsKey("Test3"));
     }
 }
