@@ -14,9 +14,9 @@ buildscript {
 
 allprojects {
     repositories {
+        mavenLocal()
         google()
         mavenCentral()
-        mavenLocal()
         maven { // add this to use snapshots
             url "https://oss.sonatype.org/content/repositories/snapshots/"
         }

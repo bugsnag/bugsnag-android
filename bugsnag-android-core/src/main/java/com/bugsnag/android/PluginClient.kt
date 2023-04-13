@@ -16,9 +16,9 @@ internal class PluginClient(
 
     private val plugins: Set<Plugin>
 
-    private val ndkPlugin = instantiatePlugin(NDK_PLUGIN)
-    private val anrPlugin = instantiatePlugin(ANR_PLUGIN)
-    private val rnPlugin = instantiatePlugin(RN_PLUGIN)
+    private val ndkPlugin = instantiatePlugin(NDK_PLUGIN, immutableConfig.enabledErrorTypes.ndkCrashes)
+    private val anrPlugin = instantiatePlugin(ANR_PLUGIN, immutableConfig.enabledErrorTypes.anrs)
+    private val rnPlugin = instantiatePlugin(RN_PLUGIN, immutableConfig.enabledErrorTypes.unhandledRejections)
 
     init {
         val set = mutableSetOf<Plugin>()
@@ -32,66 +32,70 @@ internal class PluginClient(
         plugins = set.toSet()
     }
 
-    private fun instantiatePlugin(clz: String): Plugin? {
+    private fun instantiatePlugin(clz: String, isWarningEnable: Boolean): Plugin? {
         return try {
             val pluginClz = Class.forName(clz)
             pluginClz.newInstance() as Plugin
         } catch (exc: ClassNotFoundException) {
-            logger.d("Plugin '$clz' is not on the classpath - functionality will not be enabled.")
+            if (isWarningEnable) {
+                logger.d("Plugin '$clz' is not on the classpath - functionality will not be enabled.")
+            }
             null
+
         } catch (exc: Throwable) {
             logger.e("Failed to load plugin '$clz'", exc)
             null
         }
     }
 
-    fun getNdkPlugin(): Plugin? = ndkPlugin
 
-    fun loadPlugins(client: Client) {
-        plugins.forEach { plugin ->
-            try {
-                loadPluginInternal(plugin, client)
-            } catch (exc: Throwable) {
-                logger.e("Failed to load plugin $plugin, continuing with initialisation.", exc)
-            }
+fun getNdkPlugin(): Plugin? = ndkPlugin
+
+fun loadPlugins(client: Client) {
+    plugins.forEach { plugin ->
+        try {
+            loadPluginInternal(plugin, client)
+        } catch (exc: Throwable) {
+            logger.e("Failed to load plugin $plugin, continuing with initialisation.", exc)
         }
     }
+}
 
-    fun setAutoNotify(client: Client, autoNotify: Boolean) {
-        setAutoDetectAnrs(client, autoNotify)
+fun setAutoNotify(client: Client, autoNotify: Boolean) {
+    setAutoDetectAnrs(client, autoNotify)
 
-        if (autoNotify) {
-            ndkPlugin?.load(client)
-        } else {
-            ndkPlugin?.unload()
-        }
+    if (autoNotify) {
+        ndkPlugin?.load(client)
+    } else {
+        ndkPlugin?.unload()
     }
+}
 
-    fun setAutoDetectAnrs(client: Client, autoDetectAnrs: Boolean) {
-        if (autoDetectAnrs) {
-            anrPlugin?.load(client)
-        } else {
-            anrPlugin?.unload()
-        }
+fun setAutoDetectAnrs(client: Client, autoDetectAnrs: Boolean) {
+    if (autoDetectAnrs) {
+        anrPlugin?.load(client)
+    } else {
+        anrPlugin?.unload()
     }
+}
 
-    fun findPlugin(clz: Class<*>): Plugin? = plugins.find { it.javaClass == clz }
+fun findPlugin(clz: Class<*>): Plugin? = plugins.find { it.javaClass == clz }
 
-    private fun loadPluginInternal(plugin: Plugin, client: Client) {
-        val name = plugin.javaClass.name
-        val errorTypes = immutableConfig.enabledErrorTypes
+private fun loadPluginInternal(plugin: Plugin, client: Client) {
+    val name = plugin.javaClass.name
+    val errorTypes = immutableConfig.enabledErrorTypes
 
-        // only initialize NDK/ANR plugins if automatic detection enabled
-        if (name == NDK_PLUGIN) {
-            if (errorTypes.ndkCrashes) {
-                plugin.load(client)
-            }
-        } else if (name == ANR_PLUGIN) {
-            if (errorTypes.anrs) {
-                plugin.load(client)
-            }
-        } else {
+    // only initialize NDK/ANR plugins if automatic detection enabled
+    if (name == NDK_PLUGIN) {
+        if (errorTypes.ndkCrashes) {
             plugin.load(client)
         }
+    } else if (name == ANR_PLUGIN) {
+        if (errorTypes.anrs) {
+            plugin.load(client)
+        }
+    } else {
+        plugin.load(client)
     }
+}
 }

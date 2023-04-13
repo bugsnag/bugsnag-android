@@ -51,6 +51,7 @@ open class BaseCrashyActivity : AppCompatActivity() {
             anrFromCXX()
             showSnackbar()
         }
+
     }
 
     override fun onResume() {
