@@ -292,11 +292,12 @@ public class ClientTest {
         config.addOnBreadcrumb(new OnBreadcrumbCallback() {
             @Override
             public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
-                breadcrumb.getMetadata().put("Test",1);
-                breadcrumb.getMetadata().put("Test2", 2);
-                breadcrumb.getMetadata().remove("Test");
-                breadcrumb.getMetadata().clear();
-                breadcrumb.getMetadata().put("Test3", 3);
+                Map<String, Object> metadata = breadcrumb.getMetadata();
+                metadata.put("Test",1);
+                metadata.put("Test2", 2);
+                metadata.remove("Test");
+                metadata.clear();
+                metadata.put("Test3", 3);
                 return true;
             }
         });
