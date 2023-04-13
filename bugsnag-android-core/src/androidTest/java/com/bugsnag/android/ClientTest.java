@@ -293,7 +293,7 @@ public class ClientTest {
             @Override
             public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
                 Map<String, Object> metadata = breadcrumb.getMetadata();
-                metadata.put("Test",1);
+                metadata.put("Test", 1);
                 metadata.put("Test2", 2);
                 metadata.remove("Test");
                 metadata.clear();
@@ -302,6 +302,10 @@ public class ClientTest {
             }
         });
         client = BugsnagTestUtils.generateClient(config);
-        assertTrue( client.getBreadcrumbs().get(0).getMetadata().containsKey("Test3"));
+
+        List<Breadcrumb> breadcrumbs = client.getBreadcrumbs();
+        assertEquals(1, breadcrumbs.size());
+        Integer testMetadataValue = (Integer) breadcrumbs.get(0).getMetadata().get("Test3");
+        assertEquals(Integer.valueOf(3), testMetadataValue);
     }
 }
