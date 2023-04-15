@@ -65,9 +65,6 @@ Before('@skip_android_6') do |scenario|
 end
 
 Before('@skip_samsung') do |scenario|
-
-  $logger.info "Checking: #{Maze.driver.capabilities}"
-
   caps = Maze.driver.capabilities
   options_cap = 'bitbar:options'
   device_cap = 'device'
