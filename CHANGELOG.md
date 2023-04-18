@@ -4,6 +4,9 @@
 
 ### Enhancements
 
+* ANR or NDR detection warnings can be suppressed (using `enabledErrorTypes`) when plugin is excluded.
+  [#1832](https://github.com/bugsnag/bugsnag-android/pull/1832)
+
 * Example app demonstrates global metadata.
   [#1827](https://github.com/bugsnag/bugsnag-android/pull/1827)
 
