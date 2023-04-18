@@ -9,10 +9,14 @@ import com.bugsnag.android.BreadcrumbType
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.Severity
+import com.bugsnag.android.okhttp.BugsnagOkHttpPlugin
 import com.example.foo.CrashyClass
 import com.google.android.material.snackbar.Snackbar
+import okhttp3.OkHttpClient
+import okhttp3.internal.notify
+import java.io.IOException
 import java.util.Date
-import java.util.HashMap
+import kotlin.collections.HashMap
 
 
 open class BaseCrashyActivity : AppCompatActivity() {
@@ -215,5 +219,23 @@ open class BaseCrashyActivity : AppCompatActivity() {
         val uri = Uri.parse("https://docs.bugsnag.com/platforms/android/sdk/")
         val intent = Intent(Intent.ACTION_VIEW, uri)
         startActivity(intent)
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun networkExceptionWithBreadcrumbs(view: View) {
+        val bugsnagOkHttpPlugin = BugsnagOkHttpPlugin()
+        OkHttpClient.Builder()
+            .eventListener(bugsnagOkHttpPlugin)
+            .build()
+
+        try {
+            Bugsnag.leaveBreadcrumb("NetWork failure")
+            throw IOException("Failure")
+        } catch (e: IOException) {
+            Bugsnag.notify(e) {
+                showSnackbar()
+                true
+            }
+        }
     }
 }

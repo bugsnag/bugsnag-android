@@ -93,6 +93,13 @@
             android:onClick="notifyNativeHandled"
             android:text="@string/trigger_native_notify" />
 
+        <Button
+            style="@style/ButtonTheme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="networkExceptionWithBreadcrumbs"
+            android:text="@string/trigger_network_exceptions" />
+
         <View style="@style/separator" />
 
         <TextView

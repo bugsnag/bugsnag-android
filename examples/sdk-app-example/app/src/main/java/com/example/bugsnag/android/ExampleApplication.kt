@@ -3,6 +3,7 @@ package com.example.bugsnag.android
 import android.app.Application
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
+import com.bugsnag.android.okhttp.BugsnagOkHttpPlugin
 import java.io.File
 
 class ExampleApplication : Application() {
@@ -25,9 +26,11 @@ class ExampleApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
+        val bugsnagOkHttpPlugin = BugsnagOkHttpPlugin()
         val config = Configuration.load(this)
         config.setUser("123456", "joebloggs@example.com", "Joe Bloggs")
         config.addMetadata("user", "age", 31)
+        config.addPlugin(bugsnagOkHttpPlugin)
 
         // Configure the persistence directory when running MultiProcessActivity in a separate
         // process to ensure the two Bugsnag clients are independent
