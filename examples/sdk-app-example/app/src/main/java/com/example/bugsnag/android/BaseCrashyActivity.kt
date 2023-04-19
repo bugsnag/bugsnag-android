@@ -13,10 +13,13 @@ import com.bugsnag.android.okhttp.BugsnagOkHttpPlugin
 import com.example.foo.CrashyClass
 import com.google.android.material.snackbar.Snackbar
 import okhttp3.OkHttpClient
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Request
+import okhttp3.Response
 import okhttp3.internal.notify
 import java.io.IOException
 import java.util.Date
-import kotlin.collections.HashMap
 
 
 open class BaseCrashyActivity : AppCompatActivity() {
@@ -180,8 +183,7 @@ open class BaseCrashyActivity : AppCompatActivity() {
         Bugsnag.notify(e) { event ->
             // modify the report
             val completedLevels = listOf("Level 1 - The Beginning", "Level 2 - Tower Defence")
-            val userDetails = HashMap<String, String>()
-            userDetails["playerName"] = "Joe Bloggs the Invincible"
+            val userDetails = hashMapOf("playerName" to "Joe Bloggs the Invincible" )
 
             event.addMetadata("CustomMetadata", "HasLaunchedGameTutorial", true)
             event.addMetadata("CustomMetadata", "UserDetails", userDetails)
@@ -222,20 +224,34 @@ open class BaseCrashyActivity : AppCompatActivity() {
     }
 
     @Suppress("UNUSED_PARAMETER")
+    fun notifyNetworkCallComplete() {
+        Bugsnag.notify(IOException("Network Failure")) {
+            showSnackbar()
+            true
+        }
+    }
+
     fun networkExceptionWithBreadcrumbs(view: View) {
         val bugsnagOkHttpPlugin = BugsnagOkHttpPlugin()
-        OkHttpClient.Builder()
+        val client = OkHttpClient.Builder()
             .eventListener(bugsnagOkHttpPlugin)
             .build()
 
-        try {
-            Bugsnag.leaveBreadcrumb("NetWork failure")
-            throw IOException("Failure")
-        } catch (e: IOException) {
-            Bugsnag.notify(e) {
-                showSnackbar()
-                true
+        val call = client.newCall(
+            Request.Builder()
+                .url("https://developer.android.com")
+                .build()
+        )
+
+        call.enqueue(object : Callback {
+            override fun onResponse(call: Call, response: Response) {
+                notifyNetworkCallComplete()
             }
-        }
+
+            override fun onFailure(call: Call, e: IOException) {
+                notifyNetworkCallComplete()
+            }
+        })
     }
+
 }
