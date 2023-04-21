@@ -4,6 +4,7 @@ Feature: ANRs triggered in JVM code are captured
     Given I clear all persistent data
 
   @anr
+  @skip_samsung
   Scenario: ANR triggered in JVM loop code is captured
     When I clear any error dialogue
     And I run "JvmAnrLoopScenario"
@@ -19,8 +20,8 @@ Feature: ANRs triggered in JVM code are captured
     And the error payload field "events.0.threads.0.type" equals "android"
     And the error payload field "events.0.threads.0.stacktrace.0.type" is null
 
-  @skip_samsung
   @anr
+  @skip_samsung
   Scenario: ANR triggered in JVM sleep code is captured
     When I clear any error dialogue
     And I run "JvmAnrSleepScenario"
@@ -34,6 +35,7 @@ Feature: ANRs triggered in JVM code are captured
     And the error payload field "events.0.exceptions.0.type" equals "android"
 
   @anr
+  @skip_samsung
   Scenario: ANR triggered in JVM code is not captured when detectAnrs = false
     When I run "JvmAnrDisabledScenario"
     And I wait for 2 seconds
@@ -45,6 +47,7 @@ Feature: ANRs triggered in JVM code are captured
     And the exception "message" equals "JvmAnrDisabledScenario"
 
   @anr
+  @skip_samsung
   Scenario: ANR triggered in JVM code is not captured when outside of release stage
     When I run "JvmAnrOutsideReleaseStagesScenario"
     And I wait for 2 seconds
