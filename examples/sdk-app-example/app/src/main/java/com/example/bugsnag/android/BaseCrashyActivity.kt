@@ -3,6 +3,8 @@ package com.example.bugsnag.android
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.bugsnag.android.BreadcrumbType
@@ -225,21 +227,20 @@ open class BaseCrashyActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun notifyNetworkCallComplete() {
-        Bugsnag.notify(IOException("Network Failure")) {
-            showSnackbar()
-            true
-        }
+        Handler(Looper.getMainLooper()).postDelayed({
+            Bugsnag.notify(IOException("Network Failure")) {
+                showSnackbar()
+                true
+            }
+        }, 100L)
     }
 
     fun networkExceptionWithBreadcrumbs(view: View) {
-        val bugsnagOkHttpPlugin = BugsnagOkHttpPlugin()
-        val client = OkHttpClient.Builder()
-            .eventListener(bugsnagOkHttpPlugin)
-            .build()
+        val httpClient = (application as ExampleApplication).httpClient
 
-        val call = client.newCall(
+        val call = httpClient.newCall(
             Request.Builder()
-                .url("https://developer.android.com")
+                .url("https://android.com")
                 .build()
         )
 

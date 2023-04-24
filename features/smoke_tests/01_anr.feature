@@ -1,8 +1,8 @@
 # This scenario is in its own file and folder so that it can be run first on Android 4
 Feature: ANR smoke test
 
-  @skip_samsung
   @anr
+  @skip_samsung
   Scenario: ANR detection
     When I set the screen orientation to portrait
     And I clear any error dialogue
