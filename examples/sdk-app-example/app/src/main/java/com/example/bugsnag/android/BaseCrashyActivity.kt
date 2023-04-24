@@ -121,6 +121,7 @@ open class BaseCrashyActivity : AppCompatActivity() {
      */
     @Suppress("UNUSED_PARAMETER")
     fun crashWithUserDetails(view: View) {
+        Bugsnag.addFeatureFlag("Report User Details", "User Details")
         Bugsnag.setUser("123456", "joebloggs@example.com", "Joe Bloggs")
         val e = RuntimeException("Error Report with User Info")
         Bugsnag.notify(e) {
