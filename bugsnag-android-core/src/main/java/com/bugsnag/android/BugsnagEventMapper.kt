@@ -140,6 +140,7 @@ internal class BugsnagEventMapper(
             app["buildUUID"] as? String,
             app["type"] as? String,
             (app["versionCode"] as? Number)?.toInt(),
+            app["installerPackage"] as? String,
             (app["duration"] as? Number)?.toLong(),
             (app["durationInForeground"] as? Number)?.toLong(),
             app["inForeground"] as? Boolean,

@@ -15,10 +15,11 @@ class AppDeserializer implements MapDeserializer<AppWithState> {
                 MapUtils.<String>getOrNull(map, "buildUuid"),
                 MapUtils.<String>getOrNull(map, "type"),
                 MapUtils.<Number>getOrNull(map, "versionCode"),
+                MapUtils.<String>getOrNull(map, "installerPackage"),
                 MapUtils.<Number>getOrNull(map, "duration"),
                 MapUtils.<Number>getOrNull(map, "durationInForeground"),
                 MapUtils.<Boolean>getOrNull(map, "inForeground"),
                 MapUtils.<Boolean>getOrNull(map, "isLaunching")
-        );
+                );
     }
 }

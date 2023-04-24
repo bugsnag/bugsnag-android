@@ -2,6 +2,7 @@ package com.bugsnag.android
 
 import android.app.ActivityManager
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Build
 import androidx.test.core.app.ApplicationProvider
 import org.junit.Assert.assertEquals
@@ -10,7 +11,9 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mock
+import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
 
@@ -52,6 +55,7 @@ class AppDataCollectorTest {
         )
         val app = collector.getAppDataMetadata()
         assertNull(app["backgroundWorkRestricted"])
+        assertNull(app["installer"])
         assertEquals("com.bugsnag.android.core.test", app["processName"] as String)
     }
 
@@ -99,5 +103,27 @@ class AppDataCollectorTest {
         } else {
             assertNull(app["backgroundWorkRestricted"])
         }
+    }
+
+    @Test
+    fun testGetInstallerPackageName() = withBuildSdkInt(Build.VERSION_CODES.Q) {
+        val packageManager = mock(PackageManager::class.java)
+        `when`(packageManager.getApplicationLabel(any())).thenReturn("Test App name")
+
+        val collector = AppDataCollector(
+            context,
+            packageManager,
+            client.immutableConfig,
+            client.sessionTracker,
+            am,
+            client.launchCrashTracker,
+            client.memoryTrimState
+        )
+
+        @Suppress("DEPRECATION")
+        `when`(packageManager.getInstallerPackageName(any())).thenReturn("Test Installer name")
+
+        val result = collector.getInstallerPackageName()
+        assertEquals("Test Installer name", result)
     }
 }

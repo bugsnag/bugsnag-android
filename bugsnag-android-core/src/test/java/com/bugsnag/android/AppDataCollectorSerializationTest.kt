@@ -43,6 +43,8 @@ internal class AppDataCollectorSerializationTest {
             `when`(sessionTracker.contextActivity).thenReturn("MyActivity")
             `when`(pm.getApplicationInfo(any(), anyInt())).thenReturn(ApplicationInfo())
             `when`(pm.getApplicationLabel(any())).thenReturn("MyApp")
+            @Suppress("DEPRECATION")
+            `when`(pm.getInstallerPackageName(any())).thenReturn("test.package.name")
 
             // construct AppDataCollector object
             val appData = AppDataCollector(

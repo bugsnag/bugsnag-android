@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.SystemClock
+import android.util.Log
 import com.bugsnag.android.internal.ImmutableConfig
 
 /**
@@ -33,16 +34,17 @@ internal class AppDataCollector(
     private val processName = findProcessName()
     private val releaseStage = config.releaseStage
     private val versionName = config.appVersion ?: config.packageInfo?.versionName
+    private val installerPackage = getInstallerPackageName()
 
     fun generateApp(): App =
-        App(config, binaryArch, packageName, releaseStage, versionName, codeBundleId)
+        App(config, binaryArch, packageName, releaseStage, versionName, codeBundleId, installerPackage)
 
     fun generateAppWithState(): AppWithState {
         val inForeground = sessionTracker.isInForeground
         val durationInForeground = calculateDurationInForeground(inForeground)
 
         return AppWithState(
-            config, binaryArch, packageName, releaseStage, versionName, codeBundleId,
+            config, binaryArch, packageName, releaseStage, versionName, codeBundleId, installerPackage,
             getDurationMs(), durationInForeground, inForeground,
             launchCrashTracker.isLaunching()
         )
@@ -54,6 +56,7 @@ internal class AppDataCollector(
         map["activeScreen"] = sessionTracker.contextActivity
         map["lowMemory"] = memoryTrimState.isLowMemory
         map["memoryTrimLevel"] = memoryTrimState.trimLevelDescription
+        map["installerPackage"] = installerPackage
 
         populateRuntimeMemoryMetadata(map)
 
@@ -127,6 +130,21 @@ internal class AppDataCollector(
                 packageManager.getApplicationLabel(copy).toString()
             }
             else -> null
+        }
+    }
+
+    /**
+     * The name of installer / vendor package of the app
+     */
+    fun getInstallerPackageName(): String? {
+        try {
+            if (VERSION.SDK_INT >= VERSION_CODES.R)
+                return packageManager?.getInstallSourceInfo(packageName)?.installingPackageName
+            @Suppress("DEPRECATION")
+            return packageManager?.getInstallerPackageName(packageName)
+        } catch (e: Exception) {
+            Log.i("Installer package name", "Fail getting installer package name: ")
+            return null
         }
     }
 

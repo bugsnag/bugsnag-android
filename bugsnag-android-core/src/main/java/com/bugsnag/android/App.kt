@@ -46,7 +46,9 @@ open class App internal constructor(
     /**
      * The version code of the application set in [Configuration.versionCode]
      */
-    var versionCode: Number?
+    var versionCode: Number?,
+
+    var installerPackage: String?
 ) : JsonStream.Streamable {
 
     internal constructor(
@@ -55,7 +57,8 @@ open class App internal constructor(
         id: String?,
         releaseStage: String?,
         version: String?,
-        codeBundleId: String?
+        codeBundleId: String?,
+        installerPackage: String?
     ) : this(
         binaryArch,
         id,
@@ -64,7 +67,8 @@ open class App internal constructor(
         codeBundleId,
         config.buildUuid,
         config.appType,
-        config.versionCode
+        config.versionCode,
+        installerPackage
     )
 
     internal open fun serialiseFields(writer: JsonStream) {
@@ -76,6 +80,7 @@ open class App internal constructor(
         writer.name("type").value(type)
         writer.name("version").value(version)
         writer.name("versionCode").value(versionCode)
+        writer.name("installerPackage").value(installerPackage)
     }
 
     @Throws(IOException::class)

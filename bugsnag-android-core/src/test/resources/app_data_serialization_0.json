@@ -5,5 +5,6 @@
   "releaseStage": "test-stage",
   "type": "React Native",
   "version": "1.2.3",
-  "versionCode": 55
+  "versionCode": 55,
+  "installerPackage": "test.package.name"
 }

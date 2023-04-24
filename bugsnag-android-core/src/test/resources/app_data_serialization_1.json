@@ -6,6 +6,7 @@
   "type": "React Native",
   "version": "1.2.3",
   "versionCode": 55,
+  "installerPackage": "test.package.name",
   "duration": 0,
   "durationInForeground": 0,
   "inForeground": false,

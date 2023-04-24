@@ -15,6 +15,7 @@ class AppWithState(
     buildUuid: String?,
     type: String?,
     versionCode: Number?,
+    installerPackageName: String?,
 
     /**
      * The number of milliseconds the application was running before the event occurred
@@ -36,7 +37,8 @@ class AppWithState(
      * Whether the application was launching when the event occurred
      */
     var isLaunching: Boolean?
-) : App(binaryArch, id, releaseStage, version, codeBundleId, buildUuid, type, versionCode) {
+
+) : App(binaryArch, id, releaseStage, version, codeBundleId, buildUuid, type, versionCode, installerPackageName) {
 
     internal constructor(
         config: ImmutableConfig,
@@ -45,6 +47,7 @@ class AppWithState(
         releaseStage: String?,
         version: String?,
         codeBundleId: String?,
+        installerPackage: String?,
         duration: Number?,
         durationInForeground: Number?,
         inForeground: Boolean?,
@@ -58,6 +61,7 @@ class AppWithState(
         config.buildUuid,
         config.appType,
         config.versionCode,
+        installerPackage,
         duration,
         durationInForeground,
         inForeground,
