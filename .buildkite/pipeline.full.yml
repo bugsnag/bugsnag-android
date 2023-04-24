@@ -334,7 +334,7 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
-    concurrency: 24
+    concurrency: 5
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
@@ -360,7 +360,7 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
-    concurrency: 24
+    concurrency: 5
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
@@ -386,7 +386,7 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
-    concurrency: 24
+    concurrency: 5
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
@@ -412,7 +412,7 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
-    concurrency: 24
+    concurrency: 5
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
