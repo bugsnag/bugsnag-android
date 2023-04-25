@@ -9,7 +9,7 @@ import java.io.File
 
 class ExampleApplication : Application() {
 
-    val bugsnagOkHttpPlugin = BugsnagOkHttpPlugin()
+    private val bugsnagOkHttpPlugin = BugsnagOkHttpPlugin()
     val httpClient = OkHttpClient.Builder()
         .eventListener(bugsnagOkHttpPlugin)
         .build()

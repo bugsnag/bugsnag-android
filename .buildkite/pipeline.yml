@@ -281,7 +281,7 @@ steps:
           - "--device=ANDROID_7_1"
           - "--appium-version=1.20.2"
           - "--fail-fast"
-    concurrency: 24
+    concurrency: 5
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
     env:
@@ -307,7 +307,7 @@ steps:
           - "--device=ANDROID_8_1"
           - "--appium-version=1.20.2"
           - "--fail-fast"
-    concurrency: 24
+    concurrency: 5
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
     env:

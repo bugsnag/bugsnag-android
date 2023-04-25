@@ -3,18 +3,15 @@ package com.example.bugsnag.android
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.bugsnag.android.BreadcrumbType
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.Severity
-import com.bugsnag.android.okhttp.BugsnagOkHttpPlugin
 import com.example.foo.CrashyClass
 import com.google.android.material.snackbar.Snackbar
-import okhttp3.OkHttpClient
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
@@ -130,6 +127,7 @@ open class BaseCrashyActivity : AppCompatActivity() {
      */
     @Suppress("UNUSED_PARAMETER")
     fun crashWithUserDetails(view: View) {
+        Bugsnag.addFeatureFlag("Report User Details", "User Details")
         Bugsnag.setUser("123456", "joebloggs@example.com", "Joe Bloggs")
         val e = RuntimeException("Error Report with User Info")
         Bugsnag.notify(e) {
@@ -185,7 +183,7 @@ open class BaseCrashyActivity : AppCompatActivity() {
         Bugsnag.notify(e) { event ->
             // modify the report
             val completedLevels = listOf("Level 1 - The Beginning", "Level 2 - Tower Defence")
-            val userDetails = hashMapOf("playerName" to "Joe Bloggs the Invincible" )
+            val userDetails = hashMapOf("playerName" to "Joe Bloggs the Invincible")
 
             event.addMetadata("CustomMetadata", "HasLaunchedGameTutorial", true)
             event.addMetadata("CustomMetadata", "UserDetails", userDetails)
@@ -225,14 +223,16 @@ open class BaseCrashyActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    /**
+     * Network call information will appear in all error reports sent
+     * to the Bugsnag dashboard.
+     */
     @Suppress("UNUSED_PARAMETER")
     fun notifyNetworkCallComplete() {
-        Handler(Looper.getMainLooper()).postDelayed({
-            Bugsnag.notify(IOException("Network Failure")) {
-                showSnackbar()
-                true
-            }
-        }, 100L)
+        Bugsnag.notify(IOException("Network Failure")) {
+            runOnUiThread { showSnackbar() }
+            true
+        }
     }
 
     fun networkExceptionWithBreadcrumbs(view: View) {
@@ -246,6 +246,7 @@ open class BaseCrashyActivity : AppCompatActivity() {
 
         call.enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
+                Log.d("ExampleApp", "Read ${response.body?.bytes()?.size} bytes")
                 notifyNetworkCallComplete()
             }
 
