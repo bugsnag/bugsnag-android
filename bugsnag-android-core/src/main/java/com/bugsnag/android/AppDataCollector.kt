@@ -143,7 +143,6 @@ internal class AppDataCollector(
             @Suppress("DEPRECATION")
             return packageManager?.getInstallerPackageName(packageName)
         } catch (e: Exception) {
-            Log.i("Installer package name", "Fail getting installer package name: ")
             return null
         }
     }
