@@ -145,7 +145,13 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         });
 
         // set sensible defaults for delivery/project packages etc if not set
-        ConfigModule configModule = new ConfigModule(contextModule, configuration, connectivity);
+        ConfigModule configModule = new ConfigModule(
+                contextModule,
+                configuration,
+                connectivity,
+                bgTaskService
+        );
+
         immutableConfig = configModule.getConfig();
         logger = immutableConfig.getLogger();
 

@@ -25,6 +25,7 @@ import com.bugsnag.android.errorApiHeaders
 import com.bugsnag.android.safeUnrollCauses
 import com.bugsnag.android.sessionApiHeaders
 import java.io.File
+import java.util.concurrent.Callable
 import java.util.regex.Pattern
 
 data class ImmutableConfig(
@@ -205,7 +206,8 @@ fun isInvalidApiKey(apiKey: String?): Boolean {
 internal fun sanitiseConfiguration(
     appContext: Context,
     configuration: Configuration,
-    connectivity: Connectivity
+    connectivity: Connectivity,
+    backgroundTaskService: BackgroundTaskService
 ): ImmutableConfig {
     validateApiKey(configuration.apiKey)
     val packageName = appContext.packageName
@@ -246,7 +248,7 @@ internal fun sanitiseConfiguration(
     }
 
     // populate buildUUID from manifest
-    val buildUuid = populateBuildUuid(appInfo)
+    val buildUuid = collectBuildUuid(appInfo, backgroundTaskService)
 
     @Suppress("SENSELESS_COMPARISON")
     if (configuration.delivery == null) {
@@ -266,12 +268,29 @@ internal fun sanitiseConfiguration(
     )
 }
 
-private fun populateBuildUuid(appInfo: ApplicationInfo?): String? {
+private fun collectBuildUuid(
+    appInfo: ApplicationInfo?,
+    backgroundTaskService: BackgroundTaskService
+): String? {
     val bundle = appInfo?.metaData
     return when {
         bundle?.containsKey(BUILD_UUID) == true -> {
             bundle.getString(BUILD_UUID) ?: bundle.getInt(BUILD_UUID).toString()
         }
+
+        appInfo != null -> {
+            try {
+                backgroundTaskService
+                    .submitTask(
+                        TaskType.IO,
+                        Callable { DexBuildIdGenerator.generateBuildId(appInfo) }
+                    )
+                    .get()
+            } catch (e: Exception) {
+                null
+            }
+        }
+
         else -> null
     }
 }
