@@ -3,6 +3,7 @@ package com.example.bugsnag.android
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.bugsnag.android.BreadcrumbType
@@ -11,8 +12,13 @@ import com.bugsnag.android.Configuration
 import com.bugsnag.android.Severity
 import com.example.foo.CrashyClass
 import com.google.android.material.snackbar.Snackbar
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Request
+import okhttp3.Response
+import okhttp3.internal.notify
+import java.io.IOException
 import java.util.Date
-import java.util.HashMap
 
 
 open class BaseCrashyActivity : AppCompatActivity() {
@@ -177,8 +183,7 @@ open class BaseCrashyActivity : AppCompatActivity() {
         Bugsnag.notify(e) { event ->
             // modify the report
             val completedLevels = listOf("Level 1 - The Beginning", "Level 2 - Tower Defence")
-            val userDetails = HashMap<String, String>()
-            userDetails["playerName"] = "Joe Bloggs the Invincible"
+            val userDetails = hashMapOf("playerName" to "Joe Bloggs the Invincible")
 
             event.addMetadata("CustomMetadata", "HasLaunchedGameTutorial", true)
             event.addMetadata("CustomMetadata", "UserDetails", userDetails)
@@ -217,4 +222,38 @@ open class BaseCrashyActivity : AppCompatActivity() {
         val intent = Intent(Intent.ACTION_VIEW, uri)
         startActivity(intent)
     }
+
+    /**
+     * Network call information will appear in all error reports sent
+     * to the Bugsnag dashboard.
+     */
+    @Suppress("UNUSED_PARAMETER")
+    fun notifyNetworkCallComplete() {
+        Bugsnag.notify(IOException("Network Failure")) {
+            runOnUiThread { showSnackbar() }
+            true
+        }
+    }
+
+    fun networkExceptionWithBreadcrumbs(view: View) {
+        val httpClient = (application as ExampleApplication).httpClient
+
+        val call = httpClient.newCall(
+            Request.Builder()
+                .url("https://android.com")
+                .build()
+        )
+
+        call.enqueue(object : Callback {
+            override fun onResponse(call: Call, response: Response) {
+                Log.d("ExampleApp", "Read ${response.body?.bytes()?.size} bytes")
+                notifyNetworkCallComplete()
+            }
+
+            override fun onFailure(call: Call, e: IOException) {
+                notifyNetworkCallComplete()
+            }
+        })
+    }
+
 }
