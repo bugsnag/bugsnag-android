@@ -3,7 +3,7 @@ Feature: Reporting Strict Mode Violations
   Background:
     Given I clear all persistent data
 
-  # TODO: Skipped pending PLAT-10003
+  # TODO: Skipped pending PLAT-9675
   @skip
   @skip_below_android_9
   Scenario: StrictMode Exposed File URI violation
