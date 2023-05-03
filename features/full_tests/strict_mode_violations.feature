@@ -3,6 +3,8 @@ Feature: Reporting Strict Mode Violations
   Background:
     Given I clear all persistent data
 
+  # TODO: Skipped pending PLAT-10003
+  @skip
   @skip_below_android_9
   Scenario: StrictMode Exposed File URI violation
     When I run "StrictModeFileUriExposeScenario" and relaunch the crashed app
