@@ -4,6 +4,9 @@
 
 ### Enhancements
 
+* Optimise SessionTracer to reduce the overhead in calculating the current context Activity.
+  [#1838](https://github.com/bugsnag/bugsnag-android/pull/1838)
+
 * ANR or NDK detection warnings can be suppressed (using `enabledErrorTypes`) when plugin is excluded.
   [#1832](https://github.com/bugsnag/bugsnag-android/pull/1832)
 
