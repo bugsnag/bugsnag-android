@@ -185,6 +185,7 @@ class BugsnagBuildPlugin : Plugin<Project> {
             plugins.apply("kotlin-android")
             plugins.apply("io.gitlab.arturbosch.detekt")
             plugins.apply("org.jlleitschuh.gradle.ktlint")
+            plugins.apply("org.jetbrains.kotlinx.binary-compatibility-validator")
         }
     }
 
