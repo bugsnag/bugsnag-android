@@ -305,7 +305,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         registerListenersInBackground();
 
         // Leave auto breadcrumb
-        Map<String, Object> data = Collections.emptyMap();
+        Map<String, Object> data = new HashMap<>();
         leaveAutoBreadcrumb("Bugsnag loaded", BreadcrumbType.STATE, data);
 
         logger.d("Bugsnag loaded");

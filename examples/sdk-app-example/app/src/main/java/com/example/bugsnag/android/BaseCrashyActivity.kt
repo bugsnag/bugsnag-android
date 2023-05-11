@@ -3,6 +3,7 @@ package com.example.bugsnag.android
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.bugsnag.android.BreadcrumbType
@@ -11,7 +12,14 @@ import com.bugsnag.android.Configuration
 import com.bugsnag.android.Severity
 import com.example.foo.CrashyClass
 import com.google.android.material.snackbar.Snackbar
-import java.util.HashMap
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Request
+import okhttp3.Response
+import okhttp3.internal.notify
+import java.io.IOException
+import java.util.Date
+
 
 open class BaseCrashyActivity : AppCompatActivity() {
 
@@ -50,6 +58,20 @@ open class BaseCrashyActivity : AppCompatActivity() {
             showSnackbar()
         }
     }
+
+    override fun onResume() {
+        val members = listOf(
+            mapOf("Group Members 1" to "Adam"),
+            mapOf("Group Members 2" to "Alice")
+        )
+        val lastResumeTime = mapOf("Last Resume Time" to Date())
+
+        Bugsnag.addMetadata("Custom Data", "members", members)
+        Bugsnag.addMetadata("Last Resume Time", "Member Last Resume Time", lastResumeTime)
+
+        super.onResume()
+    }
+
 
     /**
      * Throws an unhandled Exception. Bugsnag will automatically capture any uncaught exceptions
@@ -105,6 +127,7 @@ open class BaseCrashyActivity : AppCompatActivity() {
      */
     @Suppress("UNUSED_PARAMETER")
     fun crashWithUserDetails(view: View) {
+        Bugsnag.addFeatureFlag("Report User Details", "User Details")
         Bugsnag.setUser("123456", "joebloggs@example.com", "Joe Bloggs")
         val e = RuntimeException("Error Report with User Info")
         Bugsnag.notify(e) {
@@ -160,8 +183,7 @@ open class BaseCrashyActivity : AppCompatActivity() {
         Bugsnag.notify(e) { event ->
             // modify the report
             val completedLevels = listOf("Level 1 - The Beginning", "Level 2 - Tower Defence")
-            val userDetails = HashMap<String, String>()
-            userDetails["playerName"] = "Joe Bloggs the Invincible"
+            val userDetails = hashMapOf("playerName" to "Joe Bloggs the Invincible")
 
             event.addMetadata("CustomMetadata", "HasLaunchedGameTutorial", true)
             event.addMetadata("CustomMetadata", "UserDetails", userDetails)
@@ -200,4 +222,38 @@ open class BaseCrashyActivity : AppCompatActivity() {
         val intent = Intent(Intent.ACTION_VIEW, uri)
         startActivity(intent)
     }
+
+    /**
+     * Network call information will appear in all error reports sent
+     * to the Bugsnag dashboard.
+     */
+    @Suppress("UNUSED_PARAMETER")
+    fun notifyNetworkCallComplete() {
+        Bugsnag.notify(IOException("Network Failure")) {
+            runOnUiThread { showSnackbar() }
+            true
+        }
+    }
+
+    fun networkExceptionWithBreadcrumbs(view: View) {
+        val httpClient = (application as ExampleApplication).httpClient
+
+        val call = httpClient.newCall(
+            Request.Builder()
+                .url("https://android.com")
+                .build()
+        )
+
+        call.enqueue(object : Callback {
+            override fun onResponse(call: Call, response: Response) {
+                Log.d("ExampleApp", "Read ${response.body?.bytes()?.size} bytes")
+                notifyNetworkCallComplete()
+            }
+
+            override fun onFailure(call: Call, e: IOException) {
+                notifyNetworkCallComplete()
+            }
+        })
+    }
+
 }

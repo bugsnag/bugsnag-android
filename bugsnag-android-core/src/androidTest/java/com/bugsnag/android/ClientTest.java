@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.filters.SmallTest;
 
@@ -283,5 +284,28 @@ public class ClientTest {
         Collections.sort(clientActual, BugsnagTestUtils.featureFlagComparator());
 
         assertEquals(clientExpected, clientActual);
+    }
+
+    @Test
+    public void testMetadataIsMutableInBreadCrumb() {
+        Configuration config = new Configuration("api keys");
+        config.addOnBreadcrumb(new OnBreadcrumbCallback() {
+            @Override
+            public boolean onBreadcrumb(@NonNull Breadcrumb breadcrumb) {
+                Map<String, Object> metadata = breadcrumb.getMetadata();
+                metadata.put("Test", 1);
+                metadata.put("Test2", 2);
+                metadata.remove("Test");
+                metadata.clear();
+                metadata.put("Test3", 3);
+                return true;
+            }
+        });
+        client = BugsnagTestUtils.generateClient(config);
+
+        List<Breadcrumb> breadcrumbs = client.getBreadcrumbs();
+        assertEquals(1, breadcrumbs.size());
+        Integer testMetadataValue = (Integer) breadcrumbs.get(0).getMetadata().get("Test3");
+        assertEquals(Integer.valueOf(3), testMetadataValue);
     }
 }
