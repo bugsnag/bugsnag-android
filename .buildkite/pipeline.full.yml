@@ -98,13 +98,13 @@ steps:
         run: android-maze-runner-bitbar
         service-ports: true
         command:
+          - "features/full_tests"
           - "--app=build/fixture-r19.apk"
           - "--farm=bb"
           - "--device=ANDROID_7"
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "features/full_tests"
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
@@ -154,13 +154,13 @@ steps:
         run: android-maze-runner-bitbar
         service-ports: true
         command:
+          - "features/full_tests"
           - "--app=build/fixture-r21.apk"
           - "--farm=bb"
           - "--device=ANDROID_9"
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "features/full_tests"
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
@@ -217,6 +217,7 @@ steps:
           - "--device=ANDROID_10"
           - "--no-tunnel"
           - "--aws-public-ip"
+          - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -244,6 +245,7 @@ steps:
           - "--device=ANDROID_10"
           - "--no-tunnel"
           - "--aws-public-ip"
+          - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -331,6 +333,7 @@ steps:
           - "--device=ANDROID_13"
           - "--no-tunnel"
           - "--aws-public-ip"
+          - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -358,6 +361,7 @@ steps:
           - "--device=ANDROID_13"
           - "--no-tunnel"
           - "--aws-public-ip"
+          - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25

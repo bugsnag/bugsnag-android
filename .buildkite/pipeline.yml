@@ -109,6 +109,7 @@ steps:
           - "--device=ANDROID_7"
           - "--no-tunnel"
           - "--aws-public-ip"
+          - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
     concurrency: 25
@@ -135,6 +136,7 @@ steps:
           - "--device=ANDROID_9"
           - "--no-tunnel"
           - "--aws-public-ip"
+          - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -161,6 +163,7 @@ steps:
           - "--device=ANDROID_10"
           - "--no-tunnel"
           - "--aws-public-ip"
+          - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -277,6 +280,7 @@ steps:
           - "--device=ANDROID_13"
           - "--no-tunnel"
           - "--aws-public-ip"
+          - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
