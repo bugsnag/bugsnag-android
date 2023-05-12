@@ -18,7 +18,7 @@ buildscript {
         mavenCentral()
         maven { url "https://plugins.gradle.org/m2/" }
     }
-    ext.kotlin_version = "1.3.72"
+    ext.kotlin_version = "1.8.20"
 
     dependencies {
         if (project.hasProperty("USE_LEGACY_AGP") && "true" == project.property("USE_LEGACY_AGP")) {
