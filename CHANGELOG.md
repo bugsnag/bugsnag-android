@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 5.30.0 (2023-05-11)
 
 ### Enhancements
 
@@ -9,9 +9,6 @@
 
 * ANR or NDK detection warnings can be suppressed (using `enabledErrorTypes`) when plugin is excluded.
   [#1832](https://github.com/bugsnag/bugsnag-android/pull/1832)
-
-* Example app demonstrates global metadata.
-  [#1827](https://github.com/bugsnag/bugsnag-android/pull/1827)
 
 ## 5.29.0 (2023-03-23)
 

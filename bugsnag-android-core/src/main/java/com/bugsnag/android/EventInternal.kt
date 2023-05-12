@@ -306,7 +306,7 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
 
     override fun addFeatureFlag(name: String, variant: String?) = featureFlags.addFeatureFlag(name, variant)
 
-    override fun addFeatureFlags(featureFlags: MutableIterable<FeatureFlag>) =
+    override fun addFeatureFlags(featureFlags: Iterable<FeatureFlag>) =
         this.featureFlags.addFeatureFlags(featureFlags)
 
     override fun clearFeatureFlag(name: String) = featureFlags.clearFeatureFlag(name)
