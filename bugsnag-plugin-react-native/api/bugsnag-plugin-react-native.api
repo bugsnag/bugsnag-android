@@ -1,0 +1,33 @@
+public final class com/bugsnag/android/BugsnagReactNativePlugin : com/bugsnag/android/Plugin {
+	public field logger Lcom/bugsnag/android/Logger;
+	public fun <init> ()V
+	public final fun addFeatureFlag (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun addMetadata (Ljava/lang/String;Ljava/util/Map;)V
+	public final fun clearFeatureFlag (Ljava/lang/String;)V
+	public final fun clearFeatureFlags ()V
+	public final fun clearMetadata (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun configure (Ljava/util/Map;)Ljava/util/Map;
+	public final fun dispatch (Ljava/util/Map;)V
+	public final fun getJsCallback ()Lkotlin/jvm/functions/Function1;
+	public final fun getLogger ()Lcom/bugsnag/android/Logger;
+	public final fun getPayloadInfo (Z)Ljava/util/Map;
+	public final fun leaveBreadcrumb (Ljava/util/Map;)V
+	public fun load (Lcom/bugsnag/android/Client;)V
+	public final fun pauseSession ()V
+	public final fun registerForMessageEvents (Lkotlin/jvm/functions/Function1;)V
+	public final fun resumeSession ()V
+	public final fun setJsCallback (Lkotlin/jvm/functions/Function1;)V
+	public final fun setLogger (Lcom/bugsnag/android/Logger;)V
+	public final fun startSession ()V
+	public fun unload ()V
+	public final fun updateCodeBundleId (Ljava/lang/String;)V
+	public final fun updateContext (Ljava/lang/String;)V
+	public final fun updateUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+}
+
+public final class com/bugsnag/android/MessageEvent {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Object;)V
+	public final fun getData ()Ljava/lang/Object;
+	public final fun getType ()Ljava/lang/String;
+}
+

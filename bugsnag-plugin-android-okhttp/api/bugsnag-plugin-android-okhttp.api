@@ -1,0 +1,15 @@
+public final class com/bugsnag/android/okhttp/BugsnagOkHttpPlugin : okhttp3/EventListener, com/bugsnag/android/Plugin {
+	public fun <init> ()V
+	public fun <init> (Lkotlin/jvm/functions/Function0;)V
+	public synthetic fun <init> (Lkotlin/jvm/functions/Function0;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun callEnd (Lokhttp3/Call;)V
+	public fun callFailed (Lokhttp3/Call;Ljava/io/IOException;)V
+	public fun callStart (Lokhttp3/Call;)V
+	public fun canceled (Lokhttp3/Call;)V
+	public fun load (Lcom/bugsnag/android/Client;)V
+	public fun requestBodyEnd (Lokhttp3/Call;J)V
+	public fun responseBodyEnd (Lokhttp3/Call;J)V
+	public fun responseHeadersEnd (Lokhttp3/Call;Lokhttp3/Response;)V
+	public fun unload ()V
+}
+

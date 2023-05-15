@@ -20,3 +20,9 @@ buildscript {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+apiValidation {
+    ignoredPackages += [
+            com.bugsnag.android.internal
+    ]
+}

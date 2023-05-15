@@ -54,6 +54,12 @@ steps:
       queue: macos-12-arm
     command: './gradlew --continue checkstyle detekt lint ktlintCheck'
 
+  - label: ':android: Binary compatibility checks'
+    timeout_in_minutes: 20
+    agents:
+      queue: macos-12-arm
+    command: './gradlew apiCheck'
+
   - label: ':android: CppCheck'
     timeout_in_minutes: 10
     agents:
