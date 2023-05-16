@@ -152,7 +152,6 @@ class BackgroundTaskService(
     @Throws(RejectedExecutionException::class)
     fun <T> submitTask(taskType: TaskType, callable: Callable<T>): Future<T> {
         val task = FutureTask(callable)
-
         when (taskType) {
             TaskType.ERROR_REQUEST -> errorExecutor.execute(task)
             TaskType.SESSION_REQUEST -> sessionExecutor.execute(task)
@@ -162,6 +161,21 @@ class BackgroundTaskService(
         }
 
         return SafeFuture(task, taskType)
+    }
+
+    fun awaitPending() {
+        val noop = Runnable { }
+        val futures = arrayOf(
+            errorExecutor.submit(noop),
+            sessionExecutor.submit(noop),
+            ioExecutor.submit(noop),
+            internalReportExecutor.submit(noop),
+            defaultExecutor.submit(noop),
+        )
+
+        futures.forEach {
+            runCatching { it.get() }
+        }
     }
 
     /**

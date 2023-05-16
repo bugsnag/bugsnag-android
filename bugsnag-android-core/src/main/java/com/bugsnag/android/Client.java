@@ -757,9 +757,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         LastRunInfo runInfo = new LastRunInfo(consecutiveLaunchCrashes, true, launching);
         persistRunInfo(runInfo);
 
-        // suspend execution of any further background tasks, waiting for previously
-        // submitted ones to complete.
-        bgTaskService.shutdown();
+        // wait for any previously submitted tasks to complete.
+        bgTaskService.awaitPending();
     }
 
     void populateAndNotifyAndroidEvent(@NonNull Event event,

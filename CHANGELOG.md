@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Big fixes
+
+* Avoid secondary crashes triggered when multiple threads in an app crash simultaneously
+  [#1851](https://github.com/bugsnag/bugsnag-android/pull/1851)
+
 ## 5.30.0 (2023-05-11)
 
 ### Enhancements
