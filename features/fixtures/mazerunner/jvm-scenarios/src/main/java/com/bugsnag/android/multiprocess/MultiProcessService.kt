@@ -7,10 +7,12 @@ import android.os.HandlerThread
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.mazerunner.BugsnagIntentParams
+import com.bugsnag.android.mazerunner.MazerunnerHttpClient
 import com.bugsnag.android.mazerunner.log
 import com.bugsnag.android.mazerunner.prepareConfig
 import com.bugsnag.android.mazerunner.scenarios.Scenario
 import java.io.File
+import java.net.URL
 
 class MultiProcessService : Service() {
 
@@ -56,7 +58,18 @@ class MultiProcessService : Service() {
     }
 
     private fun prepareServiceConfig(params: BugsnagIntentParams): Configuration {
-        val config = prepareConfig(params.apiKey, params.notify, params.sessions) {
+        // send HTTP requests for intercepted log messages and metrics from Bugsnag.
+        // reuse notify endpoint as we don't care about logs when running mazerunner in manual mode
+        val logEndpoint = URL(params.notify.replace("/notify", "/logs"))
+        val metricsEndpoint = URL(params.notify.replace("/notify", "/metrics"))
+        val mazerunnerHttpClient = MazerunnerHttpClient(logEndpoint, metricsEndpoint)
+
+        val config = prepareConfig(
+            params.apiKey,
+            params.notify,
+            params.sessions,
+            mazerunnerHttpClient
+        ) {
             scenario?.getInterceptedLogMessages()?.contains(it) ?: false
         }
         config.persistenceDirectory = File(filesDir, "background-service-dir")

@@ -38,5 +38,6 @@
     <ID>TooGenericExceptionThrown:ReportCacheScenario.kt$ReportCacheScenario$throw RuntimeException("ReportCacheScenario")</ID>
     <ID>TooGenericExceptionThrown:StartupCrashFlushScenario.kt$StartupCrashFlushScenario$throw RuntimeException("Regular crash")</ID>
     <ID>TooGenericExceptionThrown:StartupCrashFlushScenario.kt$StartupCrashFlushScenario$throw RuntimeException("Startup crash")</ID>
+    <ID>TooManyFunctions:Scenario.kt$Scenario : ActivityLifecycleCallbacks</ID>
   </CurrentIssues>
 </SmellBaseline>

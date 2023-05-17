@@ -77,7 +77,7 @@ class MainActivity : Activity() {
     }
 
     private fun setMazeRunnerAddress() {
-        val context = MazerunnerApp.applicationContext()
+        val context = applicationContext
         val externalFilesDir = context.getExternalFilesDir(null)
         val configFile = File(externalFilesDir, "fixture_config.json")
         log("Attempting to read Maze Runner address from config file ${configFile.path}")
@@ -256,8 +256,7 @@ class MainActivity : Activity() {
     }
 
     private fun clearFolder(name: String) {
-        val context = MazerunnerApp.applicationContext()
-        val folder = File(context.cacheDir, name)
+        val folder = File(applicationContext.cacheDir, name)
         log("Clearing folder: ${folder.path}")
         folder.deleteRecursively()
     }
@@ -281,7 +280,14 @@ class MainActivity : Activity() {
             log("Running in manual mode with API key: $apiKey")
             setStoredApiKey(apiKey)
         }
-        val config = prepareConfig(apiKey, notifyUrl, sessionsUrl) {
+
+        // send HTTP requests for intercepted log messages and metrics from Bugsnag.
+        // reuse notify endpoint as we don't care about logs when running mazerunner in manual mode
+        val logEndpoint = URL(notifyUrl.replace("/notify", "/logs"))
+        val metricsEndpoint = URL(notifyUrl.replace("/notify", "/metrics"))
+        val mazerunnerHttpClient = MazerunnerHttpClient(logEndpoint, metricsEndpoint)
+
+        val config = prepareConfig(apiKey, notifyUrl, sessionsUrl, mazerunnerHttpClient) {
             var logMessage = it
             val interceptedLogMessages = scenario?.getInterceptedLogMessages()
             interceptedLogMessages?.any {

@@ -5,6 +5,7 @@ import java.io.StringWriter
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.Locale
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 enum class LogLevel {
@@ -14,7 +15,10 @@ enum class LogLevel {
     DEBUG
 }
 
-class MazerunnerHttpClient(private val logEndpoint: URL) {
+class MazerunnerHttpClient(
+    private val logEndpoint: URL,
+    private val metricsEndpoint: URL
+) {
 
     private val executor = Executors.newSingleThreadExecutor()
 
@@ -36,6 +40,25 @@ class MazerunnerHttpClient(private val logEndpoint: URL) {
         }
     }
 
+    fun postMetric(vararg values: Pair<String, String>) = executor.executeAwait {
+        val connection = metricsEndpoint.openConnection() as HttpURLConnection
+        connection.requestMethod = "POST"
+        connection.setRequestProperty("Content-Type", "application/json")
+        connection.doOutput = true
+
+        JsonWriter(connection.outputStream.writer()).use { json ->
+            json.beginObject()
+
+            values.forEach { (name, value) ->
+                json.name(name).value(value)
+            }
+
+            json.endObject()
+        }
+
+        connection.disconnect()
+    }
+
     private fun generateJson(level: String, msg: String): String {
         val stringWriter = StringWriter()
         JsonWriter(stringWriter).use { writer ->
@@ -45,5 +68,9 @@ class MazerunnerHttpClient(private val logEndpoint: URL) {
             writer.endObject()
         }
         return stringWriter.toString()
+    }
+
+    private fun ExecutorService.executeAwait(block: () -> Unit) {
+        submit(block).get()
     }
 }
