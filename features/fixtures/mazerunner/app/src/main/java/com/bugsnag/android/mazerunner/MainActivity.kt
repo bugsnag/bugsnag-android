@@ -294,7 +294,7 @@ class MainActivity : Activity() {
                 Regex(it).matches(logMessage)
             } ?: false
         }
-        return Scenario.load(this, config, eventType, mode)
+        return Scenario.load(this, config, eventType, mode, mazerunnerHttpClient)
     }
 
     private fun apiKeyStored() = prefs.contains(apiKeyKey)

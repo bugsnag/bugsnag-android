@@ -30,10 +30,17 @@ class MultiProcessService : Service() {
             val handlerThread = HandlerThread("multi-process-service")
             handlerThread.start()
             Handler(handlerThread.looper).post {
+
+                // send HTTP requests for intercepted log messages and metrics from Bugsnag.
+                // reuse notify endpoint as we don't care about logs when running mazerunner in manual mode
+                val logEndpoint = URL(params.notify.replace("/notify", "/logs"))
+                val metricsEndpoint = URL(params.notify.replace("/notify", "/metrics"))
+                val mazerunnerHttpClient = MazerunnerHttpClient(logEndpoint, metricsEndpoint)
+
                 if (params.eventType == null) { // load bugsnag to deliver previous events
-                    loadBugsnag(params)
+                    loadBugsnag(params, mazerunnerHttpClient)
                 } else { // run code that generates errors/sessions
-                    runScenario(params)
+                    runScenario(params, mazerunnerHttpClient)
                 }
             }
         } else {
@@ -42,28 +49,31 @@ class MultiProcessService : Service() {
         return START_NOT_STICKY
     }
 
-    private fun loadBugsnag(params: BugsnagIntentParams) {
-        val config = prepareServiceConfig(params)
+    private fun loadBugsnag(params: BugsnagIntentParams, mazerunnerHttpClient: MazerunnerHttpClient) {
+        val config = prepareServiceConfig(params, mazerunnerHttpClient)
         Bugsnag.start(this, config)
     }
 
-    private fun runScenario(params: BugsnagIntentParams) {
-        val config = prepareServiceConfig(params)
+    private fun runScenario(params: BugsnagIntentParams, mazerunnerHttpClient: MazerunnerHttpClient) {
+        val config = prepareServiceConfig(params, mazerunnerHttpClient)
 
-        scenario = Scenario.load(this, config, params.eventType!!, params.eventMetadata).apply {
+        scenario = Scenario.load(
+            this,
+            config,
+            params.eventType!!,
+            params.eventMetadata,
+            mazerunnerHttpClient
+        ).apply {
             startBugsnag(false)
             log("Executing scenario")
             startScenario()
         }
     }
 
-    private fun prepareServiceConfig(params: BugsnagIntentParams): Configuration {
-        // send HTTP requests for intercepted log messages and metrics from Bugsnag.
-        // reuse notify endpoint as we don't care about logs when running mazerunner in manual mode
-        val logEndpoint = URL(params.notify.replace("/notify", "/logs"))
-        val metricsEndpoint = URL(params.notify.replace("/notify", "/metrics"))
-        val mazerunnerHttpClient = MazerunnerHttpClient(logEndpoint, metricsEndpoint)
-
+    private fun prepareServiceConfig(
+        params: BugsnagIntentParams,
+        mazerunnerHttpClient: MazerunnerHttpClient
+    ): Configuration {
         val config = prepareConfig(
             params.apiKey,
             params.notify,

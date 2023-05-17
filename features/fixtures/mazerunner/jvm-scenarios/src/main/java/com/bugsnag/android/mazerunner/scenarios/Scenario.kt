@@ -202,14 +202,17 @@ abstract class Scenario(
             context: Context,
             config: Configuration,
             eventType: String,
-            eventMetaData: String?
+            eventMetaData: String?,
+            mazerunnerHttpClient: MazerunnerHttpClient
         ): Scenario {
             log("Loading scenario $eventType with metadata $eventMetaData")
             val clz = loadClass("com.bugsnag.android.mazerunner.scenarios.$eventType")
 
             try {
                 val constructor = clz.constructors[0]
-                return constructor.newInstance(config, context, eventMetaData) as Scenario
+                val scenario = constructor.newInstance(config, context, eventMetaData) as Scenario
+                scenario.mazerunnerHttpClient = mazerunnerHttpClient
+                return scenario
             } catch (exc: Throwable) {
                 throw IllegalStateException(
                     "Failed to construct test case for $eventType. Please check the nested" +
