@@ -1,9 +1,11 @@
 package com.bugsnag.android.mazerunner
 
 import android.util.JsonWriter
+import java.io.ByteArrayOutputStream
 import java.io.StringWriter
 import java.net.HttpURLConnection
 import java.net.URL
+import java.security.MessageDigest
 import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -46,17 +48,23 @@ class MazerunnerHttpClient(
         connection.setRequestProperty("Content-Type", "application/json")
         connection.doOutput = true
 
-        JsonWriter(connection.outputStream.writer()).use { json ->
-            json.beginObject()
+        val body = ByteArrayOutputStream().use { bytes ->
+            JsonWriter(bytes.writer()).use { json ->
+                json.beginObject()
 
-            values.forEach { (name, value) ->
-                json.name(name).value(value)
+                values.forEach { (name, value) ->
+                    json.name(name).value(value)
+                }
+
+                json.endObject()
             }
 
-            json.endObject()
+            bytes.toByteArray()
         }
 
-        log("${values.size} values delivered as metrics, response=${connection.responseCode}")
+        // Mazerunner expects all of these requests to also have a Bugsnag-Integrity header
+        connection.setRequestProperty("Bugsnag-Integrity", "sha1 ${body.sha1()}")
+        connection.outputStream.write(body)
 
         connection.disconnect()
     }
@@ -74,6 +82,20 @@ class MazerunnerHttpClient(
 
     private fun ExecutorService.executeAwait(block: () -> Unit) {
         submit(block).get()
+    }
+
+    @Suppress("MagicNumber") // all hex-encoding-related values
+    private fun ByteArray.sha1(): String {
+        val digester = MessageDigest.getInstance("SHA-1")
+        val digest = digester.digest(this)
+
+        return buildString(digest.size * 2) {
+            digest.forEach { b ->
+                val byte = b.toInt() and 0xff
+                if (byte < 16) append('0')
+                append(byte.toString(16))
+            }
+        }
     }
 
     override fun toString(): String {

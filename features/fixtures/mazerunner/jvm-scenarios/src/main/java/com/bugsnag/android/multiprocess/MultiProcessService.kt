@@ -12,7 +12,6 @@ import com.bugsnag.android.mazerunner.log
 import com.bugsnag.android.mazerunner.prepareConfig
 import com.bugsnag.android.mazerunner.scenarios.Scenario
 import java.io.File
-import java.net.URL
 
 class MultiProcessService : Service() {
 
