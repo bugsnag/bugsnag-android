@@ -157,7 +157,7 @@ class SessionTracker extends BaseObservable {
         Session session = null;
         if (date != null && sessionId != null) {
             session = new Session(sessionId, date, user, unhandledCount, handledCount,
-                    client.getNotifier(), logger);
+                    client.getNotifier(), logger, configuration.getApiKey());
             notifySessionStartObserver(session);
         } else {
             updateState(StateEvent.PauseSession.INSTANCE);

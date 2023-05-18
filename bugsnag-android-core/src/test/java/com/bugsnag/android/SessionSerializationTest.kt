@@ -18,7 +18,7 @@ internal class SessionSerializationTest {
         @JvmStatic
         @Parameters
         fun testCases(): Collection<Pair<Any, String>> {
-            val session = Session("123", Date(0), User(null, null, null), 1, 0, notifier, NoopLogger)
+            val session = Session("123", Date(0), User(null, null, null), 1, 0, notifier, NoopLogger, "")
             session.app = generateApp()
             session.device = generateDevice()
             return generateSerializationTestCases("session", session)

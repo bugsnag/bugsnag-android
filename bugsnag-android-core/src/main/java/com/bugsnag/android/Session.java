@@ -34,10 +34,12 @@ public final class Session implements JsonStream.Streamable, UserAware {
     private final AtomicBoolean tracked = new AtomicBoolean(false);
     final AtomicBoolean isPaused = new AtomicBoolean(false);
 
+    private String apiKey;
+
     static Session copySession(Session session) {
         Session copy = new Session(session.id, session.startedAt, session.user,
                 session.unhandledCount.get(), session.handledCount.get(), session.notifier,
-                session.logger);
+                session.logger, session.getApiKey());
         copy.tracked.set(session.tracked.get());
         copy.autoCaptured.set(session.isAutoCaptured());
         return copy;
@@ -70,11 +72,12 @@ public final class Session implements JsonStream.Streamable, UserAware {
     }
 
     Session(String id, Date startedAt, User user, int unhandledCount, int handledCount,
-            Notifier notifier, Logger logger) {
+            Notifier notifier, Logger logger, String apiKey) {
         this(id, startedAt, user, false, notifier, logger);
         this.unhandledCount.set(unhandledCount);
         this.handledCount.set(handledCount);
         this.tracked.set(true);
+        this.apiKey = apiKey;
     }
 
     Session(File file, Notifier notifier, Logger logger) {
@@ -260,5 +263,23 @@ public final class Session implements JsonStream.Streamable, UserAware {
         writer.name("startedAt").value(startedAt);
         writer.name("user").value(user);
         writer.endObject();
+    }
+
+
+    /**
+     * The API key used for session sent to Bugsnag. Even though the API key is set when Bugsnag
+     * is initialized, you may choose to send certain sessions to a different Bugsnag project.
+     */
+    public void setApiKey(@NonNull String apiKey) {
+        this.apiKey = apiKey;
+    }
+
+    /**
+     * The API key used for session sent to Bugsnag. Even though the API key is set when Bugsnag
+     * is initialized, you may choose to send certain sessions to a different Bugsnag project.
+     */
+    @NonNull
+    public String getApiKey() {
+        return apiKey;
     }
 }
