@@ -45,8 +45,8 @@ public final class Session implements JsonStream.Streamable, UserAware {
         return copy;
     }
 
-    Session(Map<String, Object> map, Logger logger) {
-        this(null, null, logger);
+    Session(Map<String, Object> map, Logger logger, String apiKey) {
+        this(null, null, logger, apiKey);
         setId((String) map.get("id"));
 
         String timestamp = (String) map.get("startedAt");
@@ -63,26 +63,28 @@ public final class Session implements JsonStream.Streamable, UserAware {
     }
 
     Session(String id, Date startedAt, User user, boolean autoCaptured,
-            Notifier notifier, Logger logger) {
-        this(null, notifier, logger);
+            Notifier notifier, Logger logger, String apiKey) {
+        this(null, notifier, logger, apiKey);
         this.id = id;
         this.startedAt = new Date(startedAt.getTime());
         this.user = user;
         this.autoCaptured.set(autoCaptured);
+        this.apiKey = apiKey;
     }
 
     Session(String id, Date startedAt, User user, int unhandledCount, int handledCount,
             Notifier notifier, Logger logger, String apiKey) {
-        this(id, startedAt, user, false, notifier, logger);
+        this(id, startedAt, user, false, notifier, logger, apiKey);
         this.unhandledCount.set(unhandledCount);
         this.handledCount.set(handledCount);
         this.tracked.set(true);
         this.apiKey = apiKey;
     }
 
-    Session(File file, Notifier notifier, Logger logger) {
+    Session(File file, Notifier notifier, Logger logger, String apiKey) {
         this.file = file;
         this.logger = logger;
+        this.apiKey = apiKey;
         if (notifier != null) {
             Notifier copy = new Notifier(notifier.getName(),
                     notifier.getVersion(), notifier.getUrl());
