@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
+import android.util.Log
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.mazerunner.BugsnagIntentParams
@@ -54,6 +55,8 @@ abstract class Scenario(
         val duration = measureNanoTime {
             returnValue = block()
         }
+
+        Log.i("Metrics", "Reporting during of $tag to $mazerunnerHttpClient")
 
         mazerunnerHttpClient?.postMetric(
             "metric.measurement" to tag,

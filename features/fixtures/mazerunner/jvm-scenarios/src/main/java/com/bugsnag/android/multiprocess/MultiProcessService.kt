@@ -30,12 +30,7 @@ class MultiProcessService : Service() {
             val handlerThread = HandlerThread("multi-process-service")
             handlerThread.start()
             Handler(handlerThread.looper).post {
-
-                // send HTTP requests for intercepted log messages and metrics from Bugsnag.
-                // reuse notify endpoint as we don't care about logs when running mazerunner in manual mode
-                val logEndpoint = URL(params.notify.replace("/notify", "/logs"))
-                val metricsEndpoint = URL(params.notify.replace("/notify", "/metrics"))
-                val mazerunnerHttpClient = MazerunnerHttpClient(logEndpoint, metricsEndpoint)
+                val mazerunnerHttpClient = MazerunnerHttpClient.fromEndpoint(params.notify)
 
                 if (params.eventType == null) { // load bugsnag to deliver previous events
                     loadBugsnag(params, mazerunnerHttpClient)

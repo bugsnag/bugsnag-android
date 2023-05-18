@@ -56,6 +56,8 @@ class MazerunnerHttpClient(
             json.endObject()
         }
 
+        log("${values.size} values delivered as metrics, response=${connection.responseCode}")
+
         connection.disconnect()
     }
 
@@ -72,5 +74,22 @@ class MazerunnerHttpClient(
 
     private fun ExecutorService.executeAwait(block: () -> Unit) {
         submit(block).get()
+    }
+
+    override fun toString(): String {
+        return "MazerunnerHttpClient(logEndpoint=$logEndpoint, metricsEndpoint=$metricsEndpoint)"
+    }
+
+    companion object {
+        fun fromEndpoint(endpoint: URL): MazerunnerHttpClient {
+            return MazerunnerHttpClient(
+                URL(endpoint.protocol, endpoint.host, endpoint.port, "/logs"),
+                URL(endpoint.protocol, endpoint.host, endpoint.port, "/metrics")
+            )
+        }
+
+        fun fromEndpoint(endpointUrl: String): MazerunnerHttpClient {
+            return fromEndpoint(URL(endpointUrl))
+        }
     }
 }
