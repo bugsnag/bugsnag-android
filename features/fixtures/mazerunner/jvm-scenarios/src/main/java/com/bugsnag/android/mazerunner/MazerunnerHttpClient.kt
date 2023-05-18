@@ -66,6 +66,10 @@ class MazerunnerHttpClient(
         connection.setRequestProperty("Bugsnag-Integrity", "sha1 ${body.sha1()}")
         connection.outputStream.write(body)
 
+        // Make sure that we wait for the Mazerunner server to respond
+        val responseCode = connection.responseCode
+        log("${values.size} values delivered as metrics, response=$responseCode")
+
         connection.disconnect()
     }
 
