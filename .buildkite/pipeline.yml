@@ -292,37 +292,3 @@ steps:
     concurrency: 25
     concurrency_group: 'bitbar-app'
     concurrency_method: eager
-
-  #
-  # BrowserStack steps
-  #
-  - label: ':browserstack: Android 8.1 NDK r19 smoke tests'
-    key: 'android-8-1-smoke'
-    depends_on: "fixture-r19"
-    timeout_in_minutes: 60
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/fixture_r19_url.txt"
-          - "build/fixture-r19/*"
-        upload: "maze_output/failed/**/*"
-      docker-compose#v4.7.0:
-        pull: android-maze-runner
-        run: android-maze-runner
-        command:
-          - "features/smoke_tests"
-          - "--app=@/app/build/fixture_r19_url.txt"
-          - "--farm=bs"
-          - "--device=ANDROID_8_1"
-          - "--appium-version=1.20.2"
-          - "--fail-fast"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
-    concurrency_method: eager
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
-
-  - label: 'Conditionally include device farms/full tests'
-    agents:
-      queue: macos-12-arm
-    command: sh -c .buildkite/pipeline_trigger.sh
