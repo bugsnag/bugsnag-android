@@ -56,7 +56,7 @@ abstract class Scenario(
             returnValue = block()
         }
 
-        Log.i("Metrics", "Reporting during of $tag to $mazerunnerHttpClient")
+        Log.i("Metrics", "Reporting duration of $tag to $mazerunnerHttpClient")
 
         mazerunnerHttpClient?.postMetric(
             "metric.measurement" to tag,

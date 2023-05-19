@@ -1,11 +1,9 @@
 package com.bugsnag.android.mazerunner
 
 import android.util.JsonWriter
-import java.io.ByteArrayOutputStream
 import java.io.StringWriter
 import java.net.HttpURLConnection
 import java.net.URL
-import java.security.MessageDigest
 import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -48,23 +46,15 @@ class MazerunnerHttpClient(
         connection.setRequestProperty("Content-Type", "application/json")
         connection.doOutput = true
 
-        val body = ByteArrayOutputStream().use { bytes ->
-            JsonWriter(bytes.writer()).use { json ->
-                json.beginObject()
+        JsonWriter(connection.outputStream.bufferedWriter()).use { json ->
+            json.beginObject()
 
-                values.forEach { (name, value) ->
-                    json.name(name).value(value)
-                }
-
-                json.endObject()
+            values.forEach { (name, value) ->
+                json.name(name).value(value)
             }
 
-            bytes.toByteArray()
+            json.endObject()
         }
-
-        // Mazerunner expects all of these requests to also have a Bugsnag-Integrity header
-        connection.setRequestProperty("Bugsnag-Integrity", "sha1 ${body.sha1()}")
-        connection.outputStream.write(body)
 
         // Make sure that we wait for the Mazerunner server to respond
         val responseCode = connection.responseCode
@@ -86,20 +76,6 @@ class MazerunnerHttpClient(
 
     private fun ExecutorService.executeAwait(block: () -> Unit) {
         submit(block).get()
-    }
-
-    @Suppress("MagicNumber") // all hex-encoding-related values
-    private fun ByteArray.sha1(): String {
-        val digester = MessageDigest.getInstance("SHA-1")
-        val digest = digester.digest(this)
-
-        return buildString(digest.size * 2) {
-            digest.forEach { b ->
-                val byte = b.toInt() and 0xff
-                if (byte < 16) append('0')
-                append(byte.toString(16))
-            }
-        }
     }
 
     override fun toString(): String {

@@ -93,8 +93,8 @@ steps:
           - "build/fixture-r19.apk"
           - "build/fixture-r19/*"
         upload:
-          - "maze_output/**"
-          - "maze_output/*"
+          - "maze_output/failed/**/*"
+          - "maze_output/metrics.csv"
       docker-compose#v4.7.0:
         pull: maze-runner
         run: maze-runner
@@ -123,8 +123,8 @@ steps:
           - "build/fixture-r19.apk"
           - "build/fixture-r19/*"
         upload:
-          - "maze_output/**"
-          - "maze_output/*"
+          - "maze_output/failed/**/*"
+          - "maze_output/metrics.csv"
       docker-compose#v4.7.0:
         pull: maze-runner
         run: maze-runner
@@ -209,8 +209,8 @@ steps:
           - "build/fixture-r21.apk"
           - "build/fixture-r21/*"
         upload:
-          - "maze_output/**"
-          - "maze_output/*"
+          - "maze_output/failed/**/*"
+          - "maze_output/metrics.csv"
       docker-compose#v4.7.0:
         pull: maze-runner
         run: maze-runner
@@ -239,8 +239,8 @@ steps:
           - "build/fixture-r21.apk"
           - "build/fixture-r21/*"
         upload:
-          - "maze_output/**"
-          - "maze_output/*"
+          - "maze_output/failed/**/*"
+          - "maze_output/metrics.csv"
       docker-compose#v4.7.0:
         pull: maze-runner
         run: maze-runner
@@ -269,8 +269,8 @@ steps:
           - "build/fixture-r21.apk"
           - "build/fixture-r21/*"
         upload:
-          - "maze_output/**"
-          - "maze_output/*"
+          - "maze_output/failed/**/*"
+          - "maze_output/metrics.csv"
       docker-compose#v4.7.0:
         pull: maze-runner
         run: maze-runner
@@ -299,8 +299,8 @@ steps:
           - "build/fixture-r21.apk"
           - "build/fixture-r21/*"
         upload:
-          - "maze_output/**"
-          - "maze_output/*"
+          - "maze_output/failed/**/*"
+          - "maze_output/metrics.csv"
       docker-compose#v4.7.0:
         pull: maze-runner
         run: maze-runner
@@ -333,8 +333,8 @@ steps:
           - "build/fixture-r21.apk"
           - "build/fixture-r21/*"
         upload:
-          - "maze_output/**"
-          - "maze_output/*"
+          - "maze_output/failed/**/*"
+          - "maze_output/metrics.csv"
       docker-compose#v4.7.0:
         pull: maze-runner
         run: maze-runner
@@ -363,8 +363,8 @@ steps:
           - "build/fixture-r21.apk"
           - "build/fixture-r21/*"
         upload:
-          - "maze_output/**"
-          - "maze_output/*"
+          - "maze_output/failed/**/*"
+          - "maze_output/metrics.csv"
       docker-compose#v4.7.0:
         pull: maze-runner
         run: maze-runner
@@ -393,8 +393,8 @@ steps:
           - "build/fixture-r21.apk"
           - "build/fixture-r21/*"
         upload:
-          - "maze_output/**"
-          - "maze_output/*"
+          - "maze_output/failed/**/*"
+          - "maze_output/metrics.csv"
       docker-compose#v4.7.0:
         pull: maze-runner
         run: maze-runner
@@ -423,8 +423,8 @@ steps:
           - "build/fixture-r21.apk"
           - "build/fixture-r21/*"
         upload:
-          - "maze_output/**"
-          - "maze_output/*"
+          - "maze_output/failed/**/*"
+          - "maze_output/metrics.csv"
       docker-compose#v4.7.0:
         pull: maze-runner
         run: maze-runner
