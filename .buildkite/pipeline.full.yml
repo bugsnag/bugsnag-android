@@ -41,8 +41,8 @@ steps:
         download: "build/fixture-minimal.apk"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
-        pull: android-maze-runner-bitbar
-        run: android-maze-runner-bitbar
+        pull: maze-runner
+        run: maze-runner
         service-ports: true
         command:
           - "features/minimal"
@@ -66,8 +66,8 @@ steps:
           - "build/fixture-debug/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
-        pull: android-maze-runner-bitbar
-        run: android-maze-runner-bitbar
+        pull: maze-runner
+        run: maze-runner
         service-ports: true
         command:
           - "features/smoke_tests"
@@ -94,8 +94,8 @@ steps:
           - "build/fixture-r19/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
-        pull: android-maze-runner-bitbar
-        run: android-maze-runner-bitbar
+        pull: maze-runner
+        run: maze-runner
         service-ports: true
         command:
           - "features/full_tests"
@@ -122,8 +122,8 @@ steps:
           - "build/fixture-r19/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
-        pull: android-maze-runner-bitbar
-        run: android-maze-runner-bitbar
+        pull: maze-runner
+        run: maze-runner
         service-ports: true
         command:
           - "features/full_tests"
@@ -150,8 +150,8 @@ steps:
           - "build/fixture-r19/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
-        pull: android-maze-runner-bitbar
-        run: android-maze-runner-bitbar
+        pull: maze-runner
+        run: maze-runner
         service-ports: true
         command:
           - "features/full_tests"
@@ -178,8 +178,8 @@ steps:
           - "build/fixture-r19/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
-        pull: android-maze-runner-bitbar
-        run: android-maze-runner-bitbar
+        pull: maze-runner
+        run: maze-runner
         service-ports: true
         command:
           - "features/full_tests"
@@ -206,8 +206,8 @@ steps:
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
-        pull: android-maze-runner-bitbar
-        run: android-maze-runner-bitbar
+        pull: maze-runner
+        run: maze-runner
         service-ports: true
         command:
           - "features/full_tests"
@@ -234,8 +234,8 @@ steps:
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
-        pull: android-maze-runner-bitbar
-        run: android-maze-runner-bitbar
+        pull: maze-runner
+        run: maze-runner
         service-ports: true
         command:
           - "features/full_tests"
@@ -262,8 +262,8 @@ steps:
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
-        pull: android-maze-runner-bitbar
-        run: android-maze-runner-bitbar
+        pull: maze-runner
+        run: maze-runner
         service-ports: true
         command:
           - "features/full_tests"
@@ -290,8 +290,8 @@ steps:
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
-        pull: android-maze-runner-bitbar
-        run: android-maze-runner-bitbar
+        pull: maze-runner
+        run: maze-runner
         service-ports: true
         command:
           - "features/full_tests"
@@ -322,8 +322,8 @@ steps:
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
-        pull: android-maze-runner-bitbar
-        run: android-maze-runner-bitbar
+        pull: maze-runner
+        run: maze-runner
         service-ports: true
         command:
           - "features/full_tests"
@@ -350,8 +350,8 @@ steps:
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
-        pull: android-maze-runner-bitbar
-        run: android-maze-runner-bitbar
+        pull: maze-runner
+        run: maze-runner
         service-ports: true
         command:
           - "features/full_tests"
@@ -378,8 +378,8 @@ steps:
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
-        pull: android-maze-runner-bitbar
-        run: android-maze-runner-bitbar
+        pull: maze-runner
+        run: maze-runner
         service-ports: true
         command:
           - "features/full_tests"
@@ -406,8 +406,8 @@ steps:
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
-        pull: android-maze-runner-bitbar
-        run: android-maze-runner-bitbar
+        pull: maze-runner
+        run: maze-runner
         service-ports: true
         command:
           - "features/full_tests"
