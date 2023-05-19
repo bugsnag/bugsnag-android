@@ -319,3 +319,9 @@ steps:
     concurrency: 25
     concurrency_group: 'bitbar-app'
     concurrency_method: eager
+
+  - label: 'Conditionally include device farms/full tests'
+    agents:
+      queue: macos-12-arm
+    command: sh -c .buildkite/pipeline_trigger.sh
+
