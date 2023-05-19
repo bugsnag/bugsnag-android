@@ -122,6 +122,33 @@ steps:
     concurrency_group: 'bitbar-app'
     concurrency_method: eager
 
+  - label: ':bitbar: Android 8 NDK r19 smoke tests'
+    depends_on: "fixture-r19"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.9.0:
+        download:
+          - "build/fixture-r19.apk"
+          - "build/fixture-r19/*"
+        upload: "maze_output/failed/**/*"
+      docker-compose#v4.7.0:
+        pull: android-maze-runner-bitbar
+        run: android-maze-runner-bitbar
+        service-ports: true
+        command:
+          - "features/smoke_tests"
+          - "--app=build/fixture-r19.apk"
+          - "--farm=bb"
+          - "--device=ANDROID_8"
+          - "--no-tunnel"
+          - "--aws-public-ip"
+          - "--fail-fast"
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
+    concurrency: 25
+    concurrency_group: 'bitbar-app'
+    concurrency_method: eager
+
   - label: ':bitbar: Android 9 NDK r21 smoke tests'
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
