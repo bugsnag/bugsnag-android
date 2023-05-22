@@ -3,8 +3,6 @@ package com.bugsnag.android
 /**
  * A callback to be run before sessions are sent to Bugsnag.
  *
- *
- *
  * You can use this to add or modify information attached to a session
  * before it is sent to your dashboard. You can also return
  * `false` from any callback to halt execution.

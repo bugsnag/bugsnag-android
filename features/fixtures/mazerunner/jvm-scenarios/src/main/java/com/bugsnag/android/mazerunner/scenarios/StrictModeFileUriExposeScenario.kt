@@ -28,11 +28,32 @@ internal class StrictModeFileUriExposeScenario(
 
         // expose a file URI to another app, triggering a StrictMode violation.
         // https://developer.android.com/reference/android/os/StrictMode.VmPolicy.Builder#detectFileUriExposure()
-        val intent = Intent(Intent.ACTION_VIEW).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            val fileUri = Uri.fromFile(File("/sdcard/bus.jpg"))
-            setDataAndType(fileUri, "image/jpeg")
-        }
+        val intents = arrayOf(
+            Intent(Intent.ACTION_VIEW).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                val fileUri = Uri.fromFile(File("/sdcard/bus.jpg"))
+                setDataAndType(fileUri, "image/jpeg")
+            },
+            Intent(Intent.ACTION_VIEW).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                val fileUri = Uri.fromFile(File("/sdcard/siren.wav"))
+                setDataAndType(fileUri, "audio/x-wav")
+            },
+            Intent(Intent.ACTION_VIEW).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                val fileUri = Uri.fromFile(File("/sdcard/siren.webm"))
+                setDataAndType(fileUri, "video/webm; codecs=\"vp8, vorbis\"")
+            },
+            Intent(Intent.ACTION_VIEW).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                val fileUri = Uri.fromFile(File("/sdcard/bus.pdf"))
+                setDataAndType(fileUri, "application/pdf")
+            }
+        )
+
+        val pm = context.packageManager
+        val intent = intents.firstOrNull { pm.queryIntentActivities(it, 0).isNotEmpty() }
+
         context.startActivity(intent)
     }
 

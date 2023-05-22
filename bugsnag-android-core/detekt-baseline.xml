@@ -41,6 +41,7 @@
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun updateSeverityReason(@SeverityReason.SeverityReasonType reason: String)</ID>
     <ID>RethrowCaughtException:JsonHelper.kt$JsonHelper$throw ex</ID>
     <ID>ReturnCount:DefaultDelivery.kt$DefaultDelivery$fun deliver( urlString: String, json: ByteArray, headers: Map&lt;String, String?> ): DeliveryStatus</ID>
+    <ID>SwallowedException:AppDataCollector.kt$AppDataCollector$catch (e: Exception) { return null }</ID>
     <ID>SwallowedException:BugsnagEventMapper.kt$BugsnagEventMapper$catch (pe: IllegalArgumentException) { ndkDateFormatHolder.get()!!.parse(this) ?: throw IllegalArgumentException("cannot parse date $this") }</ID>
     <ID>SwallowedException:ConnectivityCompat.kt$ConnectivityLegacy$catch (e: NullPointerException) { // in some rare cases we get a remote NullPointerException via Parcel.readException null }</ID>
     <ID>SwallowedException:ContextExtensions.kt$catch (exc: RuntimeException) { null }</ID>

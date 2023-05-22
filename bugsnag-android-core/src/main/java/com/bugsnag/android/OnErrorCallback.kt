@@ -3,8 +3,6 @@ package com.bugsnag.android
 /**
  * A callback to be run before error reports are sent to Bugsnag.
  *
- *
- *
  * You can use this to add or modify information attached to an error
  * before it is sent to your dashboard. You can also return
  * `false` from any callback to halt execution.

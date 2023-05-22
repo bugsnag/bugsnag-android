@@ -17,6 +17,7 @@ buildscript {
 }
 plugins {
     id "com.github.hierynomus.license" version "0.16.1"
+    id "org.jetbrains.kotlinx.binary-compatibility-validator" version "0.13.1" apply false
 }
 
 allprojects {

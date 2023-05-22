@@ -1,0 +1,44 @@
+public final class com/bugsnag/android/ndk/BugsnagNDK {
+	public static final field INSTANCE Lcom/bugsnag/android/ndk/BugsnagNDK;
+	public static final fun refreshSymbolTable ()V
+}
+
+public final class com/bugsnag/android/ndk/NativeBridge : com/bugsnag/android/internal/StateObserver {
+	public fun <init> (Lcom/bugsnag/android/internal/BackgroundTaskService;)V
+	public final fun addBreadcrumb (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;)V
+	public final fun addFeatureFlag (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun addHandledEvent ()V
+	public final fun addMetadataBoolean (Ljava/lang/String;Ljava/lang/String;Z)V
+	public final fun addMetadataDouble (Ljava/lang/String;Ljava/lang/String;D)V
+	public final fun addMetadataOpaque (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun addMetadataString (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun addUnhandledEvent ()V
+	public final fun clearFeatureFlag (Ljava/lang/String;)V
+	public final fun clearFeatureFlags ()V
+	public final fun clearMetadataTab (Ljava/lang/String;)V
+	public final fun deliverReportAtPath (Ljava/lang/String;)V
+	public final fun getCurrentCallbackSetCounts ()Ljava/util/Map;
+	public final fun getCurrentNativeApiCallUsage ()Ljava/util/Map;
+	public final fun getSignalUnwindStackFunction ()J
+	public final fun initCallbackCounts (Ljava/util/Map;)V
+	public final fun install (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IZIZI)V
+	public final fun notifyAddCallback (Ljava/lang/String;)V
+	public final fun notifyRemoveCallback (Ljava/lang/String;)V
+	public fun onStateChange (Lcom/bugsnag/android/StateEvent;)V
+	public final fun pausedSession ()V
+	public final fun refreshSymbolTable ()V
+	public final fun removeMetadata (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun setInternalMetricsEnabled (Z)V
+	public final fun setStaticJsonData (Ljava/lang/String;)V
+	public final fun startedSession (Ljava/lang/String;Ljava/lang/String;II)V
+	public final fun updateContext (Ljava/lang/String;)V
+	public final fun updateInForeground (ZLjava/lang/String;)V
+	public final fun updateIsLaunching (Z)V
+	public final fun updateLastRunInfo (I)V
+	public final fun updateLowMemory (ZLjava/lang/String;)V
+	public final fun updateOrientation (Ljava/lang/String;)V
+	public final fun updateUserEmail (Ljava/lang/String;)V
+	public final fun updateUserId (Ljava/lang/String;)V
+	public final fun updateUserName (Ljava/lang/String;)V
+}
+
