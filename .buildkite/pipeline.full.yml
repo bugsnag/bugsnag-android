@@ -41,8 +41,8 @@ steps:
         download: "build/fixture-minimal.apk"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
-        pull: android-maze-runner-bitbar
-        run: android-maze-runner-bitbar
+        pull: maze-runner
+        run: maze-runner
         service-ports: true
         command:
           - "features/minimal"
@@ -66,8 +66,8 @@ steps:
           - "build/fixture-debug/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
-        pull: android-maze-runner-bitbar
-        run: android-maze-runner-bitbar
+        pull: maze-runner
+        run: maze-runner
         service-ports: true
         command:
           - "features/smoke_tests"
@@ -94,8 +94,8 @@ steps:
           - "build/fixture-r19/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
-        pull: android-maze-runner-bitbar
-        run: android-maze-runner-bitbar
+        pull: maze-runner
+        run: maze-runner
         service-ports: true
         command:
           - "features/full_tests"
@@ -122,8 +122,8 @@ steps:
           - "build/fixture-r19/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
-        pull: android-maze-runner-bitbar
-        run: android-maze-runner-bitbar
+        pull: maze-runner
+        run: maze-runner
         service-ports: true
         command:
           - "features/full_tests"
@@ -131,6 +131,62 @@ steps:
           - "--app=build/fixture-r19.apk"
           - "--farm=bb"
           - "--device=ANDROID_7"
+          - "--no-tunnel"
+          - "--aws-public-ip"
+          - "--fail-fast"
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
+    concurrency: 25
+    concurrency_group: 'bitbar-app'
+    concurrency_method: eager
+
+  - label: ':bitbar: Android 8 NDK r19 end-to-end tests - batch 1'
+    depends_on: "fixture-r19"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.9.0:
+        download:
+          - "build/fixture-r19.apk"
+          - "build/fixture-r19/*"
+        upload: "maze_output/failed/**/*"
+      docker-compose#v4.7.0:
+        pull: maze-runner
+        run: maze-runner
+        service-ports: true
+        command:
+          - "features/full_tests"
+          - "--app=build/fixture-r19.apk"
+          - "--farm=bb"
+          - "--device=ANDROID_8"
+          - "--no-tunnel"
+          - "--aws-public-ip"
+          - "--exclude=features/full_tests/[^a-k].*.feature"
+          - "--fail-fast"
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
+    concurrency: 25
+    concurrency_group: 'bitbar-app'
+    concurrency_method: eager
+
+  - label: ':bitbar: Android 8 NDK r19 end-to-end tests - batch 2'
+    depends_on: "fixture-r19"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.9.0:
+        download:
+          - "build/fixture-r19.apk"
+          - "build/fixture-r19/*"
+        upload: "maze_output/failed/**/*"
+      docker-compose#v4.7.0:
+        pull: maze-runner
+        run: maze-runner
+        service-ports: true
+        command:
+          - "features/full_tests"
+          - "--exclude=features/full_tests/[^l-z].*.feature"
+          - "--app=build/fixture-r19.apk"
+          - "--farm=bb"
+          - "--device=ANDROID_8"
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--fail-fast"
@@ -150,8 +206,8 @@ steps:
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
-        pull: android-maze-runner-bitbar
-        run: android-maze-runner-bitbar
+        pull: maze-runner
+        run: maze-runner
         service-ports: true
         command:
           - "features/full_tests"
@@ -178,8 +234,8 @@ steps:
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
-        pull: android-maze-runner-bitbar
-        run: android-maze-runner-bitbar
+        pull: maze-runner
+        run: maze-runner
         service-ports: true
         command:
           - "features/full_tests"
@@ -206,8 +262,8 @@ steps:
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
-        pull: android-maze-runner-bitbar
-        run: android-maze-runner-bitbar
+        pull: maze-runner
+        run: maze-runner
         service-ports: true
         command:
           - "features/full_tests"
@@ -234,8 +290,8 @@ steps:
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
-        pull: android-maze-runner-bitbar
-        run: android-maze-runner-bitbar
+        pull: maze-runner
+        run: maze-runner
         service-ports: true
         command:
           - "features/full_tests"
@@ -266,8 +322,8 @@ steps:
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
-        pull: android-maze-runner-bitbar
-        run: android-maze-runner-bitbar
+        pull: maze-runner
+        run: maze-runner
         service-ports: true
         command:
           - "features/full_tests"
@@ -294,8 +350,8 @@ steps:
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
-        pull: android-maze-runner-bitbar
-        run: android-maze-runner-bitbar
+        pull: maze-runner
+        run: maze-runner
         service-ports: true
         command:
           - "features/full_tests"
@@ -322,8 +378,8 @@ steps:
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
-        pull: android-maze-runner-bitbar
-        run: android-maze-runner-bitbar
+        pull: maze-runner
+        run: maze-runner
         service-ports: true
         command:
           - "features/full_tests"
@@ -350,8 +406,8 @@ steps:
           - "build/fixture-r21/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
-        pull: android-maze-runner-bitbar
-        run: android-maze-runner-bitbar
+        pull: maze-runner
+        run: maze-runner
         service-ports: true
         command:
           - "features/full_tests"
@@ -366,61 +422,6 @@ steps:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
     concurrency_group: 'bitbar-app'
-    concurrency_method: eager
-
-  #
-  # BrowserStack steps
-  #
-  - label: ':browserstack: Android 8.1 NDK r19 end-to-end tests - batch 1'
-    depends_on: "fixture-r19"
-    timeout_in_minutes: 60
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/fixture_r19_url.txt"
-          - "build/fixture-r19/*"
-        upload: "maze_output/failed/**/*"
-      docker-compose#v4.7.0:
-        pull: android-maze-runner
-        run: android-maze-runner
-        command:
-          - "features/full_tests"
-          - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "--app=@/app/build/fixture_r19_url.txt"
-          - "--farm=bs"
-          - "--device=ANDROID_8_1"
-          - "--appium-version=1.20.2"
-          - "--fail-fast"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
-    concurrency_method: eager
-
-  - label: ':browserstack: Android 8.1 NDK r19 end-to-end tests - batch 2'
-    depends_on: "fixture-r19"
-    timeout_in_minutes: 60
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/fixture_r19_url.txt"
-          - "build/fixture-r19/*"
-        upload: "maze_output/failed/**/*"
-      docker-compose#v4.7.0:
-        pull: android-maze-runner
-        run: android-maze-runner
-        command:
-          - "features/full_tests"
-          - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=@/app/build/fixture_r19_url.txt"
-          - "--farm=bs"
-          - "--device=ANDROID_8_1"
-          - "--appium-version=1.20.2"
-          - "--fail-fast"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
   # If there is a tag present activate a manual publishing step
