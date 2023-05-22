@@ -52,7 +52,7 @@ public class SessionV2PayloadTest {
         session.toStream(stream);
         out.flush();
 
-        Session payload = new Session(file, new Notifier(), NoopLogger.INSTANCE);
+        Session payload = new Session(file, new Notifier(), NoopLogger.INSTANCE, "Test Apikey");
         JSONObject obj = BugsnagTestUtils.streamableToJson(payload);
         JSONObject rootNode = obj.getJSONArray("sessions").getJSONObject(0);
         assertNotNull(rootNode);
@@ -71,7 +71,7 @@ public class SessionV2PayloadTest {
 
     @Test
     public void testAutoCapturedOverride() throws Exception {
-        session = new Session("id", new Date(), null, false, new Notifier(), NoopLogger.INSTANCE);
+        session = new Session("id", new Date(), null, false, new Notifier(), NoopLogger.INSTANCE, "TEST APIKEY");
         assertFalse(session.isAutoCaptured());
         session.setAutoCaptured(true);
         assertTrue(session.isAutoCaptured());
