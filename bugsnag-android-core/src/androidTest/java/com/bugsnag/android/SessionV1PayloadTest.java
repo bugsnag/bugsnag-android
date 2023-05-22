@@ -47,7 +47,7 @@ public class SessionV1PayloadTest {
      */
     @Test
     public void testSessionFromFile() throws Exception {
-        Session payload = new Session(file, new Notifier(), NoopLogger.INSTANCE);
+        Session payload = new Session(file, new Notifier(), NoopLogger.INSTANCE, "TEST APIKEY");
         payload.setApp(generateApp());
         payload.setDevice(generateDevice());
 

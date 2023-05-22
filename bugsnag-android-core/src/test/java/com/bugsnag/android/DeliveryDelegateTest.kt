@@ -60,6 +60,8 @@ internal class DeliveryDelegateTest {
         // check session count incremented
         assertEquals(1, event.session!!.unhandledCount)
         assertEquals(0, event.session!!.handledCount)
+
+        assertEquals("BUGSNAG_API_KEY", event.session!!.apiKey)
     }
 
     @Test

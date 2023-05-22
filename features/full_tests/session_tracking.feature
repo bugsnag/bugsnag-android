@@ -42,3 +42,10 @@ Feature: Session Tracking
     And the session "user.id" is not null
     And the session "user.name" is null
     And the session "user.email" is null
+
+  Scenario: Session apikey can be reset
+    When I run "SessionApiKeyResetScenario"
+    And I wait to receive a session
+    Then the session is valid for the session reporting API version "1.0" for the "Android Bugsnag Notifier" notifier
+    And the session Bugsnag-Integrity header is valid
+    And the session "Bugsnag-Api-Key" header equals "TEST APIKEY"

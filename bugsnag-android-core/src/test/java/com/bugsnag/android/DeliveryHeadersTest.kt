@@ -17,6 +17,12 @@ class DeliveryHeadersTest {
 
     private val sha1Regex = "sha1 [0-9a-f]{40}".toRegex()
 
+    var file = File.createTempFile(
+        "150450000000053a27e4e-967c-4e5c-91be-2e86f2eb7cdc_v2",
+        "json"
+    )
+    var session = Session(file, Notifier(), NoopLogger, "Test Apikey")
+
     @Test
     fun computeSha1Digest() {
         val payload = generateEventPayload(generateImmutableConfig())
@@ -54,8 +60,8 @@ class DeliveryHeadersTest {
     @Test
     fun verifySessionApiHeaders() {
         val config = generateImmutableConfig()
-        val headers = config.getSessionApiDeliveryParams().headers
-        assertEquals(config.apiKey, headers["Bugsnag-Api-Key"])
+        val headers = config.getSessionApiDeliveryParams(session).headers
+        assertEquals("Test Apikey", headers["Bugsnag-Api-Key"])
         assertEquals("application/json", headers["Content-Type"])
         assertNotNull(headers["Bugsnag-Sent-At"])
         assertNotNull(headers["Bugsnag-Payload-Version"])
