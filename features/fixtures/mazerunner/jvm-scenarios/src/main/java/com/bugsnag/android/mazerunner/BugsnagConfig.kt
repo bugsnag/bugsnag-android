@@ -10,12 +10,12 @@ import com.bugsnag.android.EventPayload
 import com.bugsnag.android.Logger
 import com.bugsnag.android.Session
 import com.bugsnag.android.createDefaultDelivery
-import java.net.URL
 
 fun prepareConfig(
     apiKey: String,
     notify: String,
     sessions: String,
+    mazerunnerHttpClient: MazerunnerHttpClient,
     logFilter: (msg: String) -> Boolean
 ): Configuration {
     val config = Configuration(apiKey)
@@ -33,10 +33,6 @@ fun prepareConfig(
         anrs = true
     }
 
-    // send HTTP requests for intercepted log messages from Bugsnag.
-    // reuse notify endpoint as we don't care about logs when running mazerunner in manual mode
-    val logEndpoint = URL(notify.replace("/notify", "/logs"))
-    val mazerunnerHttpClient = MazerunnerHttpClient(logEndpoint)
     config.logger = generateInterceptingLogger { logLevel, msg ->
         if (logFilter(msg)) {
             mazerunnerHttpClient.postLog(logLevel, msg)

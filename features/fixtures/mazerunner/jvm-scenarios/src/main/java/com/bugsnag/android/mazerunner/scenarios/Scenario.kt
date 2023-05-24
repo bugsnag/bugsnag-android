@@ -7,18 +7,21 @@ import android.content.ComponentCallbacks2
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
+import android.util.Log
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.mazerunner.BugsnagIntentParams
+import com.bugsnag.android.mazerunner.MazerunnerHttpClient
 import com.bugsnag.android.mazerunner.log
 import com.bugsnag.android.mazerunner.multiprocess.MultiProcessService
 import com.bugsnag.android.mazerunner.multiprocess.findCurrentProcessName
-import com.bugsnag.android.mazerunner.reportDuration
 import java.io.File
+import kotlin.system.measureNanoTime
 
 abstract class Scenario(
     protected val config: Configuration,
@@ -31,6 +34,8 @@ abstract class Scenario(
      */
     protected var startBugsnagOnly: Boolean = false
 
+    internal var mazerunnerHttpClient: MazerunnerHttpClient? = null
+
     /**
      * Determines what log messages should be intercepted from Bugsnag and sent to Mazerunner
      * using a HTTP requests to the /logs endpoint. This is used to assert that Bugsnag is
@@ -41,13 +46,44 @@ abstract class Scenario(
         return emptyList<String>()
     }
 
+    internal inline fun <R> reportDuration(
+        tag: String,
+        vararg dimensions: Pair<String, String>,
+        block: () -> R
+    ): R {
+        val returnValue: R
+        val duration = measureNanoTime {
+            returnValue = block()
+        }
+
+        Log.i("Metrics", "Reporting duration of $tag to $mazerunnerHttpClient")
+
+        mazerunnerHttpClient?.postMetric(
+            "metric.measurement" to tag,
+            "duration.nanos" to duration.toString(),
+            *dimensions,
+            "device.manufacturer" to Build.MANUFACTURER,
+            "device.model" to Build.DEVICE,
+            "os.sdkLevel" to Build.VERSION.SDK_INT.toString()
+        )
+
+        return returnValue
+    }
+
+    internal inline fun <R> reportBugsnagStartupDuration(startup: () -> R): R {
+        return reportDuration(
+            "Bugsnag.start",
+            "config.sendLaunchCrashesSynchronously" to config.sendLaunchCrashesSynchronously.toString()
+        ) { startup() }
+    }
+
     /**
      * Initializes Bugsnag. It is possible to override this method if the scenario requires
      * it - e.g., if the config needs to be loaded from the manifest.
      */
     open fun startBugsnag(startBugsnagOnly: Boolean) {
         this.startBugsnagOnly = startBugsnagOnly
-        reportDuration("Bugsnag.start") { Bugsnag.start(context, config) }
+        reportBugsnagStartupDuration { Bugsnag.start(context, config) }
     }
 
     /**
@@ -169,14 +205,17 @@ abstract class Scenario(
             context: Context,
             config: Configuration,
             eventType: String,
-            eventMetaData: String?
+            eventMetaData: String?,
+            mazerunnerHttpClient: MazerunnerHttpClient
         ): Scenario {
             log("Loading scenario $eventType with metadata $eventMetaData")
             val clz = loadClass("com.bugsnag.android.mazerunner.scenarios.$eventType")
 
             try {
                 val constructor = clz.constructors[0]
-                return constructor.newInstance(config, context, eventMetaData) as Scenario
+                val scenario = constructor.newInstance(config, context, eventMetaData) as Scenario
+                scenario.mazerunnerHttpClient = mazerunnerHttpClient
+                return scenario
             } catch (exc: Throwable) {
                 throw IllegalStateException(
                     "Failed to construct test case for $eventType. Please check the nested" +

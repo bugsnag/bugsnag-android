@@ -1,23 +1,10 @@
 package com.bugsnag.android.mazerunner
 
 import android.app.Application
-import android.content.Context
 import android.os.Build
 import android.os.StrictMode
 
 class MazerunnerApp : Application() {
-
-    init {
-        instance = this
-    }
-
-    companion object {
-        private var instance: MazerunnerApp? = null
-
-        fun applicationContext(): Context {
-            return instance!!.applicationContext
-        }
-    }
 
     override fun onCreate() {
         super.onCreate()

@@ -35,6 +35,13 @@ internal class DiscardOldEventsScenario(
         }
     }
 
+    override fun startBugsnag(startBugsnagOnly: Boolean) {
+        // we override startBugsnag to avoid reporting startup time in this scenario
+        // as the time taken frequently pushes the scenario over our timeout
+        this.startBugsnagOnly = startBugsnagOnly
+        Bugsnag.start(context, config)
+    }
+
     override fun startScenario() {
         super.startScenario()
         Bugsnag.markLaunchCompleted()

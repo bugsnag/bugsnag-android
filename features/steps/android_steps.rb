@@ -66,11 +66,6 @@ When("I configure Bugsnag for {string}") do |event_type|
   execute_command :start_bugsnag, event_type
 end
 
-When("I set the endpoints to the terminating server") do
-  $notify_endpoint = 'http://bs-local.com:9341'
-  $sessions_endpoint = 'http://bs-local.com:9341'
-end
-
 When("I close and relaunch the app") do
   if Maze.config.legacy_driver?
     Maze.driver.close_app

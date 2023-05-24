@@ -4,7 +4,6 @@ import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Client
 import com.bugsnag.android.Configuration
-import com.bugsnag.android.mazerunner.reportDuration
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 
@@ -25,19 +24,19 @@ internal class BugsnagInitScenario(
         IntRange(1, 25).forEach {
             callables.add(
                 Callable {
-                    reportDuration("Bugsnag.start") { Bugsnag.start(context) }
+                    reportBugsnagStartupDuration { Bugsnag.start(context) }
                 }
             )
 
             callables.add(
                 Callable {
-                    reportDuration("Bugsnag.start") { Bugsnag.start(context, config.apiKey) }
+                    reportBugsnagStartupDuration { Bugsnag.start(context, config.apiKey) }
                 }
             )
 
             callables.add(
                 Callable {
-                    reportDuration("Bugsnag.start") {
+                    reportBugsnagStartupDuration {
                         Bugsnag.start(context, Configuration(config.apiKey))
                     }
                 }
