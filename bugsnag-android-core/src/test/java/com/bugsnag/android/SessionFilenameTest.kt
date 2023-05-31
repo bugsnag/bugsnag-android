@@ -52,4 +52,18 @@ class SessionFilenameTest {
         val sessionInfo = SessionFilenameInfo.fromFile(file, config)
         assertEquals(config.apiKey, sessionInfo.apiKey)
     }
+
+    @Test
+    fun getSessionUuidFromFileNameWithInvalidUuid() {
+        val file = File("TEST APIKEY_my-uuid-uuuu1504255147933_v2.json")
+        val sessionInfo = SessionFilenameInfo.fromFile(file, config)
+        assertEquals("", sessionInfo.uuid)
+    }
+
+    @Test
+    fun getSessionTimeStampFromFileNameWithNoTimeStamp() {
+        val file = File("TEST APIKEY_my-uuid-uuuuuuuuuuuuuuuuuuuuuuuuuuuu_v2.json")
+        val sessionInfo = SessionFilenameInfo.fromFile(file, config)
+        assertEquals(-1, sessionInfo.timestamp)
+    }
 }

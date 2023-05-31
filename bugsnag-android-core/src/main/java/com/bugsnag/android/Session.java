@@ -267,13 +267,16 @@ public final class Session implements JsonStream.Streamable, UserAware {
         writer.endObject();
     }
 
-
     /**
      * The API key used for session sent to Bugsnag. Even though the API key is set when Bugsnag
      * is initialized, you may choose to send certain sessions to a different Bugsnag project.
      */
     public void setApiKey(@NonNull String apiKey) {
-        this.apiKey = apiKey;
+        if (apiKey != null) {
+            this.apiKey = apiKey;
+        } else {
+            logNull("apiKey");
+        }
     }
 
     /**

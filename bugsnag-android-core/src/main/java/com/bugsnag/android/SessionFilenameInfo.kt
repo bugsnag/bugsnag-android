@@ -35,12 +35,13 @@ internal data class SessionFilenameInfo(
 
         @JvmStatic
         fun defaultFilename(apiKey: String, config: ImmutableConfig): String {
-            val sanitizedApiKey = when {
-                apiKey.isNullOrEmpty() -> config.apiKey
-                else -> apiKey
-            }
+            val sanitizedApiKey = apiKey.takeUnless { it.isEmpty() } ?: config.apiKey
 
-            return toFilename(sanitizedApiKey, System.currentTimeMillis(), UUID.randomUUID().toString())
+            return toFilename(
+                sanitizedApiKey,
+                System.currentTimeMillis(),
+                UUID.randomUUID().toString()
+            )
         }
 
         fun fromFile(file: File, config: ImmutableConfig): SessionFilenameInfo {
@@ -52,15 +53,18 @@ internal data class SessionFilenameInfo(
         }
 
         private fun findUuidInFilename(file: File): String {
-            return file.name.split("_")[1].substring(0, uuidLength)
+            val uuidWithTimestamp = file.name.substringAfter("_")
+            val uuidName = if (uuidWithTimestamp.length >= uuidLength) {
+                uuidWithTimestamp.take(uuidLength)
+            } else {
+                null
+            }
+            return uuidName.takeUnless { it.isNullOrBlank() } ?: ""
         }
 
         @JvmStatic
         fun findTimestampInFilename(file: File): Long {
-            val uuidAndTime = file.name
-
-
-            return file.name.substringAfter("_").substringAfter("_").substringBefore("_")
+            return file.name.substringAfter("_").drop(uuidLength)
                 .toLongOrNull() ?: -1
         }
 
