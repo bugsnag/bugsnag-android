@@ -25,7 +25,7 @@ class SessionTest {
 
     private val apiKey = "BUGSNAG_API_KEY"
 
-    private val session = Session("123", Date(0), User(), true, Notifier(), NoopLogger, apiKey)
+    private var session = Session("123", Date(0), User(), true, Notifier(), NoopLogger, apiKey)
 
     /**
      * Verifies that all the fields in session are copied into a new object correctly
@@ -63,6 +63,16 @@ class SessionTest {
         assertEquals("BUGSNAG_API_KEY", session.apiKey)
         session.apiKey = "foo"
         assertEquals("foo", session.apiKey)
+    }
+
+    @Test
+    fun defaultApiKey() {
+        val file = File("_my-uuid-uuuuuuuuuuuuuuuuuuuuuuuuuuuu1504255147933_v3.json")
+        session = Session(
+            "123", Date(0), User(), true, Notifier(), NoopLogger,
+            SessionFilenameInfo.findApiKeyInFilename(file, "Default apikey")
+        )
+        assertEquals("Default apikey", session.apiKey)
     }
 
     @Test

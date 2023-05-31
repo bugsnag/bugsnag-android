@@ -30,51 +30,62 @@ internal data class SessionFilenameInfo(
          * "[UUID][timestamp]_v2.json"
          */
         fun toFilename(apiKey: String, timestamp: Long, uuid: String): String {
-            return "${apiKey}_${uuid}${timestamp}_v2.json"
+            return "${apiKey}_${uuid}${timestamp}_v3.json"
         }
 
         @JvmStatic
-        fun defaultFilename(apiKey: String, config: ImmutableConfig): String {
-            val sanitizedApiKey = apiKey.takeUnless { it.isEmpty() } ?: config.apiKey
+        fun defaultFilename(
+            obj: Any,
+            config: ImmutableConfig
+        ): SessionFilenameInfo {
+            val sanitizedApiKey = when (obj) {
+                is Session -> obj.apiKey
+                else -> config.apiKey
+            }
 
-            return toFilename(
+            return SessionFilenameInfo(
                 sanitizedApiKey,
                 System.currentTimeMillis(),
                 UUID.randomUUID().toString()
             )
         }
 
-        fun fromFile(file: File, config: ImmutableConfig): SessionFilenameInfo {
+        fun fromFile(file: File, defaultApiKey: String): SessionFilenameInfo {
             return SessionFilenameInfo(
-                findApiKeyInFilename(file, config),
+                findApiKeyInFilename(file, defaultApiKey),
                 findTimestampInFilename(file),
                 findUuidInFilename(file)
             )
         }
 
-        private fun findUuidInFilename(file: File): String {
-            val uuidWithTimestamp = file.name.substringAfter("_")
-            val uuidName = if (uuidWithTimestamp.length >= uuidLength) {
-                uuidWithTimestamp.take(uuidLength)
-            } else {
-                null
+        @JvmStatic
+        fun findUuidInFilename(file: File): String {
+            var fileName = file.name
+            if (isFileV3(file)) {
+                fileName = file.name.substringAfter('_')
             }
-            return uuidName.takeUnless { it.isNullOrBlank() } ?: ""
+            return fileName.takeIf { it.length >= uuidLength }?.take(uuidLength) ?: ""
         }
 
         @JvmStatic
         fun findTimestampInFilename(file: File): Long {
-            return file.name.substringAfter("_").drop(uuidLength)
+            var fileName = file.name
+            if (isFileV3(file)) {
+                fileName = file.name.substringAfter('_')
+            }
+            return fileName.drop(findUuidInFilename(file).length)
+                .substringBefore('_')
                 .toLongOrNull() ?: -1
         }
 
-        fun findApiKeyInFilename(file: File, config: ImmutableConfig): String {
-            val apiKey = if (file.name.indexOf("_") == 0) {
-                null
-            } else {
-                file.name.substringBefore("_", missingDelimiterValue = "-1")
+        @JvmStatic
+        fun findApiKeyInFilename(file: File?, defaultApiKey: String): String {
+            if (file == null || !isFileV3(file)) {
+                return defaultApiKey
             }
-            return apiKey.takeUnless { it.isNullOrBlank() } ?: config.apiKey
+            return file.name.substringBefore('_').takeUnless { it.isEmpty() } ?: defaultApiKey
         }
+
+        internal fun isFileV3(file: File): Boolean = file.name.endsWith("_v3.json")
     }
 }

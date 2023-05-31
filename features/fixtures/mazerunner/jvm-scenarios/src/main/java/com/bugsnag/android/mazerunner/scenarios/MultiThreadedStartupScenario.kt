@@ -3,7 +3,6 @@ package com.bugsnag.android.mazerunner.scenarios
 import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
-import com.bugsnag.android.mazerunner.reportDuration
 import kotlin.concurrent.thread
 
 class MultiThreadedStartupScenario(
@@ -15,7 +14,7 @@ class MultiThreadedStartupScenario(
 
     override fun startScenario() {
         val startThread = thread(name = "AsyncStart") {
-            reportDuration("Bugsnag.start") { Bugsnag.start(context, config) }
+            reportBugsnagStartupDuration { Bugsnag.start(context, config) }
         }
 
         thread(name = "leaveBreadcrumb") {
@@ -25,7 +24,7 @@ class MultiThreadedStartupScenario(
                 Bugsnag.leaveBreadcrumb("I'm leaving a breadcrumb on another thread")
                 Bugsnag.notify(Exception("Scenario complete"))
             } catch (e: Exception) {
-                reportDuration("Bugsnag.start") { Bugsnag.start(context, config) }
+                reportBugsnagStartupDuration { Bugsnag.start(context, config) }
                 Bugsnag.notify(e)
             }
         }

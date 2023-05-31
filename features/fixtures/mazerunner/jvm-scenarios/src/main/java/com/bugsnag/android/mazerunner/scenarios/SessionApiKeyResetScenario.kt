@@ -1,13 +1,12 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
-import com.bugsnag.android.Session
-import com.bugsnag.android.Configuration
 import com.bugsnag.android.Bugsnag
+import com.bugsnag.android.Configuration
 import com.bugsnag.android.OnSessionCallback
 
 /**
- * Reset session apikey
+ * Reset session apikey.
  */
 internal class SessionApiKeyResetScenario(
     config: Configuration,
@@ -28,6 +27,4 @@ internal class SessionApiKeyResetScenario(
         super.startScenario()
         Bugsnag.startSession()
     }
-
 }
-

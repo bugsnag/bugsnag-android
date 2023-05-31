@@ -84,7 +84,7 @@ public final class Session implements JsonStream.Streamable, UserAware {
     Session(File file, Notifier notifier, Logger logger, String apiKey) {
         this.file = file;
         this.logger = logger;
-        this.apiKey = apiKey;
+        this.apiKey = SessionFilenameInfo.findApiKeyInFilename(file, apiKey);
         if (notifier != null) {
             Notifier copy = new Notifier(notifier.getName(),
                     notifier.getVersion(), notifier.getUrl());

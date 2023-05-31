@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+* Added `Session.apiKey` so that it can be changed in an `OnSessionCallback`.
+  [#1855](https://github.com/bugsnag/bugsnag-android/pull/1855)
+* 
 ## 5.30.0 (2023-05-11)
 
 ### Enhancements

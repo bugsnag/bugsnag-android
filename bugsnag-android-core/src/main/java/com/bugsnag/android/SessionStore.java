@@ -44,13 +44,15 @@ class SessionStore extends FileStore {
                 SESSION_COMPARATOR,
                 logger,
                 delegate);
-        this.config =config;
+        this.config = config;
     }
 
     @NonNull
     @Override
     String getFilename(Object object) {
-        return SessionFilenameInfo.defaultFilename("", config);
+        SessionFilenameInfo sessionInfo
+                = SessionFilenameInfo.defaultFilename(object, config);
+        return sessionInfo.encode();
     }
 
     public boolean isTooOld(File file) {
