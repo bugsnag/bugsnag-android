@@ -11,6 +11,8 @@ import org.junit.Test;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ConfigSerializerTest {
 
@@ -35,7 +37,12 @@ public class ConfigSerializerTest {
         assertTrue((Boolean) map.get("autoDetectErrors"));
         assertTrue((Boolean) map.get("autoTrackSessions"));
         assertEquals("ALWAYS", map.get("sendThreads"));
-        assertEquals(Collections.singleton("com.example.DiscardClass"), map.get("discardClasses"));
+
+        String discardClassName = "com.example.DiscardClass";
+        Pattern pattern = Pattern.compile(discardClassName,Pattern.LITERAL);
+        Matcher matcher = pattern.matcher(map.get("discardClasses").toString());
+        assertTrue( matcher.find());
+
         assertEquals(Collections.singleton("production"), map.get("enabledReleaseStages"));
         assertEquals(Collections.singleton("com.example"), map.get("projectPackages"));
         assertEquals("production", map.get("releaseStage"));

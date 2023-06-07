@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
+import java.util.regex.Pattern;
 
 class TestData {
     static ImmutableConfig generateConfig() throws IOException {
@@ -21,7 +22,7 @@ class TestData {
                 new ErrorTypes(),
                 true,
                 ThreadSendPolicy.ALWAYS,
-                Collections.singleton("com.example.DiscardClass"),
+                Collections.singleton(Pattern.compile("com.example.DiscardClass")),
                 Collections.singleton("production"),
                 Collections.singleton("com.example"),
                 new HashSet<>(Collections.singletonList(BreadcrumbType.MANUAL)),
@@ -54,7 +55,7 @@ class TestData {
                 true,
                 null,
                 null,
-                Collections.singleton("password")
+                Collections.singleton(Pattern.compile(".*password.*"))
         );
     }
 

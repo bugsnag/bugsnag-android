@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.regex.Pattern;
 
 public class EventStateTest {
 
@@ -33,7 +34,9 @@ public class EventStateTest {
     @Test
     public void shouldIgnoreMatches() {
         Configuration configuration = BugsnagTestUtils.generateConfiguration();
-        configuration.setDiscardClasses(Collections.singleton("java.io.IOException"));
+        configuration.setDiscardClasses(
+                Collections.singleton(Pattern.compile("java.io.IOException"))
+        );
 
         ImmutableConfig conig = convert(configuration);
         event = new Event(new IOException(), conig, severityReason, NoopLogger.INSTANCE);
@@ -43,7 +46,9 @@ public class EventStateTest {
     @Test
     public void shouldIgnoreMatchesMultiple() {
         Configuration configuration = BugsnagTestUtils.generateConfiguration();
-        configuration.setDiscardClasses(Collections.singleton("java.io.IOException"));
+        configuration.setDiscardClasses(
+                Collections.singleton(Pattern.compile("java.io.IOException"))
+        );
 
         RuntimeException exc = new RuntimeException(new IOException());
         ImmutableConfig conig = convert(configuration);
@@ -54,7 +59,7 @@ public class EventStateTest {
     @Test
     public void shouldIgnoreDoesNotMatch() {
         Configuration configuration = BugsnagTestUtils.generateConfiguration();
-        configuration.setDiscardClasses(Collections.<String>emptySet());
+        configuration.setDiscardClasses(Collections.<Pattern>emptySet());
         ImmutableConfig config = convert(configuration);
         event = new Event(new IOException(), config, severityReason, NoopLogger.INSTANCE);
         assertFalse(event.shouldDiscardClass());
@@ -63,7 +68,7 @@ public class EventStateTest {
     @Test
     public void shouldIgnoreDoesNotMatchMultiple() {
         Configuration configuration = BugsnagTestUtils.generateConfiguration();
-        configuration.setDiscardClasses(Collections.<String>emptySet());
+        configuration.setDiscardClasses(Collections.<Pattern>emptySet());
         RuntimeException exc = new RuntimeException(new IllegalStateException());
 
         ImmutableConfig config = convert(configuration);

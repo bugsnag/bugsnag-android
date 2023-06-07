@@ -6,6 +6,7 @@ import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
 import org.junit.Test
 import java.io.StringWriter
 import java.util.Date
+import java.util.regex.Pattern
 
 internal class EventRedactionTest {
 
@@ -14,7 +15,7 @@ internal class EventRedactionTest {
         val event = Event(
             null,
             generateImmutableConfig()
-                .copy(redactedKeys = setOf("password", "changeme")),
+                .copy(redactedKeys = setOf(Pattern.compile(".*password.*"), Pattern.compile(".*changeme.*"))),
             SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION),
             NoopLogger
         )

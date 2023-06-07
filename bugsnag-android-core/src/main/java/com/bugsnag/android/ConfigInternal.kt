@@ -3,6 +3,7 @@ package com.bugsnag.android
 import android.content.Context
 import java.io.File
 import java.util.EnumSet
+import java.util.regex.Pattern
 
 internal class ConfigInternal(
     var apiKey: String
@@ -45,13 +46,13 @@ internal class ConfigInternal(
     var maxStringValueLength: Int = DEFAULT_MAX_STRING_VALUE_LENGTH
     var context: String? = null
 
-    var redactedKeys: Set<String>
+    var redactedKeys: Set<Pattern>
         get() = metadataState.metadata.redactedKeys
         set(value) {
             metadataState.metadata.redactedKeys = value
         }
 
-    var discardClasses: Set<String> = emptySet()
+    var discardClasses: Set<Pattern> = emptySet()
     var enabledReleaseStages: Set<String>? = null
     var enabledBreadcrumbTypes: Set<BreadcrumbType>? = null
     var telemetry: Set<Telemetry> = EnumSet.of(Telemetry.INTERNAL_ERRORS, Telemetry.USAGE)

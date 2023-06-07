@@ -24,6 +24,7 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
 import java.nio.file.Files
+import java.util.regex.Pattern
 
 @RunWith(MockitoJUnitRunner::class)
 internal class ImmutableConfigTest {
@@ -100,7 +101,7 @@ internal class ImmutableConfigTest {
         seed.enabledErrorTypes.ndkCrashes = false
         seed.sendThreads = ThreadSendPolicy.UNHANDLED_ONLY
 
-        seed.discardClasses = setOf("foo")
+        seed.discardClasses = setOf(Pattern.compile("foo"))
         seed.enabledReleaseStages = setOf("bar")
         seed.projectPackages = setOf("com.example")
         seed.releaseStage = "wham"
