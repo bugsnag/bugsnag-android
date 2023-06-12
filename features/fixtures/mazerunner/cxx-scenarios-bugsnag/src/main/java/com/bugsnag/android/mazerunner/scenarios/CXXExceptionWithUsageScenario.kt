@@ -7,6 +7,7 @@ import com.bugsnag.android.OnBreadcrumbCallback
 import com.bugsnag.android.OnErrorCallback
 import com.bugsnag.android.OnSessionCallback
 import com.bugsnag.android.Telemetry
+import java.util.regex.Pattern
 
 class CXXExceptionWithUsageScenario(
     config: Configuration,
@@ -28,7 +29,13 @@ class CXXExceptionWithUsageScenario(
         }
         config.maxBreadcrumbs = 10
         config.autoTrackSessions = false
-        config.discardClasses = setOf<String>("one", "two", "three")
+        config.discardClasses =
+            setOf<Pattern>(
+                Pattern.compile("one"),
+                Pattern.compile("two"),
+                Pattern.compile("three")
+            )
+
         config.maxPersistedSessions = 1000
         val breadcrumbCb = OnBreadcrumbCallback { true }
         config.addOnBreadcrumb(breadcrumbCb)

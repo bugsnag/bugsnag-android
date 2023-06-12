@@ -60,17 +60,16 @@ public class MetadataRedactionTest {
         Metadata metadata = new Metadata();
         metadata.addMetadata("foo", "bar", "abc123");
         metadata.addMetadata("foo", "password", "abc123");
-        metadata.setRedactedKeys(Collections.singleton(Pattern.compile(".*bar.*")));
+        metadata.setRedactedKeys(Collections.singleton(Pattern.compile("bar", Pattern.LITERAL)));
         verifyJsonRedacted(metadata, "metadata_redaction_4.json");
     }
 
     @Test
-    public void testDefaultRedactKeys()  {
+    public void testDefaultRedactKeys() {
         Metadata metadata = new Metadata();
-        String keys = "password";
-        Pattern pattern = Pattern.compile(keys,Pattern.LITERAL);
-        Matcher matcher = pattern.matcher(metadata.getRedactedKeys().toString());
-        assertTrue( matcher.find());
+        Matcher matcher = Pattern.compile("password", Pattern.LITERAL)
+                .matcher(metadata.getRedactedKeys().toString());
+        assertTrue(matcher.find());
     }
 
     private void verifyJsonRedacted(Metadata metadata, String resourceName) throws IOException {

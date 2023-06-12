@@ -112,15 +112,16 @@ public class ConfigurationTest {
 
     @Test
     public void testOverrideRedactKeys() {
-        Set<Pattern> redactedKeys = Collections.singleton(Pattern.compile("Foo"));
+        Set<Pattern> redactedKeys = Collections.singleton(Pattern.compile("Foo", Pattern.LITERAL));
         config.setRedactedKeys(redactedKeys);
         assertEquals(redactedKeys, config.getRedactedKeys());
     }
 
     @Test
     public void testOverrideDiscardClasses() {
-        config.setDiscardClasses(Collections.singleton(Pattern.compile(".*Bar.*")));
-        assertEquals(Collections.singleton("Bar"), config.getDiscardClasses());
+        Set<Pattern> discardClass = Collections.singleton(Pattern.compile("Bar", Pattern.LITERAL));
+        config.setDiscardClasses(discardClass);
+        assertEquals(discardClass, config.getDiscardClasses());
     }
 
     @Test

@@ -113,7 +113,11 @@ data class ImmutableConfig(
      */
     @VisibleForTesting
     internal fun shouldDiscardByErrorClass(errorClass: String?): Boolean {
-        return discardClasses.any { it.matcher(errorClass.toString()).matches() }
+        return if (!errorClass.isNullOrEmpty()) {
+            discardClasses.any { it.matcher(errorClass.toString()).matches() }
+        } else {
+            false
+        }
     }
 
     /**

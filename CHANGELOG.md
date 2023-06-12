@@ -10,6 +10,9 @@
 * ANR or NDK detection warnings can be suppressed (using `enabledErrorTypes`) when plugin is excluded.
   [#1832](https://github.com/bugsnag/bugsnag-android/pull/1832)
 
+* Support using regexes to define redacted keys and discard classes.
+  [#1856](https://github.com/bugsnag/bugsnag-android/pull/1856)
+
 ## 5.29.0 (2023-03-23)
 
 ### Enhancements

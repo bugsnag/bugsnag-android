@@ -101,7 +101,8 @@ internal class ImmutableConfigTest {
         seed.enabledErrorTypes.ndkCrashes = false
         seed.sendThreads = ThreadSendPolicy.UNHANDLED_ONLY
 
-        seed.discardClasses = setOf(Pattern.compile("foo"))
+        val discardClasses = setOf(Pattern.compile("foo"))
+        seed.discardClasses = discardClasses
         seed.enabledReleaseStages = setOf("bar")
         seed.projectPackages = setOf("com.example")
         seed.releaseStage = "wham"
@@ -132,7 +133,7 @@ internal class ImmutableConfigTest {
             assertEquals(ThreadSendPolicy.UNHANDLED_ONLY, sendThreads)
 
             // release stages
-            assertEquals(setOf("foo"), discardClasses)
+            assertEquals(discardClasses, discardClasses)
             assertEquals(setOf("bar"), enabledReleaseStages)
             assertEquals(setOf("com.example"), projectPackages)
             assertEquals("wham", releaseStage)

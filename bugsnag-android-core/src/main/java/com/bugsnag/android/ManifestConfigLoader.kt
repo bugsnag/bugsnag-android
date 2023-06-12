@@ -136,9 +136,9 @@ internal class ManifestConfigLoader {
             if (data.containsKey(ENABLED_RELEASE_STAGES)) {
                 enabledReleaseStages = getStrArray(data, ENABLED_RELEASE_STAGES, enabledReleaseStages)
             }
-            discardClasses = getPatternArray(data, DISCARD_CLASSES, discardClasses) ?: emptySet()
+            discardClasses = getPatternSet(data, DISCARD_CLASSES, discardClasses) ?: emptySet()
             projectPackages = getStrArray(data, PROJECT_PACKAGES, emptySet()) ?: emptySet()
-            redactedKeys = getPatternArray(data, REDACTED_KEYS, redactedKeys) ?: emptySet()
+            redactedKeys = getPatternSet(data, REDACTED_KEYS, redactedKeys) ?: emptySet()
         }
     }
 
@@ -155,18 +155,14 @@ internal class ManifestConfigLoader {
         }
     }
 
-    private fun getPatternArray(
+    private fun getPatternSet(
         data: Bundle,
         key: String,
         default: Set<Pattern>?
     ): Set<Pattern>? {
-        val delimitedStr = data.getString(key)
-        return when (val ary = delimitedStr?.split(",")) {
-            null -> default
-            else -> {
-                val result = ary.map { Pattern.compile(it) }
-                return result.toSet()
-            }
-        }
+        val delimitedStr = data.getString(key) ?: return default
+        return delimitedStr.splitToSequence(',')
+            .map { Pattern.compile(it) }
+            .toSet()
     }
 }

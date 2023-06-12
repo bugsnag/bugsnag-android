@@ -35,7 +35,7 @@ public class EventStateTest {
     public void shouldIgnoreMatches() {
         Configuration configuration = BugsnagTestUtils.generateConfiguration();
         configuration.setDiscardClasses(
-                Collections.singleton(Pattern.compile("java.io.IOException"))
+                Collections.singleton(Pattern.compile("java.io.IOException", Pattern.LITERAL))
         );
 
         ImmutableConfig conig = convert(configuration);
@@ -47,12 +47,26 @@ public class EventStateTest {
     public void shouldIgnoreMatchesMultiple() {
         Configuration configuration = BugsnagTestUtils.generateConfiguration();
         configuration.setDiscardClasses(
-                Collections.singleton(Pattern.compile("java.io.IOException"))
+                Collections.singleton(Pattern.compile("java.io.IOException", Pattern.LITERAL))
         );
 
         RuntimeException exc = new RuntimeException(new IOException());
         ImmutableConfig conig = convert(configuration);
         event = new Event(exc, conig, severityReason, NoopLogger.INSTANCE);
+        assertTrue(event.shouldDiscardClass());
+    }
+
+    @Test
+    public void shouldIgnoreMatchesSigabrt() {
+        Configuration configuration = BugsnagTestUtils.generateConfiguration();
+        configuration.setDiscardClasses(
+                Collections.singleton(Pattern.compile("SIGABRT"))
+        );
+
+        RuntimeException exc = new RuntimeException(new IOException());
+        ImmutableConfig conig = convert(configuration);
+        event = new Event(exc, conig, severityReason, NoopLogger.INSTANCE);
+        event.getErrors().get(0).setErrorClass("SIGABRT");
         assertTrue(event.shouldDiscardClass());
     }
 
