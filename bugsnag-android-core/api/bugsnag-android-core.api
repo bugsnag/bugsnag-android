@@ -324,6 +324,7 @@ public final class com/bugsnag/android/ErrorType : java/lang/Enum {
 	public static final field ANDROID Lcom/bugsnag/android/ErrorType;
 	public static final field C Lcom/bugsnag/android/ErrorType;
 	public static final field DART Lcom/bugsnag/android/ErrorType;
+	public static final field EMPTY Lcom/bugsnag/android/ErrorType;
 	public static final field REACTNATIVEJS Lcom/bugsnag/android/ErrorType;
 	public static final fun fromDescriptor (Ljava/lang/String;)Lcom/bugsnag/android/ErrorType;
 	public static fun valueOf (Ljava/lang/String;)Lcom/bugsnag/android/ErrorType;
@@ -757,12 +758,12 @@ public class com/bugsnag/android/Thread : com/bugsnag/android/JsonStream$Streama
 	public fun getName ()Ljava/lang/String;
 	public fun getStacktrace ()Ljava/util/List;
 	public fun getState ()Lcom/bugsnag/android/Thread$State;
-	public fun getType ()Lcom/bugsnag/android/ThreadType;
+	public fun getType ()Lcom/bugsnag/android/ErrorType;
 	public fun setId (J)V
 	public fun setName (Ljava/lang/String;)V
 	public fun setStacktrace (Ljava/util/List;)V
 	public fun setState (Lcom/bugsnag/android/Thread$State;)V
-	public fun setType (Lcom/bugsnag/android/ThreadType;)V
+	public fun setType (Lcom/bugsnag/android/ErrorType;)V
 	public fun toStream (Lcom/bugsnag/android/JsonStream;)V
 }
 
@@ -786,13 +787,13 @@ public final class com/bugsnag/android/ThreadInternal : com/bugsnag/android/Json
 	public final fun getName ()Ljava/lang/String;
 	public final fun getStacktrace ()Ljava/util/List;
 	public final fun getState ()Ljava/lang/String;
-	public final fun getType ()Lcom/bugsnag/android/ThreadType;
+	public final fun getType ()Lcom/bugsnag/android/ErrorType;
 	public final fun isErrorReportingThread ()Z
 	public final fun setId (J)V
 	public final fun setName (Ljava/lang/String;)V
 	public final fun setStacktrace (Ljava/util/List;)V
 	public final fun setState (Ljava/lang/String;)V
-	public final fun setType (Lcom/bugsnag/android/ThreadType;)V
+	public final fun setType (Lcom/bugsnag/android/ErrorType;)V
 	public fun toStream (Lcom/bugsnag/android/JsonStream;)V
 }
 
@@ -802,15 +803,6 @@ public final class com/bugsnag/android/ThreadSendPolicy : java/lang/Enum {
 	public static final field UNHANDLED_ONLY Lcom/bugsnag/android/ThreadSendPolicy;
 	public static fun valueOf (Ljava/lang/String;)Lcom/bugsnag/android/ThreadSendPolicy;
 	public static fun values ()[Lcom/bugsnag/android/ThreadSendPolicy;
-}
-
-public final class com/bugsnag/android/ThreadType : java/lang/Enum {
-	public static final field ANDROID Lcom/bugsnag/android/ThreadType;
-	public static final field C Lcom/bugsnag/android/ThreadType;
-	public static final field EMPTY Lcom/bugsnag/android/ThreadType;
-	public static final field REACTNATIVEJS Lcom/bugsnag/android/ThreadType;
-	public static fun valueOf (Ljava/lang/String;)Lcom/bugsnag/android/ThreadType;
-	public static fun values ()[Lcom/bugsnag/android/ThreadType;
 }
 
 public final class com/bugsnag/android/User : com/bugsnag/android/JsonStream$Streamable {

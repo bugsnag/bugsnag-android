@@ -5,7 +5,7 @@ import java.io.IOException
 class ThreadInternal internal constructor(
     var id: Long,
     var name: String,
-    var type: ThreadType,
+    var type: ErrorType,
     val isErrorReportingThread: Boolean,
     var state: String,
     stacktrace: Stacktrace

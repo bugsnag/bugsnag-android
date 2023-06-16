@@ -30,7 +30,7 @@ class ThreadDeserializer implements MapDeserializer<Thread> {
         return new Thread(
                 MapUtils.<Number>getOrThrow(map, "id").longValue(),
                 MapUtils.<String>getOrThrow(map, "name"),
-                ThreadType.valueOf(type.toUpperCase(Locale.US)),
+                ErrorType.valueOf(type.toUpperCase(Locale.US)),
                 errorReportingThread,
                 Thread.State.byDescriptor(MapUtils.<String>getOrThrow(map, "state")),
                 new Stacktrace(frames),
