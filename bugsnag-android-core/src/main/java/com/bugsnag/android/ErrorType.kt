@@ -6,6 +6,11 @@ package com.bugsnag.android
 enum class ErrorType(internal val desc: String) {
 
     /**
+     * A thread captured from Android's JVM layer
+     */
+    EMPTY(""),
+
+    /**
      * An error captured from Android's JVM layer
      */
     ANDROID("android"),
