@@ -275,3 +275,17 @@ Then("the error is correct for {string} or I allow a retry") do |scenario|
     end
   end
 end
+
+Then("the event has less than {int} breadcrumb(s)") do |expected|
+  breadcrumbs = Maze::Server.errors.current[:body]['events'].first['breadcrumbs']
+  Maze.check.operator(
+    breadcrumbs&.length || 0, :<, expected,
+    "Expected event to have less '#{expected}' breadcrumbs, but got: #{breadcrumbs}"
+  )
+end
+
+Then("the event last breadcrumb has a message that matches the regex {string}") do |pattern|
+  lastBreadcrumbName = Maze::Server.errors.current[:body]['events'].first['breadcrumbs'].last['name']
+  regex = Regexp.new pattern
+  Maze.check.match regex, lastBreadcrumbName
+end
