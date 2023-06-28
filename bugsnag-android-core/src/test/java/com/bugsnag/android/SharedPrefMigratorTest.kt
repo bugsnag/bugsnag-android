@@ -37,6 +37,20 @@ internal class SharedPrefMigratorTest {
     }
 
     @Test
+    fun nullSharedPreferences() {
+        `when`(context.getSharedPreferences(eq("com.bugsnag.android"), eq(0))).thenReturn(null)
+        prefMigrator = SharedPrefMigrator(context)
+        assertFalse(prefMigrator.hasPrefs())
+    }
+
+    @Test
+    fun gettingSharedPreferencesWithException() {
+        `when`(context.getSharedPreferences(eq("com.bugsnag.android"), eq(0))).thenThrow(RuntimeException())
+        prefMigrator = SharedPrefMigrator(context)
+        assertFalse(prefMigrator.hasPrefs())
+    }
+
+    @Test
     fun nullDeviceId() {
         `when`(prefs.getString("install.iud", null)).thenReturn(null)
         assertNull(prefMigrator.loadDeviceId(true))
