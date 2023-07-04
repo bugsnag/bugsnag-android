@@ -52,6 +52,7 @@
     <ID>SwallowedException:DeviceIdFilePersistence.kt$DeviceIdFilePersistence$catch (exc: OverlappingFileLockException) { Thread.sleep(FILE_LOCK_WAIT_MS) }</ID>
     <ID>SwallowedException:JsonHelperTest.kt$JsonHelperTest$catch (e: IllegalArgumentException) { didThrow = true }</ID>
     <ID>SwallowedException:PluginClient.kt$PluginClient$catch (exc: ClassNotFoundException) { if (isWarningEnabled) { logger.d("Plugin '$clz' is not on the classpath - functionality will not be enabled.") } null }</ID>
+    <ID>SwallowedException:SharedPrefMigrator.kt$SharedPrefMigrator$catch (e: RuntimeException) { null }</ID>
     <ID>ThrowsCount:JsonHelper.kt$JsonHelper$ fun jsonToLong(value: Any?): Long?</ID>
     <ID>TooManyFunctions:ConfigInternal.kt$ConfigInternal : CallbackAwareMetadataAwareUserAwareFeatureFlagAware</ID>
     <ID>TooManyFunctions:DeviceDataCollector.kt$DeviceDataCollector</ID>
