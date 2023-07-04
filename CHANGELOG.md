@@ -1,5 +1,15 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* Prevent rare app crash while migrating old `SharedPreferences` data from older versions of `bugsnag-android`
+  [#1860](https://github.com/bugsnag/bugsnag-android/pull/1860)
+
+* Prevent free memory calculation from potentially crashing the app when `ActivityManager` cannot be reached.
+  [#1861](https://github.com/bugsnag/bugsnag-android/pull/1861)
+
 ## 5.30.0 (2023-05-11)
 
 ### Enhancements
