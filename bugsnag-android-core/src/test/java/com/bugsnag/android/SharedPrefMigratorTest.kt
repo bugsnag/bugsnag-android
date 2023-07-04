@@ -9,6 +9,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mock
 import org.mockito.Mockito.times
@@ -32,8 +33,22 @@ internal class SharedPrefMigratorTest {
 
     @Before
     fun setUp() {
-        `when`(context.getSharedPreferences(eq("com.bugsnag.android"), eq(0))).thenReturn(prefs)
+        `when`(context.getSharedPreferences(eq("com.bugsnag.android"), anyInt())).thenReturn(prefs)
         prefMigrator = SharedPrefMigrator(context)
+    }
+
+    @Test
+    fun nullSharedPreferences() {
+        `when`(context.getSharedPreferences(eq("com.bugsnag.android"), anyInt())).thenReturn(null)
+        prefMigrator = SharedPrefMigrator(context)
+        assertFalse(prefMigrator.hasPrefs())
+    }
+
+    @Test
+    fun gettingSharedPreferencesWithException() {
+        `when`(context.getSharedPreferences(eq("com.bugsnag.android"), anyInt())).thenThrow(RuntimeException())
+        prefMigrator = SharedPrefMigrator(context)
+        assertFalse(prefMigrator.hasPrefs())
     }
 
     @Test
