@@ -2,6 +2,11 @@
 
 ## TBD
 
+### Enhancements
+
+* Added `Session.apiKey` so that it can be changed in an `OnSessionCallback`
+  [#1855](https://github.com/bugsnag/bugsnag-android/pull/1855)
+
 ### Bug fixes
 
 * Prevent rare app crash while migrating old `SharedPreferences` data from older versions of `bugsnag-android`
