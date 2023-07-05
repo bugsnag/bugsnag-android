@@ -66,7 +66,7 @@ Feature: Cached Error Reports
 
     # Threads validation
     And the error payload field "events.0.threads" is a non-empty array
-    And the error payload field "events.0.threads.0.id" is an integer
+    And the event "threads.0.id" matches "^[0-9]+$"
     And the event "threads.0.name" is not null
     And the event "threads.0.type" equals "android"
     And the error payload field "events.0.threads.0.stacktrace" is a non-empty array

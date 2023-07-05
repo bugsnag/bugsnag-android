@@ -42,7 +42,7 @@ internal class EventSerializationTest {
                     it.threads.clear()
                     it.threads.add(
                         Thread(
-                            5,
+                            "5",
                             "main",
                             ThreadType.ANDROID,
                             true,

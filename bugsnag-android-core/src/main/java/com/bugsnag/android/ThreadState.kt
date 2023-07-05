@@ -89,7 +89,7 @@ internal class ThreadState @Suppress("LongParameterList") constructor(
             )
 
             return Thread(
-                thread.id,
+                thread.id.toString(),
                 thread.name,
                 ThreadType.ANDROID,
                 isErrorThread,
@@ -109,13 +109,13 @@ internal class ThreadState @Suppress("LongParameterList") constructor(
             // API 24/25 don't record the currentThread, so add it in manually
             // https://issuetracker.google.com/issues/64122757
             // currentThread may also have been removed if its ID occurred after maxThreadCount
-            keepThreads.take(Math.max(maxThreadCount - 1, 0)).plus(currentThread).sortedBy { it.id }
+            keepThreads.take((maxThreadCount - 1).coerceAtLeast(0)).plus(currentThread).sortedBy { it.id }
         }.map { toBugsnagThread(it) }.toMutableList()
 
         if (allThreads.size > maxThreadCount) {
             reportThreads.add(
                 Thread(
-                    -1,
+                    "",
                     "[${allThreads.size - maxThreadCount} threads omitted as the maxReportedThreads limit ($maxThreadCount) was exceeded]",
                     ThreadType.EMPTY,
                     false,

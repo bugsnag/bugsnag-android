@@ -177,7 +177,7 @@ internal class BugsnagEventMapper(
     @Suppress("UNCHECKED_CAST")
     internal fun convertThread(thread: Map<String, Any?>): ThreadInternal {
         return ThreadInternal(
-            (thread["id"] as? Number)?.toLong() ?: 0,
+            thread["id"].toString(),
             thread.readEntry("name"),
             ThreadType.fromDescriptor(thread.readEntry("type")) ?: ThreadType.ANDROID,
             thread["errorReportingThread"] == true,

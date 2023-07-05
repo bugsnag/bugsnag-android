@@ -28,7 +28,7 @@ public class ThreadFacadeTest {
         List<Stackframe> frames = Collections.emptyList();
         stacktrace = new Stacktrace(frames);
         thread = new Thread(
-                1,
+                "1",
                 "thread-2",
                 ThreadType.ANDROID,
                 false,
@@ -40,9 +40,9 @@ public class ThreadFacadeTest {
 
     @Test
     public void idValid() {
-        assertEquals(1, thread.getId());
-        thread.setId(55);
-        assertEquals(55, thread.getId());
+        assertEquals("1", thread.getId());
+        thread.setId("55");
+        assertEquals("55", thread.getId());
     }
 
     @Test

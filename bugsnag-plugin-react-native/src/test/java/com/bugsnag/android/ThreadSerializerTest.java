@@ -36,7 +36,7 @@ public class ThreadSerializerTest {
         Stackframe stackframe = new Stackframe("foo()", "Bar.kt", 55, true);
         List<Stackframe> frames = Collections.singletonList(stackframe);
         Stacktrace stacktrace = new Stacktrace(frames);
-        thread = new Thread(1, "fake-thread", ThreadType.ANDROID,
+        thread = new Thread("1", "fake-thread", ThreadType.ANDROID,
                 true, Thread.State.RUNNABLE, stacktrace, NoopLogger.INSTANCE);
     }
 
@@ -45,7 +45,7 @@ public class ThreadSerializerTest {
         Map<String, Object> map = new HashMap<>();
         new ThreadSerializer().serialize(map, thread);
 
-        assertEquals(1L, map.get("id"));
+        assertEquals("1", map.get("id"));
         assertEquals("fake-thread", map.get("name"));
         assertEquals("android", map.get("type"));
         assertEquals(true, map.get("errorReportingThread"));
