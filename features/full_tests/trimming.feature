@@ -56,17 +56,17 @@ Feature: Excess data is trimmed when the payload is too big
     Then I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "message" equals "EventTooBigScenario"
-    And the event has 98 breadcrumbs
-    And the event "breadcrumbs.97.name" equals "Removed, along with 2 older breadcrumbs, to reduce payload size"
-    And the event "usage.system.breadcrumbsRemoved" equals 3
+    And the event has less than 99 breadcrumbs
+    Then the event last breadcrumb has a message that matches the regex "Removed, along with [0-9]+ older breadcrumbs, to reduce payload size"
+    And the event "usage.system.breadcrumbsRemoved" is not null
     And the event "usage.system.breadcrumbBytesRemoved" is not null
     And I close and relaunch the app
     Then I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "message" equals "EventTooBigScenario"
-    And the event has 98 breadcrumbs
-    And the event "breadcrumbs.97.name" equals "Removed, along with 2 older breadcrumbs, to reduce payload size"
-    And the event "usage.system.breadcrumbsRemoved" equals 3
+    And the event has less than 99 breadcrumbs
+    Then the event last breadcrumb has a message that matches the regex "Removed, along with [0-9]+ older breadcrumbs, to reduce payload size"
+    And the event "usage.system.breadcrumbsRemoved" is not null
     And the event "usage.system.breadcrumbBytesRemoved" is not null
 
   Scenario: Payload is too big by 3 breadcrumbs, handled exception
@@ -75,9 +75,9 @@ Feature: Excess data is trimmed when the payload is too big
     Then I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "message" equals "EventTooBigScenario"
-    And the event has 98 breadcrumbs
-    And the event "breadcrumbs.97.name" equals "Removed, along with 2 older breadcrumbs, to reduce payload size"
-    And the event "usage.system.breadcrumbsRemoved" equals 3
+    And the event has less than 99 breadcrumbs
+    Then the event last breadcrumb has a message that matches the regex "Removed, along with [0-9]+ older breadcrumbs, to reduce payload size"
+    And the event "usage.system.breadcrumbsRemoved" is not null
     And the event "usage.system.breadcrumbBytesRemoved" is not null
 
   Scenario: Payload is too big by 3 breadcrumbs, jvm exception

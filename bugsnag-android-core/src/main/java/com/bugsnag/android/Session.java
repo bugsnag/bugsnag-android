@@ -34,17 +34,19 @@ public final class Session implements JsonStream.Streamable, UserAware {
     private final AtomicBoolean tracked = new AtomicBoolean(false);
     final AtomicBoolean isPaused = new AtomicBoolean(false);
 
+    private String apiKey;
+
     static Session copySession(Session session) {
         Session copy = new Session(session.id, session.startedAt, session.user,
                 session.unhandledCount.get(), session.handledCount.get(), session.notifier,
-                session.logger);
+                session.logger, session.getApiKey());
         copy.tracked.set(session.tracked.get());
         copy.autoCaptured.set(session.isAutoCaptured());
         return copy;
     }
 
-    Session(Map<String, Object> map, Logger logger) {
-        this(null, null, logger);
+    Session(Map<String, Object> map, Logger logger, String apiKey) {
+        this(null, null, logger, apiKey);
         setId((String) map.get("id"));
 
         String timestamp = (String) map.get("startedAt");
@@ -61,25 +63,28 @@ public final class Session implements JsonStream.Streamable, UserAware {
     }
 
     Session(String id, Date startedAt, User user, boolean autoCaptured,
-            Notifier notifier, Logger logger) {
-        this(null, notifier, logger);
+            Notifier notifier, Logger logger, String apiKey) {
+        this(null, notifier, logger, apiKey);
         this.id = id;
         this.startedAt = new Date(startedAt.getTime());
         this.user = user;
         this.autoCaptured.set(autoCaptured);
+        this.apiKey = apiKey;
     }
 
     Session(String id, Date startedAt, User user, int unhandledCount, int handledCount,
-            Notifier notifier, Logger logger) {
-        this(id, startedAt, user, false, notifier, logger);
+            Notifier notifier, Logger logger, String apiKey) {
+        this(id, startedAt, user, false, notifier, logger, apiKey);
         this.unhandledCount.set(unhandledCount);
         this.handledCount.set(handledCount);
         this.tracked.set(true);
+        this.apiKey = apiKey;
     }
 
-    Session(File file, Notifier notifier, Logger logger) {
+    Session(File file, Notifier notifier, Logger logger, String apiKey) {
         this.file = file;
         this.logger = logger;
+        this.apiKey = SessionFilenameInfo.findApiKeyInFilename(file, apiKey);
         if (notifier != null) {
             Notifier copy = new Notifier(notifier.getName(),
                     notifier.getVersion(), notifier.getUrl());
@@ -260,5 +265,26 @@ public final class Session implements JsonStream.Streamable, UserAware {
         writer.name("startedAt").value(startedAt);
         writer.name("user").value(user);
         writer.endObject();
+    }
+
+    /**
+     * The API key used for session sent to Bugsnag. Even though the API key is set when Bugsnag
+     * is initialized, you may choose to send certain sessions to a different Bugsnag project.
+     */
+    public void setApiKey(@NonNull String apiKey) {
+        if (apiKey != null) {
+            this.apiKey = apiKey;
+        } else {
+            logNull("apiKey");
+        }
+    }
+
+    /**
+     * The API key used for session sent to Bugsnag. Even though the API key is set when Bugsnag
+     * is initialized, you may choose to send certain sessions to a different Bugsnag project.
+     */
+    @NonNull
+    public String getApiKey() {
+        return apiKey;
     }
 }

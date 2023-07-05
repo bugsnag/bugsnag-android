@@ -107,6 +107,17 @@ public class SessionTrackerTest {
     }
 
     @Test
+    public void changeSessionApiKey() {
+        assertNotNull(sessionTracker);
+        assertNull(sessionTracker.getCurrentSession());
+        Date date = new Date();
+        sessionTracker.startNewSession(date, user, false);
+        Session newSession = sessionTracker.getCurrentSession();
+        newSession.setApiKey("Test ApiKey");
+        assertEquals("Test ApiKey", newSession.getApiKey());
+    }
+
+    @Test
     public void startSessionDisabled() {
         assertNull(sessionTracker.getCurrentSession());
         configuration.setAutoTrackSessions(false);
