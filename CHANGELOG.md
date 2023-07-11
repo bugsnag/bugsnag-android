@@ -7,6 +7,9 @@
 * Added `Session.apiKey` so that it can be changed in an `OnSessionCallback`
   [#1855](https://github.com/bugsnag/bugsnag-android/pull/1855)
 
+* Configuration.persistUser is now true by default, matching the configuration of other platforms.
+  [#1863](https://github.com/bugsnag/bugsnag-android/pull/1863)
+
 ### Bug fixes
 
 * Prevent rare app crash while migrating old `SharedPreferences` data from older versions of `bugsnag-android`
