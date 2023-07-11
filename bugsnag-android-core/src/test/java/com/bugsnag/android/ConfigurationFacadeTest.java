@@ -87,8 +87,9 @@ public class ConfigurationFacadeTest {
 
     @Test
     public void persistUserValid() {
-        config.setPersistUser(true);
         assertTrue(config.impl.getPersistUser());
+        config.setPersistUser(false);
+        assertFalse(config.impl.getPersistUser());
     }
 
     @SuppressWarnings("deprecation")
