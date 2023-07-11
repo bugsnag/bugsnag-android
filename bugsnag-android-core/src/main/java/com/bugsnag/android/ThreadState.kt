@@ -117,7 +117,7 @@ internal class ThreadState @Suppress("LongParameterList") constructor(
                 Thread(
                     -1,
                     "[${allThreads.size - maxThreadCount} threads omitted as the maxReportedThreads limit ($maxThreadCount) was exceeded]",
-                    ErrorType.EMPTY,
+                    ErrorType.UNKNOWN,
                     false,
                     Thread.State.UNKNOWN,
                     Stacktrace(arrayOf(StackTraceElement("", "", "-", 0)), projectPackages, logger),

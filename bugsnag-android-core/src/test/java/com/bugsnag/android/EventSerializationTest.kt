@@ -17,6 +17,7 @@ internal class EventSerializationTest {
         @JvmStatic
         @Parameters
         fun testCases(): Collection<Pair<Event, String>> {
+
             return generateSerializationTestCases(
                 "event",
                 createEvent(),
@@ -33,7 +34,8 @@ internal class EventSerializationTest {
                 // session included
                 createEvent {
                     val user = User("123", "foo@example.com", "Joe")
-                    it.session = Session("123", Date(0), user, false, Notifier(), NoopLogger)
+                    val apiKey = "BUGSNAG_API_KEY"
+                    it.session = Session("123", Date(0), user, false, Notifier(), NoopLogger, apiKey)
                 },
 
                 // threads included

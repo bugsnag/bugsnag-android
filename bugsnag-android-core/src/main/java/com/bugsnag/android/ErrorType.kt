@@ -6,9 +6,9 @@ package com.bugsnag.android
 enum class ErrorType(internal val desc: String) {
 
     /**
-     * A error captured from Android's JVM layer
+     * An error with an unknown type or source
      */
-    EMPTY(""),
+    UNKNOWN(""),
 
     /**
      * An error captured from Android's JVM layer

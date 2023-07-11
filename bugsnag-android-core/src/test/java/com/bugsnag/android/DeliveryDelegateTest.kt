@@ -19,6 +19,7 @@ internal class DeliveryDelegateTest {
     @Mock
     lateinit var eventStore: EventStore
 
+    private val apiKey = "BUGSNAG_API_KEY"
     private val notifier = Notifier()
     val config = generateImmutableConfig()
     val callbackState = CallbackState()
@@ -40,7 +41,7 @@ internal class DeliveryDelegateTest {
                 notifier,
                 BackgroundTaskService()
             )
-        event.session = Session("123", Date(), User(null, null, null), false, notifier, NoopLogger)
+        event.session = Session("123", Date(), User(null, null, null), false, notifier, NoopLogger, apiKey)
     }
 
     @Test
@@ -59,6 +60,8 @@ internal class DeliveryDelegateTest {
         // check session count incremented
         assertEquals(1, event.session!!.unhandledCount)
         assertEquals(0, event.session!!.handledCount)
+
+        assertEquals("BUGSNAG_API_KEY", event.session!!.apiKey)
     }
 
     @Test
@@ -67,7 +70,7 @@ internal class DeliveryDelegateTest {
             SeverityReason.REASON_HANDLED_EXCEPTION
         )
         val event = Event(RuntimeException("Whoops!"), config, state, NoopLogger)
-        event.session = Session("123", Date(), User(null, null, null), false, notifier, NoopLogger)
+        event.session = Session("123", Date(), User(null, null, null), false, notifier, NoopLogger, apiKey)
 
         var msg: StateEvent.NotifyHandled? = null
         deliveryDelegate.addObserver(

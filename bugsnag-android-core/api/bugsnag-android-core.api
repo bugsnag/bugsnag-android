@@ -324,8 +324,8 @@ public final class com/bugsnag/android/ErrorType : java/lang/Enum {
 	public static final field ANDROID Lcom/bugsnag/android/ErrorType;
 	public static final field C Lcom/bugsnag/android/ErrorType;
 	public static final field DART Lcom/bugsnag/android/ErrorType;
-	public static final field EMPTY Lcom/bugsnag/android/ErrorType;
 	public static final field REACTNATIVEJS Lcom/bugsnag/android/ErrorType;
+	public static final field UNKNOWN Lcom/bugsnag/android/ErrorType;
 	public static final fun fromDescriptor (Ljava/lang/String;)Lcom/bugsnag/android/ErrorType;
 	public static fun valueOf (Ljava/lang/String;)Lcom/bugsnag/android/ErrorType;
 	public static fun values ()[Lcom/bugsnag/android/ErrorType;
@@ -574,11 +574,13 @@ public abstract interface class com/bugsnag/android/Plugin {
 }
 
 public final class com/bugsnag/android/Session : com/bugsnag/android/JsonStream$Streamable, com/bugsnag/android/UserAware {
+	public fun getApiKey ()Ljava/lang/String;
 	public fun getApp ()Lcom/bugsnag/android/App;
 	public fun getDevice ()Lcom/bugsnag/android/Device;
 	public fun getId ()Ljava/lang/String;
 	public fun getStartedAt ()Ljava/util/Date;
 	public fun getUser ()Lcom/bugsnag/android/User;
+	public fun setApiKey (Ljava/lang/String;)V
 	public fun setId (Ljava/lang/String;)V
 	public fun setStartedAt (Ljava/util/Date;)V
 	public fun setUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
