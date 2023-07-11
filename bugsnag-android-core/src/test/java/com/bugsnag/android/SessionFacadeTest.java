@@ -14,10 +14,16 @@ public class SessionFacadeTest {
     private Session session;
     private InterceptingLogger logger;
 
+    /**
+     * Captures session logs
+     */
     @Before
     public void setUp() {
         logger = new InterceptingLogger();
-        session = new Session("123", new Date(0), new User(), true, new Notifier(), logger);
+        session = new Session(
+                "123", new Date(0), new User(),
+                true, new Notifier(), logger, "BUGSNAG_API_KEY"
+        );
     }
 
     @Test

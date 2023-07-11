@@ -23,7 +23,9 @@ class SessionTest {
     @Mock
     lateinit var app: AppWithState
 
-    private val session = Session("123", Date(0), User(), true, Notifier(), NoopLogger)
+    private val apiKey = "BUGSNAG_API_KEY"
+
+    private var session = Session("123", Date(0), User(), true, Notifier(), NoopLogger, apiKey)
 
     /**
      * Verifies that all the fields in session are copied into a new object correctly
@@ -54,6 +56,23 @@ class SessionTest {
         assertEquals("123", session.id)
         session.id = "foo"
         assertEquals("foo", session.id)
+    }
+
+    @Test
+    fun overrideApiKey() {
+        assertEquals("BUGSNAG_API_KEY", session.apiKey)
+        session.apiKey = "foo"
+        assertEquals("foo", session.apiKey)
+    }
+
+    @Test
+    fun defaultApiKey() {
+        val file = File("_my-uuid-uuuuuuuuuuuuuuuuuuuuuuuuuuuu1504255147933_v3.json")
+        session = Session(
+            "123", Date(0), User(), true, Notifier(), NoopLogger,
+            SessionFilenameInfo.findApiKeyInFilename(file, "Default apikey")
+        )
+        assertEquals("Default apikey", session.apiKey)
     }
 
     @Test
@@ -90,12 +109,13 @@ class SessionTest {
     fun isV2() {
         assertFalse(session.isV2Payload)
         val file = File("150450000000053a27e4e-967c-4e5c-91be-2e86f2eb7cdc.json")
-        assertFalse(Session(file, Notifier(), NoopLogger).isV2Payload)
+        assertFalse(Session(file, Notifier(), NoopLogger, apiKey).isV2Payload)
         assertTrue(
             Session(
                 File("150450000000053a27e4e-967c-4e5c-91be-2e86f2eb7cdc_v2.json"),
                 Notifier(),
-                NoopLogger
+                NoopLogger,
+                apiKey
             ).isV2Payload
         )
     }
@@ -105,7 +125,7 @@ class SessionTest {
         val original = Notifier()
         val dep = Notifier("bugsnag-cobol")
         original.dependencies = listOf(dep)
-        val payload = Session(null, original, NoopLogger)
+        val payload = Session(null, original, NoopLogger, apiKey)
         val copy = payload.notifier
         assertNotSame(original, copy)
         assertNotSame(original.dependencies, copy.dependencies)
