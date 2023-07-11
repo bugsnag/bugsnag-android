@@ -29,7 +29,7 @@ class ManifestConfigLoaderTest {
             assertTrue(autoDetectErrors)
             assertTrue(autoTrackSessions)
             assertEquals(ThreadSendPolicy.ALWAYS, sendThreads)
-            assertFalse(persistUser)
+            assertTrue(persistUser)
 
             // endpoints
             assertEquals(endpoints.notify, "https://notify.bugsnag.com")
