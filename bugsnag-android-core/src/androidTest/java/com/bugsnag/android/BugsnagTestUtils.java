@@ -58,7 +58,7 @@ final class BugsnagTestUtils {
 
     static Session generateSession() {
         return new Session("test", new Date(), new User(), false,
-                new Notifier(), NoopLogger.INSTANCE);
+                new Notifier(), NoopLogger.INSTANCE, "TEST APIKEY");
     }
 
     static Event generateEvent() {

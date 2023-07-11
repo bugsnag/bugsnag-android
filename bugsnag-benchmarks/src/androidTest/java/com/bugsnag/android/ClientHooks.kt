@@ -38,6 +38,7 @@ internal fun generateSession(): Session {
         null,
         false,
         Notifier(),
-        object : Logger {}
+        object : Logger {},
+        null
     )
 }
