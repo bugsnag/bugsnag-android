@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+* Generate a Build ID value if one is not provided in the AndroidManifest.xml
+  [#1865](https://github.com/bugsnag/bugsnag-android/pull/1865)
+
 ## 5.31.1 (2023-08-09)
 
 ### Bug fixes
