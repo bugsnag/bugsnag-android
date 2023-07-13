@@ -9,6 +9,7 @@ import com.bugsnag.android.BreadcrumbType
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.Connectivity
 import com.bugsnag.android.DebugLogger
+import com.bugsnag.android.DebugLogger.w
 import com.bugsnag.android.DefaultDelivery
 import com.bugsnag.android.Delivery
 import com.bugsnag.android.DeliveryParams
@@ -176,6 +177,34 @@ internal fun convertToImmutableConfig(
     )
 }
 
+private fun validateApiKey(value: String) {
+    if (isInvalidApiKey(value)) {
+        w(
+            "Invalid configuration. " +
+                "apiKey should be a 32-character hexademical string, got " + value
+        )
+    }
+}
+
+@VisibleForTesting
+fun isInvalidApiKey(apiKey: String): Boolean {
+    if (apiKey.isNullOrEmpty()) {
+        throw IllegalArgumentException("No Bugsnag API Key set")
+    }
+    if (apiKey.length != VALID_API_KEY_LEN) {
+        return true
+    }
+    // check whether each character is hexadecimal (either a digit or a-f).
+    // this avoids using a regex to improve startup performance.
+    for (k in 0 until VALID_API_KEY_LEN) {
+        val chr = apiKey[k]
+        if (!Character.isDigit(chr) && (chr < 'a' || chr > 'f')) {
+            return true
+        }
+    }
+    return false
+}
+
 internal fun sanitiseConfiguration(
     appContext: Context,
     configuration: Configuration,
@@ -187,6 +216,8 @@ internal fun sanitiseConfiguration(
     val appInfo = runCatching {
         packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
     }.getOrNull()
+
+    validateApiKey(configuration.apiKey)
 
     // populate releaseStage
     if (configuration.releaseStage == null) {
@@ -251,3 +282,4 @@ private fun populateBuildUuid(appInfo: ApplicationInfo?): String? {
 
 internal const val RELEASE_STAGE_DEVELOPMENT = "development"
 internal const val RELEASE_STAGE_PRODUCTION = "production"
+internal const val VALID_API_KEY_LEN = 32

@@ -929,6 +929,7 @@ public final class com/bugsnag/android/internal/ImmutableConfigKt {
 	public static final fun convertToImmutableConfig (Lcom/bugsnag/android/Configuration;Ljava/lang/String;)Lcom/bugsnag/android/internal/ImmutableConfig;
 	public static final fun convertToImmutableConfig (Lcom/bugsnag/android/Configuration;Ljava/lang/String;Landroid/content/pm/PackageInfo;)Lcom/bugsnag/android/internal/ImmutableConfig;
 	public static final fun convertToImmutableConfig (Lcom/bugsnag/android/Configuration;Ljava/lang/String;Landroid/content/pm/PackageInfo;Landroid/content/pm/ApplicationInfo;)Lcom/bugsnag/android/internal/ImmutableConfig;
+	public static final fun isInvalidApiKey (Ljava/lang/String;)Z
 }
 
 public abstract interface class com/bugsnag/android/internal/InternalMetrics {

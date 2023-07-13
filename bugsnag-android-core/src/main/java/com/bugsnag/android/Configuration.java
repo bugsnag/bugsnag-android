@@ -5,7 +5,6 @@ import android.content.Context;
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
 
 import java.io.File;
 import java.util.Map;
@@ -20,7 +19,6 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
 
     private static final int MIN_BREADCRUMBS = 0;
     private static final int MAX_BREADCRUMBS = 500;
-    private static final int VALID_API_KEY_LEN = 32;
     private static final long MIN_LAUNCH_CRASH_THRESHOLD_MS = 0;
 
     final ConfigInternal impl;
@@ -29,7 +27,6 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
      * Constructs a new Configuration object with default values.
      */
     public Configuration(@NonNull String apiKey) {
-        validateApiKey(apiKey);
         impl = new ConfigInternal(apiKey);
     }
 
@@ -45,32 +42,6 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
     @NonNull
     static Configuration load(@NonNull Context context, @NonNull String apiKey) {
         return ConfigInternal.load(context, apiKey);
-    }
-
-    private void validateApiKey(String value) {
-        if (isInvalidApiKey(value)) {
-            DebugLogger.INSTANCE.w("Invalid configuration. "
-                    + "apiKey should be a 32-character hexademical string, got " + value);
-        }
-    }
-
-    @VisibleForTesting
-    static boolean isInvalidApiKey(String apiKey) {
-        if (Intrinsics.isEmpty(apiKey)) {
-            throw new IllegalArgumentException("No Bugsnag API Key set");
-        }
-        if (apiKey.length() != VALID_API_KEY_LEN) {
-            return true;
-        }
-        // check whether each character is hexadecimal (either a digit or a-f).
-        // this avoids using a regex to improve startup performance.
-        for (int k = 0; k < VALID_API_KEY_LEN; k++) {
-            char chr = apiKey.charAt(k);
-            if (!Character.isDigit(chr) && (chr < 'a' || chr > 'f')) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private void logNull(String property) {
@@ -89,7 +60,6 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
      * Changes the API key used for events sent to Bugsnag.
      */
     public void setApiKey(@NonNull String apiKey) {
-        validateApiKey(apiKey);
         impl.setApiKey(apiKey);
     }
 
