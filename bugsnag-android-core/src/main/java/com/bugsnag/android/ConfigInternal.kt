@@ -23,7 +23,7 @@ internal class ConfigInternal(
     var versionCode: Int? = 0
     var releaseStage: String? = null
     var sendThreads: ThreadSendPolicy = ThreadSendPolicy.ALWAYS
-    var persistUser: Boolean = false
+    var persistUser: Boolean = true
 
     var launchDurationMillis: Long = DEFAULT_LAUNCH_CRASH_THRESHOLD_MS
 
