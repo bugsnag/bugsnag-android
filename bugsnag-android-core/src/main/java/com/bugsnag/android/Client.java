@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.regex.Pattern;
 
 /**
  * A Bugsnag Client instance allows you to use Bugsnag in your Android app.
@@ -792,7 +793,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
                         @Nullable OnErrorCallback onError) {
         // set the redacted keys on the event as this
         // will not have been set for RN/Unity events
-        Collection<String> redactedKeys = metadataState.getMetadata().getRedactedKeys();
+        Collection<Pattern> redactedKeys = metadataState.getMetadata().getRedactedKeys();
         event.setRedactedKeys(redactedKeys);
 
         // get session for event

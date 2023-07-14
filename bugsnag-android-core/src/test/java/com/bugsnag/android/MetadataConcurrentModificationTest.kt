@@ -5,6 +5,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNotSame
 import org.junit.Test
 import java.util.concurrent.Executors
+import java.util.regex.Pattern
 
 internal class MetadataConcurrentModificationTest {
 
@@ -27,14 +28,14 @@ internal class MetadataConcurrentModificationTest {
      */
     @Test()
     fun testConcurrentModificationRedactedKeys() {
-        val keys = mutableSetOf("alpha", "omega")
+        val keys = mutableSetOf(Pattern.compile(".*alpha.*"), Pattern.compile(".*omega.*"))
         val orig = Metadata()
         val executor = Executors.newSingleThreadExecutor()
 
         repeat(100) {
             orig.redactedKeys = keys
             executor.execute {
-                keys.add("$it")
+                keys.add(Pattern.compile(".*$it.*"))
             }
         }
     }
@@ -42,9 +43,10 @@ internal class MetadataConcurrentModificationTest {
     @Test()
     fun testRedactedKeysCopy() {
         val orig = Metadata()
-        orig.redactedKeys = mutableSetOf("alpha", "omega")
+        val keys = mutableSetOf(Pattern.compile(".*alpha.*"), Pattern.compile(".*omega.*"))
+        orig.redactedKeys = keys
         val copy = orig.copy()
         assertNotSame(orig.redactedKeys, copy.redactedKeys)
-        assertEquals(mutableSetOf("alpha", "omega"), copy.redactedKeys)
+        assertEquals(keys, copy.redactedKeys)
     }
 }

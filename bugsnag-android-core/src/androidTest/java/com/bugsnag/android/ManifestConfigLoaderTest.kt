@@ -6,6 +6,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.util.regex.Pattern
 
 class ManifestConfigLoaderTest {
 
@@ -40,9 +41,9 @@ class ManifestConfigLoaderTest {
             assertEquals(0, versionCode)
             assertNull(releaseStage)
             assertNull(enabledReleaseStages)
-            assertEquals(emptySet<String>(), discardClasses)
+            assertEquals(emptySet<Pattern>(), discardClasses)
             assertEquals(emptySet<String>(), projectPackages)
-            assertEquals(setOf("password"), redactedKeys)
+            assertEquals(".*password.*", redactedKeys.single().pattern())
 
             // misc
             assertEquals(maxBreadcrumbs, 100)
@@ -79,9 +80,9 @@ class ManifestConfigLoaderTest {
             putInt("com.bugsnag.android.VERSION_CODE", 55)
             putString("com.bugsnag.android.RELEASE_STAGE", "beta")
             putString("com.bugsnag.android.ENABLED_RELEASE_STAGES", "beta,production,staging")
-            putString("com.bugsnag.android.DISCARD_CLASSES", "com.bugsnag.FooKt,org.example.String")
+            putString("com.bugsnag.android.DISCARD_CLASSES", ".*com.bugsnag.FooKt.*,.*org.example.String.*")
             putString("com.bugsnag.android.PROJECT_PACKAGES", "com.bugsnag,com.example")
-            putString("com.bugsnag.android.REDACTED_KEYS", "password,auth,foo")
+            putString("com.bugsnag.android.REDACTED_KEYS", ".*password.*,.*auth.*,.*foo.*")
 
             // misc
             putInt("com.bugsnag.android.MAX_BREADCRUMBS", 75)
@@ -115,9 +116,12 @@ class ManifestConfigLoaderTest {
             assertEquals(55, versionCode)
             assertEquals("beta", releaseStage)
             assertEquals(setOf("beta", "production", "staging"), enabledReleaseStages)
-            assertEquals(setOf("com.bugsnag.FooKt", "org.example.String"), discardClasses)
             assertEquals(setOf("com.bugsnag", "com.example"), projectPackages)
-            assertEquals(setOf("password", "auth", "foo"), redactedKeys)
+
+            assertEquals(".*com.bugsnag.FooKt.*", discardClasses.first().pattern())
+            assertEquals(".*org.example.String.*", discardClasses.last().pattern())
+            assertEquals(".*password.*", redactedKeys.first().pattern())
+            assertEquals(".*foo.*", redactedKeys.last().pattern())
 
             // misc
             assertEquals(maxBreadcrumbs, 75)

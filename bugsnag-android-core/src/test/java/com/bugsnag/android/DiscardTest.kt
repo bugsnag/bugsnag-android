@@ -5,6 +5,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import java.lang.RuntimeException
+import java.util.regex.Pattern
 
 /**
  * Verifies the logic for discarding automatically captured errors/sessions/breadcrumbs.
@@ -40,12 +41,12 @@ class DiscardTest {
         assertFalse(cfg.shouldDiscardError(exc))
 
         // Should not discard if outside discard classes
-        config.discardClasses = setOf("UnwantedError")
+        config.discardClasses = setOf(Pattern.compile("UnwantedError"))
         cfg = BugsnagTestUtils.convert(config)
         assertFalse(cfg.shouldDiscardError(exc))
 
         // Should discard if inside discard classes
-        config.discardClasses = setOf("java.lang.RuntimeException")
+        config.discardClasses = setOf(Pattern.compile("java.lang.RuntimeException"))
         cfg = BugsnagTestUtils.convert(config)
         assertTrue(cfg.shouldDiscardError(exc))
     }
@@ -70,12 +71,12 @@ class DiscardTest {
         assertFalse(cfg.shouldDiscardError("MyError"))
 
         // Should not discard if outside discard classes
-        config.discardClasses = setOf("UnwantedError")
+        config.discardClasses = setOf(Pattern.compile("UnwantedError"))
         cfg = BugsnagTestUtils.convert(config)
         assertFalse(cfg.shouldDiscardError("MyError"))
 
         // Should discard if inside discard classes
-        config.discardClasses = setOf("UnwantedError")
+        config.discardClasses = setOf(Pattern.compile("UnwantedError"))
         cfg = BugsnagTestUtils.convert(config)
         assertTrue(cfg.shouldDiscardError("UnwantedError"))
     }

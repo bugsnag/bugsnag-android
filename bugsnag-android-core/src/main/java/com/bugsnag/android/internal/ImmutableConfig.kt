@@ -25,6 +25,7 @@ import com.bugsnag.android.errorApiHeaders
 import com.bugsnag.android.safeUnrollCauses
 import com.bugsnag.android.sessionApiHeaders
 import java.io.File
+import java.util.regex.Pattern
 
 data class ImmutableConfig(
     val apiKey: String,
@@ -32,7 +33,7 @@ data class ImmutableConfig(
     val enabledErrorTypes: ErrorTypes,
     val autoTrackSessions: Boolean,
     val sendThreads: ThreadSendPolicy,
-    val discardClasses: Collection<String>,
+    val discardClasses: Collection<Pattern>,
     val enabledReleaseStages: Collection<String>?,
     val projectPackages: Collection<String>,
     val enabledBreadcrumbTypes: Set<BreadcrumbType>?,
@@ -58,7 +59,7 @@ data class ImmutableConfig(
     // results cached here to avoid unnecessary lookups in Client.
     val packageInfo: PackageInfo?,
     val appInfo: ApplicationInfo?,
-    val redactedKeys: Collection<String>
+    val redactedKeys: Collection<Pattern>
 ) {
 
     @JvmName("getErrorApiDeliveryParams")
@@ -113,7 +114,11 @@ data class ImmutableConfig(
      */
     @VisibleForTesting
     internal fun shouldDiscardByErrorClass(errorClass: String?): Boolean {
-        return discardClasses.contains(errorClass)
+        return if (!errorClass.isNullOrEmpty()) {
+            discardClasses.any { it.matcher(errorClass.toString()).matches() }
+        } else {
+            false
+        }
     }
 
     /**

@@ -3,6 +3,7 @@ package com.bugsnag.android.mazerunner.scenarios
 import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
+import java.util.regex.Pattern
 
 /**
  * Sends a handled exception to Bugsnag, which contains metadata that should be filtered
@@ -14,7 +15,7 @@ internal class ManualRedactKeysScenario(
 ) : Scenario(config, context, eventMetadata) {
 
     init {
-        config.redactedKeys = setOf("foo")
+        config.redactedKeys = setOf(Pattern.compile(".*foo.*"))
     }
 
     override fun startScenario() {
