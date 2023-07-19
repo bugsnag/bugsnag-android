@@ -25,6 +25,7 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
 import java.nio.file.Files
+import java.util.regex.Pattern
 
 @RunWith(MockitoJUnitRunner::class)
 internal class ImmutableConfigTest {
@@ -101,7 +102,8 @@ internal class ImmutableConfigTest {
         seed.enabledErrorTypes.ndkCrashes = false
         seed.sendThreads = ThreadSendPolicy.UNHANDLED_ONLY
 
-        seed.discardClasses = setOf("foo")
+        val discardClasses = setOf(Pattern.compile("foo"))
+        seed.discardClasses = discardClasses
         seed.enabledReleaseStages = setOf("bar")
         seed.projectPackages = setOf("com.example")
         seed.releaseStage = "wham"
@@ -132,7 +134,7 @@ internal class ImmutableConfigTest {
             assertEquals(ThreadSendPolicy.UNHANDLED_ONLY, sendThreads)
 
             // release stages
-            assertEquals(setOf("foo"), discardClasses)
+            assertEquals(discardClasses, discardClasses)
             assertEquals(setOf("bar"), enabledReleaseStages)
             assertEquals(setOf("com.example"), projectPackages)
             assertEquals("wham", releaseStage)

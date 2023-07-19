@@ -4,6 +4,7 @@ import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import java.lang.IllegalStateException
+import java.util.regex.Pattern
 
 /**
  * Attempts to send an ignored handled exception to Bugsnag, which should not result
@@ -16,7 +17,7 @@ internal class IgnoredExceptionScenario(
 ) : Scenario(config, context, eventMetadata) {
 
     init {
-        config.discardClasses = setOf("java.lang.RuntimeException")
+        config.discardClasses = setOf(Pattern.compile(".*java.lang.RuntimeException.*"))
     }
 
     override fun startScenario() {

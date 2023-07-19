@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.annotation.VisibleForTesting
 import java.lang.IllegalArgumentException
+import java.util.regex.Pattern
 
 internal class ManifestConfigLoader {
 
@@ -135,9 +136,9 @@ internal class ManifestConfigLoader {
             if (data.containsKey(ENABLED_RELEASE_STAGES)) {
                 enabledReleaseStages = getStrArray(data, ENABLED_RELEASE_STAGES, enabledReleaseStages)
             }
-            discardClasses = getStrArray(data, DISCARD_CLASSES, discardClasses) ?: emptySet()
+            discardClasses = getPatternSet(data, DISCARD_CLASSES, discardClasses) ?: emptySet()
             projectPackages = getStrArray(data, PROJECT_PACKAGES, emptySet()) ?: emptySet()
-            redactedKeys = getStrArray(data, REDACTED_KEYS, redactedKeys) ?: emptySet()
+            redactedKeys = getPatternSet(data, REDACTED_KEYS, redactedKeys) ?: emptySet()
         }
     }
 
@@ -152,5 +153,16 @@ internal class ManifestConfigLoader {
             null -> default
             else -> ary.toSet()
         }
+    }
+
+    private fun getPatternSet(
+        data: Bundle,
+        key: String,
+        default: Set<Pattern>?
+    ): Set<Pattern>? {
+        val delimitedStr = data.getString(key) ?: return default
+        return delimitedStr.splitToSequence(',')
+            .map { Pattern.compile(it) }
+            .toSet()
     }
 }

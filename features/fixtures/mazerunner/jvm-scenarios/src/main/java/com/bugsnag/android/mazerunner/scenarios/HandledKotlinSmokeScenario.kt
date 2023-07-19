@@ -6,6 +6,7 @@ import com.bugsnag.android.Configuration
 import com.bugsnag.android.OnBreadcrumbCallback
 import com.bugsnag.android.OnErrorCallback
 import com.bugsnag.android.Severity
+import java.util.regex.Pattern
 
 /**
  * Sends a handled exception to Bugsnag, which does not include session data.
@@ -25,7 +26,7 @@ internal class HandledKotlinSmokeScenario(
         config.context = "HandledKotlinSmokeScenario"
         config.setUser("ABC", "ABC@CBA.CA", "HandledKotlinSmokeScenario")
         config.addMetadata("TestData", "Source", "HandledKotlinSmokeScenario")
-        config.redactedKeys = setOf("redacted")
+        config.redactedKeys = setOf(Pattern.compile(".*redacted.*"))
         config.addOnBreadcrumb(
             OnBreadcrumbCallback {
                 it.metadata?.put("Source", "HandledKotlinSmokeScenario")

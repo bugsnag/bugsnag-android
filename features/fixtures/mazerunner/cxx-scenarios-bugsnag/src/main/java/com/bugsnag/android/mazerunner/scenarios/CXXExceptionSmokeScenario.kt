@@ -9,6 +9,7 @@ import com.bugsnag.android.OnBreadcrumbCallback
 import com.bugsnag.android.OnErrorCallback
 import com.bugsnag.android.Severity
 import com.bugsnag.android.mazerunner.disableSessionDelivery
+import java.util.regex.Pattern
 
 class CXXExceptionSmokeScenario(
     config: Configuration,
@@ -37,7 +38,7 @@ class CXXExceptionSmokeScenario(
         config.context = "CXXExceptionSmokeScenario"
         config.setUser("ABC", "ABC@CBA.CA", "CXXExceptionSmokeScenario")
         config.addMetadata("TestData", "Source", "CXXExceptionSmokeScenario")
-        config.redactedKeys = setOf("redacted")
+        config.redactedKeys = setOf(Pattern.compile(".*redacted.*"))
         config.addOnBreadcrumb(
             OnBreadcrumbCallback { breadcrumb ->
                 val metadata = breadcrumb.metadata
