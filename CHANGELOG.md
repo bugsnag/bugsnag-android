@@ -7,6 +7,9 @@
 * Added `Session.apiKey` so that it can be changed in an `OnSessionCallback`
   [#1855](https://github.com/bugsnag/bugsnag-android/pull/1855)
 
+* Configuration.persistUser is now true by default, matching the configuration of other platforms.
+  [#1863](https://github.com/bugsnag/bugsnag-android/pull/1863)
+
 ### Bug fixes
 
 * Prevent rare app crash while migrating old `SharedPreferences` data from older versions of `bugsnag-android`
@@ -24,6 +27,9 @@
 
 * ANR or NDK detection warnings can be suppressed (using `enabledErrorTypes`) when plugin is excluded.
   [#1832](https://github.com/bugsnag/bugsnag-android/pull/1832)
+
+* Support using regexes to define redacted keys and discard classes.
+  [#1856](https://github.com/bugsnag/bugsnag-android/pull/1856)
 
 ## 5.29.0 (2023-03-23)
 
