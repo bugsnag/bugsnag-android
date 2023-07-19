@@ -41,7 +41,11 @@ public class Thread implements JsonStream.Streamable {
      * Sets the unique ID of the thread (from {@link java.lang.Thread})
      */
     public void setId(@NonNull String id) {
-        impl.setId(id);
+        if (id != null) {
+            impl.setId(id);
+        } else {
+            logNull("id");
+        }
     }
 
     /**

@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 @SuppressWarnings("ConstantConditions") // suppress warning about making redundant null checks
 public class ConfigurationFacadeTest {
@@ -87,8 +88,9 @@ public class ConfigurationFacadeTest {
 
     @Test
     public void persistUserValid() {
-        config.setPersistUser(true);
         assertTrue(config.impl.getPersistUser());
+        config.setPersistUser(false);
+        assertFalse(config.impl.getPersistUser());
     }
 
     @SuppressWarnings("deprecation")
@@ -222,14 +224,14 @@ public class ConfigurationFacadeTest {
 
     @Test
     public void redactedKeysValid() {
-        Set<String> redactedKeys = new HashSet<>();
+        Set<Pattern> redactedKeys = new HashSet<>();
         config.setRedactedKeys(redactedKeys);
         assertEquals(redactedKeys, config.impl.getRedactedKeys());
     }
 
     @Test
     public void redactedKeysInvalid() {
-        Set<String> keys = config.impl.getRedactedKeys();
+        Set<Pattern> keys = config.impl.getRedactedKeys();
         config.setRedactedKeys(null);
         assertEquals(keys, config.impl.getRedactedKeys());
         assertNotNull(logger.getMsg());
@@ -237,15 +239,15 @@ public class ConfigurationFacadeTest {
 
     @Test
     public void discardClassesValid() {
-        Set<String> discardClasses = new HashSet<>();
-        discardClasses.add("com.example.Foo");
+        Set<Pattern> discardClasses = new HashSet<>();
+        discardClasses.add(Pattern.compile("com.example.Foo"));
         config.setDiscardClasses(discardClasses);
         assertEquals(discardClasses, config.impl.getDiscardClasses());
     }
 
     @Test
     public void discardClassesInvalid() {
-        Set<String> classes = config.impl.getDiscardClasses();
+        Set<Pattern> classes = config.impl.getDiscardClasses();
         config.setDiscardClasses(null);
         assertEquals(classes, config.impl.getDiscardClasses());
         assertNotNull(logger.getMsg());

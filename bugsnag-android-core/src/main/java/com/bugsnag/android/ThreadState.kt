@@ -2,6 +2,7 @@ package com.bugsnag.android
 
 import com.bugsnag.android.internal.ImmutableConfig
 import java.io.IOException
+import kotlin.math.max
 import java.lang.Thread as JavaThread
 
 /**
@@ -109,7 +110,7 @@ internal class ThreadState @Suppress("LongParameterList") constructor(
             // API 24/25 don't record the currentThread, so add it in manually
             // https://issuetracker.google.com/issues/64122757
             // currentThread may also have been removed if its ID occurred after maxThreadCount
-            keepThreads.take((maxThreadCount - 1).coerceAtLeast(0)).plus(currentThread).sortedBy { it.id }
+            keepThreads.take(max(maxThreadCount - 1, 0)).plus(currentThread).sortedBy { it.id }
         }.map { toBugsnagThread(it) }.toMutableList()
 
         if (allThreads.size > maxThreadCount) {

@@ -15,6 +15,7 @@ import org.junit.Test;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 public class ConfigurationTest {
 
@@ -111,14 +112,16 @@ public class ConfigurationTest {
 
     @Test
     public void testOverrideRedactKeys() {
-        config.setRedactedKeys(Collections.singleton("Foo"));
-        assertEquals(Collections.singleton("Foo"), config.getRedactedKeys());
+        Set<Pattern> redactedKeys = Collections.singleton(Pattern.compile("Foo", Pattern.LITERAL));
+        config.setRedactedKeys(redactedKeys);
+        assertEquals(redactedKeys, config.getRedactedKeys());
     }
 
     @Test
     public void testOverrideDiscardClasses() {
-        config.setDiscardClasses(Collections.singleton("Bar"));
-        assertEquals(Collections.singleton("Bar"), config.getDiscardClasses());
+        Set<Pattern> discardClass = Collections.singleton(Pattern.compile("Bar", Pattern.LITERAL));
+        config.setDiscardClasses(discardClass);
+        assertEquals(discardClass, config.getDiscardClasses());
     }
 
     @Test

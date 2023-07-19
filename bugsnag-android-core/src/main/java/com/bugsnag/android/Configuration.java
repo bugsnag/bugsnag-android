@@ -10,6 +10,7 @@ import androidx.annotation.VisibleForTesting;
 import java.io.File;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * User-specified configuration storage object, contains information
@@ -671,7 +672,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
      * By default, redactedKeys is set to "password"
      */
     @NonNull
-    public Set<String> getRedactedKeys() {
+    public Set<Pattern> getRedactedKeys() {
         return impl.getRedactedKeys();
     }
 
@@ -683,7 +684,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
      *
      * By default, redactedKeys is set to "password"
      */
-    public void setRedactedKeys(@NonNull Set<String> redactedKeys) {
+    public void setRedactedKeys(@NonNull Set<Pattern> redactedKeys) {
         if (CollectionUtils.containsNullElements(redactedKeys)) {
             logNull("redactedKeys");
         } else {
@@ -697,7 +698,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
      * match against the canonical class name.
      */
     @NonNull
-    public Set<String> getDiscardClasses() {
+    public Set<Pattern> getDiscardClasses() {
         return impl.getDiscardClasses();
     }
 
@@ -706,7 +707,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
      * before being sent to Bugsnag if they are detected. The notifier performs an exact
      * match against the canonical class name.
      */
-    public void setDiscardClasses(@NonNull Set<String> discardClasses) {
+    public void setDiscardClasses(@NonNull Set<Pattern> discardClasses) {
         if (CollectionUtils.containsNullElements(discardClasses)) {
             logNull("discardClasses");
         } else {
