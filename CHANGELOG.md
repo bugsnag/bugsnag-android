@@ -6,6 +6,8 @@
 
 * Added `Session.apiKey` so that it can be changed in an `OnSessionCallback`
   [#1855](https://github.com/bugsnag/bugsnag-android/pull/1855)
+* `BroadcastReceiver` derived breadcrumbs will function as-expected on Android 14+ 
+  [#1871](https://github.com/bugsnag/bugsnag-android/pull/1871)
 
 ### Bug fixes
 
