@@ -23,7 +23,14 @@ internal class ThreadState @Suppress("LongParameterList") constructor(
         exc: Throwable?,
         isUnhandled: Boolean,
         config: ImmutableConfig
-    ) : this(exc, isUnhandled, config.maxReportedThreads, config.sendThreads, config.projectPackages, config.logger)
+    ) : this(
+        exc,
+        isUnhandled,
+        config.maxReportedThreads,
+        config.sendThreads,
+        config.projectPackages,
+        config.logger
+    )
 
     val threads: MutableList<Thread>
 
@@ -92,7 +99,7 @@ internal class ThreadState @Suppress("LongParameterList") constructor(
             return Thread(
                 thread.id.toString(),
                 thread.name,
-                ThreadType.ANDROID,
+                ErrorType.ANDROID,
                 isErrorThread,
                 Thread.State.forThread(thread),
                 stackTrace,
@@ -118,7 +125,7 @@ internal class ThreadState @Suppress("LongParameterList") constructor(
                 Thread(
                     "",
                     "[${allThreads.size - maxThreadCount} threads omitted as the maxReportedThreads limit ($maxThreadCount) was exceeded]",
-                    ThreadType.EMPTY,
+                    ErrorType.UNKNOWN,
                     false,
                     Thread.State.UNKNOWN,
                     Stacktrace(arrayOf(StackTraceElement("", "", "-", 0)), projectPackages, logger),

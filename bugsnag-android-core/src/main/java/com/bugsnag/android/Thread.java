@@ -18,7 +18,7 @@ public class Thread implements JsonStream.Streamable {
     Thread(
             String id,
             @NonNull String name,
-            @NonNull ThreadType type,
+            @NonNull ErrorType type,
             boolean errorReportingThread,
             @NonNull Thread.State state,
             @NonNull Stacktrace stacktrace,
@@ -78,7 +78,7 @@ public class Thread implements JsonStream.Streamable {
     /**
      * Sets the type of thread based on the originating platform (intended for internal use only)
      */
-    public void setType(@NonNull ThreadType type) {
+    public void setType(@NonNull ErrorType type) {
         if (type != null) {
             impl.setType(type);
         } else {
@@ -90,7 +90,7 @@ public class Thread implements JsonStream.Streamable {
      * Gets the type of thread based on the originating platform (intended for internal use only)
      */
     @NonNull
-    public ThreadType getType() {
+    public ErrorType getType() {
         return impl.getType();
     }
 
