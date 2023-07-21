@@ -2,13 +2,13 @@ apply plugin: "com.android.application"
 apply plugin: "kotlin-android"
 
 android {
-    compileSdkVersion 31
+    compileSdk 34
     ndkVersion "17.2.4988734"
 
     defaultConfig {
         applicationId "com.example.bugsnag.android"
         minSdkVersion 14
-        targetSdkVersion 31
+        targetSdkVersion 34
         versionCode 1
         versionName "1.0"
     }
