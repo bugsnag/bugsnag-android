@@ -9,7 +9,6 @@ import com.bugsnag.android.BreadcrumbType
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.Connectivity
 import com.bugsnag.android.DebugLogger
-import com.bugsnag.android.DebugLogger.w
 import com.bugsnag.android.DefaultDelivery
 import com.bugsnag.android.Delivery
 import com.bugsnag.android.DeliveryParams
@@ -184,9 +183,8 @@ internal fun convertToImmutableConfig(
 
 private fun validateApiKey(value: String) {
     if (isInvalidApiKey(value)) {
-        w(
-            "Invalid configuration. " +
-                "apiKey should be a 32-character hexademical string, got " + value
+        DebugLogger.w(
+            "Invalid configuration. apiKey should be a 32-character hexademical string, got $value"
         )
     }
 }
@@ -203,7 +201,7 @@ fun isInvalidApiKey(apiKey: String): Boolean {
     // this avoids using a regex to improve startup performance.
     for (k in 0 until VALID_API_KEY_LEN) {
         val chr = apiKey[k]
-        if (!Character.isDigit(chr) && (chr < 'a' || chr > 'f')) {
+        if (!chr.isDigit() && chr !in 'a'..'f') {
             return true
         }
     }
@@ -221,8 +219,6 @@ internal fun sanitiseConfiguration(
     val appInfo = runCatching {
         packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
     }.getOrNull()
-
-    validateApiKey(configuration.apiKey)
 
     // populate releaseStage
     if (configuration.releaseStage == null) {
@@ -242,6 +238,8 @@ internal fun sanitiseConfiguration(
         } else {
             configuration.logger = NoopLogger
         }
+    } else {
+        validateApiKey(configuration.apiKey)
     }
 
     if (configuration.versionCode == null || configuration.versionCode == 0) {

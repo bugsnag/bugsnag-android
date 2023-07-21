@@ -46,7 +46,7 @@ internal class EventSerializationTest {
                         Thread(
                             5,
                             "main",
-                            ThreadType.ANDROID,
+                            ErrorType.ANDROID,
                             true,
                             Thread.State.RUNNABLE,
                             stacktrace,

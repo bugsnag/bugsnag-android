@@ -91,7 +91,7 @@ internal class ThreadState @Suppress("LongParameterList") constructor(
             return Thread(
                 thread.id,
                 thread.name,
-                ThreadType.ANDROID,
+                ErrorType.ANDROID,
                 isErrorThread,
                 Thread.State.forThread(thread),
                 stackTrace,
@@ -117,7 +117,7 @@ internal class ThreadState @Suppress("LongParameterList") constructor(
                 Thread(
                     -1,
                     "[${allThreads.size - maxThreadCount} threads omitted as the maxReportedThreads limit ($maxThreadCount) was exceeded]",
-                    ThreadType.EMPTY,
+                    ErrorType.UNKNOWN,
                     false,
                     Thread.State.UNKNOWN,
                     Stacktrace(arrayOf(StackTraceElement("", "", "-", 0)), projectPackages, logger),
