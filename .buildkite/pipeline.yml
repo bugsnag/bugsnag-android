@@ -5,28 +5,28 @@ steps:
       queue: macos-12-arm
     command: 'make example-app'
     env:
-      JAVA_HOME: '/Users/administrator/azul_openjdk_11'
+      JAVA_HOME: '/Users/administrator/azul_openjdk_17'
   - label: ':android: Build Example App'
     timeout_in_minutes: 5
     agents:
       queue: macos-12-arm
     command: 'make example-app'
     env:
-      JAVA_HOME: '/Users/administrator/azul_openjdk_11'
+      JAVA_HOME: '/Users/administrator/azul_openjdk_17'
   - label: ':android: Build Example App'
     timeout_in_minutes: 5
     agents:
       queue: macos-12-arm
     command: 'make example-app'
     env:
-      JAVA_HOME: '/Users/administrator/azul_openjdk_11'
+      JAVA_HOME: '/Users/administrator/azul_openjdk_17'
   - label: ':android: Build Example App'
     timeout_in_minutes: 5
     agents:
       queue: macos-12-arm
     command: 'make example-app'
     env:
-      JAVA_HOME: '/Users/administrator/azul_openjdk_11'
+      JAVA_HOME: '/Users/administrator/azul_openjdk_17'
 
 #
 #  - label: 'Audit current licenses'
