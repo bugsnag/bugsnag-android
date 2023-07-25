@@ -4,22 +4,29 @@ steps:
     agents:
       queue: ms-arm-12-1
     command: 'make example-app'
+    env:
+      JAVA_HOME: '/Users/administrator/azul_openjdk_17'
   - label: ':android: Build Example App'
     timeout_in_minutes: 5
     agents:
       queue: ms-arm-12-1
     command: 'make example-app'
+    env:
+      JAVA_HOME: '/Users/administrator/azul_openjdk_17'
   - label: ':android: Build Example App'
     timeout_in_minutes: 5
     agents:
       queue: ms-arm-12-1
     command: 'make example-app'
-
+    env:
+      JAVA_HOME: '/Users/administrator/azul_openjdk_17'
   - label: ':android: Build Example App'
     timeout_in_minutes: 5
     agents:
       queue: ms-arm-12-1
     command: 'make example-app'
+    env:
+      JAVA_HOME: '/Users/administrator/azul_openjdk_17'
 
 #
 #  - label: 'Audit current licenses'
