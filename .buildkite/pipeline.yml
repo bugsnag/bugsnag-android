@@ -2,44 +2,37 @@ steps:
   - label: ':android: Build Example App'
     timeout_in_minutes: 5
     agents:
-      queue: macos-12-arm
+      queue: ms-arm-12-1
     command: 'make example-app'
-    env:
-      JAVA_HOME: '/Users/administrator/azul_openjdk_17'
   - label: ':android: Build Example App'
     timeout_in_minutes: 5
     agents:
-      queue: macos-12-arm
+      queue: ms-arm-12-1
     command: 'make example-app'
-    env:
-      JAVA_HOME: '/Users/administrator/azul_openjdk_17'
   - label: ':android: Build Example App'
     timeout_in_minutes: 5
     agents:
-      queue: macos-12-arm
+      queue: ms-arm-12-1
     command: 'make example-app'
-    env:
-      JAVA_HOME: '/Users/administrator/azul_openjdk_17'
+
   - label: ':android: Build Example App'
     timeout_in_minutes: 5
     agents:
-      queue: macos-12-arm
+      queue: ms-arm-12-1
     command: 'make example-app'
-    env:
-      JAVA_HOME: '/Users/administrator/azul_openjdk_17'
 
 #
 #  - label: 'Audit current licenses'
 #    timeout_in_minutes: 30
 #    agents:
-#      queue: macos-12-arm
+#      queue: ms-arm-12-1
 #    command: ./scripts/audit-dependency-licenses.sh
 #
 #  - label: ':android: Build fixture APK r16'
 #    key: "fixture-r16"
 #    timeout_in_minutes: 30
 #    agents:
-#      queue: macos-12-arm
+#      queue: ms-arm-12-1
 #    artifact_paths:
 #      - "build/fixture-r16.apk"
 #      - "build/fixture_r16_url.txt"
@@ -53,7 +46,7 @@ steps:
 #    key: "fixture-r19"
 #    timeout_in_minutes: 30
 #    agents:
-#      queue: macos-12-arm
+#      queue: ms-arm-12-1
 #    artifact_paths:
 #      - "build/fixture-r19.apk"
 #      - "build/fixture_r19_url.txt"
@@ -67,7 +60,7 @@ steps:
 #    key: "fixture-r21"
 #    timeout_in_minutes: 30
 #    agents:
-#      queue: macos-12-arm
+#      queue: ms-arm-12-1
 #    artifact_paths:
 #      - "build/fixture-r21.apk"
 #      - "build/fixture_r21_url.txt"
@@ -80,31 +73,31 @@ steps:
 #  - label: ':android: Coding standards checks'
 #    timeout_in_minutes: 20
 #    agents:
-#      queue: macos-12-arm
+#      queue: ms-arm-12-1
 #    command: './gradlew --continue checkstyle detekt lint ktlintCheck'
 #
 #  - label: ':android: Binary compatibility checks'
 #    timeout_in_minutes: 20
 #    agents:
-#      queue: macos-12-arm
+#      queue: ms-arm-12-1
 #    command: './gradlew apiCheck'
 #
 #  - label: ':android: CppCheck'
 #    timeout_in_minutes: 10
 #    agents:
-#      queue: macos-12-arm
+#      queue: ms-arm-12-1
 #    command: 'bash ./scripts/run-cpp-check.sh'
 #
 #  - label: ':android: ClangFormat'
 #    timeout_in_minutes: 10
 #    agents:
-#      queue: macos-12-arm
+#      queue: ms-arm-12-1
 #    command: 'bash ./scripts/run-clang-format-ci-check.sh'
 #
 #  - label: ':android: Lint mazerunner scenarios'
 #    timeout_in_minutes: 10
 #    agents:
-#      queue: macos-12-arm
+#      queue: ms-arm-12-1
 #    commands:
 #      - cd features/fixtures/mazerunner
 #      - ./gradlew ktlintCheck detekt checkstyle
@@ -112,13 +105,13 @@ steps:
 #  - label: ':android: Android size reporting'
 #    timeout_in_minutes: 10
 #    agents:
-#      queue: macos-12-arm
+#      queue: ms-arm-12-1
 #    command: scripts/run-sizer.sh
 #
 #  - label: ':android: JVM tests'
 #    timeout_in_minutes: 10
 #    agents:
-#      queue: macos-12-arm
+#      queue: ms-arm-12-1
 #    command: './gradlew test'
 #
 #  #
@@ -365,6 +358,6 @@ steps:
 #
 #  - label: 'Conditionally include device farms/full tests'
 #    agents:
-#      queue: macos-12-arm
+#      queue: ms-arm-12-1
 #    command: sh -c .buildkite/pipeline_trigger.sh
 #
