@@ -4,7 +4,6 @@ import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.OnErrorCallback
-import com.bugsnag.android.mazerunner.reportDuration
 import java.lang.RuntimeException
 
 internal class LoadConfigurationFromManifestScenario(
@@ -32,7 +31,7 @@ internal class LoadConfigurationFromManifestScenario(
             }
         )
 
-        reportDuration("Bugsnag.start") { Bugsnag.start(this.context, testConfig) }
+        reportBugsnagStartupDuration { Bugsnag.start(this.context, testConfig) }
     }
 
     override fun startScenario() {

@@ -66,11 +66,6 @@ When("I configure Bugsnag for {string}") do |event_type|
   execute_command :start_bugsnag, event_type
 end
 
-When("I set the endpoints to the terminating server") do
-  $notify_endpoint = 'http://bs-local.com:9341'
-  $sessions_endpoint = 'http://bs-local.com:9341'
-end
-
 When("I close and relaunch the app") do
   if Maze.config.legacy_driver?
     Maze.driver.close_app
@@ -279,4 +274,18 @@ Then("the error is correct for {string} or I allow a retry") do |scenario|
       raise
     end
   end
+end
+
+Then("the event has less than {int} breadcrumb(s)") do |expected|
+  breadcrumbs = Maze::Server.errors.current[:body]['events'].first['breadcrumbs']
+  Maze.check.operator(
+    breadcrumbs&.length || 0, :<, expected,
+    "Expected event to have less '#{expected}' breadcrumbs, but got: #{breadcrumbs}"
+  )
+end
+
+Then("the event last breadcrumb has a message that matches the regex {string}") do |pattern|
+  lastBreadcrumbName = Maze::Server.errors.current[:body]['events'].first['breadcrumbs'].last['name']
+  regex = Regexp.new pattern
+  Maze.check.match regex, lastBreadcrumbName
 end

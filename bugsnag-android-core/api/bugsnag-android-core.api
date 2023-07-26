@@ -1,0 +1,1506 @@
+public class com/bugsnag/android/App : com/bugsnag/android/JsonStream$Streamable {
+	public final fun getBinaryArch ()Ljava/lang/String;
+	public final fun getBuildUuid ()Ljava/lang/String;
+	public final fun getCodeBundleId ()Ljava/lang/String;
+	public final fun getId ()Ljava/lang/String;
+	public final fun getReleaseStage ()Ljava/lang/String;
+	public final fun getType ()Ljava/lang/String;
+	public final fun getVersion ()Ljava/lang/String;
+	public final fun getVersionCode ()Ljava/lang/Number;
+	public final fun setBinaryArch (Ljava/lang/String;)V
+	public final fun setBuildUuid (Ljava/lang/String;)V
+	public final fun setCodeBundleId (Ljava/lang/String;)V
+	public final fun setId (Ljava/lang/String;)V
+	public final fun setReleaseStage (Ljava/lang/String;)V
+	public final fun setType (Ljava/lang/String;)V
+	public final fun setVersion (Ljava/lang/String;)V
+	public final fun setVersionCode (Ljava/lang/Number;)V
+	public fun toStream (Lcom/bugsnag/android/JsonStream;)V
+}
+
+public final class com/bugsnag/android/AppWithState : com/bugsnag/android/App {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Boolean;Ljava/lang/Boolean;)V
+	public final fun getDuration ()Ljava/lang/Number;
+	public final fun getDurationInForeground ()Ljava/lang/Number;
+	public final fun getInForeground ()Ljava/lang/Boolean;
+	public final fun isLaunching ()Ljava/lang/Boolean;
+	public final fun setDuration (Ljava/lang/Number;)V
+	public final fun setDurationInForeground (Ljava/lang/Number;)V
+	public final fun setInForeground (Ljava/lang/Boolean;)V
+	public final fun setLaunching (Ljava/lang/Boolean;)V
+}
+
+public class com/bugsnag/android/Breadcrumb : com/bugsnag/android/JsonStream$Streamable {
+	public fun getMessage ()Ljava/lang/String;
+	public fun getMetadata ()Ljava/util/Map;
+	public fun getTimestamp ()Ljava/util/Date;
+	public fun getType ()Lcom/bugsnag/android/BreadcrumbType;
+	public fun setMessage (Ljava/lang/String;)V
+	public fun setMetadata (Ljava/util/Map;)V
+	public fun setType (Lcom/bugsnag/android/BreadcrumbType;)V
+	public fun toStream (Lcom/bugsnag/android/JsonStream;)V
+}
+
+public final class com/bugsnag/android/BreadcrumbType : java/lang/Enum {
+	public static final field ERROR Lcom/bugsnag/android/BreadcrumbType;
+	public static final field LOG Lcom/bugsnag/android/BreadcrumbType;
+	public static final field MANUAL Lcom/bugsnag/android/BreadcrumbType;
+	public static final field NAVIGATION Lcom/bugsnag/android/BreadcrumbType;
+	public static final field PROCESS Lcom/bugsnag/android/BreadcrumbType;
+	public static final field REQUEST Lcom/bugsnag/android/BreadcrumbType;
+	public static final field STATE Lcom/bugsnag/android/BreadcrumbType;
+	public static final field USER Lcom/bugsnag/android/BreadcrumbType;
+	public fun toString ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lcom/bugsnag/android/BreadcrumbType;
+	public static fun values ()[Lcom/bugsnag/android/BreadcrumbType;
+}
+
+public final class com/bugsnag/android/Bugsnag {
+	public static fun addFeatureFlag (Ljava/lang/String;)V
+	public static fun addFeatureFlag (Ljava/lang/String;Ljava/lang/String;)V
+	public static fun addFeatureFlags (Ljava/lang/Iterable;)V
+	public static fun addMetadata (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;)V
+	public static fun addMetadata (Ljava/lang/String;Ljava/util/Map;)V
+	public static fun addOnBreadcrumb (Lcom/bugsnag/android/OnBreadcrumbCallback;)V
+	public static fun addOnError (Lcom/bugsnag/android/OnErrorCallback;)V
+	public static fun addOnSession (Lcom/bugsnag/android/OnSessionCallback;)V
+	public static fun clearFeatureFlag (Ljava/lang/String;)V
+	public static fun clearFeatureFlags ()V
+	public static fun clearMetadata (Ljava/lang/String;)V
+	public static fun clearMetadata (Ljava/lang/String;Ljava/lang/String;)V
+	public static fun getBreadcrumbs ()Ljava/util/List;
+	public static fun getClient ()Lcom/bugsnag/android/Client;
+	public static fun getContext ()Ljava/lang/String;
+	public static fun getLastRunInfo ()Lcom/bugsnag/android/LastRunInfo;
+	public static fun getMetadata (Ljava/lang/String;)Ljava/util/Map;
+	public static fun getMetadata (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
+	public static fun getUser ()Lcom/bugsnag/android/User;
+	public static fun isStarted ()Z
+	public static fun leaveBreadcrumb (Ljava/lang/String;)V
+	public static fun leaveBreadcrumb (Ljava/lang/String;Ljava/util/Map;Lcom/bugsnag/android/BreadcrumbType;)V
+	public static fun markLaunchCompleted ()V
+	public static fun notify (Ljava/lang/Throwable;)V
+	public static fun notify (Ljava/lang/Throwable;Lcom/bugsnag/android/OnErrorCallback;)V
+	public static fun pauseSession ()V
+	public static fun removeOnBreadcrumb (Lcom/bugsnag/android/OnBreadcrumbCallback;)V
+	public static fun removeOnError (Lcom/bugsnag/android/OnErrorCallback;)V
+	public static fun removeOnSession (Lcom/bugsnag/android/OnSessionCallback;)V
+	public static fun resumeSession ()Z
+	public static fun setContext (Ljava/lang/String;)V
+	public static fun setUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public static fun start (Landroid/content/Context;)Lcom/bugsnag/android/Client;
+	public static fun start (Landroid/content/Context;Lcom/bugsnag/android/Configuration;)Lcom/bugsnag/android/Client;
+	public static fun start (Landroid/content/Context;Ljava/lang/String;)Lcom/bugsnag/android/Client;
+	public static fun startSession ()V
+}
+
+public class com/bugsnag/android/BugsnagThreadViolationListener : android/os/StrictMode$OnThreadViolationListener {
+	public fun <init> ()V
+	public fun <init> (Lcom/bugsnag/android/Client;)V
+	public fun <init> (Lcom/bugsnag/android/Client;Landroid/os/StrictMode$OnThreadViolationListener;)V
+	public fun onThreadViolation (Landroid/os/strictmode/Violation;)V
+}
+
+public class com/bugsnag/android/BugsnagVmViolationListener : android/os/StrictMode$OnVmViolationListener {
+	public fun <init> ()V
+	public fun <init> (Lcom/bugsnag/android/Client;)V
+	public fun <init> (Lcom/bugsnag/android/Client;Landroid/os/StrictMode$OnVmViolationListener;)V
+	public fun onVmViolation (Landroid/os/strictmode/Violation;)V
+}
+
+public class com/bugsnag/android/Client : com/bugsnag/android/CallbackAware, com/bugsnag/android/FeatureFlagAware, com/bugsnag/android/MetadataAware, com/bugsnag/android/UserAware {
+	protected final field eventStore Lcom/bugsnag/android/EventStore;
+	public fun <init> (Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;Lcom/bugsnag/android/Configuration;)V
+	public fun <init> (Landroid/content/Context;Ljava/lang/String;)V
+	public fun addFeatureFlag (Ljava/lang/String;)V
+	public fun addFeatureFlag (Ljava/lang/String;Ljava/lang/String;)V
+	public fun addFeatureFlags (Ljava/lang/Iterable;)V
+	public fun addMetadata (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;)V
+	public fun addMetadata (Ljava/lang/String;Ljava/util/Map;)V
+	public fun addOnBreadcrumb (Lcom/bugsnag/android/OnBreadcrumbCallback;)V
+	public fun addOnError (Lcom/bugsnag/android/OnErrorCallback;)V
+	public fun addOnSession (Lcom/bugsnag/android/OnSessionCallback;)V
+	public fun clearFeatureFlag (Ljava/lang/String;)V
+	public fun clearFeatureFlags ()V
+	public fun clearMetadata (Ljava/lang/String;)V
+	public fun clearMetadata (Ljava/lang/String;Ljava/lang/String;)V
+	protected fun finalize ()V
+	public fun getBreadcrumbs ()Ljava/util/List;
+	public fun getContext ()Ljava/lang/String;
+	public fun getLastRunInfo ()Lcom/bugsnag/android/LastRunInfo;
+	public fun getMetadata (Ljava/lang/String;)Ljava/util/Map;
+	public fun getMetadata (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
+	public fun getUser ()Lcom/bugsnag/android/User;
+	public fun leaveBreadcrumb (Ljava/lang/String;)V
+	public fun leaveBreadcrumb (Ljava/lang/String;Ljava/util/Map;Lcom/bugsnag/android/BreadcrumbType;)V
+	public fun markLaunchCompleted ()V
+	public fun notify (Ljava/lang/Throwable;)V
+	public fun notify (Ljava/lang/Throwable;Lcom/bugsnag/android/OnErrorCallback;)V
+	public fun pauseSession ()V
+	public fun removeOnBreadcrumb (Lcom/bugsnag/android/OnBreadcrumbCallback;)V
+	public fun removeOnError (Lcom/bugsnag/android/OnErrorCallback;)V
+	public fun removeOnSession (Lcom/bugsnag/android/OnSessionCallback;)V
+	public fun resumeSession ()Z
+	public fun setContext (Ljava/lang/String;)V
+	public fun setUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public fun startSession ()V
+}
+
+public class com/bugsnag/android/Configuration : com/bugsnag/android/CallbackAware, com/bugsnag/android/FeatureFlagAware, com/bugsnag/android/MetadataAware, com/bugsnag/android/UserAware {
+	public fun <init> (Ljava/lang/String;)V
+	public fun addFeatureFlag (Ljava/lang/String;)V
+	public fun addFeatureFlag (Ljava/lang/String;Ljava/lang/String;)V
+	public fun addFeatureFlags (Ljava/lang/Iterable;)V
+	public fun addMetadata (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;)V
+	public fun addMetadata (Ljava/lang/String;Ljava/util/Map;)V
+	public fun addOnBreadcrumb (Lcom/bugsnag/android/OnBreadcrumbCallback;)V
+	public fun addOnError (Lcom/bugsnag/android/OnErrorCallback;)V
+	public fun addOnSend (Lcom/bugsnag/android/OnSendCallback;)V
+	public fun addOnSession (Lcom/bugsnag/android/OnSessionCallback;)V
+	public fun addPlugin (Lcom/bugsnag/android/Plugin;)V
+	public fun clearFeatureFlag (Ljava/lang/String;)V
+	public fun clearFeatureFlags ()V
+	public fun clearMetadata (Ljava/lang/String;)V
+	public fun clearMetadata (Ljava/lang/String;Ljava/lang/String;)V
+	public fun getApiKey ()Ljava/lang/String;
+	public fun getAppType ()Ljava/lang/String;
+	public fun getAppVersion ()Ljava/lang/String;
+	public fun getAutoDetectErrors ()Z
+	public fun getAutoTrackSessions ()Z
+	public fun getContext ()Ljava/lang/String;
+	public fun getDelivery ()Lcom/bugsnag/android/Delivery;
+	public fun getDiscardClasses ()Ljava/util/Set;
+	public fun getEnabledBreadcrumbTypes ()Ljava/util/Set;
+	public fun getEnabledErrorTypes ()Lcom/bugsnag/android/ErrorTypes;
+	public fun getEnabledReleaseStages ()Ljava/util/Set;
+	public fun getEndpoints ()Lcom/bugsnag/android/EndpointConfiguration;
+	public fun getLaunchCrashThresholdMs ()J
+	public fun getLaunchDurationMillis ()J
+	public fun getLogger ()Lcom/bugsnag/android/Logger;
+	public fun getMaxBreadcrumbs ()I
+	public fun getMaxPersistedEvents ()I
+	public fun getMaxPersistedSessions ()I
+	public fun getMaxReportedThreads ()I
+	public fun getMaxStringValueLength ()I
+	public fun getMetadata (Ljava/lang/String;)Ljava/util/Map;
+	public fun getMetadata (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
+	public fun getPersistUser ()Z
+	public fun getPersistenceDirectory ()Ljava/io/File;
+	public fun getProjectPackages ()Ljava/util/Set;
+	public fun getRedactedKeys ()Ljava/util/Set;
+	public fun getReleaseStage ()Ljava/lang/String;
+	public fun getSendLaunchCrashesSynchronously ()Z
+	public fun getSendThreads ()Lcom/bugsnag/android/ThreadSendPolicy;
+	public fun getTelemetry ()Ljava/util/Set;
+	public fun getUser ()Lcom/bugsnag/android/User;
+	public fun getVersionCode ()Ljava/lang/Integer;
+	public fun isAttemptDeliveryOnCrash ()Z
+	public static fun load (Landroid/content/Context;)Lcom/bugsnag/android/Configuration;
+	public fun removeOnBreadcrumb (Lcom/bugsnag/android/OnBreadcrumbCallback;)V
+	public fun removeOnError (Lcom/bugsnag/android/OnErrorCallback;)V
+	public fun removeOnSend (Lcom/bugsnag/android/OnSendCallback;)V
+	public fun removeOnSession (Lcom/bugsnag/android/OnSessionCallback;)V
+	public fun setApiKey (Ljava/lang/String;)V
+	public fun setAppType (Ljava/lang/String;)V
+	public fun setAppVersion (Ljava/lang/String;)V
+	public fun setAttemptDeliveryOnCrash (Z)V
+	public fun setAutoDetectErrors (Z)V
+	public fun setAutoTrackSessions (Z)V
+	public fun setContext (Ljava/lang/String;)V
+	public fun setDelivery (Lcom/bugsnag/android/Delivery;)V
+	public fun setDiscardClasses (Ljava/util/Set;)V
+	public fun setEnabledBreadcrumbTypes (Ljava/util/Set;)V
+	public fun setEnabledErrorTypes (Lcom/bugsnag/android/ErrorTypes;)V
+	public fun setEnabledReleaseStages (Ljava/util/Set;)V
+	public fun setEndpoints (Lcom/bugsnag/android/EndpointConfiguration;)V
+	public fun setLaunchCrashThresholdMs (J)V
+	public fun setLaunchDurationMillis (J)V
+	public fun setLogger (Lcom/bugsnag/android/Logger;)V
+	public fun setMaxBreadcrumbs (I)V
+	public fun setMaxPersistedEvents (I)V
+	public fun setMaxPersistedSessions (I)V
+	public fun setMaxReportedThreads (I)V
+	public fun setMaxStringValueLength (I)V
+	public fun setPersistUser (Z)V
+	public fun setPersistenceDirectory (Ljava/io/File;)V
+	public fun setProjectPackages (Ljava/util/Set;)V
+	public fun setRedactedKeys (Ljava/util/Set;)V
+	public fun setReleaseStage (Ljava/lang/String;)V
+	public fun setSendLaunchCrashesSynchronously (Z)V
+	public fun setSendThreads (Lcom/bugsnag/android/ThreadSendPolicy;)V
+	public fun setTelemetry (Ljava/util/Set;)V
+	public fun setUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public fun setVersionCode (Ljava/lang/Integer;)V
+}
+
+public abstract interface class com/bugsnag/android/Delivery {
+	public abstract fun deliver (Lcom/bugsnag/android/EventPayload;Lcom/bugsnag/android/DeliveryParams;)Lcom/bugsnag/android/DeliveryStatus;
+	public abstract fun deliver (Lcom/bugsnag/android/Session;Lcom/bugsnag/android/DeliveryParams;)Lcom/bugsnag/android/DeliveryStatus;
+}
+
+public final class com/bugsnag/android/DeliveryParams {
+	public fun <init> (Ljava/lang/String;Ljava/util/Map;)V
+	public final fun getEndpoint ()Ljava/lang/String;
+	public final fun getHeaders ()Ljava/util/Map;
+}
+
+public final class com/bugsnag/android/DeliveryStatus : java/lang/Enum {
+	public static final field DELIVERED Lcom/bugsnag/android/DeliveryStatus;
+	public static final field FAILURE Lcom/bugsnag/android/DeliveryStatus;
+	public static final field UNDELIVERED Lcom/bugsnag/android/DeliveryStatus;
+	public static fun valueOf (Ljava/lang/String;)Lcom/bugsnag/android/DeliveryStatus;
+	public static fun values ()[Lcom/bugsnag/android/DeliveryStatus;
+}
+
+public class com/bugsnag/android/Device : com/bugsnag/android/JsonStream$Streamable {
+	public final fun getCpuAbi ()[Ljava/lang/String;
+	public final fun getId ()Ljava/lang/String;
+	public final fun getJailbroken ()Ljava/lang/Boolean;
+	public final fun getLocale ()Ljava/lang/String;
+	public final fun getManufacturer ()Ljava/lang/String;
+	public final fun getModel ()Ljava/lang/String;
+	public final fun getOsName ()Ljava/lang/String;
+	public final fun getOsVersion ()Ljava/lang/String;
+	public final fun getRuntimeVersions ()Ljava/util/Map;
+	public final fun getTotalMemory ()Ljava/lang/Long;
+	public final fun setCpuAbi ([Ljava/lang/String;)V
+	public final fun setId (Ljava/lang/String;)V
+	public final fun setJailbroken (Ljava/lang/Boolean;)V
+	public final fun setLocale (Ljava/lang/String;)V
+	public final fun setManufacturer (Ljava/lang/String;)V
+	public final fun setModel (Ljava/lang/String;)V
+	public final fun setOsName (Ljava/lang/String;)V
+	public final fun setOsVersion (Ljava/lang/String;)V
+	public final fun setRuntimeVersions (Ljava/util/Map;)V
+	public final fun setTotalMemory (Ljava/lang/Long;)V
+	public fun toStream (Lcom/bugsnag/android/JsonStream;)V
+}
+
+public final class com/bugsnag/android/DeviceIdFilePersistence : com/bugsnag/android/DeviceIdPersistence {
+	public static final field Companion Lcom/bugsnag/android/DeviceIdFilePersistence$Companion;
+	public fun <init> (Ljava/io/File;Lkotlin/jvm/functions/Function0;Lcom/bugsnag/android/Logger;)V
+	public fun loadDeviceId (Z)Ljava/lang/String;
+}
+
+public final class com/bugsnag/android/DeviceIdFilePersistence$Companion {
+}
+
+public abstract interface class com/bugsnag/android/DeviceIdPersistence {
+	public abstract fun loadDeviceId (Z)Ljava/lang/String;
+}
+
+public final class com/bugsnag/android/DeviceWithState : com/bugsnag/android/Device {
+	public final fun getFreeDisk ()Ljava/lang/Long;
+	public final fun getFreeMemory ()Ljava/lang/Long;
+	public final fun getOrientation ()Ljava/lang/String;
+	public final fun getTime ()Ljava/util/Date;
+	public final fun setFreeDisk (Ljava/lang/Long;)V
+	public final fun setFreeMemory (Ljava/lang/Long;)V
+	public final fun setOrientation (Ljava/lang/String;)V
+	public final fun setTime (Ljava/util/Date;)V
+}
+
+public final class com/bugsnag/android/EndpointConfiguration {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getNotify ()Ljava/lang/String;
+	public final fun getSessions ()Ljava/lang/String;
+}
+
+public class com/bugsnag/android/Error : com/bugsnag/android/JsonStream$Streamable {
+	public fun getErrorClass ()Ljava/lang/String;
+	public fun getErrorMessage ()Ljava/lang/String;
+	public fun getStacktrace ()Ljava/util/List;
+	public fun getType ()Lcom/bugsnag/android/ErrorType;
+	public fun setErrorClass (Ljava/lang/String;)V
+	public fun setErrorMessage (Ljava/lang/String;)V
+	public fun setType (Lcom/bugsnag/android/ErrorType;)V
+	public fun toStream (Lcom/bugsnag/android/JsonStream;)V
+}
+
+public final class com/bugsnag/android/ErrorType : java/lang/Enum {
+	public static final field ANDROID Lcom/bugsnag/android/ErrorType;
+	public static final field C Lcom/bugsnag/android/ErrorType;
+	public static final field DART Lcom/bugsnag/android/ErrorType;
+	public static final field REACTNATIVEJS Lcom/bugsnag/android/ErrorType;
+	public static final fun fromDescriptor (Ljava/lang/String;)Lcom/bugsnag/android/ErrorType;
+	public static fun valueOf (Ljava/lang/String;)Lcom/bugsnag/android/ErrorType;
+	public static fun values ()[Lcom/bugsnag/android/ErrorType;
+}
+
+public final class com/bugsnag/android/ErrorTypes {
+	public fun <init> ()V
+	public fun <init> (ZZZZ)V
+	public synthetic fun <init> (ZZZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAnrs ()Z
+	public final fun getNdkCrashes ()Z
+	public final fun getUnhandledExceptions ()Z
+	public final fun getUnhandledRejections ()Z
+	public fun hashCode ()I
+	public final fun setAnrs (Z)V
+	public final fun setNdkCrashes (Z)V
+	public final fun setUnhandledExceptions (Z)V
+	public final fun setUnhandledRejections (Z)V
+}
+
+public class com/bugsnag/android/Event : com/bugsnag/android/FeatureFlagAware, com/bugsnag/android/JsonStream$Streamable, com/bugsnag/android/MetadataAware, com/bugsnag/android/UserAware {
+	public fun addFeatureFlag (Ljava/lang/String;)V
+	public fun addFeatureFlag (Ljava/lang/String;Ljava/lang/String;)V
+	public fun addFeatureFlags (Ljava/lang/Iterable;)V
+	public fun addMetadata (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;)V
+	public fun addMetadata (Ljava/lang/String;Ljava/util/Map;)V
+	public fun clearFeatureFlag (Ljava/lang/String;)V
+	public fun clearFeatureFlags ()V
+	public fun clearMetadata (Ljava/lang/String;)V
+	public fun clearMetadata (Ljava/lang/String;Ljava/lang/String;)V
+	public fun getApiKey ()Ljava/lang/String;
+	public fun getApp ()Lcom/bugsnag/android/AppWithState;
+	public fun getBreadcrumbs ()Ljava/util/List;
+	public fun getContext ()Ljava/lang/String;
+	public fun getDevice ()Lcom/bugsnag/android/DeviceWithState;
+	public fun getErrors ()Ljava/util/List;
+	public fun getFeatureFlags ()Ljava/util/List;
+	public fun getGroupingHash ()Ljava/lang/String;
+	public fun getMetadata (Ljava/lang/String;)Ljava/util/Map;
+	public fun getMetadata (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
+	public fun getOriginalError ()Ljava/lang/Throwable;
+	public fun getSeverity ()Lcom/bugsnag/android/Severity;
+	public fun getThreads ()Ljava/util/List;
+	public fun getUser ()Lcom/bugsnag/android/User;
+	public fun isUnhandled ()Z
+	public fun setApiKey (Ljava/lang/String;)V
+	public fun setContext (Ljava/lang/String;)V
+	public fun setGroupingHash (Ljava/lang/String;)V
+	public fun setSeverity (Lcom/bugsnag/android/Severity;)V
+	public fun setUnhandled (Z)V
+	public fun setUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	protected fun shouldDiscardClass ()Z
+	public fun toStream (Lcom/bugsnag/android/JsonStream;)V
+	protected fun updateSeverityInternal (Lcom/bugsnag/android/Severity;)V
+	protected fun updateSeverityReason (Ljava/lang/String;)V
+}
+
+public final class com/bugsnag/android/EventPayload : com/bugsnag/android/JsonStream$Streamable {
+	public fun <init> (Ljava/lang/String;Lcom/bugsnag/android/Event;Lcom/bugsnag/android/Notifier;Lcom/bugsnag/android/internal/ImmutableConfig;)V
+	public fun <init> (Ljava/lang/String;Lcom/bugsnag/android/Notifier;Lcom/bugsnag/android/internal/ImmutableConfig;)V
+	public final fun getApiKey ()Ljava/lang/String;
+	public final fun getEvent ()Lcom/bugsnag/android/Event;
+	public final fun setApiKey (Ljava/lang/String;)V
+	public fun toStream (Lcom/bugsnag/android/JsonStream;)V
+}
+
+public final class com/bugsnag/android/FeatureFlag : java/util/Map$Entry {
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public fun <init> (Ljava/util/Map$Entry;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getKey ()Ljava/lang/Object;
+	public fun getKey ()Ljava/lang/String;
+	public fun getName ()Ljava/lang/String;
+	public synthetic fun getValue ()Ljava/lang/Object;
+	public fun getValue ()Ljava/lang/String;
+	public fun getVariant ()Ljava/lang/String;
+	public fun hashCode ()I
+	public synthetic fun setValue (Ljava/lang/Object;)Ljava/lang/Object;
+	public fun setValue (Ljava/lang/String;)Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public class com/bugsnag/android/JsonStream {
+	public fun <init> (Ljava/io/Writer;)V
+	public synthetic fun beginArray ()Lcom/bugsnag/android/JsonWriter;
+	public synthetic fun beginObject ()Lcom/bugsnag/android/JsonWriter;
+	public synthetic fun close ()V
+	public synthetic fun endArray ()Lcom/bugsnag/android/JsonWriter;
+	public synthetic fun endObject ()Lcom/bugsnag/android/JsonWriter;
+	public synthetic fun flush ()V
+	public synthetic fun isLenient ()Z
+	public synthetic fun jsonValue (Ljava/lang/String;)Lcom/bugsnag/android/JsonWriter;
+	public fun name (Ljava/lang/String;)Lcom/bugsnag/android/JsonStream;
+	public synthetic fun name (Ljava/lang/String;)Lcom/bugsnag/android/JsonWriter;
+	public synthetic fun nullValue ()Lcom/bugsnag/android/JsonWriter;
+	public synthetic fun value (D)Lcom/bugsnag/android/JsonWriter;
+	public synthetic fun value (J)Lcom/bugsnag/android/JsonWriter;
+	public fun value (Ljava/io/File;)V
+	public synthetic fun value (Ljava/lang/Boolean;)Lcom/bugsnag/android/JsonWriter;
+	public synthetic fun value (Ljava/lang/Number;)Lcom/bugsnag/android/JsonWriter;
+	public fun value (Ljava/lang/Object;)V
+	public fun value (Ljava/lang/Object;Z)V
+	public synthetic fun value (Ljava/lang/String;)Lcom/bugsnag/android/JsonWriter;
+	public synthetic fun value (Z)Lcom/bugsnag/android/JsonWriter;
+}
+
+public abstract interface class com/bugsnag/android/JsonStream$Streamable {
+	public abstract fun toStream (Lcom/bugsnag/android/JsonStream;)V
+}
+
+public final class com/bugsnag/android/LastRunInfo {
+	public fun <init> (IZZ)V
+	public final fun getConsecutiveLaunchCrashes ()I
+	public final fun getCrashed ()Z
+	public final fun getCrashedDuringLaunch ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class com/bugsnag/android/Logger {
+	public abstract fun d (Ljava/lang/String;)V
+	public abstract fun d (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public abstract fun e (Ljava/lang/String;)V
+	public abstract fun e (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public abstract fun i (Ljava/lang/String;)V
+	public abstract fun i (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public abstract fun w (Ljava/lang/String;)V
+	public abstract fun w (Ljava/lang/String;Ljava/lang/Throwable;)V
+}
+
+public final class com/bugsnag/android/Logger$DefaultImpls {
+	public static fun d (Lcom/bugsnag/android/Logger;Ljava/lang/String;)V
+	public static fun d (Lcom/bugsnag/android/Logger;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public static fun e (Lcom/bugsnag/android/Logger;Ljava/lang/String;)V
+	public static fun e (Lcom/bugsnag/android/Logger;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public static fun i (Lcom/bugsnag/android/Logger;Ljava/lang/String;)V
+	public static fun i (Lcom/bugsnag/android/Logger;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public static fun w (Lcom/bugsnag/android/Logger;Ljava/lang/String;)V
+	public static fun w (Lcom/bugsnag/android/Logger;Ljava/lang/String;Ljava/lang/Throwable;)V
+}
+
+public class com/bugsnag/android/NativeInterface {
+	public fun <init> ()V
+	public static fun addMetadata (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;)V
+	public static fun addMetadata (Ljava/lang/String;Ljava/util/Map;)V
+	public static fun clearMetadata (Ljava/lang/String;Ljava/lang/String;)V
+	public static fun createEvent (Ljava/lang/Throwable;Lcom/bugsnag/android/Client;Lcom/bugsnag/android/SeverityReason;)Lcom/bugsnag/android/Event;
+	public static fun deliverReport ([B[B[BLjava/lang/String;Z)V
+	public static fun getApp ()Ljava/util/Map;
+	public static fun getAppVersion ()Ljava/lang/String;
+	public static fun getBreadcrumbs ()Ljava/util/List;
+	public static fun getContext ()Ljava/lang/String;
+	public static fun getCpuAbi ()[Ljava/lang/String;
+	public static fun getCurrentSession ()Lcom/bugsnag/android/Session;
+	public static fun getDevice ()Ljava/util/Map;
+	public static fun getEnabledReleaseStages ()Ljava/util/Collection;
+	public static fun getEndpoint ()Ljava/lang/String;
+	public static fun getLastRunInfo ()Lcom/bugsnag/android/LastRunInfo;
+	public static fun getLogger ()Lcom/bugsnag/android/Logger;
+	public static fun getMetadata ()Ljava/util/Map;
+	public static fun getNativeReportPath ()Ljava/io/File;
+	public static fun getReleaseStage ()Ljava/lang/String;
+	public static fun getSessionEndpoint ()Ljava/lang/String;
+	public static fun getUser ()Ljava/util/Map;
+	public static fun isDiscardErrorClass (Ljava/lang/String;)Z
+	public static fun leaveBreadcrumb (Ljava/lang/String;Lcom/bugsnag/android/BreadcrumbType;)V
+	public static fun leaveBreadcrumb (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)V
+	public static fun leaveBreadcrumb ([BLcom/bugsnag/android/BreadcrumbType;)V
+	public static fun markLaunchCompleted ()V
+	public static fun notify (Ljava/lang/String;Ljava/lang/String;Lcom/bugsnag/android/Severity;[Lcom/bugsnag/android/NativeStackframe;)V
+	public static fun notify (Ljava/lang/String;Ljava/lang/String;Lcom/bugsnag/android/Severity;[Ljava/lang/StackTraceElement;)V
+	public static fun notify ([B[BLcom/bugsnag/android/Severity;[Lcom/bugsnag/android/NativeStackframe;)V
+	public static fun notify ([B[BLcom/bugsnag/android/Severity;[Ljava/lang/StackTraceElement;)V
+	public static fun pauseSession ()V
+	public static fun registerSession (JLjava/lang/String;II)V
+	public static fun resumeSession ()Z
+	public static fun setAutoDetectAnrs (Z)V
+	public static fun setAutoNotify (Z)V
+	public static fun setBinaryArch (Ljava/lang/String;)V
+	public static fun setClient (Lcom/bugsnag/android/Client;)V
+	public static fun setContext (Ljava/lang/String;)V
+	public static fun setUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public static fun setUser ([B[B[B)V
+	public static fun startSession ()V
+}
+
+public final class com/bugsnag/android/NativeStackframe : com/bugsnag/android/JsonStream$Streamable {
+	public final fun getCodeIdentifier ()Ljava/lang/String;
+	public final fun getFile ()Ljava/lang/String;
+	public final fun getFrameAddress ()Ljava/lang/Long;
+	public final fun getLineNumber ()Ljava/lang/Number;
+	public final fun getLoadAddress ()Ljava/lang/Long;
+	public final fun getMethod ()Ljava/lang/String;
+	public final fun getSymbolAddress ()Ljava/lang/Long;
+	public final fun getType ()Lcom/bugsnag/android/ErrorType;
+	public final fun isPC ()Ljava/lang/Boolean;
+	public final fun setCodeIdentifier (Ljava/lang/String;)V
+	public final fun setFile (Ljava/lang/String;)V
+	public final fun setFrameAddress (Ljava/lang/Long;)V
+	public final fun setLineNumber (Ljava/lang/Number;)V
+	public final fun setLoadAddress (Ljava/lang/Long;)V
+	public final fun setMethod (Ljava/lang/String;)V
+	public final fun setPC (Ljava/lang/Boolean;)V
+	public final fun setSymbolAddress (Ljava/lang/Long;)V
+	public final fun setType (Lcom/bugsnag/android/ErrorType;)V
+	public fun toStream (Lcom/bugsnag/android/JsonStream;)V
+}
+
+public final class com/bugsnag/android/Notifier : com/bugsnag/android/JsonStream$Streamable {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getDependencies ()Ljava/util/List;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getUrl ()Ljava/lang/String;
+	public final fun getVersion ()Ljava/lang/String;
+	public final fun setDependencies (Ljava/util/List;)V
+	public final fun setName (Ljava/lang/String;)V
+	public final fun setUrl (Ljava/lang/String;)V
+	public final fun setVersion (Ljava/lang/String;)V
+	public fun toStream (Lcom/bugsnag/android/JsonStream;)V
+}
+
+public abstract interface class com/bugsnag/android/OnBreadcrumbCallback {
+	public abstract fun onBreadcrumb (Lcom/bugsnag/android/Breadcrumb;)Z
+}
+
+public abstract interface class com/bugsnag/android/OnErrorCallback {
+	public abstract fun onError (Lcom/bugsnag/android/Event;)Z
+}
+
+public abstract interface class com/bugsnag/android/OnSendCallback {
+	public abstract fun onSend (Lcom/bugsnag/android/Event;)Z
+}
+
+public abstract interface class com/bugsnag/android/OnSessionCallback {
+	public abstract fun onSession (Lcom/bugsnag/android/Session;)Z
+}
+
+public abstract interface class com/bugsnag/android/Plugin {
+	public abstract fun load (Lcom/bugsnag/android/Client;)V
+	public abstract fun unload ()V
+}
+
+public final class com/bugsnag/android/Session : com/bugsnag/android/JsonStream$Streamable, com/bugsnag/android/UserAware {
+	public fun getApiKey ()Ljava/lang/String;
+	public fun getApp ()Lcom/bugsnag/android/App;
+	public fun getDevice ()Lcom/bugsnag/android/Device;
+	public fun getId ()Ljava/lang/String;
+	public fun getStartedAt ()Ljava/util/Date;
+	public fun getUser ()Lcom/bugsnag/android/User;
+	public fun setApiKey (Ljava/lang/String;)V
+	public fun setId (Ljava/lang/String;)V
+	public fun setStartedAt (Ljava/util/Date;)V
+	public fun setUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public fun toStream (Lcom/bugsnag/android/JsonStream;)V
+}
+
+public final class com/bugsnag/android/Severity : java/lang/Enum, com/bugsnag/android/JsonStream$Streamable {
+	public static final field ERROR Lcom/bugsnag/android/Severity;
+	public static final field INFO Lcom/bugsnag/android/Severity;
+	public static final field WARNING Lcom/bugsnag/android/Severity;
+	public fun toStream (Lcom/bugsnag/android/JsonStream;)V
+	public static fun valueOf (Ljava/lang/String;)Lcom/bugsnag/android/Severity;
+	public static fun values ()[Lcom/bugsnag/android/Severity;
+}
+
+public final class com/bugsnag/android/Stackframe : com/bugsnag/android/JsonStream$Streamable {
+	public fun <init> (Lcom/bugsnag/android/NativeStackframe;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Number;Ljava/lang/Boolean;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Number;Ljava/lang/Boolean;Ljava/util/Map;)V
+	public final fun getCode ()Ljava/util/Map;
+	public final fun getCodeIdentifier ()Ljava/lang/String;
+	public final fun getColumnNumber ()Ljava/lang/Number;
+	public final fun getFile ()Ljava/lang/String;
+	public final fun getFrameAddress ()Ljava/lang/Long;
+	public final fun getInProject ()Ljava/lang/Boolean;
+	public final fun getLineNumber ()Ljava/lang/Number;
+	public final fun getLoadAddress ()Ljava/lang/Long;
+	public final fun getMethod ()Ljava/lang/String;
+	public final fun getSymbolAddress ()Ljava/lang/Long;
+	public final fun getType ()Lcom/bugsnag/android/ErrorType;
+	public final fun isPC ()Ljava/lang/Boolean;
+	public final fun setCode (Ljava/util/Map;)V
+	public final fun setCodeIdentifier (Ljava/lang/String;)V
+	public final fun setColumnNumber (Ljava/lang/Number;)V
+	public final fun setFile (Ljava/lang/String;)V
+	public final fun setFrameAddress (Ljava/lang/Long;)V
+	public final fun setInProject (Ljava/lang/Boolean;)V
+	public final fun setLineNumber (Ljava/lang/Number;)V
+	public final fun setLoadAddress (Ljava/lang/Long;)V
+	public final fun setMethod (Ljava/lang/String;)V
+	public final fun setPC (Ljava/lang/Boolean;)V
+	public final fun setSymbolAddress (Ljava/lang/Long;)V
+	public final fun setType (Lcom/bugsnag/android/ErrorType;)V
+	public fun toStream (Lcom/bugsnag/android/JsonStream;)V
+}
+
+public abstract class com/bugsnag/android/StateEvent {
+}
+
+public final class com/bugsnag/android/StateEvent$AddBreadcrumb : com/bugsnag/android/StateEvent {
+	public final field message Ljava/lang/String;
+	public final field metadata Ljava/util/Map;
+	public final field timestamp Ljava/lang/String;
+	public final field type Lcom/bugsnag/android/BreadcrumbType;
+	public fun <init> (Ljava/lang/String;Lcom/bugsnag/android/BreadcrumbType;Ljava/lang/String;Ljava/util/Map;)V
+}
+
+public final class com/bugsnag/android/StateEvent$AddFeatureFlag : com/bugsnag/android/StateEvent {
+	public final field name Ljava/lang/String;
+	public final field variant Ljava/lang/String;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/bugsnag/android/StateEvent$AddMetadata : com/bugsnag/android/StateEvent {
+	public final field key Ljava/lang/String;
+	public final field section Ljava/lang/String;
+	public final field value Ljava/lang/Object;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;)V
+}
+
+public final class com/bugsnag/android/StateEvent$ClearFeatureFlag : com/bugsnag/android/StateEvent {
+	public final field name Ljava/lang/String;
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class com/bugsnag/android/StateEvent$ClearFeatureFlags : com/bugsnag/android/StateEvent {
+	public static final field INSTANCE Lcom/bugsnag/android/StateEvent$ClearFeatureFlags;
+}
+
+public final class com/bugsnag/android/StateEvent$ClearMetadataSection : com/bugsnag/android/StateEvent {
+	public final field section Ljava/lang/String;
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class com/bugsnag/android/StateEvent$ClearMetadataValue : com/bugsnag/android/StateEvent {
+	public final field key Ljava/lang/String;
+	public final field section Ljava/lang/String;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+}
+
+public final class com/bugsnag/android/StateEvent$DeliverPending : com/bugsnag/android/StateEvent {
+	public static final field INSTANCE Lcom/bugsnag/android/StateEvent$DeliverPending;
+}
+
+public final class com/bugsnag/android/StateEvent$Install : com/bugsnag/android/StateEvent {
+	public final field apiKey Ljava/lang/String;
+	public final field appVersion Ljava/lang/String;
+	public final field autoDetectNdkCrashes Z
+	public final field buildUuid Ljava/lang/String;
+	public final field consecutiveLaunchCrashes I
+	public final field lastRunInfoPath Ljava/lang/String;
+	public final field releaseStage Ljava/lang/String;
+	public final field sendThreads Lcom/bugsnag/android/ThreadSendPolicy;
+	public fun <init> (Ljava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILcom/bugsnag/android/ThreadSendPolicy;)V
+}
+
+public final class com/bugsnag/android/StateEvent$NotifyHandled : com/bugsnag/android/StateEvent {
+	public static final field INSTANCE Lcom/bugsnag/android/StateEvent$NotifyHandled;
+}
+
+public final class com/bugsnag/android/StateEvent$NotifyUnhandled : com/bugsnag/android/StateEvent {
+	public static final field INSTANCE Lcom/bugsnag/android/StateEvent$NotifyUnhandled;
+}
+
+public final class com/bugsnag/android/StateEvent$PauseSession : com/bugsnag/android/StateEvent {
+	public static final field INSTANCE Lcom/bugsnag/android/StateEvent$PauseSession;
+}
+
+public final class com/bugsnag/android/StateEvent$StartSession : com/bugsnag/android/StateEvent {
+	public final field handledCount I
+	public final field id Ljava/lang/String;
+	public final field startedAt Ljava/lang/String;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;II)V
+	public final fun getUnhandledCount ()I
+}
+
+public final class com/bugsnag/android/StateEvent$UpdateContext : com/bugsnag/android/StateEvent {
+	public final field context Ljava/lang/String;
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class com/bugsnag/android/StateEvent$UpdateInForeground : com/bugsnag/android/StateEvent {
+	public final field inForeground Z
+	public fun <init> (ZLjava/lang/String;)V
+	public final fun getContextActivity ()Ljava/lang/String;
+}
+
+public final class com/bugsnag/android/StateEvent$UpdateIsLaunching : com/bugsnag/android/StateEvent {
+	public final field isLaunching Z
+	public fun <init> (Z)V
+}
+
+public final class com/bugsnag/android/StateEvent$UpdateLastRunInfo : com/bugsnag/android/StateEvent {
+	public final field consecutiveLaunchCrashes I
+	public fun <init> (I)V
+}
+
+public final class com/bugsnag/android/StateEvent$UpdateMemoryTrimEvent : com/bugsnag/android/StateEvent {
+	public final field isLowMemory Z
+	public final field memoryTrimLevel Ljava/lang/Integer;
+	public final field memoryTrimLevelDescription Ljava/lang/String;
+	public fun <init> (ZLjava/lang/Integer;Ljava/lang/String;)V
+	public synthetic fun <init> (ZLjava/lang/Integer;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/bugsnag/android/StateEvent$UpdateOrientation : com/bugsnag/android/StateEvent {
+	public final field orientation Ljava/lang/String;
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class com/bugsnag/android/StateEvent$UpdateUser : com/bugsnag/android/StateEvent {
+	public final field user Lcom/bugsnag/android/User;
+	public fun <init> (Lcom/bugsnag/android/User;)V
+}
+
+public final class com/bugsnag/android/Telemetry : java/lang/Enum {
+	public static final field INTERNAL_ERRORS Lcom/bugsnag/android/Telemetry;
+	public static final field USAGE Lcom/bugsnag/android/Telemetry;
+	public static fun valueOf (Ljava/lang/String;)Lcom/bugsnag/android/Telemetry;
+	public static fun values ()[Lcom/bugsnag/android/Telemetry;
+}
+
+public class com/bugsnag/android/Thread : com/bugsnag/android/JsonStream$Streamable {
+	public fun getErrorReportingThread ()Z
+	public fun getId ()J
+	public fun getName ()Ljava/lang/String;
+	public fun getStacktrace ()Ljava/util/List;
+	public fun getState ()Lcom/bugsnag/android/Thread$State;
+	public fun getType ()Lcom/bugsnag/android/ThreadType;
+	public fun setId (J)V
+	public fun setName (Ljava/lang/String;)V
+	public fun setStacktrace (Ljava/util/List;)V
+	public fun setState (Lcom/bugsnag/android/Thread$State;)V
+	public fun setType (Lcom/bugsnag/android/ThreadType;)V
+	public fun toStream (Lcom/bugsnag/android/JsonStream;)V
+}
+
+public final class com/bugsnag/android/Thread$State : java/lang/Enum {
+	public static final field BLOCKED Lcom/bugsnag/android/Thread$State;
+	public static final field NEW Lcom/bugsnag/android/Thread$State;
+	public static final field RUNNABLE Lcom/bugsnag/android/Thread$State;
+	public static final field TERMINATED Lcom/bugsnag/android/Thread$State;
+	public static final field TIMED_WAITING Lcom/bugsnag/android/Thread$State;
+	public static final field UNKNOWN Lcom/bugsnag/android/Thread$State;
+	public static final field WAITING Lcom/bugsnag/android/Thread$State;
+	public static fun byDescriptor (Ljava/lang/String;)Lcom/bugsnag/android/Thread$State;
+	public static fun forThread (Ljava/lang/Thread;)Lcom/bugsnag/android/Thread$State;
+	public fun getDescriptor ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lcom/bugsnag/android/Thread$State;
+	public static fun values ()[Lcom/bugsnag/android/Thread$State;
+}
+
+public final class com/bugsnag/android/ThreadInternal : com/bugsnag/android/JsonStream$Streamable {
+	public final fun getId ()J
+	public final fun getName ()Ljava/lang/String;
+	public final fun getStacktrace ()Ljava/util/List;
+	public final fun getState ()Ljava/lang/String;
+	public final fun getType ()Lcom/bugsnag/android/ThreadType;
+	public final fun isErrorReportingThread ()Z
+	public final fun setId (J)V
+	public final fun setName (Ljava/lang/String;)V
+	public final fun setStacktrace (Ljava/util/List;)V
+	public final fun setState (Ljava/lang/String;)V
+	public final fun setType (Lcom/bugsnag/android/ThreadType;)V
+	public fun toStream (Lcom/bugsnag/android/JsonStream;)V
+}
+
+public final class com/bugsnag/android/ThreadSendPolicy : java/lang/Enum {
+	public static final field ALWAYS Lcom/bugsnag/android/ThreadSendPolicy;
+	public static final field NEVER Lcom/bugsnag/android/ThreadSendPolicy;
+	public static final field UNHANDLED_ONLY Lcom/bugsnag/android/ThreadSendPolicy;
+	public static fun valueOf (Ljava/lang/String;)Lcom/bugsnag/android/ThreadSendPolicy;
+	public static fun values ()[Lcom/bugsnag/android/ThreadSendPolicy;
+}
+
+public final class com/bugsnag/android/ThreadType : java/lang/Enum {
+	public static final field ANDROID Lcom/bugsnag/android/ThreadType;
+	public static final field C Lcom/bugsnag/android/ThreadType;
+	public static final field EMPTY Lcom/bugsnag/android/ThreadType;
+	public static final field REACTNATIVEJS Lcom/bugsnag/android/ThreadType;
+	public static fun valueOf (Ljava/lang/String;)Lcom/bugsnag/android/ThreadType;
+	public static fun values ()[Lcom/bugsnag/android/ThreadType;
+}
+
+public final class com/bugsnag/android/User : com/bugsnag/android/JsonStream$Streamable {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEmail ()Ljava/lang/String;
+	public final fun getId ()Ljava/lang/String;
+	public final fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toStream (Lcom/bugsnag/android/JsonStream;)V
+}
+
+public final class com/bugsnag/android/internal/BackgroundTaskService {
+	public fun <init> ()V
+	public fun <init> (Ljava/util/concurrent/ExecutorService;Ljava/util/concurrent/ExecutorService;Ljava/util/concurrent/ExecutorService;Ljava/util/concurrent/ExecutorService;Ljava/util/concurrent/ExecutorService;)V
+	public synthetic fun <init> (Ljava/util/concurrent/ExecutorService;Ljava/util/concurrent/ExecutorService;Ljava/util/concurrent/ExecutorService;Ljava/util/concurrent/ExecutorService;Ljava/util/concurrent/ExecutorService;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun shutdown ()V
+	public final fun submitTask (Lcom/bugsnag/android/internal/TaskType;Ljava/lang/Runnable;)Ljava/util/concurrent/Future;
+	public final fun submitTask (Lcom/bugsnag/android/internal/TaskType;Ljava/util/concurrent/Callable;)Ljava/util/concurrent/Future;
+}
+
+public final class com/bugsnag/android/internal/BugsnagMapper {
+	public fun <init> (Lcom/bugsnag/android/Logger;)V
+	public final fun convertToError (Ljava/util/Map;)Lcom/bugsnag/android/Error;
+	public final fun convertToEvent (Ljava/util/Map;Ljava/lang/String;)Lcom/bugsnag/android/Event;
+	public final fun convertToMap (Lcom/bugsnag/android/Error;)Ljava/util/Map;
+	public final fun convertToMap (Lcom/bugsnag/android/Event;)Ljava/util/Map;
+}
+
+public final class com/bugsnag/android/internal/DateUtils {
+	public static final field INSTANCE Lcom/bugsnag/android/internal/DateUtils;
+	public static final fun fromIso8601 (Ljava/lang/String;)Ljava/util/Date;
+	public static final fun toIso8601 (Ljava/util/Date;)Ljava/lang/String;
+}
+
+public final class com/bugsnag/android/internal/ImmutableConfig {
+	public fun <init> (Ljava/lang/String;ZLcom/bugsnag/android/ErrorTypes;ZLcom/bugsnag/android/ThreadSendPolicy;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Set;Ljava/util/Set;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/bugsnag/android/Delivery;Lcom/bugsnag/android/EndpointConfiguration;ZJLcom/bugsnag/android/Logger;IIIILkotlin/Lazy;ZZLandroid/content/pm/PackageInfo;Landroid/content/pm/ApplicationInfo;Ljava/util/Collection;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component10 ()Ljava/util/Set;
+	public final fun component11 ()Ljava/lang/String;
+	public final fun component12 ()Ljava/lang/String;
+	public final fun component13 ()Ljava/lang/String;
+	public final fun component14 ()Ljava/lang/Integer;
+	public final fun component15 ()Ljava/lang/String;
+	public final fun component16 ()Lcom/bugsnag/android/Delivery;
+	public final fun component17 ()Lcom/bugsnag/android/EndpointConfiguration;
+	public final fun component18 ()Z
+	public final fun component19 ()J
+	public final fun component2 ()Z
+	public final fun component20 ()Lcom/bugsnag/android/Logger;
+	public final fun component21 ()I
+	public final fun component22 ()I
+	public final fun component23 ()I
+	public final fun component24 ()I
+	public final fun component25 ()Lkotlin/Lazy;
+	public final fun component26 ()Z
+	public final fun component27 ()Z
+	public final fun component28 ()Landroid/content/pm/PackageInfo;
+	public final fun component29 ()Landroid/content/pm/ApplicationInfo;
+	public final fun component3 ()Lcom/bugsnag/android/ErrorTypes;
+	public final fun component30 ()Ljava/util/Collection;
+	public final fun component4 ()Z
+	public final fun component5 ()Lcom/bugsnag/android/ThreadSendPolicy;
+	public final fun component6 ()Ljava/util/Collection;
+	public final fun component7 ()Ljava/util/Collection;
+	public final fun component8 ()Ljava/util/Collection;
+	public final fun component9 ()Ljava/util/Set;
+	public final fun copy (Ljava/lang/String;ZLcom/bugsnag/android/ErrorTypes;ZLcom/bugsnag/android/ThreadSendPolicy;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Set;Ljava/util/Set;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/bugsnag/android/Delivery;Lcom/bugsnag/android/EndpointConfiguration;ZJLcom/bugsnag/android/Logger;IIIILkotlin/Lazy;ZZLandroid/content/pm/PackageInfo;Landroid/content/pm/ApplicationInfo;Ljava/util/Collection;)Lcom/bugsnag/android/internal/ImmutableConfig;
+	public static synthetic fun copy$default (Lcom/bugsnag/android/internal/ImmutableConfig;Ljava/lang/String;ZLcom/bugsnag/android/ErrorTypes;ZLcom/bugsnag/android/ThreadSendPolicy;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Set;Ljava/util/Set;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/bugsnag/android/Delivery;Lcom/bugsnag/android/EndpointConfiguration;ZJLcom/bugsnag/android/Logger;IIIILkotlin/Lazy;ZZLandroid/content/pm/PackageInfo;Landroid/content/pm/ApplicationInfo;Ljava/util/Collection;ILjava/lang/Object;)Lcom/bugsnag/android/internal/ImmutableConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getApiKey ()Ljava/lang/String;
+	public final fun getAppInfo ()Landroid/content/pm/ApplicationInfo;
+	public final fun getAppType ()Ljava/lang/String;
+	public final fun getAppVersion ()Ljava/lang/String;
+	public final fun getAttemptDeliveryOnCrash ()Z
+	public final fun getAutoDetectErrors ()Z
+	public final fun getAutoTrackSessions ()Z
+	public final fun getBuildUuid ()Ljava/lang/String;
+	public final fun getDelivery ()Lcom/bugsnag/android/Delivery;
+	public final fun getDiscardClasses ()Ljava/util/Collection;
+	public final fun getEnabledBreadcrumbTypes ()Ljava/util/Set;
+	public final fun getEnabledErrorTypes ()Lcom/bugsnag/android/ErrorTypes;
+	public final fun getEnabledReleaseStages ()Ljava/util/Collection;
+	public final fun getEndpoints ()Lcom/bugsnag/android/EndpointConfiguration;
+	public final fun getLaunchDurationMillis ()J
+	public final fun getLogger ()Lcom/bugsnag/android/Logger;
+	public final fun getMaxBreadcrumbs ()I
+	public final fun getMaxPersistedEvents ()I
+	public final fun getMaxPersistedSessions ()I
+	public final fun getMaxReportedThreads ()I
+	public final fun getPackageInfo ()Landroid/content/pm/PackageInfo;
+	public final fun getPersistUser ()Z
+	public final fun getPersistenceDirectory ()Lkotlin/Lazy;
+	public final fun getProjectPackages ()Ljava/util/Collection;
+	public final fun getRedactedKeys ()Ljava/util/Collection;
+	public final fun getReleaseStage ()Ljava/lang/String;
+	public final fun getSendLaunchCrashesSynchronously ()Z
+	public final fun getSendThreads ()Lcom/bugsnag/android/ThreadSendPolicy;
+	public final fun getTelemetry ()Ljava/util/Set;
+	public final fun getVersionCode ()Ljava/lang/Integer;
+	public fun hashCode ()I
+	public final fun shouldDiscardBreadcrumb (Lcom/bugsnag/android/BreadcrumbType;)Z
+	public final fun shouldDiscardByReleaseStage ()Z
+	public final fun shouldDiscardError (Ljava/lang/String;)Z
+	public final fun shouldDiscardError (Ljava/lang/Throwable;)Z
+	public final fun shouldDiscardSession (Z)Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/bugsnag/android/internal/ImmutableConfigKt {
+	public static final fun convertToImmutableConfig (Lcom/bugsnag/android/Configuration;)Lcom/bugsnag/android/internal/ImmutableConfig;
+	public static final fun convertToImmutableConfig (Lcom/bugsnag/android/Configuration;Ljava/lang/String;)Lcom/bugsnag/android/internal/ImmutableConfig;
+	public static final fun convertToImmutableConfig (Lcom/bugsnag/android/Configuration;Ljava/lang/String;Landroid/content/pm/PackageInfo;)Lcom/bugsnag/android/internal/ImmutableConfig;
+	public static final fun convertToImmutableConfig (Lcom/bugsnag/android/Configuration;Ljava/lang/String;Landroid/content/pm/PackageInfo;Landroid/content/pm/ApplicationInfo;)Lcom/bugsnag/android/internal/ImmutableConfig;
+}
+
+public abstract interface class com/bugsnag/android/internal/InternalMetrics {
+	public abstract fun notifyAddCallback (Ljava/lang/String;)V
+	public abstract fun notifyRemoveCallback (Ljava/lang/String;)V
+	public abstract fun setBreadcrumbTrimMetrics (II)V
+	public abstract fun setCallbackCounts (Ljava/util/Map;)V
+	public abstract fun setConfigDifferences (Ljava/util/Map;)V
+	public abstract fun setMetadataTrimMetrics (II)V
+	public abstract fun toJsonableMap ()Ljava/util/Map;
+}
+
+public final class com/bugsnag/android/internal/InternalMetricsImpl : com/bugsnag/android/internal/InternalMetrics {
+	public fun <init> ()V
+	public fun <init> (Ljava/util/Map;)V
+	public synthetic fun <init> (Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun notifyAddCallback (Ljava/lang/String;)V
+	public fun notifyRemoveCallback (Ljava/lang/String;)V
+	public fun setBreadcrumbTrimMetrics (II)V
+	public fun setCallbackCounts (Ljava/util/Map;)V
+	public fun setConfigDifferences (Ljava/util/Map;)V
+	public fun setMetadataTrimMetrics (II)V
+	public fun toJsonableMap ()Ljava/util/Map;
+}
+
+public final class com/bugsnag/android/internal/InternalMetricsNoop : com/bugsnag/android/internal/InternalMetrics {
+	public fun <init> ()V
+	public fun notifyAddCallback (Ljava/lang/String;)V
+	public fun notifyRemoveCallback (Ljava/lang/String;)V
+	public fun setBreadcrumbTrimMetrics (II)V
+	public fun setCallbackCounts (Ljava/util/Map;)V
+	public fun setConfigDifferences (Ljava/util/Map;)V
+	public fun setMetadataTrimMetrics (II)V
+	public fun toJsonableMap ()Ljava/util/Map;
+}
+
+public abstract interface class com/bugsnag/android/internal/StateObserver {
+	public abstract fun onStateChange (Lcom/bugsnag/android/StateEvent;)V
+}
+
+public final class com/bugsnag/android/internal/TaskType : java/lang/Enum {
+	public static final field DEFAULT Lcom/bugsnag/android/internal/TaskType;
+	public static final field ERROR_REQUEST Lcom/bugsnag/android/internal/TaskType;
+	public static final field INTERNAL_REPORT Lcom/bugsnag/android/internal/TaskType;
+	public static final field IO Lcom/bugsnag/android/internal/TaskType;
+	public static final field SESSION_REQUEST Lcom/bugsnag/android/internal/TaskType;
+	public static fun valueOf (Ljava/lang/String;)Lcom/bugsnag/android/internal/TaskType;
+	public static fun values ()[Lcom/bugsnag/android/internal/TaskType;
+}
+
+public abstract class com/bugsnag/android/repackaged/dslplatform/json/BinaryConverter {
+	public fun <init> ()V
+	public static fun deserialize (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)[B
+	public static fun deserializeCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/ArrayList;
+	public static fun deserializeCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/util/Collection;)V
+	public static fun deserializeNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/ArrayList;
+	public static fun deserializeNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/util/Collection;)V
+	public static fun serialize ([BLcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+}
+
+public abstract class com/bugsnag/android/repackaged/dslplatform/json/BoolConverter {
+	public static final field ARRAY_READER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;
+	public static final field ARRAY_WRITER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject;
+	public static final field EMPTY_ARRAY [Z
+	public static final field NULLABLE_READER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;
+	public static final field READER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;
+	public static final field WRITER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject;
+	public fun <init> ()V
+	public static fun deserialize (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Z
+	public static fun deserializeBoolArray (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)[Z
+	public static fun deserializeCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/ArrayList;
+	public static fun deserializeCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/util/Collection;)V
+	public static fun deserializeNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/ArrayList;
+	public static fun deserializeNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/util/Collection;)V
+	public static fun serialize (ZLcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public static fun serialize ([ZLcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public static fun serializeNullable (Ljava/lang/Boolean;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+}
+
+public abstract interface class com/bugsnag/android/repackaged/dslplatform/json/Configuration {
+	public abstract fun configure (Lcom/bugsnag/android/repackaged/dslplatform/json/DslJson;)V
+}
+
+public class com/bugsnag/android/repackaged/dslplatform/json/ConfigurationException : java/lang/RuntimeException {
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public fun <init> (Ljava/lang/Throwable;)V
+}
+
+public class com/bugsnag/android/repackaged/dslplatform/json/DslJson : com/bugsnag/android/repackaged/dslplatform/json/TypeLookup, com/bugsnag/android/repackaged/dslplatform/json/UnknownSerializer {
+	public final field allowArrayFormat Z
+	protected final field binderFactories Ljava/util/List;
+	public final field context Ljava/lang/Object;
+	protected final field fallback Lcom/bugsnag/android/repackaged/dslplatform/json/DslJson$Fallback;
+	protected final field keyCache Lcom/bugsnag/android/repackaged/dslplatform/json/StringCache;
+	protected final field localReader Ljava/lang/ThreadLocal;
+	protected final field localWriter Ljava/lang/ThreadLocal;
+	public final field omitDefaults Z
+	protected final field readerFactories Ljava/util/List;
+	protected final field valuesCache Lcom/bugsnag/android/repackaged/dslplatform/json/StringCache;
+	protected final field writerFactories Ljava/util/List;
+	public fun <init> ()V
+	public fun <init> (Lcom/bugsnag/android/repackaged/dslplatform/json/DslJson$Settings;)V
+	public fun <init> (Ljava/lang/Object;ZLcom/bugsnag/android/repackaged/dslplatform/json/DslJson$Fallback;ZLcom/bugsnag/android/repackaged/dslplatform/json/StringCache;Ljava/lang/Iterable;)V
+	public final fun canDeserialize (Ljava/lang/reflect/Type;)Z
+	public final fun canSerialize (Ljava/lang/reflect/Type;)Z
+	protected fun createErrorMessage (Ljava/lang/Class;)Ljava/io/IOException;
+	public fun deserialize (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/lang/Object;
+	protected fun deserialize (Ljava/lang/Class;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/io/InputStream;)Ljava/lang/Object;
+	public fun deserialize (Ljava/lang/Class;Ljava/io/InputStream;)Ljava/lang/Object;
+	public fun deserialize (Ljava/lang/Class;Ljava/io/InputStream;[B)Ljava/lang/Object;
+	public fun deserialize (Ljava/lang/Class;[BI)Ljava/lang/Object;
+	public fun deserialize (Ljava/lang/reflect/Type;Ljava/io/InputStream;)Ljava/lang/Object;
+	public fun deserialize (Ljava/lang/reflect/Type;Ljava/io/InputStream;[B)Ljava/lang/Object;
+	public fun deserialize (Ljava/lang/reflect/Type;[BI)Ljava/lang/Object;
+	public static fun deserializeList (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/ArrayList;
+	protected fun deserializeList (Ljava/lang/Class;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/io/InputStream;)Ljava/util/List;
+	public fun deserializeList (Ljava/lang/Class;Ljava/io/InputStream;)Ljava/util/List;
+	public fun deserializeList (Ljava/lang/Class;Ljava/io/InputStream;[B)Ljava/util/List;
+	public fun deserializeList (Ljava/lang/Class;[BI)Ljava/util/List;
+	public static fun deserializeMap (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/LinkedHashMap;
+	public static fun deserializeObject (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/lang/Object;
+	protected fun deserializeWith (Ljava/lang/reflect/Type;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/lang/Object;
+	public final fun getDefault (Ljava/lang/reflect/Type;)Ljava/lang/Object;
+	protected final fun getObjectReader (Ljava/lang/Class;)Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadJsonObject;
+	public final fun getRegisteredBinders ()Ljava/util/Set;
+	public final fun getRegisteredCreatorMarkers ()Ljava/util/Map;
+	public final fun getRegisteredDecoders ()Ljava/util/Set;
+	public final fun getRegisteredEncoders ()Ljava/util/Set;
+	protected fun iterateOver (Ljava/lang/Class;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/io/InputStream;)Ljava/util/Iterator;
+	public fun iterateOver (Ljava/lang/Class;Ljava/io/InputStream;)Ljava/util/Iterator;
+	public fun iterateOver (Ljava/lang/Class;Ljava/io/InputStream;[B)Ljava/util/Iterator;
+	public fun iterateOver (Ljava/util/Iterator;Ljava/io/OutputStream;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public fun iterateOver (Ljava/util/Iterator;Ljava/lang/Class;Ljava/io/OutputStream;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public fun newReader ()Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;
+	public fun newReader (Ljava/io/InputStream;[B)Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;
+	public fun newReader (Ljava/lang/String;)Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;
+	public fun newReader ([B)Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;
+	public fun newReader ([BI)Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;
+	public fun newReader ([BI[C)Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;
+	public fun newWriter ()Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;
+	public fun newWriter (I)Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;
+	public fun newWriter ([B)Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;
+	public fun registerBinder (Ljava/lang/Class;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$BindObject;)V
+	public fun registerBinder (Ljava/lang/reflect/Type;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$BindObject;)V
+	public fun registerBinderFactory (Lcom/bugsnag/android/repackaged/dslplatform/json/DslJson$ConverterFactory;)Z
+	public fun registerDefault (Ljava/lang/Class;Ljava/lang/Object;)V
+	public fun registerReader (Ljava/lang/Class;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;)V
+	public fun registerReader (Ljava/lang/reflect/Type;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;)Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;
+	public fun registerReaderFactory (Lcom/bugsnag/android/repackaged/dslplatform/json/DslJson$ConverterFactory;)Z
+	public fun registerWriter (Ljava/lang/Class;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject;)V
+	public fun registerWriter (Ljava/lang/reflect/Type;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject;)Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject;
+	public fun registerWriterFactory (Lcom/bugsnag/android/repackaged/dslplatform/json/DslJson$ConverterFactory;)Z
+	public final fun serialize (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;Ljava/lang/Object;)V
+	public fun serialize (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;Ljava/lang/reflect/Type;Ljava/lang/Object;)Z
+	public fun serialize (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;Ljava/util/Collection;)V
+	public fun serialize (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;Ljava/util/List;)V
+	public fun serialize (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;[Lcom/bugsnag/android/repackaged/dslplatform/json/JsonObject;)V
+	public fun serialize (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;[Lcom/bugsnag/android/repackaged/dslplatform/json/JsonObject;I)V
+	public final fun serialize (Ljava/lang/Object;Ljava/io/OutputStream;)V
+	public fun serializeMap (Ljava/util/Map;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public fun tryFindBinder (Ljava/lang/Class;)Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$BindObject;
+	public fun tryFindBinder (Ljava/lang/reflect/Type;)Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$BindObject;
+	public fun tryFindReader (Ljava/lang/Class;)Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;
+	public fun tryFindReader (Ljava/lang/reflect/Type;)Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;
+	public fun tryFindWriter (Ljava/lang/Class;)Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject;
+	public fun tryFindWriter (Ljava/lang/reflect/Type;)Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject;
+}
+
+public abstract interface class com/bugsnag/android/repackaged/dslplatform/json/DslJson$ConverterFactory {
+	public abstract fun tryCreate (Ljava/lang/reflect/Type;Lcom/bugsnag/android/repackaged/dslplatform/json/DslJson;)Ljava/lang/Object;
+}
+
+public abstract interface class com/bugsnag/android/repackaged/dslplatform/json/DslJson$Fallback {
+	public abstract fun deserialize (Ljava/lang/Object;Ljava/lang/reflect/Type;Ljava/io/InputStream;)Ljava/lang/Object;
+	public abstract fun deserialize (Ljava/lang/Object;Ljava/lang/reflect/Type;[BI)Ljava/lang/Object;
+	public abstract fun serialize (Ljava/lang/Object;Ljava/io/OutputStream;)V
+}
+
+public class com/bugsnag/android/repackaged/dslplatform/json/DslJson$Settings {
+	public fun <init> ()V
+	public fun allowArrayFormat (Z)Lcom/bugsnag/android/repackaged/dslplatform/json/DslJson$Settings;
+	public fun creatorMarker (Ljava/lang/Class;Z)Lcom/bugsnag/android/repackaged/dslplatform/json/DslJson$Settings;
+	public fun doublePrecision (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$DoublePrecision;)Lcom/bugsnag/android/repackaged/dslplatform/json/DslJson$Settings;
+	public fun errorInfo (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ErrorInfo;)Lcom/bugsnag/android/repackaged/dslplatform/json/DslJson$Settings;
+	public fun fallbackTo (Lcom/bugsnag/android/repackaged/dslplatform/json/DslJson$Fallback;)Lcom/bugsnag/android/repackaged/dslplatform/json/DslJson$Settings;
+	public fun includeServiceLoader ()Lcom/bugsnag/android/repackaged/dslplatform/json/DslJson$Settings;
+	public fun includeServiceLoader (Ljava/lang/ClassLoader;)Lcom/bugsnag/android/repackaged/dslplatform/json/DslJson$Settings;
+	public fun limitDigitsBuffer (I)Lcom/bugsnag/android/repackaged/dslplatform/json/DslJson$Settings;
+	public fun limitStringBuffer (I)Lcom/bugsnag/android/repackaged/dslplatform/json/DslJson$Settings;
+	public fun resolveBinder (Lcom/bugsnag/android/repackaged/dslplatform/json/DslJson$ConverterFactory;)Lcom/bugsnag/android/repackaged/dslplatform/json/DslJson$Settings;
+	public fun resolveReader (Lcom/bugsnag/android/repackaged/dslplatform/json/DslJson$ConverterFactory;)Lcom/bugsnag/android/repackaged/dslplatform/json/DslJson$Settings;
+	public fun resolveWriter (Lcom/bugsnag/android/repackaged/dslplatform/json/DslJson$ConverterFactory;)Lcom/bugsnag/android/repackaged/dslplatform/json/DslJson$Settings;
+	public fun skipDefaultValues (Z)Lcom/bugsnag/android/repackaged/dslplatform/json/DslJson$Settings;
+	public fun unknownNumbers (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$UnknownNumberParsing;)Lcom/bugsnag/android/repackaged/dslplatform/json/DslJson$Settings;
+	public fun useKeyCache (Lcom/bugsnag/android/repackaged/dslplatform/json/StringCache;)Lcom/bugsnag/android/repackaged/dslplatform/json/DslJson$Settings;
+	public fun useStringValuesCache (Lcom/bugsnag/android/repackaged/dslplatform/json/StringCache;)Lcom/bugsnag/android/repackaged/dslplatform/json/DslJson$Settings;
+	public fun with (Lcom/bugsnag/android/repackaged/dslplatform/json/Configuration;)Lcom/bugsnag/android/repackaged/dslplatform/json/DslJson$Settings;
+	public fun withContext (Ljava/lang/Object;)Lcom/bugsnag/android/repackaged/dslplatform/json/DslJson$Settings;
+	public fun withJavaConverters (Z)Lcom/bugsnag/android/repackaged/dslplatform/json/DslJson$Settings;
+}
+
+public class com/bugsnag/android/repackaged/dslplatform/json/DslJson$SimpleStringCache : com/bugsnag/android/repackaged/dslplatform/json/StringCache {
+	public fun <init> ()V
+	public fun <init> (I)V
+	public fun get ([CI)Ljava/lang/String;
+}
+
+public abstract interface class com/bugsnag/android/repackaged/dslplatform/json/JsonObject {
+	public abstract fun serialize (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;Z)V
+}
+
+public final class com/bugsnag/android/repackaged/dslplatform/json/JsonReader {
+	public final field context Ljava/lang/Object;
+	public fun <init> ([BILjava/lang/Object;)V
+	public fun <init> ([BILjava/lang/Object;[C)V
+	public fun <init> ([BILjava/lang/Object;[CLcom/bugsnag/android/repackaged/dslplatform/json/StringCache;Lcom/bugsnag/android/repackaged/dslplatform/json/StringCache;)V
+	public fun <init> ([BLjava/lang/Object;)V
+	public fun <init> ([BLjava/lang/Object;Lcom/bugsnag/android/repackaged/dslplatform/json/StringCache;Lcom/bugsnag/android/repackaged/dslplatform/json/StringCache;)V
+	public fun <init> ([BLjava/lang/Object;[C)V
+	public final fun appendString (Ljava/lang/StringBuffer;)Ljava/lang/StringBuffer;
+	public final fun appendString (Ljava/lang/StringBuilder;)Ljava/lang/StringBuilder;
+	public final fun calcHash ()I
+	public final fun calcWeakHash ()I
+	public final fun checkArrayEnd ()V
+	public final fun checkObjectEnd ()V
+	public final fun comma ()V
+	public final fun deserializeCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadJsonObject;)Ljava/util/ArrayList;
+	public final fun deserializeCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadJsonObject;Ljava/util/Collection;)V
+	public final fun deserializeCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;)Ljava/util/ArrayList;
+	public final fun deserializeCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;Ljava/util/Collection;)V
+	public final fun deserializeNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadJsonObject;)Ljava/util/ArrayList;
+	public final fun deserializeNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadJsonObject;Ljava/util/Collection;)V
+	public final fun deserializeNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;)Ljava/util/ArrayList;
+	public final fun deserializeNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;Ljava/util/Collection;)V
+	public final fun endArray ()V
+	public final fun endObject ()V
+	public final fun fillName ()I
+	public final fun fillNameWeakHash ()I
+	public final fun getCurrentIndex ()I
+	public final fun getLastHash ()I
+	public final fun getLastName ()Ljava/lang/String;
+	public final fun getNextToken ()B
+	public final fun getTokenStart ()I
+	public final fun iterateOver (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadJsonObject;)Ljava/util/Iterator;
+	public final fun iterateOver (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;)Ljava/util/Iterator;
+	public final fun last ()B
+	public final fun length ()I
+	public final fun newParseError (Ljava/lang/String;)Lcom/bugsnag/android/repackaged/dslplatform/json/ParsingException;
+	public final fun newParseError (Ljava/lang/String;I)Lcom/bugsnag/android/repackaged/dslplatform/json/ParsingException;
+	public final fun newParseErrorAt (Ljava/lang/String;I)Lcom/bugsnag/android/repackaged/dslplatform/json/ParsingException;
+	public final fun newParseErrorAt (Ljava/lang/String;ILjava/lang/Exception;)Lcom/bugsnag/android/repackaged/dslplatform/json/ParsingException;
+	public final fun newParseErrorFormat (Ljava/lang/String;ILjava/lang/String;[Ljava/lang/Object;)Lcom/bugsnag/android/repackaged/dslplatform/json/ParsingException;
+	public final fun newParseErrorWith (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Object;Ljava/lang/String;)Lcom/bugsnag/android/repackaged/dslplatform/json/ParsingException;
+	public final fun newParseErrorWith (Ljava/lang/String;Ljava/lang/Object;)Lcom/bugsnag/android/repackaged/dslplatform/json/ParsingException;
+	public final fun next (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$BindObject;Ljava/lang/Object;)Ljava/lang/Object;
+	public final fun next (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;)Ljava/lang/Object;
+	public final fun next (Ljava/lang/Class;)Ljava/lang/Object;
+	public final fun next (Ljava/lang/Class;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun positionDescription ()Ljava/lang/String;
+	public fun positionDescription (I)Ljava/lang/String;
+	public final fun positionInStream ()J
+	public final fun positionInStream (I)J
+	public final fun process (Ljava/io/InputStream;)Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;
+	public final fun process ([BI)Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;
+	public final fun read ()B
+	public final fun readArray (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;[Ljava/lang/Object;)[Ljava/lang/Object;
+	public final fun readBase64 ()[B
+	public final fun readCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;)Ljava/util/ArrayList;
+	public final fun readKey ()Ljava/lang/String;
+	public final fun readMap (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;)Ljava/util/LinkedHashMap;
+	public fun readNext ()Ljava/lang/String;
+	public final fun readNumber ()[C
+	public final fun readSet (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;)Ljava/util/LinkedHashSet;
+	public final fun readSimpleQuote ()[C
+	public final fun readSimpleString ()Ljava/lang/String;
+	public final fun readString ()Ljava/lang/String;
+	public final fun reset (Ljava/io/InputStream;)V
+	public final fun scanNumber ()I
+	public final fun semicolon ()V
+	public final fun skip ()B
+	public final fun startArray ()V
+	public final fun startAttribute (Ljava/lang/String;)V
+	public final fun startObject ()V
+	public fun toString ()Ljava/lang/String;
+	public final fun wasFalse ()Z
+	public final fun wasLastName (Ljava/lang/String;)Z
+	public final fun wasLastName ([B)Z
+	public final fun wasNull ()Z
+	public final fun wasTrue ()Z
+}
+
+public abstract interface class com/bugsnag/android/repackaged/dslplatform/json/JsonReader$BindObject {
+	public abstract fun bind (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class com/bugsnag/android/repackaged/dslplatform/json/JsonReader$DoublePrecision : java/lang/Enum {
+	public static final field DEFAULT Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$DoublePrecision;
+	public static final field EXACT Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$DoublePrecision;
+	public static final field HIGH Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$DoublePrecision;
+	public static final field LOW Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$DoublePrecision;
+	public static fun valueOf (Ljava/lang/String;)Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$DoublePrecision;
+	public static fun values ()[Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$DoublePrecision;
+}
+
+public final class com/bugsnag/android/repackaged/dslplatform/json/JsonReader$ErrorInfo : java/lang/Enum {
+	public static final field DESCRIPTION_AND_POSITION Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ErrorInfo;
+	public static final field DESCRIPTION_ONLY Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ErrorInfo;
+	public static final field MINIMAL Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ErrorInfo;
+	public static final field WITH_STACK_TRACE Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ErrorInfo;
+	public static fun valueOf (Ljava/lang/String;)Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ErrorInfo;
+	public static fun values ()[Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ErrorInfo;
+}
+
+public abstract interface class com/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadJsonObject {
+	public abstract fun deserialize (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Lcom/bugsnag/android/repackaged/dslplatform/json/JsonObject;
+}
+
+public abstract interface class com/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject {
+	public abstract fun read (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/lang/Object;
+}
+
+public final class com/bugsnag/android/repackaged/dslplatform/json/JsonReader$UnknownNumberParsing : java/lang/Enum {
+	public static final field BIGDECIMAL Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$UnknownNumberParsing;
+	public static final field DOUBLE Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$UnknownNumberParsing;
+	public static final field LONG_AND_BIGDECIMAL Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$UnknownNumberParsing;
+	public static final field LONG_AND_DOUBLE Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$UnknownNumberParsing;
+	public static fun valueOf (Ljava/lang/String;)Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$UnknownNumberParsing;
+	public static fun values ()[Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$UnknownNumberParsing;
+}
+
+public final class com/bugsnag/android/repackaged/dslplatform/json/JsonWriter {
+	public static final field ARRAY_END B
+	public static final field ARRAY_START B
+	public static final field COMMA B
+	public static final field ESCAPE B
+	public static final field OBJECT_END B
+	public static final field OBJECT_START B
+	public static final field QUOTE B
+	public static final field SEMI B
+	public fun <init> ()V
+	public fun close ()V
+	public final fun flush ()V
+	public final fun flushed ()J
+	public final fun getByteBuffer ()[B
+	public final fun reset ()V
+	public final fun reset (Ljava/io/OutputStream;)V
+	public fun serialize (Ljava/util/Collection;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject;)V
+	public fun serialize (Ljava/util/List;)V
+	public fun serialize (Ljava/util/List;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject;)V
+	public fun serialize (Ljava/util/Map;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject;)V
+	public fun serialize ([Lcom/bugsnag/android/repackaged/dslplatform/json/JsonObject;)V
+	public fun serialize ([Lcom/bugsnag/android/repackaged/dslplatform/json/JsonObject;I)V
+	public fun serialize ([Ljava/lang/Object;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject;)V
+	public fun serializeObject (Ljava/lang/Object;)V
+	public fun serializeRaw (Ljava/util/Collection;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject;)V
+	public fun serializeRaw (Ljava/util/List;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject;)V
+	public fun serializeRaw (Ljava/util/Map;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject;)V
+	public final fun size ()I
+	public final fun toByteArray ()[B
+	public final fun toStream (Ljava/io/OutputStream;)V
+	public fun toString ()Ljava/lang/String;
+	public final fun writeAscii (Ljava/lang/String;)V
+	public final fun writeAscii (Ljava/lang/String;I)V
+	public final fun writeAscii ([B)V
+	public final fun writeAscii ([BI)V
+	public final fun writeBinary ([B)V
+	public final fun writeByte (B)V
+	public final fun writeNull ()V
+	public fun writeQuoted (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject;Ljava/lang/Object;)V
+	public final fun writeRaw ([BII)V
+	public final fun writeString (Ljava/lang/CharSequence;)V
+	public final fun writeString (Ljava/lang/String;)V
+}
+
+public abstract interface class com/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject {
+	public abstract fun write (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;Ljava/lang/Object;)V
+}
+
+public abstract class com/bugsnag/android/repackaged/dslplatform/json/MapConverter {
+	public fun <init> ()V
+	public static fun deserialize (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/Map;
+	public static fun deserializeCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/ArrayList;
+	public static fun deserializeCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/util/Collection;)V
+	public static fun deserializeNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/ArrayList;
+	public static fun deserializeNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/util/Collection;)V
+	public static fun serialize (Ljava/util/Map;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public static fun serializeNullable (Ljava/util/Map;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+}
+
+public abstract class com/bugsnag/android/repackaged/dslplatform/json/NetConverter {
+	public fun <init> ()V
+	public static fun deserializeIp (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/net/InetAddress;
+	public static fun deserializeIpCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/ArrayList;
+	public static fun deserializeIpCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/util/Collection;)V
+	public static fun deserializeIpNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/ArrayList;
+	public static fun deserializeIpNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/util/Collection;)V
+	public static fun deserializeUri (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/net/URI;
+	public static fun deserializeUriCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/ArrayList;
+	public static fun deserializeUriCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/util/Collection;)V
+	public static fun deserializeUriNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/ArrayList;
+	public static fun deserializeUriNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/util/Collection;)V
+	public static fun serialize (Ljava/net/InetAddress;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public static fun serialize (Ljava/net/URI;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public static fun serializeNullable (Ljava/net/InetAddress;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public static fun serializeNullable (Ljava/net/URI;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+}
+
+public abstract class com/bugsnag/android/repackaged/dslplatform/json/NumberConverter {
+	public static final field DOUBLE_ARRAY_READER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;
+	public static final field DOUBLE_ARRAY_WRITER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject;
+	public static final field DOUBLE_EMPTY_ARRAY [D
+	public static final field DOUBLE_READER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;
+	public static final field DOUBLE_WRITER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject;
+	public static final field DOUBLE_ZERO Ljava/lang/Double;
+	public static final field DecimalReader Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;
+	public static final field DecimalWriter Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject;
+	public static final field FLOAT_ARRAY_READER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;
+	public static final field FLOAT_ARRAY_WRITER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject;
+	public static final field FLOAT_EMPTY_ARRAY [F
+	public static final field FLOAT_READER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;
+	public static final field FLOAT_WRITER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject;
+	public static final field FLOAT_ZERO Ljava/lang/Float;
+	public static final field INT_ARRAY_READER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;
+	public static final field INT_ARRAY_WRITER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject;
+	public static final field INT_EMPTY_ARRAY [I
+	public static final field INT_READER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;
+	public static final field INT_WRITER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject;
+	public static final field INT_ZERO Ljava/lang/Integer;
+	public static final field LONG_ARRAY_READER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;
+	public static final field LONG_ARRAY_WRITER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject;
+	public static final field LONG_EMPTY_ARRAY [J
+	public static final field LONG_READER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;
+	public static final field LONG_WRITER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject;
+	public static final field LONG_ZERO Ljava/lang/Long;
+	public static final field NULLABLE_DOUBLE_READER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;
+	public static final field NULLABLE_FLOAT_READER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;
+	public static final field NULLABLE_INT_READER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;
+	public static final field NULLABLE_LONG_READER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;
+	public static final field NULLABLE_SHORT_READER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;
+	public static final field SHORT_ARRAY_READER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;
+	public static final field SHORT_ARRAY_WRITER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject;
+	public static final field SHORT_EMPTY_ARRAY [S
+	public static final field SHORT_READER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;
+	public static final field SHORT_WRITER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject;
+	public static final field SHORT_ZERO Ljava/lang/Short;
+	public fun <init> ()V
+	public static fun deserializeDecimal (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/math/BigDecimal;
+	public static fun deserializeDecimalCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/ArrayList;
+	public static fun deserializeDecimalCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/util/Collection;)V
+	public static fun deserializeDecimalNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/ArrayList;
+	public static fun deserializeDecimalNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/util/Collection;)V
+	public static fun deserializeDouble (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)D
+	public static fun deserializeDoubleArray (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)[D
+	public static fun deserializeDoubleCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/ArrayList;
+	public static fun deserializeDoubleCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/util/Collection;)V
+	public static fun deserializeDoubleNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/ArrayList;
+	public static fun deserializeDoubleNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/util/Collection;)V
+	public static fun deserializeFloat (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)F
+	public static fun deserializeFloatArray (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)[F
+	public static fun deserializeFloatCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/ArrayList;
+	public static fun deserializeFloatCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/util/Collection;)V
+	public static fun deserializeFloatNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/ArrayList;
+	public static fun deserializeFloatNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/util/Collection;)V
+	public static fun deserializeInt (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)I
+	public static fun deserializeIntArray (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)[I
+	public static fun deserializeIntCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/ArrayList;
+	public static fun deserializeIntCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/util/Collection;)V
+	public static fun deserializeIntNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/ArrayList;
+	public static fun deserializeIntNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/util/Collection;)V
+	public static fun deserializeLong (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)J
+	public static fun deserializeLongArray (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)[J
+	public static fun deserializeLongCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/ArrayList;
+	public static fun deserializeLongCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/util/Collection;)V
+	public static fun deserializeLongNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/ArrayList;
+	public static fun deserializeLongNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/util/Collection;)V
+	public static fun deserializeNumber (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/lang/Number;
+	public static fun deserializeShort (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)S
+	public static fun deserializeShortArray (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)[S
+	public static fun deserializeShortCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/util/Collection;)V
+	public static fun deserializeShortNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/ArrayList;
+	public static fun deserializeShortNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/util/Collection;)V
+	public static fun serialize (DLcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public static fun serialize (FLcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public static fun serialize (ILcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public static fun serialize (JLcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public static fun serialize (Ljava/math/BigDecimal;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public static fun serialize ([DLcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public static fun serialize ([FLcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public static fun serialize ([ILcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public static fun serialize ([JLcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public static fun serialize ([SLcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public static fun serializeNullable (Ljava/lang/Double;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public static fun serializeNullable (Ljava/lang/Float;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public static fun serializeNullable (Ljava/lang/Integer;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public static fun serializeNullable (Ljava/lang/Long;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public static fun serializeNullable (Ljava/math/BigDecimal;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+}
+
+public abstract class com/bugsnag/android/repackaged/dslplatform/json/ObjectConverter {
+	public fun <init> ()V
+	public static fun deserializeList (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/ArrayList;
+	public static fun deserializeMap (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/LinkedHashMap;
+	public static fun deserializeMapCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/ArrayList;
+	public static fun deserializeMapCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/util/Collection;)V
+	public static fun deserializeNullableMapCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/ArrayList;
+	public static fun deserializeNullableMapCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/util/Collection;)V
+	public static fun deserializeObject (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/lang/Object;
+	public static fun serializeMap (Ljava/util/Map;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public static fun serializeNullableMap (Ljava/util/Map;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public static fun serializeObject (Ljava/lang/Object;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+}
+
+public class com/bugsnag/android/repackaged/dslplatform/json/ParsingException : java/io/IOException {
+	public static fun create (Ljava/lang/String;Ljava/lang/Throwable;Z)Lcom/bugsnag/android/repackaged/dslplatform/json/ParsingException;
+	public static fun create (Ljava/lang/String;Z)Lcom/bugsnag/android/repackaged/dslplatform/json/ParsingException;
+}
+
+public class com/bugsnag/android/repackaged/dslplatform/json/SerializationException : java/lang/RuntimeException {
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public fun <init> (Ljava/lang/Throwable;)V
+}
+
+public abstract interface class com/bugsnag/android/repackaged/dslplatform/json/StringCache {
+	public abstract fun get ([CI)Ljava/lang/String;
+}
+
+public abstract class com/bugsnag/android/repackaged/dslplatform/json/StringConverter {
+	public static final field READER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;
+	public static final field READER_BUFFER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;
+	public static final field READER_BUILDER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;
+	public static final field WRITER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject;
+	public static final field WRITER_CHARS Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject;
+	public fun <init> ()V
+	public static fun deserialize (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/lang/String;
+	public static fun deserializeCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/ArrayList;
+	public static fun deserializeCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/util/Collection;)V
+	public static fun deserializeNullable (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/lang/String;
+	public static fun deserializeNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/ArrayList;
+	public static fun deserializeNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/util/Collection;)V
+	public static fun serialize (Ljava/lang/String;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public static fun serialize (Ljava/util/List;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public static fun serializeNullable (Ljava/lang/String;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public static fun serializeShort (Ljava/lang/String;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public static fun serializeShortNullable (Ljava/lang/String;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+}
+
+public abstract class com/bugsnag/android/repackaged/dslplatform/json/UUIDConverter {
+	public static final field MIN_UUID Ljava/util/UUID;
+	public static final field READER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader$ReadObject;
+	public static final field WRITER Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter$WriteObject;
+	public fun <init> ()V
+	public static fun deserialize (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/UUID;
+	public static fun deserializeCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/ArrayList;
+	public static fun deserializeCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/util/Collection;)V
+	public static fun deserializeNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/ArrayList;
+	public static fun deserializeNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/util/Collection;)V
+	public static fun serialize (JJLcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public static fun serialize (Ljava/util/UUID;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public static fun serializeNullable (Ljava/util/UUID;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+}
+
+public abstract class com/bugsnag/android/repackaged/dslplatform/json/XmlConverter {
+	public fun <init> ()V
+	public static fun deserialize (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Lorg/w3c/dom/Element;
+	public static fun deserializeCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/ArrayList;
+	public static fun deserializeCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/util/Collection;)V
+	public static fun deserializeNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;)Ljava/util/ArrayList;
+	public static fun deserializeNullableCollection (Lcom/bugsnag/android/repackaged/dslplatform/json/JsonReader;Ljava/util/Collection;)V
+	public static fun mapToXml (Ljava/util/Map;)Lorg/w3c/dom/Element;
+	public static fun serialize (Lorg/w3c/dom/Element;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+	public static fun serializeNullable (Lorg/w3c/dom/Element;Lcom/bugsnag/android/repackaged/dslplatform/json/JsonWriter;)V
+}
+

@@ -41,15 +41,19 @@
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun updateSeverityReason(@SeverityReason.SeverityReasonType reason: String)</ID>
     <ID>RethrowCaughtException:JsonHelper.kt$JsonHelper$throw ex</ID>
     <ID>ReturnCount:DefaultDelivery.kt$DefaultDelivery$fun deliver( urlString: String, json: ByteArray, headers: Map&lt;String, String?> ): DeliveryStatus</ID>
+    <ID>SwallowedException:AppDataCollector.kt$AppDataCollector$catch (e: Exception) { return null }</ID>
     <ID>SwallowedException:BugsnagEventMapper.kt$BugsnagEventMapper$catch (pe: IllegalArgumentException) { ndkDateFormatHolder.get()!!.parse(this) ?: throw IllegalArgumentException("cannot parse date $this") }</ID>
     <ID>SwallowedException:ConnectivityCompat.kt$ConnectivityLegacy$catch (e: NullPointerException) { // in some rare cases we get a remote NullPointerException via Parcel.readException null }</ID>
     <ID>SwallowedException:ContextExtensions.kt$catch (exc: RuntimeException) { null }</ID>
+    <ID>SwallowedException:DeviceDataCollector.kt$DeviceDataCollector$catch (e: Throwable) { null }</ID>
+    <ID>SwallowedException:DeviceDataCollector.kt$DeviceDataCollector$catch (e: Throwable) { return null }</ID>
     <ID>SwallowedException:DeviceDataCollector.kt$DeviceDataCollector$catch (exc: Exception) { false }</ID>
     <ID>SwallowedException:DeviceDataCollector.kt$DeviceDataCollector$catch (exception: Exception) { logger.w("Could not get battery status") }</ID>
     <ID>SwallowedException:DeviceDataCollector.kt$DeviceDataCollector$catch (exception: Exception) { logger.w("Could not get locationStatus") }</ID>
     <ID>SwallowedException:DeviceIdFilePersistence.kt$DeviceIdFilePersistence$catch (exc: OverlappingFileLockException) { Thread.sleep(FILE_LOCK_WAIT_MS) }</ID>
     <ID>SwallowedException:JsonHelperTest.kt$JsonHelperTest$catch (e: IllegalArgumentException) { didThrow = true }</ID>
     <ID>SwallowedException:PluginClient.kt$PluginClient$catch (exc: ClassNotFoundException) { if (isWarningEnabled) { logger.d("Plugin '$clz' is not on the classpath - functionality will not be enabled.") } null }</ID>
+    <ID>SwallowedException:SharedPrefMigrator.kt$SharedPrefMigrator$catch (e: RuntimeException) { null }</ID>
     <ID>ThrowsCount:JsonHelper.kt$JsonHelper$ fun jsonToLong(value: Any?): Long?</ID>
     <ID>TooManyFunctions:ConfigInternal.kt$ConfigInternal : CallbackAwareMetadataAwareUserAwareFeatureFlagAware</ID>
     <ID>TooManyFunctions:DeviceDataCollector.kt$DeviceDataCollector</ID>

@@ -47,6 +47,7 @@ class SystemBroadcastReceiverTest {
         `when`(intent.action).thenReturn("SomeTitle")
         `when`(intent.extras).thenReturn(bundle)
         `when`(bundle.keySet()).thenReturn(setOf("foo"))
+        @Suppress("DEPRECATION")
         `when`(bundle.get("foo")).thenReturn(setOf("bar"))
 
         val receiver = SystemBroadcastReceiver(client, NoopLogger)

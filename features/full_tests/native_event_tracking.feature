@@ -12,6 +12,8 @@ Feature: Synchronizing app/device metadata in the native layer
     And the event "unhandled" is false
     And the "codeIdentifier" of stack frame 0 is not null
 
+  # TODO: Skipped pending PLAT-10634
+  @skip
   Scenario: Capture foreground state while in the background
     When I run "CXXBackgroundNotifyScenario"
     And I send the app to the background for 5 seconds

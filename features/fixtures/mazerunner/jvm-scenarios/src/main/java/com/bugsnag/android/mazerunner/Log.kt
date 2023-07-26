@@ -1,6 +1,5 @@
 package com.bugsnag.android.mazerunner
 
-import android.os.SystemClock
 import android.util.Log
 
 fun log(msg: String) {
@@ -9,16 +8,6 @@ fun log(msg: String) {
 
 fun log(msg: String, e: Exception) {
     Log.e("BugsnagMazeRunner", msg, e)
-}
-
-inline fun <R> reportDuration(tag: String, block: () -> R): R {
-    val start = SystemClock.elapsedRealtime()
-    try {
-        return block()
-    } finally {
-        val end = SystemClock.elapsedRealtime()
-        Log.i("MazeDuration", "$tag - ${end - start}ms")
-    }
 }
 
 /**
