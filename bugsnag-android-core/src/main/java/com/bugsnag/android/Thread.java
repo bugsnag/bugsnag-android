@@ -16,7 +16,7 @@ public class Thread implements JsonStream.Streamable {
     private final Logger logger;
 
     Thread(
-            long id,
+            String id,
             @NonNull String name,
             @NonNull ErrorType type,
             boolean errorReportingThread,
@@ -40,14 +40,19 @@ public class Thread implements JsonStream.Streamable {
     /**
      * Sets the unique ID of the thread (from {@link java.lang.Thread})
      */
-    public void setId(long id) {
-        impl.setId(id);
+    public void setId(@NonNull String id) {
+        if (id != null) {
+            impl.setId(id);
+        } else {
+            logNull("id");
+        }
     }
 
     /**
      * Gets the unique ID of the thread (from {@link java.lang.Thread})
      */
-    public long getId() {
+    @NonNull
+    public String getId() {
         return impl.getId();
     }
 

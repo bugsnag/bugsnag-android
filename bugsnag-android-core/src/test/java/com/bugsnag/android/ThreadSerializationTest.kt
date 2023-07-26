@@ -20,7 +20,7 @@ internal class ThreadSerializationTest {
             )
 
             val thread = Thread(
-                24,
+                "24",
                 "main-one",
                 ErrorType.ANDROID,
                 true,
@@ -40,7 +40,7 @@ internal class ThreadSerializationTest {
             )
 
             val thread1 = Thread(
-                24,
+                "24",
                 "main-one",
                 ErrorType.ANDROID,
                 false,
@@ -74,7 +74,7 @@ internal class ThreadSerializationTest {
                 NoopLogger
             )
             return Thread(
-                24,
+                "24",
                 "main-one",
                 ErrorType.ANDROID,
                 true,
@@ -97,7 +97,7 @@ internal class ThreadSerializationTest {
                 NoopLogger
             )
             return Thread(
-                24,
+                "24",
                 "main-one",
                 ErrorType.ANDROID,
                 false,

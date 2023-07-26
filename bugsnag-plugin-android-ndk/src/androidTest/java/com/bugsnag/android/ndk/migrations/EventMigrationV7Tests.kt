@@ -177,7 +177,7 @@ class EventMigrationV7Tests : EventMigrationTest() {
                     mapOf(
                         "name" to "Thread #$index",
                         "state" to "paused-$index",
-                        "id" to 1000L + index,
+                        "id" to (1000L + index).toString(),
                         "type" to "c"
                     ),
                     thread

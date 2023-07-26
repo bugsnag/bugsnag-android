@@ -28,7 +28,7 @@ class ThreadDeserializer implements MapDeserializer<Thread> {
         Boolean errorReportingThread = MapUtils.<Boolean>getOrNull(map, "errorReportingThread");
         errorReportingThread = errorReportingThread == null ? false : errorReportingThread;
         return new Thread(
-                MapUtils.<Number>getOrThrow(map, "id").longValue(),
+                MapUtils.<Long>getOrThrow(map, "id").toString(),
                 MapUtils.<String>getOrThrow(map, "name"),
                 ErrorType.valueOf(type.toUpperCase(Locale.US)),
                 errorReportingThread,
