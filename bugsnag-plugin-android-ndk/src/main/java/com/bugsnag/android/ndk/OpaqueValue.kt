@@ -26,7 +26,7 @@ internal class OpaqueValue(val json: String) {
             return value.toByteArray().size < MAX_NDK_STRING_LENGTH
         }
 
-        fun encode(value: Any): String {
+        private fun encode(value: Any): String {
             val writer = StringWriter()
             writer.use { JsonStream(it).value(value, true) }
             return writer.toString()
@@ -41,7 +41,11 @@ internal class OpaqueValue(val json: String) {
             value is Boolean -> value
             value is Number -> value
             value is String && isStringNDKSupported(value) -> value
-            value is String || value is Map<*, *> || value is Collection<*> || value is Array<*> -> OpaqueValue(encode(value))
+            value is String ||
+                value is Map<*, *> ||
+                value is Collection<*> ||
+                value is Array<*> ->
+                OpaqueValue(encode(value))
             else -> null
         }
     }
