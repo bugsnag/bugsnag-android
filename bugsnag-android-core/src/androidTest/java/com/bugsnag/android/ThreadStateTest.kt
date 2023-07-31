@@ -204,7 +204,7 @@ class ThreadStateTest {
         )
         val json = streamableToJsonArray(state)
 
-        assertEquals(-1, json.getJSONObject(2).getInt("id"))
+        assertEquals("", json.getJSONObject(2).getString("id"))
         assert(
             json.getJSONObject(2).getString("name").endsWith(
                 " threads omitted as the maxReportedThreads limit (2) was exceeded]",
@@ -231,7 +231,7 @@ class ThreadStateTest {
         )
         val json = streamableToJsonArray(state)
 
-        assertEquals(-1, json.getJSONObject(4).getInt("id"))
+        assertEquals("", json.getJSONObject(4).getString("id"))
         assert(
             json.getJSONObject(4).getString("name").endsWith(
                 " threads omitted as the maxReportedThreads limit (4) was exceeded]",

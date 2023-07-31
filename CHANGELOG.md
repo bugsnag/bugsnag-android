@@ -18,6 +18,9 @@
 * Prevent free memory calculation from potentially crashing the app when `ActivityManager` cannot be reached.
   [#1861](https://github.com/bugsnag/bugsnag-android/pull/1861)
 
+* Thread.id is now stored and transmitted as a String. 
+  [#1862](https://github.com/bugsnag/bugsnag-android/pull/1862)
+
 ## 5.30.0 (2023-05-11)
 
 ### Enhancements

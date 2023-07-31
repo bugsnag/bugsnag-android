@@ -34,7 +34,7 @@
   "breadcrumbs": [],
   "threads": [
     {
-      "id": 5,
+      "id": "5",
       "name": "main",
       "type": "android",
       "state": "RUNNABLE",

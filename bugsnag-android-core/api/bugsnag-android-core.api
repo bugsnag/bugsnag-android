@@ -756,12 +756,12 @@ public final class com/bugsnag/android/Telemetry : java/lang/Enum {
 
 public class com/bugsnag/android/Thread : com/bugsnag/android/JsonStream$Streamable {
 	public fun getErrorReportingThread ()Z
-	public fun getId ()J
+	public fun getId ()Ljava/lang/String;
 	public fun getName ()Ljava/lang/String;
 	public fun getStacktrace ()Ljava/util/List;
 	public fun getState ()Lcom/bugsnag/android/Thread$State;
 	public fun getType ()Lcom/bugsnag/android/ErrorType;
-	public fun setId (J)V
+	public fun setId (Ljava/lang/String;)V
 	public fun setName (Ljava/lang/String;)V
 	public fun setStacktrace (Ljava/util/List;)V
 	public fun setState (Lcom/bugsnag/android/Thread$State;)V
@@ -785,13 +785,13 @@ public final class com/bugsnag/android/Thread$State : java/lang/Enum {
 }
 
 public final class com/bugsnag/android/ThreadInternal : com/bugsnag/android/JsonStream$Streamable {
-	public final fun getId ()J
+	public final fun getId ()Ljava/lang/String;
 	public final fun getName ()Ljava/lang/String;
 	public final fun getStacktrace ()Ljava/util/List;
 	public final fun getState ()Ljava/lang/String;
 	public final fun getType ()Lcom/bugsnag/android/ErrorType;
 	public final fun isErrorReportingThread ()Z
-	public final fun setId (J)V
+	public final fun setId (Ljava/lang/String;)V
 	public final fun setName (Ljava/lang/String;)V
 	public final fun setStacktrace (Ljava/util/List;)V
 	public final fun setState (Ljava/lang/String;)V

@@ -383,7 +383,9 @@ void bsg_serialize_threads(const bugsnag_event *event, JSON_Array *threads) {
     json_array_append_value(threads, thread_val);
 
     const bsg_thread *thread = &event->threads[index];
-    json_object_set_number(json_thread, "id", (double)thread->id);
+    char buffer[32];
+    sprintf(buffer, "%d", thread->id);
+    json_object_set_string(json_thread, "id", buffer);
     json_object_set_string(json_thread, "name", thread->name);
     json_object_set_string(json_thread, "state", thread->state);
     json_object_set_string(json_thread, "type", "c");

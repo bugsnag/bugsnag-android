@@ -199,13 +199,7 @@ fun isInvalidApiKey(apiKey: String): Boolean {
     }
     // check whether each character is hexadecimal (either a digit or a-f).
     // this avoids using a regex to improve startup performance.
-    for (k in 0 until VALID_API_KEY_LEN) {
-        val chr = apiKey[k]
-        if (!chr.isDigit() && chr !in 'a'..'f') {
-            return true
-        }
-    }
-    return false
+    return !apiKey.all { it.isDigit() || it in 'a'..'f' }
 }
 
 internal fun sanitiseConfiguration(
