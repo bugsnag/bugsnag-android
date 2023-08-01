@@ -181,11 +181,33 @@ internal fun convertToImmutableConfig(
     )
 }
 
+private fun validateApiKey(value: String) {
+    if (isInvalidApiKey(value)) {
+        DebugLogger.w(
+            "Invalid configuration. apiKey should be a 32-character hexademical string, got $value"
+        )
+    }
+}
+
+@VisibleForTesting
+fun isInvalidApiKey(apiKey: String): Boolean {
+    if (apiKey.isNullOrEmpty()) {
+        throw IllegalArgumentException("No Bugsnag API Key set")
+    }
+    if (apiKey.length != VALID_API_KEY_LEN) {
+        return true
+    }
+    // check whether each character is hexadecimal (either a digit or a-f).
+    // this avoids using a regex to improve startup performance.
+    return !apiKey.all { it.isDigit() || it in 'a'..'f' }
+}
+
 internal fun sanitiseConfiguration(
     appContext: Context,
     configuration: Configuration,
     connectivity: Connectivity
 ): ImmutableConfig {
+    validateApiKey(configuration.apiKey)
     val packageName = appContext.packageName
     val packageManager = appContext.packageManager
     val packageInfo = runCatching { packageManager.getPackageInfo(packageName, 0) }.getOrNull()
@@ -256,3 +278,4 @@ private fun populateBuildUuid(appInfo: ApplicationInfo?): String? {
 
 internal const val RELEASE_STAGE_DEVELOPMENT = "development"
 internal const val RELEASE_STAGE_PRODUCTION = "production"
+internal const val VALID_API_KEY_LEN = 32

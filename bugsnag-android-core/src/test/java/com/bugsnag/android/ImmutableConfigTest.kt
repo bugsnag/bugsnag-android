@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import com.bugsnag.android.internal.convertToImmutableConfig
+import com.bugsnag.android.internal.isInvalidApiKey
 import com.bugsnag.android.internal.sanitiseConfiguration
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -267,5 +268,29 @@ internal class ImmutableConfigTest {
         val seed = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
         val config = sanitiseConfiguration(context, seed, connectivity)
         assertNull(config.buildUuid)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun testEmptyApiKey() {
+        val seed = Configuration("")
+        `when`(isInvalidApiKey(seed.apiKey)).thenThrow(IllegalArgumentException())
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun testSettingEmptyApiKey() {
+        val seed = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
+        seed.apiKey = ""
+        `when`(isInvalidApiKey(seed.apiKey)).thenThrow(IllegalArgumentException())
+        val config = sanitiseConfiguration(context, seed, connectivity)
+
+        assertEquals("", config.apiKey)
+    }
+
+    @Test
+    fun testSettingWrongSizeApiKey() {
+        val config = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
+        config.apiKey = "abfe05f"
+        assertTrue(isInvalidApiKey(config.apiKey))
+        assertEquals("abfe05f", config.apiKey)
     }
 }
