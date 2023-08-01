@@ -207,6 +207,7 @@ internal fun sanitiseConfiguration(
     configuration: Configuration,
     connectivity: Connectivity
 ): ImmutableConfig {
+    validateApiKey(configuration.apiKey)
     val packageName = appContext.packageName
     val packageManager = appContext.packageManager
     val packageInfo = runCatching { packageManager.getPackageInfo(packageName, 0) }.getOrNull()
@@ -232,8 +233,6 @@ internal fun sanitiseConfiguration(
         } else {
             configuration.logger = NoopLogger
         }
-    } else {
-        validateApiKey(configuration.apiKey)
     }
 
     if (configuration.versionCode == null || configuration.versionCode == 0) {
