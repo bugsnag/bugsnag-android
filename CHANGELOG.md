@@ -2,6 +2,11 @@
 
 ## TBD
 
+### Breaking Changes
+
+* Removed `bugsnag-android-ndk` module, as it has been superseded by `bugsnag-plugin-android-ndk`
+  [#1881](https://github.com/bugsnag/bugsnag-android/pull/1881)
+
 ### Enhancements
 
 * Added `Session.apiKey` so that it can be changed in an `OnSessionCallback`

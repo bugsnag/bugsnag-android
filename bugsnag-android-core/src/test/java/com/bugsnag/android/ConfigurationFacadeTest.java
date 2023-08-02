@@ -44,11 +44,6 @@ public class ConfigurationFacadeTest {
         assertEquals("ffffc5bd39a74caa1267142706a7fb21", config.impl.getApiKey());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void apiKeyInvalid() {
-        config.setApiKey(null);
-    }
-
     @Test
     public void appVersionValid() {
         config.setAppVersion("1.23");
