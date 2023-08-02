@@ -11,6 +11,7 @@ gradleEnterprise {
 
 include(
     ":bugsnag-android",
+    ":bugsnag-android-ndk",
     ":bugsnag-android-core",
     ":bugsnag-plugin-android-anr",
     ":bugsnag-plugin-android-ndk",

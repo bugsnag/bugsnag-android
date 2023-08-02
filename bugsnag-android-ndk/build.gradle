@@ -1,0 +1,15 @@
+plugins {
+    id("bugsnag-build-plugin")
+}
+
+bugsnagBuildOptions {
+    compilesCode = false
+}
+
+apply plugin: "com.android.library"
+
+dependencies {
+    api(project(":bugsnag-android-core"))
+    api(project(":bugsnag-plugin-android-anr"))
+    api(project(":bugsnag-plugin-android-ndk"))
+}
