@@ -4,5 +4,10 @@ android {
         jvmTarget = "1.6"
         apiVersion = "1.3"
         languageVersion = "1.4"
+        freeCompilerArgs += [
+                '-Xno-call-assertions',
+                '-Xno-receiver-assertions',
+                '-Xno-param-assertions'
+        ]
     }
 }
