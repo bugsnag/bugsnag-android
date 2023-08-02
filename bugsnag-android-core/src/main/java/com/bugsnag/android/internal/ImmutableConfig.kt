@@ -190,7 +190,7 @@ private fun validateApiKey(value: String) {
 }
 
 @VisibleForTesting
-fun isInvalidApiKey(apiKey: String): Boolean {
+fun isInvalidApiKey(apiKey: String?): Boolean {
     if (apiKey.isNullOrEmpty()) {
         throw IllegalArgumentException("No Bugsnag API Key set")
     }
