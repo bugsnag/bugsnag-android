@@ -286,6 +286,16 @@ internal class ImmutableConfigTest {
         assertEquals("", config.apiKey)
     }
 
+    @Test(expected = IllegalArgumentException::class)
+    fun testSettingNullApiKey() {
+        val seed = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
+        seed.apiKey = ""
+        `when`(isInvalidApiKey(seed.apiKey)).thenThrow(IllegalArgumentException())
+        val config = sanitiseConfiguration(context, seed, connectivity)
+
+        assertEquals(null, config.apiKey)
+    }
+
     @Test
     fun testSettingWrongSizeApiKey() {
         val config = Configuration("5d1ec5bd39a74caa1267142706a7fb21")

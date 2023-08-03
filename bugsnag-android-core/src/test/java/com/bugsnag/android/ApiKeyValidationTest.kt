@@ -12,6 +12,11 @@ internal class ApiKeyValidationTest {
         isInvalidApiKey("")
     }
 
+    @Test(expected = IllegalArgumentException::class)
+    fun testNullApiKey() {
+        isInvalidApiKey(null)
+    }
+
     @Test
     fun testWrongSizeApiKey() {
         assertTrue(isInvalidApiKey("abfe05f"))
