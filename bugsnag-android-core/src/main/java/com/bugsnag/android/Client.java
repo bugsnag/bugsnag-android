@@ -178,7 +178,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         final SystemServiceModule systemServiceModule = new SystemServiceModule(contextModule);
 
         // block until storage module has resolved everything
-        storageModule.resolveDependencies(bgTaskService, TaskType.IO);
+        storageModule.ensureLoaded();
 
         // setup further state trackers and data collection
         TrackerModule trackerModule = new TrackerModule(configModule,
@@ -190,7 +190,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
                 configModule, systemServiceModule, trackerModule,
                 bgTaskService, connectivity, storageModule.getDeviceId(),
                 storageModule.getInternalDeviceId(), memoryTrimState);
-        dataCollectionModule.resolveDependencies(bgTaskService, TaskType.IO);
+        dataCollectionModule.ensureLoaded();
         appDataCollector = dataCollectionModule.getAppDataCollector();
         deviceDataCollector = dataCollectionModule.getDeviceDataCollector();
 
@@ -201,7 +201,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         EventStorageModule eventStorageModule = new EventStorageModule(contextModule, configModule,
                 dataCollectionModule, bgTaskService, trackerModule, systemServiceModule, notifier,
                 callbackState);
-        eventStorageModule.resolveDependencies(bgTaskService, TaskType.IO);
+        eventStorageModule.ensureLoaded();
         eventStore = eventStorageModule.getEventStore();
 
         deliveryDelegate = new DeliveryDelegate(logger, eventStore,

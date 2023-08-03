@@ -1,37 +1,42 @@
 package com.bugsnag.android.internal.dag
 
-import com.bugsnag.android.internal.BackgroundTaskService
-import com.bugsnag.android.internal.TaskType
+import kotlin.reflect.KProperty
+
+private typealias DependencyRef = Int
 
 internal abstract class DependencyModule {
 
-    private val properties = mutableListOf<Lazy<*>>()
+    private val dependencies = mutableListOf<DependencyModule>()
 
-    /**
-     * Creates a new [Lazy] property that is marked as an object that should be resolved off the
-     * main thread when [resolveDependencies] is called.
-     */
-    fun <T> future(initializer: () -> T): Lazy<T> {
-        val lazy = lazy {
-            initializer()
+    private var state: Int = STATE_PENDING
+
+    open fun load() = Unit
+
+    fun ensureLoaded() {
+        if (state != 0) {
+            return
         }
-        properties.add(lazy)
-        return lazy
+
+        state = STATE_LOADING
+        dependencies.forEach(DependencyModule::ensureLoaded)
+        load()
+        state = STATE_LOADED
     }
 
-    /**
-     * Blocks until all dependencies in the module have been constructed. This provides the option
-     * for modules to construct objects in a background thread, then have a user block on another
-     * thread until all the objects have been constructed.
-     */
-    fun resolveDependencies(bgTaskService: BackgroundTaskService, taskType: TaskType) {
-        kotlin.runCatching {
-            bgTaskService.submitTask(
-                taskType,
-                Runnable {
-                    properties.forEach { it.value }
-                }
-            ).get()
-        }
+    protected fun dependencyRef(module: DependencyModule): DependencyRef {
+        val id = dependencies.size
+        dependencies.add(module)
+        return id
+    }
+
+    protected operator fun <T> DependencyRef.getValue(thisRef: Any?, property: KProperty<*>): T {
+        @Suppress("UNCHECKED_CAST")
+        return dependencies[this] as T
+    }
+
+    private companion object {
+        const val STATE_PENDING = 0
+        const val STATE_LOADING = 1
+        const val STATE_LOADED = 2
     }
 }

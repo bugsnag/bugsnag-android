@@ -8,42 +8,60 @@ import com.bugsnag.android.internal.dag.DependencyModule
  * A dependency module which constructs the objects that store information to disk in Bugsnag.
  */
 internal class StorageModule(
-    appContext: Context,
-    immutableConfig: ImmutableConfig,
-    logger: Logger
+    private val appContext: Context,
+    private val immutableConfig: ImmutableConfig,
+    private val logger: Logger
 ) : DependencyModule() {
 
-    val sharedPrefMigrator by future { SharedPrefMigrator(appContext) }
+    lateinit var sharedPrefMigrator: SharedPrefMigrator
+        private set
 
-    private val deviceIdStore by future {
-        DeviceIdStore(
+    var deviceId: String? = null
+        private set
+
+    var internalDeviceId: String? = null
+        private set
+
+    lateinit var userStore: UserStore
+        private set
+
+    lateinit var lastRunInfoStore: LastRunInfoStore
+        private set
+
+    lateinit var sessionStore: SessionStore
+        private set
+
+    var lastRunInfo: LastRunInfo? = null
+        private set
+
+    override fun load() {
+        sharedPrefMigrator = SharedPrefMigrator(appContext)
+
+        val deviceIdStore = DeviceIdStore(
             appContext,
             sharedPrefMigrator = sharedPrefMigrator,
             logger = logger
         )
-    }
 
-    val deviceId by future { deviceIdStore.loadDeviceId() }
+        deviceId = deviceIdStore.loadDeviceId()
+        internalDeviceId = deviceIdStore.loadInternalDeviceId()
 
-    val internalDeviceId by future { deviceIdStore.loadInternalDeviceId() }
-
-    val userStore by future {
-        UserStore(
+        userStore = UserStore(
             immutableConfig,
             deviceId,
             sharedPrefMigrator = sharedPrefMigrator,
             logger = logger
         )
+
+        lastRunInfoStore = LastRunInfoStore(immutableConfig)
+        sessionStore = SessionStore(immutableConfig, logger, null)
+        lastRunInfo = loadAndUpdateLastRunInfo()
     }
 
-    val lastRunInfoStore by future { LastRunInfoStore(immutableConfig) }
-
-    val sessionStore by future { SessionStore(immutableConfig, logger, null) }
-
-    val lastRunInfo by future {
+    private fun loadAndUpdateLastRunInfo(): LastRunInfo? {
         val info = lastRunInfoStore.load()
         val currentRunInfo = LastRunInfo(0, crashed = false, crashedDuringLaunch = false)
         lastRunInfoStore.persist(currentRunInfo)
-        info
+        return info
     }
 }

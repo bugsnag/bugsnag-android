@@ -13,17 +13,25 @@ internal class EventStorageModule(
     contextModule: ContextModule,
     configModule: ConfigModule,
     dataCollectionModule: DataCollectionModule,
-    bgTaskService: BackgroundTaskService,
+    private val bgTaskService: BackgroundTaskService,
     trackerModule: TrackerModule,
     systemServiceModule: SystemServiceModule,
-    notifier: Notifier,
-    callbackState: CallbackState
+    private val notifier: Notifier,
+    private val callbackState: CallbackState
 ) : DependencyModule() {
+
+    private val contextModule: ContextModule by dependencyRef(contextModule)
+    private val dataCollectionModule: DataCollectionModule by dependencyRef(dataCollectionModule)
+    private val trackerModule: TrackerModule by dependencyRef(trackerModule)
+    private val systemServiceModule: SystemServiceModule by dependencyRef(systemServiceModule)
 
     private val cfg = configModule.config
 
-    private val delegate by future {
-        if (cfg.telemetry.contains(Telemetry.INTERNAL_ERRORS) == true)
+    lateinit var eventStore: EventStore
+        private set
+
+    override fun load() {
+        val delegate = if (cfg.telemetry.contains(Telemetry.INTERNAL_ERRORS))
             InternalReportDelegate(
                 contextModule.ctx,
                 cfg.logger,
@@ -35,7 +43,7 @@ internal class EventStorageModule(
                 notifier,
                 bgTaskService
             ) else null
-    }
 
-    val eventStore by future { EventStore(cfg, cfg.logger, notifier, bgTaskService, delegate, callbackState) }
+        eventStore = EventStore(cfg, cfg.logger, notifier, bgTaskService, delegate, callbackState)
+    }
 }
