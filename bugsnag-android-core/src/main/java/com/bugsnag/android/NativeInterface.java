@@ -85,7 +85,7 @@ public class NativeInterface {
     }
 
     private static @NonNull File getNativeReportPath(@NonNull File persistenceDirectory) {
-        return new File(persistenceDirectory, "bugsnag-native");
+        return new File(persistenceDirectory, "bugsnag/native");
     }
 
     private static @NonNull File getPersistenceDirectory() {

@@ -23,7 +23,7 @@ class SessionStoreMaxLimitTest {
     fun setUp() {
         storageDir = Files.createTempDirectory("tmp").toFile()
         storageDir.deleteRecursively()
-        sessionDir = File(storageDir, "bugsnag-sessions")
+        sessionDir = File(storageDir, "bugsnag/sessions")
     }
 
     @After

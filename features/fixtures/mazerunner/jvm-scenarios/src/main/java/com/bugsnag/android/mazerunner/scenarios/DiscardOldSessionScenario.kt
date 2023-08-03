@@ -28,7 +28,7 @@ internal class DiscardOldSessionScenario(
     }
 
     fun sessionDir(): File {
-        return File(context.cacheDir, "bugsnag-sessions")
+        return File(context.cacheDir, "bugsnag/sessions")
     }
 
     fun waitForSessionFile() {
