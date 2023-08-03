@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicReference
 internal class UserStore @JvmOverloads constructor(
     private val config: ImmutableConfig,
     private val deviceId: String?,
-    file: File = File(config.persistenceDirectory.value, "user-info"),
+    file: File = File(config.persistenceDirectory.value, "bugsnag/user-info"),
     private val sharedPrefMigrator: SharedPrefMigrator,
     private val logger: Logger
 ) {
