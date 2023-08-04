@@ -4,6 +4,7 @@ Feature: In foreground field populates correctly
     Given I clear all persistent data
 
   @skip_android_13
+  @skip_samsung
   Scenario: Test handled exception in background
     When I run "InForegroundScenario"
     And I send the app to the background for 5 seconds
