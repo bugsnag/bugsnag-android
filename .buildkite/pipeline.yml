@@ -262,7 +262,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "--app=build/fixture-r21-url.txt"
+          - "--app=@build/fixture-r21-url.txt"
           - "--farm=bb"
           - "--device=ANDROID_12"
           - "--no-tunnel"
