@@ -18,7 +18,7 @@ steps:
     commands:
       - bundle install
       - make fixture-r16
-      - bundle exec upload-app --app=./build/fixture-r16.apk --app-id-file=build/fixture-r16-url.txt
+      - bundle exec upload-app --farm=bb --app=./build/fixture-r16.apk --app-id-file=build/fixture-r16-url.txt
 
   - label: ':android: Build fixture APK r19'
     key: "fixture-r19"
@@ -32,7 +32,7 @@ steps:
     commands:
       - bundle install
       - make fixture-r19
-      - bundle exec upload-app --app=./build/fixture-r19.apk --app-id-file=build/fixture-r19-url.txt
+      - bundle exec upload-app --farm=bb --app=./build/fixture-r19.apk --app-id-file=build/fixture-r19-url.txt
 
   - label: ':android: Build fixture APK r21'
     key: "fixture-r21"
@@ -46,7 +46,7 @@ steps:
     commands:
       - bundle install
       - make fixture-r21
-      - bundle exec upload-app --app=./build/fixture-r21.apk --app-id-file=build/fixture-r21-url.txt
+      - bundle exec upload-app --farm=bb --app=./build/fixture-r21.apk --app-id-file=build/fixture-r21-url.txt
 
   - label: ':android: Coding standards checks'
     timeout_in_minutes: 20
