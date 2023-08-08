@@ -1,26 +1,59 @@
 package com.bugsnag.android.internal.dag
 
+import com.bugsnag.android.internal.BackgroundTaskService
+import com.bugsnag.android.internal.TaskType
+import java.util.concurrent.Future
 import kotlin.reflect.KProperty
 
 private typealias DependencyRef = Int
 
-internal abstract class DependencyModule {
+internal abstract class DependencyModule : Runnable {
 
     private val dependencies = mutableListOf<DependencyModule>()
 
     private var state: Int = STATE_PENDING
 
+    fun enqueue(bgTaskService: BackgroundTaskService): Future<*> {
+        return bgTaskService.submitTask(TaskType.DEFAULT, this)
+    }
+
     open fun load() = Unit
 
-    fun ensureLoaded() {
-        if (state != 0) {
-            return
-        }
+    override fun run() {
+        ensureLoaded()
+    }
 
-        state = STATE_LOADING
-        dependencies.forEach(DependencyModule::ensureLoaded)
-        load()
-        state = STATE_LOADED
+    @Synchronized
+    private fun ensureLoaded() {
+        when (state) {
+            STATE_LOADING -> {
+                while (state == STATE_LOADING) {
+                    @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+                    (this as Object).wait()
+                }
+            }
+
+            STATE_PENDING -> {
+                state = STATE_LOADING
+                try {
+                    dependencies.forEach(DependencyModule::ensureLoaded)
+                    load()
+                } finally {
+                    state = STATE_LOADED
+
+                    @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+                    (this as Object).notifyAll()
+                }
+            }
+        }
+    }
+
+    @Synchronized
+    fun await() {
+        while (state != STATE_LOADED) {
+            @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+            (this as Object).wait()
+        }
     }
 
     protected fun dependencyRef(module: DependencyModule): DependencyRef {

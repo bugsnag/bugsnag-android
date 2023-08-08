@@ -11,21 +11,28 @@ import com.bugsnag.android.internal.dag.DependencyModule
 internal class TrackerModule(
     configModule: ConfigModule,
     storageModule: StorageModule,
-    client: Client,
-    bgTaskService: BackgroundTaskService,
-    callbackState: CallbackState
+    private val client: Client,
+    private val bgTaskService: BackgroundTaskService,
+    private val callbackState: CallbackState
 ) : DependencyModule() {
 
     private val config = configModule.config
 
+    private val storageModule: StorageModule by dependencyRef(storageModule)
+
     val launchCrashTracker = LaunchCrashTracker(config)
 
-    val sessionTracker = SessionTracker(
-        config,
-        callbackState,
-        client,
-        storageModule.sessionStore,
-        config.logger,
-        bgTaskService
-    )
+    lateinit var sessionTracker: SessionTracker
+        private set
+
+    override fun load() {
+        sessionTracker = SessionTracker(
+            config,
+            callbackState,
+            client,
+            storageModule.sessionStore,
+            config.logger,
+            bgTaskService
+        )
+    }
 }

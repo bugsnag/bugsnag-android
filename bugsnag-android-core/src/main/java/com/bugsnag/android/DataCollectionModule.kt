@@ -16,16 +16,12 @@ internal class DataCollectionModule(
     configModule: ConfigModule,
     systemServiceModule: SystemServiceModule,
     trackerModule: TrackerModule,
+    storageModule: StorageModule,
     private val bgTaskService: BackgroundTaskService,
     private val connectivity: Connectivity,
-    private val deviceId: String?,
-    private val internalDeviceId: String?,
     private val memoryTrimState: MemoryTrimState
 ) : DependencyModule() {
 
-    private val ctx = contextModule.ctx
-    private val cfg = configModule.config
-    private val logger = cfg.logger
     private val deviceBuildInfo: DeviceBuildInfo = DeviceBuildInfo.defaultInfo()
     private val dataDir = Environment.getDataDirectory()
 
@@ -33,6 +29,7 @@ internal class DataCollectionModule(
     private val configModule: ConfigModule by dependencyRef(configModule)
     private val systemServiceModule: SystemServiceModule by dependencyRef(systemServiceModule)
     private val trackerModule: TrackerModule by dependencyRef(trackerModule)
+    private val storageModule: StorageModule by dependencyRef(storageModule)
 
     lateinit var appDataCollector: AppDataCollector
         private set
@@ -44,6 +41,9 @@ internal class DataCollectionModule(
         private set
 
     override fun load() {
+        val ctx = contextModule.ctx
+        val cfg = configModule.config
+
         appDataCollector = AppDataCollector(
             ctx,
             ctx.packageManager,
@@ -54,19 +54,19 @@ internal class DataCollectionModule(
             memoryTrimState
         )
 
-        rootDetector = RootDetector(logger = logger, deviceBuildInfo = deviceBuildInfo)
+        rootDetector = RootDetector(logger = cfg.logger, deviceBuildInfo = deviceBuildInfo)
 
         deviceDataCollector = DeviceDataCollector(
             connectivity,
             ctx,
             ctx.resources,
-            deviceId,
-            internalDeviceId,
+            storageModule.deviceId,
+            storageModule.internalDeviceId,
             deviceBuildInfo,
             dataDir,
             rootDetector,
             bgTaskService,
-            logger
+            cfg.logger
         )
     }
 }

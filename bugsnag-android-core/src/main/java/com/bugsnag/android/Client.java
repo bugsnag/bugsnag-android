@@ -161,8 +161,12 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         }
 
         // setup storage as soon as possible
-        final StorageModule storageModule = new StorageModule(appContext,
-                immutableConfig, logger);
+        final StorageModule storageModule = new StorageModule(
+                appContext, immutableConfig, logger);
+
+        // lookup system services
+        final SystemServiceModule systemServiceModule = new SystemServiceModule(contextModule);
+        systemServiceModule.enqueue(bgTaskService);
 
         // setup state trackers for bugsnag
         BugsnagStateModule bugsnagStateModule = new BugsnagStateModule(
@@ -174,23 +178,26 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         metadataState = bugsnagStateModule.getMetadataState();
         featureFlagState = bugsnagStateModule.getFeatureFlagState();
 
-        // lookup system services
-        final SystemServiceModule systemServiceModule = new SystemServiceModule(contextModule);
-
-        // block until storage module has resolved everything
-        storageModule.ensureLoaded();
-
         // setup further state trackers and data collection
         TrackerModule trackerModule = new TrackerModule(configModule,
                 storageModule, this, bgTaskService, callbackState);
+        trackerModule.enqueue(bgTaskService);
+
+        DataCollectionModule dataCollectionModule = new DataCollectionModule(contextModule,
+                configModule, systemServiceModule, trackerModule, storageModule,
+                bgTaskService, connectivity, memoryTrimState);
+        dataCollectionModule.enqueue(bgTaskService);
+
+        EventStorageModule eventStorageModule = new EventStorageModule(contextModule, configModule,
+                dataCollectionModule, bgTaskService, trackerModule, systemServiceModule, notifier,
+                callbackState);
+        eventStorageModule.enqueue(bgTaskService);
+
+        trackerModule.await();
         launchCrashTracker = trackerModule.getLaunchCrashTracker();
         sessionTracker = trackerModule.getSessionTracker();
 
-        DataCollectionModule dataCollectionModule = new DataCollectionModule(contextModule,
-                configModule, systemServiceModule, trackerModule,
-                bgTaskService, connectivity, storageModule.getDeviceId(),
-                storageModule.getInternalDeviceId(), memoryTrimState);
-        dataCollectionModule.ensureLoaded();
+        dataCollectionModule.await();
         appDataCollector = dataCollectionModule.getAppDataCollector();
         deviceDataCollector = dataCollectionModule.getDeviceDataCollector();
 
@@ -198,10 +205,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         userState = storageModule.getUserStore().load(configuration.getUser());
         storageModule.getSharedPrefMigrator().deleteLegacyPrefs();
 
-        EventStorageModule eventStorageModule = new EventStorageModule(contextModule, configModule,
-                dataCollectionModule, bgTaskService, trackerModule, systemServiceModule, notifier,
-                callbackState);
-        eventStorageModule.ensureLoaded();
+        eventStorageModule.await();
         eventStore = eventStorageModule.getEventStore();
 
         deliveryDelegate = new DeliveryDelegate(logger, eventStore,
