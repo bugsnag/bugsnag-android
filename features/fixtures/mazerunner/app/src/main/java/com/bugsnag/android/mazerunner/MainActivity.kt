@@ -80,7 +80,7 @@ class MainActivity : Activity() {
         val context = applicationContext
         val externalFilesDir = context.getExternalFilesDir(null)
         val configFile = File(externalFilesDir, "fixture_config.json")
-        logCiInfo("Attempting to read Maze Runner address from ${configFile.path}")
+        CiLog.info("Attempting to read Maze Runner address from ${configFile.path}")
 
         // Poll for the fixture config file
         val pollEnd = System.currentTimeMillis() + CONFIG_FILE_TIMEOUT
@@ -90,7 +90,7 @@ class MainActivity : Activity() {
                 val fixtureConfig = runCatching { JSONObject(fileContents) }.getOrNull()
                 mazeAddress = getStringSafely(fixtureConfig, "maze_address")
                 if (!mazeAddress.isNullOrBlank()) {
-                    logCiInfo("Maze Runner address set from config file: $mazeAddress")
+                    CiLog.info("Maze Runner address set from config file: $mazeAddress")
                     break
                 }
             }
@@ -100,19 +100,19 @@ class MainActivity : Activity() {
 
         // Assume we are running in legacy mode on BrowserStack
         if (mazeAddress.isNullOrBlank()) {
-            logCiWarn("Failed to read Maze Runner address from config file, defaulting to legacy BrowserStack address")
+            CiLog.warn("Failed to read Maze Runner address from config file, defaulting to legacy BrowserStack address")
             mazeAddress = "bs-local.com:9339"
         }
     }
 
     // Checks general internet and secure tunnel connectivity
     private fun checkNetwork() {
-        logCiInfo("Network connectivity: $networkStatus")
+        CiLog.info("Network connectivity: $networkStatus")
         try {
             URL("http://$mazeAddress").readText()
-            logCiInfo("Connection to Maze Runner seems ok")
+            CiLog.info("Connection to Maze Runner seems ok")
         } catch (e: Exception) {
-            logCiError("Connection to Maze Runner FAILED", e)
+            CiLog.error("Connection to Maze Runner FAILED", e)
         }
     }
 
@@ -135,12 +135,12 @@ class MainActivity : Activity() {
                     // Get the next command from Maze Runner
                     val commandStr = readCommand()
                     if (commandStr == "null") {
-                        logCiInfo("No Maze Runner commands queued")
+                        CiLog.info("No Maze Runner commands queued")
                         continue
                     }
 
                     // Log the received command
-                    logCiInfo("Received command: $commandStr")
+                    CiLog.info("Received command: $commandStr")
                     var command = JSONObject(commandStr)
                     val action = getStringSafely(command, "action")
                     val scenarioName = getStringSafely(command, "scenario_name")
@@ -168,7 +168,7 @@ class MainActivity : Activity() {
                         // Perform the given action on the UI thread
                         when (action) {
                             "noop" -> {
-                                logCiInfo("No Maze Runner command queuing, continuing to poll")
+                                CiLog.info("No Maze Runner command queuing, continuing to poll")
                             }
                             "start_bugsnag" -> {
                                 startBugsnag(scenarioName, scenarioMode, sessionsUrl, notifyUrl)
@@ -181,7 +181,7 @@ class MainActivity : Activity() {
                         }
                     }
                 } catch (e: Exception) {
-                    logCiError("Failed to fetch command from Maze Runner", e)
+                    CiLog.error("Failed to fetch command from Maze Runner", e)
                 }
             }
         }
@@ -193,10 +193,10 @@ class MainActivity : Activity() {
         try {
             return urlConnection.inputStream.use { it.reader().readText() }
         } catch (ioe: IOException) {
-            logCiError("Read of Maze Runner command failed", ioe)
+            CiLog.error("Read of Maze Runner command failed", ioe)
             try {
                 val errorMessage = urlConnection.errorStream.use { it.reader().readText() }
-                logCiError(
+                CiLog.error(
                     "Failed to GET $commandUrl (HTTP ${urlConnection.responseCode} " +
                         "${urlConnection.responseMessage}):\n" +
                         "${"-".repeat(errorMessage.width)}\n" +
@@ -239,14 +239,14 @@ class MainActivity : Activity() {
          * unhandled Exceptions
          */
         mainHandler.post {
-            logCiInfo("Executing scenario")
+            CiLog.info("Executing scenario")
             scenario?.startScenario()
         }
     }
 
     // Clear persistent data (used to stop scenarios bleeding into each other)
     private fun clearPersistentData() {
-        logCiInfo("Clearing persistent data")
+        CiLog.info("Clearing persistent data")
         clearFolder("last-run-info")
         clearFolder("bugsnag-errors")
         clearFolder("bugsnag-native")

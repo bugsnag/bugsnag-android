@@ -10,20 +10,11 @@ fun log(msg: String, e: Exception) {
     Log.e("BugsnagMazeRunner", msg, e)
 }
 
-fun logCiInfo(msg: String) {
-    Log.i("bugsnagci info", msg)
-}
-
-fun logCiWarn(msg: String) {
-    Log.w("bugsnagci warn", msg)
-}
-
-fun logCiError(msg: String) {
-    Log.e("bugsnagci error", msg)
-}
-
-fun logCiError(msg: String, e: Exception) {
-    Log.e("bugsnagci error", msg, e)
+object CiLog {
+    fun info(msg: String) = Log.i("bugsnagci info", msg)
+    fun warn(msg: String) = Log.w("bugsnagci warn", msg)
+    fun error(msg: String) = Log.e("bugsnagci error", msg)
+    fun error(msg: String, e: Exception) = Log.e("bugsnagci error", msg, e)
 }
 
 /**
