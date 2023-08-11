@@ -13,12 +13,12 @@ steps:
       queue: macos-12-arm
     artifact_paths:
       - "build/fixture-r16.apk"
-      - "build/fixture_r16_url.txt"
+      - "build/fixture-r16-url.txt"
       - "build/fixture-r16/*"
     commands:
       - bundle install
       - make fixture-r16
-      - bundle exec upload-app --app=./build/fixture-r16.apk --app-id-file=build/fixture_r16_url.txt
+      - bundle exec upload-app --farm=bb --app=./build/fixture-r16.apk --app-id-file=build/fixture-r16-url.txt
 
   - label: ':android: Build fixture APK r19'
     key: "fixture-r19"
@@ -27,12 +27,12 @@ steps:
       queue: macos-12-arm
     artifact_paths:
       - "build/fixture-r19.apk"
-      - "build/fixture_r19_url.txt"
+      - "build/fixture-r19-url.txt"
       - "build/fixture-r19/*"
     commands:
       - bundle install
       - make fixture-r19
-      - bundle exec upload-app --app=./build/fixture-r19.apk --app-id-file=build/fixture_r19_url.txt
+      - bundle exec upload-app --farm=bb --app=./build/fixture-r19.apk --app-id-file=build/fixture-r19-url.txt
 
   - label: ':android: Build fixture APK r21'
     key: "fixture-r21"
@@ -41,12 +41,12 @@ steps:
       queue: macos-12-arm
     artifact_paths:
       - "build/fixture-r21.apk"
-      - "build/fixture_r21_url.txt"
+      - "build/fixture-r21-url.txt"
       - "build/fixture-r21/*"
     commands:
       - bundle install
       - make fixture-r21
-      - bundle exec upload-app --app=./build/fixture-r21.apk --app-id-file=build/fixture_r21_url.txt
+      - bundle exec upload-app --farm=bb --app=./build/fixture-r21.apk --app-id-file=build/fixture-r21-url.txt
 
   - label: ':android: Coding standards checks'
     timeout_in_minutes: 20
@@ -101,7 +101,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r19.apk"
+          - "build/fixture-r19-url.txt"
           - "build/fixture-r19/*"
         upload:
           - "maze_output/failed/**/*"
@@ -112,7 +112,7 @@ steps:
         service-ports: true
         command:
           - "features/smoke_tests"
-          - "--app=build/fixture-r19.apk"
+          - "--app=@build/fixture-r19-url.txt"
           - "--farm=bb"
           - "--device=ANDROID_7"
           - "--no-tunnel"
@@ -130,7 +130,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r19.apk"
+          - "build/fixture-r19-url.txt"
           - "build/fixture-r19/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
@@ -139,7 +139,7 @@ steps:
         service-ports: true
         command:
           - "features/smoke_tests"
-          - "--app=build/fixture-r19.apk"
+          - "--app=@build/fixture-r19-url.txt"
           - "--farm=bb"
           - "--device=ANDROID_8"
           - "--no-tunnel"
@@ -157,7 +157,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r21.apk"
+          - "build/fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -168,7 +168,7 @@ steps:
         service-ports: true
         command:
           - "features/smoke_tests"
-          - "--app=build/fixture-r21.apk"
+          - "--app=@build/fixture-r21-url.txt"
           - "--farm=bb"
           - "--device=ANDROID_9"
           - "--no-tunnel"
@@ -186,7 +186,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r21.apk"
+          - "build/fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -197,7 +197,7 @@ steps:
         service-ports: true
         command:
           - "features/smoke_tests"
-          - "--app=build/fixture-r21.apk"
+          - "--app=@build/fixture-r21-url.txt"
           - "--farm=bb"
           - "--device=ANDROID_10"
           - "--no-tunnel"
@@ -216,7 +216,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r21.apk"
+          - "build/fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -227,7 +227,7 @@ steps:
         service-ports: true
         command:
           - "features/smoke_tests"
-          - "--app=build/fixture-r21.apk"
+          - "--app=@build/fixture-r21-url.txt"
           - "--farm=bb"
           - "--device=ANDROID_11"
           - "--no-tunnel"
@@ -250,7 +250,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r21.apk"
+          - "build/fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -262,7 +262,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "--app=build/fixture-r21.apk"
+          - "--app=@build/fixture-r21-url.txt"
           - "--farm=bb"
           - "--device=ANDROID_12"
           - "--no-tunnel"
@@ -281,7 +281,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r21.apk"
+          - "build/fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -293,7 +293,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=build/fixture-r21.apk"
+          - "--app=@build/fixture-r21-url.txt"
           - "--farm=bb"
           - "--device=ANDROID_12"
           - "--no-tunnel"
@@ -311,7 +311,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r21.apk"
+          - "build/fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -322,7 +322,7 @@ steps:
         service-ports: true
         command:
           - "features/smoke_tests"
-          - "--app=build/fixture-r21.apk"
+          - "--app=@build/fixture-r21-url.txt"
           - "--farm=bb"
           - "--device=ANDROID_13"
           - "--no-tunnel"
