@@ -210,6 +210,9 @@ Feature: Unhandled smoke tests
     And the event "metaData.opaque.nestedList.1" equals "one"
     And the event "metaData.opaque.nestedList.2" equals "two"
     And the event "metaData.opaque.nestedList.3" equals "three"
+    And the event "metaData.opaque.array.0" equals "a"
+    And the event "metaData.opaque.array.1" equals "b"
+    And the event "metaData.opaque.array.2" equals "c"
 
   @debug-safe
   Scenario: C++ exception thrown with overwritten config
