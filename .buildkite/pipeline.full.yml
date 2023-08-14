@@ -90,7 +90,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r19.apk"
+          - "build/fixture-r19-url.txt"
           - "build/fixture-r19/*"
         upload:
           - "maze_output/failed/**/*"
@@ -101,7 +101,7 @@ steps:
         service-ports: true
         command:
           - "features/full_tests"
-          - "--app=build/fixture-r19.apk"
+          - "--app=@build/fixture-r19-url.txt"
           - "--farm=bb"
           - "--device=ANDROID_7"
           - "--no-tunnel"
@@ -120,7 +120,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r19.apk"
+          - "build/fixture-r19-url.txt"
           - "build/fixture-r19/*"
         upload:
           - "maze_output/failed/**/*"
@@ -132,7 +132,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=build/fixture-r19.apk"
+          - "--app=@build/fixture-r19-url.txt"
           - "--farm=bb"
           - "--device=ANDROID_7"
           - "--no-tunnel"
@@ -150,7 +150,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r19.apk"
+          - "build/fixture-r19-url.txt"
           - "build/fixture-r19/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
@@ -159,7 +159,7 @@ steps:
         service-ports: true
         command:
           - "features/full_tests"
-          - "--app=build/fixture-r19.apk"
+          - "--app=@build/fixture-r19-url.txt"
           - "--farm=bb"
           - "--device=ANDROID_8"
           - "--no-tunnel"
@@ -178,7 +178,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r19.apk"
+          - "build/fixture-r19-url.txt"
           - "build/fixture-r19/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
@@ -188,7 +188,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=build/fixture-r19.apk"
+          - "--app=@build/fixture-r19-url.txt"
           - "--farm=bb"
           - "--device=ANDROID_8"
           - "--no-tunnel"
@@ -206,7 +206,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r21.apk"
+          - "build/fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -217,7 +217,7 @@ steps:
         service-ports: true
         command:
           - "features/full_tests"
-          - "--app=build/fixture-r21.apk"
+          - "--app=@build/fixture-r21-url.txt"
           - "--farm=bb"
           - "--device=ANDROID_9"
           - "--no-tunnel"
@@ -236,7 +236,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r21.apk"
+          - "build/fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -248,7 +248,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=build/fixture-r21.apk"
+          - "--app=@build/fixture-r21-url.txt"
           - "--farm=bb"
           - "--device=ANDROID_9"
           - "--no-tunnel"
@@ -266,7 +266,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r21.apk"
+          - "build/fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -278,7 +278,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "--app=build/fixture-r21.apk"
+          - "--app=@build/fixture-r21-url.txt"
           - "--farm=bb"
           - "--device=ANDROID_10"
           - "--no-tunnel"
@@ -296,7 +296,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r21.apk"
+          - "build/fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -308,7 +308,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=build/fixture-r21.apk"
+          - "--app=@build/fixture-r21-url.txt"
           - "--farm=bb"
           - "--device=ANDROID_10"
           - "--no-tunnel"
@@ -330,7 +330,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r21.apk"
+          - "build/fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -342,7 +342,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "--app=build/fixture-r21.apk"
+          - "--app=@build/fixture-r21-url.txt"
           - "--farm=bb"
           - "--device=ANDROID_11"
           - "--no-tunnel"
@@ -360,7 +360,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r21.apk"
+          - "build/fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -372,7 +372,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=build/fixture-r21.apk"
+          - "--app=@build/fixture-r21-url.txt"
           - "--farm=bb"
           - "--device=ANDROID_11"
           - "--no-tunnel"
@@ -390,7 +390,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r21.apk"
+          - "build/fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -402,7 +402,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "--app=build/fixture-r21.apk"
+          - "--app=@build/fixture-r21-url.txt"
           - "--farm=bb"
           - "--device=ANDROID_13"
           - "--no-tunnel"
@@ -420,7 +420,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r21.apk"
+          - "build/fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -432,7 +432,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=build/fixture-r21.apk"
+          - "--app=@build/fixture-r21-url.txt"
           - "--farm=bb"
           - "--device=ANDROID_13"
           - "--no-tunnel"
