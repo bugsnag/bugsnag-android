@@ -9,7 +9,7 @@ import java.net.HttpURLConnection.HTTP_CLIENT_TIMEOUT
 import java.net.HttpURLConnection.HTTP_OK
 import java.net.URL
 
-internal class DefaultDelivery(
+class DefaultDelivery(
     private val connectivity: Connectivity?,
     private val apiKey: String,
     private val maxStringValueLength: Int,

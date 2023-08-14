@@ -121,6 +121,8 @@ public class CXXSignalSmokeScenario extends Scenario {
 
         metadata.put("nestedMap", nestedMap);
 
+        metadata.put("array", new String[]{"a", "b", "c"});
+
         return metadata;
     }
 }

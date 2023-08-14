@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 internal typealias NetworkChangeCallback = (hasConnection: Boolean, networkState: String) -> Unit
 
-internal interface Connectivity {
+interface Connectivity {
     fun registerForNetworkChanges()
     fun unregisterForNetworkChanges()
     fun hasNetworkConnection(): Boolean

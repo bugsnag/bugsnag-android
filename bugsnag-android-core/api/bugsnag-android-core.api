@@ -234,6 +234,25 @@ public class com/bugsnag/android/Configuration : com/bugsnag/android/CallbackAwa
 	public fun setVersionCode (Ljava/lang/Integer;)V
 }
 
+public abstract interface class com/bugsnag/android/Connectivity {
+	public abstract fun hasNetworkConnection ()Z
+	public abstract fun registerForNetworkChanges ()V
+	public abstract fun retrieveNetworkAccessState ()Ljava/lang/String;
+	public abstract fun unregisterForNetworkChanges ()V
+}
+
+public final class com/bugsnag/android/DefaultDelivery : com/bugsnag/android/Delivery {
+	public static final field Companion Lcom/bugsnag/android/DefaultDelivery$Companion;
+	public static final field maxPayloadSize I
+	public fun <init> (Lcom/bugsnag/android/Connectivity;Ljava/lang/String;ILcom/bugsnag/android/Logger;)V
+	public fun deliver (Lcom/bugsnag/android/EventPayload;Lcom/bugsnag/android/DeliveryParams;)Lcom/bugsnag/android/DeliveryStatus;
+	public fun deliver (Lcom/bugsnag/android/Session;Lcom/bugsnag/android/DeliveryParams;)Lcom/bugsnag/android/DeliveryStatus;
+	public final fun deliver (Ljava/lang/String;[BLjava/util/Map;)Lcom/bugsnag/android/DeliveryStatus;
+}
+
+public final class com/bugsnag/android/DefaultDelivery$Companion {
+}
+
 public abstract interface class com/bugsnag/android/Delivery {
 	public abstract fun deliver (Lcom/bugsnag/android/EventPayload;Lcom/bugsnag/android/DeliveryParams;)Lcom/bugsnag/android/DeliveryStatus;
 	public abstract fun deliver (Lcom/bugsnag/android/Session;Lcom/bugsnag/android/DeliveryParams;)Lcom/bugsnag/android/DeliveryStatus;
@@ -533,6 +552,18 @@ public final class com/bugsnag/android/NativeStackframe : com/bugsnag/android/Js
 	public final fun setSymbolAddress (Ljava/lang/Long;)V
 	public final fun setType (Lcom/bugsnag/android/ErrorType;)V
 	public fun toStream (Lcom/bugsnag/android/JsonStream;)V
+}
+
+public final class com/bugsnag/android/NoopLogger : com/bugsnag/android/Logger {
+	public static final field INSTANCE Lcom/bugsnag/android/NoopLogger;
+	public fun d (Ljava/lang/String;)V
+	public fun d (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public fun e (Ljava/lang/String;)V
+	public fun e (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public fun i (Ljava/lang/String;)V
+	public fun i (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public fun w (Ljava/lang/String;)V
+	public fun w (Ljava/lang/String;Ljava/lang/Throwable;)V
 }
 
 public final class com/bugsnag/android/Notifier : com/bugsnag/android/JsonStream$Streamable {
