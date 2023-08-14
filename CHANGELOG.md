@@ -1,11 +1,25 @@
 # Changelog
 
-## TBD
+## 5.31.1 (2023-08-09)
+
+### Bug fixes
+
+* NDK Events will report array metadata when it is added in Java/Kotlin.
+  [#1875](https://github.com/bugsnag/bugsnag-android/pull/1875)
+
+## 5.31.0 (2023-07-26)
+
+### Breaking Changes
+
+* Removed `bugsnag-android-ndk` module, as it has been superseded by `bugsnag-plugin-android-ndk`
+  [#1881](https://github.com/bugsnag/bugsnag-android/pull/1881)
 
 ### Enhancements
 
 * Added `Session.apiKey` so that it can be changed in an `OnSessionCallback`
   [#1855](https://github.com/bugsnag/bugsnag-android/pull/1855)
+* `BroadcastReceiver` derived breadcrumbs will function as-expected on Android 14+ 
+  [#1871](https://github.com/bugsnag/bugsnag-android/pull/1871)
 
 * Configuration.persistUser is now true by default, matching the configuration of other platforms.
   [#1863](https://github.com/bugsnag/bugsnag-android/pull/1863)
