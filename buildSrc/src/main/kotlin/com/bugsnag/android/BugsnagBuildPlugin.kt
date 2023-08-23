@@ -145,7 +145,7 @@ class BugsnagBuildPlugin : Plugin<Project> {
 
             add("testImplementation", "junit:junit:${Versions.junitTestLib}")
             add("testImplementation", "org.mockito:mockito-core:${Versions.mockitoTestLib}")
-
+            add("testImplementation", "org.mockito:mockito-inline:${Versions.mockitoTestLib}")
             add(
                 "androidTestImplementation",
                 "org.mockito:mockito-android:${Versions.mockitoTestLib}"
