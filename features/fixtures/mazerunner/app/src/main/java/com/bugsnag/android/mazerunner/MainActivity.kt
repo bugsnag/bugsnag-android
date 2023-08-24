@@ -254,6 +254,7 @@ class MainActivity : Activity() {
         clearFolder("device-id")
         clearFolder("user-info")
         clearFolder("fake")
+        clearFolder("bugsnag")
     }
 
     private fun clearFolder(name: String) {

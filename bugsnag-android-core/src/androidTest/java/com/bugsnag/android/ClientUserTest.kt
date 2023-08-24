@@ -78,7 +78,7 @@ class ClientUserTest {
         client.setUser(USER_ID, USER_EMAIL, USER_NAME)
 
         // Check that the user was persisted
-        val file = File(client.config.persistenceDirectory.value, "user-info")
+        val file = File(client.config.persistenceDirectory.value, "bugsnag/user-info")
         val expected = "{\"id\":\"123456\",\"email\":\"mr.test@email.com\",\"name\":\"Mr Test\"}"
         assertEquals(expected, file.readText())
     }
@@ -90,9 +90,9 @@ class ClientUserTest {
 
         // Check that the user was not persisted
         val file = File(client.config.persistenceDirectory.value, "user-info")
-        assertEquals("", file.readText())
+        assertFalse(file.exists())
         client.setUser(USER_ID, USER_EMAIL, USER_NAME)
-        assertEquals("", file.readText())
+        assertFalse(file.exists())
     }
 
     @Test

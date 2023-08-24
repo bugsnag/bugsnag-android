@@ -89,7 +89,7 @@ internal class NativeInterfaceApiTest {
         val customDir = Files.createTempDirectory("custom").toFile()
         `when`(immutableConfig.persistenceDirectory).thenReturn(lazy { customDir })
         val observed = NativeInterface.getNativeReportPath()
-        val expected = File(customDir, "bugsnag-native")
+        val expected = File(customDir, "bugsnag/native")
         assertEquals(expected, observed)
     }
 

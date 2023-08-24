@@ -3,6 +3,7 @@ package com.bugsnag.android;
 import static com.bugsnag.android.SeverityReason.REASON_HANDLED_EXCEPTION;
 
 import com.bugsnag.android.internal.BackgroundTaskService;
+import com.bugsnag.android.internal.BugsnagStoreMigrator;
 import com.bugsnag.android.internal.ImmutableConfig;
 import com.bugsnag.android.internal.InternalMetrics;
 import com.bugsnag.android.internal.InternalMetricsImpl;
@@ -159,6 +160,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
                     + "https://docs.bugsnag.com/platforms/android/#basic-configuration");
 
         }
+
+        BugsnagStoreMigrator.moveToNewDirectory(
+                immutableConfig.getPersistenceDirectory().getValue());
 
         // setup storage as soon as possible
         final StorageModule storageModule = new StorageModule(appContext,
