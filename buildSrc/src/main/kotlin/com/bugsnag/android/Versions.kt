@@ -19,6 +19,7 @@ object Versions {
     val ktlintPlugin = "10.2.0"
     val dokkaPlugin = "1.5.0"
     val benchmarkPlugin = "1.0.0"
+    val protobufPlugin = "0.9.4"
 
     // dependencies
     val supportLib = "1.1.0"

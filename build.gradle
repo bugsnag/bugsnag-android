@@ -13,6 +13,7 @@ buildscript {
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:${Versions.dokkaPlugin}"
         classpath "org.jlleitschuh.gradle:ktlint-gradle:${Versions.ktlintPlugin}"
         classpath "androidx.benchmark:benchmark-gradle-plugin:${Versions.benchmarkPlugin}"
+        classpath "com.google.protobuf:protobuf-gradle-plugin:${Versions.protobufPlugin}"
     }
 }
 plugins {
