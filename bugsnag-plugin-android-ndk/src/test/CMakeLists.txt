@@ -12,15 +12,7 @@ add_library(bugsnag-ndk-test SHARED
     cpp/test_breadcrumbs.c
     cpp/test_bsg_event.c
     cpp/test_featureflags.c
-    cpp/migrations/EventMigrationV4Tests.cpp
-    cpp/migrations/EventMigrationV5Tests.cpp
-    cpp/migrations/EventMigrationV6Tests.cpp
-    cpp/migrations/EventMigrationV7Tests.cpp
-    cpp/migrations/EventMigrationV8Tests.cpp
-    cpp/migrations/EventMigrationV9Tests.cpp
-    cpp/migrations/EventMigrationV10Tests.cpp
-    cpp/migrations/EventMigrationV11Tests.cpp
-    cpp/migrations/EventMigrationV12Tests.cpp
+    cpp/migrations/EventOnDiskTests.cpp
     cpp/UnwindTest.cpp
 )
 target_link_libraries(bugsnag-ndk-test bugsnag-ndk)

@@ -5,15 +5,15 @@ import org.junit.Assert.assertNotEquals
 import org.junit.Assert.fail
 import org.junit.Test
 
-/** Migration v11 added telemetry data */
-class EventMigrationV11Tests : EventMigrationTest() {
+/** Migration v12 added telemetry data */
+class EventOnDiskTests : EventMigrationTest() {
 
     @Test
     /** check notifier and api key, since they aren't included in event JSON */
-    fun testMigrationPayloadInfo() {
+    fun testPayloadInfo() {
         val infoFile = createTempFile()
 
-        val info = migratePayloadInfo(infoFile.absolutePath)
+        val info = generatePayloadInfo(infoFile.absolutePath)
 
         assertEquals(
             mapOf(
@@ -27,10 +27,10 @@ class EventMigrationV11Tests : EventMigrationTest() {
     }
 
     @Test
-    fun testMigrateEventToLatest() {
+    fun testEvent() {
         val eventFile = createTempFile()
 
-        migrateEvent(eventFile.absolutePath)
+        generateAndStoreEvent(eventFile.absolutePath)
         assertNotEquals(0, eventFile.length())
 
         val output = parseJSON(eventFile)
@@ -215,10 +215,10 @@ class EventMigrationV11Tests : EventMigrationTest() {
         )
     }
 
-    /** Migrate an event to the latest format, writing JSON to tempFilePath */
-    external fun migrateEvent(tempFilePath: String)
+    /** Generate an event to the latest format, writing JSON to tempFilePath */
+    external fun generateAndStoreEvent(tempFilePath: String)
 
-    /** Migrate notifier and apiKey info to a bespoke structure (apiKey and
+    /** Generate notifier and apiKey info to a bespoke structure (apiKey and
      * notifier are not included in event info written to disk) */
-    external fun migratePayloadInfo(tempFilePath: String): String
+    external fun generatePayloadInfo(tempFilePath: String): String
 }
