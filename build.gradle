@@ -13,9 +13,9 @@ buildscript {
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:${Versions.dokkaPlugin}"
         classpath "org.jlleitschuh.gradle:ktlint-gradle:${Versions.ktlintPlugin}"
         classpath "androidx.benchmark:benchmark-gradle-plugin:${Versions.benchmarkPlugin}"
-        classpath "com.google.protobuf:protobuf-gradle-plugin:${Versions.protobufPlugin}"
     }
 }
+
 plugins {
     id "com.github.hierynomus.license" version "0.16.1"
     id "org.jetbrains.kotlinx.binary-compatibility-validator" version "0.13.1" apply false
