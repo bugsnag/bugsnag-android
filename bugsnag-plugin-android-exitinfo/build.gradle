@@ -30,4 +30,11 @@ protobuf {
     }
 }
 
+android {
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+}
+
 apiValidation.ignoredPackages += ["com.bugsnag.android.repackaged.server.os"]
