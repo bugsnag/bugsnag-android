@@ -50,7 +50,7 @@ class ForegroundDetector {
     private ActivityManager.RunningAppProcessInfo getProcessInfo() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             ActivityManager.RunningAppProcessInfo info =
-                new ActivityManager.RunningAppProcessInfo();
+                    new ActivityManager.RunningAppProcessInfo();
             ActivityManager.getMyMemoryState(info);
             return info;
         } else {

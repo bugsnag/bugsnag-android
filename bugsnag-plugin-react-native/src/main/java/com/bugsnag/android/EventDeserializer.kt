@@ -1,7 +1,5 @@
 package com.bugsnag.android
 
-import java.util.Locale
-
 internal class EventDeserializer(
     private val client: Client,
     private val projectPackages: Collection<String>
@@ -25,7 +23,7 @@ internal class EventDeserializer(
 
         val handledState = SeverityReason(
             severityReasonType,
-            Severity.valueOf(severity.toUpperCase(Locale.US)),
+            Severity.valueOf(severity.uppercase()),
             unhandled,
             originalUnhandled,
             null,

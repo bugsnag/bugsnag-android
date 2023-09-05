@@ -30,3 +30,6 @@ android {
         }
     }
 }
+
+apiValidation.ignoredPackages += ["com.bugsnag.android.repackaged.dslplatform.json"]
+

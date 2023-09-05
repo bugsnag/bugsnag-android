@@ -1,7 +1,5 @@
 package com.bugsnag.android
 
-import java.util.Locale
-
 /**
  * The BugsnagReactNativePlugin is invoked by the BugsnagReactNative class in the bugsnag-js repo.
  * Its responsibility is to update the native client when informed of state changes in the JS layer
@@ -89,7 +87,7 @@ class BugsnagReactNativePlugin : Plugin {
     fun leaveBreadcrumb(map: Map<String, Any?>?) {
         requireNotNull(map)
         val msg = map["message"] as String
-        val type = BreadcrumbType.valueOf((map["type"] as String).toUpperCase(Locale.US))
+        val type = BreadcrumbType.valueOf((map["type"] as String).uppercase())
         val obj = map["metadata"] ?: emptyMap<String, Any>()
         @Suppress("UNCHECKED_CAST")
         client.leaveBreadcrumb(msg, obj as Map<String, Any>, type)

@@ -16,7 +16,7 @@ internal class OpaqueValue(val json: String) {
             if (value.length >= MAX_NDK_STRING_LENGTH) return false
 
             // all chars are US-ASCII valid (0-127)?
-            if (value.all { ch: Char -> ch.toInt() <= US_ASCII_MAX_CODEPOINT }) {
+            if (value.all { ch: Char -> ch.code <= US_ASCII_MAX_CODEPOINT }) {
                 // US-ASCII values shorter than 64 characters are supported directly
                 return true
             }
