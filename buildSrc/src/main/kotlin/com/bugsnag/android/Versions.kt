@@ -15,7 +15,7 @@ object Versions {
 
     // plugins
     val androidGradlePlugin = "7.0.4"
-    val detektPlugin = "1.18.1"
+    val detektPlugin = "1.23.1"
     val ktlintPlugin = "10.2.0"
     val dokkaPlugin = "1.9.0"
     val benchmarkPlugin = "1.0.0"
