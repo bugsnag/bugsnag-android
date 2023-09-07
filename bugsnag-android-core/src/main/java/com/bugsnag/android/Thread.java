@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,6 +15,26 @@ public class Thread implements JsonStream.Streamable {
 
     private final ThreadInternal impl;
     private final Logger logger;
+
+    Thread(
+            String id,
+            @NonNull String name,
+            @NonNull ErrorType type,
+            boolean errorReportingThread,
+            @NonNull Thread.State state,
+            @NonNull Logger logger) {
+
+        this.impl = new ThreadInternal(
+                id,
+                name,
+                type,
+                errorReportingThread,
+                state.getDescriptor(),
+                new Stacktrace(new ArrayList<Stackframe>())
+        );
+
+        this.logger = logger;
+    }
 
     Thread(
             String id,
