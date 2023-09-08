@@ -1,5 +1,6 @@
 package com.bugsnag.android.internal
 
+import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.Callable
@@ -162,6 +163,17 @@ class BackgroundTaskService(
         }
 
         return SafeFuture(task, taskType)
+    }
+
+    @Throws(RejectedExecutionException::class)
+    fun execute(task: Runnable, taskType: TaskType) {
+        when (taskType) {
+            TaskType.ERROR_REQUEST -> errorExecutor.execute(task)
+            TaskType.SESSION_REQUEST -> sessionExecutor.execute(task)
+            TaskType.IO -> ioExecutor.execute(task)
+            TaskType.INTERNAL_REPORT -> internalReportExecutor.execute(task)
+            TaskType.DEFAULT -> defaultExecutor.execute(task)
+        }
     }
 
     /**

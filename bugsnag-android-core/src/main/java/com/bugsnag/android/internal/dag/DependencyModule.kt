@@ -2,21 +2,31 @@ package com.bugsnag.android.internal.dag
 
 import com.bugsnag.android.internal.BackgroundTaskService
 import com.bugsnag.android.internal.TaskType
+import java.util.concurrent.Future
+import java.util.concurrent.FutureTask
+import kotlin.reflect.KProperty
 
 internal abstract class DependencyModule {
 
-    private val properties = mutableListOf<Lazy<*>>()
+    private val properties = mutableListOf<FutureTask<*>>()
 
     /**
      * Creates a new [Lazy] property that is marked as an object that should be resolved off the
      * main thread when [resolveDependencies] is called.
      */
-    fun <T> future(initializer: () -> T): Lazy<T> {
-        val lazy = lazy {
-            initializer()
-        }
+    fun <T> future(initializer: () -> T): FutureTask<T> {
+        val lazy = FutureTask(initializer)
         properties.add(lazy)
         return lazy
+    }
+
+    protected operator fun <T> Future<T>.getValue(thisRef: Any, property: KProperty<*>): T {
+        return try {
+            get()
+        } catch (ex: Exception) {
+            @Suppress("UNCHECKED_CAST")
+            null as T
+        }
     }
 
     /**
@@ -26,12 +36,9 @@ internal abstract class DependencyModule {
      */
     fun resolveDependencies(bgTaskService: BackgroundTaskService, taskType: TaskType) {
         kotlin.runCatching {
-            bgTaskService.submitTask(
-                taskType,
-                Runnable {
-                    properties.forEach { it.value }
-                }
-            ).get()
+            properties.forEach { property ->
+                bgTaskService.execute(property, taskType)
+            }
         }
     }
 }
