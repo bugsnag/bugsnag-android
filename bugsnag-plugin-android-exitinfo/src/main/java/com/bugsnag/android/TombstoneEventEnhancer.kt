@@ -5,7 +5,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.bugsnag.android.Thread as BugsnagThread
 
-internal class TombstoneEnhancer(
+internal class TombstoneEventEnhancer(
     private val logger: Logger
 ) : (Event, ApplicationExitInfo) -> Unit {
     @RequiresApi(Build.VERSION_CODES.R)
@@ -27,11 +27,9 @@ internal class TombstoneEnhancer(
             currentThread.id == newThread.id
         }
         if (existingThread != null) {
+            existingThread.name = newThread.name
             existingThread.stacktrace.clear()
-            newThread.stacktrace.forEach { stackFrame ->
-                existingThread.stacktrace.add(stackFrame)
-            }
-
+            existingThread.stacktrace.addAll(newThread.stacktrace)
         } else {
             event.threads.add(newThread)
         }

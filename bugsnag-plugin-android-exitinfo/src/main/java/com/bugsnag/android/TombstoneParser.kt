@@ -3,10 +3,10 @@ package com.bugsnag.android
 import android.app.ApplicationExitInfo
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.bugsnag.android.Thread.State
 import com.bugsnag.android.repackaged.server.os.TombstoneProtos
 import com.bugsnag.android.repackaged.server.os.TombstoneProtos.Tombstone
 import com.bugsnag.android.Thread as BugsnagThread
-import com.bugsnag.android.Thread.State
 
 internal class TombstoneParser(
     private val logger: Logger
@@ -21,22 +21,27 @@ internal class TombstoneParser(
             val trace: Tombstone = exitInfo.traceInputStream?.use {
                 Tombstone.newBuilder().mergeFrom(it).build()
             } ?: return
-            convertToBugsnagThread(trace.threadsMap.values, threadConsumer)
+            extractTombstoneThreads(trace.threadsMap.values, threadConsumer)
         } catch (ex: Throwable) {
             logger.w("Tombstone input stream threw an Exception", ex)
         }
     }
 
-    private fun convertToBugsnagThread(
-        values: MutableCollection<TombstoneProtos.Thread>,
+    private fun extractTombstoneThreads(
+        values: Collection<TombstoneProtos.Thread>,
         threadConsumer: (BugsnagThread) -> Unit
     ) {
         values.forEach { thread ->
-            val stackFrames = thread.currentBacktraceList.map {
-                val stackFrame = Stackframe(it.functionName, it.fileName, it.relPc, null)
-                stackFrame.symbolAddress = it.functionOffset
-                stackFrame.loadAddress = it.fileMapOffset
-                stackFrame.codeIdentifier = it.buildId
+            val stacktrace = thread.currentBacktraceList.map { tombstoneTraceFrame ->
+                val stackFrame = Stackframe(
+                    tombstoneTraceFrame.functionName,
+                    tombstoneTraceFrame.fileName,
+                    tombstoneTraceFrame.relPc,
+                    null
+                )
+                stackFrame.symbolAddress = tombstoneTraceFrame.functionOffset
+                stackFrame.loadAddress = tombstoneTraceFrame.fileMapOffset
+                stackFrame.codeIdentifier = tombstoneTraceFrame.buildId
                 return@map stackFrame
             }
 
@@ -48,7 +53,7 @@ internal class TombstoneParser(
                 State.UNKNOWN,
                 logger
             )
-            bugsnagThread.stacktrace = stackFrames
+            bugsnagThread.stacktrace = stacktrace
             threadConsumer(bugsnagThread)
         }
     }
