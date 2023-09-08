@@ -2,10 +2,11 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>ComplexMethod:NativeBridge.kt$NativeBridge$override fun onStateChange(event: StateEvent)</ID>
+    <ID>CyclomaticComplexMethod:NativeBridge.kt$NativeBridge$override fun onStateChange(event: StateEvent)</ID>
     <ID>LongMethod:EventOnDiskTests.kt$EventOnDiskTests$@Test fun testEvent()</ID>
     <ID>LongParameterList:NativeBridge.kt$NativeBridge$( apiKey: String, reportingDirectory: String, lastRunInfoPath: String, consecutiveLaunchCrashes: Int, autoDetectNdkCrashes: Boolean, apiLevel: Int, is32bit: Boolean, threadSendPolicy: Int )</ID>
     <ID>NestedBlockDepth:NativeBridge.kt$NativeBridge$private fun deliverPendingReports()</ID>
     <ID>TooManyFunctions:NativeBridge.kt$NativeBridge : StateObserver</ID>
+    <ID>UseCheckOrError:ResourceUtils.kt$throw IllegalStateException("Failed to read JSON from $resourceName")</ID>
   </CurrentIssues>
 </SmellBaseline>
