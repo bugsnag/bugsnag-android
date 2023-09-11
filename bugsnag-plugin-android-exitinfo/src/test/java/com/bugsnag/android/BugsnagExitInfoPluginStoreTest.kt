@@ -10,7 +10,7 @@ import org.mockito.Mockito.`when`
 import java.io.File
 import java.nio.file.Files
 
-internal class ExitInfoPluginStoreTest {
+internal class BugsnagExitInfoPluginStoreTest {
 
     private lateinit var file: File
     private lateinit var exitInfoPluginStore: ExitInfoPluginStore

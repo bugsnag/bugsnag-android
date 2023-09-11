@@ -24,7 +24,7 @@ internal class ExitInfoCallbackTest {
     private lateinit var context: Context
 
     @Mock
-    private lateinit var eventEnhancer: (Event, ApplicationExitInfo) -> Unit
+    private lateinit var nativeEnhancer: (Event, ApplicationExitInfo) -> Unit
 
     @Mock
     private lateinit var event: Event
@@ -40,9 +40,12 @@ internal class ExitInfoCallbackTest {
 
     private var exitInfos = listOf<ApplicationExitInfo>()
 
+    @Mock
+    private lateinit var anrEventEnhancer: (Event, ApplicationExitInfo) -> Unit
+
     @Before
     fun setUp() {
-        exitInfoCallback = ExitInfoCallback(context, eventEnhancer)
+        exitInfoCallback = ExitInfoCallback(context, nativeEnhancer, anrEventEnhancer)
         exitInfos = listOf(exitInfo1)
         `when`(context.getSystemService(any())).thenReturn(am)
         `when`(am.getHistoricalProcessExitReasons(any(), anyInt(), anyInt()))
@@ -54,7 +57,8 @@ internal class ExitInfoCallbackTest {
     fun testSessionIsNull() {
         event.session = null
         assertTrue(exitInfoCallback.onSend(event))
-        verify(eventEnhancer, times(0)).invoke(event, exitInfo1)
+        verify(nativeEnhancer, times(0)).invoke(event, exitInfo1)
+        verify(anrEventEnhancer, times(0)).invoke(event, exitInfo1)
     }
 
     @Test
@@ -62,7 +66,8 @@ internal class ExitInfoCallbackTest {
         `when`(exitInfos.first().processStateSummary).thenReturn("1".toByteArray())
         `when`(event.session?.id).thenReturn("1")
         assertTrue(exitInfoCallback.onSend(event))
-        verify(eventEnhancer, times(1)).invoke(event, exitInfo1)
+        verify(nativeEnhancer, times(0)).invoke(event, exitInfo1)
+        verify(anrEventEnhancer, times(0)).invoke(event, exitInfo1)
     }
 
     @Test
@@ -70,6 +75,37 @@ internal class ExitInfoCallbackTest {
         `when`(exitInfos.first().processStateSummary).thenReturn("1".toByteArray())
         `when`(event.session?.id).thenReturn("test")
         assertTrue(exitInfoCallback.onSend(event))
-        verify(eventEnhancer, times(0)).invoke(event, exitInfo1)
+        verify(nativeEnhancer, times(0)).invoke(event, exitInfo1)
+        verify(anrEventEnhancer, times(0)).invoke(event, exitInfo1)
+    }
+
+    @Test
+    fun testUseTombstoneEnhancer() {
+        `when`(exitInfos.first().processStateSummary).thenReturn("1".toByteArray())
+        `when`(event.session?.id).thenReturn("1")
+        `when`(exitInfo1.reason).thenReturn(ApplicationExitInfo.REASON_CRASH_NATIVE)
+        assertTrue(exitInfoCallback.onSend(event))
+        verify(nativeEnhancer, times(1)).invoke(event, exitInfo1)
+        verify(anrEventEnhancer, times(0)).invoke(event, exitInfo1)
+    }
+
+    @Test
+    fun testUseTraceEnhancer() {
+        `when`(exitInfos.first().processStateSummary).thenReturn("1".toByteArray())
+        `when`(event.session?.id).thenReturn("1")
+        `when`(exitInfo1.reason).thenReturn(ApplicationExitInfo.REASON_ANR)
+        assertTrue(exitInfoCallback.onSend(event))
+        verify(nativeEnhancer, times(0)).invoke(event, exitInfo1)
+        verify(anrEventEnhancer, times(1)).invoke(event, exitInfo1)
+    }
+
+    @Test
+    fun testInvalidExitInfo() {
+        `when`(exitInfos.first().processStateSummary).thenReturn("1".toByteArray())
+        `when`(event.session?.id).thenReturn("1")
+        `when`(exitInfo1.reason).thenReturn(ApplicationExitInfo.CONTENTS_FILE_DESCRIPTOR)
+        assertTrue(exitInfoCallback.onSend(event))
+        verify(nativeEnhancer, times(0)).invoke(event, exitInfo1)
+        verify(anrEventEnhancer, times(0)).invoke(event, exitInfo1)
     }
 }
