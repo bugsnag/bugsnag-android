@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import android.content.Context
+import com.bugsnag.android.internal.BackgroundTaskService
 import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.dag.DependencyModule
 
@@ -10,8 +11,9 @@ import com.bugsnag.android.internal.dag.DependencyModule
 internal class StorageModule(
     private val appContext: Context,
     private val immutableConfig: ImmutableConfig,
-    private val logger: Logger
-) : DependencyModule() {
+    private val logger: Logger,
+    bgTaskService: BackgroundTaskService
+) : DependencyModule(bgTaskService) {
 
     lateinit var sharedPrefMigrator: SharedPrefMigrator
         private set

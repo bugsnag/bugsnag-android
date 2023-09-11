@@ -17,10 +17,10 @@ internal class DataCollectionModule(
     systemServiceModule: SystemServiceModule,
     trackerModule: TrackerModule,
     storageModule: StorageModule,
-    private val bgTaskService: BackgroundTaskService,
+    bgTaskService: BackgroundTaskService,
     private val connectivity: Connectivity,
     private val memoryTrimState: MemoryTrimState
-) : DependencyModule() {
+) : DependencyModule(bgTaskService) {
 
     private val deviceBuildInfo: DeviceBuildInfo = DeviceBuildInfo.defaultInfo()
     private val dataDir = Environment.getDataDirectory()

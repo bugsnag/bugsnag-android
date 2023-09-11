@@ -13,12 +13,12 @@ internal class EventStorageModule(
     contextModule: ContextModule,
     configModule: ConfigModule,
     dataCollectionModule: DataCollectionModule,
-    private val bgTaskService: BackgroundTaskService,
+    bgTaskService: BackgroundTaskService,
     trackerModule: TrackerModule,
     systemServiceModule: SystemServiceModule,
     private val notifier: Notifier,
     private val callbackState: CallbackState
-) : DependencyModule() {
+) : DependencyModule(bgTaskService) {
 
     private val contextModule: ContextModule by dependencyRef(contextModule)
     private val dataCollectionModule: DataCollectionModule by dependencyRef(dataCollectionModule)

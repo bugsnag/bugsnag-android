@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.internal.BackgroundTaskService
 import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.dag.DependencyModule
 
@@ -9,8 +10,9 @@ import com.bugsnag.android.internal.dag.DependencyModule
  */
 internal class BugsnagStateModule(
     cfg: ImmutableConfig,
-    configuration: Configuration
-) : DependencyModule() {
+    configuration: Configuration,
+    bgTaskService: BackgroundTaskService
+) : DependencyModule(bgTaskService) {
 
     val clientObservable = ClientObservable()
 

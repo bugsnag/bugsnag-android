@@ -12,9 +12,9 @@ internal class TrackerModule(
     configModule: ConfigModule,
     storageModule: StorageModule,
     private val client: Client,
-    private val bgTaskService: BackgroundTaskService,
+    bgTaskService: BackgroundTaskService,
     private val callbackState: CallbackState
-) : DependencyModule() {
+) : DependencyModule(bgTaskService) {
 
     private val config = configModule.config
 

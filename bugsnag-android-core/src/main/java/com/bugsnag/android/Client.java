@@ -123,7 +123,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
      * @param configuration  a configuration for the Client
      */
     public Client(@NonNull Context androidContext, @NonNull final Configuration configuration) {
-        ContextModule contextModule = new ContextModule(androidContext);
+        ContextModule contextModule = new ContextModule(androidContext, bgTaskService);
         appContext = contextModule.getCtx();
 
         notifier = configuration.getNotifier();
@@ -144,7 +144,13 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         });
 
         // set sensible defaults for delivery/project packages etc if not set
-        ConfigModule configModule = new ConfigModule(contextModule, configuration, connectivity);
+        ConfigModule configModule = new ConfigModule(
+                contextModule,
+                configuration,
+                connectivity,
+                bgTaskService
+        );
+        configModule.await();
         immutableConfig = configModule.getConfig();
         logger = immutableConfig.getLogger();
 
@@ -162,15 +168,20 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
         // setup storage as soon as possible
         final StorageModule storageModule = new StorageModule(
-                appContext, immutableConfig, logger);
+                appContext, immutableConfig, logger, bgTaskService);
+        storageModule.enqueue();
 
         // lookup system services
-        final SystemServiceModule systemServiceModule = new SystemServiceModule(contextModule);
-        systemServiceModule.enqueue(bgTaskService);
+        final SystemServiceModule systemServiceModule = new SystemServiceModule(
+                contextModule,
+                bgTaskService
+        );
+        systemServiceModule.enqueue();
 
         // setup state trackers for bugsnag
         BugsnagStateModule bugsnagStateModule = new BugsnagStateModule(
-                immutableConfig, configuration);
+                immutableConfig, configuration, bgTaskService);
+        bugsnagStateModule.await();
         clientObservable = bugsnagStateModule.getClientObservable();
         callbackState = bugsnagStateModule.getCallbackState();
         breadcrumbState = bugsnagStateModule.getBreadcrumbState();
@@ -181,17 +192,17 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         // setup further state trackers and data collection
         TrackerModule trackerModule = new TrackerModule(configModule,
                 storageModule, this, bgTaskService, callbackState);
-        trackerModule.enqueue(bgTaskService);
+        trackerModule.enqueue();
 
         DataCollectionModule dataCollectionModule = new DataCollectionModule(contextModule,
                 configModule, systemServiceModule, trackerModule, storageModule,
                 bgTaskService, connectivity, memoryTrimState);
-        dataCollectionModule.enqueue(bgTaskService);
+        dataCollectionModule.enqueue();
 
         EventStorageModule eventStorageModule = new EventStorageModule(contextModule, configModule,
                 dataCollectionModule, bgTaskService, trackerModule, systemServiceModule, notifier,
                 callbackState);
-        eventStorageModule.enqueue(bgTaskService);
+        eventStorageModule.enqueue();
 
         trackerModule.await();
         launchCrashTracker = trackerModule.getLaunchCrashTracker();
