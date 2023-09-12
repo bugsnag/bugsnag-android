@@ -22,7 +22,9 @@ internal class ExitInfoCallback(
                 ?: return true
 
         try {
-            if (exitInfo.reason == ApplicationExitInfo.REASON_CRASH_NATIVE) {
+            if (exitInfo.reason == ApplicationExitInfo.REASON_CRASH_NATIVE ||
+                exitInfo.reason == ApplicationExitInfo.REASON_SIGNALED
+            ) {
                 nativeEnhancer(event, exitInfo)
             } else if (exitInfo.reason == ApplicationExitInfo.REASON_ANR) {
                 anrEventEnhancer(event, exitInfo)

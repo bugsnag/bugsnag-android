@@ -132,7 +132,7 @@ static void *create_full_event() {
 static const char *write_event(JNIEnv *env, jstring temp_file,
                                   void *(event_generator)()) {
   auto event_ctx = (bsg_environment *)calloc(1, sizeof(bsg_environment));
-  event_ctx->report_header.version = 12;
+  event_ctx->report_header.version = 13;
   const char *path = (*env).GetStringUTFChars(temp_file, nullptr);
   sprintf(event_ctx->next_event_path, "%s", path);
 

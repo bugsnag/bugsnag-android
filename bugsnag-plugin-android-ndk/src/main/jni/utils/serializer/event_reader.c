@@ -9,7 +9,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-const int BSG_MIGRATOR_CURRENT_VERSION = 12;
+const int BSG_MIGRATOR_CURRENT_VERSION = 13;
 
 void bsg_read_feature_flags(int fd, bool expect_verification,
                             bsg_feature_flag **out_feature_flags,

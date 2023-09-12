@@ -1,0 +1,11 @@
+public final class com/bugsnag/android/BugsnagExitInfoPlugin : com/bugsnag/android/OnSendCallback, com/bugsnag/android/Plugin {
+	public fun <init> ()V
+	public fun <init> (Z)V
+	public fun <init> (ZZ)V
+	public fun <init> (ZZZ)V
+	public synthetic fun <init> (ZZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun load (Lcom/bugsnag/android/Client;)V
+	public fun onSend (Lcom/bugsnag/android/Event;)Z
+	public fun unload ()V
+}
+
