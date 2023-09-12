@@ -80,7 +80,7 @@ internal class BackgroundTaskServiceTest {
     @Test
     fun testThreadConfinement() {
         val service = BackgroundTaskService()
-        TaskType.values().forEach { taskType ->
+        (TaskType.values().toSet() - TaskType.DEFAULT).forEach { taskType ->
             runThreadConfinementTest(service, taskType)
         }
     }

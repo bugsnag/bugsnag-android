@@ -1,14 +1,15 @@
 package com.bugsnag.android.internal
 
 import androidx.annotation.VisibleForTesting
+import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.FutureTask
-import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.RejectedExecutionException
+import java.util.concurrent.SynchronousQueue
 import java.util.concurrent.ThreadFactory
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
@@ -64,7 +65,7 @@ private class TaskTypeThread(runnable: Runnable, name: String, val taskType: Tas
 internal val JThread.taskType get() = (this as? TaskTypeThread)?.taskType
 
 internal fun createExecutor(name: String, type: TaskType, keepAlive: Boolean): ExecutorService {
-    val queue: BlockingQueue<Runnable> = LinkedBlockingQueue(TASK_QUEUE_SIZE)
+    val queue: BlockingQueue<Runnable> = ArrayBlockingQueue(TASK_QUEUE_SIZE)
     val threadFactory = ThreadFactory { TaskTypeThread(it, name, type) }
 
     // certain executors (error/session/io) should always keep their threads alive, but others
@@ -123,10 +124,13 @@ class BackgroundTaskService(
     ),
 
     @get:VisibleForTesting
-    internal val defaultExecutor: ExecutorService = createExecutor(
-        "Bugsnag Default thread",
-        TaskType.DEFAULT,
-        false
+    internal val defaultExecutor: ExecutorService = ThreadPoolExecutor(
+        0,
+        Integer.MAX_VALUE,
+        KEEP_ALIVE_SECS,
+        TimeUnit.SECONDS,
+        SynchronousQueue(),
+        ThreadFactory { JThread(it, "Bugsnag Default thread") }
     )
 ) {
 
