@@ -24,19 +24,16 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
      */
     private val disableProcessStateSummaryOverride: Boolean = false
 
-) : Plugin, OnSendCallback {
+) : Plugin {
 
     private var exitInfoCallback: ExitInfoCallback? = null
-
-    override fun onSend(event: Event): Boolean {
-        return exitInfoCallback?.onSend(event) ?: true
-    }
 
     override fun load(client: Client) {
         if (!disableProcessStateSummaryOverride) {
             client.addOnSession(
                 OnSessionCallback { session: Session ->
-                    val am = client.appContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+                    val am =
+                        client.appContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
                     am.setProcessStateSummary(session.id.toByteArray())
                     return@OnSessionCallback true
                 }
@@ -47,6 +44,7 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
             TombstoneEventEnhancer(client.logger),
             TraceEventEnhancer(client.logger, client.immutableConfig.projectPackages)
         )
+        client.addOnSend(exitInfoCallback)
     }
 
     override fun unload() {

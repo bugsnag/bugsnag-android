@@ -1187,4 +1187,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
     void setAutoDetectAnrs(boolean autoDetectAnrs) {
         pluginClient.setAutoDetectAnrs(this, autoDetectAnrs);
     }
+
+    void addOnSend(OnSendCallback callback) {
+        callbackState.addPreOnSend(callback);
+    }
 }
