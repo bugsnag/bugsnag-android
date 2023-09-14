@@ -8,7 +8,8 @@ import androidx.annotation.RequiresApi
 
 internal class ExitInfoCallback(
     private val context: Context,
-    private val eventEnhancer: (Event, ApplicationExitInfo) -> Unit
+    private val nativeEnhancer: (Event, ApplicationExitInfo) -> Unit,
+    private val anrEventEnhancer: (Event, ApplicationExitInfo) -> Unit
 ) : OnSendCallback {
 
     @RequiresApi(Build.VERSION_CODES.R)
@@ -16,10 +17,21 @@ internal class ExitInfoCallback(
         val am = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         val allExitInfo = am.getHistoricalProcessExitReasons(context.packageName, 0, MAX_EXIT_INFO)
         val sessionIdBytes = event.session?.id?.toByteArray() ?: return true
-        val exitInfo = allExitInfo.find { it.processStateSummary?.contentEquals(sessionIdBytes) == true }
-            ?: return true
+        val exitInfo =
+            allExitInfo.find { it.processStateSummary?.contentEquals(sessionIdBytes) == true }
+                ?: return true
 
-        eventEnhancer(event, exitInfo)
+        try {
+            if (exitInfo.reason == ApplicationExitInfo.REASON_CRASH_NATIVE ||
+                exitInfo.reason == ApplicationExitInfo.REASON_SIGNALED
+            ) {
+                nativeEnhancer(event, exitInfo)
+            } else if (exitInfo.reason == ApplicationExitInfo.REASON_ANR) {
+                anrEventEnhancer(event, exitInfo)
+            }
+        } catch (exc: Throwable) {
+            return true
+        }
         return true
     }
 
