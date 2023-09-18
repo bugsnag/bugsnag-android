@@ -152,4 +152,16 @@ class CallbackStateTest {
         assertFalse(state.runOnSendTasks({ event }, NoopLogger))
         assertEquals(0, count)
     }
+
+    @Test
+    fun testOnPreSend() {
+        val state = CallbackState()
+        state.addOnSend(OnSendCallback { true })
+        val onSendCallBack = state.onSendTasks.first()
+        state.addPreOnSend(OnSendCallback { true })
+        val expectedOnSendCallBackPosition = state.onSendTasks.indexOf(onSendCallBack)
+
+        assertEquals(2, state.onSendTasks.size)
+        assertEquals(1, expectedOnSendCallBackPosition)
+    }
 }
