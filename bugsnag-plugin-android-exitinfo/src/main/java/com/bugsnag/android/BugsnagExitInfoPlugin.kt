@@ -39,9 +39,10 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
                 }
             )
         }
+
         exitInfoCallback = ExitInfoCallback(
             client.appContext,
-            TombstoneEventEnhancer(client.logger),
+            TombstoneEventEnhancer(client.logger, listOpenFds),
             TraceEventEnhancer(client.logger, client.immutableConfig.projectPackages)
         )
         client.addOnSend(exitInfoCallback)

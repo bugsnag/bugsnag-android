@@ -24,7 +24,6 @@
     <ID>NestedBlockDepth:TraceParser.kt$TraceParser$private fun parseThreadAttributes(line: String)</ID>
     <ID>ReturnCount:TraceParser.kt$TraceParser$@VisibleForTesting internal fun parseNativeFrame(line: String): Stackframe?</ID>
     <ID>SwallowedException:ExitInfoCallback.kt$ExitInfoCallback$exc: Throwable</ID>
-    <ID>UnusedPrivateProperty:BugsnagExitInfoPlugin.kt$BugsnagExitInfoPlugin$/** * Whether to add the list of open FDs to correlated reports */ private val listOpenFds: Boolean = true</ID>
     <ID>UnusedPrivateProperty:BugsnagExitInfoPlugin.kt$BugsnagExitInfoPlugin$/** * Whether to report stored logcat messages metadata */ private val includeLogcat: Boolean = false</ID>
   </CurrentIssues>
 </SmellBaseline>
