@@ -15,15 +15,30 @@ internal class TombstoneParser(
     @RequiresApi(Build.VERSION_CODES.R)
     fun parse(
         exitInfo: ApplicationExitInfo,
-        threadConsumer: (BugsnagThread) -> Unit
+        listOpenFds: Boolean,
+        threadConsumer: (BugsnagThread) -> Unit,
+        fileDescriptorConsumer: (Int, String, String) -> Unit
     ) {
         try {
             val trace: Tombstone = exitInfo.traceInputStream?.use {
                 Tombstone.newBuilder().mergeFrom(it).build()
             } ?: return
             extractTombstoneThreads(trace.threadsMap.values, threadConsumer)
+
+            if (listOpenFds) {
+                extractTombstoneFd(trace.openFdsList, fileDescriptorConsumer)
+            }
         } catch (ex: Throwable) {
             logger.w("Tombstone input stream threw an Exception", ex)
+        }
+    }
+
+    private fun extractTombstoneFd(
+        fdsList: List<TombstoneProtos.FD>,
+        fDConsumer: (Int, String, String) -> Unit
+    ) {
+        fdsList.forEach { fd ->
+            fDConsumer(fd.fd, fd.path, fd.owner)
         }
     }
 

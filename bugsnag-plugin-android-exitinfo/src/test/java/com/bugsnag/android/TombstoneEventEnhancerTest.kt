@@ -3,6 +3,7 @@ package com.bugsnag.android
 import android.app.ApplicationExitInfo
 import com.bugsnag.android.internal.ImmutableConfig
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
@@ -12,7 +13,7 @@ internal class TombstoneEventEnhancerTest {
 
     private val logger = mock(Logger::class.java)
 
-    private val tombstoneEventEnhancer = TombstoneEventEnhancer(logger)
+    private val tombstoneEventEnhancer = TombstoneEventEnhancer(logger, true)
 
     @Test
     fun testTombstoneEnhancer() {
@@ -49,5 +50,9 @@ internal class TombstoneEventEnhancerTest {
         assertEquals(667096L, testThread.stacktrace.first().lineNumber)
         assertEquals("__rt_sigtimedwait", testThread.stacktrace.first().method)
         assertEquals("__start_thread", testThread.stacktrace.last().method)
+
+        val firstFd = event.getMetadata("Open FileDescriptors")!!["0"] as Map<*, *>
+        assertEquals("/dev/null", firstFd["path"])
+        assertNull(firstFd["owner"])
     }
 }

@@ -23,9 +23,18 @@ internal class TombstoneParserTest {
         val file = this.javaClass.getResourceAsStream("/tombstone_01.pb")
         `when`(exitInfo.traceInputStream).thenReturn(file)
         val threads = mutableListOf<Thread>()
-        TombstoneParser(logger).parse(exitInfo) {
-            threads.add(it)
-        }
+        val fileDescriptors = ArrayList<Map<String, Any>>()
+        TombstoneParser(logger).parse(exitInfo, true, { thread ->
+            threads.add(thread)
+        }, { fd, path, owner ->
+            fileDescriptors.add(
+                mapOf(
+                    "fd" to fd,
+                    "path" to path,
+                    "owner" to owner,
+                )
+            )
+        })
 
         assertEquals("30640", threads.first().id)
         assertEquals("30639", threads.last().id)
@@ -38,17 +47,33 @@ internal class TombstoneParserTest {
         assertEquals(8L, firstStackFrame.first().symbolAddress)
         assertEquals(0L, firstStackFrame.first().loadAddress)
         assertEquals("01331f74b0bb2cb958bdc15282b8ec7b", firstStackFrame.first().codeIdentifier)
+
+        assertEquals(145, fileDescriptors.size)
+        val firstFileDescriptor = fileDescriptors.first()
+        assertEquals(0, firstFileDescriptor["fd"])
+        assertEquals("/dev/null", firstFileDescriptor["path"])
+        assertEquals("", firstFileDescriptor["owner"])
     }
 
     @Test
     fun parseNullInputStream() {
         `when`(exitInfo.traceInputStream).thenReturn(null)
         val threads = mutableListOf<Thread>()
-        TombstoneParser(logger).parse(exitInfo) {
-            threads.add(it)
-        }
+        val fileDescriptors = ArrayList<Map<String, Any>>()
+        TombstoneParser(logger).parse(exitInfo, true, { thread ->
+            threads.add(thread)
+        }, { fd, path, owner ->
+            fileDescriptors.add(
+                mapOf(
+                    "fd" to fd,
+                    "path" to path,
+                    "owner" to owner,
+                )
+            )
+        })
         verify(exitInfo, times(1)).traceInputStream
         assertEquals(0, threads.size)
+        assertEquals(0, fileDescriptors.size)
     }
 
     @Test
@@ -56,11 +81,20 @@ internal class TombstoneParserTest {
         val junkData = ByteArray(128) { it.toByte() }
         `when`(exitInfo.traceInputStream).thenReturn(junkData.inputStream())
         val threads = mutableListOf<Thread>()
-        TombstoneParser(logger).parse(exitInfo) {
-            threads.add(it)
-        }
-
+        val fileDescriptors = ArrayList<Map<String, Any>>()
+        TombstoneParser(logger).parse(exitInfo, true, { thread ->
+            threads.add(thread)
+        }, { fd, path, owner ->
+            fileDescriptors.add(
+                mapOf(
+                    "fd" to fd,
+                    "path" to path,
+                    "owner" to owner,
+                )
+            )
+        })
         verify(exitInfo, times(1)).traceInputStream
         assertEquals(0, threads.size)
+        assertEquals(0, fileDescriptors.size)
     }
 }

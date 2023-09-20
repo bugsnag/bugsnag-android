@@ -6,17 +6,29 @@ import androidx.annotation.RequiresApi
 import com.bugsnag.android.Thread as BugsnagThread
 
 internal class TombstoneEventEnhancer(
-    private val logger: Logger
+    private val logger: Logger,
+    private val listOpenFds: Boolean
 ) : (Event, ApplicationExitInfo) -> Unit {
     @RequiresApi(Build.VERSION_CODES.R)
     override fun invoke(event: Event, exitInfo: ApplicationExitInfo) {
         try {
-            TombstoneParser(logger).parse(exitInfo) { thread ->
-                mergeThreadIntoEvent(
-                    thread,
-                    event
-                )
-            }
+            TombstoneParser(logger).parse(
+                exitInfo,
+                listOpenFds,
+                threadConsumer = { thread ->
+                    mergeThreadIntoEvent(
+                        thread,
+                        event
+                    )
+                },
+                { fd, path, owner ->
+                    val fdInfo = if (owner.isNotEmpty()) mapOf(
+                        "path" to path,
+                        "owner" to owner
+                    ) else mapOf("path" to path)
+                    event.addMetadata("Open FileDescriptors", fd.toString(), fdInfo)
+                }
+            )
         } catch (ex: Exception) {
             logger.w("could not parse tombstone file", ex)
         }
