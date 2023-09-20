@@ -24,17 +24,27 @@ internal class TombstoneParserTest {
         `when`(exitInfo.traceInputStream).thenReturn(file)
         val threads = mutableListOf<Thread>()
         val fileDescriptors = ArrayList<Map<String, Any>>()
-        TombstoneParser(logger).parse(exitInfo, true, { thread ->
-            threads.add(thread)
-        }, { fd, path, owner ->
-            fileDescriptors.add(
-                mapOf(
-                    "fd" to fd,
-                    "path" to path,
-                    "owner" to owner,
+        val logList = mutableListOf<String>()
+        TombstoneParser(logger).parse(
+            exitInfo = exitInfo,
+            listOpenFds = true,
+            includeLogcat = true,
+            threadConsumer = { thread ->
+                threads.add(thread)
+            },
+            fileDescriptorConsumer = { fd, path, owner ->
+                fileDescriptors.add(
+                    mapOf(
+                        "fd" to fd,
+                        "path" to path,
+                        "owner" to owner,
+                    )
                 )
-            )
-        })
+            },
+            logcatConsumer = { logMessage ->
+                logList.add(0, logMessage)
+            }
+        )
 
         assertEquals("30640", threads.first().id)
         assertEquals("30639", threads.last().id)
@@ -53,6 +63,8 @@ internal class TombstoneParserTest {
         assertEquals(0, firstFileDescriptor["fd"])
         assertEquals("/dev/null", firstFileDescriptor["path"])
         assertEquals("", firstFileDescriptor["owner"])
+
+        assertEquals(1, logList.size)
     }
 
     @Test
@@ -60,20 +72,31 @@ internal class TombstoneParserTest {
         `when`(exitInfo.traceInputStream).thenReturn(null)
         val threads = mutableListOf<Thread>()
         val fileDescriptors = ArrayList<Map<String, Any>>()
-        TombstoneParser(logger).parse(exitInfo, true, { thread ->
-            threads.add(thread)
-        }, { fd, path, owner ->
-            fileDescriptors.add(
-                mapOf(
-                    "fd" to fd,
-                    "path" to path,
-                    "owner" to owner,
+        val logList = mutableListOf<String>()
+        TombstoneParser(logger).parse(
+            exitInfo = exitInfo,
+            listOpenFds = true,
+            includeLogcat = true,
+            threadConsumer = { thread ->
+                threads.add(thread)
+            },
+            fileDescriptorConsumer = { fd, path, owner ->
+                fileDescriptors.add(
+                    mapOf(
+                        "fd" to fd,
+                        "path" to path,
+                        "owner" to owner,
+                    )
                 )
-            )
-        })
+            },
+            logcatConsumer = { logMessage ->
+                logList.add(0, logMessage)
+            }
+        )
         verify(exitInfo, times(1)).traceInputStream
         assertEquals(0, threads.size)
         assertEquals(0, fileDescriptors.size)
+        assertEquals(0, logList.size)
     }
 
     @Test
@@ -82,19 +105,30 @@ internal class TombstoneParserTest {
         `when`(exitInfo.traceInputStream).thenReturn(junkData.inputStream())
         val threads = mutableListOf<Thread>()
         val fileDescriptors = ArrayList<Map<String, Any>>()
-        TombstoneParser(logger).parse(exitInfo, true, { thread ->
-            threads.add(thread)
-        }, { fd, path, owner ->
-            fileDescriptors.add(
-                mapOf(
-                    "fd" to fd,
-                    "path" to path,
-                    "owner" to owner,
+        val logList = mutableListOf<String>()
+        TombstoneParser(logger).parse(
+            exitInfo = exitInfo,
+            listOpenFds = true,
+            includeLogcat = true,
+            threadConsumer = { thread ->
+                threads.add(thread)
+            },
+            fileDescriptorConsumer = { fd, path, owner ->
+                fileDescriptors.add(
+                    mapOf(
+                        "fd" to fd,
+                        "path" to path,
+                        "owner" to owner,
+                    )
                 )
-            )
-        })
+            },
+            logcatConsumer = { logMessage ->
+                logList.add(0, logMessage)
+            }
+        )
         verify(exitInfo, times(1)).traceInputStream
         assertEquals(0, threads.size)
         assertEquals(0, fileDescriptors.size)
+        assertEquals(0, logList.size)
     }
 }
