@@ -7,7 +7,8 @@ import com.bugsnag.android.Thread as BugsnagThread
 
 internal class TombstoneEventEnhancer(
     private val logger: Logger,
-    private val listOpenFds: Boolean
+    private val listOpenFds: Boolean,
+    private val includeLogcat: Boolean
 ) : (Event, ApplicationExitInfo) -> Unit {
     @RequiresApi(Build.VERSION_CODES.R)
     override fun invoke(event: Event, exitInfo: ApplicationExitInfo) {
@@ -15,6 +16,7 @@ internal class TombstoneEventEnhancer(
             TombstoneParser(logger).parse(
                 exitInfo,
                 listOpenFds,
+                includeLogcat,
                 threadConsumer = { thread ->
                     mergeThreadIntoEvent(
                         thread,
@@ -27,6 +29,9 @@ internal class TombstoneEventEnhancer(
                         "owner" to owner
                     ) else mapOf("path" to path)
                     event.addMetadata("Open FileDescriptors", fd.toString(), fdInfo)
+                },
+                { log ->
+                    event.addMetadata("Log Messages", "Log Messages", log)
                 }
             )
         } catch (ex: Exception) {

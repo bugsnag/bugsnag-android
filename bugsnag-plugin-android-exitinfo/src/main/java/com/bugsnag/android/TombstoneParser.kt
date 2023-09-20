@@ -16,8 +16,10 @@ internal class TombstoneParser(
     fun parse(
         exitInfo: ApplicationExitInfo,
         listOpenFds: Boolean,
+        includeLogcat: Boolean,
         threadConsumer: (BugsnagThread) -> Unit,
-        fileDescriptorConsumer: (Int, String, String) -> Unit
+        fileDescriptorConsumer: (Int, String, String) -> Unit,
+        logcatConsumer: (String) -> Unit
     ) {
         try {
             val trace: Tombstone = exitInfo.traceInputStream?.use {
@@ -28,9 +30,40 @@ internal class TombstoneParser(
             if (listOpenFds) {
                 extractTombstoneFd(trace.openFdsList, fileDescriptorConsumer)
             }
+
+            if (includeLogcat) {
+                extractTombstoneLogBuffers(trace.logBuffersList, logcatConsumer)
+            }
         } catch (ex: Throwable) {
             logger.w("Tombstone input stream threw an Exception", ex)
         }
+    }
+
+    private fun extractTombstoneLogBuffers(
+        logBuffersList: List<TombstoneProtos.LogBuffer>,
+        logcatConsumer: (String) -> Unit
+    ) {
+        val newLogList = mutableListOf<String>()
+        var priorityType: String
+        logBuffersList.forEach { logs ->
+            logs.logsList.forEach {
+                priorityType = when (it.priority) {
+                    2 -> "VERBOSE"
+                    3 -> "DEBUG"
+                    4 -> "INFO"
+                    5 -> "WARN"
+                    6 -> "ERROR"
+                    7 -> "ASSERT"
+                    else -> it.priority.toString()
+                }
+
+                newLogList.add(
+                    0,
+                    "\n${it.timestamp} ${it.tid} ${it.tag} $priorityType ${it.message}"
+                )
+            }
+        }
+        logcatConsumer(newLogList.toString())
     }
 
     private fun extractTombstoneFd(
