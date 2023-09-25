@@ -16,7 +16,7 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
     /**
      * Whether to report stored logcat messages metadata
      */
-    private val includeLogcat: Boolean = true,
+    private val includeLogcat: Boolean = false,
 
     /**
      * Turn of event correlation based on the processStateSummary field, this can
@@ -40,8 +40,13 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
             )
         }
 
+        val exitInfoPluginStore = ExitInfoPluginStore(client.immutableConfig)
+        val oldPid = exitInfoPluginStore.load()
+        exitInfoPluginStore.persist(android.os.Process.myPid())
+
         exitInfoCallback = ExitInfoCallback(
             client.appContext,
+            oldPid,
             TombstoneEventEnhancer(client.logger, listOpenFds, includeLogcat),
             TraceEventEnhancer(client.logger, client.immutableConfig.projectPackages)
         )

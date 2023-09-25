@@ -8,12 +8,3 @@ public final class com/bugsnag/android/BugsnagExitInfoPlugin : com/bugsnag/andro
 	public fun unload ()V
 }
 
-public final class com/bugsnag/android/TombstoneParserKt {
-	public static final field ASSERT I
-	public static final field DEBUG I
-	public static final field ERROR I
-	public static final field INFO I
-	public static final field VERBOSE I
-	public static final field WARN I
-}
-

@@ -30,7 +30,7 @@ internal class TombstoneEventEnhancer(
                     ) else mapOf("path" to path)
                     event.addMetadata("Open FileDescriptors", fd.toString(), fdInfo)
                 },
-                { log ->
+                logcatConsumer = { log ->
                     event.addMetadata("Log Messages", "Log Messages", log)
                 }
             )

@@ -8,16 +8,6 @@ import com.bugsnag.android.repackaged.server.os.TombstoneProtos
 import com.bugsnag.android.repackaged.server.os.TombstoneProtos.Tombstone
 import com.bugsnag.android.Thread as BugsnagThread
 
-/**
- * from android.util.Log
- */
-const val VERBOSE = 2
-const val DEBUG = 3
-const val INFO = 4
-const val WARN = 5
-const val ERROR = 6
-const val ASSERT = 7
-
 internal class TombstoneParser(
     private val logger: Logger
 ) {
@@ -56,22 +46,27 @@ internal class TombstoneParser(
         val newLogList = StringBuilder()
         logBuffersList.forEach { logs ->
             logs.logsList.forEach {
-                val priorityType = when (it.priority) {
-                    VERBOSE -> "VERBOSE"
-                    DEBUG -> "DEBUG"
-                    INFO -> "INFO"
-                    WARN -> "WARN"
-                    ERROR -> "ERROR"
-                    ASSERT -> "ASSERT"
-                    else -> it.priority.toString()
-                }
-                newLogList.append(
-                    "\n${it.timestamp} ${it.tid} ${it.tag} $priorityType ${it.message}"
-                )
+                newLogList.append(it.timestamp).append(' ')
+                    .append(it.tid).append(' ')
+                    .append(it.tag).append(' ')
+                    .append(priorityType(it)).append(' ')
+                    .append(it.message)
+                    .append('\n')
             }
         }
         logcatConsumer(newLogList.toString())
     }
+
+    private fun priorityType(it: TombstoneProtos.LogMessage): String =
+        when (it.priority) {
+            VERBOSE -> "V"
+            DEBUG -> "D"
+            INFO -> "I"
+            WARN -> "W"
+            ERROR -> "E"
+            ASSERT -> "A"
+            else -> it.priority.toString()
+        }
 
     private fun extractTombstoneFd(
         fdsList: List<TombstoneProtos.FD>,
@@ -89,10 +84,10 @@ internal class TombstoneParser(
         values.forEach { thread ->
             val stacktrace = thread.currentBacktraceList.map { tombstoneTraceFrame ->
                 val stackFrame = Stackframe(
-                    tombstoneTraceFrame.functionName,
-                    tombstoneTraceFrame.fileName,
-                    tombstoneTraceFrame.relPc,
-                    null
+                    method = tombstoneTraceFrame.functionName,
+                    file = tombstoneTraceFrame.fileName,
+                    lineNumber = tombstoneTraceFrame.relPc,
+                    inProject = null
                 )
                 stackFrame.symbolAddress = tombstoneTraceFrame.functionOffset
                 stackFrame.loadAddress = tombstoneTraceFrame.fileMapOffset
@@ -111,5 +106,17 @@ internal class TombstoneParser(
             bugsnagThread.stacktrace = stacktrace
             threadConsumer(bugsnagThread)
         }
+    }
+
+    /**
+     * from android.util.Log
+     */
+    companion object {
+        private const val VERBOSE = 2
+        private const val DEBUG = 3
+        private const val INFO = 4
+        private const val WARN = 5
+        private const val ERROR = 6
+        private const val ASSERT = 7
     }
 }
