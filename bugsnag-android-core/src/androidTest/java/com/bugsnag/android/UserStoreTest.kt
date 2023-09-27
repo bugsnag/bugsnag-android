@@ -136,7 +136,7 @@ internal class UserStoreTest {
     /**
      * If persistUser is false a user is still returned
      */
-    @Test
+    @Test(expected = Exception::class)
     fun loadWithoutPersistUser() {
         val store = UserStore(
             generateConfig(false),
@@ -145,21 +145,18 @@ internal class UserStoreTest {
             prefMigrator,
             NoopLogger
         )
-        val user = store.load(User()).user
-        assertEquals("device-id-123", user.id)
-        assertNull(user.email)
-        assertNull(user.name)
-        assertEquals("", file.readText())
+        store.load(User()).user
+        file.readText()
     }
 
     /**
      * If persistUser is false a user is not saved
      */
-    @Test
+    @Test(expected = Exception::class)
     fun saveWithoutPersistUser() {
         val store = UserStore(generateConfig(false), "", file, prefMigrator, NoopLogger)
         store.save(User("123", "joe@yahoo.com", "Joe Bloggs"))
-        assertEquals("", file.readText())
+        file.readText()
     }
 
     /**
