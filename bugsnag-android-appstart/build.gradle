@@ -1,0 +1,15 @@
+plugins {
+    id("bugsnag-build-plugin")
+}
+
+apply plugin: "com.android.library"
+
+dependencies {
+    api(project(":bugsnag-android-core"))
+}
+
+apply from: "../gradle/kotlin.gradle"
+
+dependencies {
+    implementation("androidx.startup:startup-runtime:1.0.0")
+}

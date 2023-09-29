@@ -1,0 +1,7 @@
+public final class com/bugsnag/android/BugsnagInitializer : androidx/startup/Initializer {
+	public fun <init> ()V
+	public fun create (Landroid/content/Context;)Lcom/bugsnag/android/Client;
+	public synthetic fun create (Landroid/content/Context;)Ljava/lang/Object;
+	public fun dependencies ()Ljava/util/List;
+}
+
