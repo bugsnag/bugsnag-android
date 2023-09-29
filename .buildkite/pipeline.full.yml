@@ -53,7 +53,7 @@ steps:
           - "--aws-public-ip"
           - "--fail-fast"
     concurrency: 25
-    concurrency_group: 'bitbar-app'
+    concurrency_group: 'bitbar'
     concurrency_method: eager
 
   - label: ':bitbar: Debug fixture smoke tests'
@@ -81,7 +81,7 @@ steps:
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-debug"
     concurrency: 25
-    concurrency_group: 'bitbar-app'
+    concurrency_group: 'bitbar'
     concurrency_method: eager
 
   - label: ':bitbar: Android 7 NDK r19 end-to-end tests - batch 1'
@@ -111,7 +111,7 @@ steps:
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
     concurrency: 25
-    concurrency_group: 'bitbar-app'
+    concurrency_group: 'bitbar'
     concurrency_method: eager
 
   - label: ':bitbar: Android 7 NDK r19 end-to-end tests - batch 2'
@@ -141,7 +141,7 @@ steps:
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
     concurrency: 25
-    concurrency_group: 'bitbar-app'
+    concurrency_group: 'bitbar'
     concurrency_method: eager
 
   - label: ':bitbar: Android 8 NDK r19 end-to-end tests - batch 1'
@@ -169,7 +169,7 @@ steps:
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
     concurrency: 25
-    concurrency_group: 'bitbar-app'
+    concurrency_group: 'bitbar'
     concurrency_method: eager
 
   - label: ':bitbar: Android 8 NDK r19 end-to-end tests - batch 2'
@@ -197,7 +197,7 @@ steps:
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
     concurrency: 25
-    concurrency_group: 'bitbar-app'
+    concurrency_group: 'bitbar'
     concurrency_method: eager
 
   - label: ':bitbar: Android 9 NDK r21 end-to-end tests - batch 1'
@@ -227,7 +227,7 @@ steps:
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
-    concurrency_group: 'bitbar-app'
+    concurrency_group: 'bitbar'
     concurrency_method: eager
 
   - label: ':bitbar: Android 9 NDK r21 end-to-end tests - batch 2'
@@ -257,7 +257,7 @@ steps:
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
-    concurrency_group: 'bitbar-app'
+    concurrency_group: 'bitbar'
     concurrency_method: eager
 
   - label: ':bitbar: Android 10 NDK r21 end-to-end tests - batch 1'
@@ -287,7 +287,7 @@ steps:
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
-    concurrency_group: 'bitbar-app'
+    concurrency_group: 'bitbar'
     concurrency_method: eager
 
   - label: ':bitbar: Android 10 NDK r21 end-to-end tests - batch 2'
@@ -317,7 +317,7 @@ steps:
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
-    concurrency_group: 'bitbar-app'
+    concurrency_group: 'bitbar'
     concurrency_method: eager
 
   # Android 11+ devices have the GWP-ASAN tool enabled which randomly samples native memory
@@ -351,7 +351,7 @@ steps:
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
-    concurrency_group: 'bitbar-app'
+    concurrency_group: 'bitbar'
     concurrency_method: eager
 
   - label: ':bitbar: Android 11 NDK r21 end-to-end tests - batch 2'
@@ -381,7 +381,7 @@ steps:
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
-    concurrency_group: 'bitbar-app'
+    concurrency_group: 'bitbar'
     concurrency_method: eager
 
   - label: ':bitbar: Android 13 NDK r21 end-to-end tests - batch 1'
@@ -411,7 +411,7 @@ steps:
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
-    concurrency_group: 'bitbar-app'
+    concurrency_group: 'bitbar'
     concurrency_method: eager
 
   - label: ':bitbar: Android 13 NDK r21 end-to-end tests - batch 2'
@@ -441,7 +441,7 @@ steps:
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
-    concurrency_group: 'bitbar-app'
+    concurrency_group: 'bitbar'
     concurrency_method: eager
 
   # If there is a tag present activate a manual publishing step
