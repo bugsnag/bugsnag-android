@@ -16,8 +16,10 @@ internal class TombstoneParser(
     fun parse(
         exitInfo: ApplicationExitInfo,
         listOpenFds: Boolean,
+        includeLogcat: Boolean,
         threadConsumer: (BugsnagThread) -> Unit,
-        fileDescriptorConsumer: (Int, String, String) -> Unit
+        fileDescriptorConsumer: (Int, String, String) -> Unit,
+        logcatConsumer: (String) -> Unit
     ) {
         try {
             val trace: Tombstone = exitInfo.traceInputStream?.use {
@@ -28,10 +30,43 @@ internal class TombstoneParser(
             if (listOpenFds) {
                 extractTombstoneFd(trace.openFdsList, fileDescriptorConsumer)
             }
+
+            if (includeLogcat) {
+                extractTombstoneLogBuffers(trace.logBuffersList, logcatConsumer)
+            }
         } catch (ex: Throwable) {
             logger.w("Tombstone input stream threw an Exception", ex)
         }
     }
+
+    private fun extractTombstoneLogBuffers(
+        logBuffersList: List<TombstoneProtos.LogBuffer>,
+        logcatConsumer: (String) -> Unit
+    ) {
+        val newLogList = StringBuilder()
+        logBuffersList.forEach { logs ->
+            logs.logsList.forEach {
+                newLogList.append(it.timestamp).append(' ')
+                    .append(it.tid).append(' ')
+                    .append(it.tag).append(' ')
+                    .append(priorityType(it)).append(' ')
+                    .append(it.message)
+                    .append('\n')
+            }
+        }
+        logcatConsumer(newLogList.toString())
+    }
+
+    private fun priorityType(it: TombstoneProtos.LogMessage): String =
+        when (it.priority) {
+            VERBOSE -> "V"
+            DEBUG -> "D"
+            INFO -> "I"
+            WARN -> "W"
+            ERROR -> "E"
+            ASSERT -> "A"
+            else -> it.priority.toString()
+        }
 
     private fun extractTombstoneFd(
         fdsList: List<TombstoneProtos.FD>,
@@ -49,10 +84,10 @@ internal class TombstoneParser(
         values.forEach { thread ->
             val stacktrace = thread.currentBacktraceList.map { tombstoneTraceFrame ->
                 val stackFrame = Stackframe(
-                    tombstoneTraceFrame.functionName,
-                    tombstoneTraceFrame.fileName,
-                    tombstoneTraceFrame.relPc,
-                    null
+                    method = tombstoneTraceFrame.functionName,
+                    file = tombstoneTraceFrame.fileName,
+                    lineNumber = tombstoneTraceFrame.relPc,
+                    inProject = null
                 )
                 stackFrame.symbolAddress = tombstoneTraceFrame.functionOffset
                 stackFrame.loadAddress = tombstoneTraceFrame.fileMapOffset
@@ -71,5 +106,17 @@ internal class TombstoneParser(
             bugsnagThread.stacktrace = stacktrace
             threadConsumer(bugsnagThread)
         }
+    }
+
+    /**
+     * from android.util.Log
+     */
+    companion object {
+        private const val VERBOSE = 2
+        private const val DEBUG = 3
+        private const val INFO = 4
+        private const val WARN = 5
+        private const val ERROR = 6
+        private const val ASSERT = 7
     }
 }
