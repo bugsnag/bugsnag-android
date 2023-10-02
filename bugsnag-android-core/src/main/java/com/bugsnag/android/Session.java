@@ -220,6 +220,10 @@ public final class Session implements JsonStream.Streamable, UserAware {
         return file != null && file.getName().endsWith("_v2.json");
     }
 
+    boolean isV3Payload() {
+        return file != null && file.getName().endsWith("_v3.json");
+    }
+
     Notifier getNotifier() {
         return notifier;
     }
@@ -227,8 +231,8 @@ public final class Session implements JsonStream.Streamable, UserAware {
     @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         if (file != null) {
-            if (isV2Payload()) {
-                serializeV2Payload(writer);
+            if (isV2Payload() || isV3Payload()) {
+                serializeV2V3Payload(writer);
             } else {
                 serializeV1Payload(writer);
             }
@@ -244,7 +248,7 @@ public final class Session implements JsonStream.Streamable, UserAware {
         }
     }
 
-    private void serializeV2Payload(@NonNull JsonStream writer) throws IOException {
+    private void serializeV2V3Payload(@NonNull JsonStream writer) throws IOException {
         writer.value(file);
     }
 
