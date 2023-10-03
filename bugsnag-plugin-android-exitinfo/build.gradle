@@ -15,6 +15,12 @@ dependencies {
     implementation 'com.google.protobuf:protobuf-javalite:3.24.2'
 }
 
+android.libraryVariants.configureEach { variant ->
+    variant.processJavaResourcesProvider.configure {
+        exclude('**/*.proto')
+    }
+}
+
 protobuf {
     protoc {
         artifact = 'com.google.protobuf:protoc:3.24.2'
@@ -22,7 +28,7 @@ protobuf {
     generateProtoTasks {
         all().configureEach { task ->
             task.builtins {
-                java{
+                java {
                     option "lite"
                 }
             }
