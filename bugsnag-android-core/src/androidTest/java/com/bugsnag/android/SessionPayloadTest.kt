@@ -13,7 +13,7 @@ import java.io.OutputStreamWriter
 import java.io.Writer
 import java.util.Date
 
-class SessionV2V3PayloadTest {
+class SessionPayloadTest {
     lateinit var session: Session
 
     @Before

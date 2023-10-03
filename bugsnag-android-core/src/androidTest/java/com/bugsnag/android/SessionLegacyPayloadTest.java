@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
-public class SessionV1PayloadTest {
+public class SessionLegacyPayloadTest {
 
     private File file;
 

@@ -106,32 +106,17 @@ class SessionTest {
     }
 
     @Test
-    fun isV2() {
-        assertFalse(session.isV2Payload)
+    fun isLegacyPayload() {
+        assertTrue(session.isLegacyPayload)
         val file = File("150450000000053a27e4e-967c-4e5c-91be-2e86f2eb7cdc.json")
-        assertFalse(Session(file, Notifier(), NoopLogger, apiKey).isV2Payload)
-        assertTrue(
+        assertTrue(Session(file, Notifier(), NoopLogger, apiKey).isLegacyPayload)
+        assertFalse(
             Session(
                 File("150450000000053a27e4e-967c-4e5c-91be-2e86f2eb7cdc_v2.json"),
                 Notifier(),
                 NoopLogger,
                 apiKey
-            ).isV2Payload
-        )
-    }
-
-    @Test
-    fun isV3() {
-        assertFalse(session.isV3Payload)
-        val file = File("150450000000053a27e4e-967c-4e5c-91be-2e86f2eb7cdc.json")
-        assertFalse(Session(file, Notifier(), NoopLogger, apiKey).isV3Payload)
-        assertTrue(
-            Session(
-                File("150450000000053a27e4e-967c-4e5c-91be-2e86f2eb7cdc_v3.json"),
-                Notifier(),
-                NoopLogger,
-                apiKey
-            ).isV3Payload
+            ).isLegacyPayload
         )
     }
 
