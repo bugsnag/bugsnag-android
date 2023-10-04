@@ -15,7 +15,6 @@ internal class ExitInfoPluginStore(config: ImmutableConfig) {
             try {
                 val text = pid.toString()
                 file.writeText(text)
-                logger.d("Persisted: $text")
             } catch (exc: Throwable) {
                 logger.w("Unexpectedly failed to persist PID.", exc)
             }
