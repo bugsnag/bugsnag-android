@@ -294,7 +294,7 @@ internal class ImmutableConfigTest {
         val seed = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
         seed.apiKey = ""
         `when`(isInvalidApiKey(seed.apiKey)).thenThrow(IllegalArgumentException())
-        val config = sanitiseConfiguration(context, seed, connectivity)
+        val config = sanitiseConfiguration(context, seed, connectivity, backgroundTaskService)
 
         assertEquals("", config.apiKey)
     }
@@ -304,7 +304,7 @@ internal class ImmutableConfigTest {
         val seed = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
         seed.apiKey = ""
         `when`(isInvalidApiKey(seed.apiKey)).thenThrow(IllegalArgumentException())
-        val config = sanitiseConfiguration(context, seed, connectivity)
+        val config = sanitiseConfiguration(context, seed, connectivity, backgroundTaskService)
 
         assertEquals(null, config.apiKey)
     }
