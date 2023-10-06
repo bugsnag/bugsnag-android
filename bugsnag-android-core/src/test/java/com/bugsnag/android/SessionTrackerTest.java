@@ -10,9 +10,6 @@ import static org.mockito.Mockito.when;
 import com.bugsnag.android.internal.BackgroundTaskService;
 import com.bugsnag.android.internal.ImmutableConfig;
 
-import android.app.ActivityManager;
-import android.content.Context;
-
 import androidx.annotation.NonNull;
 
 import org.junit.After;
@@ -48,12 +45,6 @@ public class SessionTrackerTest {
     DeviceDataCollector deviceDataCollector;
 
     @Mock
-    Context context;
-
-    @Mock
-    ActivityManager activityManager;
-
-    @Mock
     SessionStore sessionStore;
 
     @Mock
@@ -68,14 +59,12 @@ public class SessionTrackerTest {
     public void setUp() {
         contextState = new ContextState();
         when(client.getNotifier()).thenReturn(new Notifier());
-        when(client.getAppContext()).thenReturn(context);
         when(client.getAppDataCollector()).thenReturn(appDataCollector);
         when(client.getConfig()).thenReturn(cfg);
         when(client.getContextState()).thenReturn(contextState);
         when(appDataCollector.generateApp()).thenReturn(app);
         when(client.getDeviceDataCollector()).thenReturn(deviceDataCollector);
         when(deviceDataCollector.generateDevice()).thenReturn(generateDevice());
-        when(context.getSystemService("activity")).thenReturn(activityManager);
 
         configuration = BugsnagTestUtils.generateConfiguration();
         configuration.setDelivery(BugsnagTestUtils.generateDelivery());
