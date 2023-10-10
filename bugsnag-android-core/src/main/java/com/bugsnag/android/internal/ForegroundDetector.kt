@@ -73,7 +73,7 @@ internal object ForegroundDetector : ActivityLifecycleCallbacks {
         }
     }
 
-    private inline fun notifyListeners(send: (OnActivityCallback) -> Unit) {
+    private inline fun notifyListeners(sendCallback: (OnActivityCallback) -> Unit) {
         synchronized(listeners) {
             if (listeners.isEmpty()) {
                 return
@@ -87,7 +87,7 @@ internal object ForegroundDetector : ActivityLifecycleCallbacks {
                     if (listener == null) {
                         iterator.remove()
                     } else {
-                        send(listener)
+                        sendCallback(listener)
                     }
                 }
             } catch (e: Exception) {
