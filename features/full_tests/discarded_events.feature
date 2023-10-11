@@ -60,7 +60,7 @@ Feature: Discarding events
     # Now there is no event on disk, so there's nothing to send.
     And I close and relaunch the app
     And I configure Bugsnag for "DiscardBigEventsScenario"
-    Then I should receive no requests
+    Then I should receive no errors
 
   Scenario: Discard an on-disk error that received 400 and is too big
     # Fail to send initial handled error due to 400 error. Client discards it immediately.

@@ -216,8 +216,10 @@ public final class Session implements JsonStream.Streamable, UserAware {
      *
      * @return whether the payload is v2
      */
-    boolean isV2Payload() {
-        return file != null && file.getName().endsWith("_v2.json");
+
+    boolean isLegacyPayload() {
+        return !(file != null
+                && (file.getName().endsWith("_v2.json") || file.getName().endsWith("_v3.json")));
     }
 
     Notifier getNotifier() {
@@ -227,10 +229,10 @@ public final class Session implements JsonStream.Streamable, UserAware {
     @Override
     public void toStream(@NonNull JsonStream writer) throws IOException {
         if (file != null) {
-            if (isV2Payload()) {
-                serializeV2Payload(writer);
+            if (!isLegacyPayload()) {
+                serializePayload(writer);
             } else {
-                serializeV1Payload(writer);
+                serializeLegacyPayload(writer);
             }
         } else {
             writer.beginObject();
@@ -244,11 +246,11 @@ public final class Session implements JsonStream.Streamable, UserAware {
         }
     }
 
-    private void serializeV2Payload(@NonNull JsonStream writer) throws IOException {
+    private void serializePayload(@NonNull JsonStream writer) throws IOException {
         writer.value(file);
     }
 
-    private void serializeV1Payload(@NonNull JsonStream writer) throws IOException {
+    private void serializeLegacyPayload(@NonNull JsonStream writer) throws IOException {
         writer.beginObject();
         writer.name("notifier").value(notifier);
         writer.name("app").value(app);
