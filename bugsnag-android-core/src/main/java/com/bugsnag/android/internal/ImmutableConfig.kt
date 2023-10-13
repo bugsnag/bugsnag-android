@@ -275,7 +275,8 @@ private fun collectBuildUuid(
     val bundle = appInfo?.metaData
     return when {
         bundle?.containsKey(BUILD_UUID) == true -> {
-            bundle.getString(BUILD_UUID) ?: bundle.getInt(BUILD_UUID).toString()
+            (bundle.getString(BUILD_UUID) ?: bundle.getInt(BUILD_UUID).toString())
+                .takeIf { it.isNotEmpty() }
         }
 
         appInfo != null -> {

@@ -248,6 +248,24 @@ internal class ImmutableConfigTest {
     }
 
     @Test
+    fun sanitizeConfigEmptyBuildUuid() {
+        `when`(context.packageName).thenReturn("com.example.foo")
+        `when`(context.packageManager).thenReturn(packageManager)
+
+        // setup build uuid
+        val bundle = mock(Bundle::class.java)
+        `when`(bundle.containsKey("com.bugsnag.android.BUILD_UUID")).thenReturn(true)
+        `when`(bundle.getString("com.bugsnag.android.BUILD_UUID")).thenReturn("")
+        val appInfo = ApplicationInfo().apply { metaData = bundle }
+        `when`(packageManager.getApplicationInfo(anyString(), anyInt())).thenReturn(appInfo)
+
+        // validate build uuid
+        val seed = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
+        val config = sanitiseConfiguration(context, seed, connectivity, backgroundTaskService)
+        assertNull(config.buildUuid)
+    }
+
+    @Test
     fun sanitizeConfigBuildUuidInt() {
         `when`(context.packageName).thenReturn("com.example.foo")
         `when`(context.packageManager).thenReturn(packageManager)
