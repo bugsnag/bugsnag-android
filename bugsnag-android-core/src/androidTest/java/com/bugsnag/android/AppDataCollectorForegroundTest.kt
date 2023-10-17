@@ -3,7 +3,6 @@ package com.bugsnag.android
 import android.content.Context
 import android.os.SystemClock
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -80,16 +79,5 @@ class AppDataCollectorForegroundTest {
         val appWithState = appDataCollector.generateAppWithState()
         assertEquals(false, appWithState.inForeground)
         assertEquals(0L, appWithState.durationInForeground)
-    }
-
-    /**
-     * When the foreground detection is not possible, both properties should be `null`
-     */
-    @Test
-    fun foregroundNotAvailable() {
-        `when`(sessionTracker.isInForeground).thenReturn(null)
-        val appWithState = appDataCollector.generateAppWithState()
-        assertNull(appWithState.inForeground)
-        assertNull(appWithState.durationInForeground)
     }
 }

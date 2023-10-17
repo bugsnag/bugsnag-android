@@ -4,6 +4,7 @@ import static com.bugsnag.android.SeverityReason.REASON_HANDLED_EXCEPTION;
 
 import com.bugsnag.android.internal.BackgroundTaskService;
 import com.bugsnag.android.internal.BugsnagStoreMigrator;
+import com.bugsnag.android.internal.ForegroundDetector;
 import com.bugsnag.android.internal.ImmutableConfig;
 import com.bugsnag.android.internal.InternalMetrics;
 import com.bugsnag.android.internal.InternalMetricsImpl;
@@ -319,8 +320,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
     void registerLifecycleCallbacks() {
         if (appContext instanceof Application) {
             Application application = (Application) appContext;
-            SessionLifecycleCallback sessionCb = new SessionLifecycleCallback(sessionTracker);
-            application.registerActivityLifecycleCallbacks(sessionCb);
+            ForegroundDetector.registerOn(application);
+            ForegroundDetector.registerActivityCallbacks(sessionTracker);
 
             if (!immutableConfig.shouldDiscardBreadcrumb(BreadcrumbType.STATE)) {
                 ActivityBreadcrumbCollector activityCb = new ActivityBreadcrumbCollector(
