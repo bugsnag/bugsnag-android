@@ -8,6 +8,7 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
 
 import com.bugsnag.android.internal.BackgroundTaskService;
+import com.bugsnag.android.internal.ForegroundDetector;
 import com.bugsnag.android.internal.ImmutableConfig;
 
 import androidx.annotation.NonNull;
@@ -74,6 +75,9 @@ public class SessionTrackerTest {
                 bgTaskService);
         configuration.setAutoTrackSessions(true);
         user = new User(null, null, null);
+
+        ForegroundDetector.setLastExitedForegroundMs(0L);
+        ForegroundDetector.setLastExitedForegroundMs(0L);
     }
 
     @After
@@ -156,16 +160,17 @@ public class SessionTrackerTest {
         assertNull(sessionTracker.getContextActivity());
         assertNull(contextState.getContext());
 
-        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, System.currentTimeMillis());
+        sessionTracker.onForegroundStatus(true, System.currentTimeMillis());
+        sessionTracker.updateContext(ACTIVITY_NAME, true);
         Session firstSession = sessionTracker.getCurrentSession();
         assertNotNull(firstSession);
 
-        sessionTracker.updateForegroundTracker("other", true, System.currentTimeMillis());
+        sessionTracker.updateContext("other", true);
         assertEquals(firstSession, sessionTracker.getCurrentSession());
         assertEquals("other", sessionTracker.getContextActivity());
         assertEquals("other", contextState.getContext());
 
-        sessionTracker.updateForegroundTracker("other", false, System.currentTimeMillis());
+        sessionTracker.updateContext("other", false);
         assertEquals(ACTIVITY_NAME, sessionTracker.getContextActivity());
         assertEquals(ACTIVITY_NAME, contextState.getContext());
     }
@@ -177,12 +182,16 @@ public class SessionTrackerTest {
             0, sessionStore, NoopLogger.INSTANCE, bgTaskService);
 
         long now = System.currentTimeMillis();
-        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now);
-        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, false, now);
+        sessionTracker.onForegroundStatus(true, now);
+        sessionTracker.updateContext(ACTIVITY_NAME, true);
+        sessionTracker.onForegroundStatus(false, now);
+        sessionTracker.updateContext(ACTIVITY_NAME, false);
+
         Session firstSession = sessionTracker.getCurrentSession();
         assertNotNull(firstSession);
 
-        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now);
+        sessionTracker.onForegroundStatus(true, now);
+        sessionTracker.updateContext(ACTIVITY_NAME, true);
         assertNotEquals(firstSession, sessionTracker.getCurrentSession());
     }
 
@@ -193,20 +202,23 @@ public class SessionTrackerTest {
             100, sessionStore, NoopLogger.INSTANCE, bgTaskService);
 
         long now = System.currentTimeMillis();
-        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now);
-        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, false, now);
+        sessionTracker.onForegroundStatus(true, now);
+        sessionTracker.onForegroundStatus(false, now);
+        ForegroundDetector.setLastExitedForegroundMs(now);
         Session firstSession = sessionTracker.getCurrentSession();
         assertNotNull(firstSession);
 
-        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now + 5);
+        sessionTracker.onForegroundStatus(true, now + 5L);
+        ForegroundDetector.setLastEnteredForegroundMs(now + 5L);
         assertEquals(firstSession, sessionTracker.getCurrentSession());
 
-        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, false, now);
-        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now + 99);
+        sessionTracker.onForegroundStatus(false, now);
+        ForegroundDetector.setLastExitedForegroundMs(now);
+        sessionTracker.onForegroundStatus(true, now + 99L);
         assertEquals(firstSession, sessionTracker.getCurrentSession());
 
-        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, false, now);
-        sessionTracker.updateForegroundTracker(ACTIVITY_NAME, true, now + 100);
+        sessionTracker.onForegroundStatus(false, now);
+        sessionTracker.onForegroundStatus(true, now + 100L);
         assertNotEquals(firstSession, sessionTracker.getCurrentSession());
     }
 

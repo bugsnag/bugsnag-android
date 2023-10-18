@@ -7,11 +7,13 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.Message
+import android.os.SystemClock
 import androidx.annotation.VisibleForTesting
 import java.lang.ref.WeakReference
 import kotlin.math.max
 
-internal object ForegroundDetector : ActivityLifecycleCallbacks {
+internal object ForegroundDetector : ActivityLifecycleCallbacks, Handler.Callback {
 
     /**
      * Same as `androidx.lifecycle.ProcessLifecycleOwner` and is used to avoid reporting
@@ -22,12 +24,22 @@ internal object ForegroundDetector : ActivityLifecycleCallbacks {
     internal const val BACKGROUND_TIMEOUT_MS = 700L
 
     /**
+     * `Message.what` used to send the "in background" notification event. The `arg1` and `arg2`
+     * contain the actual timestamp (relative to [SystemClock.elapsedRealtime()]) split into `int`
+     * values.
+     */
+    @VisibleForTesting
+    internal const val MSG_SEND_BACKGROUND = 1
+
+    private const val INT_MASK = 0xffffffffL
+
+    /**
      * We weak-ref all of the listeners to avoid keeping Client instances around forever. The
      * references are cleaned up each time we iterate over the list to notify the listeners.
      */
     private val listeners = ArrayList<WeakReference<OnActivityCallback>>()
 
-    private val mainThreadHandler = Handler(Looper.getMainLooper())
+    private val mainThreadHandler = Handler(Looper.getMainLooper(), this)
 
     private var observedApplication: Application? = null
 
@@ -41,19 +53,25 @@ internal object ForegroundDetector : ActivityLifecycleCallbacks {
      */
     private var startedActivityCount: Int = 0
 
-    private var backgroundSent = true
+    private var waitingForActivityRestart: Boolean = false
 
+    @VisibleForTesting
+    internal var backgroundSent = true
+
+    @JvmStatic
     var isInForeground: Boolean = false
-        private set
+        @VisibleForTesting
+        internal set
 
-    private val sendInBackground: Runnable = Runnable {
-        if (!backgroundSent) {
-            isInForeground = false
-            backgroundSent = true
+    // This most recent time an Activity was stopped.
+    @Volatile
+    @JvmStatic
+    var lastExitedForegroundMs = 0L
 
-            notifyListeners { it.onForegroundStatus(false) }
-        }
-    }
+    // The first Activity in this 'session' was started at this time.
+    @Volatile
+    @JvmStatic
+    var lastEnteredForegroundMs = 0L
 
     @JvmStatic
     fun registerOn(application: Application) {
@@ -67,9 +85,20 @@ internal object ForegroundDetector : ActivityLifecycleCallbacks {
     }
 
     @JvmStatic
-    fun registerActivityCallbacks(callbacks: OnActivityCallback) {
+    @JvmOverloads
+    fun registerActivityCallbacks(
+        callbacks: OnActivityCallback,
+        notifyCurrentState: Boolean = true,
+    ) {
         synchronized(listeners) {
             listeners.add(WeakReference(callbacks))
+        }
+
+        if (notifyCurrentState) {
+            callbacks.onForegroundStatus(
+                isInForeground,
+                if (isInForeground) lastEnteredForegroundMs else lastExitedForegroundMs
+            )
         }
     }
 
@@ -101,11 +130,16 @@ internal object ForegroundDetector : ActivityLifecycleCallbacks {
     }
 
     override fun onActivityStarted(activity: Activity) {
-        startedActivityCount++
-        mainThreadHandler.removeCallbacks(sendInBackground)
-        isInForeground = true
+        if (startedActivityCount == 0 && !waitingForActivityRestart) {
+            val startedTimestamp = SystemClock.elapsedRealtime()
+            notifyListeners { it.onForegroundStatus(true, startedTimestamp) }
+            lastEnteredForegroundMs = startedTimestamp
+        }
 
-        notifyListeners { it.onForegroundStatus(true) }
+        startedActivityCount++
+        mainThreadHandler.removeMessages(MSG_SEND_BACKGROUND)
+        isInForeground = true
+        waitingForActivityRestart = false
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             notifyListeners { it.onActivityStarted(activity) }
@@ -116,8 +150,21 @@ internal object ForegroundDetector : ActivityLifecycleCallbacks {
         startedActivityCount = max(0, startedActivityCount - 1)
 
         if (startedActivityCount == 0) {
-            backgroundSent = false
-            mainThreadHandler.postDelayed(sendInBackground, BACKGROUND_TIMEOUT_MS)
+            val stoppedTimestamp = SystemClock.elapsedRealtime()
+            if (activity.isChangingConfigurations) {
+                // isChangingConfigurations indicates that the Activity will be restarted
+                // immediately, but we post a slightly delayed Message (with the current timestamp)
+                // to handle cases where (for whatever reason) that doesn't happen
+                // this follows the same logic as ProcessLifecycleOwner
+                waitingForActivityRestart = true
+
+                val backgroundMessage = mainThreadHandler.obtainMessage(MSG_SEND_BACKGROUND)
+                backgroundMessage.timestamp = stoppedTimestamp
+                mainThreadHandler.sendMessageDelayed(backgroundMessage, BACKGROUND_TIMEOUT_MS)
+            } else {
+                notifyListeners { it.onForegroundStatus(false, stoppedTimestamp) }
+                lastExitedForegroundMs = stoppedTimestamp
+            }
         }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
@@ -137,12 +184,38 @@ internal object ForegroundDetector : ActivityLifecycleCallbacks {
         activityInstanceCount = max(0, activityInstanceCount - 1)
     }
 
+    override fun handleMessage(msg: Message): Boolean {
+        if (msg.what != MSG_SEND_BACKGROUND) {
+            return false
+        }
+
+        waitingForActivityRestart = false
+
+        if (!backgroundSent) {
+            isInForeground = false
+            backgroundSent = true
+
+            val backgroundedTimestamp = msg.timestamp
+            notifyListeners { it.onForegroundStatus(false, backgroundedTimestamp) }
+            lastExitedForegroundMs = backgroundedTimestamp
+        }
+
+        return true
+    }
+
+    private var Message.timestamp: Long
+        get() = (arg1.toLong() shl Int.SIZE_BITS) or arg2.toLong()
+        set(timestamp) {
+            arg1 = ((timestamp ushr Int.SIZE_BITS) and INT_MASK).toInt()
+            arg2 = (timestamp and INT_MASK).toInt()
+        }
+
     override fun onActivityResumed(activity: Activity) = Unit
     override fun onActivityPaused(activity: Activity) = Unit
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) = Unit
 
     interface OnActivityCallback {
-        fun onForegroundStatus(foreground: Boolean)
+        fun onForegroundStatus(foreground: Boolean, timestamp: Long)
 
         fun onActivityStarted(activity: Activity)
 

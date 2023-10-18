@@ -7,7 +7,6 @@ import com.bugsnag.android.internal.ImmutableConfig;
 import com.bugsnag.android.internal.TaskType;
 
 import android.app.Activity;
-import android.os.SystemClock;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,7 +20,6 @@ import java.util.Deque;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.atomic.AtomicLong;
 
 class SessionTracker extends BaseObservable implements ForegroundDetector.OnActivityCallback {
 
@@ -35,12 +33,6 @@ class SessionTracker extends BaseObservable implements ForegroundDetector.OnActi
     private final CallbackState callbackState;
     private final Client client;
     final SessionStore sessionStore;
-
-    // This most recent time an Activity was stopped.
-    private final AtomicLong lastExitedForegroundMs = new AtomicLong(0);
-
-    // The first Activity in this 'session' was started at this time.
-    private final AtomicLong lastEnteredForegroundMs = new AtomicLong(0);
     private volatile Session currentSession = null;
     final BackgroundTaskService backgroundTaskService;
     final Logger logger;
@@ -69,7 +61,6 @@ class SessionTracker extends BaseObservable implements ForegroundDetector.OnActi
         this.sessionStore = sessionStore;
         this.backgroundTaskService = backgroundTaskService;
         this.logger = logger;
-        notifyNdkInForeground();
     }
 
     /**
@@ -341,18 +332,16 @@ class SessionTracker extends BaseObservable implements ForegroundDetector.OnActi
     }
 
     public void onActivityStarted(Activity activity) {
-        updateForegroundTracker(
+        updateContext(
                 activity.getClass().getSimpleName(),
-                true,
-                SystemClock.elapsedRealtime()
+                true
         );
     }
 
     public void onActivityStopped(Activity activity) {
-        updateForegroundTracker(
+        updateContext(
                 activity.getClass().getSimpleName(),
-                false,
-                SystemClock.elapsedRealtime()
+                false
         );
     }
 
@@ -367,46 +356,26 @@ class SessionTracker extends BaseObservable implements ForegroundDetector.OnActi
      *
      * @param activityName     the activity name
      * @param activityStarting whether the activity is being started or not
-     * @param nowMs            The current time in ms
      */
-    void updateForegroundTracker(String activityName, boolean activityStarting, long nowMs) {
+    void updateContext(String activityName, boolean activityStarting) {
         if (activityStarting) {
-            long noActivityRunningForMs = nowMs - lastExitedForegroundMs.get();
             synchronized (foregroundActivities) {
-                if (foregroundActivities.isEmpty()) {
-                    lastEnteredForegroundMs.set(nowMs);
-
-                    if (noActivityRunningForMs >= timeoutMs
-                            && configuration.getAutoTrackSessions()) {
-                        startNewSession(new Date(), client.getUser(), true);
-                    }
-                }
                 foregroundActivities.add(activityName);
             }
         } else {
             synchronized (foregroundActivities) {
                 foregroundActivities.removeLastOccurrence(activityName);
-                if (foregroundActivities.isEmpty()) {
-                    lastExitedForegroundMs.set(nowMs);
-                }
             }
         }
         client.getContextState().setAutomaticContext(getContextActivity());
-        notifyNdkInForeground();
-    }
-
-    private void notifyNdkInForeground() {
-        Boolean inForeground = isInForeground();
-        final boolean foreground = inForeground != null ? inForeground : false;
-        updateState(new StateEvent.UpdateInForeground(foreground, getContextActivity()));
     }
 
     boolean isInForeground() {
-        return ForegroundDetector.INSTANCE.isInForeground();
+        return ForegroundDetector.isInForeground();
     }
 
     long getLastEnteredForegroundMs() {
-        return lastEnteredForegroundMs.get();
+        return ForegroundDetector.getLastEnteredForegroundMs();
     }
 
     @Nullable
@@ -417,7 +386,16 @@ class SessionTracker extends BaseObservable implements ForegroundDetector.OnActi
     }
 
     @Override
-    public void onForegroundStatus(boolean foreground) {
+    public void onForegroundStatus(boolean foreground, long timestamp) {
+        if (foreground) {
+            long noActivityRunningForMs =
+                    timestamp - ForegroundDetector.getLastExitedForegroundMs();
+            if (noActivityRunningForMs >= timeoutMs && configuration.getAutoTrackSessions()) {
+                startNewSession(new Date(), client.getUser(), true);
+            }
+        }
 
+        // update any downstream notifiers (NDK, ReactNative, Flutter, etc.)
+        updateState(new StateEvent.UpdateInForeground(foreground, getContextActivity()));
     }
 }
