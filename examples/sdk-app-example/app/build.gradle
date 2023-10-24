@@ -7,7 +7,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.bugsnag.android"
-        minSdkVersion 14
+        minSdkVersion 16
         targetSdkVersion 31
         versionCode 1
         versionName "1.0"
@@ -38,8 +38,8 @@ android {
 }
 
 dependencies {
-    implementation "com.bugsnag:bugsnag-android:5.31.2"
-    implementation "com.bugsnag:bugsnag-plugin-android-okhttp:5.31.2"
+    implementation "com.bugsnag:bugsnag-android:5.31.1"
+    implementation "com.bugsnag:bugsnag-plugin-android-okhttp:5.31.1"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.appcompat:appcompat:1.4.0"
     implementation "com.google.android.material:material:1.4.0"
