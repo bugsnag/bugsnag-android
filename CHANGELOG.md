@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* Handle cases in NDK when `GetStringUTFChars` fails for callback names
+  [#1918](https://github.com/bugsnag/bugsnag-android/pull/1918)
+
 ## 5.31.2 (2023-10-11)
 
 ### Bug fixes
