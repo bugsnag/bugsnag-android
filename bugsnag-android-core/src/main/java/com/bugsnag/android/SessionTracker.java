@@ -254,7 +254,7 @@ class SessionTracker extends BaseObservable implements ForegroundDetector.OnActi
                 storedFile, client.getNotifier(), logger, configuration.getApiKey()
         );
 
-        if (!payload.isV2Payload()) { // collect data here
+        if (payload.isLegacyPayload()) { // collect data here
             payload.setApp(client.getAppDataCollector().generateApp());
             payload.setDevice(client.getDeviceDataCollector().generateDevice());
         }
