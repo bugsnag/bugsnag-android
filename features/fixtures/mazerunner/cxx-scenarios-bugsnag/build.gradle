@@ -11,7 +11,7 @@ android {
     ndkVersion parent.ext.ndkVersion
 
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 16
     }
 
     buildTypes {
