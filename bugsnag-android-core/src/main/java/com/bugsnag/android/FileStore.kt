@@ -14,13 +14,13 @@ import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
 
 internal abstract class FileStore(
-    storageDir: File,
+    private val storageDir: File,
     private val maxStoreCount: Int,
     private val comparator: Comparator<in File?>,
     protected open val logger: Logger,
-    delegate: Delegate?
+    protected val delegate: Delegate?
 ) {
-    internal interface Delegate {
+    internal fun interface Delegate {
         /**
          * Invoked when an error report is not (de)serialized correctly
          *
@@ -31,14 +31,10 @@ internal abstract class FileStore(
         fun onErrorIOFailure(exception: Exception?, errorFile: File?, context: String?)
     }
 
-    private val storageDir: File
     private val lock: Lock = ReentrantLock()
     private val queuedFiles: MutableCollection<File> = ConcurrentSkipListSet()
-    private val delegate: Delegate?
 
     init {
-        this.delegate = delegate
-        this.storageDir = storageDir
         isStorageDirValid(storageDir)
     }
 
@@ -119,7 +115,7 @@ internal abstract class FileStore(
         // Limit number of saved payloads to prevent disk space issues
         if (isStorageDirValid(storageDir)) {
             val listFiles = storageDir.listFiles() ?: return
-            val files: ArrayList<File> = ArrayList(listOf(*listFiles))
+            val files: ArrayList<File> = arrayListOf(*listFiles)
             if (files.size >= maxStoreCount) {
                 // Sort files then delete the first one (oldest timestamp)
                 Collections.sort(files, comparator)
@@ -141,7 +137,7 @@ internal abstract class FileStore(
         }
     }
 
-    abstract fun getFilename(`object`: Any?): String
+    abstract fun getFilename(obj: Any?): String
 
     fun findStoredFiles(): MutableList<File> {
         lock.lock()

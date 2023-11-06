@@ -52,5 +52,5 @@ internal class CustomFileStore(
     comparator: Comparator<in File?>,
     delegate: Delegate?
 ) : FileStore(folder, maxStoreCount, comparator, NoopLogger, delegate) {
-    override fun getFilename(`object`: Any?) = "foo.json"
+    override fun getFilename(obj: Any?) = "foo.json"
 }

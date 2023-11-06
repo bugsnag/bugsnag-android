@@ -52,8 +52,8 @@ internal class SessionStore(
         }
     }
 
-    override fun getFilename(`object`: Any?): String {
-        val sessionInfo = defaultFilename(`object`, config)
+    override fun getFilename(obj: Any?): String {
+        val sessionInfo = defaultFilename(obj, config)
         return sessionInfo.encode()
     }
 }
