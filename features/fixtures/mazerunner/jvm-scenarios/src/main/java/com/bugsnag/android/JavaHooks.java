@@ -1,5 +1,8 @@
 package com.bugsnag.android;
 
+import com.bugsnag.android.Client;
+import com.bugsnag.android.Event;
+import com.bugsnag.android.EventStore;
 import com.bugsnag.android.internal.ImmutableConfig;
 
 import androidx.annotation.NonNull;
@@ -54,5 +57,31 @@ public class JavaHooks {
     @NonNull
     public static Delivery createDefaultDelivery() {
         return new DefaultDelivery(null, "test-api-key", 10000, NoopLogger.INSTANCE);
+    }
+
+    /**
+     * Trigger an internal bugsnag error
+     */
+
+    @NonNull
+    public static void triggerInternalBugsnagForError(Client client) {
+        client.getEventStore().write((stream) -> {
+            throw new IllegalStateException("Mazerunner threw exception serializing error");
+        });
+    }
+
+    @NonNull
+    public static void flushErrorStoreAsync(Client client) {
+        client.getEventStore().flushAsync();
+    }
+
+    @NonNull
+    public static void flushErrorStoreOnLaunch(Client client) {
+        client.getEventStore().flushOnLaunch();
+    }
+
+    @NonNull
+    public static void writeErrorToStore(Client client, Event event) {
+        client.getEventStore().write(event);
     }
 }

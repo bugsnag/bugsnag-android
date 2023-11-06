@@ -25,14 +25,14 @@ import kotlin.collections.ArrayList
  * Store and flush Event reports which couldn't be sent immediately due to
  * lack of network connectivity.
  */
-internal abstract class KotlinEventStore(
+internal class EventStore(
     private val config: ImmutableConfig,
     logger: Logger,
     notifier: Notifier,
     bgTaskSevice: BackgroundTaskService,
     delegate: Delegate?,
     callbackState: CallbackState
-) : KotlinFileStore(
+) : FileStore(
     File(config.persistenceDirectory.value, "bugsnag/errors"),
     config.maxPersistedEvents,
     EVENT_COMPARATOR,
@@ -177,23 +177,18 @@ internal abstract class KotlinEventStore(
             }
             DeliveryStatus.UNDELIVERED -> if (isTooBig(eventFile)) {
                 logger.w(
-                    "Discarding over-sized event (" +
-                            eventFile.length() +
-                            ") after failed delivery"
+                    "Discarding over-sized event (" + eventFile.length() + ") after failed delivery"
                 )
                 deleteStoredFiles(setOf(eventFile))
             } else if (isTooOld(eventFile)) {
                 logger.w(
-                    "Discarding historical event (from " +
-                            getCreationDate(eventFile) +
-                            ") after failed delivery"
+                    "Discarding historical event (from " + getCreationDate(eventFile) + ") after failed delivery"
                 )
                 deleteStoredFiles(setOf(eventFile))
             } else {
                 cancelQueuedFiles(setOf(eventFile))
                 logger.w(
-                    "Could not send previously saved error(s)" +
-                            " to Bugsnag, will try again later"
+                    "Could not send previously saved error(s)" + " to Bugsnag, will try again later"
                 )
             }
             DeliveryStatus.FAILURE -> {

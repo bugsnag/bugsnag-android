@@ -2,7 +2,7 @@ package com.bugsnag.android
 
 import android.app.Application
 import androidx.test.core.app.ApplicationProvider
-import com.bugsnag.android.KotlinEventStore.Companion.EVENT_COMPARATOR
+import com.bugsnag.android.EventStore.Companion.EVENT_COMPARATOR
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -30,7 +30,7 @@ class FileStoreTest {
     }
 }
 
-class CustomDelegate : KotlinFileStore.Delegate {
+class CustomDelegate : FileStore.Delegate {
     var exception: Exception? = null
     var errorFile: File? = null
     var context: String? = null
@@ -51,6 +51,6 @@ internal class CustomFileStore(
     maxStoreCount: Int,
     comparator: Comparator<in File?>,
     delegate: Delegate?
-) : KotlinFileStore(folder, maxStoreCount, comparator, NoopLogger, delegate) {
+) : FileStore(folder, maxStoreCount, comparator, NoopLogger, delegate) {
     override fun getFilename(`object`: Any?) = "foo.json"
 }

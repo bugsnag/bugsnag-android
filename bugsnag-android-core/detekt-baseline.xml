@@ -3,6 +3,8 @@
   <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>CyclomaticComplexMethod:ConfigInternal.kt$ConfigInternal$fun getConfigDifferences(): Map&lt;String, Any></ID>
+    <ID>FunctionParameterNaming:EventStore.kt$EventStore$`object`: Any?</ID>
+    <ID>FunctionParameterNaming:FileStore.kt$FileStore$`object`: Any?</ID>
     <ID>ImplicitDefaultLocale:DeliveryHeaders.kt$String.format("%02x", byte)</ID>
     <ID>LongParameterList:App.kt$App$( /** * The architecture of the running application binary */ var binaryArch: String?, /** * The package name of the application */ var id: String?, /** * The release stage set in [Configuration.releaseStage] */ var releaseStage: String?, /** * The version of the application set in [Configuration.version] */ var version: String?, /** The revision ID from the manifest (React Native apps only) */ var codeBundleId: String?, /** * The unique identifier for the build of the application set in [Configuration.buildUuid] */ var buildUuid: String?, /** * The application type set in [Configuration#version] */ var type: String?, /** * The version code of the application set in [Configuration.versionCode] */ var versionCode: Number? )</ID>
     <ID>LongParameterList:AppDataCollector.kt$AppDataCollector$( appContext: Context, private val packageManager: PackageManager?, private val config: ImmutableConfig, private val sessionTracker: SessionTracker, private val activityManager: ActivityManager?, private val launchCrashTracker: LaunchCrashTracker, private val memoryTrimState: MemoryTrimState )</ID>
@@ -23,6 +25,7 @@
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$299</ID>
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$429</ID>
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$499</ID>
+    <ID>MagicNumber:EventStore.kt$EventStore$60</ID>
     <ID>MagicNumber:JsonHelper.kt$JsonHelper$0xff</ID>
     <ID>MagicNumber:JsonHelper.kt$JsonHelper$1000</ID>
     <ID>MagicNumber:JsonHelper.kt$JsonHelper$16</ID>
@@ -31,8 +34,12 @@
     <ID>MagicNumber:JsonHelper.kt$JsonHelper$3</ID>
     <ID>MagicNumber:JsonHelper.kt$JsonHelper$8</ID>
     <ID>MagicNumber:LastRunInfoStore.kt$LastRunInfoStore$3</ID>
+    <ID>MagicNumber:SessionStore.kt$SessionStore$60</ID>
     <ID>MaxLineLength:LastRunInfo.kt$LastRunInfo$return "LastRunInfo(consecutiveLaunchCrashes=$consecutiveLaunchCrashes, crashed=$crashed, crashedDuringLaunch=$crashedDuringLaunch)"</ID>
     <ID>MaxLineLength:ThreadState.kt$ThreadState$"[${allThreads.size - maxThreadCount} threads omitted as the maxReportedThreads limit ($maxThreadCount) was exceeded]"</ID>
+    <ID>NestedBlockDepth:FileStore.kt$FileStore$fun deleteStoredFiles(storedFiles: Collection&lt;File>?)</ID>
+    <ID>NestedBlockDepth:FileStore.kt$FileStore$fun discardOldestFileIfNeeded()</ID>
+    <ID>NestedBlockDepth:FileStore.kt$FileStore$fun findStoredFiles(): MutableList&lt;File></ID>
     <ID>NestedBlockDepth:JsonHelper.kt$JsonHelper$fun jsonToLong(value: Any?): Long?</ID>
     <ID>ProtectedMemberInFinalClass:ConfigInternal.kt$ConfigInternal$protected val plugins = HashSet&lt;Plugin>()</ID>
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun isAnr(event: Event): Boolean</ID>
@@ -40,6 +47,7 @@
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun updateSeverityInternal(severity: Severity)</ID>
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun updateSeverityReason(@SeverityReason.SeverityReasonType reason: String)</ID>
     <ID>ReturnCount:DefaultDelivery.kt$DefaultDelivery$fun deliver( urlString: String, json: ByteArray, headers: Map&lt;String, String?> ): DeliveryStatus</ID>
+    <ID>SpreadOperator:FileStore.kt$FileStore$(*listFiles)</ID>
     <ID>SwallowedException:AppDataCollector.kt$AppDataCollector$e: Exception</ID>
     <ID>SwallowedException:BugsnagEventMapper.kt$BugsnagEventMapper$pe: IllegalArgumentException</ID>
     <ID>SwallowedException:ConnectivityCompat.kt$ConnectivityLegacy$e: NullPointerException</ID>
@@ -49,6 +57,8 @@
     <ID>SwallowedException:DeviceDataCollector.kt$DeviceDataCollector$exception: Exception</ID>
     <ID>SwallowedException:DeviceIdFilePersistence.kt$DeviceIdFilePersistence$exc: OverlappingFileLockException</ID>
     <ID>SwallowedException:ImmutableConfig.kt$e: Exception</ID>
+    <ID>SwallowedException:EventStore.kt$EventStore$exception: RejectedExecutionException</ID>
+    <ID>SwallowedException:EventStore.kt$EventStore$ioe: Exception</ID>
     <ID>SwallowedException:ForegroundDetector.kt$ForegroundDetector$e: Exception</ID>
     <ID>SwallowedException:JsonHelperTest.kt$JsonHelperTest$e: IllegalArgumentException</ID>
     <ID>SwallowedException:PluginClient.kt$PluginClient$exc: ClassNotFoundException</ID>

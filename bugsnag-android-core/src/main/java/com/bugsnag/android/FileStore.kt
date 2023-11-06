@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentSkipListSet
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
 
-internal abstract class KotlinFileStore(
+internal abstract class FileStore(
     storageDir: File,
     private val maxStoreCount: Int,
     private val comparator: Comparator<in File?>,
@@ -129,7 +129,7 @@ internal abstract class KotlinFileStore(
                     if (!queuedFiles.contains(oldestFile)) {
                         logger.w(
                             "Discarding oldest error as stored " +
-                                    "error limit reached: '" + oldestFile.path + '\''
+                                "error limit reached: '" + oldestFile.path + '\''
                         )
                         deleteStoredFiles(setOf(oldestFile))
                         files.removeAt(k)

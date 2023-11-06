@@ -12,11 +12,11 @@ import java.util.Date
  * Store and flush Sessions which couldn't be sent immediately due to
  * lack of network connectivity.
  */
-internal class KotlinSessionStore(
+internal class SessionStore(
     private val config: ImmutableConfig,
     logger: Logger,
     delegate: Delegate?
-) : KotlinFileStore(
+) : FileStore(
     File(
         config.persistenceDirectory.value, "bugsnag/sessions"
     ),
