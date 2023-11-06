@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 5.31.3 (2023-11-06)
 
 ### Bug fixes
 
