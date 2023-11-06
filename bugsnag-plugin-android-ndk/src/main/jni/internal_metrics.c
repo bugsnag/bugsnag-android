@@ -130,26 +130,28 @@ static void bsg_modify_callback_count(bugsnag_event *event, const char *api,
                                       int delta) {
   static const int total_callbacks =
       sizeof(event->set_callback_counts) / sizeof(*event->set_callback_counts);
-  if (strlen(api) >= sizeof(event->set_callback_counts[0].name)) {
-    // API name is too big to store.
+  if (!api || strnlen(api, sizeof(event->set_callback_counts[0].name)) >=
+                  sizeof(event->set_callback_counts[0].name)) {
+    // API name is NULL or is too big to store.
     return;
   }
 
   int i = 0;
   for (; i < total_callbacks && event->set_callback_counts[i].name[0] != 0;
        i++) {
-    if (strcmp(event->set_callback_counts[i].name, api) == 0) {
-      event->set_callback_counts[i].count += delta;
-      if (event->set_callback_counts[i].count < 0) {
-        event->set_callback_counts[i].count = 0;
+    set_callback_count *callback_counter = &event->set_callback_counts[i];
+    if (strcmp(callback_counter->name, api) == 0) {
+      callback_counter->count += delta;
+      if (callback_counter->count < 0) {
+        callback_counter->count = 0;
       }
       return;
     }
   }
   if (i < total_callbacks && delta > 0) {
-    strncpy(event->set_callback_counts[i].name, api,
-            sizeof(event->set_callback_counts[i].name));
-    event->set_callback_counts[i].count = delta;
+    set_callback_count *callback_counter = &event->set_callback_counts[i];
+    strncpy(callback_counter->name, api, sizeof(callback_counter->name));
+    callback_counter->count = delta;
   }
 }
 

@@ -955,14 +955,24 @@ Java_com_bugsnag_android_ndk_NativeBridge_notifyAddCallback(JNIEnv *env,
                                                             jobject thiz,
                                                             jstring callback_) {
   const char *callback = bsg_safe_get_string_utf_chars(env, callback_);
+  if (!callback) {
+    return;
+  }
+
   bsg_notify_add_callback(&bsg_global_env->next_event, callback);
+  bsg_safe_release_string_utf_chars(env, callback_, callback);
 }
 
 JNIEXPORT void JNICALL
 Java_com_bugsnag_android_ndk_NativeBridge_notifyRemoveCallback(
     JNIEnv *env, jobject thiz, jstring callback_) {
   const char *callback = bsg_safe_get_string_utf_chars(env, callback_);
+  if (!callback) {
+    return;
+  }
+
   bsg_notify_remove_callback(&bsg_global_env->next_event, callback);
+  bsg_safe_release_string_utf_chars(env, callback_, callback);
 }
 
 JNIEXPORT void JNICALL
