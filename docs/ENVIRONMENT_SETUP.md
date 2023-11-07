@@ -13,7 +13,7 @@ This contains information on first-time setup required to develop bugsnag-androi
 ## Initial setup
 
 1. Download the [latest stable version](https://developer.android.com/studio) of Android Studio.
-2. Download [r16b of the NDK](https://developer.android.com/ndk/downloads/older_releases)
+2. Download [r23.1 of the NDK](https://developer.android.com/ndk/downloads/older_releases) (23.1.7779620)
 3. Set the `$ANDROID_SDK_ROOT` environment variables to point to the SDK
 4. Add the adb/android/emulator [platform tools](https://developer.android.com/studio/command-line/variables) to your `$PATH`
 4. Clone the repository and its submodules: `git submodule update --init --recursive`
