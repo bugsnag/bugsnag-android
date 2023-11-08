@@ -1,0 +1,1 @@
+../../../../../bugsnag-plugin-android-ndk/src/main/jni/include/event.h

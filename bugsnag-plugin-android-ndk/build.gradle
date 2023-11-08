@@ -4,6 +4,7 @@ plugins {
 
 bugsnagBuildOptions {
     usesNdk = true
+    publishesPrefab = "bugsnag-ndk"
 }
 
 apply plugin: "com.android.library"
@@ -13,3 +14,15 @@ dependencies {
 }
 
 apply from: "../gradle/kotlin.gradle"
+
+afterEvaluate {
+    tasks.named("prefabReleasePackage") {
+        doLast {
+            project.fileTree("build/intermediates/prefab_package/") {
+                include("**/abi.json")
+            }.forEach { file ->
+                file.text = file.text.replace("c++_static", "none")
+            }
+        }
+    }
+}

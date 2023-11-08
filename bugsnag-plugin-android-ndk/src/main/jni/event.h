@@ -1,8 +1,8 @@
 #ifndef BUGSNAG_EVENT_H
 #define BUGSNAG_EVENT_H
 
-#include "../assets/include/event.h"
 #include "bsg_unwind.h"
+#include "include/event.h"
 #include <stdbool.h>
 #include <sys/types.h>
 #ifndef BUGSNAG_METADATA_MAX
