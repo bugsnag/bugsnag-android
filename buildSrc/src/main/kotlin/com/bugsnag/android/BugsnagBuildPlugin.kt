@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
@@ -47,6 +48,12 @@ class BugsnagBuildPlugin : Plugin<Project> {
 
             if (bugsnag.usesNdk) {
                 configureNdk(project)
+
+                bugsnag.publishesPrefab?.let { prefabModuleName ->
+                    (android as? LibraryExtension)?.run {
+                        configurePrefabPublishing(prefabModuleName)
+                    }
+                }
             }
         }
 
@@ -63,12 +70,22 @@ class BugsnagBuildPlugin : Plugin<Project> {
         }
     }
 
+    private fun LibraryExtension.configurePrefabPublishing(prefabModuleName: String) {
+        buildFeatures.prefabPublishing = true
+        prefab.create(prefabModuleName) {
+            headers = "src/main/jni/include"
+        }
+    }
+
     /**
      * Configures the Android NDK, if it is enabled
      */
     private fun BaseExtension.configureNdk(project: Project) {
         defaultConfig {
-            externalNativeBuild.cmake.arguments += listOf("-DANDROID_CPP_FEATURES=exceptions", "-DANDROID_STL=c++_static")
+            externalNativeBuild.cmake.arguments += listOf(
+                "-DANDROID_CPP_FEATURES=exceptions",
+                "-DANDROID_STL=c++_static"
+            )
 
             val override: String? = project.findProperty("ABI_FILTERS") as String?
             val abis = override?.split(",") ?: mutableSetOf(
@@ -97,9 +114,6 @@ class BugsnagBuildPlugin : Plugin<Project> {
         compileOptions {
             sourceCompatibility = Versions.java
             targetCompatibility = Versions.java
-        }
-        packagingOptions {
-            pickFirst("**/*.so")
         }
     }
 
@@ -146,8 +160,11 @@ class BugsnagBuildPlugin : Plugin<Project> {
             add("testImplementation", "junit:junit:${Versions.junitTestLib}")
             add("testImplementation", "org.mockito:mockito-core:${Versions.mockitoTestLib}")
             add("testImplementation", "org.mockito:mockito-inline:${Versions.mockitoTestLib}")
-            
-            add("androidTestImplementation", "org.mockito:mockito-android:${Versions.mockitoTestLib}")
+
+            add(
+                "androidTestImplementation",
+                "org.mockito:mockito-android:${Versions.mockitoTestLib}"
+            )
             add("androidTestImplementation", "androidx.test:core:${Versions.supportTestLib}")
             add("androidTestImplementation", "androidx.test:runner:${Versions.supportTestLib}")
             add("androidTestImplementation", "androidx.test:rules:${Versions.supportTestLib}")

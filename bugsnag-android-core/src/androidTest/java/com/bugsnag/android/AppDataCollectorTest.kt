@@ -75,7 +75,7 @@ class AppDataCollectorTest {
             client.memoryTrimState
         )
         client.context = "Some Custom Context"
-        client.sessionTracker.updateForegroundTracker("MyActivity", true, 0L)
+        client.sessionTracker.updateContext("MyActivity", true)
         val app = collector.getAppDataMetadata()
         assertEquals("MyActivity", app["activeScreen"] as String)
     }

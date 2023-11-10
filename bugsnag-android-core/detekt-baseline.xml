@@ -49,6 +49,7 @@
     <ID>SwallowedException:DeviceDataCollector.kt$DeviceDataCollector$exception: Exception</ID>
     <ID>SwallowedException:DeviceIdFilePersistence.kt$DeviceIdFilePersistence$exc: OverlappingFileLockException</ID>
     <ID>SwallowedException:ImmutableConfig.kt$e: Exception</ID>
+    <ID>SwallowedException:ForegroundDetector.kt$ForegroundDetector$e: Exception</ID>
     <ID>SwallowedException:JsonHelperTest.kt$JsonHelperTest$e: IllegalArgumentException</ID>
     <ID>SwallowedException:PluginClient.kt$PluginClient$exc: ClassNotFoundException</ID>
     <ID>SwallowedException:SharedPrefMigrator.kt$SharedPrefMigrator$e: RuntimeException</ID>

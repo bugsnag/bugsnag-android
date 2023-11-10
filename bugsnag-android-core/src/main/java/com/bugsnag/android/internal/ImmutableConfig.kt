@@ -182,7 +182,7 @@ internal fun convertToImmutableConfig(
     )
 }
 
-private fun validateApiKey(value: String) {
+private fun validateApiKey(value: String?) {
     if (isInvalidApiKey(value)) {
         DebugLogger.w(
             "Invalid configuration. apiKey should be a 32-character hexademical string, got $value"

@@ -13,14 +13,8 @@ fixture_dir = 'features/fixtures/mazerunner'
 cxx_base = "#{fixture_dir}/cxx-scenarios/build/intermediates"
 cxx_bsg_base = "#{fixture_dir}/cxx-scenarios-bugsnag/build/intermediates"
 
-case ndk_version
-  when 'r16'
-    cxx_dir = "#{cxx_base}/cmake/release/obj"
-    cxx_bsg_dir = "#{cxx_bsg_base}/cmake/release/obj"
-  else
-    cxx_dir = `ls -dt #{cxx_base}/cxx/*/*/obj | head -n 1`.strip
-    cxx_bsg_dir = `ls -dt #{cxx_bsg_base}/cxx/*/*/obj | head -n 1`.strip
-end
+cxx_dir = `ls -dt #{cxx_base}/cxx/*/*/obj | head -n 1`.strip
+cxx_bsg_dir = `ls -dt #{cxx_bsg_base}/cxx/*/*/obj | head -n 1`.strip
 
 puts "Copying cxx-scenarios objects from: #{cxx_dir}"
 puts "Copying cxx-scenarios-bugsnag objects from: #{cxx_bsg_dir}"

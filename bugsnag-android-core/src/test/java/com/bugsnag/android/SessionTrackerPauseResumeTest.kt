@@ -1,6 +1,5 @@
 package com.bugsnag.android
 
-import android.app.ActivityManager
 import android.content.Context
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import com.bugsnag.android.BugsnagTestUtils.generateDevice
@@ -25,6 +24,7 @@ internal class SessionTrackerPauseResumeTest {
     private val configuration = generateConfiguration().also {
         it.autoTrackSessions = false
     }
+
     private lateinit var tracker: SessionTracker
 
     @Mock
@@ -43,9 +43,6 @@ internal class SessionTrackerPauseResumeTest {
     lateinit var context: Context
 
     @Mock
-    lateinit var activityManager: ActivityManager
-
-    @Mock
     lateinit var sessionStore: SessionStore
 
     @Mock
@@ -54,13 +51,11 @@ internal class SessionTrackerPauseResumeTest {
     @Before
     fun setUp() {
         `when`(client.getNotifier()).thenReturn(Notifier())
-        `when`(client.getAppContext()).thenReturn(context)
         `when`(client.getAppDataCollector()).thenReturn(appDataCollector)
         `when`(client.config).thenReturn(cfg)
         `when`(appDataCollector.generateApp()).thenReturn(app)
         `when`(client.getDeviceDataCollector()).thenReturn(deviceDataCollector)
         `when`(deviceDataCollector.generateDevice()).thenReturn(generateDevice())
-        `when`(context.getSystemService("activity")).thenReturn(activityManager)
         tracker = SessionTracker(
             BugsnagTestUtils.generateImmutableConfig(),
             configuration.impl.callbackState,

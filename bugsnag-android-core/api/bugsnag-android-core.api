@@ -821,6 +821,17 @@ public final class com/bugsnag/android/User : com/bugsnag/android/JsonStream$Str
 	public fun toStream (Lcom/bugsnag/android/JsonStream;)V
 }
 
+public abstract class com/bugsnag/android/internal/AbstractStartupProvider : android/content/ContentProvider {
+	public fun <init> ()V
+	protected final fun checkPrivilegeEscalation ()V
+	public final fun delete (Landroid/net/Uri;Ljava/lang/String;[Ljava/lang/String;)I
+	public final fun getType (Landroid/net/Uri;)Ljava/lang/String;
+	public final fun insert (Landroid/net/Uri;Landroid/content/ContentValues;)Landroid/net/Uri;
+	public fun onCreate ()Z
+	public final fun query (Landroid/net/Uri;[Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;)Landroid/database/Cursor;
+	public final fun update (Landroid/net/Uri;Landroid/content/ContentValues;Ljava/lang/String;[Ljava/lang/String;)I
+}
+
 public final class com/bugsnag/android/internal/BackgroundTaskService {
 	public fun <init> ()V
 	public fun <init> (Ljava/util/concurrent/ExecutorService;Ljava/util/concurrent/ExecutorService;Ljava/util/concurrent/ExecutorService;Ljava/util/concurrent/ExecutorService;Ljava/util/concurrent/ExecutorService;)V
@@ -828,6 +839,11 @@ public final class com/bugsnag/android/internal/BackgroundTaskService {
 	public final fun shutdown ()V
 	public final fun submitTask (Lcom/bugsnag/android/internal/TaskType;Ljava/lang/Runnable;)Ljava/util/concurrent/Future;
 	public final fun submitTask (Lcom/bugsnag/android/internal/TaskType;Ljava/util/concurrent/Callable;)Ljava/util/concurrent/Future;
+}
+
+public final class com/bugsnag/android/internal/BugsnagContentProvider : com/bugsnag/android/internal/AbstractStartupProvider {
+	public fun <init> ()V
+	public fun onCreate ()Z
 }
 
 public final class com/bugsnag/android/internal/BugsnagMapper {

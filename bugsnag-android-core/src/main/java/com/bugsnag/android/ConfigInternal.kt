@@ -6,7 +6,7 @@ import java.util.EnumSet
 import java.util.regex.Pattern
 
 internal class ConfigInternal(
-    var apiKey: String
+    var apiKey: String?
 ) : CallbackAware, MetadataAware, UserAware, FeatureFlagAware {
 
     private var user = User()

@@ -7,34 +7,17 @@ import androidx.annotation.RequiresApi
 
 @RequiresApi(Build.VERSION_CODES.R)
 class BugsnagExitInfoPlugin @JvmOverloads constructor(
-
-    /**
-     * Whether to add the list of open FDs to correlated reports
-     */
-    private val listOpenFds: Boolean = true,
-
-    /**
-     * Whether to report stored logcat messages metadata
-     */
-    private val includeLogcat: Boolean = false,
-
-    /**
-     * Turn of event correlation based on the processStateSummary field, this can
-     * set to `true` if the field is required by the app
-     */
-    private val disableProcessStateSummaryOverride: Boolean = false
-
+    configuration: ExitInfoPluginConfiguration = ExitInfoPluginConfiguration()
 ) : Plugin {
 
-    private var exitInfoCallback: ExitInfoCallback? = null
+    private val configuration = configuration.copy()
 
     override fun load(client: Client) {
-        if (!disableProcessStateSummaryOverride) {
+        if (!configuration.disableProcessStateSummaryOverride) {
             client.addOnSession(
                 OnSessionCallback { session: Session ->
-                    val am =
-                        client.appContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-                    am.setProcessStateSummary(session.id.toByteArray())
+                    val am = client.appContext.safeGetActivityManager()
+                    am?.setProcessStateSummary(session.id.toByteArray())
                     return@OnSessionCallback true
                 }
             )
@@ -44,15 +27,28 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
         val oldPid = exitInfoPluginStore.load()
         exitInfoPluginStore.persist(android.os.Process.myPid())
 
-        exitInfoCallback = ExitInfoCallback(
+        val exitInfoCallback = ExitInfoCallback(
             client.appContext,
             oldPid,
-            TombstoneEventEnhancer(client.logger, listOpenFds, includeLogcat),
-            TraceEventEnhancer(client.logger, client.immutableConfig.projectPackages)
+            TombstoneEventEnhancer(
+                client.logger,
+                configuration.listOpenFds,
+                configuration.includeLogcat
+            ),
+            TraceEventEnhancer(
+                client.logger,
+                client.immutableConfig.projectPackages
+            )
         )
+
         client.addOnSend(exitInfoCallback)
     }
 
-    override fun unload() {
+    override fun unload() = Unit
+
+    private fun Context.safeGetActivityManager(): ActivityManager? = try {
+        getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+    } catch (e: Exception) {
+        null
     }
 }
