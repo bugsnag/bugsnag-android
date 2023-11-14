@@ -490,8 +490,8 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
      *
      * By default, 32 events are persisted.
      */
-    public int getMaxPersistedEvents() { 
-        return impl.getMaxPersistedEvents(); 
+    public int getMaxPersistedEvents() {
+        return impl.getMaxPersistedEvents();
     }
 
     /**
@@ -536,27 +536,28 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
         }
     }
 
+
     /**
      * Gets the maximum time for collecting threads and traces.
-     *
      * By default, up to 200 threads are reported.
      */
-    public int getMaxTracesTime() {
-        return impl.getMaxTracesTime();
+    public long getThreadCollectionTimeLimitMillis() {
+        return impl.getThreadCollectionTimeLimitMillis();
     }
 
     /**
      * Sets the maximum time for collecting threads and traces.
-     *
      * By default, up to 500 milliseconds are reported.
      */
-    public void setMaxTracesTime(@IntRange(from = 0) int maxTracesTime) {
-        if (maxTracesTime >= 0) {
-            impl.setMaxTracesTime(maxTracesTime);
+    public void setThreadCollectionTimeLimitMillis(
+            @IntRange(from = 0) long threadCollectionTimeLimitMillis
+    ) {
+        if (threadCollectionTimeLimitMillis >= 0) {
+            impl.setThreadCollectionTimeLimitMillis(threadCollectionTimeLimitMillis);
         } else {
             getLogger().e("Invalid configuration value detected. "
-                    + "Option maxThreadTime should be a positive integer."
-                    + "Supplied value is " + maxTracesTime);
+                    + "Option threadCollectionTimeLimitMillis should be a positive integer."
+                    + "Supplied value is " + threadCollectionTimeLimitMillis);
         }
     }
 
@@ -1137,7 +1138,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
 
     /**
      * Whether Bugsnag should try to send crashing errors prior to app termination.
-     * 
+     *
      * @see #setAttemptDeliveryOnCrash(boolean)
      */
     public boolean isAttemptDeliveryOnCrash() {

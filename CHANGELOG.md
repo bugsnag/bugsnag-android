@@ -1,5 +1,12 @@
 # Changelog
 
+## TBC
+
+### Enhancements
+
+* The maximum time taken to collect Event.threads can now be controlled using 'Configuration.threadCollectionTimeLimitMillis' (default 5000ms)
+  [#1935](https://github.com/bugsnag/bugsnag-android/pull/1935)
+
 ## 6.0.0 (2023-11-20)
 
 ### Breaking Changes

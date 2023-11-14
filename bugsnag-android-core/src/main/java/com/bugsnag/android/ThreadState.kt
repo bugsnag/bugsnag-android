@@ -1,8 +1,10 @@
 package com.bugsnag.android
 
+import android.os.SystemClock
 import com.bugsnag.android.internal.ImmutableConfig
 import java.io.IOException
 import kotlin.math.max
+import kotlin.math.min
 import java.lang.Thread as JavaThread
 
 /**
@@ -12,7 +14,7 @@ internal class ThreadState @Suppress("LongParameterList") constructor(
     exc: Throwable?,
     isUnhandled: Boolean,
     maxThreads: Int,
-    maxTime: Int,
+    threadCollectionTimeLimitMillis: Long,
     sendThreads: ThreadSendPolicy,
     projectPackages: Collection<String>,
     logger: Logger,
@@ -28,7 +30,7 @@ internal class ThreadState @Suppress("LongParameterList") constructor(
         exc,
         isUnhandled,
         config.maxReportedThreads,
-        config.maxTracesTime,
+        config.threadCollectionTimeLimitMillis,
         config.sendThreads,
         config.projectPackages,
         config.logger
@@ -38,7 +40,7 @@ internal class ThreadState @Suppress("LongParameterList") constructor(
 
     init {
         val recordThreads = sendThreads == ThreadSendPolicy.ALWAYS ||
-                (sendThreads == ThreadSendPolicy.UNHANDLED_ONLY && isUnhandled)
+            (sendThreads == ThreadSendPolicy.UNHANDLED_ONLY && isUnhandled)
 
         threads = when {
             recordThreads -> captureThreadTrace(
@@ -47,7 +49,7 @@ internal class ThreadState @Suppress("LongParameterList") constructor(
                 exc,
                 isUnhandled,
                 maxThreads,
-                maxTime,
+                threadCollectionTimeLimitMillis,
                 projectPackages,
                 logger
             )
@@ -81,7 +83,7 @@ internal class ThreadState @Suppress("LongParameterList") constructor(
         exc: Throwable?,
         isUnhandled: Boolean,
         maxThreadCount: Int,
-        maxTime: Int,
+        threadCollectionTimeLimitMillis: Long,
         projectPackages: Collection<String>,
         logger: Logger
     ): MutableList<Thread> {
@@ -113,21 +115,41 @@ internal class ThreadState @Suppress("LongParameterList") constructor(
 
         // Keep the lowest ID threads (ordered). Anything after maxThreadCount is lost.
         // Note: We must ensure that currentThread is always present in the final list regardless.
-        val keepThreads = allThreads.sortedBy { it.id }.take(maxThreadCount)
 
-        val reportThreads = mutableListOf<Thread>()
-        if (keepThreads.contains(currentThread)) {
-            keepThreads
-        } else {
-            // API 24/25 don't record the currentThread, so add it in manually
-            // https://issuetracker.google.com/issues/64122757
-            // currentThread may also have been removed if its ID occurred after maxThreadCount
-            keepThreads.take(max(maxThreadCount - 1, 0)).plus(currentThread).sortedBy { it.id }
-        }.forEach {
-            val timeout = System.currentTimeMillis() + maxTime
-            if (System.currentTimeMillis() < timeout) {
-                reportThreads.add(toBugsnagThread(it))
+        val sortedThreads = allThreads.sortedBy { it.id }
+        val currentThreadIndex = sortedThreads.binarySearch(0, min(maxThreadCount, sortedThreads.size)) {
+            it.id.compareTo(currentThread.id)
+        }
+
+        // API 24/25 don't record the currentThread, so add it in manually
+        // https://issuetracker.google.com/issues/64122757
+        // currentThread may also have been removed if its ID occurred after maxThreadCount
+        // as such we may need to leave a space in new list for currentThread
+        val keepThreads = sortedThreads.take(
+            if (currentThreadIndex >= 0) maxThreadCount else max(maxThreadCount - 1, 0)
+        )
+
+        val reportThreads = ArrayList<Thread>(maxThreadCount)
+
+        val timeout = SystemClock.elapsedRealtime() + threadCollectionTimeLimitMillis
+        for (thread in keepThreads) {
+            if (SystemClock.elapsedRealtime() >= timeout) {
+                break
             }
+            reportThreads.add(toBugsnagThread(thread))
+        }
+
+        if (currentThreadIndex < 0) {
+            val expectedIndex = -currentThreadIndex - 1
+            if (expectedIndex >= reportThreads.size) {
+                reportThreads.add(toBugsnagThread(currentThread))
+            } else {
+                reportThreads.add(expectedIndex, toBugsnagThread(currentThread))
+            }
+        } else if (currentThreadIndex >= reportThreads.size) {
+            // if this is the case we have failed to collect maxThreadCount within the timeout
+            // so we can safely add currentThread to the end of the list without going over maxThreadCount
+            reportThreads.add(toBugsnagThread(currentThread))
         }
 
         if (allThreads.size > maxThreadCount) {
