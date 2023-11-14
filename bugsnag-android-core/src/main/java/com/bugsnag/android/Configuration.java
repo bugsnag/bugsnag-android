@@ -537,6 +537,30 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
     }
 
     /**
+     * Gets the maximum time for collecting threads and traces.
+     *
+     * By default, up to 200 threads are reported.
+     */
+    public int getMaxTracesTime() {
+        return impl.getMaxTracesTime();
+    }
+
+    /**
+     * Sets the maximum time for collecting threads and traces.
+     *
+     * By default, up to 500 milliseconds are reported.
+     */
+    public void setMaxTracesTime(@IntRange(from = 0) int maxTracesTime) {
+        if (maxTracesTime >= 0) {
+            impl.setMaxTracesTime(maxTracesTime);
+        } else {
+            getLogger().e("Invalid configuration value detected. "
+                    + "Option maxThreadTime should be a positive integer."
+                    + "Supplied value is " + maxTracesTime);
+        }
+    }
+
+    /**
      * Sets the maximum number of persisted sessions which will be stored. Once the threshold is
      * reached, the oldest session will be deleted.
      *
