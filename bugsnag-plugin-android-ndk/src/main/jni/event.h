@@ -1,8 +1,8 @@
 #ifndef BUGSNAG_EVENT_H
 #define BUGSNAG_EVENT_H
 
-#include "../assets/include/event.h"
 #include "bsg_unwind.h"
+#include "include/event.h"
 #include <stdbool.h>
 #include <sys/types.h>
 #ifndef BUGSNAG_METADATA_MAX
@@ -34,7 +34,7 @@
 /**
  * Version of the bugsnag_event struct. Serialized to report header.
  */
-#define BUGSNAG_EVENT_VERSION 12
+#define BUGSNAG_EVENT_VERSION 13
 
 #ifdef __cplusplus
 extern "C" {
@@ -234,7 +234,7 @@ typedef struct {
   char context[64];
   bugsnag_severity severity;
 
-  char session_id[33];
+  char session_id[37];
   char session_start[33];
   int handled_events;
   int unhandled_events;

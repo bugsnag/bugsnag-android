@@ -6,6 +6,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.util.regex.Pattern
 
 class ManifestConfigLoaderTest {
 
@@ -29,7 +30,7 @@ class ManifestConfigLoaderTest {
             assertTrue(autoDetectErrors)
             assertTrue(autoTrackSessions)
             assertEquals(ThreadSendPolicy.ALWAYS, sendThreads)
-            assertFalse(persistUser)
+            assertTrue(persistUser)
 
             // endpoints
             assertEquals(endpoints.notify, "https://notify.bugsnag.com")
@@ -40,9 +41,9 @@ class ManifestConfigLoaderTest {
             assertEquals(0, versionCode)
             assertNull(releaseStage)
             assertNull(enabledReleaseStages)
-            assertEquals(emptySet<String>(), discardClasses)
+            assertEquals(emptySet<Pattern>(), discardClasses)
             assertEquals(emptySet<String>(), projectPackages)
-            assertEquals(setOf("password"), redactedKeys)
+            assertEquals(".*password.*", redactedKeys.single().pattern())
 
             // misc
             assertEquals(maxBreadcrumbs, 100)
@@ -50,8 +51,6 @@ class ManifestConfigLoaderTest {
             assertEquals(maxPersistedSessions, 128)
             assertEquals(maxReportedThreads, 200)
             assertTrue(sendLaunchCrashesSynchronously)
-            @Suppress("DEPRECATION")
-            assertEquals(launchCrashThresholdMs, 5000)
             assertEquals(launchDurationMillis, 5000)
             assertEquals("android", appType)
         }
@@ -79,9 +78,9 @@ class ManifestConfigLoaderTest {
             putInt("com.bugsnag.android.VERSION_CODE", 55)
             putString("com.bugsnag.android.RELEASE_STAGE", "beta")
             putString("com.bugsnag.android.ENABLED_RELEASE_STAGES", "beta,production,staging")
-            putString("com.bugsnag.android.DISCARD_CLASSES", "com.bugsnag.FooKt,org.example.String")
+            putString("com.bugsnag.android.DISCARD_CLASSES", ".*com.bugsnag.FooKt.*,.*org.example.String.*")
             putString("com.bugsnag.android.PROJECT_PACKAGES", "com.bugsnag,com.example")
-            putString("com.bugsnag.android.REDACTED_KEYS", "password,auth,foo")
+            putString("com.bugsnag.android.REDACTED_KEYS", ".*password.*,.*auth.*,.*foo.*")
 
             // misc
             putInt("com.bugsnag.android.MAX_BREADCRUMBS", 75)
@@ -115,17 +114,18 @@ class ManifestConfigLoaderTest {
             assertEquals(55, versionCode)
             assertEquals("beta", releaseStage)
             assertEquals(setOf("beta", "production", "staging"), enabledReleaseStages)
-            assertEquals(setOf("com.bugsnag.FooKt", "org.example.String"), discardClasses)
             assertEquals(setOf("com.bugsnag", "com.example"), projectPackages)
-            assertEquals(setOf("password", "auth", "foo"), redactedKeys)
+
+            assertEquals(".*com.bugsnag.FooKt.*", discardClasses.first().pattern())
+            assertEquals(".*org.example.String.*", discardClasses.last().pattern())
+            assertEquals(".*password.*", redactedKeys.first().pattern())
+            assertEquals(".*foo.*", redactedKeys.last().pattern())
 
             // misc
             assertEquals(maxBreadcrumbs, 75)
             assertEquals(maxPersistedEvents, 52)
             assertEquals(maxPersistedSessions, 64)
             assertEquals(maxReportedThreads, 100)
-            @Suppress("DEPRECATION")
-            assertEquals(launchCrashThresholdMs, 7000)
             assertEquals(launchDurationMillis, 7000)
             assertFalse(sendLaunchCrashesSynchronously)
             assertEquals("react-native", appType)
@@ -138,14 +138,12 @@ class ManifestConfigLoaderTest {
         val data = Bundle().apply {
             putString("com.bugsnag.android.API_KEY", "5d1ec5bd39a74caa1267142706a7fb21")
             putBoolean("com.bugsnag.android.ENABLE_EXCEPTION_HANDLER", false)
-            putInt("com.bugsnag.android.LAUNCH_CRASH_THRESHOLD_MS", 8000)
         }
 
         val config = configLoader.load(data, null)
 
         with(config) {
             assertEquals("5d1ec5bd39a74caa1267142706a7fb21", apiKey)
-            assertEquals(8000, launchDurationMillis)
         }
     }
 }

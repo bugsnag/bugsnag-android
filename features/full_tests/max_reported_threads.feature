@@ -12,7 +12,7 @@ Feature: Reporting with other exception handlers installed
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "UnhandledExceptionMaxThreadsScenario"
     And the error payload field "events.0.threads" is an array with 3 elements
-    And the error payload field "events.0.threads.2.id" equals -1
+    And the error payload field "events.0.threads.2.id" equals ""
     And the error payload field "events.0.threads.2.name" ends with "threads omitted as the maxReportedThreads limit (2) was exceeded]"
 
   Scenario: Handled exception with max threads set
@@ -23,5 +23,5 @@ Feature: Reporting with other exception handlers installed
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "HandledExceptionMaxThreadsScenario"
     And the error payload field "events.0.threads" is an array with 4 elements
-    And the error payload field "events.0.threads.3.id" equals -1
+    And the error payload field "events.0.threads.3.id" equals ""
     And the error payload field "events.0.threads.3.name" ends with "threads omitted as the maxReportedThreads limit (3) was exceeded]"

@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 @SuppressWarnings("ConstantConditions") // suppress warning about making redundant null checks
 public class ConfigurationFacadeTest {
@@ -41,11 +42,6 @@ public class ConfigurationFacadeTest {
     public void apiKeyValid() {
         config.setApiKey("ffffc5bd39a74caa1267142706a7fb21");
         assertEquals("ffffc5bd39a74caa1267142706a7fb21", config.impl.getApiKey());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void apiKeyInvalid() {
-        config.setApiKey(null);
     }
 
     @Test
@@ -87,15 +83,9 @@ public class ConfigurationFacadeTest {
 
     @Test
     public void persistUserValid() {
-        config.setPersistUser(true);
         assertTrue(config.impl.getPersistUser());
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void launchCrashThresholdMsValid() {
-        config.setLaunchCrashThresholdMs(123456);
-        assertEquals(123456, config.impl.getLaunchDurationMillis());
+        config.setPersistUser(false);
+        assertFalse(config.impl.getPersistUser());
     }
 
     @Test
@@ -222,14 +212,14 @@ public class ConfigurationFacadeTest {
 
     @Test
     public void redactedKeysValid() {
-        Set<String> redactedKeys = new HashSet<>();
+        Set<Pattern> redactedKeys = new HashSet<>();
         config.setRedactedKeys(redactedKeys);
         assertEquals(redactedKeys, config.impl.getRedactedKeys());
     }
 
     @Test
     public void redactedKeysInvalid() {
-        Set<String> keys = config.impl.getRedactedKeys();
+        Set<Pattern> keys = config.impl.getRedactedKeys();
         config.setRedactedKeys(null);
         assertEquals(keys, config.impl.getRedactedKeys());
         assertNotNull(logger.getMsg());
@@ -237,15 +227,15 @@ public class ConfigurationFacadeTest {
 
     @Test
     public void discardClassesValid() {
-        Set<String> discardClasses = new HashSet<>();
-        discardClasses.add("com.example.Foo");
+        Set<Pattern> discardClasses = new HashSet<>();
+        discardClasses.add(Pattern.compile("com.example.Foo"));
         config.setDiscardClasses(discardClasses);
         assertEquals(discardClasses, config.impl.getDiscardClasses());
     }
 
     @Test
     public void discardClassesInvalid() {
-        Set<String> classes = config.impl.getDiscardClasses();
+        Set<Pattern> classes = config.impl.getDiscardClasses();
         config.setDiscardClasses(null);
         assertEquals(classes, config.impl.getDiscardClasses());
         assertNotNull(logger.getMsg());

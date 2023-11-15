@@ -28,9 +28,9 @@ public class ThreadFacadeTest {
         List<Stackframe> frames = Collections.emptyList();
         stacktrace = new Stacktrace(frames);
         thread = new Thread(
-                1,
+                "1",
                 "thread-2",
-                ThreadType.ANDROID,
+                ErrorType.ANDROID,
                 false,
                 Thread.State.RUNNABLE,
                 stacktrace,
@@ -40,9 +40,9 @@ public class ThreadFacadeTest {
 
     @Test
     public void idValid() {
-        assertEquals(1, thread.getId());
-        thread.setId(55);
-        assertEquals(55, thread.getId());
+        assertEquals("1", thread.getId());
+        thread.setId("55");
+        assertEquals("55", thread.getId());
     }
 
     @Test
@@ -62,16 +62,16 @@ public class ThreadFacadeTest {
 
     @Test
     public void typeValid() {
-        assertEquals(ThreadType.ANDROID, thread.getType());
-        thread.setType(ThreadType.REACTNATIVEJS);
-        assertEquals(ThreadType.REACTNATIVEJS, thread.getType());
+        assertEquals(ErrorType.ANDROID, thread.getType());
+        thread.setType(ErrorType.REACTNATIVEJS);
+        assertEquals(ErrorType.REACTNATIVEJS, thread.getType());
     }
 
     @Test
     public void typeInvalid() {
-        assertEquals(ThreadType.ANDROID, thread.getType());
+        assertEquals(ErrorType.ANDROID, thread.getType());
         thread.setType(null);
-        assertEquals(ThreadType.ANDROID, thread.getType());
+        assertEquals(ErrorType.ANDROID, thread.getType());
         assertNotNull(logger.getMsg());
     }
 

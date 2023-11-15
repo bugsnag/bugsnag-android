@@ -3,9 +3,10 @@ package com.bugsnag.android
 import android.content.Context
 import java.io.File
 import java.util.EnumSet
+import java.util.regex.Pattern
 
 internal class ConfigInternal(
-    var apiKey: String
+    var apiKey: String?
 ) : CallbackAware, MetadataAware, UserAware, FeatureFlagAware {
 
     private var user = User()
@@ -23,7 +24,7 @@ internal class ConfigInternal(
     var versionCode: Int? = 0
     var releaseStage: String? = null
     var sendThreads: ThreadSendPolicy = ThreadSendPolicy.ALWAYS
-    var persistUser: Boolean = false
+    var persistUser: Boolean = true
 
     var launchDurationMillis: Long = DEFAULT_LAUNCH_CRASH_THRESHOLD_MS
 
@@ -45,13 +46,13 @@ internal class ConfigInternal(
     var maxStringValueLength: Int = DEFAULT_MAX_STRING_VALUE_LENGTH
     var context: String? = null
 
-    var redactedKeys: Set<String>
+    var redactedKeys: Set<Pattern>
         get() = metadataState.metadata.redactedKeys
         set(value) {
             metadataState.metadata.redactedKeys = value
         }
 
-    var discardClasses: Set<String> = emptySet()
+    var discardClasses: Set<Pattern> = emptySet()
     var enabledReleaseStages: Set<String>? = null
     var enabledBreadcrumbTypes: Set<BreadcrumbType>? = null
     var telemetry: Set<Telemetry> = EnumSet.of(Telemetry.INTERNAL_ERRORS, Telemetry.USAGE)

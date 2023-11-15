@@ -34,7 +34,3 @@ void bsg_serialize_breadcrumbs(const bugsnag_event *event, JSON_Array *crumbs);
 void bsg_serialize_threads(const bugsnag_event *event, JSON_Array *threads);
 void bsg_serialize_feature_flags(const bugsnag_event *event,
                                  JSON_Array *feature_flags);
-
-int bsg_calculate_total_crumbs(int old_count);
-int bsg_calculate_v1_start_index(int old_count);
-int bsg_calculate_v1_crumb_index(int crumb_pos, int first_index);

@@ -24,7 +24,7 @@ class EventStoreMaxLimitTest {
     fun setUp() {
         storageDir = Files.createTempDirectory("tmp").toFile()
         storageDir.deleteRecursively()
-        errorDir = File(storageDir, "bugsnag-errors")
+        errorDir = File(storageDir, "bugsnag/errors")
     }
 
     @After

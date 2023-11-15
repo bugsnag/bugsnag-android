@@ -2,7 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>ComplexMethod:ConfigInternal.kt$ConfigInternal$fun getConfigDifferences(): Map&lt;String, Any></ID>
+    <ID>CyclomaticComplexMethod:ConfigInternal.kt$ConfigInternal$fun getConfigDifferences(): Map&lt;String, Any></ID>
     <ID>ImplicitDefaultLocale:DeliveryHeaders.kt$String.format("%02x", byte)</ID>
     <ID>LongParameterList:App.kt$App$( /** * The architecture of the running application binary */ var binaryArch: String?, /** * The package name of the application */ var id: String?, /** * The release stage set in [Configuration.releaseStage] */ var releaseStage: String?, /** * The version of the application set in [Configuration.version] */ var version: String?, /** The revision ID from the manifest (React Native apps only) */ var codeBundleId: String?, /** * The unique identifier for the build of the application set in [Configuration.buildUuid] */ var buildUuid: String?, /** * The application type set in [Configuration#version] */ var type: String?, /** * The version code of the application set in [Configuration.versionCode] */ var versionCode: Number? )</ID>
     <ID>LongParameterList:AppDataCollector.kt$AppDataCollector$( appContext: Context, private val packageManager: PackageManager?, private val config: ImmutableConfig, private val sessionTracker: SessionTracker, private val activityManager: ActivityManager?, private val launchCrashTracker: LaunchCrashTracker, private val memoryTrimState: MemoryTrimState )</ID>
@@ -15,7 +15,7 @@
     <ID>LongParameterList:DeviceIdStore.kt$DeviceIdStore$( context: Context, deviceIdfile: File = File(context.filesDir, "device-id"), deviceIdGenerator: () -> UUID = { UUID.randomUUID() }, internalDeviceIdfile: File = File(context.filesDir, "internal-device-id"), internalDeviceIdGenerator: () -> UUID = { UUID.randomUUID() }, private val sharedPrefMigrator: SharedPrefMigrator, logger: Logger )</ID>
     <ID>LongParameterList:DeviceWithState.kt$DeviceWithState$( buildInfo: DeviceBuildInfo, jailbroken: Boolean?, id: String?, locale: String?, totalMemory: Long?, runtimeVersions: MutableMap&lt;String, Any>, /** * The number of free bytes of storage available on the device */ var freeDisk: Long?, /** * The number of free bytes of memory available on the device */ var freeMemory: Long?, /** * The orientation of the device when the event occurred: either portrait or landscape */ var orientation: String?, /** * The timestamp on the device when the event occurred */ var time: Date? )</ID>
     <ID>LongParameterList:EventFilenameInfo.kt$EventFilenameInfo.Companion$( obj: Any, uuid: String = UUID.randomUUID().toString(), apiKey: String?, timestamp: Long = System.currentTimeMillis(), config: ImmutableConfig, isLaunching: Boolean? = null )</ID>
-    <ID>LongParameterList:EventInternal.kt$EventInternal$( apiKey: String, logger: Logger, breadcrumbs: MutableList&lt;Breadcrumb> = mutableListOf(), discardClasses: Set&lt;String> = setOf(), errors: MutableList&lt;Error> = mutableListOf(), metadata: Metadata = Metadata(), featureFlags: FeatureFlags = FeatureFlags(), originalError: Throwable? = null, projectPackages: Collection&lt;String> = setOf(), severityReason: SeverityReason = SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION), threads: MutableList&lt;Thread&gt; = mutableListOf(), user: User = User(), redactionKeys: Set&lt;String>? = null )</ID>
+    <ID>LongParameterList:EventInternal.kt$EventInternal$( apiKey: String, logger: Logger, breadcrumbs: MutableList&lt;Breadcrumb> = mutableListOf(), discardClasses: Set&lt;Pattern> = setOf(), errors: MutableList&lt;Error> = mutableListOf(), metadata: Metadata = Metadata(), featureFlags: FeatureFlags = FeatureFlags(), originalError: Throwable? = null, projectPackages: Collection&lt;String> = setOf(), severityReason: SeverityReason = SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION), threads: MutableList&lt;Thread> = mutableListOf(), user: User = User(), redactionKeys: Set&lt;Pattern>? = null )</ID>
     <ID>LongParameterList:EventStorageModule.kt$EventStorageModule$( contextModule: ContextModule, configModule: ConfigModule, dataCollectionModule: DataCollectionModule, bgTaskService: BackgroundTaskService, trackerModule: TrackerModule, systemServiceModule: SystemServiceModule, notifier: Notifier, callbackState: CallbackState )</ID>
     <ID>LongParameterList:NativeStackframe.kt$NativeStackframe$( /** * The name of the method that was being executed */ var method: String?, /** * The location of the source file */ var file: String?, /** * The line number within the source file this stackframe refers to */ var lineNumber: Number?, /** * The address of the instruction where the event occurred. */ var frameAddress: Long?, /** * The address of the function where the event occurred. */ var symbolAddress: Long?, /** * The address of the library where the event occurred. */ var loadAddress: Long?, /** * Whether this frame identifies the program counter */ var isPC: Boolean?, /** * The type of the error */ var type: ErrorType? = null, /** * Identifies the exact build this frame originates from. */ var codeIdentifier: String? = null, )</ID>
     <ID>LongParameterList:StateEvent.kt$StateEvent.Install$( @JvmField val apiKey: String, @JvmField val autoDetectNdkCrashes: Boolean, @JvmField val appVersion: String?, @JvmField val buildUuid: String?, @JvmField val releaseStage: String?, @JvmField val lastRunInfoPath: String, @JvmField val consecutiveLaunchCrashes: Int, @JvmField val sendThreads: ThreadSendPolicy )</ID>
@@ -33,32 +33,36 @@
     <ID>MagicNumber:LastRunInfoStore.kt$LastRunInfoStore$3</ID>
     <ID>MaxLineLength:LastRunInfo.kt$LastRunInfo$return "LastRunInfo(consecutiveLaunchCrashes=$consecutiveLaunchCrashes, crashed=$crashed, crashedDuringLaunch=$crashedDuringLaunch)"</ID>
     <ID>MaxLineLength:ThreadState.kt$ThreadState$"[${allThreads.size - maxThreadCount} threads omitted as the maxReportedThreads limit ($maxThreadCount) was exceeded]"</ID>
-    <ID>NestedBlockDepth:JsonHelper.kt$JsonHelper$ fun jsonToLong(value: Any?): Long?</ID>
+    <ID>NestedBlockDepth:JsonHelper.kt$JsonHelper$fun jsonToLong(value: Any?): Long?</ID>
     <ID>ProtectedMemberInFinalClass:ConfigInternal.kt$ConfigInternal$protected val plugins = HashSet&lt;Plugin>()</ID>
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun isAnr(event: Event): Boolean</ID>
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun shouldDiscardClass(): Boolean</ID>
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun updateSeverityInternal(severity: Severity)</ID>
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun updateSeverityReason(@SeverityReason.SeverityReasonType reason: String)</ID>
-    <ID>RethrowCaughtException:JsonHelper.kt$JsonHelper$throw ex</ID>
     <ID>ReturnCount:DefaultDelivery.kt$DefaultDelivery$fun deliver( urlString: String, json: ByteArray, headers: Map&lt;String, String?> ): DeliveryStatus</ID>
-    <ID>SwallowedException:AppDataCollector.kt$AppDataCollector$catch (e: Exception) { return null }</ID>
-    <ID>SwallowedException:BugsnagEventMapper.kt$BugsnagEventMapper$catch (pe: IllegalArgumentException) { ndkDateFormatHolder.get()!!.parse(this) ?: throw IllegalArgumentException("cannot parse date $this") }</ID>
-    <ID>SwallowedException:ConnectivityCompat.kt$ConnectivityLegacy$catch (e: NullPointerException) { // in some rare cases we get a remote NullPointerException via Parcel.readException null }</ID>
-    <ID>SwallowedException:ContextExtensions.kt$catch (exc: RuntimeException) { null }</ID>
-    <ID>SwallowedException:DeviceDataCollector.kt$DeviceDataCollector$catch (e: Throwable) { null }</ID>
-    <ID>SwallowedException:DeviceDataCollector.kt$DeviceDataCollector$catch (e: Throwable) { return null }</ID>
-    <ID>SwallowedException:DeviceDataCollector.kt$DeviceDataCollector$catch (exc: Exception) { false }</ID>
-    <ID>SwallowedException:DeviceDataCollector.kt$DeviceDataCollector$catch (exception: Exception) { logger.w("Could not get battery status") }</ID>
-    <ID>SwallowedException:DeviceDataCollector.kt$DeviceDataCollector$catch (exception: Exception) { logger.w("Could not get locationStatus") }</ID>
-    <ID>SwallowedException:DeviceIdFilePersistence.kt$DeviceIdFilePersistence$catch (exc: OverlappingFileLockException) { Thread.sleep(FILE_LOCK_WAIT_MS) }</ID>
-    <ID>SwallowedException:JsonHelperTest.kt$JsonHelperTest$catch (e: IllegalArgumentException) { didThrow = true }</ID>
-    <ID>SwallowedException:PluginClient.kt$PluginClient$catch (exc: ClassNotFoundException) { if (isWarningEnabled) { logger.d("Plugin '$clz' is not on the classpath - functionality will not be enabled.") } null }</ID>
-    <ID>SwallowedException:SharedPrefMigrator.kt$SharedPrefMigrator$catch (e: RuntimeException) { null }</ID>
-    <ID>ThrowsCount:JsonHelper.kt$JsonHelper$ fun jsonToLong(value: Any?): Long?</ID>
+    <ID>SwallowedException:AppDataCollector.kt$AppDataCollector$e: Exception</ID>
+    <ID>SwallowedException:BugsnagEventMapper.kt$BugsnagEventMapper$pe: IllegalArgumentException</ID>
+    <ID>SwallowedException:ConnectivityCompat.kt$ConnectivityLegacy$e: NullPointerException</ID>
+    <ID>SwallowedException:ContextExtensions.kt$exc: RuntimeException</ID>
+    <ID>SwallowedException:DeviceDataCollector.kt$DeviceDataCollector$e: Throwable</ID>
+    <ID>SwallowedException:DeviceDataCollector.kt$DeviceDataCollector$exc: Exception</ID>
+    <ID>SwallowedException:DeviceDataCollector.kt$DeviceDataCollector$exception: Exception</ID>
+    <ID>SwallowedException:DeviceIdFilePersistence.kt$DeviceIdFilePersistence$exc: OverlappingFileLockException</ID>
+    <ID>SwallowedException:ImmutableConfig.kt$e: Exception</ID>
+    <ID>SwallowedException:ForegroundDetector.kt$ForegroundDetector$e: Exception</ID>
+    <ID>SwallowedException:JsonHelperTest.kt$JsonHelperTest$e: IllegalArgumentException</ID>
+    <ID>SwallowedException:PluginClient.kt$PluginClient$exc: ClassNotFoundException</ID>
+    <ID>SwallowedException:SharedPrefMigrator.kt$SharedPrefMigrator$e: RuntimeException</ID>
+    <ID>ThrowsCount:JsonHelper.kt$JsonHelper$fun jsonToLong(value: Any?): Long?</ID>
     <ID>TooManyFunctions:ConfigInternal.kt$ConfigInternal : CallbackAwareMetadataAwareUserAwareFeatureFlagAware</ID>
     <ID>TooManyFunctions:DeviceDataCollector.kt$DeviceDataCollector</ID>
     <ID>TooManyFunctions:EventInternal.kt$EventInternal : FeatureFlagAwareStreamableMetadataAwareUserAware</ID>
-    <ID>UnnecessaryAbstractClass:DependencyModule.kt$DependencyModule</ID>
-    <ID>UnusedPrivateMember:ThreadStateTest.kt$ThreadStateTest$private val configuration = generateImmutableConfig()</ID>
+    <ID>UnusedPrivateProperty:ThreadStateTest.kt$ThreadStateTest$private val configuration = generateImmutableConfig()</ID>
+    <ID>UseCheckOrError:BackgroundTaskServiceTest.kt$BackgroundTaskServiceTest$throw IllegalStateException()</ID>
+    <ID>UseCheckOrError:BugsnagEventMapper.kt$BugsnagEventMapper$throw IllegalStateException("cannot find json property '$key'")</ID>
+    <ID>UseCheckOrError:StacktraceSerializationTest.kt$StacktraceSerializationTest.Companion$throw IllegalStateException()</ID>
+    <ID>UseCheckOrError:SynchronizedStreamableStoreTest.kt$CrashyStreamable$throw IllegalStateException()</ID>
+    <ID>UseCheckOrError:SynchronizedStreamableStoreTest.kt$CrashyStreamable.Companion$throw IllegalStateException()</ID>
+    <ID>UseRequire:ImmutableConfig.kt$throw IllegalArgumentException("No Bugsnag API Key set")</ID>
   </CurrentIssues>
 </SmellBaseline>

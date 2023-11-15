@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 
 public class CXXSignalSmokeScenario extends Scenario {
@@ -50,8 +51,8 @@ public class CXXSignalSmokeScenario extends Scenario {
         config.setContext("CXXSignalSmokeScenario");
         config.setUser("ABC", "ABC@CBA.CA", "CXXSignalSmokeScenario");
         config.addMetadata("TestData", "Source", "CXXSignalSmokeScenario");
-        Set<String> redactedKeys = new HashSet<>();
-        redactedKeys.add("redacted");
+        Set<Pattern> redactedKeys = new HashSet<Pattern>();
+        redactedKeys.add(Pattern.compile(".*redacted.*"));
         config.setRedactedKeys(redactedKeys);
         config.addOnBreadcrumb(new OnBreadcrumbCallback() {
             @Override

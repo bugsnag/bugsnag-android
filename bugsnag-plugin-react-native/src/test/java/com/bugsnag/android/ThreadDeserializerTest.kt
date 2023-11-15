@@ -32,8 +32,8 @@ class ThreadDeserializerTest {
     @Test
     fun deserialize() {
         val thread = ThreadDeserializer(StackframeDeserializer(), object : Logger {}).deserialize(map)
-        assertEquals(52, thread.id)
-        assertEquals(ThreadType.REACTNATIVEJS, thread.type)
+        assertEquals("52", thread.id)
+        assertEquals(ErrorType.REACTNATIVEJS, thread.type)
         assertEquals("thread-worker-02", thread.name)
         assertTrue(thread.errorReportingThread)
 

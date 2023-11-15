@@ -20,4 +20,9 @@ open class BugsnagBuildPluginExtension(@Suppress("UNUSED_PARAMETER") objects: Ob
      */
     open var usesNdk: Boolean = false
 
+    /**
+     * The project publishes a native prefab with the specified name. By default this is disabled.
+     */
+    open var publishesPrefab: String? = null
+
 }

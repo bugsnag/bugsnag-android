@@ -18,19 +18,16 @@ buildscript {
         mavenCentral()
         maven { url "https://plugins.gradle.org/m2/" }
     }
-    ext.kotlin_version = "1.3.72"
+    ext.kotlin_version = "1.4.32"
 
     dependencies {
-        if (project.hasProperty("USE_LEGACY_AGP") && "true" == project.property("USE_LEGACY_AGP")) {
-            project.logger.lifecycle("Using AGP 4.2.0")
-            classpath "com.android.tools.build:gradle:4.2.0"
-            classpath "com.bugsnag:bugsnag-android-gradle-plugin:5.8.2"
-        }
-        else {
-            project.logger.lifecycle("Using AGP 7.1.0")
-            classpath "com.android.tools.build:gradle:7.1.0"
-            classpath "com.bugsnag:bugsnag-android-gradle-plugin:7.1.0"
-        }
+        def agpVersion = project.hasProperty("USE_AGP_VERSION")
+                ? project.property("USE_AGP_VERSION")
+                : "7.1.0"
+
+        project.logger.lifecycle("Using AGP $agpVersion")
+        classpath "com.android.tools.build:gradle:$agpVersion"
+        classpath "com.bugsnag:bugsnag-android-gradle-plugin:7.1.0"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.18.1"
         classpath "org.jlleitschuh.gradle:ktlint-gradle:10.2.0"

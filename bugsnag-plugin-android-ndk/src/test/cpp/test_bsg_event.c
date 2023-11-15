@@ -1,7 +1,7 @@
 #include <greatest/greatest.h>
 #include <event.h>
 #include <utils/string.h>
-#include "../../main/assets/include/bugsnag.h"
+#include "../../main/jni/include/bugsnag.h"
 #include <event.h>
 
 bugsnag_event *init_event() {

@@ -3,11 +3,11 @@ apply plugin: "kotlin-android"
 
 android {
     compileSdk 31
-    ndkVersion "17.2.4988734"
+    ndkVersion "21.4.7075529"
 
     defaultConfig {
         applicationId "com.example.bugsnag.android"
-        minSdkVersion 14
+        minSdkVersion 16
         targetSdkVersion 31
         versionCode 1
         versionName "1.0"
@@ -35,11 +35,14 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    buildFeatures.prefab = true
+    packagingOptions.jniLibs.pickFirsts += ["**/libbugsnag-ndk.so"]
 }
 
 dependencies {
-    implementation "com.bugsnag:bugsnag-android:5.31.3"
-    implementation "com.bugsnag:bugsnag-plugin-android-okhttp:5.31.3"
+    implementation "com.bugsnag:bugsnag-android:6.0.0"
+    implementation "com.bugsnag:bugsnag-plugin-android-okhttp:6.0.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.appcompat:appcompat:1.4.0"
     implementation "com.google.android.material:material:1.4.0"

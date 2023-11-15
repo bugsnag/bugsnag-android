@@ -6,8 +6,11 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
+import com.bugsnag.android.internal.BackgroundTaskService
 import com.bugsnag.android.internal.convertToImmutableConfig
+import com.bugsnag.android.internal.isInvalidApiKey
 import com.bugsnag.android.internal.sanitiseConfiguration
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -24,6 +27,7 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
 import java.nio.file.Files
+import java.util.regex.Pattern
 
 @RunWith(MockitoJUnitRunner::class)
 internal class ImmutableConfigTest {
@@ -42,12 +46,23 @@ internal class ImmutableConfigTest {
     @Mock
     lateinit var packageManager: PackageManager
 
+    lateinit var backgroundTaskService: BackgroundTaskService
+
     @Before
     fun setUp() {
         // these options are required, but are set in the Client constructor if no value is set
         // on the config object
         seed.delivery = delivery
         seed.logger = NoopLogger
+
+        // we use a real BackgroundTaskService
+        backgroundTaskService = BackgroundTaskService()
+    }
+
+    @After
+    fun shutdown() {
+        // shutdown the backgroundTaskService to avoid leaking threads
+        backgroundTaskService.shutdown()
     }
 
     @Test
@@ -78,8 +93,6 @@ internal class ImmutableConfigTest {
             assertEquals(seed.endpoints, endpoints)
 
             // behaviour
-            @Suppress("DEPRECATION") // tests deprecated option is set via launchDurationMillis
-            assertEquals(seed.launchCrashThresholdMs, launchDurationMillis)
             assertEquals(seed.launchDurationMillis, launchDurationMillis)
             assertTrue(sendLaunchCrashesSynchronously)
             assertEquals(NoopLogger, seed.logger)
@@ -100,7 +113,8 @@ internal class ImmutableConfigTest {
         seed.enabledErrorTypes.ndkCrashes = false
         seed.sendThreads = ThreadSendPolicy.UNHANDLED_ONLY
 
-        seed.discardClasses = setOf("foo")
+        val discardClasses = setOf(Pattern.compile("foo"))
+        seed.discardClasses = discardClasses
         seed.enabledReleaseStages = setOf("bar")
         seed.projectPackages = setOf("com.example")
         seed.releaseStage = "wham"
@@ -131,7 +145,7 @@ internal class ImmutableConfigTest {
             assertEquals(ThreadSendPolicy.UNHANDLED_ONLY, sendThreads)
 
             // release stages
-            assertEquals(setOf("foo"), discardClasses)
+            assertEquals(discardClasses, discardClasses)
             assertEquals(setOf("bar"), enabledReleaseStages)
             assertEquals(setOf("com.example"), projectPackages)
             assertEquals("wham", releaseStage)
@@ -148,8 +162,6 @@ internal class ImmutableConfigTest {
 
             // behaviour
             assertEquals(7000, seed.launchDurationMillis)
-            @Suppress("DEPRECATION") // should be same as launchDurationMillis
-            assertEquals(7000, seed.launchCrashThresholdMs)
             assertFalse(sendLaunchCrashesSynchronously)
             assertEquals(NoopLogger, seed.logger)
             assertEquals(37, seed.maxBreadcrumbs)
@@ -182,7 +194,7 @@ internal class ImmutableConfigTest {
 
         val seed = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
         seed.logger = NoopLogger
-        val config = sanitiseConfiguration(context, seed, connectivity)
+        val config = sanitiseConfiguration(context, seed, connectivity, backgroundTaskService)
         assertEquals(NoopLogger, config.logger)
         assertEquals(setOf("com.example.foo"), config.projectPackages)
         assertEquals("development", config.releaseStage)
@@ -204,7 +216,7 @@ internal class ImmutableConfigTest {
 
         val seed = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
         seed.logger = NoopLogger
-        val config = sanitiseConfiguration(context, seed, connectivity)
+        val config = sanitiseConfiguration(context, seed, connectivity, backgroundTaskService)
         assertEquals(NoopLogger, config.logger)
         assertEquals(setOf("com.example.foo"), config.projectPackages)
         assertEquals("production", config.releaseStage)
@@ -227,8 +239,26 @@ internal class ImmutableConfigTest {
 
         // validate build uuid
         val seed = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
-        val config = sanitiseConfiguration(context, seed, connectivity)
+        val config = sanitiseConfiguration(context, seed, connectivity, backgroundTaskService)
         assertEquals("6533e9f7-0e98-40fe-84b4-0e4ed6df6866", config.buildUuid)
+    }
+
+    @Test
+    fun sanitizeConfigEmptyBuildUuid() {
+        `when`(context.packageName).thenReturn("com.example.foo")
+        `when`(context.packageManager).thenReturn(packageManager)
+
+        // setup build uuid
+        val bundle = mock(Bundle::class.java)
+        `when`(bundle.containsKey("com.bugsnag.android.BUILD_UUID")).thenReturn(true)
+        `when`(bundle.getString("com.bugsnag.android.BUILD_UUID")).thenReturn("")
+        val appInfo = ApplicationInfo().apply { metaData = bundle }
+        `when`(packageManager.getApplicationInfo(anyString(), anyInt())).thenReturn(appInfo)
+
+        // validate build uuid
+        val seed = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
+        val config = sanitiseConfiguration(context, seed, connectivity, backgroundTaskService)
+        assertNull(config.buildUuid)
     }
 
     @Test
@@ -246,7 +276,7 @@ internal class ImmutableConfigTest {
 
         // validate build uuid
         val seed = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
-        val config = sanitiseConfiguration(context, seed, connectivity)
+        val config = sanitiseConfiguration(context, seed, connectivity, backgroundTaskService)
         assertEquals("590265330", config.buildUuid)
     }
 
@@ -263,7 +293,41 @@ internal class ImmutableConfigTest {
 
         // validate build uuid
         val seed = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
-        val config = sanitiseConfiguration(context, seed, connectivity)
+        val config = sanitiseConfiguration(context, seed, connectivity, backgroundTaskService)
         assertNull(config.buildUuid)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun testEmptyApiKey() {
+        val seed = Configuration("")
+        `when`(isInvalidApiKey(seed.apiKey)).thenThrow(IllegalArgumentException())
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun testSettingEmptyApiKey() {
+        val seed = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
+        seed.apiKey = ""
+        `when`(isInvalidApiKey(seed.apiKey)).thenThrow(IllegalArgumentException())
+        val config = sanitiseConfiguration(context, seed, connectivity, backgroundTaskService)
+
+        assertEquals("", config.apiKey)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun testSettingNullApiKey() {
+        val seed = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
+        seed.apiKey = ""
+        `when`(isInvalidApiKey(seed.apiKey)).thenThrow(IllegalArgumentException())
+        val config = sanitiseConfiguration(context, seed, connectivity, backgroundTaskService)
+
+        assertEquals(null, config.apiKey)
+    }
+
+    @Test
+    fun testSettingWrongSizeApiKey() {
+        val config = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
+        config.apiKey = "abfe05f"
+        assertTrue(isInvalidApiKey(config.apiKey))
+        assertEquals("abfe05f", config.apiKey)
     }
 }

@@ -18,7 +18,6 @@ SUITE(suite_event_mutators);
 SUITE(suite_event_app_mutators);
 SUITE(suite_event_device_mutators);
 SUITE(suite_struct_to_file);
-SUITE(suite_struct_migration);
 SUITE(suite_feature_flags);
 
 GREATEST_MAIN_DEFS();
@@ -64,11 +63,6 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_NativeJsonSerializeTest_run(
 JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_NativeStructToFileTest_run(
     JNIEnv *_env, jobject _this) {
     return run_test_suite(suite_struct_to_file);
-}
-
-JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_NativeStructMigrationTest_run(
-    JNIEnv *_env, jobject _this) {
-    return run_test_suite(suite_struct_migration);
 }
 
 JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_NativeBreadcrumbTest_run(

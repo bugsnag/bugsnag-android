@@ -146,7 +146,7 @@ abstract class Scenario(
     }
 
     protected fun errorsDir(): File {
-        return File(context.cacheDir, "bugsnag-errors")
+        return File(context.cacheDir, "bugsnag/errors")
     }
 
     protected fun waitForEventFile() {

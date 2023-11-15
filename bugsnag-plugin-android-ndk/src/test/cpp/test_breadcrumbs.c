@@ -2,7 +2,6 @@
 #include <greatest/greatest.h>
 #include <time.h>
 #include <utils/serializer/json_writer.h>
-#include <utils/serializer/migrate.h>
 
 bugsnag_breadcrumb *init_breadcrumb(const char *name, const char *message, bugsnag_breadcrumb_type type) {
   bugsnag_breadcrumb *crumb = calloc(1, sizeof(bugsnag_breadcrumb));
@@ -76,54 +75,7 @@ TEST test_add_breadcrumbs_over_max(void) {
   PASS();
 }
 
-TEST test_bsg_calculate_total_crumbs(void) {
-  ASSERT_EQ(0, bsg_calculate_total_crumbs(0));
-  ASSERT_EQ(5, bsg_calculate_total_crumbs(5));
-  ASSERT_EQ(22, bsg_calculate_total_crumbs(22));
-  ASSERT_EQ(25, bsg_calculate_total_crumbs(25));
-  ASSERT_EQ(50, bsg_calculate_total_crumbs(51));
-  ASSERT_EQ(50, bsg_calculate_total_crumbs(55));
-  PASS();
-}
-
-TEST test_bsg_calculate_start_index(void) {
-  ASSERT_EQ(0, bsg_calculate_v1_start_index(0));
-  ASSERT_EQ(0, bsg_calculate_v1_start_index(3));
-  ASSERT_EQ(0, bsg_calculate_v1_start_index(17));
-  ASSERT_EQ(0, bsg_calculate_v1_start_index(24));
-  ASSERT_EQ(0, bsg_calculate_v1_start_index(25));
-  ASSERT_EQ(1, bsg_calculate_v1_start_index(26));
-  ASSERT_EQ(3, bsg_calculate_v1_start_index(28));
-  ASSERT_EQ(5, bsg_calculate_v1_start_index(30));
-  PASS();
-}
-
-TEST test_bsg_calculate_crumb_index(void) {
-  ASSERT_EQ(0, bsg_calculate_v1_crumb_index(0, 0));
-
-  // zero offset
-  ASSERT_EQ(24, bsg_calculate_v1_crumb_index(24, 0));
-  ASSERT_EQ(25, bsg_calculate_v1_crumb_index(25, 0));
-  ASSERT_EQ(26, bsg_calculate_v1_crumb_index(26, 0));
-  ASSERT_EQ(0, bsg_calculate_v1_crumb_index(30, 0));
-
-  // offset
-  ASSERT_EQ(15, bsg_calculate_v1_crumb_index(0, 15));
-  ASSERT_EQ(15, bsg_calculate_v1_crumb_index(5, 10));
-  ASSERT_EQ(24, bsg_calculate_v1_crumb_index(10, 14));
-  ASSERT_EQ(25, bsg_calculate_v1_crumb_index(10, 15));
-  ASSERT_EQ(26, bsg_calculate_v1_crumb_index(11, 15));
-  ASSERT_EQ(29, bsg_calculate_v1_crumb_index(14, 15));
-  ASSERT_EQ(0, bsg_calculate_v1_crumb_index(20, 10));
-  ASSERT_EQ(1, bsg_calculate_v1_crumb_index(20, 11));
-  ASSERT_EQ(4, bsg_calculate_v1_crumb_index(23, 11));
-  PASS();
-}
-
 SUITE(suite_breadcrumbs) {
   RUN_TEST(test_add_breadcrumb);
   RUN_TEST(test_add_breadcrumbs_over_max);
-  RUN_TEST(test_bsg_calculate_total_crumbs);
-  RUN_TEST(test_bsg_calculate_start_index);
-  RUN_TEST(test_bsg_calculate_crumb_index);
 }

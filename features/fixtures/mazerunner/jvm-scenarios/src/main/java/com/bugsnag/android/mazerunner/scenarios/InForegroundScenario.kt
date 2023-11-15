@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
+import com.bugsnag.android.mazerunner.log
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -29,6 +30,7 @@ internal class InForegroundScenario(
         Handler(Looper.getMainLooper()).post {
             // debounce so this can only ever occur once
             if (!triggered.getAndSet(true)) {
+                log("onActivityStopped is finished, calling Bugsnag.notify in the background")
                 Bugsnag.notify(generateException())
             }
         }

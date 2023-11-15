@@ -58,7 +58,7 @@ public class ClientTest {
         }
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = IllegalStateException.class)
     public void testNullContext() {
         client = new Client(null, "api-key");
     }

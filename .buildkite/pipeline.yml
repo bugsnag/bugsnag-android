@@ -6,20 +6,6 @@ steps:
       queue: macos-12-arm
     command: ./scripts/audit-dependency-licenses.sh
 
-  - label: ':android: Build fixture APK r16'
-    key: "fixture-r16"
-    timeout_in_minutes: 30
-    agents:
-      queue: macos-12-arm
-    artifact_paths:
-      - "build/fixture-r16.apk"
-      - "build/fixture-r16-url.txt"
-      - "build/fixture-r16/*"
-    commands:
-      - bundle install
-      - make fixture-r16
-      - bundle exec upload-app --farm=bb --app=./build/fixture-r16.apk --app-id-file=build/fixture-r16-url.txt
-
   - label: ':android: Build fixture APK r19'
     key: "fixture-r19"
     timeout_in_minutes: 30
