@@ -1,6 +1,6 @@
 /** \brief The public API
  */
-#include "../assets/include/bugsnag.h"
+#include "include/bugsnag.h"
 #include "bugsnag_ndk.h"
 #include "event.h"
 #include "jni_cache.h"

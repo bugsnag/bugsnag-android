@@ -1,0 +1,39 @@
+plugins {
+    id("bugsnag-build-plugin")
+    id "com.google.protobuf" version "0.9.4"
+}
+
+apply plugin: "com.android.library"
+
+dependencies {
+    api(project(":bugsnag-android-core"))
+}
+
+apply from: "../gradle/kotlin.gradle"
+
+dependencies {
+    implementation 'com.google.protobuf:protobuf-javalite:3.24.2'
+}
+
+android.libraryVariants.configureEach { variant ->
+    variant.processJavaResourcesProvider.configure {
+        exclude('**/*.proto')
+    }
+}
+
+protobuf {
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.24.2'
+    }
+    generateProtoTasks {
+        all().configureEach { task ->
+            task.builtins {
+                java {
+                    option "lite"
+                }
+            }
+        }
+    }
+}
+
+apiValidation.ignoredPackages += ["com.bugsnag.android.repackaged.server.os"]

@@ -1,0 +1,1 @@
+-keep class com.bugsnag.android.repackaged.server.os.* extends com.google.protobuf.GeneratedMessageLite { *; }

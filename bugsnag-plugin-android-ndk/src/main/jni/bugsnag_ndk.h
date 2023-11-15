@@ -7,8 +7,8 @@
 #include <stdatomic.h>
 #include <stdbool.h>
 
-#include "../assets/include/bugsnag.h"
 #include "event.h"
+#include "include/bugsnag.h"
 #include "utils/logger.h"
 #include "utils/stack_unwinder.h"
 

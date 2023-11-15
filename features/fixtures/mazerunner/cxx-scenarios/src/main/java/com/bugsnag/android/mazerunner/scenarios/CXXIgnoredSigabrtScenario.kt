@@ -2,6 +2,7 @@ package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
 import com.bugsnag.android.Configuration
+import java.util.regex.Pattern
 
 internal class CXXIgnoredSigabrtScenario(
     config: Configuration,
@@ -10,7 +11,7 @@ internal class CXXIgnoredSigabrtScenario(
 ) : Scenario(config, context, eventMetadata) {
 
     init {
-        config.discardClasses = setOf(eventMetadata)
+        config.discardClasses = setOf(Pattern.compile(eventMetadata))
         System.loadLibrary("cxx-scenarios")
     }
 

@@ -39,7 +39,7 @@ class SessionStore extends FileStore {
     SessionStore(@NonNull ImmutableConfig config,
                  @NonNull Logger logger,
                  @Nullable Delegate delegate) {
-        super(new File(config.getPersistenceDirectory().getValue(), "bugsnag-sessions"),
+        super(new File(config.getPersistenceDirectory().getValue(), "bugsnag/sessions"),
                 config.getMaxPersistedSessions(),
                 SESSION_COMPARATOR,
                 logger,

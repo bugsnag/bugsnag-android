@@ -59,7 +59,7 @@ class EventStore extends FileStore {
                BackgroundTaskService bgTaskSevice,
                Delegate delegate,
                CallbackState callbackState) {
-        super(new File(config.getPersistenceDirectory().getValue(), "bugsnag-errors"),
+        super(new File(config.getPersistenceDirectory().getValue(), "bugsnag/errors"),
                 config.getMaxPersistedEvents(),
                 EVENT_COMPARATOR,
                 logger,

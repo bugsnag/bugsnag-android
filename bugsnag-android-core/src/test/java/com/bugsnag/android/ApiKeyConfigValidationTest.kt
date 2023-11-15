@@ -5,11 +5,6 @@ import org.junit.Test
 
 class ApiKeyConfigValidationTest {
 
-    @Test(expected = IllegalArgumentException::class)
-    fun testEmptyApiKey() {
-        Configuration("")
-    }
-
     @Test
     fun testWrongSizeApiKey() {
         val config = Configuration("abfe05f")
@@ -20,13 +15,6 @@ class ApiKeyConfigValidationTest {
     fun testNonHexApiKey() {
         val config = Configuration("yej0492j55z92z2p")
         assertEquals("yej0492j55z92z2p", config.apiKey)
-    }
-
-    @Test(expected = IllegalArgumentException::class)
-    fun testSettingEmptyApiKey() {
-        val config = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
-        config.apiKey = ""
-        assertEquals("", config.apiKey)
     }
 
     @Test

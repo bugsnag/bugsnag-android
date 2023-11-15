@@ -2,9 +2,9 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>SwallowedException:AnrDetailsCollector.kt$AnrDetailsCollector$catch (exc: RuntimeException) { null }</ID>
-    <ID>SwallowedException:AnrPlugin.kt$AnrPlugin$catch (exc: Throwable) { null }</ID>
+    <ID>SwallowedException:AnrDetailsCollector.kt$AnrDetailsCollector$exc: RuntimeException</ID>
+    <ID>SwallowedException:AnrPlugin.kt$AnrPlugin$exc: Throwable</ID>
     <ID>ThrowingExceptionsWithoutMessageOrCause:AnrPlugin.kt$AnrPlugin$RuntimeException()</ID>
-    <ID>UnusedPrivateMember:AnrPlugin.kt$AnrPlugin$ private fun notifyAnrDetected(nativeTrace: List&lt;NativeStackframe>)</ID>
+    <ID>UnusedPrivateMember:AnrPlugin.kt$AnrPlugin$private fun notifyAnrDetected(nativeTrace: List&lt;NativeStackframe>)</ID>
   </CurrentIssues>
 </SmellBaseline>

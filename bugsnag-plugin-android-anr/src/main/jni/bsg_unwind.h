@@ -1,7 +1,7 @@
 #ifndef BSG_UNWIND_H
 #define BSG_UNWIND_H
 
-#include "../assets/include/event.h"
+#include "include/event.h"
 
 // These are isolated because the ANR plugin symlinks to this file and to
 // ../assets/include/event.h

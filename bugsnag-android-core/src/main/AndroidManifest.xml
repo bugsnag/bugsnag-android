@@ -5,4 +5,12 @@
     <!-- Required: Used to deliver Bugsnag crash reports -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application>
+        <provider
+            android:name="com.bugsnag.android.internal.BugsnagContentProvider"
+            android:authorities="${applicationId}.bugsnag-startup"
+            android:exported="false"
+            android:initOrder="9000" />
+    </application>
 </manifest>

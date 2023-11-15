@@ -32,15 +32,6 @@ notifier:
 	# Build the notifier
 	@./gradlew -PVERSION_NAME=9.9.9 assembleRelease publishToMavenLocal -x check
 
-fixture-r16: notifier
-	# Build the r16 test fixture
-	@./gradlew -PTEST_FIXTURE_NDK_VERSION=16.1.4479499 \
-               -PTEST_FIXTURE_NAME=fixture-r16.apk \
-               -PUSE_LEGACY_AGP=true \
-               -PUSE_LEGACY_OKHTTP=true \
-	           -p=features/fixtures/mazerunner assembleRelease -x check
-	@ruby scripts/copy-build-files.rb release r16
-
 fixture-r19: notifier
 	# Build the r19 test fixture
 	@./gradlew -PTEST_FIXTURE_NDK_VERSION=19.2.5345600 \
@@ -73,7 +64,7 @@ fixture-debug: notifier
 example-app:
 	@./gradlew assembleRelease publishToMavenLocal -x check
 	# Build Android example app
-	@./gradlew -pexamples/sdk-app-example clean assembleRelease
+	@./examples/sdk-app-example/gradlew clean assembleRelease
 
 bump:
 ifneq ($(shell git diff --staged),)

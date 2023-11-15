@@ -6,6 +6,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.bugsnag.android.internal.ImmutableConfig
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
@@ -145,11 +146,8 @@ internal class UserStoreTest {
             prefMigrator,
             NoopLogger
         )
-        val user = store.load(User()).user
-        assertEquals("device-id-123", user.id)
-        assertNull(user.email)
-        assertNull(user.name)
-        assertEquals("", file.readText())
+        store.load(User()).user
+        assertFalse(file.exists())
     }
 
     /**
@@ -159,7 +157,7 @@ internal class UserStoreTest {
     fun saveWithoutPersistUser() {
         val store = UserStore(generateConfig(false), "", file, prefMigrator, NoopLogger)
         store.save(User("123", "joe@yahoo.com", "Joe Bloggs"))
-        assertEquals("", file.readText())
+        assertFalse(file.exists())
     }
 
     /**
