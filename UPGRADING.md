@@ -16,6 +16,7 @@ __This version contains several breaking changes__.
   ```xml
   <meta-data android:name="com.bugsnag.android.BUILD_UUID" android:value="" />
   ```
+- The deprecated `Configuration.launchCrashThresholdMs` (and equivalent manifest entry `LAUNCH_CRASH_THRESHOLD_MS`) have been removed in favour of `Configuration.launchDurationMillis` (`LAUNCH_DURATION_MILLIS`)
 
 ### redactedKeys & discardClasses
 

@@ -46,20 +46,12 @@ Please see our [Upgrade Guide](./UPGRADING.md) for more information on moving fr
 
 ## 5.31.0 (2023-07-26)
 
-### Breaking Changes
-
-* Removed `bugsnag-android-ndk` module, as it has been superseded by `bugsnag-plugin-android-ndk`
-  [#1881](https://github.com/bugsnag/bugsnag-android/pull/1881)
-
 ### Enhancements
 
 * Added `Session.apiKey` so that it can be changed in an `OnSessionCallback`
   [#1855](https://github.com/bugsnag/bugsnag-android/pull/1855)
 * `BroadcastReceiver` derived breadcrumbs will function as-expected on Android 14+ 
   [#1871](https://github.com/bugsnag/bugsnag-android/pull/1871)
-
-* Configuration.persistUser is now true by default, matching the configuration of other platforms.
-  [#1863](https://github.com/bugsnag/bugsnag-android/pull/1863)
 
 ### Bug fixes
 
@@ -68,9 +60,6 @@ Please see our [Upgrade Guide](./UPGRADING.md) for more information on moving fr
 
 * Prevent free memory calculation from potentially crashing the app when `ActivityManager` cannot be reached.
   [#1861](https://github.com/bugsnag/bugsnag-android/pull/1861)
-
-* Thread.id is now stored and transmitted as a String. 
-  [#1862](https://github.com/bugsnag/bugsnag-android/pull/1862)
 
 ## 5.30.0 (2023-05-11)
 
