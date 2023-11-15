@@ -51,8 +51,6 @@ class ManifestConfigLoaderTest {
             assertEquals(maxPersistedSessions, 128)
             assertEquals(maxReportedThreads, 200)
             assertTrue(sendLaunchCrashesSynchronously)
-            @Suppress("DEPRECATION")
-            assertEquals(launchCrashThresholdMs, 5000)
             assertEquals(launchDurationMillis, 5000)
             assertEquals("android", appType)
         }
@@ -128,8 +126,6 @@ class ManifestConfigLoaderTest {
             assertEquals(maxPersistedEvents, 52)
             assertEquals(maxPersistedSessions, 64)
             assertEquals(maxReportedThreads, 100)
-            @Suppress("DEPRECATION")
-            assertEquals(launchCrashThresholdMs, 7000)
             assertEquals(launchDurationMillis, 7000)
             assertFalse(sendLaunchCrashesSynchronously)
             assertEquals("react-native", appType)
@@ -142,14 +138,12 @@ class ManifestConfigLoaderTest {
         val data = Bundle().apply {
             putString("com.bugsnag.android.API_KEY", "5d1ec5bd39a74caa1267142706a7fb21")
             putBoolean("com.bugsnag.android.ENABLE_EXCEPTION_HANDLER", false)
-            putInt("com.bugsnag.android.LAUNCH_CRASH_THRESHOLD_MS", 8000)
         }
 
         val config = configLoader.load(data, null)
 
         with(config) {
             assertEquals("5d1ec5bd39a74caa1267142706a7fb21", apiKey)
-            assertEquals(8000, launchDurationMillis)
         }
     }
 }

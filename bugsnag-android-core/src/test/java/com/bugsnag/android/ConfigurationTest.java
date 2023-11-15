@@ -72,19 +72,6 @@ public class ConfigurationTest {
         return BugsnagTestUtils.convert(config);
     }
 
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testLaunchThresholdDeprecated() {
-        assertEquals(5000L, config.getLaunchCrashThresholdMs());
-
-        config.setLaunchCrashThresholdMs(-5);
-        assertEquals(5000, config.getLaunchCrashThresholdMs());
-
-        int expected = 1500;
-        config.setLaunchCrashThresholdMs(expected);
-        assertEquals(expected, config.getLaunchCrashThresholdMs());
-    }
-
     @Test
     public void testLaunchThreshold() {
         assertEquals(5000L, config.getLaunchDurationMillis());

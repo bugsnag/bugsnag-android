@@ -175,7 +175,6 @@ public class com/bugsnag/android/Configuration : com/bugsnag/android/CallbackAwa
 	public fun getEnabledErrorTypes ()Lcom/bugsnag/android/ErrorTypes;
 	public fun getEnabledReleaseStages ()Ljava/util/Set;
 	public fun getEndpoints ()Lcom/bugsnag/android/EndpointConfiguration;
-	public fun getLaunchCrashThresholdMs ()J
 	public fun getLaunchDurationMillis ()J
 	public fun getLogger ()Lcom/bugsnag/android/Logger;
 	public fun getMaxBreadcrumbs ()I
@@ -214,7 +213,6 @@ public class com/bugsnag/android/Configuration : com/bugsnag/android/CallbackAwa
 	public fun setEnabledErrorTypes (Lcom/bugsnag/android/ErrorTypes;)V
 	public fun setEnabledReleaseStages (Ljava/util/Set;)V
 	public fun setEndpoints (Lcom/bugsnag/android/EndpointConfiguration;)V
-	public fun setLaunchCrashThresholdMs (J)V
 	public fun setLaunchDurationMillis (J)V
 	public fun setLogger (Lcom/bugsnag/android/Logger;)V
 	public fun setMaxBreadcrumbs (I)V
