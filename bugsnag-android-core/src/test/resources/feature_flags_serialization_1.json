@@ -1,9 +1,9 @@
 [
   {
-    "featureFlag": "demo_mode"
-  },
-  {
     "featureFlag": "sample_group",
     "variant": "b"
+  },
+  {
+    "featureFlag": "demo_mode"
   }
 ]
