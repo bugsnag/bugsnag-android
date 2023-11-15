@@ -216,28 +216,6 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
     }
 
     /**
-     * Deprecated. Use {@link #getLaunchDurationMillis()} instead.
-     */
-    @Deprecated
-    public long getLaunchCrashThresholdMs() {
-        getLogger().w("The launchCrashThresholdMs configuration option is deprecated "
-                + "and will be removed in a future release. Please use "
-                + "launchDurationMillis instead.");
-        return getLaunchDurationMillis();
-    }
-
-    /**
-     * Deprecated. Use {@link #setLaunchDurationMillis(long)} instead.
-     */
-    @Deprecated
-    public void setLaunchCrashThresholdMs(long launchCrashThresholdMs) {
-        getLogger().w("The launchCrashThresholdMs configuration option is deprecated "
-                + "and will be removed in a future release. Please use "
-                + "launchDurationMillis instead.");
-        setLaunchDurationMillis(launchCrashThresholdMs);
-    }
-
-    /**
      * Sets whether or not Bugsnag should send crashes synchronously that occurred during
      * the application's launch period. By default this behavior is enabled.
      *

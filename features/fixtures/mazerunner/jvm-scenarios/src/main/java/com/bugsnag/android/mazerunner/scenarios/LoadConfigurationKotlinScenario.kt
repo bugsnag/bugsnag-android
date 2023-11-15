@@ -31,7 +31,7 @@ internal class LoadConfigurationKotlinScenario(
             Pattern.compile(".*java.net.UnknownHostException.*"),
             Pattern.compile(".*com.example.Custom.*")
         )
-        testConfig.launchCrashThresholdMs = 10000
+        testConfig.launchDurationMillis = 10000
         testConfig.maxBreadcrumbs = 1
         testConfig.persistUser = false
         testConfig.redactedKeys = setOf(Pattern.compile(".*filter_me_two.*"))
