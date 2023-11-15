@@ -247,19 +247,45 @@ class MainActivity : Activity() {
     // Clear persistent data (used to stop scenarios bleeding into each other)
     private fun clearPersistentData() {
         CiLog.info("Clearing persistent data")
-        clearFolder("last-run-info")
-        clearFolder("bugsnag-errors")
-        clearFolder("bugsnag-native")
-        clearFolder("bugsnag-sessions")
-        clearFolder("device-id")
-        clearFolder("user-info")
-        clearFolder("fake")
+        clearCacheFolder("last-run-info")
+        clearCacheFolder("bugsnag-errors")
+        clearCacheFolder("bugsnag-native")
+        clearCacheFolder("bugsnag-sessions")
+        clearCacheFolder("device-id")
+        clearCacheFolder("user-info")
+        clearCacheFolder("fake")
+
+        removeFile("device-id")
+        removeFile("internal-device-id")
+
+        listFolders()
     }
 
-    private fun clearFolder(name: String) {
+    // Recursively deletes the contents of a folder beneath /cache
+    private fun clearCacheFolder(name: String) {
         val folder = File(applicationContext.cacheDir, name)
         log("Clearing folder: ${folder.path}")
         folder.deleteRecursively()
+    }
+
+    // Deletes a file beneath /files
+    private fun removeFile(name: String) {
+        val file = File(applicationContext.filesDir, name)
+        log("Removing file: ${file.path}")
+        file.delete()
+    }
+
+    // Logs out the contents of the /cache and /files folders
+    private fun listFolders() {
+        log("Contents of: ${applicationContext.cacheDir}")
+        applicationContext.cacheDir.walkTopDown().forEach {
+            log(it.absolutePath)
+        }
+
+        log("Contents of: ${applicationContext.filesDir}")
+        applicationContext.filesDir.walkTopDown().forEach {
+            log(it.absolutePath)
+        }
     }
 
     private fun loadScenario(
