@@ -93,8 +93,6 @@ internal class ImmutableConfigTest {
             assertEquals(seed.endpoints, endpoints)
 
             // behaviour
-            @Suppress("DEPRECATION") // tests deprecated option is set via launchDurationMillis
-            assertEquals(seed.launchCrashThresholdMs, launchDurationMillis)
             assertEquals(seed.launchDurationMillis, launchDurationMillis)
             assertTrue(sendLaunchCrashesSynchronously)
             assertEquals(NoopLogger, seed.logger)
@@ -164,8 +162,6 @@ internal class ImmutableConfigTest {
 
             // behaviour
             assertEquals(7000, seed.launchDurationMillis)
-            @Suppress("DEPRECATION") // should be same as launchDurationMillis
-            assertEquals(7000, seed.launchCrashThresholdMs)
             assertFalse(sendLaunchCrashesSynchronously)
             assertEquals(NoopLogger, seed.logger)
             assertEquals(37, seed.maxBreadcrumbs)

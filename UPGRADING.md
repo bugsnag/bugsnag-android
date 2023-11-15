@@ -1,6 +1,53 @@
 Upgrading Guide
 ===============
 
+Upgrade from 5.X to 6.X
+-----------------------
+
+__This version contains several breaking changes__.
+
+### Key points
+
+- `redactedKeys` and `discardClasses` are now matched as a `Pattern` instead of `String`
+- `ThreadType` has been removed in favour of `ErrorType` bringing bugsnag-android inline with other platform SDKs
+- `Thread.id` is now a `String` instead of an `int` bringing bugsnag-android inline with other platform SDKs
+- API Key validation has moved to `Bugsnag.start` (instead of when the `Configuration` is created), this means that `Bugsnag.start` will now fail with an exception if no API key is provided
+- When no `BUILD_UUID` is specified one is automatically derived from your `.dex` files in order to match your bytecode to the appropriate `mapping.txt` file exactly. This behaviour can be opted-out of by setting `BUILD_UUID` to a blank (empty) string value:
+  ```xml
+  <meta-data android:name="com.bugsnag.android.BUILD_UUID" android:value="" />
+  ```
+- The deprecated `Configuration.launchCrashThresholdMs` (and equivalent manifest entry `LAUNCH_CRASH_THRESHOLD_MS`) have been removed in favour of `Configuration.launchDurationMillis` (`LAUNCH_DURATION_MILLIS`)
+
+### redactedKeys & discardClasses
+
+The properties / accessors for redacted keys and discard classes remain the same, but the type has been changed from `String` to `Pattern` to allow for more flexible matches (matching is done with `Pattern.matches`).
+
+To retain the same behaviour as v5.X replace:
+
+```kotlin
+configuration.redactedKeys = setOf("password", "secret")
+```
+
+with
+
+```kotlin
+configuration.redactedKeys = setOf(
+    Pattern.compile(".*password.*"),
+    Pattern.compile(".*secret.*"),
+)
+```
+
+### ThreadType removal
+
+The `ThreadType` enum has been removed in favour of the existing `ErrorType` enum (this follows the same pattern as our other platform notifiers). Simply replace any references to `ThreadType` with `ErrorType`, the constant values remain the same:
+
+```kotlin
+Bugsnag.addOnError { event ->
+    event.threads.first().type = ErrorType.UNKNOWN
+    return@addOnError true
+}
+```
+
 Upgrade from 4.X to 5.X
 -----------------------
 

@@ -88,13 +88,6 @@ public class ConfigurationFacadeTest {
         assertFalse(config.impl.getPersistUser());
     }
 
-    @SuppressWarnings("deprecation")
-    @Test
-    public void launchCrashThresholdMsValid() {
-        config.setLaunchCrashThresholdMs(123456);
-        assertEquals(123456, config.impl.getLaunchDurationMillis());
-    }
-
     @Test
     public void launchDurationMillisValid() {
         config.setLaunchDurationMillis(123456);

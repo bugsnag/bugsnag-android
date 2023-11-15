@@ -2,10 +2,26 @@
 
 ## TBD
 
+### Breaking Changes
+
+- (breaking API change) Redacted Keys and Discard Classes are now matched as a `Pattern` instead of `String`
+- (breaking API change) Removed `ThreadType` in favour of `ErrorType` bringing bugsnag-android inline with other platform SDKs
+- (breaking API change) Removed the deprecated `Configuration.launchCrashThresholdMs` accessors and manifest entry (which was previously replaced by `Configuration.launchDurationMillis`)
+- (breaking API change) `Thread.id` is now a `String` instead of an `int`
+- (behaviour change) API Key validation has moved to `Bugsnag.start` (instead of when the `Configuration` is created), this means that `Bugsnag.start` will now fail with an exception if no API key is provided
+- (behaviour change) When no `BUILD_UUID` is specified one is automatically derived from your `.dex` files in order to match your bytecode to the appropriate `mapping.txt` file exactly.
+
+Please see our [Upgrade Guide](./UPGRADING.md) for more information on moving from v5.x to v6.0.0.
+  
 ### Enhancements
 
-* Generate a Build ID value if one is not provided in the AndroidManifest.xml
-  [#1865](https://github.com/bugsnag/bugsnag-android/pull/1865)
+- bugsnag-plugin-android-ndk is now available as a Prefab to make access to our C API easier than ever
+- New foreground tracking based on Activity tracking, bringing inForeground closer to the behaviour of ProcessLifecycleOwner
+- [bugsnag-plugin-android-exitinfo](bugsnag-plugin-android-exitinfo/README.md) can be added to enhance native and ANR crash reports from Android 11
+  - Stack traces for all threads in native crashes
+  - Open FDs on native crashes
+  - Include the application logcat output in native crashes
+  - More detailed ANR thread stack traces
 
 ## 5.31.3 (2023-11-06)
 
@@ -30,20 +46,12 @@
 
 ## 5.31.0 (2023-07-26)
 
-### Breaking Changes
-
-* Removed `bugsnag-android-ndk` module, as it has been superseded by `bugsnag-plugin-android-ndk`
-  [#1881](https://github.com/bugsnag/bugsnag-android/pull/1881)
-
 ### Enhancements
 
 * Added `Session.apiKey` so that it can be changed in an `OnSessionCallback`
   [#1855](https://github.com/bugsnag/bugsnag-android/pull/1855)
 * `BroadcastReceiver` derived breadcrumbs will function as-expected on Android 14+ 
   [#1871](https://github.com/bugsnag/bugsnag-android/pull/1871)
-
-* Configuration.persistUser is now true by default, matching the configuration of other platforms.
-  [#1863](https://github.com/bugsnag/bugsnag-android/pull/1863)
 
 ### Bug fixes
 
@@ -52,9 +60,6 @@
 
 * Prevent free memory calculation from potentially crashing the app when `ActivityManager` cannot be reached.
   [#1861](https://github.com/bugsnag/bugsnag-android/pull/1861)
-
-* Thread.id is now stored and transmitted as a String. 
-  [#1862](https://github.com/bugsnag/bugsnag-android/pull/1862)
 
 ## 5.30.0 (2023-05-11)
 
@@ -65,9 +70,6 @@
 
 * ANR or NDK detection warnings can be suppressed (using `enabledErrorTypes`) when plugin is excluded.
   [#1832](https://github.com/bugsnag/bugsnag-android/pull/1832)
-
-* Support using regexes to define redacted keys and discard classes.
-  [#1856](https://github.com/bugsnag/bugsnag-android/pull/1856)
 
 ## 5.29.0 (2023-03-23)
 
