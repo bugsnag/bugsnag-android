@@ -16,7 +16,6 @@ class ConfigSerializer implements MapSerializer<ImmutableConfig> {
         map.put("autoDetectErrors", config.getAutoDetectErrors());
         map.put("autoTrackSessions", config.getAutoTrackSessions());
         map.put("sendThreads", config.getSendThreads().toString());
-        map.put("discardClasses", config.getDiscardClasses());
         map.put("projectPackages", config.getProjectPackages());
         map.put("enabledReleaseStages", config.getEnabledReleaseStages());
         map.put("releaseStage", config.getReleaseStage());
