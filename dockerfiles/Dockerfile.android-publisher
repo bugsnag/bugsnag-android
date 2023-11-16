@@ -10,7 +10,6 @@ COPY buildSrc/ buildSrc/
 
 # Copy sdk source files
 COPY bugsnag-android/ bugsnag-android/
-COPY bugsnag-android-ndk/ bugsnag-android-ndk/
 COPY bugsnag-plugin-android-anr/ bugsnag-plugin-android-anr/
 COPY bugsnag-android-core/ bugsnag-android-core/
 COPY bugsnag-plugin-android-ndk/ bugsnag-plugin-android-ndk/
