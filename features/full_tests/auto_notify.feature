@@ -28,6 +28,8 @@ Feature: Switching automatic error detection on/off for Unity
     And I close and relaunch the app
     And I configure Bugsnag for "AutoDetectAnrsFalseScenario"
     Then Bugsnag confirms it has no errors to send
+    And I wait for 10 seconds
+    #  Wait extra 10 seconds in the end, so appium will have enough time to terminated the previous anr session
 
   Scenario: JVM exception captured with autoNotify reenabled
     When I run "UnhandledJvmAutoNotifyTrueScenario" and relaunch the crashed app
