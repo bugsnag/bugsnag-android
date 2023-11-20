@@ -15,7 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       RELEASE_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.target_version || github.event.release.tag_name }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     strategy:
       matrix:
         downstream_repo: ['bugsnag/bugsnag-unity']
@@ -28,5 +27,5 @@ jobs:
       - run: >
           curl -X POST https://api.github.com/repos/${{ matrix.downstream_repo }}/dispatches
           -H 'Content-Type: application/json'
-          -H "Authorization: Bearer $GITHUB_TOKEN"
-          -d '{"event_type":"update-dependency","client_payload": {"target_submodule":"bugsnag-android", "target_version": "$RELEASE_VERSION"}}'
+          -H "Authorization: Bearer ${{ secrets.DEP_UPDATER_BEARER_TOKEN }}"
+          -d '{"event_type":"update-dependency","client_payload": {"target_submodule":"bugsnag-android", "target_version": "${{ env.RELEASE_VERSION }}"}}'
