@@ -20,14 +20,20 @@ internal class InForegroundScenario(
 ) : Scenario(config, context, eventMetadata) {
 
     private var triggered = AtomicBoolean(false)
+    private val mainHandler = Handler(Looper.getMainLooper())
 
     override fun startScenario() {
         super.startScenario()
         registerActivityLifecycleCallbacks()
+
+        // make sure the app goes to the background
+        mainHandler.post {
+            (context as Activity).finish()
+        }
     }
 
     override fun onActivityStopped(activity: Activity) {
-        Handler(Looper.getMainLooper()).post {
+        mainHandler.post {
             // debounce so this can only ever occur once
             if (!triggered.getAndSet(true)) {
                 log("onActivityStopped is finished, calling Bugsnag.notify in the background")

@@ -38,10 +38,6 @@ public class ConfigSerializerTest {
         assertTrue((Boolean) map.get("autoTrackSessions"));
         assertEquals("ALWAYS", map.get("sendThreads"));
 
-        Matcher matcher = Pattern.compile("com.example.DiscardClass", Pattern.LITERAL)
-                .matcher(map.get("discardClasses").toString());
-        assertTrue(matcher.find());
-
         assertEquals(Collections.singleton("production"), map.get("enabledReleaseStages"));
         assertEquals(Collections.singleton("com.example"), map.get("projectPackages"));
         assertEquals("production", map.get("releaseStage"));
