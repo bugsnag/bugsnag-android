@@ -6,18 +6,18 @@
 
 - (breaking API change) Redacted Keys and Discard Classes are now matched as a `Pattern` instead of `String`
 - (breaking API change) Removed `ThreadType` in favour of `ErrorType` bringing bugsnag-android inline with other platform SDKs
-- (breaking API change) Removed the deprecated `Configuration.launchCrashThresholdMs` accessors and manifest entry (which was previously replaced by `Configuration.launchDurationMillis`)
 - (breaking API change) `Thread.id` is now a `String` instead of an `int`
+- (breaking API change) Removed the deprecated `Configuration.launchCrashThresholdMs` accessors and manifest entry (which was previously replaced by `Configuration.launchDurationMillis`)
 - (breaking API change) The legacy `bugsnag-android-ndk` module has been removed in favor of `bugsnag-plugin-android-ndk`
-- (behaviour change) API Key validation has moved to `Bugsnag.start` (instead of when the `Configuration` is created), this means that `Bugsnag.start` will now fail with an exception if no API key is provided
-- (behaviour change) When no `BUILD_UUID` is specified one is automatically derived from your `.dex` files in order to match your bytecode to the appropriate `mapping.txt` file exactly.
+- (behavior change) New foreground tracking based on Activity tracking, bringing `inForeground` closer to the behavior of `ProcessLifecycleOwner`
+- (behavior change) When no `BUILD_UUID` is specified, a unique ID is now automatically derived from your `.dex` files in order to match your bytecode to the appropriate `mapping.txt` file exactly when an event is symbolicated on the BugSnag dashboard.
+- (behavior change) API key validation has moved to `Bugsnag.start` (instead of when the `Configuration` is created), this means that `Bugsnag.start` will now fail with an exception if no API key is provided
 
 Please see our [Upgrade Guide](./UPGRADING.md) for more information on moving from v5.x to v6.0.0.
-  
+
 ### Enhancements
 
 - bugsnag-plugin-android-ndk is now available as a Prefab to make access to our C API easier than ever
-- New foreground tracking based on Activity tracking, bringing inForeground closer to the behaviour of ProcessLifecycleOwner
 - [bugsnag-plugin-android-exitinfo](bugsnag-plugin-android-exitinfo/README.md) can be added to enhance native and ANR crash reports from Android 11
   - Stack traces for all threads in native crashes
   - Open FDs on native crashes
