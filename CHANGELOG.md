@@ -9,7 +9,7 @@
 - (breaking API change) `Thread.id` is now a `String` instead of an `int`
 - (breaking API change) Removed the deprecated `Configuration.launchCrashThresholdMs` accessors and manifest entry (which was previously replaced by `Configuration.launchDurationMillis`)
 - (breaking API change) The legacy `bugsnag-android-ndk` module has been removed in favor of `bugsnag-plugin-android-ndk`
-- (behavior change) New foreground tracking based on Activity tracking, bringing `inForeground` closer to the behavior of `ProcessLifecycleOwner`
+- (behavior change) Make foreground tracking based on Activity tracking, potentially affecting Application Stability scores (see [Upgrade Guide](./UPGRADING.md))
 - (behavior change) When no `BUILD_UUID` is specified, a unique ID is now automatically derived from your `.dex` files in order to match your bytecode to the appropriate `mapping.txt` file exactly when an event is symbolicated on the BugSnag dashboard.
 - (behavior change) API key validation has moved to `Bugsnag.start` (instead of when the `Configuration` is created), this means that `Bugsnag.start` will now fail with an exception if no API key is provided
 
