@@ -13,7 +13,7 @@ __This version contains several breaking changes__.
 - `Thread.id` is now a `String` instead of an `int`
 - `Configuration.launchCrashThresholdMs` has been renamed `Configuration.launchDurationMillis`
 - The legacy `bugsnag-android-ndk` module has been removed in favor of `bugsnag-plugin-android-ndk`
-- Change to make foreground tracking based on Activity tracking
+- Change to make foreground tracking based on Activity tracking, potentially affecting Application Stability scores
 - Generation of a deterministic build ID from `.dex` files to avoid the need for UUID generation
 - API key validation has moved to `Bugsnag.start`, instead of when the `Configuration` is created
 
