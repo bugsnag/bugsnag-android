@@ -13,7 +13,8 @@ __This version contains several breaking changes__.
 - `Thread.id` is now a `String` instead of an `int`
 - `Configuration.launchCrashThresholdMs` has been renamed `Configuration.launchDurationMillis`
 - The legacy `bugsnag-android-ndk` module has been removed in favor of `bugsnag-plugin-android-ndk`
-- Change to make foreground tracking based on Activity tracking, potentially affecting Application Stability scores
+- Change to make foreground tracking based on Activity tracking, to match the [`ProcessLifecycleOwner`](https://developer.android.com/reference/android/arch/lifecycle/ProcessLifecycleOwner), potentially affecting Application Stability scores (see below)
+- `Configuration.persistUser` now defaults to `true`
 - Generation of a deterministic build ID from `.dex` files to avoid the need for UUID generation
 - API key validation has moved to `Bugsnag.start`, instead of when the `Configuration` is created
 
@@ -62,7 +63,7 @@ Bugsnag.addOnError { event ->
 
 ## Rename of the `launchCrashThresholdMs` configuration option
 
-`Configuration.launchCrashThresholdMs` (and equivalent manifest entry `LAUNCH_CRASH_THRESHOLD_MS`) has been renamed for consistency with other SDKs and was marked as deprecated in v5.x. Use `Configuration.launchDurationMillis` (`LAUNCH_DURATION_MILLIS`) as a direct equivalent in v6.x.
+`Configuration.launchCrashThresholdMs` (and equivalent manifest entry `LAUNCH_CRASH_THRESHOLD_MS`) has been renamed for consistency with other SDKs and was marked as deprecated in v5.x. Use `Configuration.launchDurationMillis` (`LAUNCH_DURATION_MILLIS`) as a direct equivalent in v6.x – see our [online docs](https://docs.bugsnag.com/platforms/android/configuration-options/#launchdurationmillis).
 
 ## Rename of `bugsnag-android-ndk`
 
@@ -72,9 +73,13 @@ The legacy `bugsnag-android-ndk` module has been removed in favor of `bugsnag-pl
 
 Before v6.x, the `app.inForeground` flag was set to `true` whenever the app process has an importance of "foreground service" or greater (note: lower importance = higher priority). This will include any apps that are actively running in the background but include a foreground notification – known as Foreground Services. For example, fitness apps that are actively tracking; or music players when their controls are visible to the user.
 
-As of v6.x, the Activity tracking has changed to exclude these scenarios. In other words, if `app.inForeground` on an event is `true` then the user has the app itself open and is engaged with it either in full screen or split-screen.
+As of v6.x, the Activity tracking has changed to exclude these scenarios. In other words, if `app.inForeground` on an event is `true` then the user has the app itself open and is engaged with it either in full screen or split-screen. This better aligns with the behavior of the [`ProcessLifecycleOwner`](https://developer.android.com/reference/android/arch/lifecycle/ProcessLifecycleOwner) and the [BugSnag Performance SDK](https://docs.bugsnag.com/performance/integration-guides/android/).
 
-Foreground tracking is also used to determine how many unique sessions have occurred for Application Stability purposes. Therefore apps that make use of this mode of operation may see fewer sessions created when they move to v6.x.
+Foreground tracking is also used to determine when there's an active session, for the purposes of calculating a [Stability score](https://docs.bugsnag.com/product/stability/). Apps that run as a Foreground Service may therefore see fewer sessions created and also, if crashes occur when the app is in this state, they won't count towards a score. This means that your Stability score may change after migrating to v6.x.
+
+### Change of `persistUser` configuration option default value
+
+The [`persistUser` configuration option](https://docs.bugsnag.com/platforms/android/configuration-options/#persistuser) now defaults to `true` meaning that any stored user information will be persisted to file between launches of the app and used in future events until it is explicitly cleared. If you don't want this information to be stored, set the configuration option to `false`.
 
 ### Deterministic build UUID
 
