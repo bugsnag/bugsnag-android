@@ -14,11 +14,11 @@ TEST test_set_feature_flag(void) {
   ASSERT_STR_EQ("sample_group", event->feature_flags[0].name);
   ASSERT_STR_EQ("a", event->feature_flags[0].variant);
 
-  ASSERT_STR_EQ("zzz", event->feature_flags[2].name);
-  ASSERT_EQ(NULL, event->feature_flags[2].variant);
-
   ASSERT_STR_EQ("demo_mode", event->feature_flags[1].name);
   ASSERT_STR_EQ("yes", event->feature_flags[1].variant);
+
+  ASSERT_STR_EQ("zzz", event->feature_flags[2].name);
+  ASSERT_EQ(NULL, event->feature_flags[2].variant);
 
   bsg_free_feature_flags(event);
   free(event);

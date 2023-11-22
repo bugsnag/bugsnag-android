@@ -163,6 +163,7 @@ internal object ForegroundDetector : ActivityLifecycleCallbacks, Handler.Callbac
                 mainThreadHandler.sendMessageDelayed(backgroundMessage, BACKGROUND_TIMEOUT_MS)
             } else {
                 notifyListeners { it.onForegroundStatus(false, stoppedTimestamp) }
+                isInForeground = false
                 lastExitedForegroundMs = stoppedTimestamp
             }
         }
