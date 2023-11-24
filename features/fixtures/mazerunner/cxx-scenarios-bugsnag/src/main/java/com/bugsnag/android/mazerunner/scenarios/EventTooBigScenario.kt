@@ -3,6 +3,7 @@ package com.bugsnag.android.mazerunner.scenarios
 import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
+import com.bugsnag.android.OnErrorCallback
 import com.bugsnag.android.Telemetry
 
 class EventTooBigScenario(
@@ -39,6 +40,7 @@ class EventTooBigScenario(
             breadcrumbCount = args[2].toInt()
             config.setTelemetry(config.getTelemetry() + Telemetry.USAGE)
         }
+        config.addOnError(OnErrorCallback { true })
     }
 
     external fun nativeCrash(value: Int): Int
