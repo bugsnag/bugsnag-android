@@ -43,6 +43,7 @@ internal class ConfigInternal(
     var maxPersistedEvents: Int = DEFAULT_MAX_PERSISTED_EVENTS
     var maxPersistedSessions: Int = DEFAULT_MAX_PERSISTED_SESSIONS
     var maxReportedThreads: Int = DEFAULT_MAX_REPORTED_THREADS
+    var threadCollectionTimeLimitMillis: Long = DEFAULT_THREAD_COLLECTION_TIME_LIMIT_MS
     var maxStringValueLength: Int = DEFAULT_MAX_STRING_VALUE_LENGTH
     var context: String? = null
 
@@ -139,6 +140,8 @@ internal class ConfigInternal(
                 "maxPersistedSessions" to maxPersistedSessions else null,
             if (maxReportedThreads != defaultConfig.maxReportedThreads)
                 "maxReportedThreads" to maxReportedThreads else null,
+            if (threadCollectionTimeLimitMillis != defaultConfig.threadCollectionTimeLimitMillis)
+                "threadCollectionTimeLimitMillis" to threadCollectionTimeLimitMillis else null,
             if (persistenceDirectory != null)
                 "persistenceDirectorySet" to true else null,
             if (sendThreads != defaultConfig.sendThreads)
@@ -153,6 +156,7 @@ internal class ConfigInternal(
         private const val DEFAULT_MAX_PERSISTED_SESSIONS = 128
         private const val DEFAULT_MAX_PERSISTED_EVENTS = 32
         private const val DEFAULT_MAX_REPORTED_THREADS = 200
+        private const val DEFAULT_THREAD_COLLECTION_TIME_LIMIT_MS: Long = 5000
         private const val DEFAULT_LAUNCH_CRASH_THRESHOLD_MS: Long = 5000
         private const val DEFAULT_MAX_STRING_VALUE_LENGTH = 10000
 
