@@ -4,20 +4,6 @@ import com.bugsnag.android.JavaHooks.generateAppWithState
 import com.bugsnag.android.JavaHooks.generateDeviceWithState
 import java.lang.Thread
 
-internal fun triggerInternalBugsnagForError(client: Client) {
-    client.eventStore.write {
-        throw IllegalStateException("Mazerunner threw exception serializing error")
-    }
-}
-
-internal fun flushErrorStoreAsync(client: Client) {
-    client.eventStore.flushAsync()
-}
-
-internal fun flushErrorStoreOnLaunch(client: Client) {
-    client.eventStore.flushOnLaunch()
-}
-
 /**
  * Creates a delivery API client with a 500ms delay, emulating poor network connectivity
  */
@@ -25,7 +11,10 @@ internal fun createSlowDelivery(): Delivery {
     val delivery = createDefaultDelivery()
 
     return object : Delivery {
-        override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
+        override fun deliver(
+            payload: EventPayload,
+            deliveryParams: DeliveryParams
+        ): DeliveryStatus {
             Thread.sleep(500)
             return delivery.deliver(payload, deliveryParams)
         }
@@ -58,10 +47,6 @@ internal fun createCustomHeaderDelivery(): Delivery {
 }
 
 fun createDefaultDelivery(): Delivery = JavaHooks.createDefaultDelivery()
-
-internal fun writeErrorToStore(client: Client, event: Event) {
-    client.eventStore.write(event)
-}
 
 fun generateEvent(client: Client): Event {
     val event = NativeInterface.createEvent(

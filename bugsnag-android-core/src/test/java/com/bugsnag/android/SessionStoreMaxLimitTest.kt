@@ -2,6 +2,7 @@ package com.bugsnag.android
 
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import com.bugsnag.android.BugsnagTestUtils.generateSession
+import com.bugsnag.android.FileStore.Delegate
 import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.convertToImmutableConfig
 import org.junit.After
@@ -80,7 +81,14 @@ class SessionStoreMaxLimitTest {
         return SessionStore(
             config,
             NoopLogger,
-            FileStore.Delegate { _, _, _ -> }
+            object : Delegate {
+                override fun onErrorIOFailure(
+                    exception: Exception?,
+                    errorFile: File?,
+                    context: String?
+                ) {
+                }
+            }
         )
     }
 }

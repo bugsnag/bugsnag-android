@@ -2,18 +2,23 @@ package com.bugsnag.android
 
 import android.app.Application
 import androidx.test.core.app.ApplicationProvider
+import com.bugsnag.android.EventStore.Companion.EVENT_COMPARATOR
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.junit.MockitoJUnitRunner
 import java.io.File
 import java.util.Comparator
 
+@RunWith(MockitoJUnitRunner::class)
 class FileStoreTest {
 
     @Test
     fun sendsInternalErrorReport() {
+
         val delegate = CustomDelegate()
         val dir = File(ApplicationProvider.getApplicationContext<Application>().cacheDir, "tmp")
-        val store = CustomFileStore(dir, 1, null, delegate)
+        val store = CustomFileStore(dir, 1, EVENT_COMPARATOR, delegate)
         val exc = RuntimeException("Whoops")
         store.write(CustomStreamable(exc))
 
@@ -44,8 +49,8 @@ class CustomStreamable(private val exc: Throwable) : JsonStream.Streamable {
 internal class CustomFileStore(
     folder: File,
     maxStoreCount: Int,
-    comparator: Comparator<File>?,
+    comparator: Comparator<in File?>,
     delegate: Delegate?
 ) : FileStore(folder, maxStoreCount, comparator, NoopLogger, delegate) {
-    override fun getFilename(`object`: Any?) = "foo.json"
+    override fun getFilename(obj: Any?) = "foo.json"
 }
