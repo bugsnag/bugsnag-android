@@ -21,6 +21,7 @@ class ThreadStateTest {
         null,
         true,
         1000,
+        1000,
         ThreadSendPolicy.ALWAYS,
         Collections.emptyList(),
         NoopLogger,
@@ -64,6 +65,7 @@ class ThreadStateTest {
             trace,
             true,
             1000,
+            1000,
             ThreadSendPolicy.ALWAYS,
             Collections.emptyList(),
             NoopLogger,
@@ -90,6 +92,7 @@ class ThreadStateTest {
             trace,
             true,
             1000,
+            1000,
             ThreadSendPolicy.ALWAYS,
             Collections.emptyList(),
             NoopLogger,
@@ -113,6 +116,7 @@ class ThreadStateTest {
         val state = ThreadState(
             trace,
             true,
+            1000,
             1000,
             ThreadSendPolicy.ALWAYS,
             Collections.emptyList(),
@@ -159,6 +163,7 @@ class ThreadStateTest {
             exc,
             true,
             1000,
+            1000,
             ThreadSendPolicy.ALWAYS,
             Collections.emptyList(),
             NoopLogger,
@@ -196,6 +201,7 @@ class ThreadStateTest {
             trace,
             true,
             2,
+            1000,
             ThreadSendPolicy.ALWAYS,
             Collections.emptyList(),
             NoopLogger,
@@ -224,6 +230,7 @@ class ThreadStateTest {
             exc,
             true,
             4,
+            1000,
             ThreadSendPolicy.ALWAYS,
             Collections.emptyList(),
             NoopLogger,
@@ -251,6 +258,7 @@ class ThreadStateTest {
             trace,
             true,
             1000,
+            1000,
             ThreadSendPolicy.NEVER,
             Collections.emptyList(),
             NoopLogger,
@@ -260,6 +268,26 @@ class ThreadStateTest {
         val json = streamableToJsonArray(state)
 
         assertEquals(0, json.length())
+    }
+
+    @Test
+    fun testThreadCollectionTimeLimitMillis() {
+        val currentThread = Thread.currentThread()
+        val allThreads = allThreads()
+        val state = ThreadState(
+            trace,
+            true,
+            1000,
+            0,
+            ThreadSendPolicy.ALWAYS,
+            Collections.emptyList(),
+            NoopLogger,
+            currentThread,
+            allThreads
+        )
+        val json = streamableToJsonArray(state)
+
+        assertEquals(1, json.length())
     }
 
     private fun verifyCurrentThreadStructure(
