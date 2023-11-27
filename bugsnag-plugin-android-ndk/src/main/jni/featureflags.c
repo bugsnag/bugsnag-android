@@ -83,15 +83,11 @@ static void insert_new(bugsnag_event *const event, const char *const name,
   event->feature_flag_count++;
 }
 
-static void modify_at_index_and_reinsert(bugsnag_event *const event,
-                                         const int index,
-                                         const char *const variant) {
-  bsg_feature_flag flag = event->feature_flags[index];
-  free(flag.variant);
-  set_flag_variant(&flag, variant);
-
-  remove_at_index_and_compact(event, index);
-  event->feature_flags[event->feature_flag_count - 1] = flag;
+static void modify_at_index(bugsnag_event *const event, const int index,
+                            const char *const variant) {
+  bsg_feature_flag *flag = &event->feature_flags[index];
+  free(flag->variant);
+  set_flag_variant(flag, variant);
 }
 
 void bsg_set_feature_flag(bugsnag_event *event, const char *const name,
@@ -101,7 +97,7 @@ void bsg_set_feature_flag(bugsnag_event *event, const char *const name,
   if (index == INDEX_NOT_FOUND) {
     insert_new(event, name, variant);
   } else {
-    modify_at_index_and_reinsert(event, index, variant);
+    modify_at_index(event, index, variant);
   }
   bsg_seqlock_release_write(&bsg_feature_flag_lock);
 }
