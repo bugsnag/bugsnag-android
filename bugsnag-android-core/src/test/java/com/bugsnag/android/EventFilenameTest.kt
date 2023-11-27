@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
-import com.bugsnag.android.EventStore.EVENT_COMPARATOR
+import com.bugsnag.android.EventStore.Companion.EVENT_COMPARATOR
+import com.bugsnag.android.FileStore.Delegate
 import com.bugsnag.android.internal.BackgroundTaskService
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -57,7 +58,14 @@ internal class EventFilenameTest {
             NoopLogger,
             Notifier(),
             BackgroundTaskService(),
-            FileStore.Delegate { _, _, _ -> },
+            object : Delegate {
+                override fun onErrorIOFailure(
+                    exception: Exception?,
+                    errorFile: File?,
+                    context: String?
+                ) {
+                }
+            },
             CallbackState()
         )
 
@@ -79,7 +87,14 @@ internal class EventFilenameTest {
             NoopLogger,
             Notifier(),
             BackgroundTaskService(),
-            FileStore.Delegate { _, _, _ -> },
+            object : Delegate {
+                override fun onErrorIOFailure(
+                    exception: Exception?,
+                    errorFile: File?,
+                    context: String?
+                ) {
+                }
+            },
             CallbackState()
         )
 
@@ -95,7 +110,14 @@ internal class EventFilenameTest {
             NoopLogger,
             Notifier(),
             BackgroundTaskService(),
-            FileStore.Delegate { _, _, _ -> },
+            object : Delegate {
+                override fun onErrorIOFailure(
+                    exception: Exception?,
+                    errorFile: File?,
+                    context: String?
+                ) {
+                }
+            },
             CallbackState()
         )
 
