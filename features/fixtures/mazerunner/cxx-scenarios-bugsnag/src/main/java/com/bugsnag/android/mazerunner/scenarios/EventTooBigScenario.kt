@@ -39,6 +39,12 @@ class EventTooBigScenario(
             breadcrumbCount = args[2].toInt()
             config.setTelemetry(config.getTelemetry() + Telemetry.USAGE)
         }
+        // Remove all threads from the error as the stack traces vary in size enough to trigger
+        // different trimming behavior, and cause the scenarios to fail
+        config.addOnError { event ->
+            event.threads.clear()
+            true
+        }
     }
 
     external fun nativeCrash(value: Int): Int
