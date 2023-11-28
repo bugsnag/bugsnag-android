@@ -53,11 +53,11 @@ class DeliveryDelegate extends BaseObservable {
             }
         }
 
-        if (event.getImpl().getOriginalUnhandled()) {
+        if (event.getOriginalUnhandled()) {
             // should only send unhandled errors if they don't terminate the process (i.e. ANRs)
-            String severityReasonType = event.getImpl().getSeverityReasonType();
+            String severityReasonType = event.getSeverityReasonType();
             boolean promiseRejection = REASON_PROMISE_REJECTION.equals(severityReasonType);
-            boolean anr = event.getImpl().isAnr(event);
+            boolean anr = event.isAnr(event);
             if (anr || promiseRejection) {
                 cacheEvent(event, true);
             } else if (immutableConfig.getAttemptDeliveryOnCrash()) {

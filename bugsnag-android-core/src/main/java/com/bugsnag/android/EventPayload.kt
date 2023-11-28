@@ -28,7 +28,7 @@ class EventPayload @JvmOverloads internal constructor(
     internal fun getErrorTypes(): Set<ErrorType> {
         val event = this.event
         return when {
-            event != null -> event.impl.getErrorTypesFromStackframes()
+            event != null -> event.getErrorTypesFromStackframes()
             eventFile != null -> EventFilenameInfo.fromFile(eventFile, config).errorTypes
             else -> emptySet()
         }

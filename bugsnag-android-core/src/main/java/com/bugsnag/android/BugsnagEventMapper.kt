@@ -13,12 +13,12 @@ internal class BugsnagEventMapper(
 ) {
 
     internal fun convertToEvent(map: Map<in String, Any?>, apiKey: String): Event {
-        return Event(convertToEventImpl(map, apiKey), logger)
+        return convertToEventImpl(map, apiKey)
     }
 
     @Suppress("UNCHECKED_CAST")
-    internal fun convertToEventImpl(map: Map<in String, Any?>, apiKey: String): EventInternal {
-        val event = EventInternal(apiKey, logger)
+    internal fun convertToEventImpl(map: Map<in String, Any?>, apiKey: String): Event {
+        val event = Event(apiKey, logger)
 
         // populate exceptions. check this early to avoid unnecessary serialization if
         // no stacktrace was gathered.

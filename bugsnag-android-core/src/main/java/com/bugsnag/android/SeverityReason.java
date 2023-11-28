@@ -5,6 +5,7 @@ import static com.bugsnag.android.Severity.WARNING;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RestrictTo;
 import androidx.annotation.StringDef;
 
 import java.io.IOException;

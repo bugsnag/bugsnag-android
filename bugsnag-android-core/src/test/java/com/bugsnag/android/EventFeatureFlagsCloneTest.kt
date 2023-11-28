@@ -27,7 +27,7 @@ class EventFeatureFlagsCloneTest {
         event.addFeatureFlag("demo_mode")
 
         // featureFlags objects should be deep copied
-        assertNotSame(featureFlags, event.impl.featureFlags)
+        assertNotSame(featureFlags, event.featureFlags)
 
         // validate origin featureFlags
         val origExpected = listOf(FeatureFlag("sample_group", "123"))
@@ -38,6 +38,6 @@ class EventFeatureFlagsCloneTest {
             FeatureFlag("sample_group", "123"),
             FeatureFlag("demo_mode")
         )
-        assertEquals(eventExpected, event.impl.featureFlags.toList())
+        assertEquals(eventExpected, event.featureFlags.toList())
     }
 }

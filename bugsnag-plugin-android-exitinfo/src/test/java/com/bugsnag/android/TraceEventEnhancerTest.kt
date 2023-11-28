@@ -17,7 +17,7 @@ class TraceEventEnhancerTest {
         val event = Event(
             RuntimeException("error"),
             mock(ImmutableConfig::class.java),
-            SeverityReason.newInstance(SeverityReason.REASON_ANR),
+            SeverityReason.REASON_ANR,
             mockLogger
         )
 

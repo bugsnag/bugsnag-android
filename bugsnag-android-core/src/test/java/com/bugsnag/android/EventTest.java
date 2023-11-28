@@ -166,22 +166,22 @@ public class EventTest {
     public void testIsAnr() {
         RuntimeException exc = new RuntimeException("Something went wrong");
         Event event = new Event(exc, config, severityReason, NoopLogger.INSTANCE);
-        assertFalse(event.getImpl().isAnr(event));
+        assertFalse(event.isAnr(event));
 
         // simulate ANR
         event.getErrors().get(0).setErrorClass("ANR");
-        assertTrue(event.getImpl().isAnr(event));
+        assertTrue(event.isAnr(event));
 
         // clear all errors
         event.getErrors().clear();
-        assertFalse(event.getImpl().isAnr(event));
+        assertFalse(event.isAnr(event));
     }
 
     @Test
     public void testSeverityReasonType() {
         RuntimeException exc = new RuntimeException("Something went wrong");
         Event event = new Event(exc, config, severityReason, NoopLogger.INSTANCE);
-        String severityReasonType = event.getImpl().getSeverityReasonType();
+        String severityReasonType = event.getSeverityReasonType();
         assertEquals(SeverityReason.REASON_HANDLED_EXCEPTION, severityReasonType);
     }
 
@@ -190,13 +190,13 @@ public class EventTest {
         RuntimeException exc = new RuntimeException("Something went wrong");
         Event event = new Event(exc, config, severityReason, NoopLogger.INSTANCE);
 
-        String severityReasonType = event.getImpl().getSeverityReasonType();
+        String severityReasonType = event.getSeverityReasonType();
         assertEquals(SeverityReason.REASON_HANDLED_EXCEPTION, severityReasonType);
         assertEquals(Severity.WARNING, event.getSeverity());
 
         event.updateSeverityInternal(Severity.INFO);
         event.updateSeverityReason(SeverityReason.REASON_STRICT_MODE);
-        severityReasonType = event.getImpl().getSeverityReasonType();
+        severityReasonType = event.getSeverityReasonType();
         assertEquals(SeverityReason.REASON_STRICT_MODE, severityReasonType);
         assertEquals(Severity.INFO, event.getSeverity());
     }

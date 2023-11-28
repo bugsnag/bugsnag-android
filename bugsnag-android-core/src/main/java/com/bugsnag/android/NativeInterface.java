@@ -54,12 +54,11 @@ public class NativeInterface {
         Client client = getClient();
 
         return new Event(
-                new EventInternal(
-                        (Throwable) null,
-                        client.getConfig(),
-                        SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION),
-                        client.getMetadataState().getMetadata().copy()
-                ),
+                (Throwable) null,
+                client.getConfig(),
+                SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION),
+                client.getMetadataState().getMetadata().copy(),
+                client.getFeatureFlagState().getFeatureFlags(),
                 client.getLogger()
         );
     }

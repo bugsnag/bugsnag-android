@@ -35,7 +35,8 @@ internal class EventSerializationTest {
                 createEvent {
                     val user = User("123", "foo@example.com", "Joe")
                     val apiKey = "BUGSNAG_API_KEY"
-                    it.session = Session("123", Date(0), user, false, Notifier(), NoopLogger, apiKey)
+                    it.session =
+                        Session("123", Date(0), user, false, Notifier(), NoopLogger, apiKey)
                 },
 
                 // threads included
@@ -69,7 +70,7 @@ internal class EventSerializationTest {
                         Date(0),
                         NoopLogger
                     )
-                    it.breadcrumbs = listOf(crumb)
+                    it.breadcrumbs = mutableListOf(crumb)
 
                     val stacktrace = Stacktrace(arrayOf(), emptySet(), NoopLogger)
                     val err =
@@ -113,10 +114,7 @@ internal class EventSerializationTest {
     @Test
     fun testJsonDeserializion() {
         verifyJsonParser(testCase.first, testCase.second) {
-            Event(
-                eventMapper.convertToEventImpl(it, "5d1ec5bd39a74caa1267142706a7fb21"),
-                NoopLogger
-            )
+            eventMapper.convertToEventImpl(it, "5d1ec5bd39a74caa1267142706a7fb21")
         }
     }
 }

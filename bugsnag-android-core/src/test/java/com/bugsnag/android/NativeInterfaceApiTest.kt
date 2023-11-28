@@ -76,6 +76,7 @@ internal class NativeInterfaceApiTest {
         `when`(client.getDeviceDataCollector()).thenReturn(deviceDataCollector)
         `when`(client.getUser()).thenReturn(User("123", "tod@example.com", "Tod"))
         `when`(client.getMetadataState()).thenReturn(MetadataState())
+        `when`(client.getFeatureFlagState()).thenReturn(FeatureFlagState())
     }
 
     @Test

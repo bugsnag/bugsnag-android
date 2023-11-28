@@ -44,8 +44,8 @@ internal class DefaultDelivery(
             payload.apiKey = apiKey
         }
 
-        val (itemsTrimmed, dataTrimmed) = event.impl.trimMetadataStringsTo(maxStringValueLength)
-        event.impl.internalMetrics.setMetadataTrimMetrics(
+        val (itemsTrimmed, dataTrimmed) = event.trimMetadataStringsTo(maxStringValueLength)
+        event.internalMetrics.setMetadataTrimMetrics(
             itemsTrimmed,
             dataTrimmed
         )
@@ -56,8 +56,8 @@ internal class DefaultDelivery(
         }
 
         val breadcrumbAndBytesRemovedCounts =
-            event.impl.trimBreadcrumbsBy(json.size - maxPayloadSize)
-        event.impl.internalMetrics.setBreadcrumbTrimMetrics(
+            event.trimBreadcrumbsBy(json.size - maxPayloadSize)
+        event.internalMetrics.setBreadcrumbTrimMetrics(
             breadcrumbAndBytesRemovedCounts.itemsTrimmed,
             breadcrumbAndBytesRemovedCounts.dataTrimmed
         )

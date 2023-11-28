@@ -26,7 +26,7 @@ internal class TombstoneEventEnhancerTest {
         val event = Event(
             RuntimeException("error"),
             mock(ImmutableConfig::class.java),
-            SeverityReason.newInstance(SeverityReason.REASON_SIGNAL),
+            SeverityReason.REASON_SIGNAL,
             logger
         )
         val oldThread = BugsnagThread(

@@ -347,7 +347,10 @@ public final class com/bugsnag/android/ErrorTypes {
 	public final fun setUnhandledRejections (Z)V
 }
 
-public class com/bugsnag/android/Event : com/bugsnag/android/FeatureFlagAware, com/bugsnag/android/JsonStream$Streamable, com/bugsnag/android/MetadataAware, com/bugsnag/android/UserAware {
+public final class com/bugsnag/android/Event : com/bugsnag/android/FeatureFlagAware, com/bugsnag/android/JsonStream$Streamable, com/bugsnag/android/MetadataAware, com/bugsnag/android/UserAware {
+	public field app Lcom/bugsnag/android/AppWithState;
+	public field device Lcom/bugsnag/android/DeviceWithState;
+	public fun <init> (Ljava/lang/Throwable;Lcom/bugsnag/android/internal/ImmutableConfig;Ljava/lang/String;Lcom/bugsnag/android/Logger;)V
 	public fun addFeatureFlag (Ljava/lang/String;)V
 	public fun addFeatureFlag (Ljava/lang/String;Ljava/lang/String;)V
 	public fun addFeatureFlags (Ljava/lang/Iterable;)V
@@ -357,31 +360,48 @@ public class com/bugsnag/android/Event : com/bugsnag/android/FeatureFlagAware, c
 	public fun clearFeatureFlags ()V
 	public fun clearMetadata (Ljava/lang/String;)V
 	public fun clearMetadata (Ljava/lang/String;Ljava/lang/String;)V
-	public fun getApiKey ()Ljava/lang/String;
-	public fun getApp ()Lcom/bugsnag/android/AppWithState;
-	public fun getBreadcrumbs ()Ljava/util/List;
-	public fun getContext ()Ljava/lang/String;
-	public fun getDevice ()Lcom/bugsnag/android/DeviceWithState;
-	public fun getErrors ()Ljava/util/List;
-	public fun getFeatureFlags ()Ljava/util/List;
-	public fun getGroupingHash ()Ljava/lang/String;
+	public final fun getApiKey ()Ljava/lang/String;
+	public final fun getApp ()Lcom/bugsnag/android/AppWithState;
+	public final fun getBreadcrumbs ()Ljava/util/List;
+	public final fun getContext ()Ljava/lang/String;
+	public final fun getDevice ()Lcom/bugsnag/android/DeviceWithState;
+	public final fun getErrors ()Ljava/util/List;
+	public final fun getFeatureFlags ()Ljava/util/List;
+	public final fun getGroupingHash ()Ljava/lang/String;
+	public final fun getInternalMetrics ()Lcom/bugsnag/android/internal/InternalMetrics;
+	public final fun getLogger ()Lcom/bugsnag/android/Logger;
 	public fun getMetadata (Ljava/lang/String;)Ljava/util/Map;
 	public fun getMetadata (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
-	public fun getOriginalError ()Ljava/lang/Throwable;
-	public fun getSeverity ()Lcom/bugsnag/android/Severity;
-	public fun getThreads ()Ljava/util/List;
+	public final fun getOriginalError ()Ljava/lang/Throwable;
+	public final fun getOriginalUnhandled ()Z
+	public final fun getRedactedKeys ()Ljava/util/Collection;
+	public final fun getSession ()Lcom/bugsnag/android/Session;
+	public final fun getSeverity ()Lcom/bugsnag/android/Severity;
+	public final fun getSeverityReasonType ()Ljava/lang/String;
+	public final fun getThreads ()Ljava/util/List;
+	public final fun getUnhandledOverridden ()Z
 	public fun getUser ()Lcom/bugsnag/android/User;
-	public fun isUnhandled ()Z
-	public fun setApiKey (Ljava/lang/String;)V
-	public fun setContext (Ljava/lang/String;)V
-	public fun setGroupingHash (Ljava/lang/String;)V
-	public fun setSeverity (Lcom/bugsnag/android/Severity;)V
-	public fun setUnhandled (Z)V
+	public final fun getUserImpl ()Lcom/bugsnag/android/User;
+	public final fun isUnhandled ()Z
+	public final fun setApiKey (Ljava/lang/String;)V
+	public final fun setApp (Lcom/bugsnag/android/AppWithState;)V
+	public final fun setBreadcrumbs (Ljava/util/List;)V
+	public final fun setContext (Ljava/lang/String;)V
+	public final fun setDevice (Lcom/bugsnag/android/DeviceWithState;)V
+	public final fun setErrors (Ljava/util/List;)V
+	public final fun setGroupingHash (Ljava/lang/String;)V
+	public final fun setInternalMetrics (Lcom/bugsnag/android/internal/InternalMetrics;)V
+	public final fun setRedactedKeys (Ljava/util/Collection;)V
+	public final fun setSession (Lcom/bugsnag/android/Session;)V
+	public final fun setSeverity (Lcom/bugsnag/android/Severity;)V
+	public final fun setThreads (Ljava/util/List;)V
+	public final fun setUnhandled (Z)V
 	public fun setUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
-	protected fun shouldDiscardClass ()Z
+	public final fun setUserImpl (Lcom/bugsnag/android/User;)V
+	public final fun shouldDiscardClass ()Z
 	public fun toStream (Lcom/bugsnag/android/JsonStream;)V
-	protected fun updateSeverityInternal (Lcom/bugsnag/android/Severity;)V
-	protected fun updateSeverityReason (Ljava/lang/String;)V
+	public final fun updateSeverityInternal (Lcom/bugsnag/android/Severity;)V
+	public final fun updateSeverityReason (Ljava/lang/String;)V
 }
 
 public final class com/bugsnag/android/EventPayload : com/bugsnag/android/JsonStream$Streamable {

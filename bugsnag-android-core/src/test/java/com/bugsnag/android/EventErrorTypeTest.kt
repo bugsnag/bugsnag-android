@@ -49,7 +49,7 @@ class EventErrorTypeTest {
         assertEquals(setOf(ANDROID), payload.getErrorTypes())
 
         // confirm single type is stripped from individual stackframes
-        event.impl.normalizeStackframeErrorTypes()
+        event.normalizeStackframeErrorTypes()
         assertEquals(ANDROID, error.type)
         assertEquals(setOf(ANDROID), payload.getErrorTypes())
         error.stacktrace.forEach { assertNull(it.type) }
@@ -80,7 +80,7 @@ class EventErrorTypeTest {
         assertEquals(setOf(ANDROID, C), payload.getErrorTypes())
 
         // confirm single type is stripped from individual stackframes
-        event.impl.normalizeStackframeErrorTypes()
+        event.normalizeStackframeErrorTypes()
         assertEquals(ANDROID, error.type)
         assertEquals(setOf(ANDROID, C), payload.getErrorTypes())
 

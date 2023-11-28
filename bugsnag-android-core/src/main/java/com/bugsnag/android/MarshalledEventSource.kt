@@ -34,9 +34,6 @@ internal class MarshalledEventSource(
     private fun unmarshall(): Event {
         val eventMapper = BugsnagEventMapper(logger)
         val jsonMap = JsonHelper.deserialize(eventFile)
-        return Event(
-            eventMapper.convertToEventImpl(jsonMap, apiKey),
-            logger
-        )
+        return eventMapper.convertToEventImpl(jsonMap, apiKey)
     }
 }

@@ -41,9 +41,9 @@ internal class EventRedactionTest {
 
         event.addMetadata("app", "password", "foo")
         event.addMetadata("device", "password", "bar")
-        event.impl.metadata.addMetadata("baz", "password", "hunter2")
+        event.metadata.addMetadata("baz", "password", "hunter2")
         val metadata = mutableMapOf<String, Any?>(Pair("changeme", "whoops"))
-        event.breadcrumbs = listOf(Breadcrumb("Whoops", BreadcrumbType.LOG, metadata, Date(0), NoopLogger))
+        event.breadcrumbs = mutableListOf(Breadcrumb("Whoops", BreadcrumbType.LOG, metadata, Date(0), NoopLogger))
         event.threads.clear()
         event.device.cpuAbi = emptyArray()
 

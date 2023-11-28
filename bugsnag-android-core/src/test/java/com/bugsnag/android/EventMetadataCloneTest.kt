@@ -27,7 +27,7 @@ class EventMetadataCloneTest {
         event.addMetadata("test_section", "second", "another value")
 
         // metadata object should be deep copied
-        assertNotSame(data, event.impl.metadata)
+        assertNotSame(data, event.metadata)
 
         // validate event metadata
         val origExpected = mapOf(Pair("foo", "bar"))
@@ -35,6 +35,6 @@ class EventMetadataCloneTest {
 
         // validate event metadata
         val eventExpected = mapOf(Pair("foo", "bar"), Pair("second", "another value"))
-        assertEquals(eventExpected, event.impl.metadata.getMetadata("test_section"))
+        assertEquals(eventExpected, event.metadata.getMetadata("test_section"))
     }
 }

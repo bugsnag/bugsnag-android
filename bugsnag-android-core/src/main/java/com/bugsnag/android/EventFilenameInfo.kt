@@ -146,7 +146,7 @@ internal data class EventFilenameInfo(
          */
         internal fun findErrorTypesForEvent(obj: Any): Set<ErrorType> {
             return when (obj) {
-                is Event -> obj.impl.getErrorTypesFromStackframes()
+                is Event -> obj.getErrorTypesFromStackframes()
                 else -> setOf(ErrorType.C)
             }
         }
