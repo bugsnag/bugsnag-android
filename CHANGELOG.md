@@ -11,6 +11,8 @@
 
 * Updating existing feature flags no longer causes them to change location.
   [#1940](https://github.com/bugsnag/bugsnag-android/pull/1940)
+* Fixed possible NDK crash when constructing several concurrent `Client` instances
+  []()
 
 
 ## 6.0.0 (2023-11-20)
