@@ -1,28 +1,54 @@
 # Changelog
 
+## 6.1.0 (2023-12-05)
+
+### Enhancements
+
+* The maximum time taken to collect Event.threads can now be controlled using `Configuration.threadCollectionTimeLimitMillis` (default 5000ms)
+  [#1935](https://github.com/bugsnag/bugsnag-android/pull/1935)
+
+### Bug fixes
+
+* Updating existing feature flags no longer causes them to change location.
+  [#1940](https://github.com/bugsnag/bugsnag-android/pull/1940)
+* Fixed possible NDK crash when constructing several concurrent `Client` instances
+  [#1950](https://github.com/bugsnag/bugsnag-android/pull/1950)
+
+
 ## 6.0.0 (2023-11-20)
 
 ### Breaking Changes
 
 - (breaking API change) Redacted Keys and Discard Classes are now matched as a `Pattern` instead of `String`
-- (breaking API change) Removed `ThreadType` in favour of `ErrorType` bringing bugsnag-android inline with other platform SDKs
-- (breaking API change) Removed the deprecated `Configuration.launchCrashThresholdMs` accessors and manifest entry (which was previously replaced by `Configuration.launchDurationMillis`)
+  [#1866](https://github.com/bugsnag/bugsnag-android/pull/1866)
+- (breaking API change) Removed `ThreadType` in favour of `ErrorType`
+  [#1859](https://github.com/bugsnag/bugsnag-android/pull/1859)
 - (breaking API change) `Thread.id` is now a `String` instead of an `int`
+  [#1862](https://github.com/bugsnag/bugsnag-android/pull/1862)
+- (breaking API change) Removed the deprecated `Configuration.launchCrashThresholdMs` accessors and manifest entry (which was previously replaced by `Configuration.launchDurationMillis`)
+  [#1937](https://github.com/bugsnag/bugsnag-android/pull/1937)
 - (breaking API change) The legacy `bugsnag-android-ndk` module has been removed in favor of `bugsnag-plugin-android-ndk`
-- (behaviour change) API Key validation has moved to `Bugsnag.start` (instead of when the `Configuration` is created), this means that `Bugsnag.start` will now fail with an exception if no API key is provided
-- (behaviour change) When no `BUILD_UUID` is specified one is automatically derived from your `.dex` files in order to match your bytecode to the appropriate `mapping.txt` file exactly.
+  [#1881](https://github.com/bugsnag/bugsnag-android/pull/1881)
+- (behavior change) Foreground tracking is now based on Activity tracking, to match the [`ProcessLifecycleOwner`](https://developer.android.com/reference/android/arch/lifecycle/ProcessLifecycleOwner), potentially affecting Stability scores (see [Upgrade Guide](./UPGRADING.md))
+  [#1915](https://github.com/bugsnag/bugsnag-android/pull/1915)
+- (behavior change) `Configuration.persistUser` now defaults to `true`
+  [#1867](https://github.com/bugsnag/bugsnag-android/pull/1867)
+- (behavior change) When no `BUILD_UUID` is specified, a unique ID is now automatically derived from your `.dex` files in order to match your bytecode to the appropriate `mapping.txt` file exactly when an event is symbolicated on the BugSnag dashboard
+  [#1829](https://github.com/bugsnag/bugsnag-android/pull/1829)
+- (behavior change) API key validation has moved to `Bugsnag.start` (instead of when the `Configuration` is created), this means that `Bugsnag.start` will now fail with an exception if no API key is provided
+  [#1868](https://github.com/bugsnag/bugsnag-android/pull/1868)
 
 Please see our [Upgrade Guide](./UPGRADING.md) for more information on moving from v5.x to v6.0.0.
-  
+
 ### Enhancements
 
 - bugsnag-plugin-android-ndk is now available as a Prefab to make access to our C API easier than ever
-- New foreground tracking based on Activity tracking, bringing inForeground closer to the behaviour of ProcessLifecycleOwner
+  [#1921](https://github.com/bugsnag/bugsnag-android/pull/1921)
 - [bugsnag-plugin-android-exitinfo](bugsnag-plugin-android-exitinfo/README.md) can be added to enhance native and ANR crash reports from Android 11
   - Stack traces for all threads in native crashes
+  - More detailed ANR thread stack traces
   - Open FDs on native crashes
   - Include the application logcat output in native crashes
-  - More detailed ANR thread stack traces
 
 ## 5.31.3 (2023-11-06)
 

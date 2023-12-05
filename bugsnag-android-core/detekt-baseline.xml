@@ -19,10 +19,11 @@
     <ID>LongParameterList:EventStorageModule.kt$EventStorageModule$( contextModule: ContextModule, configModule: ConfigModule, dataCollectionModule: DataCollectionModule, bgTaskService: BackgroundTaskService, trackerModule: TrackerModule, systemServiceModule: SystemServiceModule, notifier: Notifier, callbackState: CallbackState )</ID>
     <ID>LongParameterList:NativeStackframe.kt$NativeStackframe$( /** * The name of the method that was being executed */ var method: String?, /** * The location of the source file */ var file: String?, /** * The line number within the source file this stackframe refers to */ var lineNumber: Number?, /** * The address of the instruction where the event occurred. */ var frameAddress: Long?, /** * The address of the function where the event occurred. */ var symbolAddress: Long?, /** * The address of the library where the event occurred. */ var loadAddress: Long?, /** * Whether this frame identifies the program counter */ var isPC: Boolean?, /** * The type of the error */ var type: ErrorType? = null, /** * Identifies the exact build this frame originates from. */ var codeIdentifier: String? = null, )</ID>
     <ID>LongParameterList:StateEvent.kt$StateEvent.Install$( @JvmField val apiKey: String, @JvmField val autoDetectNdkCrashes: Boolean, @JvmField val appVersion: String?, @JvmField val buildUuid: String?, @JvmField val releaseStage: String?, @JvmField val lastRunInfoPath: String, @JvmField val consecutiveLaunchCrashes: Int, @JvmField val sendThreads: ThreadSendPolicy )</ID>
-    <ID>LongParameterList:ThreadState.kt$ThreadState$( allThreads: List&lt;JavaThread>, currentThread: JavaThread, exc: Throwable?, isUnhandled: Boolean, maxThreadCount: Int, projectPackages: Collection&lt;String>, logger: Logger )</ID>
+    <ID>LongParameterList:ThreadState.kt$ThreadState$( allThreads: List&lt;JavaThread>, currentThread: JavaThread, exc: Throwable?, isUnhandled: Boolean, maxThreadCount: Int, threadCollectionTimeLimitMillis: Long, projectPackages: Collection&lt;String>, logger: Logger )</ID>
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$299</ID>
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$429</ID>
     <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$499</ID>
+    <ID>MagicNumber:EventStore.kt$EventStore$60</ID>
     <ID>MagicNumber:JsonHelper.kt$JsonHelper$0xff</ID>
     <ID>MagicNumber:JsonHelper.kt$JsonHelper$1000</ID>
     <ID>MagicNumber:JsonHelper.kt$JsonHelper$16</ID>
@@ -31,8 +32,12 @@
     <ID>MagicNumber:JsonHelper.kt$JsonHelper$3</ID>
     <ID>MagicNumber:JsonHelper.kt$JsonHelper$8</ID>
     <ID>MagicNumber:LastRunInfoStore.kt$LastRunInfoStore$3</ID>
+    <ID>MagicNumber:SessionStore.kt$SessionStore$60</ID>
     <ID>MaxLineLength:LastRunInfo.kt$LastRunInfo$return "LastRunInfo(consecutiveLaunchCrashes=$consecutiveLaunchCrashes, crashed=$crashed, crashedDuringLaunch=$crashedDuringLaunch)"</ID>
     <ID>MaxLineLength:ThreadState.kt$ThreadState$"[${allThreads.size - maxThreadCount} threads omitted as the maxReportedThreads limit ($maxThreadCount) was exceeded]"</ID>
+    <ID>NestedBlockDepth:FileStore.kt$FileStore$fun deleteStoredFiles(storedFiles: Collection&lt;File>?)</ID>
+    <ID>NestedBlockDepth:FileStore.kt$FileStore$fun discardOldestFileIfNeeded()</ID>
+    <ID>NestedBlockDepth:FileStore.kt$FileStore$fun findStoredFiles(): MutableList&lt;File></ID>
     <ID>NestedBlockDepth:JsonHelper.kt$JsonHelper$fun jsonToLong(value: Any?): Long?</ID>
     <ID>ProtectedMemberInFinalClass:ConfigInternal.kt$ConfigInternal$protected val plugins = HashSet&lt;Plugin>()</ID>
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun isAnr(event: Event): Boolean</ID>
@@ -40,6 +45,7 @@
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun updateSeverityInternal(severity: Severity)</ID>
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun updateSeverityReason(@SeverityReason.SeverityReasonType reason: String)</ID>
     <ID>ReturnCount:DefaultDelivery.kt$DefaultDelivery$fun deliver( urlString: String, json: ByteArray, headers: Map&lt;String, String?> ): DeliveryStatus</ID>
+    <ID>SpreadOperator:FileStore.kt$FileStore$(*listFiles)</ID>
     <ID>SwallowedException:AppDataCollector.kt$AppDataCollector$e: Exception</ID>
     <ID>SwallowedException:BugsnagEventMapper.kt$BugsnagEventMapper$pe: IllegalArgumentException</ID>
     <ID>SwallowedException:ConnectivityCompat.kt$ConnectivityLegacy$e: NullPointerException</ID>
@@ -48,8 +54,10 @@
     <ID>SwallowedException:DeviceDataCollector.kt$DeviceDataCollector$exc: Exception</ID>
     <ID>SwallowedException:DeviceDataCollector.kt$DeviceDataCollector$exception: Exception</ID>
     <ID>SwallowedException:DeviceIdFilePersistence.kt$DeviceIdFilePersistence$exc: OverlappingFileLockException</ID>
-    <ID>SwallowedException:ImmutableConfig.kt$e: Exception</ID>
+    <ID>SwallowedException:EventStore.kt$EventStore$exception: RejectedExecutionException</ID>
+    <ID>SwallowedException:EventStore.kt$EventStore$ioe: Exception</ID>
     <ID>SwallowedException:ForegroundDetector.kt$ForegroundDetector$e: Exception</ID>
+    <ID>SwallowedException:ImmutableConfig.kt$e: Exception</ID>
     <ID>SwallowedException:JsonHelperTest.kt$JsonHelperTest$e: IllegalArgumentException</ID>
     <ID>SwallowedException:PluginClient.kt$PluginClient$exc: ClassNotFoundException</ID>
     <ID>SwallowedException:SharedPrefMigrator.kt$SharedPrefMigrator$e: RuntimeException</ID>
@@ -57,6 +65,7 @@
     <ID>TooManyFunctions:ConfigInternal.kt$ConfigInternal : CallbackAwareMetadataAwareUserAwareFeatureFlagAware</ID>
     <ID>TooManyFunctions:DeviceDataCollector.kt$DeviceDataCollector</ID>
     <ID>TooManyFunctions:EventInternal.kt$EventInternal : FeatureFlagAwareStreamableMetadataAwareUserAware</ID>
+    <ID>UnusedPrivateProperty:ManifestConfigLoader.kt$ManifestConfigLoader.Companion$private const val LAUNCH_CRASH_THRESHOLD_MS = "$BUGSNAG_NS.LAUNCH_CRASH_THRESHOLD_MS"</ID>
     <ID>UnusedPrivateProperty:ThreadStateTest.kt$ThreadStateTest$private val configuration = generateImmutableConfig()</ID>
     <ID>UseCheckOrError:BackgroundTaskServiceTest.kt$BackgroundTaskServiceTest$throw IllegalStateException()</ID>
     <ID>UseCheckOrError:BugsnagEventMapper.kt$BugsnagEventMapper$throw IllegalStateException("cannot find json property '$key'")</ID>

@@ -217,6 +217,8 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   bugsnag_env->next_event.feature_flag_count = 0;
   bugsnag_env->next_event.feature_flags = NULL;
 
+  atomic_init(&bugsnag_env->static_json_data, NULL);
+
   bsg_global_env = bugsnag_env;
   bsg_update_next_run_info(bsg_global_env);
   BUGSNAG_LOG("Initialization complete!");
@@ -912,13 +914,18 @@ Java_com_bugsnag_android_ndk_NativeBridge_setStaticJsonData(JNIEnv *env,
     return;
   }
 
-  size_t length = strlen(data);
-  if (length == 0) {
+  // strlen(data) == 0
+  if (*data == 0) {
     goto done;
   }
 
-  const char *data_old = bsg_global_env->static_json_data;
-  bsg_global_env->static_json_data = strdup(data);
+  const char *new_data = strdup(data);
+  if (!new_data) {
+    goto done;
+  }
+
+  const char *data_old =
+      atomic_exchange(&bsg_global_env->static_json_data, new_data);
   free((void *)data_old);
 
 done:

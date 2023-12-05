@@ -81,7 +81,7 @@ typedef struct {
    * On delivery, this data gets sent to the JVM alongside of the JSONified
    * event object.
    */
-  const char *static_json_data;
+  const char *_Atomic static_json_data;
 
 } bsg_environment;
 

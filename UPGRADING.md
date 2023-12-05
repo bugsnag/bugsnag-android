@@ -1,7 +1,7 @@
 Upgrading Guide
 ===============
 
-Upgrade from 5.X to 6.X
+Upgrade from 5.x to 6.x
 -----------------------
 
 __This version contains several breaking changes__.
@@ -9,20 +9,22 @@ __This version contains several breaking changes__.
 ### Key points
 
 - `redactedKeys` and `discardClasses` are now matched as a `Pattern` instead of `String`
-- `ThreadType` has been removed in favour of `ErrorType` bringing bugsnag-android inline with other platform SDKs
-- `Thread.id` is now a `String` instead of an `int` bringing bugsnag-android inline with other platform SDKs
-- API Key validation has moved to `Bugsnag.start` (instead of when the `Configuration` is created), this means that `Bugsnag.start` will now fail with an exception if no API key is provided
-- When no `BUILD_UUID` is specified one is automatically derived from your `.dex` files in order to match your bytecode to the appropriate `mapping.txt` file exactly. This behaviour can be opted-out of by setting `BUILD_UUID` to a blank (empty) string value:
-  ```xml
-  <meta-data android:name="com.bugsnag.android.BUILD_UUID" android:value="" />
-  ```
-- The deprecated `Configuration.launchCrashThresholdMs` (and equivalent manifest entry `LAUNCH_CRASH_THRESHOLD_MS`) have been removed in favour of `Configuration.launchDurationMillis` (`LAUNCH_DURATION_MILLIS`)
+- `ThreadType` has been removed in favour of `ErrorType`
+- `Thread.id` is now a `String` instead of an `int`
+- `Configuration.launchCrashThresholdMs` has been renamed `Configuration.launchDurationMillis`
+- The legacy `bugsnag-android-ndk` module has been removed in favor of `bugsnag-plugin-android-ndk`
+- Change to make foreground tracking based on Activity tracking, to match the [`ProcessLifecycleOwner`](https://developer.android.com/reference/android/arch/lifecycle/ProcessLifecycleOwner), potentially affecting Application Stability scores (see below)
+- `Configuration.persistUser` now defaults to `true`
+- Generation of a deterministic build ID from `.dex` files to avoid the need for UUID generation
+- API key validation has moved to `Bugsnag.start`, instead of when the `Configuration` is created
 
-### redactedKeys & discardClasses
+More detail on these changes is described below:
+
+### `redactedKeys` & `discardClasses`
 
 The properties / accessors for redacted keys and discard classes remain the same, but the type has been changed from `String` to `Pattern` to allow for more flexible matches (matching is done with `Pattern.matches`).
 
-To retain the same behaviour as v5.X replace:
+To retain the same behavior as v5.X replace:
 
 ```kotlin
 configuration.redactedKeys = setOf("password", "secret")
@@ -37,9 +39,9 @@ configuration.redactedKeys = setOf(
 )
 ```
 
-### ThreadType removal
+### `ThreadType` removal
 
-The `ThreadType` enum has been removed in favour of the existing `ErrorType` enum (this follows the same pattern as our other platform notifiers). Simply replace any references to `ThreadType` with `ErrorType`, the constant values remain the same:
+The `ThreadType` enum has been removed in favour of the existing `ErrorType` enum (this follows the same pattern as our other SDKs). Simply replace any references to `ThreadType` with `ErrorType`, the constant values remain the same:
 
 ```kotlin
 Bugsnag.addOnError { event ->
@@ -48,7 +50,54 @@ Bugsnag.addOnError { event ->
 }
 ```
 
-Upgrade from 4.X to 5.X
+### Thread ID change in type
+
+The ID of a thread is now reported as a string, rather than an integer, for consistency with our other SDKs. If it is referenced in any error callback, it should be amended accordingly:
+
+```kotlin
+Bugsnag.addOnError { event ->
+    if (event.threads.first().id == "0")
+    ...
+}
+```
+
+## Rename of the `launchCrashThresholdMs` configuration option
+
+`Configuration.launchCrashThresholdMs` (and equivalent manifest entry `LAUNCH_CRASH_THRESHOLD_MS`) has been renamed for consistency with other SDKs and was marked as deprecated in v5.x. Use `Configuration.launchDurationMillis` (`LAUNCH_DURATION_MILLIS`) as a direct equivalent in v6.x – see our [online docs](https://docs.bugsnag.com/platforms/android/configuration-options/#launchdurationmillis).
+
+## Rename of `bugsnag-android-ndk`
+
+The legacy `bugsnag-android-ndk` module has been removed in favor of `bugsnag-plugin-android-ndk`. This won't affect most build setups but if your project references this library explicitly it will need to be updated to the new name.
+
+### Change in app foreground detection
+
+Before v6.x, the `app.inForeground` flag was set to `true` whenever the app process has an importance of "foreground service" or greater (note: lower importance = higher priority). This will include any apps that are actively running in the background but include a foreground notification – known as Foreground Services. For example, fitness apps that are actively tracking; or music players when their controls are visible to the user.
+
+As of v6.x, the Activity tracking has changed to exclude these scenarios. In other words, if `app.inForeground` on an event is `true` then the user has the app itself open and is engaged with it either in full screen or split-screen. This better aligns with the behavior of the [`ProcessLifecycleOwner`](https://developer.android.com/reference/android/arch/lifecycle/ProcessLifecycleOwner) and the [BugSnag Performance SDK](https://docs.bugsnag.com/performance/integration-guides/android/).
+
+Foreground tracking is also used to determine when there's an active session, for the purposes of calculating a [Stability score](https://docs.bugsnag.com/product/stability/). Apps that run as a Foreground Service may therefore see fewer sessions created and also, if crashes occur when the app is in this state, they won't count towards a score. This means that your Stability score may change after migrating to v6.x.
+
+### Change of `persistUser` configuration option default value
+
+The [`persistUser` configuration option](https://docs.bugsnag.com/platforms/android/configuration-options/#persistuser) now defaults to `true` meaning that any stored user information will be persisted to file between launches of the app and used in future events until it is explicitly cleared. If you don't want this information to be stored, set the configuration option to `false`.
+
+### Deterministic build UUID
+
+The SDK can now generate a unique identifier for your build, derived from your `.dex` files, in order to match your bytecode to the appropriate `mapping.txt` file during symbolication of a crash event on the BugSnag dashboard, if there are more than one build for a given version code (e.g. development and staging builds).
+
+The `BUILD_UUID` from the manifest is still used if provided – usually by the [BugSnag Android Gradle Plugin](https://docs.bugsnag.com/build-integrations/gradle/) – therefore no changes are necessary for most build setups. However if you are an On Premise customer using versions before v3.2307.0 (single machine) and v5.2307.0 (clustered) and do not use our Gradle plugin for your builds, you may need opt-out of this behavior by setting `BUILD_UUID` to a blank (empty) string value:
+
+```xml
+<meta-data android:name="com.bugsnag.android.BUILD_UUID" android:value="" />
+```
+
+Alternatively ensure that this value is populated with a unique value and is included in your [mapping upload API](https://docs.bugsnag.com/api/android-mapping-upload/#uploading-mapping-files) call as `buildUUID`.
+
+### API key validation on start
+
+The presence and format of your API key has moved to `Bugsnag.start`, instead of when the `Configuration` is created. This means that `Bugsnag.start` will now fail with an exception if no valid-looking API key is provided.
+
+Upgrade from 4.x to 5.x
 -----------------------
 
 __This version contains many breaking changes__. It is part of an effort to unify our notifier libraries across platforms, making the user interface more consistent, and implementations better on multi-layered environments where multiple Bugsnag libraries need to work together (such as React Native).
