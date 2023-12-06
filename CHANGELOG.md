@@ -1,6 +1,6 @@
 # Changelog
 
-## TBC
+## 6.1.0 (2023-12-05)
 
 ### Enhancements
 
@@ -12,7 +12,7 @@
 * Updating existing feature flags no longer causes them to change location.
   [#1940](https://github.com/bugsnag/bugsnag-android/pull/1940)
 * Fixed possible NDK crash when constructing several concurrent `Client` instances
-  []()
+  [#1950](https://github.com/bugsnag/bugsnag-android/pull/1950)
 
 
 ## 6.0.0 (2023-11-20)
