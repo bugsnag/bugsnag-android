@@ -142,7 +142,7 @@ ssize_t bsg_unwind_crash_stack(bugsnag_stackframe stack[BUGSNAG_FRAMES_MAX],
   // we always check unwinding_crash_stack and set *before* attempting to
   // retrieve the crash unwinder to avoid picking up an unwinder that is about
   // to be destroyed by bsg_unwinder_refresh
-  static bool expected = false;
+  bool expected = false;
   if (!std::atomic_compare_exchange_strong(&unwinding_crash_stack, &expected,
                                            true)) {
     return 0;
