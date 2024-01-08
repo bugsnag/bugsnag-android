@@ -68,7 +68,7 @@ bool bsg_run_on_error() {
 }
 
 bool bsg_begin_handling_crash() {
-  static bool expected = false;
+  bool expected = false;
   return atomic_compare_exchange_strong(&bsg_global_env->handling_crash,
                                         &expected, true);
 }
