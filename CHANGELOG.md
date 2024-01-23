@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.32.1 (2024-01-23)
+
+### Bug fixes
+
+* Fixed proguard-consumer rules in `bugsnag-plugin-react-native` for ReactNative 0.73
+  [#1963](https://github.com/bugsnag/bugsnag-android/pull/1963)
+
 ## 5.32.0 (2023-12-12)
 
 ### Enhancements
