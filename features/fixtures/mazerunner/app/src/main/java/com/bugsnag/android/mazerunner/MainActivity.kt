@@ -247,13 +247,8 @@ class MainActivity : Activity() {
     // Clear persistent data (used to stop scenarios bleeding into each other)
     private fun clearPersistentData() {
         CiLog.info("Clearing persistent data")
-        clearCacheFolder("last-run-info")
-        clearCacheFolder("bugsnag-errors")
-        clearCacheFolder("bugsnag-native")
-        clearCacheFolder("bugsnag-sessions")
-        clearCacheFolder("device-id")
-        clearCacheFolder("user-info")
-        clearCacheFolder("fake")
+        clearCacheFolder("bugsnag")
+        clearCacheFolder("StrictModeDiscScenarioFile")
 
         removeFile("device-id")
         removeFile("internal-device-id")
