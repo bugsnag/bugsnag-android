@@ -6,8 +6,42 @@ import kotlin.math.min
 
 private const val UTF_REPLACEMENT_CHAR = '\uFFFD'
 
+/**
+ * Read a value of the C type `int`, not to be confused with `getInt` which will always read
+ *  * a Java `int`.
+ */
 internal fun ByteBuffer.getNativeInt(): Int = getInt()
-internal fun ByteBuffer.getNativeLong(): Long = getLong()
+
+/**
+ * Read a value of the C type `long`, not to be confused with `getLong` which will always read
+ * a Java `long`.
+ */
+internal fun ByteBuffer.getNativeLong(): Long =
+    if (NativeArch.is32bit) getInt().toLong() else getLong()
+
+/**
+ * Read a value of type `time_t`, the resolution of the value returned *is not defined*. Some of
+ * our properties are in seconds, others are in milliseconds.
+ */
+internal fun ByteBuffer.getNativeTime(): Long =
+    if (NativeArch.is32bit) getInt().toLong() else getLong()
+
+/**
+ * Read a value of type `size_t`
+ */
+internal fun ByteBuffer.getNativeSize(): Long = getNativeLong()
+
+/**
+ * Read a value of type `bool`
+ */
+internal fun ByteBuffer.getNativeBool(): Boolean = get().toInt() and 0xff != 0
+
+// -------------------------------------------------------------------------------------------------
+// Read functions for fixed-width primitives
+// -------------------------------------------------------------------------------------------------
+
+internal fun ByteBuffer.getULong(): ULong = getLong().toULong()
+internal fun ByteBuffer.getUInt(): UInt = getInt().toUInt()
 
 /**
  * Decode [allocatedByteCount] as a null-terminated sequence of modified UTF-8 bytes. This reads
