@@ -18,7 +18,7 @@ Feature: Reporting Errors with usage info
     And the event "usage.callbacks.ndkOnError" equals 1
     And the event "usage.callbacks.onBreadcrumb" equals 1
     And the event "usage.callbacks.onError" equals 3
-    And the event "usage.callbacks.onSession" equals 3
+    And the event "usage.callbacks.onSession" equals 4
 
   Scenario: Report a handled exception with custom configuration and set callbacks, usage disabled
     When I configure the app to run in the "disable-usage" state

@@ -4,7 +4,6 @@ import android.app.ActivityManager
 import android.app.ApplicationExitInfo
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 
 @RequiresApi(Build.VERSION_CODES.R)
@@ -18,12 +17,9 @@ internal class ExitInfoCallback(
     override fun onSend(event: Event): Boolean {
         val am = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         val allExitInfo = am.getHistoricalProcessExitReasons(context.packageName, 0, MAX_EXIT_INFO)
-        Log.e("Bugsnag", "allExitInfo: $allExitInfo")
         val sessionIdBytes = event.session?.id?.toByteArray() ?: return true
-        Log.e("Bugsnag", "sessionIdBytes: $sessionIdBytes")
         val exitInfo = findExitInfoBySessionId(allExitInfo, sessionIdBytes)
             ?: findExitInfoByPid(allExitInfo) ?: return true
-        Log.e("Bugsnag", "exitInfo: $exitInfo")
 
         try {
             val reason = exitReasonOf(exitInfo)
@@ -76,7 +72,7 @@ internal class ExitInfoCallback(
         ActivityManager.RunningAppProcessInfo.IMPORTANCE_SERVICE -> "service"
         ActivityManager.RunningAppProcessInfo.IMPORTANCE_CACHED -> "cached"
         ActivityManager.RunningAppProcessInfo.IMPORTANCE_GONE -> "gone"
-        else -> "unknown importance ${exitInfo.importance}"
+        else -> "unknown importance (${exitInfo.importance})"
     }
 
     private fun findExitInfoBySessionId(

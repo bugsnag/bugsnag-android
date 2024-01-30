@@ -1,14 +1,11 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 
 class ExitInfoScenario(
-    config: com.bugsnag.android.Configuration,
+    config: Configuration,
     context: android.content.Context,
     eventMetadata: String?
 ) : Scenario(config, context, eventMetadata) {
@@ -16,13 +13,6 @@ class ExitInfoScenario(
     override fun startScenario() {
         super.startScenario()
         Bugsnag.startSession()
-        val time1 = 2726
-        val time2 = 500
-        val main: android.os.Handler = android.os.Handler(android.os.Looper.getMainLooper())
-        main.postDelayed(object : java.lang.Runnable {
-            override fun run() {
-                crash(time1)
-            }
-        }, time2)
+        throw generateException()
     }
 }
