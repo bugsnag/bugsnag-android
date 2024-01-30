@@ -16,11 +16,13 @@ class ExitInfoScenario(
     override fun startScenario() {
         super.startScenario()
         Bugsnag.startSession()
+        val time1 = 2726
+        val time2 = 500
         val main: android.os.Handler = android.os.Handler(android.os.Looper.getMainLooper())
         main.postDelayed(object : java.lang.Runnable {
             override fun run() {
-                crash(2726)
+                crash(time1)
             }
-        }, 500)
+        }, time2)
     }
 }
