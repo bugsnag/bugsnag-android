@@ -3,7 +3,6 @@ package com.bugsnag.android
 import android.app.ActivityManager
 import android.app.ApplicationExitInfo
 import android.content.Context
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -117,7 +116,7 @@ internal class ExitInfoCallbackTest {
         `when`(exitInfo1.reason).thenReturn(ApplicationExitInfo.REASON_UNKNOWN)
         `when`(exitInfo1.importance).thenReturn(ActivityManager.RunningAppProcessInfo.REASON_UNKNOWN)
         assertTrue(exitInfoCallback.onSend(event))
-        assertEquals("0", exitInfo1.reason.toString())
-        assertEquals("0", exitInfo1.importance.toString())
+        verify(event, times(1)).addMetadata("app", "exitReason", "unknown reason (0)")
+        verify(event, times(1)).addMetadata("app", "processImportance", "unknown importance (0)")
     }
 }
