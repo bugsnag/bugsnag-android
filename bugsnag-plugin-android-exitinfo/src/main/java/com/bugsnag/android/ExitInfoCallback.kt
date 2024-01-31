@@ -68,7 +68,7 @@ internal class ExitInfoCallback(
         ActivityManager.RunningAppProcessInfo.IMPORTANCE_TOP_SLEEPING -> "top sleeping"
         ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE -> "visible"
         ActivityManager.RunningAppProcessInfo.IMPORTANCE_PERCEPTIBLE -> "perceptible"
-        ActivityManager.RunningAppProcessInfo.IMPORTANCE_CANT_SAVE_STATE -> "can not save state"
+        ActivityManager.RunningAppProcessInfo.IMPORTANCE_CANT_SAVE_STATE -> "can't save state"
         ActivityManager.RunningAppProcessInfo.IMPORTANCE_SERVICE -> "service"
         ActivityManager.RunningAppProcessInfo.IMPORTANCE_CACHED -> "cached"
         ActivityManager.RunningAppProcessInfo.IMPORTANCE_GONE -> "gone"

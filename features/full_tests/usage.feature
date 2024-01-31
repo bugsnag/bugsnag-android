@@ -53,7 +53,7 @@ Feature: Reporting Errors with usage info
     And the event "usage.callbacks.ndkOnError" equals 1
     And the event "usage.callbacks.onBreadcrumb" equals 3
     And the event "usage.callbacks.onError" equals 2
-    And the event "usage.callbacks.onSession" equals 2
+    And the event "usage.callbacks.onSession" equals 3
 
   Scenario: Report an unhandled exception with custom configuration and set callbacks, usage disabled
     When I configure the app to run in the "disable-usage" state
@@ -87,7 +87,7 @@ Feature: Reporting Errors with usage info
     And the event "usage.config.maxPersistedSessions" equals 1000
     And the event "usage.callbacks.onBreadcrumb" equals 1
     And the event "usage.callbacks.onError" equals 2
-    And the event "usage.callbacks.onSession" equals 4
+    And the event "usage.callbacks.onSession" equals 5
 
   Scenario: Report a native exception with custom configuration and set callbacks, usage disabled
     When I configure the app to run in the "disable-usage" state
@@ -121,7 +121,7 @@ Feature: Reporting Errors with usage info
     And the event "usage.callbacks.ndkOnError" equals 1
     And the event "usage.callbacks.onBreadcrumb" equals 1
     And the event "usage.callbacks.onError" equals 2
-    And the event "usage.callbacks.onSession" equals 4
+    And the event "usage.callbacks.onSession" equals 5
     And the event "usage.callbacks.event_set_user" is true
     And the event "usage.callbacks.app_set_binary_arch" is true
     And the event "usage.callbacks.device_get_model" is true
