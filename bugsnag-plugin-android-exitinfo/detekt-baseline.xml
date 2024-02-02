@@ -2,6 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
+    <ID>CyclomaticComplexMethod:ExitInfoCallback.kt$ExitInfoCallback$private fun exitReasonOf(exitInfo: ApplicationExitInfo)</ID>
     <ID>LongParameterList:TombstoneParser.kt$TombstoneParser$( exitInfo: ApplicationExitInfo, listOpenFds: Boolean, includeLogcat: Boolean, threadConsumer: (BugsnagThread) -> Unit, fileDescriptorConsumer: (Int, String, String) -> Unit, logcatConsumer: (String) -> Unit )</ID>
     <ID>MagicNumber:TraceParser.kt$TraceParser$16</ID>
     <ID>MagicNumber:TraceParser.kt$TraceParser$3</ID>

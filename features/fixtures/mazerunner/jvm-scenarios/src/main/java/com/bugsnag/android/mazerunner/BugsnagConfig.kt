@@ -1,6 +1,8 @@
 package com.bugsnag.android.mazerunner
 
+import android.os.Build
 import android.util.Log
+import com.bugsnag.android.BugsnagExitInfoPlugin
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.Delivery
 import com.bugsnag.android.DeliveryParams
@@ -19,6 +21,9 @@ fun prepareConfig(
     logFilter: (msg: String) -> Boolean
 ): Configuration {
     val config = Configuration(apiKey)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        config.addPlugin(BugsnagExitInfoPlugin())
+    }
 
     if (notify.isNotEmpty() && sessions.isNotEmpty()) {
         config.endpoints = EndpointConfiguration(notify, sessions)
