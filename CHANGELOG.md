@@ -2,6 +2,11 @@
 
 ## TBD
 
+### Enhancements
+
+* `bugsnag-plugin-android-exitinfo` now includes `exitReason` and `processImportance` in the `APP` tab on the dashboard
+  [#1968](https://github.com/bugsnag/bugsnag-android/pull/1968)
+
 ### Bug fixes
 
 * Avoid any possibility of multiple conflicting native crash handlers or stack-unwinders running concurrently

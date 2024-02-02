@@ -22,6 +22,12 @@ internal class ExitInfoCallback(
             ?: findExitInfoByPid(allExitInfo) ?: return true
 
         try {
+            val reason = exitReasonOf(exitInfo)
+            event.addMetadata("app", "exitReason", reason)
+
+            val importance = importanceDescriptionOf(exitInfo)
+            event.addMetadata("app", "processImportance", importance)
+
             if (exitInfo.reason == ApplicationExitInfo.REASON_CRASH_NATIVE ||
                 exitInfo.reason == ApplicationExitInfo.REASON_SIGNALED
             ) {
@@ -33,6 +39,40 @@ internal class ExitInfoCallback(
             return true
         }
         return true
+    }
+
+    private fun exitReasonOf(exitInfo: ApplicationExitInfo) = when (exitInfo.reason) {
+        ApplicationExitInfo.REASON_UNKNOWN -> "unknown reason (${exitInfo.reason})"
+        ApplicationExitInfo.REASON_EXIT_SELF -> "exit self"
+        ApplicationExitInfo.REASON_SIGNALED -> "signaled"
+        ApplicationExitInfo.REASON_LOW_MEMORY -> "low memory"
+        ApplicationExitInfo.REASON_CRASH -> "crash"
+        ApplicationExitInfo.REASON_CRASH_NATIVE -> "crash native"
+        ApplicationExitInfo.REASON_ANR -> "ANR"
+        ApplicationExitInfo.REASON_INITIALIZATION_FAILURE -> "initialization failure"
+        ApplicationExitInfo.REASON_PERMISSION_CHANGE -> "permission change"
+        ApplicationExitInfo.REASON_EXCESSIVE_RESOURCE_USAGE -> "excessive resource usage"
+        ApplicationExitInfo.REASON_USER_REQUESTED -> "user requested"
+        ApplicationExitInfo.REASON_USER_STOPPED -> "user stopped"
+        ApplicationExitInfo.REASON_DEPENDENCY_DIED -> "dependency died"
+        ApplicationExitInfo.REASON_OTHER -> "other"
+        ApplicationExitInfo.REASON_FREEZER -> "freezer"
+        ApplicationExitInfo.REASON_PACKAGE_STATE_CHANGE -> "package state change"
+        ApplicationExitInfo.REASON_PACKAGE_UPDATED -> "package updated"
+        else -> "unknown reason (${exitInfo.reason})"
+    }
+
+    private fun importanceDescriptionOf(exitInfo: ApplicationExitInfo) = when (exitInfo.importance) {
+        ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND -> "foreground"
+        ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND_SERVICE -> "foreground service"
+        ActivityManager.RunningAppProcessInfo.IMPORTANCE_TOP_SLEEPING -> "top sleeping"
+        ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE -> "visible"
+        ActivityManager.RunningAppProcessInfo.IMPORTANCE_PERCEPTIBLE -> "perceptible"
+        ActivityManager.RunningAppProcessInfo.IMPORTANCE_CANT_SAVE_STATE -> "can't save state"
+        ActivityManager.RunningAppProcessInfo.IMPORTANCE_SERVICE -> "service"
+        ActivityManager.RunningAppProcessInfo.IMPORTANCE_CACHED -> "cached"
+        ActivityManager.RunningAppProcessInfo.IMPORTANCE_GONE -> "gone"
+        else -> "unknown importance (${exitInfo.importance})"
     }
 
     private fun findExitInfoBySessionId(
