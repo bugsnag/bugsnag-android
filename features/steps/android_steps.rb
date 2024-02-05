@@ -289,3 +289,9 @@ Then("the event last breadcrumb has a message that matches the regex {string}") 
   regex = Regexp.new pattern
   Maze.check.match regex, lastBreadcrumbName
 end
+
+
+Then('the {request_type} payload field {string} is not null or empty') do |request_type, keypath|
+  value = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], keypath)
+  Maze.check.false(value.nil? || value.empty?, "The #{keypath} is nil or empty: '#{value}'")
+end
