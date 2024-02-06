@@ -126,4 +126,35 @@ class AppDataCollectorTest {
         val result = collector.getInstallerPackageName()
         assertEquals("Test Installer name", result)
     }
+
+    @Test
+    fun testGetProcessImportance() = withBuildSdkInt(Build.VERSION_CODES.Q) {
+        val packageManager = mock(PackageManager::class.java)
+        `when`(packageManager.getApplicationLabel(any())).thenReturn("Test App name")
+        `when`(am.runningAppProcesses).thenReturn(
+            listOf(
+                ActivityManager.RunningAppProcessInfo().apply {
+                    importance = ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
+                }
+            )
+        )
+
+        val collector = AppDataCollector(
+            context,
+            packageManager,
+            client.immutableConfig,
+            client.sessionTracker,
+            am,
+            client.launchCrashTracker,
+            client.memoryTrimState
+        )
+
+        val result = collector.getAppDataMetadata()["processImportance"]
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            assertEquals(null, result)
+        } else {
+            assertEquals("foreground", result)
+        }
+    }
 }

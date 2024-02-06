@@ -2,11 +2,26 @@ package com.bugsnag.android
 
 import android.annotation.SuppressLint
 import android.app.ActivityManager
+import android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_CACHED
+import android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_CANT_SAVE_STATE
+import android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_EMPTY
+import android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
+import android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND_SERVICE
+import android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_GONE
+import android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_PERCEPTIBLE
+import android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_PERCEPTIBLE_PRE_26
+import android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_SERVICE
+import android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_TOP_SLEEPING
+import android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_TOP_SLEEPING_PRE_28
+import android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE
+import android.app.ActivityManager.RunningAppProcessInfo.REASON_PROVIDER_IN_USE
+import android.app.ActivityManager.RunningAppProcessInfo.REASON_SERVICE_IN_USE
 import android.app.Application
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
+import android.os.Process
 import android.os.SystemClock
 import com.bugsnag.android.internal.ImmutableConfig
 
@@ -49,12 +64,55 @@ internal class AppDataCollector(
         )
     }
 
+    @SuppressLint("SwitchIntDef")
+    @Suppress("DEPRECATION")
+    private fun getProcessImportance(): String? {
+        try {
+            val appInfo = ActivityManager.RunningAppProcessInfo()
+            if (appInfo.pid == 0) {
+                return null
+            }
+
+            if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
+                ActivityManager.getMyMemoryState(appInfo)
+            } else {
+                activityManager?.runningAppProcesses?.find {
+                    it.pid == Process.myPid()
+                }?.let {
+                    appInfo.importance = it.importance
+                }
+            }
+
+            return when (appInfo.importance) {
+                IMPORTANCE_FOREGROUND -> "foreground"
+                IMPORTANCE_FOREGROUND_SERVICE -> "foreground service"
+                IMPORTANCE_TOP_SLEEPING -> "top sleeping"
+                IMPORTANCE_TOP_SLEEPING_PRE_28 -> "top sleeping"
+                IMPORTANCE_VISIBLE -> "visible"
+                IMPORTANCE_PERCEPTIBLE -> "perceptible"
+                IMPORTANCE_PERCEPTIBLE_PRE_26 -> "perceptible"
+                IMPORTANCE_CANT_SAVE_STATE -> "can't save state"
+                IMPORTANCE_CANT_SAVE_STATE_PRE_26 -> "can't save state"
+                IMPORTANCE_SERVICE -> "service"
+                IMPORTANCE_CACHED -> "cached/background"
+                IMPORTANCE_GONE -> "gone"
+                IMPORTANCE_EMPTY -> "empty"
+                REASON_PROVIDER_IN_USE -> "provider in use"
+                REASON_SERVICE_IN_USE -> "service in use"
+                else -> "unknown importance (${activityManager?.runningAppProcesses?.last()?.importance})"
+            }
+        } catch (e: Exception) {
+            return null
+        }
+    }
+
     fun getAppDataMetadata(): MutableMap<String, Any?> {
         val map = HashMap<String, Any?>()
         map["name"] = appName
         map["activeScreen"] = sessionTracker.contextActivity
         map["lowMemory"] = memoryTrimState.isLowMemory
         map["memoryTrimLevel"] = memoryTrimState.trimLevelDescription
+        map["processImportance"] = getProcessImportance()
 
         populateRuntimeMemoryMetadata(map)
 
@@ -128,6 +186,7 @@ internal class AppDataCollector(
             packageManager != null && copy != null -> {
                 packageManager.getApplicationLabel(copy).toString()
             }
+
             else -> null
         }
     }
@@ -156,6 +215,7 @@ internal class AppDataCollector(
                 VERSION.SDK_INT >= VERSION_CODES.P -> {
                     Application.getProcessName()
                 }
+
                 else -> {
                     // see https://stackoverflow.com/questions/19631894
                     val clz = Class.forName("android.app.ActivityThread")
@@ -179,5 +239,7 @@ internal class AppDataCollector(
          * good approximation for how long the app has been running.
          */
         fun getDurationMs(): Long = SystemClock.elapsedRealtime() - startTimeMs
+
+        private const val IMPORTANCE_CANT_SAVE_STATE_PRE_26 = 170
     }
 }
