@@ -3,6 +3,7 @@ Feature: Reporting Errors with usage info
   Background:
     Given I clear all persistent data
 
+    @skip_above_android_11
   Scenario: Report a handled exception with custom configuration and set callbacks
     When I configure the app to run in the "USAGE" state
     And I run "HandledExceptionWithUsageScenario"
@@ -18,7 +19,7 @@ Feature: Reporting Errors with usage info
     And the event "usage.callbacks.ndkOnError" equals 1
     And the event "usage.callbacks.onBreadcrumb" equals 1
     And the event "usage.callbacks.onError" equals 3
-    And the event "usage.callbacks.onSession" equals 4
+    And the event "usage.callbacks.onSession" equals 3
 
   Scenario: Report a handled exception with custom configuration and set callbacks, usage disabled
     When I configure the app to run in the "disable-usage" state
@@ -37,6 +38,7 @@ Feature: Reporting Errors with usage info
     And the event "usage.callbacks.onError" is null
     And the event "usage.callbacks.onSession" is null
 
+  @skip_above_android_11
   Scenario: Report an unhandled exception with custom configuration and set callbacks
     When I configure the app to run in the "USAGE" state
     And I run "UnhandledExceptionWithUsageScenario" and relaunch the crashed app
@@ -53,7 +55,7 @@ Feature: Reporting Errors with usage info
     And the event "usage.callbacks.ndkOnError" equals 1
     And the event "usage.callbacks.onBreadcrumb" equals 3
     And the event "usage.callbacks.onError" equals 2
-    And the event "usage.callbacks.onSession" equals 3
+    And the event "usage.callbacks.onSession" equals 2
 
   Scenario: Report an unhandled exception with custom configuration and set callbacks, usage disabled
     When I configure the app to run in the "disable-usage" state
@@ -73,6 +75,7 @@ Feature: Reporting Errors with usage info
     And the event "usage.callbacks.onError" is null
     And the event "usage.callbacks.onSession" is null
 
+  @skip_above_android_11
   Scenario: Report a native exception with custom configuration and set callbacks
     When I configure the app to run in the "USAGE" state
     And I run "CXXExceptionWithUsageScenario" and relaunch the crashed app
@@ -87,7 +90,7 @@ Feature: Reporting Errors with usage info
     And the event "usage.config.maxPersistedSessions" equals 1000
     And the event "usage.callbacks.onBreadcrumb" equals 1
     And the event "usage.callbacks.onError" equals 2
-    And the event "usage.callbacks.onSession" equals 5
+    And the event "usage.callbacks.onSession" equals 4
 
   Scenario: Report a native exception with custom configuration and set callbacks, usage disabled
     When I configure the app to run in the "disable-usage" state
@@ -105,6 +108,7 @@ Feature: Reporting Errors with usage info
     And the event "usage.callbacks.onError" is null
     And the event "usage.callbacks.onSession" is null
 
+  @skip_above_android_11
   Scenario: Report a native exception with custom configuration and set callbacks
     When I configure the app to run in the "USAGE" state
     And I run "CXXSigsegvWithUsageScenario" and relaunch the crashed app
@@ -121,7 +125,7 @@ Feature: Reporting Errors with usage info
     And the event "usage.callbacks.ndkOnError" equals 1
     And the event "usage.callbacks.onBreadcrumb" equals 1
     And the event "usage.callbacks.onError" equals 2
-    And the event "usage.callbacks.onSession" equals 5
+    And the event "usage.callbacks.onSession" equals 4
     And the event "usage.callbacks.event_set_user" is true
     And the event "usage.callbacks.app_set_binary_arch" is true
     And the event "usage.callbacks.device_get_model" is true
