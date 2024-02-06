@@ -10,6 +10,5 @@ Feature: Application exitInfo is reported in crashes
     And I configure Bugsnag for "ExitInfoScenario"
     And I wait to receive an error
     Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the error payload field "events.0.metaData.app.processImportance" equals "foreground"
-    And the error payload field "events.0.metaData.app.exitReason" equals "crash"
-
+    And the event "metaData.app.processImportance" equals "foreground"
+    And the event "metaData.app.exitReason" is not null

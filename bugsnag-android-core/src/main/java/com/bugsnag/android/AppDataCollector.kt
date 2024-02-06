@@ -69,18 +69,20 @@ internal class AppDataCollector(
     private fun getProcessImportance(): String? {
         try {
             val appInfo = ActivityManager.RunningAppProcessInfo()
-            if (appInfo.pid == 0) {
-                return null
-            }
-
             if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
                 ActivityManager.getMyMemoryState(appInfo)
             } else {
-                activityManager?.runningAppProcesses?.find {
-                    it.pid == Process.myPid()
-                }?.let {
-                    appInfo.importance = it.importance
-                }
+                val expectedPid = Process.myPid()
+                activityManager?.runningAppProcesses
+                    ?.find { it.pid == expectedPid }
+                    ?.let {
+                        appInfo.importance = it.importance
+                        appInfo.pid = expectedPid
+                    }
+            }
+
+            if (appInfo.pid == 0) {
+                return null
             }
 
             return when (appInfo.importance) {
@@ -99,7 +101,7 @@ internal class AppDataCollector(
                 IMPORTANCE_EMPTY -> "empty"
                 REASON_PROVIDER_IN_USE -> "provider in use"
                 REASON_SERVICE_IN_USE -> "service in use"
-                else -> "unknown importance (${activityManager?.runningAppProcesses?.last()?.importance})"
+                else -> "unknown importance (${appInfo.importance})"
             }
         } catch (e: Exception) {
             return null

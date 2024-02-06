@@ -4,6 +4,7 @@ import android.app.ActivityManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
+import android.os.Process
 import androidx.test.core.app.ApplicationProvider
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -128,7 +129,7 @@ class AppDataCollectorTest {
     }
 
     @Test
-    fun testGetProcessImportance() = withBuildSdkInt(Build.VERSION_CODES.Q) {
+    fun testGetProcessImportanceWithVersion29() = withBuildSdkInt(Build.VERSION_CODES.Q) {
         val packageManager = mock(PackageManager::class.java)
         `when`(packageManager.getApplicationLabel(any())).thenReturn("Test App name")
         `when`(am.runningAppProcesses).thenReturn(
@@ -150,11 +151,60 @@ class AppDataCollectorTest {
         )
 
         val result = collector.getAppDataMetadata()["processImportance"]
+        assertEquals("foreground service", result)
+    }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            assertEquals(null, result)
-        } else {
-            assertEquals("foreground", result)
-        }
+    @Test
+    fun testGetProcessImportanceWithVersion14() = withBuildSdkInt(Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+        val packageManager = mock(PackageManager::class.java)
+        `when`(packageManager.getApplicationLabel(any())).thenReturn("Test App name")
+        `when`(am.runningAppProcesses).thenReturn(
+            listOf(
+                ActivityManager.RunningAppProcessInfo().apply {
+                    importance = ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
+                    pid = Process.myPid()
+                }
+            )
+        )
+
+        val collector = AppDataCollector(
+            context,
+            packageManager,
+            client.immutableConfig,
+            client.sessionTracker,
+            am,
+            client.launchCrashTracker,
+            client.memoryTrimState
+        )
+
+        val result = collector.getAppDataMetadata()["processImportance"]
+        assertEquals("foreground", result)
+    }
+
+    @Test
+    fun testGetProcessImportanceWithPid0() = withBuildSdkInt(Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+        val packageManager = mock(PackageManager::class.java)
+        `when`(packageManager.getApplicationLabel(any())).thenReturn("Test App name")
+        `when`(am.runningAppProcesses).thenReturn(
+            listOf(
+                ActivityManager.RunningAppProcessInfo().apply {
+                    importance = ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
+                    pid = 0
+                }
+            )
+        )
+
+        val collector = AppDataCollector(
+            context,
+            packageManager,
+            client.immutableConfig,
+            client.sessionTracker,
+            am,
+            client.launchCrashTracker,
+            client.memoryTrimState
+        )
+
+        val result = collector.getAppDataMetadata()["processImportance"]
+        assertEquals(null, result)
     }
 }
