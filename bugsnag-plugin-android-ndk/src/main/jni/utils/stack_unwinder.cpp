@@ -39,12 +39,20 @@ static void bsg_fallback_symbols(const uint64_t addr,
 }
 
 static bool bsg_check_invalid_libname(const std::string &filename) {
+  const auto length = filename.length();
+  // turn clang-format off - for clarity in the string compare:
+  // clang-format off
   return filename.empty() ||
          // if the filename ends-in ".apk" then the lib was loaded without
          // extracting it from the apk we consider these as "invalid" to trigger
          // the use of a fallback filename
-         (filename.length() >= 4 &&
-          filename.substr(filename.length() - 4, 4) == ".apk");
+         (length >= 4 &&
+          // compare char-by-char to avoid the allocation is substr
+          filename[length - 4] == '.' &&
+          filename[length - 3] == 'a' &&
+          filename[length - 2] == 'p' &&
+          filename[length - 1] == 'k');
+  // clang-format on
 }
 
 void bsg_unwinder_init() {
@@ -142,7 +150,7 @@ ssize_t bsg_unwind_crash_stack(bugsnag_stackframe stack[BUGSNAG_FRAMES_MAX],
   // we always check unwinding_crash_stack and set *before* attempting to
   // retrieve the crash unwinder to avoid picking up an unwinder that is about
   // to be destroyed by bsg_unwinder_refresh
-  static bool expected = false;
+  bool expected = false;
   if (!std::atomic_compare_exchange_strong(&unwinding_crash_stack, &expected,
                                            true)) {
     return 0;

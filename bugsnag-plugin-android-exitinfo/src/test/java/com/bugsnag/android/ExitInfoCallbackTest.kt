@@ -108,4 +108,15 @@ internal class ExitInfoCallbackTest {
         verify(nativeEnhancer, times(0)).invoke(event, exitInfo1)
         verify(anrEventEnhancer, times(0)).invoke(event, exitInfo1)
     }
+
+    @Test
+    fun testUnknownExitReasonAndImportance() {
+        `when`(exitInfos.first().processStateSummary).thenReturn("1".toByteArray())
+        `when`(event.session?.id).thenReturn("1")
+        `when`(exitInfo1.reason).thenReturn(ApplicationExitInfo.REASON_UNKNOWN)
+        `when`(exitInfo1.importance).thenReturn(ActivityManager.RunningAppProcessInfo.REASON_UNKNOWN)
+        assertTrue(exitInfoCallback.onSend(event))
+        verify(event, times(1)).addMetadata("app", "exitReason", "unknown reason (0)")
+        verify(event, times(1)).addMetadata("app", "processImportance", "unknown importance (0)")
+    }
 }

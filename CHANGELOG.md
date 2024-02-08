@@ -1,5 +1,22 @@
 # Changelog
 
+## 6.2.0 (2024-02-08)
+
+### Enhancements
+
+* `processImportance` is now included in the 'app' tab on the dashboard
+  [#1973](https://github.com/bugsnag/bugsnag-android/pull/1973)
+
+* `bugsnag-plugin-android-exitinfo` now includes `exitReason` and `processImportance` in the `APP` tab on the dashboard
+  [#1968](https://github.com/bugsnag/bugsnag-android/pull/1968)
+
+### Bug fixes
+
+* Avoid any possibility of multiple conflicting native crash handlers or stack-unwinders running concurrently
+  [#1960](https://github.com/bugsnag/bugsnag-android/pull/1960)
+* Metadata that includes non-finite doubles (NaN, +Infinity, -Infinity) are omitted instead of breaking serialization
+  [#1958](https://github.com/bugsnag/bugsnag-android/pull/1958)
+
 ## 6.1.0 (2023-12-05)
 
 ### Enhancements
@@ -9,7 +26,7 @@
 
 ### Bug fixes
 
-* Updating existing feature flags no longer causes them to change location.
+* Updating existing feature-flags flags no longer causes them to change location.
   [#1940](https://github.com/bugsnag/bugsnag-android/pull/1940)
 * Fixed possible NDK crash when constructing several concurrent `Client` instances
   [#1950](https://github.com/bugsnag/bugsnag-android/pull/1950)
