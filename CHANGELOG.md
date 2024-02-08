@@ -1,8 +1,11 @@
 # Changelog
 
-## TBD
+## 6.2.0 (2024-02-08)
 
 ### Enhancements
+
+* `processImportance` is now included in the 'app' tab on the dashboard
+  [#1973](https://github.com/bugsnag/bugsnag-android/pull/1973)
 
 * `bugsnag-plugin-android-exitinfo` now includes `exitReason` and `processImportance` in the `APP` tab on the dashboard
   [#1968](https://github.com/bugsnag/bugsnag-android/pull/1968)
