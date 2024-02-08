@@ -1,6 +1,21 @@
 package com.bugsnag.android
 
+import android.annotation.SuppressLint
 import android.app.ActivityManager
+import android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_CACHED
+import android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_CANT_SAVE_STATE
+import android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_EMPTY
+import android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
+import android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND_SERVICE
+import android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_GONE
+import android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_PERCEPTIBLE
+import android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_PERCEPTIBLE_PRE_26
+import android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_SERVICE
+import android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_TOP_SLEEPING
+import android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_TOP_SLEEPING_PRE_28
+import android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE
+import android.app.ActivityManager.RunningAppProcessInfo.REASON_PROVIDER_IN_USE
+import android.app.ActivityManager.RunningAppProcessInfo.REASON_SERVICE_IN_USE
 import android.app.ApplicationExitInfo
 import android.content.Context
 import android.os.Build
@@ -62,16 +77,24 @@ internal class ExitInfoCallback(
         else -> "unknown reason (${exitInfo.reason})"
     }
 
+    @SuppressLint("SwitchIntDef")
+    @Suppress("DEPRECATION")
     private fun importanceDescriptionOf(exitInfo: ApplicationExitInfo) = when (exitInfo.importance) {
-        ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND -> "foreground"
-        ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND_SERVICE -> "foreground service"
-        ActivityManager.RunningAppProcessInfo.IMPORTANCE_TOP_SLEEPING -> "top sleeping"
-        ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE -> "visible"
-        ActivityManager.RunningAppProcessInfo.IMPORTANCE_PERCEPTIBLE -> "perceptible"
-        ActivityManager.RunningAppProcessInfo.IMPORTANCE_CANT_SAVE_STATE -> "can't save state"
-        ActivityManager.RunningAppProcessInfo.IMPORTANCE_SERVICE -> "service"
-        ActivityManager.RunningAppProcessInfo.IMPORTANCE_CACHED -> "cached"
-        ActivityManager.RunningAppProcessInfo.IMPORTANCE_GONE -> "gone"
+        IMPORTANCE_FOREGROUND -> "foreground"
+        IMPORTANCE_FOREGROUND_SERVICE -> "foreground service"
+        IMPORTANCE_TOP_SLEEPING -> "top sleeping"
+        IMPORTANCE_TOP_SLEEPING_PRE_28 -> "top sleeping"
+        IMPORTANCE_VISIBLE -> "visible"
+        IMPORTANCE_PERCEPTIBLE -> "perceptible"
+        IMPORTANCE_PERCEPTIBLE_PRE_26 -> "perceptible"
+        IMPORTANCE_CANT_SAVE_STATE -> "can't save state"
+        IMPORTANCE_CANT_SAVE_STATE_PRE_26 -> "can't save state"
+        IMPORTANCE_SERVICE -> "service"
+        IMPORTANCE_CACHED -> "cached/background"
+        IMPORTANCE_GONE -> "gone"
+        IMPORTANCE_EMPTY -> "empty"
+        REASON_PROVIDER_IN_USE -> "provider in use"
+        REASON_SERVICE_IN_USE -> "service in use"
         else -> "unknown importance (${exitInfo.importance})"
     }
 
@@ -86,6 +109,7 @@ internal class ExitInfoCallback(
         allExitInfo.find { it.pid == pid }
 
     internal companion object {
-        const val MAX_EXIT_INFO = 100
+        private const val MAX_EXIT_INFO = 100
+        private const val IMPORTANCE_CANT_SAVE_STATE_PRE_26 = 170
     }
 }
