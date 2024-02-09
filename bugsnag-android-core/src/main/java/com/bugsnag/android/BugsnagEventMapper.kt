@@ -252,4 +252,3 @@ internal class BugsnagEventMapper(
         }
     }
 }
-

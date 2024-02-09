@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* Metadata that includes non-finite doubles (NaN, +Infinity, -Infinity) are omitted instead of breaking serialization
+  [#1977](https://github.com/bugsnag/bugsnag-android/pull/1977)
+
 ## 5.32.1 (2024-01-23)
 
 ### Bug fixes
