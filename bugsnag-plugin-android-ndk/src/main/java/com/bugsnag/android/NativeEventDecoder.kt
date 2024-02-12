@@ -2,8 +2,9 @@ package com.bugsnag.android
 
 import androidx.annotation.VisibleForTesting
 import com.bugsnag.android.ndk.getCString
+import com.bugsnag.android.ndk.getNativeBool
 import com.bugsnag.android.ndk.getNativeInt
-import com.bugsnag.android.ndk.getNativeLong
+import com.bugsnag.android.ndk.getNativeTime
 import java.io.File
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -30,6 +31,7 @@ internal object NativeEventDecoder {
         return event.inputStream().channel.use {
             // map the entire file in READ_ONLY mode
             val eventBytes = it.map(FileChannel.MapMode.READ_ONLY, 0L, event.length())
+            eventBytes.order(ByteOrder.nativeOrder())
             decodeEventFromBytes(eventBytes, newEvent)
         }
     }
@@ -39,27 +41,24 @@ internal object NativeEventDecoder {
         eventBytes: ByteBuffer,
         event: Event
     ): Event {
-        eventBytes.order(ByteOrder.nativeOrder())
 
         val header = decodeHeader(eventBytes)
         require(header.version == BUGSNAG_EVENT_VERSION) { "Unsupported event version: ${header.version}" }
-
-        if (header.bigEndian == 0) {
-            eventBytes.order(ByteOrder.BIG_ENDIAN)
-        }
 
         decodeNotifier(eventBytes, event)
         decodeAppInfoToAppWithState(eventBytes, event)
 
         return event
-//        @Suppress("StopShip") // This is targeting an integration branch
-//        TODO("To be completed")
     }
 
     private fun decodeNotifier(eventBytes: ByteBuffer, event: Event) {
-        event.session?.notifier?.name = eventBytes.getCString(64)
-        event.session?.notifier?.version = eventBytes.getCString(16)
-        event.session?.notifier?.url = eventBytes.getCString(64)
+        val name = eventBytes.getCString(64)
+        val version = eventBytes.getCString(16)
+        val url = eventBytes.getCString(64)
+
+        event.session?.notifier?.name = name
+        event.session?.notifier?.version = version
+        event.session?.notifier?.url = url
     }
 
     private fun decodeAppInfoToAppWithState(eventBytes: ByteBuffer, event: Event) {
@@ -67,12 +66,15 @@ internal object NativeEventDecoder {
         val releaseStage = eventBytes.getCString(64)
         val type = eventBytes.getCString(32)
         val version = eventBytes.getCString(32)
-        val versionCode = eventBytes.getNativeLong()
+        @Suppress("UNUSED_VARIABLE") val activeScreen = eventBytes.getCString(64)
+        val versionCode = eventBytes.getLong()
         val buildUuid = eventBytes.getCString(64)
-        val duration = eventBytes.getNativeLong()
-        val durationInForeground = eventBytes.getNativeLong()
-        val inForeground = eventBytes.getNativeInt() != 0
-        val isLaunching = eventBytes.getNativeInt() != 0
+        val duration = eventBytes.getLong()
+        val durationInForeground = eventBytes.getLong()
+        @Suppress("UNUSED_VARIABLE") val durationMsOffset = eventBytes.getLong()
+        @Suppress("UNUSED_VARIABLE") val durationInForegroundMsOffset = eventBytes.getNativeTime()
+        val inForeground = eventBytes.getNativeBool()
+        val isLaunching = eventBytes.getNativeBool()
         val binaryArch = eventBytes.getCString(32)
 
         event.app = AppWithState(
