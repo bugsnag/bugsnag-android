@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 5.32.2 (2024-02-12)
 
 ### Bug fixes
 
