@@ -9,6 +9,7 @@ import java.io.File
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.channels.FileChannel
+import java.util.Date
 
 private const val BUGSNAG_EVENT_VERSION = 13
 
@@ -47,6 +48,7 @@ internal object NativeEventDecoder {
 
         decodeNotifier(eventBytes, event)
         decodeAppInfoToAppWithState(eventBytes, event)
+        decodeDeviceInfo(eventBytes, event)
 
         return event
     }
@@ -92,6 +94,36 @@ internal object NativeEventDecoder {
             isLaunching = isLaunching
         )
         event.addMetadata("app", "activeScreen", activeScreen)
+    }
+
+    private fun decodeDeviceInfo(eventBytes: ByteBuffer, event: Event) {
+        @Suppress("UNUSED_VARIABLE") val apiLevel = eventBytes.getNativeInt()
+        val cpuAbiCount = eventBytes.getNativeInt()
+        val cpuAbis = (0 until cpuAbiCount).map { eventBytes.getCString(32) }
+        val orientation = eventBytes.getCString(32)
+        val time = eventBytes.getNativeTime()
+        val id = eventBytes.getCString(64)
+        val jailbroken = eventBytes.getNativeBool()
+        val locale = eventBytes.getCString(32)
+        val manufacturer = eventBytes.getCString(64)
+        val model = eventBytes.getCString(64)
+        @Suppress("UNUSED_VARIABLE") val osBuild = eventBytes.getCString(64)
+        val osVersion = eventBytes.getCString(64)
+        @Suppress("UNUSED_VARIABLE") val osName = eventBytes.getCString(64)
+        val totalMemory = eventBytes.getLong()
+
+
+        event.device.cpuAbi = cpuAbis.toTypedArray()
+        event.device.jailbroken = jailbroken
+        event.device.id = id
+        event.device.locale = locale
+        event.device.totalMemory = totalMemory
+        event.device.orientation = orientation
+        event.device.time = Date(time)
+        event.device.manufacturer = manufacturer
+        event.device.model = model
+        event.device.osVersion = osVersion
+
     }
 
     private fun decodeHeader(eventBytes: ByteBuffer): NativeEventHeader {

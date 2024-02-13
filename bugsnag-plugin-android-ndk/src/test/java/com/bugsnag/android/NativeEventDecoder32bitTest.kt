@@ -60,5 +60,8 @@ class NativeEventDecoder32bitTest {
         assertEquals(true, captor.value.inForeground)
         assertEquals(true, captor.value.isLaunching)
         assertEquals("arm32", captor.value.binaryArch)
+
+//        assertEquals("arm32", deviceCaptor.value.cpuAbi)
+
     }
 }
