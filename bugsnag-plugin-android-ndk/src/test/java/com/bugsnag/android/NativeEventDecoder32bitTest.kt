@@ -15,8 +15,8 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 @RunWith(MockitoJUnitRunner::class)
-class NativeEventDecoderTest {
-    private val sample32BitData =
+class NativeEventDecoder32bitTest {
+    private val crashDumpData =
         this::class.java.getResourceAsStream("/arm32-droid-razr.crash_dump")!!.readBytes()
 
     private val event = mock(Event::class.java)
@@ -34,8 +34,8 @@ class NativeEventDecoderTest {
     }
 
     @Test
-    fun test32BitPrimitives() {
-        val data = ByteBuffer.wrap(sample32BitData)
+    fun testNativeEventDecode() {
+        val data = ByteBuffer.wrap(crashDumpData)
         data.order(ByteOrder.LITTLE_ENDIAN)
         val captor = ArgumentCaptor.forClass(AppWithState::class.java)
         `when`(event.session).thenReturn(session)

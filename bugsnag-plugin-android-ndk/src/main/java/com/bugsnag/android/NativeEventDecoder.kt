@@ -66,7 +66,7 @@ internal object NativeEventDecoder {
         val releaseStage = eventBytes.getCString(64)
         val type = eventBytes.getCString(32)
         val version = eventBytes.getCString(32)
-        @Suppress("UNUSED_VARIABLE") val activeScreen = eventBytes.getCString(64)
+        val activeScreen = eventBytes.getCString(64)
         val versionCode = eventBytes.getLong()
         val buildUuid = eventBytes.getCString(64)
         val duration = eventBytes.getLong()
@@ -83,7 +83,7 @@ internal object NativeEventDecoder {
             releaseStage = releaseStage,
             version = version,
             codeBundleId = null,
-            buildUuid = buildUuid,
+            buildUuid = buildUuid.takeUnless { it.isEmpty() },
             type = type,
             versionCode = versionCode,
             duration = duration,
@@ -91,6 +91,7 @@ internal object NativeEventDecoder {
             inForeground = inForeground,
             isLaunching = isLaunching
         )
+        event.addMetadata("app", "activeScreen", activeScreen)
     }
 
     private fun decodeHeader(eventBytes: ByteBuffer): NativeEventHeader {
