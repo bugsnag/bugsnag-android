@@ -13,6 +13,7 @@ import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import java.util.Date
 
 @RunWith(MockitoJUnitRunner::class)
 class NativeEventDecoder32bitTest {
@@ -22,6 +23,7 @@ class NativeEventDecoder32bitTest {
     private val event = mock(Event::class.java)
     private val session = mock(Session::class.java)
     private val notifier = mock(Notifier::class.java)
+    private val device = mock(DeviceWithState::class.java)
 
     @Before
     fun setupArchitecture() {
@@ -38,8 +40,11 @@ class NativeEventDecoder32bitTest {
         val data = ByteBuffer.wrap(crashDumpData)
         data.order(ByteOrder.LITTLE_ENDIAN)
         val captor = ArgumentCaptor.forClass(AppWithState::class.java)
+        val runtimeVersions = mutableMapOf<String, Any>()
         `when`(event.session).thenReturn(session)
         `when`(session.notifier).thenReturn(notifier)
+        `when`(event.device).thenReturn(device)
+        `when`(device.runtimeVersions).thenReturn(runtimeVersions)
 
         NativeEventDecoder.decodeEventFromBytes(data, event)
 
@@ -61,7 +66,17 @@ class NativeEventDecoder32bitTest {
         assertEquals(true, captor.value.isLaunching)
         assertEquals("arm32", captor.value.binaryArch)
 
-//        assertEquals("arm32", deviceCaptor.value.cpuAbi)
-
+        assertEquals(15, runtimeVersions["apiLevel"])
+        assertEquals("6.7.3-94_SPI-324", runtimeVersions["osBuild"])
+        verify(device).orientation = "portrait"
+        verify(device).time = Date(1339585022 * 1000L)
+        verify(device).id = "deddc379-5a77-4f2c-b21c-b24baca697f6"
+        verify(device).jailbroken = false
+        verify(device).locale = "en_GB"
+        verify(device).manufacturer = "motorola"
+        verify(device).model = "XT910"
+        verify(device).osVersion = "4.0.4"
+        verify(device).osName = "android"
+        verify(device).totalMemory = 0L
     }
 }
