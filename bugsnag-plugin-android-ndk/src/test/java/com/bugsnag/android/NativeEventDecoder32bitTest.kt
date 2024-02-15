@@ -8,11 +8,13 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import java.util.Date
 
 @RunWith(MockitoJUnitRunner::class)
 class NativeEventDecoder32bitTest {
@@ -22,9 +24,18 @@ class NativeEventDecoder32bitTest {
     private val event = mock(Event::class.java)
     private val session = mock(Session::class.java)
     private val notifier = mock(Notifier::class.java)
+    private val device = mock(DeviceWithState::class.java)
+
+    lateinit var data: ByteBuffer
 
     @Before
-    fun setupArchitecture() {
+    fun setUp() {
+        setupArchitecture()
+        data = ByteBuffer.wrap(crashDumpData)
+        data.order(ByteOrder.LITTLE_ENDIAN)
+    }
+
+    private fun setupArchitecture() {
         NativeArch._is32Bit = true
     }
 
@@ -34,23 +45,27 @@ class NativeEventDecoder32bitTest {
     }
 
     @Test
-    fun testNativeEventDecode() {
-        val data = ByteBuffer.wrap(crashDumpData)
-        data.order(ByteOrder.LITTLE_ENDIAN)
-        val captor = ArgumentCaptor.forClass(AppWithState::class.java)
-//        val deviceCaptor = ArgumentCaptor.forClass(DeviceWithState::class.java)
+    fun testNotifierDecode() {
         `when`(event.session).thenReturn(session)
         `when`(session.notifier).thenReturn(notifier)
+        `when`(event.device).thenReturn(device)
 
         NativeEventDecoder.decodeEventFromBytes(data, event)
-
-        verify(event).app = captor.capture()
-
-//        verify(event).device = deviceCaptor.capture()
 
         verify(notifier).name = ""
         verify(notifier).version = ""
         verify(notifier).url = ""
+    }
+
+    @Test
+    fun testAppInfoDecode() {
+        `when`(event.session).thenReturn(session)
+        `when`(session.notifier).thenReturn(notifier)
+        `when`(event.device).thenReturn(device)
+        val captor = ArgumentCaptor.forClass(AppWithState::class.java)
+
+        NativeEventDecoder.decodeEventFromBytes(data, event)
+        verify(event).app = captor.capture()
 
         assertEquals("com.example.bugsnag.android", captor.value.id)
         assertEquals("development", captor.value.releaseStage)
@@ -63,8 +78,42 @@ class NativeEventDecoder32bitTest {
         assertEquals(true, captor.value.inForeground)
         assertEquals(true, captor.value.isLaunching)
         assertEquals("arm32", captor.value.binaryArch)
+    }
 
-//        assertEquals("arm32", deviceCaptor.value.cpuAbi)
+    @Test
+    fun testDeviceInfoDecode() {
+        val runtimeVersions = mutableMapOf<String, Any>()
+        `when`(event.session).thenReturn(session)
+        `when`(session.notifier).thenReturn(notifier)
+        `when`(event.device).thenReturn(device)
+        `when`(device.runtimeVersions).thenReturn(runtimeVersions)
 
+        NativeEventDecoder.decodeEventFromBytes(data, event)
+
+        assertEquals(15, runtimeVersions["apiLevel"])
+        assertEquals("6.7.3-94_SPI-324", runtimeVersions["osBuild"])
+        verify(device).orientation = "portrait"
+        verify(device).time = Date(1339585022 * 1000L)
+        verify(device).id = "deddc379-5a77-4f2c-b21c-b24baca697f6"
+        verify(device).jailbroken = false
+        verify(device).locale = "en_GB"
+        verify(device).manufacturer = "motorola"
+        verify(device).model = "XT910"
+        verify(device).osVersion = "4.0.4"
+        verify(device).osName = "android"
+        verify(device).totalMemory = 0L
+    }
+
+    @Test
+    fun testUserInfoDecode() {
+        val runtimeVersions = mutableMapOf<String, Any>()
+        `when`(event.session).thenReturn(session)
+        `when`(session.notifier).thenReturn(notifier)
+        `when`(event.device).thenReturn(device)
+        `when`(device.runtimeVersions).thenReturn(runtimeVersions)
+
+        NativeEventDecoder.decodeEventFromBytes(data, event)
+
+        verify(event, times(1)).setUser("999999", "ndk override", "j@ex.co")
     }
 }
