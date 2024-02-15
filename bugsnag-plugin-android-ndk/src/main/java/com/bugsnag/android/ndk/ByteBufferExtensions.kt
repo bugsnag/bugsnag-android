@@ -169,3 +169,17 @@ private fun ByteBuffer.readModifiedUtf8(
     }
     return outIndex1
 }
+
+/**
+ * Realign the ByteBuffer (forwards) to the next machine-word if required. If the `position` is
+ * currently aligned to a machine-word this is a no-op.
+ */
+internal fun ByteBuffer.realign() {
+    val p = position()
+    val wordSize = if (NativeArch.is32bit) 4 else 8
+    val misalignment = p % wordSize
+
+    if (misalignment != 0) {
+        position(p + misalignment)
+    }
+}
