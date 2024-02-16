@@ -5,10 +5,12 @@ import com.bugsnag.android.ndk.getCString
 import com.bugsnag.android.ndk.getNativeBool
 import com.bugsnag.android.ndk.getNativeInt
 import com.bugsnag.android.ndk.getNativeTime
+import com.bugsnag.android.ndk.realign
 import java.io.File
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.channels.FileChannel
+import java.util.Date
 
 private const val BUGSNAG_EVENT_VERSION = 13
 
@@ -47,11 +49,13 @@ internal object NativeEventDecoder {
 
         decodeNotifier(eventBytes, event)
         decodeAppInfoToAppWithState(eventBytes, event)
+        decodeDeviceInfo(eventBytes, event)
 
         return event
     }
 
     private fun decodeNotifier(eventBytes: ByteBuffer, event: Event) {
+        eventBytes.realign()
         val name = eventBytes.getCString(64)
         val version = eventBytes.getCString(16)
         val url = eventBytes.getCString(64)
@@ -62,6 +66,7 @@ internal object NativeEventDecoder {
     }
 
     private fun decodeAppInfoToAppWithState(eventBytes: ByteBuffer, event: Event) {
+        eventBytes.realign()
         val id = eventBytes.getCString(64)
         val releaseStage = eventBytes.getCString(64)
         val type = eventBytes.getCString(32)
@@ -92,6 +97,41 @@ internal object NativeEventDecoder {
             isLaunching = isLaunching
         )
         event.addMetadata("app", "activeScreen", activeScreen)
+    }
+
+    private fun decodeDeviceInfo(eventBytes: ByteBuffer, event: Event) {
+        eventBytes.realign()
+        val apiLevel = eventBytes.getNativeInt()
+        val cpuAbiCount = eventBytes.getNativeInt()
+        val cpuAbis = (0 until 8).map { eventBytes.getCString(32) }
+            .take(cpuAbiCount)
+            .filter { it.isNotEmpty() }
+            .toTypedArray()
+        val orientation = eventBytes.getCString(32)
+        val time = eventBytes.getNativeTime()
+        val id = eventBytes.getCString(64)
+        val jailbroken = eventBytes.getNativeBool()
+        val locale = eventBytes.getCString(32)
+        val manufacturer = eventBytes.getCString(64)
+        val model = eventBytes.getCString(64)
+        val osBuild = eventBytes.getCString(64)
+        val osVersion = eventBytes.getCString(64)
+        val osName = eventBytes.getCString(64)
+        val totalMemory = eventBytes.getLong()
+
+        event.device.manufacturer = manufacturer
+        event.device.id = id
+        event.device.osName = osName
+        event.device.locale = locale
+        event.device.osVersion = osVersion
+        event.device.model = model
+        event.device.orientation = orientation
+        event.device.runtimeVersions?.set("apiLevel", apiLevel)
+        event.device.runtimeVersions?.set("osBuild", osBuild)
+        event.device.cpuAbi = cpuAbis
+        event.device.totalMemory = totalMemory
+        event.device.jailbroken = jailbroken
+        event.device.time = Date(time * 1000L)
     }
 
     private fun decodeHeader(eventBytes: ByteBuffer): NativeEventHeader {

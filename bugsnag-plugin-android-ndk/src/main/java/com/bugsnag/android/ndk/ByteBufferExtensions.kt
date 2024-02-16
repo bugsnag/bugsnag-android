@@ -1,6 +1,7 @@
 @file:Suppress("MagicNumber") // this file is filled with numbers used in modified-utf8
 package com.bugsnag.android.ndk
 
+import com.bugsnag.android.ndk.NativeArch.is32bit
 import java.nio.ByteBuffer
 import kotlin.math.min
 
@@ -168,4 +169,18 @@ private fun ByteBuffer.readModifiedUtf8(
         }
     }
     return outIndex1
+}
+
+/**
+ * Realign the ByteBuffer (forwards) to the next machine-word if required. If the `position` is
+ * currently aligned to a machine-word this is a no-op.
+ */
+internal fun ByteBuffer.realign() {
+    val p = position()
+    val wordSize = if (is32bit) 4 else 8
+    val realigned = (p or (wordSize - 1)) + 1
+
+    if (realigned - wordSize != p) {
+        position(realigned)
+    }
 }
