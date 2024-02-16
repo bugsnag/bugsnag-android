@@ -7,6 +7,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
+import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
@@ -81,5 +82,8 @@ class NativeEventDecoder64bitTest {
         verify(device).osVersion = "14"
         verify(device).osName = "android"
         verify(device).totalMemory = 0L
+
+        // user info
+        verify(event, Mockito.times(1)).setUser("999999", "ndk override", "j@ex.co")
     }
 }
