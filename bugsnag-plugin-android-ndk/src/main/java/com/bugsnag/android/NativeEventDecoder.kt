@@ -62,7 +62,6 @@ internal object NativeEventDecoder {
         event.session?.notifier?.name = name
         event.session?.notifier?.version = version
         event.session?.notifier?.url = url
-        eventBytes.realign()
     }
 
     private fun decodeAppInfoToAppWithState(eventBytes: ByteBuffer, event: Event) {

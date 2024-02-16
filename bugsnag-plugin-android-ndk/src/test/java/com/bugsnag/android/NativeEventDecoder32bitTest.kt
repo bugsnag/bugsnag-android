@@ -50,10 +50,12 @@ class NativeEventDecoder32bitTest {
 
         verify(event).app = captor.capture()
 
+        // notifier
         verify(notifier).name = ""
         verify(notifier).version = ""
         verify(notifier).url = ""
 
+        // app info
         assertEquals("com.example.bugsnag.android", captor.value.id)
         assertEquals("development", captor.value.releaseStage)
         assertEquals("android", captor.value.type)
@@ -66,6 +68,7 @@ class NativeEventDecoder32bitTest {
         assertEquals(true, captor.value.isLaunching)
         assertEquals("arm32", captor.value.binaryArch)
 
+        // device info
         assertEquals(15, runtimeVersions["apiLevel"])
         assertEquals("6.7.3-94_SPI-324", runtimeVersions["osBuild"])
         verify(device).orientation = "portrait"
