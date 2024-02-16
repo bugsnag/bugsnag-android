@@ -8,6 +8,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
@@ -47,13 +48,14 @@ class NativeEventDecoder32bitTest {
         `when`(device.runtimeVersions).thenReturn(runtimeVersions)
 
         NativeEventDecoder.decodeEventFromBytes(data, event)
-
         verify(event).app = captor.capture()
 
+        // notifier
         verify(notifier).name = ""
         verify(notifier).version = ""
         verify(notifier).url = ""
 
+        // app info
         assertEquals("com.example.bugsnag.android", captor.value.id)
         assertEquals("development", captor.value.releaseStage)
         assertEquals("android", captor.value.type)
@@ -66,6 +68,7 @@ class NativeEventDecoder32bitTest {
         assertEquals(true, captor.value.isLaunching)
         assertEquals("arm32", captor.value.binaryArch)
 
+        // device info
         assertEquals(15, runtimeVersions["apiLevel"])
         assertEquals("6.7.3-94_SPI-324", runtimeVersions["osBuild"])
         verify(device).orientation = "portrait"
@@ -78,5 +81,8 @@ class NativeEventDecoder32bitTest {
         verify(device).osVersion = "4.0.4"
         verify(device).osName = "android"
         verify(device).totalMemory = 0L
+
+        // user info
+        verify(event, times(1)).setUser("999999", "ndk override", "j@ex.co")
     }
 }
