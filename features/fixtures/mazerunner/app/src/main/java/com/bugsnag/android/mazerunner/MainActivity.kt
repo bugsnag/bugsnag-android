@@ -11,6 +11,7 @@ import android.os.Looper
 import android.view.Window
 import android.widget.Button
 import android.widget.EditText
+import com.bugsnag.android.BugsnagInternals
 import com.bugsnag.android.mazerunner.scenarios.Scenario
 import org.json.JSONObject
 import java.io.File
@@ -177,6 +178,7 @@ class MainActivity : Activity() {
                                 runScenario(scenarioName, scenarioMode, sessionsUrl, notifyUrl)
                             }
                             "clear_persistent_data" -> clearPersistentData()
+                            "flush" -> BugsnagInternals.flush()
                             else -> throw IllegalArgumentException("Unknown action: $action")
                         }
                     }

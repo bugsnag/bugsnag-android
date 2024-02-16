@@ -3,6 +3,7 @@ Feature: Reporting Errors with usage info
   Background:
     Given I clear all persistent data
 
+    @skip_above_android_11
   Scenario: Report a handled exception with custom configuration and set callbacks
     When I configure the app to run in the "USAGE" state
     And I run "HandledExceptionWithUsageScenario"
@@ -37,6 +38,7 @@ Feature: Reporting Errors with usage info
     And the event "usage.callbacks.onError" is null
     And the event "usage.callbacks.onSession" is null
 
+  @skip_above_android_11
   Scenario: Report an unhandled exception with custom configuration and set callbacks
     When I configure the app to run in the "USAGE" state
     And I run "UnhandledExceptionWithUsageScenario" and relaunch the crashed app
@@ -73,6 +75,7 @@ Feature: Reporting Errors with usage info
     And the event "usage.callbacks.onError" is null
     And the event "usage.callbacks.onSession" is null
 
+  @skip_above_android_11
   Scenario: Report a native exception with custom configuration and set callbacks
     When I configure the app to run in the "USAGE" state
     And I run "CXXExceptionWithUsageScenario" and relaunch the crashed app
@@ -105,6 +108,7 @@ Feature: Reporting Errors with usage info
     And the event "usage.callbacks.onError" is null
     And the event "usage.callbacks.onSession" is null
 
+  @skip_above_android_11
   Scenario: Report a native exception with custom configuration and set callbacks
     When I configure the app to run in the "USAGE" state
     And I run "CXXSigsegvWithUsageScenario" and relaunch the crashed app
