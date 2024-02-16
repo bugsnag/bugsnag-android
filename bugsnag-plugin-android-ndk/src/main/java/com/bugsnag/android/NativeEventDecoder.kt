@@ -55,6 +55,7 @@ internal object NativeEventDecoder {
     }
 
     private fun decodeNotifier(eventBytes: ByteBuffer, event: Event) {
+        eventBytes.realign()
         val name = eventBytes.getCString(64)
         val version = eventBytes.getCString(16)
         val url = eventBytes.getCString(64)
@@ -65,6 +66,7 @@ internal object NativeEventDecoder {
     }
 
     private fun decodeAppInfoToAppWithState(eventBytes: ByteBuffer, event: Event) {
+        eventBytes.realign()
         val id = eventBytes.getCString(64)
         val releaseStage = eventBytes.getCString(64)
         val type = eventBytes.getCString(32)
@@ -95,10 +97,10 @@ internal object NativeEventDecoder {
             isLaunching = isLaunching
         )
         event.addMetadata("app", "activeScreen", activeScreen)
-        eventBytes.realign()
     }
 
     private fun decodeDeviceInfo(eventBytes: ByteBuffer, event: Event) {
+        eventBytes.realign()
         val apiLevel = eventBytes.getNativeInt()
         val cpuAbiCount = eventBytes.getNativeInt()
         val cpuAbis = (0 until 8).map { eventBytes.getCString(32) }
@@ -130,7 +132,6 @@ internal object NativeEventDecoder {
         event.device.totalMemory = totalMemory
         event.device.jailbroken = jailbroken
         event.device.time = Date(time * 1000L)
-        eventBytes.realign()
     }
 
     private fun decodeHeader(eventBytes: ByteBuffer): NativeEventHeader {
