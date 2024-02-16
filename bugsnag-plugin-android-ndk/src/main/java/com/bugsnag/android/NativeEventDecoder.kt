@@ -98,7 +98,6 @@ internal object NativeEventDecoder {
             isLaunching = isLaunching
         )
         event.addMetadata("app", "activeScreen", activeScreen)
-        eventBytes.realign()
     }
 
     private fun decodeDeviceInfo(eventBytes: ByteBuffer, event: Event) {
