@@ -177,9 +177,7 @@ private fun ByteBuffer.readModifiedUtf8(
 internal fun ByteBuffer.realign() {
     val p = position()
     val wordSize = if (NativeArch.is32bit) 4 else 8
-    val misalignment = p % wordSize
+    val aligned = (p or (wordSize - 1)) + 1
 
-    if (misalignment != 0) {
-        position(p + misalignment)
-    }
+    position(aligned)
 }
