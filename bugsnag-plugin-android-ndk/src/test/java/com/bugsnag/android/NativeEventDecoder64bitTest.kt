@@ -7,6 +7,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
+import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
@@ -25,6 +26,9 @@ class NativeEventDecoder64bitTest {
     private val notifier = mock(Notifier::class.java)
     private val device = mock(DeviceWithState::class.java)
 
+    lateinit var data: ByteBuffer
+    val runtimeVersions = mutableMapOf<String, Any>()
+
     @Before
     fun setupArchitecture() {
         NativeArch._is32Bit = false
@@ -37,25 +41,29 @@ class NativeEventDecoder64bitTest {
 
     @Test
     fun testNativeEventDecode() {
-        val data = ByteBuffer.wrap(crashDump64BitData)
+        data = ByteBuffer.wrap(crashDump64BitData)
         data.order(ByteOrder.LITTLE_ENDIAN)
-        val captor = ArgumentCaptor.forClass(AppWithState::class.java)
-        val runtimeVersions = mutableMapOf<String, Any>()
         `when`(event.session).thenReturn(session)
         `when`(session.notifier).thenReturn(notifier)
         `when`(event.device).thenReturn(device)
         `when`(device.runtimeVersions).thenReturn(runtimeVersions)
-
         NativeEventDecoder.decodeEventFromBytes(data, event)
 
-        verify(event).app = captor.capture()
+        verifyNotifierDecode()
+        assertAppInfo()
+        verifyDeviceInfoDecode()
+        verifyUserInfoDecode()
+    }
 
-        // notifier
+    private fun verifyNotifierDecode() {
         verify(notifier).name = ""
         verify(notifier).version = ""
         verify(notifier).url = ""
+    }
 
-        // app info
+    private fun assertAppInfo() {
+        val captor = ArgumentCaptor.forClass(AppWithState::class.java)
+        verify(event).app = captor.capture()
         assertEquals("com.example.bugsnag.android", captor.value.id)
         assertEquals("production", captor.value.releaseStage)
         assertEquals("android", captor.value.type)
@@ -67,8 +75,9 @@ class NativeEventDecoder64bitTest {
         assertEquals(true, captor.value.inForeground)
         assertEquals(true, captor.value.isLaunching)
         assertEquals("arm64", captor.value.binaryArch)
+    }
 
-        // device info
+    private fun verifyDeviceInfoDecode() {
         assertEquals(34, runtimeVersions["apiLevel"])
         assertEquals("UE1A.230829.030", runtimeVersions["osBuild"])
         verify(device).orientation = "portrait"
@@ -81,5 +90,9 @@ class NativeEventDecoder64bitTest {
         verify(device).osVersion = "14"
         verify(device).osName = "android"
         verify(device).totalMemory = 0L
+    }
+
+    private fun verifyUserInfoDecode() {
+        verify(event, Mockito.times(1)).setUser("999999", "ndk override", "j@ex.co")
     }
 }
