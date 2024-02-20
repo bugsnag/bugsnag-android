@@ -5,6 +5,7 @@
     <ID>CyclomaticComplexMethod:NativeBridge.kt$NativeBridge$override fun onStateChange(event: StateEvent)</ID>
     <ID>LongMethod:EventOnDiskTests.kt$EventOnDiskTests$@Test fun testEvent()</ID>
     <ID>LongParameterList:NativeBridge.kt$NativeBridge$( apiKey: String, reportingDirectory: String, lastRunInfoPath: String, consecutiveLaunchCrashes: Int, autoDetectNdkCrashes: Boolean, apiLevel: Int, is32bit: Boolean, threadSendPolicy: Int )</ID>
+    <ID>MaxLineLength:NativeEventDecoder64bitTest.kt$NativeEventDecoder64bitTest$verify(stackFrame).file = "/data/app/~~dpOrZdWcDXB7AvWSQq_ToA==/com.example.bugsnag.android-qrHfhc0chd9kQAkU0AxRKQ==/lib/arm64/libentrypoint.so"</ID>
     <ID>NestedBlockDepth:NativeBridge.kt$NativeBridge$private fun deliverPendingReports()</ID>
     <ID>TooManyFunctions:NativeBridge.kt$NativeBridge : StateObserver</ID>
     <ID>UseCheckOrError:ResourceUtils.kt$throw IllegalStateException("Failed to read JSON from $resourceName")</ID>
