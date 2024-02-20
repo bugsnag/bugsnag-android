@@ -4,6 +4,8 @@ import androidx.annotation.VisibleForTesting
 import com.bugsnag.android.ndk.getCString
 import com.bugsnag.android.ndk.getNativeBool
 import com.bugsnag.android.ndk.getNativeInt
+import com.bugsnag.android.ndk.getNativeLong
+import com.bugsnag.android.ndk.getNativeSize
 import com.bugsnag.android.ndk.getNativeTime
 import com.bugsnag.android.ndk.realign
 import java.io.File
@@ -13,6 +15,7 @@ import java.nio.channels.FileChannel
 import java.util.Date
 
 private const val BUGSNAG_EVENT_VERSION = 13
+private const val BUGSNAG_FRAMES_MAX = 192
 
 @Suppress("MagicNumber") // this class is filled with numbers defined in event.h
 internal object NativeEventDecoder {
@@ -51,6 +54,7 @@ internal object NativeEventDecoder {
         decodeAppInfoToAppWithState(eventBytes, event)
         decodeDeviceInfo(eventBytes, event)
         decodeUser(eventBytes, event)
+        decodeError(eventBytes, event)
 
         return event
     }
@@ -141,6 +145,69 @@ internal object NativeEventDecoder {
         val email = eventBytes.getCString(64)
         val id = eventBytes.getCString(64)
         event.setUser(id, email, name)
+    }
+
+    private fun decodeError(eventBytes: ByteBuffer, event: Event) {
+        eventBytes.realign()
+        val errorClass = eventBytes.getCString(64)
+        val errorMessage = eventBytes.getCString(256)
+        val type = eventBytes.getCString(32)
+        val frameCount = eventBytes.getNativeSize()
+        val stacktrace = Array(BUGSNAG_FRAMES_MAX) { decodeFrame(eventBytes) }
+            .take(frameCount.toInt())
+
+        event.errors.map {
+            it.errorClass = errorClass
+            it.errorMessage = errorMessage
+            it.type = ErrorType.values()
+                .find { errorType -> errorType.name == type } ?: ErrorType.UNKNOWN
+            it.stacktrace.mapIndexed { index, frame ->
+                frame.method = stacktrace[index].method
+                frame.file = stacktrace[index].file
+                frame.lineNumber = stacktrace[index].lineNumber
+                frame.frameAddress = stacktrace[index].frameAddress
+                frame.symbolAddress = stacktrace[index].symbolAddress
+                frame.loadAddress = stacktrace[index].loadAddress
+                frame.codeIdentifier = stacktrace[index].codeIdentifier
+                if (frame.isPC == true) {
+                    frame.isPC = true
+                }
+            }
+        }
+    }
+
+    private fun decodeFrame(eventBytes: ByteBuffer): Stackframe {
+        eventBytes.realign()
+        val frameAddress = eventBytes.getNativeLong()
+        val symbolsAddress = eventBytes.getNativeLong()
+        val loadAddress = eventBytes.getNativeLong()
+        val lineNumber = eventBytes.getNativeLong()
+        val fileName = eventBytes.getCString(256)
+        val method = eventBytes.getCString(256)
+        val codeIdentifier = eventBytes.getCString(256)
+        val result = Stackframe(
+            method = null,
+            file = null,
+            lineNumber = lineNumber,
+            inProject = null,
+            code = null,
+            columnNumber = null
+        )
+        if (fileName.isNotEmpty()) {
+            result.file = fileName
+        }
+        if (method.isEmpty()) {
+            result.method = frameAddress.toString(20)
+        } else {
+            result.method = method
+        }
+
+        result.frameAddress = frameAddress
+        result.symbolAddress = symbolsAddress
+        result.loadAddress = loadAddress
+        result.codeIdentifier = codeIdentifier
+
+        return result
     }
 
     private fun decodeHeader(eventBytes: ByteBuffer): NativeEventHeader {

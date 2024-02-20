@@ -25,17 +25,14 @@ class NativeEventDecoder64bitTest {
     private val session = mock(Session::class.java)
     private val notifier = mock(Notifier::class.java)
     private val device = mock(DeviceWithState::class.java)
+    private val error = mock(Error::class.java)
+    private val stackFrame = mock(Stackframe::class.java)
 
     lateinit var data: ByteBuffer
+    val runtimeVersions = mutableMapOf<String, Any>()
 
     @Before
-    fun setUp() {
-        setupArchitecture()
-        data = ByteBuffer.wrap(crashDump64BitData)
-        data.order(ByteOrder.LITTLE_ENDIAN)
-    }
-
-    private fun setupArchitecture() {
+    fun setupArchitecture() {
         NativeArch._is32Bit = false
     }
 
@@ -45,28 +42,33 @@ class NativeEventDecoder64bitTest {
     }
 
     @Test
-    fun testNativeNotifierDecode() {
+    fun testNativeEventDecode() {
+        data = ByteBuffer.wrap(crashDump64BitData)
+        data.order(ByteOrder.LITTLE_ENDIAN)
         `when`(event.session).thenReturn(session)
         `when`(session.notifier).thenReturn(notifier)
         `when`(event.device).thenReturn(device)
-
+        `when`(device.runtimeVersions).thenReturn(runtimeVersions)
+        `when`(event.errors).thenReturn(listOf(error))
+        `when`(error.stacktrace).thenReturn(listOf(stackFrame))
         NativeEventDecoder.decodeEventFromBytes(data, event)
 
+        verifyNotifierDecode()
+        assertAppInfo()
+        verifyDeviceInfoDecode()
+        verifyUserInfoDecode()
+        verifyErrorDecode()
+    }
+
+    private fun verifyNotifierDecode() {
         verify(notifier).name = ""
         verify(notifier).version = ""
         verify(notifier).url = ""
     }
 
-    @Test
-    fun testAppInfoDecode() {
-        `when`(event.session).thenReturn(session)
-        `when`(session.notifier).thenReturn(notifier)
-        `when`(event.device).thenReturn(device)
+    private fun assertAppInfo() {
         val captor = ArgumentCaptor.forClass(AppWithState::class.java)
-
-        NativeEventDecoder.decodeEventFromBytes(data, event)
         verify(event).app = captor.capture()
-
         assertEquals("com.example.bugsnag.android", captor.value.id)
         assertEquals("production", captor.value.releaseStage)
         assertEquals("android", captor.value.type)
@@ -80,18 +82,7 @@ class NativeEventDecoder64bitTest {
         assertEquals("arm64", captor.value.binaryArch)
     }
 
-    @Test
-    fun testDeviceInfoDecode() {
-        val captor = ArgumentCaptor.forClass(AppWithState::class.java)
-        val runtimeVersions = mutableMapOf<String, Any>()
-        `when`(event.session).thenReturn(session)
-        `when`(session.notifier).thenReturn(notifier)
-        `when`(event.device).thenReturn(device)
-        `when`(device.runtimeVersions).thenReturn(runtimeVersions)
-
-        NativeEventDecoder.decodeEventFromBytes(data, event)
-        verify(event).app = captor.capture()
-
+    private fun verifyDeviceInfoDecode() {
         assertEquals(34, runtimeVersions["apiLevel"])
         assertEquals("UE1A.230829.030", runtimeVersions["osBuild"])
         verify(device).orientation = "portrait"
@@ -106,16 +97,22 @@ class NativeEventDecoder64bitTest {
         verify(device).totalMemory = 0L
     }
 
-    @Test
-    fun testUserInfoDecode() {
-        val runtimeVersions = mutableMapOf<String, Any>()
-        `when`(event.session).thenReturn(session)
-        `when`(session.notifier).thenReturn(notifier)
-        `when`(event.device).thenReturn(device)
-        `when`(device.runtimeVersions).thenReturn(runtimeVersions)
-
-        NativeEventDecoder.decodeEventFromBytes(data, event)
-
+    private fun verifyUserInfoDecode() {
         verify(event, Mockito.times(1)).setUser("999999", "ndk override", "j@ex.co")
+    }
+
+    private fun verifyErrorDecode() {
+        verify(error).errorClass = "SIGSEGV"
+        verify(error).errorMessage = "Segmentation violation (invalid memory reference)"
+        verify(error).type = ErrorType.UNKNOWN
+        verify(stackFrame).frameAddress = 512876502024
+        verify(stackFrame).symbolAddress = 512876502020
+        verify(stackFrame).loadAddress = 512876498944
+        verify(stackFrame).lineNumber = 3080L
+        verify(stackFrame).file =
+            "/data/app/~~dpOrZdWcDXB7AvWSQq_ToA==/com.example.bugsnag.android-qrHfhc0chd9kQAkU0AxRKQ==/lib/arm64/libentrypoint.so"
+        verify(stackFrame).method =
+            "Java_com_example_bugsnag_android_BaseCrashyActivity_crashFromCXX"
+        verify(stackFrame).codeIdentifier = "bfc2827bededb48c287bc9a4e1c61d41514d6a8b"
     }
 }

@@ -25,17 +25,14 @@ class NativeEventDecoder32bitTest {
     private val session = mock(Session::class.java)
     private val notifier = mock(Notifier::class.java)
     private val device = mock(DeviceWithState::class.java)
+    private val error = mock(Error::class.java)
+    private val stackFrame = mock(Stackframe::class.java)
 
     lateinit var data: ByteBuffer
+    val runtimeVersions = mutableMapOf<String, Any>()
 
     @Before
-    fun setUp() {
-        setupArchitecture()
-        data = ByteBuffer.wrap(crashDumpData)
-        data.order(ByteOrder.LITTLE_ENDIAN)
-    }
-
-    private fun setupArchitecture() {
+    fun setupArchitecture() {
         NativeArch._is32Bit = true
     }
 
@@ -45,28 +42,33 @@ class NativeEventDecoder32bitTest {
     }
 
     @Test
-    fun testNotifierDecode() {
+    fun testNativeEventDecode() {
+        data = ByteBuffer.wrap(crashDumpData)
+        data.order(ByteOrder.LITTLE_ENDIAN)
         `when`(event.session).thenReturn(session)
         `when`(session.notifier).thenReturn(notifier)
         `when`(event.device).thenReturn(device)
-
+        `when`(device.runtimeVersions).thenReturn(runtimeVersions)
+        `when`(event.errors).thenReturn(listOf(error))
+        `when`(error.stacktrace).thenReturn(listOf(stackFrame))
         NativeEventDecoder.decodeEventFromBytes(data, event)
 
+        verifyNotifierDecode()
+        assertAppInfo()
+        verifyDeviceInfoDecode()
+        verifyUserInfoDecode()
+        verifyErrorDecode()
+    }
+
+    private fun verifyNotifierDecode() {
         verify(notifier).name = ""
         verify(notifier).version = ""
         verify(notifier).url = ""
     }
 
-    @Test
-    fun testAppInfoDecode() {
-        `when`(event.session).thenReturn(session)
-        `when`(session.notifier).thenReturn(notifier)
-        `when`(event.device).thenReturn(device)
+    private fun assertAppInfo() {
         val captor = ArgumentCaptor.forClass(AppWithState::class.java)
-
-        NativeEventDecoder.decodeEventFromBytes(data, event)
         verify(event).app = captor.capture()
-
         assertEquals("com.example.bugsnag.android", captor.value.id)
         assertEquals("development", captor.value.releaseStage)
         assertEquals("android", captor.value.type)
@@ -80,16 +82,7 @@ class NativeEventDecoder32bitTest {
         assertEquals("arm32", captor.value.binaryArch)
     }
 
-    @Test
-    fun testDeviceInfoDecode() {
-        val runtimeVersions = mutableMapOf<String, Any>()
-        `when`(event.session).thenReturn(session)
-        `when`(session.notifier).thenReturn(notifier)
-        `when`(event.device).thenReturn(device)
-        `when`(device.runtimeVersions).thenReturn(runtimeVersions)
-
-        NativeEventDecoder.decodeEventFromBytes(data, event)
-
+    private fun verifyDeviceInfoDecode() {
         assertEquals(15, runtimeVersions["apiLevel"])
         assertEquals("6.7.3-94_SPI-324", runtimeVersions["osBuild"])
         verify(device).orientation = "portrait"
@@ -104,16 +97,21 @@ class NativeEventDecoder32bitTest {
         verify(device).totalMemory = 0L
     }
 
-    @Test
-    fun testUserInfoDecode() {
-        val runtimeVersions = mutableMapOf<String, Any>()
-        `when`(event.session).thenReturn(session)
-        `when`(session.notifier).thenReturn(notifier)
-        `when`(event.device).thenReturn(device)
-        `when`(device.runtimeVersions).thenReturn(runtimeVersions)
-
-        NativeEventDecoder.decodeEventFromBytes(data, event)
-
+    private fun verifyUserInfoDecode() {
         verify(event, times(1)).setUser("999999", "ndk override", "j@ex.co")
+    }
+
+    private fun verifyErrorDecode() {
+        verify(error).errorClass = "SIGSEGV"
+        verify(error).errorMessage = "Segmentation violation (invalid memory reference)"
+        verify(error).type = ErrorType.UNKNOWN
+        verify(stackFrame).frameAddress = 1285807130
+        verify(stackFrame).symbolAddress = 1285807124
+        verify(stackFrame).loadAddress = 1285804032
+        verify(stackFrame).lineNumber = 3098L
+        verify(stackFrame).file = "/data/data/com.example.bugsnag.android/lib/libentrypoint.so"
+        verify(stackFrame).method =
+            "Java_com_example_bugsnag_android_BaseCrashyActivity_crashFromCXX"
+        verify(stackFrame).codeIdentifier = "5ddb429dfa12daf935fbe29b6d2d498a5740e0eb"
     }
 }
