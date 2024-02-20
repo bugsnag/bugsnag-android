@@ -22,7 +22,7 @@ internal class StacktraceSerializationTest {
                 Stacktrace(arrayOf(), emptySet(), NoopLogger),
 
                 // empty custom frames ctor
-                Stacktrace(listOf(frame)),
+                Stacktrace(mutableListOf(frame)),
 
                 // basic
                 basic(),
@@ -69,7 +69,7 @@ internal class StacktraceSerializationTest {
                     }
                 }
             }
-            return Stacktrace(elements)
+            return Stacktrace(elements.toMutableList())
         }
     }
 

@@ -25,11 +25,10 @@ class NativeEventDecoder64bitTest {
     private val session = mock(Session::class.java)
     private val notifier = mock(Notifier::class.java)
     private val device = mock(DeviceWithState::class.java)
-    private val error = mock(Error::class.java)
-    private val stackFrame = mock(Stackframe::class.java)
+    private val logger = mock(Logger::class.java)
 
-    lateinit var data: ByteBuffer
-    val runtimeVersions = mutableMapOf<String, Any>()
+    private lateinit var data: ByteBuffer
+    private val runtimeVersions = mutableMapOf<String, Any>()
 
     @Before
     fun setupArchitecture() {
@@ -49,8 +48,8 @@ class NativeEventDecoder64bitTest {
         `when`(session.notifier).thenReturn(notifier)
         `when`(event.device).thenReturn(device)
         `when`(device.runtimeVersions).thenReturn(runtimeVersions)
-        `when`(event.errors).thenReturn(listOf(error))
-        `when`(error.stacktrace).thenReturn(listOf(stackFrame))
+        val errors = Error.createError(RuntimeException(), emptySet(), logger)
+        `when`(event.errors).thenReturn(errors)
         NativeEventDecoder.decodeEventFromBytes(data, event)
 
         verifyNotifierDecode()
@@ -102,17 +101,17 @@ class NativeEventDecoder64bitTest {
     }
 
     private fun verifyErrorDecode() {
-        verify(error).errorClass = "SIGSEGV"
-        verify(error).errorMessage = "Segmentation violation (invalid memory reference)"
-        verify(error).type = ErrorType.UNKNOWN
-        verify(stackFrame).frameAddress = 512876502024
-        verify(stackFrame).symbolAddress = 512876502020
-        verify(stackFrame).loadAddress = 512876498944
-        verify(stackFrame).lineNumber = 3080L
-        verify(stackFrame).file =
-            "/data/app/~~dpOrZdWcDXB7AvWSQq_ToA==/com.example.bugsnag.android-qrHfhc0chd9kQAkU0AxRKQ==/lib/arm64/libentrypoint.so"
-        verify(stackFrame).method =
-            "Java_com_example_bugsnag_android_BaseCrashyActivity_crashFromCXX"
-        verify(stackFrame).codeIdentifier = "bfc2827bededb48c287bc9a4e1c61d41514d6a8b"
+        val error = event.errors.single()
+        assertEquals("SIGSEGV", error.errorClass)
+        assertEquals("Segmentation violation (invalid memory reference)", error.errorMessage)
+        assertEquals(ErrorType.UNKNOWN, error.type)
+        val stackFrame = error.stacktrace.first()
+        assertEquals(512876502024L, stackFrame.frameAddress)
+        assertEquals(512876502020L, stackFrame.symbolAddress)
+        assertEquals(512876498944L, stackFrame.loadAddress)
+        assertEquals(3080L, stackFrame.lineNumber)
+        assertEquals("/data/app/~~dpOrZdWcDXB7AvWSQq_ToA==/com.example.bugsnag.android-qrHfhc0chd9kQAkU0AxRKQ==/lib/arm64/libentrypoint.so", stackFrame.file)
+        assertEquals("Java_com_example_bugsnag_android_BaseCrashyActivity_crashFromCXX", stackFrame.method)
+        assertEquals("bfc2827bededb48c287bc9a4e1c61d41514d6a8b", stackFrame.codeIdentifier)
     }
 }

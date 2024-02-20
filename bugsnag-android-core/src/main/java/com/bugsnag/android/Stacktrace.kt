@@ -27,10 +27,10 @@ internal class Stacktrace : JsonStream.Streamable {
         }
     }
 
-    val trace: List<Stackframe>
+    val trace: MutableList<Stackframe>
 
-    constructor(frames: List<Stackframe>) {
-        trace = limitTraceLength(frames)
+    constructor(frames: MutableList<Stackframe>) {
+        trace = limitTraceLength(frames).toMutableList()
     }
 
     constructor(
@@ -39,7 +39,7 @@ internal class Stacktrace : JsonStream.Streamable {
         logger: Logger
     ) {
         val frames = limitTraceLength(stacktrace)
-        trace = frames.mapNotNull { serializeStackframe(it, projectPackages, logger) }
+        trace = frames.mapNotNull { serializeStackframe(it, projectPackages, logger) }.toMutableList()
     }
 
     private fun limitTraceLength(frames: Array<StackTraceElement>): Array<StackTraceElement> {

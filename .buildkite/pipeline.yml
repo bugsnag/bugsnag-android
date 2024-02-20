@@ -4,7 +4,9 @@ steps:
     timeout_in_minutes: 30
     agents:
       queue: macos-12-arm
-    command: ./scripts/audit-dependency-licenses.sh
+    command:
+      - bundle install
+      - ./scripts/audit-dependency-licenses.sh
 
   - label: ':android: Build fixture APK r19'
     key: "fixture-r19"

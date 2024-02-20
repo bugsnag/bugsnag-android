@@ -156,24 +156,16 @@ internal object NativeEventDecoder {
         val stacktrace = Array(BUGSNAG_FRAMES_MAX) { decodeFrame(eventBytes) }
             .take(frameCount.toInt())
 
-        event.errors.map {
-            it.errorClass = errorClass
-            it.errorMessage = errorMessage
-            it.type = ErrorType.values()
-                .find { errorType -> errorType.name == type } ?: ErrorType.UNKNOWN
-            it.stacktrace.mapIndexed { index, frame ->
-                frame.method = stacktrace[index].method
-                frame.file = stacktrace[index].file
-                frame.lineNumber = stacktrace[index].lineNumber
-                frame.frameAddress = stacktrace[index].frameAddress
-                frame.symbolAddress = stacktrace[index].symbolAddress
-                frame.loadAddress = stacktrace[index].loadAddress
-                frame.codeIdentifier = stacktrace[index].codeIdentifier
-                if (frame.isPC == true) {
-                    frame.isPC = true
-                }
-            }
+        val error = event.errors.single()
+        error.errorClass = errorClass
+        error.errorMessage = errorMessage
+        error.type = try {
+            ErrorType.valueOf(type)
+        } catch (e: IllegalArgumentException) {
+            ErrorType.UNKNOWN
         }
+        error.stacktrace.clear()
+        error.stacktrace.addAll(stacktrace)
     }
 
     private fun decodeFrame(eventBytes: ByteBuffer): Stackframe {
@@ -196,8 +188,9 @@ internal object NativeEventDecoder {
         if (fileName.isNotEmpty()) {
             result.file = fileName
         }
+
         if (method.isEmpty()) {
-            result.method = frameAddress.toString(20)
+            result.method = getDecodedFrameAddress(frameAddress)
         } else {
             result.method = method
         }
@@ -208,6 +201,12 @@ internal object NativeEventDecoder {
         result.codeIdentifier = codeIdentifier
 
         return result
+    }
+
+    private fun getDecodedFrameAddress(frameAddress: Long) = if (frameAddress >= 0) {
+        "0x%x".format(frameAddress)
+    } else {
+        "0x%x%02x".format(frameAddress.ushr(8), frameAddress.and(0xff))
     }
 
     private fun decodeHeader(eventBytes: ByteBuffer): NativeEventHeader {
