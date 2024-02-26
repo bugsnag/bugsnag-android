@@ -101,17 +101,44 @@ class NativeEventDecoder32bitTest {
     }
 
     private fun verifyErrorDecode() {
+        val stackFrame1 = Stackframe(null, null, null, null)
+        val stackFrame2 = Stackframe(null, null, null, null)
+
         val error = event.errors.single()
         assertEquals("SIGSEGV", error.errorClass)
         assertEquals("Segmentation violation (invalid memory reference)", error.errorMessage)
         assertEquals(ErrorType.UNKNOWN, error.type)
-        val stackFrame = error.stacktrace.first()
-        assertEquals(1285807130L, stackFrame.frameAddress)
-        assertEquals(1285807124L, stackFrame.symbolAddress)
-        assertEquals(1285804032L, stackFrame.loadAddress)
-        assertEquals(3098L, stackFrame.lineNumber)
-        assertEquals("/data/data/com.example.bugsnag.android/lib/libentrypoint.so", stackFrame.file)
-        assertEquals("Java_com_example_bugsnag_android_BaseCrashyActivity_crashFromCXX", stackFrame.method)
-        assertEquals("5ddb429dfa12daf935fbe29b6d2d498a5740e0eb", stackFrame.codeIdentifier)
+
+        stackFrame1.frameAddress = 1285807130L
+        stackFrame1.symbolAddress = 1285807124L
+        stackFrame1.loadAddress = 1285804032L
+        stackFrame1.lineNumber = 3098L
+        stackFrame1.file = "/data/data/com.example.bugsnag.android/lib/libentrypoint.so"
+        stackFrame1.method = "Java_com_example_bugsnag_android_BaseCrashyActivity_crashFromCXX"
+        stackFrame1.codeIdentifier = "5ddb429dfa12daf935fbe29b6d2d498a5740e0eb"
+
+        stackFrame2.frameAddress = 1082654128L
+        stackFrame2.symbolAddress = 1082654016L
+        stackFrame2.loadAddress = 1082527744L
+        stackFrame2.lineNumber = 126384L
+        stackFrame2.file = "/system/lib/libdvm.so"
+        stackFrame2.method = "dvmPlatformInvoke"
+        stackFrame2.codeIdentifier = ""
+
+        assertEquals(stackFrame1.frameAddress, error.stacktrace.first().frameAddress)
+        assertEquals(stackFrame1.symbolAddress, error.stacktrace.first().symbolAddress)
+        assertEquals(stackFrame1.loadAddress, error.stacktrace.first().loadAddress)
+        assertEquals(stackFrame1.lineNumber, error.stacktrace.first().lineNumber)
+        assertEquals(stackFrame1.file, error.stacktrace.first().file)
+        assertEquals(stackFrame1.method, error.stacktrace.first().method)
+        assertEquals(stackFrame1.codeIdentifier, error.stacktrace.first().codeIdentifier)
+
+        assertEquals(stackFrame2.frameAddress, error.stacktrace[1].frameAddress)
+        assertEquals(stackFrame2.symbolAddress, error.stacktrace[1].symbolAddress)
+        assertEquals(stackFrame2.loadAddress, error.stacktrace[1].loadAddress)
+        assertEquals(stackFrame2.lineNumber, error.stacktrace[1].lineNumber)
+        assertEquals(stackFrame2.file, error.stacktrace[1].file)
+        assertEquals(stackFrame2.method, error.stacktrace[1].method)
+        assertEquals(stackFrame2.codeIdentifier, error.stacktrace[1].codeIdentifier)
     }
 }

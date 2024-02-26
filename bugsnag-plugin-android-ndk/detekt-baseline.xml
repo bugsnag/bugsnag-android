@@ -4,8 +4,11 @@
   <CurrentIssues>
     <ID>CyclomaticComplexMethod:NativeBridge.kt$NativeBridge$override fun onStateChange(event: StateEvent)</ID>
     <ID>LongMethod:EventOnDiskTests.kt$EventOnDiskTests$@Test fun testEvent()</ID>
+    <ID>LongMethod:NativeEventDecoder64bitTest.kt$NativeEventDecoder64bitTest$private fun verifyErrorDecode()</ID>
     <ID>LongParameterList:NativeBridge.kt$NativeBridge$( apiKey: String, reportingDirectory: String, lastRunInfoPath: String, consecutiveLaunchCrashes: Int, autoDetectNdkCrashes: Boolean, apiLevel: Int, is32bit: Boolean, threadSendPolicy: Int )</ID>
-    <ID>MaxLineLength:NativeEventDecoder64bitTest.kt$NativeEventDecoder64bitTest$assertEquals("/data/app/~~dpOrZdWcDXB7AvWSQq_ToA==/com.example.bugsnag.android-qrHfhc0chd9kQAkU0AxRKQ==/lib/arm64/libentrypoint.so", stackFrame.file)</ID>
+    <ID>MaxLineLength:NativeEventDecoder64bitTest.kt$NativeEventDecoder64bitTest$stackFrame1.file = "/data/app/~~dpOrZdWcDXB7AvWSQq_ToA==/com.example.bugsnag.android-qrHfhc0chd9kQAkU0AxRKQ==/lib/arm64/libentrypoint.so"</ID>
+    <ID>MaxLineLength:NativeEventDecoder64bitTest.kt$NativeEventDecoder64bitTest$stackFrame4.file = "/data/app/~~dpOrZdWcDXB7AvWSQq_ToA==/com.example.bugsnag.android-qrHfhc0chd9kQAkU0AxRKQ==/oat/arm64/base.odex"</ID>
+    <ID>MaxLineLength:NativeEventDecoder64bitTest.kt$NativeEventDecoder64bitTest$stackFrame6.file = "/data/app/~~dpOrZdWcDXB7AvWSQq_ToA==/com.example.bugsnag.android-qrHfhc0chd9kQAkU0AxRKQ==/oat/arm64/base.odex"</ID>
     <ID>NestedBlockDepth:NativeBridge.kt$NativeBridge$private fun deliverPendingReports()</ID>
     <ID>SwallowedException:NativeEventDecoder.kt$NativeEventDecoder$e: IllegalArgumentException</ID>
     <ID>TooManyFunctions:NativeBridge.kt$NativeBridge : StateObserver</ID>
