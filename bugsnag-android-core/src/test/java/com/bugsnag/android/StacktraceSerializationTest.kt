@@ -57,7 +57,7 @@ internal class StacktraceSerializationTest {
         }
 
         private fun trimStacktraceListCtor(): Stacktrace {
-            val elements = (0..999).map { count ->
+            val elements = (0..999).mapTo(ArrayList()) { count ->
                 Stackframe("Foo", "Bar.kt", count, true).also { frame ->
                     // set different type for each frame
                     frame.type = when (count % 3) {
@@ -69,7 +69,7 @@ internal class StacktraceSerializationTest {
                     }
                 }
             }
-            return Stacktrace(elements.toMutableList())
+            return Stacktrace(elements)
         }
     }
 

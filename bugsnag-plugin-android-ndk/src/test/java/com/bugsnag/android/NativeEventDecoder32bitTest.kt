@@ -105,13 +105,30 @@ class NativeEventDecoder32bitTest {
         assertEquals("SIGSEGV", error.errorClass)
         assertEquals("Segmentation violation (invalid memory reference)", error.errorMessage)
         assertEquals(ErrorType.UNKNOWN, error.type)
-        val stackFrame = error.stacktrace.first()
-        assertEquals(1285807130L, stackFrame.frameAddress)
-        assertEquals(1285807124L, stackFrame.symbolAddress)
-        assertEquals(1285804032L, stackFrame.loadAddress)
-        assertEquals(3098L, stackFrame.lineNumber)
-        assertEquals("/data/data/com.example.bugsnag.android/lib/libentrypoint.so", stackFrame.file)
-        assertEquals("Java_com_example_bugsnag_android_BaseCrashyActivity_crashFromCXX", stackFrame.method)
-        assertEquals("5ddb429dfa12daf935fbe29b6d2d498a5740e0eb", stackFrame.codeIdentifier)
+
+        val stackFrame1 = error.stacktrace[0]
+        val stackFrame2 = error.stacktrace[1]
+
+        assertEquals(1285807130L, stackFrame1.frameAddress)
+        assertEquals(1285807124L, stackFrame1.symbolAddress)
+        assertEquals(1285804032L, stackFrame1.loadAddress)
+        assertEquals(3098L, stackFrame1.lineNumber)
+        assertEquals(
+            "/data/data/com.example.bugsnag.android/lib/libentrypoint.so",
+            stackFrame1.file
+        )
+        assertEquals(
+            "Java_com_example_bugsnag_android_BaseCrashyActivity_crashFromCXX",
+            stackFrame1.method
+        )
+        assertEquals("5ddb429dfa12daf935fbe29b6d2d498a5740e0eb", stackFrame1.codeIdentifier)
+
+        assertEquals(1082654128L, stackFrame2.frameAddress)
+        assertEquals(1082654016L, stackFrame2.symbolAddress)
+        assertEquals(1082527744L, stackFrame2.loadAddress)
+        assertEquals(126384L, stackFrame2.lineNumber)
+        assertEquals("/system/lib/libdvm.so", stackFrame2.file)
+        assertEquals("dvmPlatformInvoke", stackFrame2.method)
+        assertEquals("", stackFrame2.codeIdentifier)
     }
 }

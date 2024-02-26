@@ -7,10 +7,10 @@ class StacktraceTest {
 
     @Test
     fun stackframeListTrimmed() {
-        val stackList = (1..300).map { index ->
+        val stackList = (1..300).mapTo(ArrayList(300)) { index ->
             Stackframe("A", "B", index, true)
         }
-        val stacktrace = Stacktrace(stackList.toMutableList())
+        val stacktrace = Stacktrace(stackList)
         // Confirm the length of the stackList
         assertEquals(300, stackList.size)
         assertEquals(200, stacktrace.trace.size)

@@ -188,7 +188,7 @@ internal class BugsnagEventMapper(
     }
 
     internal fun convertStacktrace(trace: MutableList<Map<String, Any?>>): Stacktrace {
-        return Stacktrace(trace.map { Stackframe(it) }.toMutableList())
+        return Stacktrace(trace.mapTo(ArrayList(trace.size)) { Stackframe(it) })
     }
 
     internal fun deserializeSeverityReason(

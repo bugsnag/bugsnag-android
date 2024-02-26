@@ -176,38 +176,28 @@ internal object NativeEventDecoder {
         val lineNumber = eventBytes.getNativeLong()
         val fileName = eventBytes.getCString(256)
         val method = eventBytes.getCString(256)
-        val codeIdentifier = eventBytes.getCString(256)
+        val codeIdentifier = eventBytes.getCString(65)
         val result = Stackframe(
-            method = null,
-            file = null,
+            method = method.takeUnless { it.isEmpty() } ?: getDecodedFrameAddress(frameAddress),
+            file = fileName.takeUnless { it.isEmpty() },
             lineNumber = lineNumber,
             inProject = null,
             code = null,
             columnNumber = null
         )
-        if (fileName.isNotEmpty()) {
-            result.file = fileName
-        }
-
-        if (method.isEmpty()) {
-            result.method = getDecodedFrameAddress(frameAddress)
-        } else {
-            result.method = method
-        }
-
         result.frameAddress = frameAddress
         result.symbolAddress = symbolsAddress
         result.loadAddress = loadAddress
         result.codeIdentifier = codeIdentifier
-
         return result
     }
 
-    private fun getDecodedFrameAddress(frameAddress: Long) = if (frameAddress >= 0) {
-        "0x%x".format(frameAddress)
-    } else {
-        "0x%x%02x".format(frameAddress.ushr(8), frameAddress.and(0xff))
-    }
+    private fun getDecodedFrameAddress(frameAddress: Long) =
+        if (frameAddress >= 0) {
+            "0x%x".format(frameAddress)
+        } else {
+            "0x%x%02x".format(frameAddress ushr 8, frameAddress and 0xff)
+        }
 
     private fun decodeHeader(eventBytes: ByteBuffer): NativeEventHeader {
         return NativeEventHeader(
