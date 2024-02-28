@@ -16,6 +16,13 @@ import java.util.Date
 
 private const val BUGSNAG_EVENT_VERSION = 13
 private const val BUGSNAG_FRAMES_MAX = 192
+private const val BUGSNAG_METADATA_MAX = 128
+
+private const val BSG_METADATA_NONE_VALUE = 0
+private const val BSG_METADATA_BOOL_VALUE = 1
+private const val BSG_METADATA_CHAR_VALUE = 2
+private const val BSG_METADATA_NUMBER_VALUE = 3
+private const val BSG_METADATA_OPAQUE_VALUE = 4
 
 @Suppress("MagicNumber") // this class is filled with numbers defined in event.h
 internal object NativeEventDecoder {
@@ -55,6 +62,7 @@ internal object NativeEventDecoder {
         decodeDeviceInfo(eventBytes, event)
         decodeUser(eventBytes, event)
         decodeError(eventBytes, event)
+        decodeMetadata(eventBytes, event::addMetadata)
 
         return event
     }
@@ -153,10 +161,7 @@ internal object NativeEventDecoder {
         val errorMessage = eventBytes.getCString(256)
         val type = eventBytes.getCString(32)
         val frameCount = eventBytes.getNativeSize()
-        val stacktrace = Array(BUGSNAG_FRAMES_MAX) {
-            eventBytes.realign()
-            decodeFrame(eventBytes)
-        }
+        val stacktrace = Array(BUGSNAG_FRAMES_MAX) { decodeFrame(eventBytes) }
             .take(frameCount.toInt())
 
         val error = event.errors.single()
@@ -202,6 +207,51 @@ internal object NativeEventDecoder {
             "0x%x%02x".format(frameAddress ushr 8, frameAddress and 0xff)
         }
 
+    private fun decodeMetadata(
+        eventBytes: ByteBuffer,
+        addMetadata: (section: String, key: String, value: Any?) -> Unit
+    ) {
+        eventBytes.realign(8)
+        var valueCount = eventBytes.getNativeInt()
+        if (valueCount > BUGSNAG_METADATA_MAX) {
+            valueCount = BUGSNAG_METADATA_MAX
+        }
+        eventBytes.realign(8)
+        for (i in 0 until valueCount) {
+            eventBytes.realign()
+            val name = eventBytes.getCString(64)
+            val section = eventBytes.getCString(64)
+            val type = eventBytes.getNativeInt()
+            val boolValue = eventBytes.getNativeBool()
+            val charValue = eventBytes.getCString(64)
+            val doubleValue = eventBytes.getDouble()
+            val opaqueValue = NativeOpaqueValue(eventBytes.getNativeLong())
+            @Suppress("UNUSED_VARIABLE") val opaqueValueSize = eventBytes.getNativeSize()
+
+            when (type) {
+                BSG_METADATA_NONE_VALUE -> {}
+
+                BSG_METADATA_BOOL_VALUE -> {
+                    addMetadata(name, section, boolValue)
+                }
+
+                BSG_METADATA_CHAR_VALUE -> {
+                    addMetadata(name, section, charValue)
+                }
+
+                BSG_METADATA_NUMBER_VALUE -> {
+                    addMetadata(name, section, doubleValue)
+                }
+
+                BSG_METADATA_OPAQUE_VALUE -> {
+                    addMetadata(name, section, opaqueValue.value)
+                }
+
+                else -> throw IllegalArgumentException("Unsupported metadata type: $type")
+            }
+        }
+    }
+
     private fun decodeHeader(eventBytes: ByteBuffer): NativeEventHeader {
         return NativeEventHeader(
             eventBytes.getNativeInt(),
@@ -214,5 +264,9 @@ internal object NativeEventDecoder {
         val version: Int,
         val bigEndian: Int,
         val osBuild: String
+    )
+
+    private data class NativeOpaqueValue(
+        val value: Long
     )
 }

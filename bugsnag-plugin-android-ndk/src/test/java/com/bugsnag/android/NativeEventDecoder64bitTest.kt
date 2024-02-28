@@ -57,6 +57,7 @@ class NativeEventDecoder64bitTest {
         verifyDeviceInfoDecode()
         verifyUserInfoDecode()
         verifyErrorDecode()
+        verifyMetadataDecode()
     }
 
     private fun verifyNotifierDecode() {
@@ -101,129 +102,105 @@ class NativeEventDecoder64bitTest {
     }
 
     private fun verifyErrorDecode() {
-        val stackFrame1 = Stackframe(null, null, null, null)
-        val stackFrame2 = Stackframe(null, null, null, null)
-        val stackFrame3 = Stackframe(null, null, null, null)
-        val stackFrame4 = Stackframe(null, null, null, null)
-        val stackFrame5 = Stackframe(null, null, null, null)
-        val stackFrame6 = Stackframe(null, null, null, null)
-        val stackFrame7 = Stackframe(null, null, null, null)
-
         val error = event.errors.single()
         assertEquals("SIGSEGV", error.errorClass)
         assertEquals("Segmentation violation (invalid memory reference)", error.errorMessage)
         assertEquals(ErrorType.UNKNOWN, error.type)
 
-        stackFrame1.frameAddress = 512876502024L
-        stackFrame1.symbolAddress = 512876502020L
-        stackFrame1.loadAddress = 512876498944L
-        stackFrame1.lineNumber = 3080L
-        stackFrame1.file = "/data/app/~~dpOrZdWcDXB7AvWSQq_ToA==/com.example.bugsnag.android-qrHfhc0chd9kQAkU0AxRKQ==/lib/arm64/libentrypoint.so"
-        stackFrame1.method = "Java_com_example_bugsnag_android_BaseCrashyActivity_crashFromCXX"
-        stackFrame1.codeIdentifier = "bfc2827bededb48c287bc9a4e1c61d41514d6a8b"
+        val stackFrame1 = error.stacktrace[0]
+        val stackFrame2 = error.stacktrace[1]
+        val stackFrame3 = error.stacktrace[2]
+        val stackFrame4 = error.stacktrace[3]
+        val stackFrame5 = error.stacktrace[4]
+        val stackFrame6 = error.stacktrace[5]
+        val stackFrame7 = error.stacktrace[6]
 
-        stackFrame2.frameAddress = 514965598256L
-        stackFrame2.symbolAddress = 514965598112L
-        stackFrame2.loadAddress = 514964062208L
-        stackFrame2.lineNumber = 3633200L
-        stackFrame2.file = "/apex/com.android.art/lib64/libart.so"
-        stackFrame2.method = "art_quick_generic_jni_trampoline"
-        stackFrame2.codeIdentifier = "b10f5696fea1b32039b162aef3850ed3"
+        assertEquals(512876502024L, stackFrame1.frameAddress)
+        assertEquals(512876502020L, stackFrame1.symbolAddress)
+        assertEquals(512876498944L, stackFrame1.loadAddress)
+        assertEquals(3080L, stackFrame1.lineNumber)
+        assertEquals(
+            "/data/app/~~dpOrZdWcDXB7AvWSQq_ToA==/com.example.bugsnag.android-qrHfhc0chd9kQAkU0AxRKQ==/lib/arm64/libentrypoint.so",
+            stackFrame1.file
+        )
+        assertEquals(
+            "Java_com_example_bugsnag_android_BaseCrashyActivity_crashFromCXX",
+            stackFrame1.method
+        )
+        assertEquals("bfc2827bededb48c287bc9a4e1c61d41514d6a8b", stackFrame1.codeIdentifier)
 
-        stackFrame3.frameAddress = 514967776432L
-        stackFrame3.symbolAddress = 514967772416L
-        stackFrame3.loadAddress = 514964062208L
-        stackFrame3.lineNumber = 5811376L
-        stackFrame3.file = "/apex/com.android.art/lib64/libart.so"
-        stackFrame3.method = "nterp_helper"
-        stackFrame3.codeIdentifier = "b10f5696fea1b32039b162aef3850ed3"
+        assertEquals(514965598256L, stackFrame2.frameAddress)
+        assertEquals(514965598112L, stackFrame2.symbolAddress)
+        assertEquals(514964062208L, stackFrame2.loadAddress)
+        assertEquals(3633200L, stackFrame2.lineNumber)
+        assertEquals("/apex/com.android.art/lib64/libart.so", stackFrame2.file)
+        assertEquals("art_quick_generic_jni_trampoline", stackFrame2.method)
+        assertEquals("b10f5696fea1b32039b162aef3850ed3", stackFrame2.codeIdentifier)
 
-        stackFrame4.frameAddress = 512895163634L
-        stackFrame4.symbolAddress = 512895163634L
-        stackFrame4.loadAddress = 512894267392L
-        stackFrame4.lineNumber = 896242L
-        stackFrame4.file = "/data/app/~~dpOrZdWcDXB7AvWSQq_ToA==/com.example.bugsnag.android-qrHfhc0chd9kQAkU0AxRKQ==/oat/arm64/base.odex"
-        stackFrame4.method = "0x776aef1cf2"
-        stackFrame4.codeIdentifier = ""
+        assertEquals(514967776432L, stackFrame3.frameAddress)
+        assertEquals(514967772416L, stackFrame3.symbolAddress)
+        assertEquals(514964062208L, stackFrame3.loadAddress)
+        assertEquals(5811376L, stackFrame3.lineNumber)
+        assertEquals("/apex/com.android.art/lib64/libart.so", stackFrame3.file)
+        assertEquals("nterp_helper", stackFrame3.method)
+        assertEquals("b10f5696fea1b32039b162aef3850ed3", stackFrame3.codeIdentifier)
 
-        stackFrame5.frameAddress = 514967772468L
-        stackFrame5.symbolAddress = 514967772416L
-        stackFrame5.loadAddress = 514964062208L
-        stackFrame5.lineNumber = 5807412L
-        stackFrame5.file = "/apex/com.android.art/lib64/libart.so"
-        stackFrame5.method = "nterp_helper"
-        stackFrame5.codeIdentifier = "b10f5696fea1b32039b162aef3850ed3"
+        assertEquals(512895163634L, stackFrame4.frameAddress)
+        assertEquals(512895163634L, stackFrame4.symbolAddress)
+        assertEquals(512894267392L, stackFrame4.loadAddress)
+        assertEquals(896242L, stackFrame4.lineNumber)
+        assertEquals(
+            "/data/app/~~dpOrZdWcDXB7AvWSQq_ToA==/com.example.bugsnag.android-qrHfhc0chd9kQAkU0AxRKQ==/oat/arm64/base.odex",
+            stackFrame4.file
+        )
+        assertEquals("0x776aef1cf2", stackFrame4.method)
+        assertEquals("", stackFrame4.codeIdentifier)
 
-        stackFrame6.frameAddress = 512895084840L
-        stackFrame6.symbolAddress = 512895084840L
-        stackFrame6.loadAddress = 512894267392L
-        stackFrame6.lineNumber = 817448L
-        stackFrame6.file = "/data/app/~~dpOrZdWcDXB7AvWSQq_ToA==/com.example.bugsnag.android-qrHfhc0chd9kQAkU0AxRKQ==/oat/arm64/base.odex"
-        stackFrame6.method = "0x776aede928"
-        stackFrame6.codeIdentifier = ""
+        assertEquals(514967772468L, stackFrame5.frameAddress)
+        assertEquals(514967772416L, stackFrame5.symbolAddress)
+        assertEquals(514964062208L, stackFrame5.loadAddress)
+        assertEquals(5807412L, stackFrame5.lineNumber)
+        assertEquals("/apex/com.android.art/lib64/libart.so", stackFrame5.file)
+        assertEquals("nterp_helper", stackFrame5.method)
+        assertEquals("b10f5696fea1b32039b162aef3850ed3", stackFrame5.codeIdentifier)
 
-        stackFrame7.frameAddress = 1919189480L
-        stackFrame7.symbolAddress = 1919189024L
-        stackFrame7.loadAddress = 1913180160L
-        stackFrame7.lineNumber = 8016360L
-        stackFrame7.file = "/system/framework/arm64/boot-framework.oat"
-        stackFrame7.method = "android.view.View.performClick"
-        stackFrame7.codeIdentifier = "d78a45b435dbd99c4526a33e3674ae4ee6ada328"
+        assertEquals(512895084840L, stackFrame6.frameAddress)
+        assertEquals(512895084840L, stackFrame6.symbolAddress)
+        assertEquals(512894267392L, stackFrame6.loadAddress)
+        assertEquals(817448L, stackFrame6.lineNumber)
+        assertEquals(
+            "/data/app/~~dpOrZdWcDXB7AvWSQq_ToA==/com.example.bugsnag.android-qrHfhc0chd9kQAkU0AxRKQ==/oat/arm64/base.odex",
+            stackFrame6.file
+        )
+        assertEquals("0x776aede928", stackFrame6.method)
+        assertEquals("", stackFrame6.codeIdentifier)
 
-        assertEquals(stackFrame1.frameAddress, error.stacktrace.first().frameAddress)
-        assertEquals(stackFrame1.symbolAddress, error.stacktrace.first().symbolAddress)
-        assertEquals(stackFrame1.loadAddress, error.stacktrace.first().loadAddress)
-        assertEquals(stackFrame1.lineNumber, error.stacktrace.first().lineNumber)
-        assertEquals(stackFrame1.file, error.stacktrace.first().file)
-        assertEquals(stackFrame1.method, error.stacktrace.first().method)
-        assertEquals(stackFrame1.codeIdentifier, error.stacktrace.first().codeIdentifier)
+        assertEquals(1919189480L, stackFrame7.frameAddress)
+        assertEquals(1919189024L, stackFrame7.symbolAddress)
+        assertEquals(1913180160L, stackFrame7.loadAddress)
+        assertEquals(8016360L, stackFrame7.lineNumber)
+        assertEquals("/system/framework/arm64/boot-framework.oat", stackFrame7.file)
+        assertEquals("android.view.View.performClick", stackFrame7.method)
+        assertEquals("d78a45b435dbd99c4526a33e3674ae4ee6ada328", stackFrame7.codeIdentifier)
+    }
 
-        assertEquals(stackFrame2.frameAddress, error.stacktrace[1].frameAddress)
-        assertEquals(stackFrame2.symbolAddress, error.stacktrace[1].symbolAddress)
-        assertEquals(stackFrame2.loadAddress, error.stacktrace[1].loadAddress)
-        assertEquals(stackFrame2.lineNumber, error.stacktrace[1].lineNumber)
-        assertEquals(stackFrame2.file, error.stacktrace[1].file)
-        assertEquals(stackFrame2.method, error.stacktrace[1].method)
-        assertEquals(stackFrame2.codeIdentifier, error.stacktrace[1].codeIdentifier)
-
-        assertEquals(stackFrame3.frameAddress, error.stacktrace[2].frameAddress)
-        assertEquals(stackFrame3.symbolAddress, error.stacktrace[2].symbolAddress)
-        assertEquals(stackFrame3.loadAddress, error.stacktrace[2].loadAddress)
-        assertEquals(stackFrame3.lineNumber, error.stacktrace[2].lineNumber)
-        assertEquals(stackFrame3.file, error.stacktrace[2].file)
-        assertEquals(stackFrame3.method, error.stacktrace[2].method)
-        assertEquals(stackFrame3.codeIdentifier, error.stacktrace[2].codeIdentifier)
-
-        assertEquals(stackFrame4.frameAddress, error.stacktrace[3].frameAddress)
-        assertEquals(stackFrame4.symbolAddress, error.stacktrace[3].symbolAddress)
-        assertEquals(stackFrame4.loadAddress, error.stacktrace[3].loadAddress)
-        assertEquals(stackFrame4.lineNumber, error.stacktrace[3].lineNumber)
-        assertEquals(stackFrame4.file, error.stacktrace[3].file)
-        assertEquals(stackFrame4.method, error.stacktrace[3].method)
-        assertEquals(stackFrame4.codeIdentifier, error.stacktrace[3].codeIdentifier)
-
-        assertEquals(stackFrame5.frameAddress, error.stacktrace[4].frameAddress)
-        assertEquals(stackFrame5.symbolAddress, error.stacktrace[4].symbolAddress)
-        assertEquals(stackFrame5.loadAddress, error.stacktrace[4].loadAddress)
-        assertEquals(stackFrame5.lineNumber, error.stacktrace[4].lineNumber)
-        assertEquals(stackFrame5.file, error.stacktrace[4].file)
-        assertEquals(stackFrame5.method, error.stacktrace[4].method)
-        assertEquals(stackFrame5.codeIdentifier, error.stacktrace[4].codeIdentifier)
-
-        assertEquals(stackFrame6.frameAddress, error.stacktrace[5].frameAddress)
-        assertEquals(stackFrame6.symbolAddress, error.stacktrace[5].symbolAddress)
-        assertEquals(stackFrame6.loadAddress, error.stacktrace[5].loadAddress)
-        assertEquals(stackFrame6.lineNumber, error.stacktrace[5].lineNumber)
-        assertEquals(stackFrame6.file, error.stacktrace[5].file)
-        assertEquals(stackFrame6.method, error.stacktrace[5].method)
-        assertEquals(stackFrame6.codeIdentifier, error.stacktrace[5].codeIdentifier)
-
-        assertEquals(stackFrame7.frameAddress, error.stacktrace[6].frameAddress)
-        assertEquals(stackFrame7.symbolAddress, error.stacktrace[6].symbolAddress)
-        assertEquals(stackFrame7.loadAddress, error.stacktrace[6].loadAddress)
-        assertEquals(stackFrame7.lineNumber, error.stacktrace[6].lineNumber)
-        assertEquals(stackFrame7.file, error.stacktrace[6].file)
-        assertEquals(stackFrame7.method, error.stacktrace[6].method)
-        assertEquals(stackFrame7.codeIdentifier, error.stacktrace[6].codeIdentifier)
+    private fun verifyMetadataDecode() {
+        verify(event).addMetadata("name", "app", "Bugsnag")
+        verify(event).addMetadata("processName", "app", "com.example.bugsnag.android")
+        verify(event).addMetadata("memoryLimit", "app", 0.0)
+        verify(event).addMetadata("brand", "device", "google")
+        verify(event).addMetadata("dpi", "device", 0.0)
+        verify(event).addMetadata("emulator", "device", false)
+        verify(event).addMetadata("locationStatus", "device", "allowed")
+        verify(event).addMetadata("networkAccess", "device", "wifi")
+        verify(event).addMetadata("screenDensity", "device", 0.0)
+        verify(event).addMetadata("screenResolution", "device", "2892x1440")
+        verify(event).addMetadata("age", "user", 0.0)
+        verify(event).addMetadata("lowMemory", "app", false)
+        verify(event).addMetadata("memoryTrimLevel", "app", "None")
+        verify(event).addMetadata("members", "Custom Data", 8743606624549076992)
+        verify(event).addMetadata("Member Last Resume Time", "Last Resume Time", 8739112013482950656)
+        verify(event).addMetadata("field", "Native", "value")
+        verify(event).addMetadata("field", "Native", true)
     }
 }

@@ -8,7 +8,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito.mock
-import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
@@ -57,6 +56,7 @@ class NativeEventDecoder32bitTest {
         verifyDeviceInfoDecode()
         verifyUserInfoDecode()
         verifyErrorDecode()
+        verifyMetadataDecode()
     }
 
     private fun verifyNotifierDecode() {
@@ -97,48 +97,58 @@ class NativeEventDecoder32bitTest {
     }
 
     private fun verifyUserInfoDecode() {
-        verify(event, times(1)).setUser("999999", "ndk override", "j@ex.co")
+        verify(event).setUser("999999", "ndk override", "j@ex.co")
     }
 
     private fun verifyErrorDecode() {
-        val stackFrame1 = Stackframe(null, null, null, null)
-        val stackFrame2 = Stackframe(null, null, null, null)
-
         val error = event.errors.single()
         assertEquals("SIGSEGV", error.errorClass)
         assertEquals("Segmentation violation (invalid memory reference)", error.errorMessage)
         assertEquals(ErrorType.UNKNOWN, error.type)
 
-        stackFrame1.frameAddress = 1285807130L
-        stackFrame1.symbolAddress = 1285807124L
-        stackFrame1.loadAddress = 1285804032L
-        stackFrame1.lineNumber = 3098L
-        stackFrame1.file = "/data/data/com.example.bugsnag.android/lib/libentrypoint.so"
-        stackFrame1.method = "Java_com_example_bugsnag_android_BaseCrashyActivity_crashFromCXX"
-        stackFrame1.codeIdentifier = "5ddb429dfa12daf935fbe29b6d2d498a5740e0eb"
+        val stackFrame1 = error.stacktrace[0]
+        val stackFrame2 = error.stacktrace[1]
 
-        stackFrame2.frameAddress = 1082654128L
-        stackFrame2.symbolAddress = 1082654016L
-        stackFrame2.loadAddress = 1082527744L
-        stackFrame2.lineNumber = 126384L
-        stackFrame2.file = "/system/lib/libdvm.so"
-        stackFrame2.method = "dvmPlatformInvoke"
-        stackFrame2.codeIdentifier = ""
+        assertEquals(1285807130L, stackFrame1.frameAddress)
+        assertEquals(1285807124L, stackFrame1.symbolAddress)
+        assertEquals(1285804032L, stackFrame1.loadAddress)
+        assertEquals(3098L, stackFrame1.lineNumber)
+        assertEquals(
+            "/data/data/com.example.bugsnag.android/lib/libentrypoint.so",
+            stackFrame1.file
+        )
+        assertEquals(
+            "Java_com_example_bugsnag_android_BaseCrashyActivity_crashFromCXX",
+            stackFrame1.method
+        )
+        assertEquals("5ddb429dfa12daf935fbe29b6d2d498a5740e0eb", stackFrame1.codeIdentifier)
 
-        assertEquals(stackFrame1.frameAddress, error.stacktrace.first().frameAddress)
-        assertEquals(stackFrame1.symbolAddress, error.stacktrace.first().symbolAddress)
-        assertEquals(stackFrame1.loadAddress, error.stacktrace.first().loadAddress)
-        assertEquals(stackFrame1.lineNumber, error.stacktrace.first().lineNumber)
-        assertEquals(stackFrame1.file, error.stacktrace.first().file)
-        assertEquals(stackFrame1.method, error.stacktrace.first().method)
-        assertEquals(stackFrame1.codeIdentifier, error.stacktrace.first().codeIdentifier)
+        assertEquals(1082654128L, stackFrame2.frameAddress)
+        assertEquals(1082654016L, stackFrame2.symbolAddress)
+        assertEquals(1082527744L, stackFrame2.loadAddress)
+        assertEquals(126384L, stackFrame2.lineNumber)
+        assertEquals("/system/lib/libdvm.so", stackFrame2.file)
+        assertEquals("dvmPlatformInvoke", stackFrame2.method)
+        assertEquals("", stackFrame2.codeIdentifier)
+    }
 
-        assertEquals(stackFrame2.frameAddress, error.stacktrace[1].frameAddress)
-        assertEquals(stackFrame2.symbolAddress, error.stacktrace[1].symbolAddress)
-        assertEquals(stackFrame2.loadAddress, error.stacktrace[1].loadAddress)
-        assertEquals(stackFrame2.lineNumber, error.stacktrace[1].lineNumber)
-        assertEquals(stackFrame2.file, error.stacktrace[1].file)
-        assertEquals(stackFrame2.method, error.stacktrace[1].method)
-        assertEquals(stackFrame2.codeIdentifier, error.stacktrace[1].codeIdentifier)
+    private fun verifyMetadataDecode() {
+        verify(event).addMetadata("name", "app", "Bugsnag")
+        verify(event).addMetadata("processName", "app", "x")
+        verify(event).addMetadata("memoryLimit", "app", 0.0)
+        verify(event).addMetadata("brand", "device", "RTSAF")
+        verify(event).addMetadata("dpi", "device", 0.0)
+        verify(event).addMetadata("emulator", "device", false)
+        verify(event).addMetadata("locationStatus", "device", "disallowed")
+        verify(event).addMetadata("networkAccess", "device", "none")
+        verify(event).addMetadata("screenDensity", "device", 0.0)
+        verify(event).addMetadata("screenResolution", "device", "960x540")
+        verify(event).addMetadata("age", "user", 0.0)
+        verify(event).addMetadata("lowMemory", "app", false)
+        verify(event).addMetadata("memoryTrimLevel", "app", "None")
+        verify(event).addMetadata("members", "Custom Data", -536870912L)
+        verify(event).addMetadata("Member Last Resume Time", "Last Resume Time", -134217728L)
+        verify(event).addMetadata("field", "Native", "value")
+        verify(event).addMetadata("field", "Native", true)
     }
 }
