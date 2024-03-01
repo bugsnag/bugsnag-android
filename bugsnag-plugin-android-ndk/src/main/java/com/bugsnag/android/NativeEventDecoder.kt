@@ -213,9 +213,8 @@ internal object NativeEventDecoder {
     ) {
         eventBytes.realign(8)
         var valueCount = eventBytes.getNativeInt()
-        if (valueCount > BUGSNAG_METADATA_MAX) {
-            valueCount = BUGSNAG_METADATA_MAX
-        }
+        if (valueCount > BUGSNAG_METADATA_MAX) valueCount = BUGSNAG_METADATA_MAX
+
         eventBytes.realign(8)
         for (i in 0 until valueCount) {
             eventBytes.realign()
@@ -230,23 +229,10 @@ internal object NativeEventDecoder {
 
             when (type) {
                 BSG_METADATA_NONE_VALUE -> {}
-
-                BSG_METADATA_BOOL_VALUE -> {
-                    addMetadata(name, section, boolValue)
-                }
-
-                BSG_METADATA_CHAR_VALUE -> {
-                    addMetadata(name, section, charValue)
-                }
-
-                BSG_METADATA_NUMBER_VALUE -> {
-                    addMetadata(name, section, doubleValue)
-                }
-
-                BSG_METADATA_OPAQUE_VALUE -> {
-                    addMetadata(name, section, opaqueValue.value)
-                }
-
+                BSG_METADATA_BOOL_VALUE -> { addMetadata(name, section, boolValue) }
+                BSG_METADATA_CHAR_VALUE -> { addMetadata(name, section, charValue) }
+                BSG_METADATA_NUMBER_VALUE -> { addMetadata(name, section, doubleValue) }
+                BSG_METADATA_OPAQUE_VALUE -> { addMetadata(name, section, opaqueValue.value) }
                 else -> throw IllegalArgumentException("Unsupported metadata type: $type")
             }
         }
