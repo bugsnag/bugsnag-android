@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* Use PushLocalFrame/PopLocalFrame instead of DeleteLocalRef to avoid creating "holes" in the local ref table that are not always reused, leading to possible crashes in the ANR handler
+  []()
+
 ## 6.2.0 (2024-02-08)
 
 ### Enhancements

@@ -181,6 +181,19 @@ static void safe_delete_local_ref(JNIEnv *env, jobject obj) {
   }
 }
 
+static jint safe_push_local_frame(JNIEnv *env, const int size) {
+  if (env != NULL) {
+    return (*env)->PushLocalFrame(env, size);
+  }
+  return 0;
+}
+
+static void safe_pop_local_frame(JNIEnv *env) {
+  if (env != NULL) {
+    (*env)->PopLocalFrame(env, NULL);
+  }
+}
+
 // End of duplication
 
 static bool configure_anr_jni_impl(JNIEnv *env) {
@@ -296,6 +309,10 @@ static void notify_anr_detected() {
     return;
   }
   for (ssize_t i = 0; i < anr_stacktrace_length; i++) {
+    if (safe_push_local_frame(env, 7) != 0) {
+      // there is a pending error, so we exit rather than trying to continue
+      break;
+    }
     bugsnag_stackframe *frame = anr_stacktrace + i;
     jobject jmethod = safe_new_string_utf(env, frame->method);
     jobject jfilename = safe_new_string_utf(env, frame->filename);
@@ -314,13 +331,7 @@ static void notify_anr_detected() {
       (*env)->CallBooleanMethod(env, jlist, list_add, jframe);
       check_and_clear_exc(env);
     }
-    safe_delete_local_ref(env, jmethod);
-    safe_delete_local_ref(env, jfilename);
-    safe_delete_local_ref(env, jline_number);
-    safe_delete_local_ref(env, jframe_address);
-    safe_delete_local_ref(env, jsymbol_address);
-    safe_delete_local_ref(env, jload_address);
-    safe_delete_local_ref(env, jframe);
+    safe_pop_local_frame(env);
   }
 
   (*env)->CallVoidMethod(env, obj_plugin, mthd_notify_anr_detected, jlist);
