@@ -2,6 +2,7 @@ package com.bugsnag.android
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
+import com.bugsnag.android.internal.ImmutableConfig
 import junit.framework.TestCase.assertNull
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -46,6 +47,12 @@ internal class DeviceIdStoreTest {
         prefs.edit().remove("install.iud").commit()
     }
 
+    private fun generateConfig(generateAnonymousId: Boolean): ImmutableConfig {
+        val config = BugsnagTestUtils.generateConfiguration()
+        config.generateAnonymousId = generateAnonymousId
+        return BugsnagTestUtils.convert(config)
+    }
+
     /**
      * A file should be created if it does not already exist
      */
@@ -61,8 +68,9 @@ internal class DeviceIdStoreTest {
             uuidProvider(0),
             nonExistentInternalFile,
             uuidProvider(1),
-            prefMigrator,
-            NoopLogger
+            sharedPrefMigrator = prefMigrator,
+            logger = NoopLogger,
+            config = generateConfig(true)
         )
 
         assertEquals(ids[0], store.loadDeviceId()!!)
@@ -85,7 +93,8 @@ internal class DeviceIdStoreTest {
             fileInternal,
             uuidProvider(1),
             prefMigrator,
-            NoopLogger
+            logger = NoopLogger,
+            config = generateConfig(true)
         )
 
         assertEquals(ids[0], store.loadDeviceId()!!)
@@ -106,7 +115,8 @@ internal class DeviceIdStoreTest {
             fileInternal,
             uuidProvider(1),
             prefMigrator,
-            NoopLogger
+            logger = NoopLogger,
+            config = generateConfig(true)
         )
 
         assertEquals(ids[0], store.loadDeviceId()!!)
@@ -127,7 +137,8 @@ internal class DeviceIdStoreTest {
             fileInternal,
             uuidProvider(3),
             prefMigrator,
-            NoopLogger
+            logger = NoopLogger,
+            config = generateConfig(true)
         )
         val storeA = DeviceIdStore(
             ctx,
@@ -136,7 +147,8 @@ internal class DeviceIdStoreTest {
             fileInternal,
             uuidProvider(1),
             prefMigrator,
-            NoopLogger
+            logger = NoopLogger,
+            config = generateConfig(true)
         )
 
         // device ID is loaded without writing file
@@ -170,7 +182,8 @@ internal class DeviceIdStoreTest {
             nonReadableInternalFile,
             uuidProvider(1),
             prefMigrator,
-            NoopLogger
+            logger = NoopLogger,
+            config = generateConfig(true)
         )
         assertNull(store.loadDeviceId())
         assertNull(store.loadInternalDeviceId())
@@ -188,7 +201,8 @@ internal class DeviceIdStoreTest {
             fileInternal,
             uuidProvider(1),
             prefMigrator,
-            NoopLogger
+            logger = NoopLogger,
+            config = generateConfig(true)
         )
 
         // load the device ID on many different background threads.
@@ -224,7 +238,8 @@ internal class DeviceIdStoreTest {
             fileInternal,
             uuidProvider(1),
             prefMigrator,
-            NoopLogger
+            logger = NoopLogger,
+            config = generateConfig(true)
         )
         val context = ApplicationProvider.getApplicationContext<Context>()
 
@@ -236,5 +251,27 @@ internal class DeviceIdStoreTest {
         val storeDeviceId = store.loadDeviceId()!!
         assertEquals(prefsId, storeDeviceId)
         assertEquals(prefDeviceId, storeDeviceId)
+    }
+
+    /**
+     * If generateAnonymousId is false, no device ID is returned (even if one is saved)
+     */
+    @Test
+    fun loadWithoutGenerateAnonymousId() {
+        file.writeText("{\"id\": \"${ids[0]}\"}")
+        fileInternal.writeText("{\"id\": \"${ids[1]}\"}")
+        val store = DeviceIdStore(
+            ctx,
+            file,
+            uuidProvider(0),
+            fileInternal,
+            uuidProvider(1),
+            sharedPrefMigrator = prefMigrator,
+            logger = NoopLogger,
+            config = generateConfig(false)
+        )
+
+        assertNull(store.loadDeviceId())
+        assertNull(store.loadInternalDeviceId())
     }
 }
