@@ -159,7 +159,7 @@ steps:
         run: maze-runner
         service-ports: true
         command:
-          - "features/smoke_tests"
+          - "features/full_tests/auto_notify.feature"
           - "--app=@build/fixture-r21-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
