@@ -50,7 +50,7 @@ void loadDeviceTestCase(bugsnag_event *event) {
     strcpy(device->orientation, "portrait");
 
     struct tm time = { 0, 0, 0, 1, 12, 128 };
-    device->time = mktime(&time);
+    device->time = timegm(&time);
     strcpy(device->id, "f5gh7");
     device->jailbroken = true;
     strcpy(device->locale, "En");
