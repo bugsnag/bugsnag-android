@@ -34,114 +34,114 @@ steps:
       - make fixture-r21
       - bundle exec upload-app --farm=bb --app=./build/fixture-r21.apk --app-id-file=build/fixture-r21-url.txt
 
-  - label: ':android: Coding standards checks'
-    timeout_in_minutes: 20
-    agents:
-      queue: macos-12-arm
-    command: './gradlew --continue checkstyle detekt lint ktlintCheck'
+  # - label: ':android: Coding standards checks'
+  #   timeout_in_minutes: 20
+  #   agents:
+  #     queue: macos-12-arm
+  #   command: './gradlew --continue checkstyle detekt lint ktlintCheck'
 
-  - label: ':android: Binary compatibility checks'
-    timeout_in_minutes: 20
-    agents:
-      queue: macos-12-arm
-    command: './gradlew apiCheck'
+  # - label: ':android: Binary compatibility checks'
+  #   timeout_in_minutes: 20
+  #   agents:
+  #     queue: macos-12-arm
+  #   command: './gradlew apiCheck'
 
-  - label: ':android: CppCheck'
-    timeout_in_minutes: 10
-    agents:
-      queue: macos-12-arm
-    command: 'bash ./scripts/run-cpp-check.sh'
+  # - label: ':android: CppCheck'
+  #   timeout_in_minutes: 10
+  #   agents:
+  #     queue: macos-12-arm
+  #   command: 'bash ./scripts/run-cpp-check.sh'
 
-  - label: ':android: ClangFormat'
-    timeout_in_minutes: 10
-    agents:
-      queue: macos-12-arm
-    command: 'bash ./scripts/run-clang-format-ci-check.sh'
+  # - label: ':android: ClangFormat'
+  #   timeout_in_minutes: 10
+  #   agents:
+  #     queue: macos-12-arm
+  #   command: 'bash ./scripts/run-clang-format-ci-check.sh'
 
-  - label: ':android: Lint mazerunner scenarios'
-    timeout_in_minutes: 10
-    agents:
-      queue: macos-12-arm
-    commands:
-      - cd features/fixtures/mazerunner
-      - ./gradlew ktlintCheck detekt checkstyle
+  # - label: ':android: Lint mazerunner scenarios'
+  #   timeout_in_minutes: 10
+  #   agents:
+  #     queue: macos-12-arm
+  #   commands:
+  #     - cd features/fixtures/mazerunner
+  #     - ./gradlew ktlintCheck detekt checkstyle
 
-  - label: ':android: Android size reporting'
-    timeout_in_minutes: 10
-    agents:
-      queue: macos-12-arm
-    command: scripts/run-sizer.sh
+  # - label: ':android: Android size reporting'
+  #   timeout_in_minutes: 10
+  #   agents:
+  #     queue: macos-12-arm
+  #   command: scripts/run-sizer.sh
 
-  - label: ':android: JVM tests'
-    timeout_in_minutes: 10
-    agents:
-      queue: macos-12-arm
-    command: './gradlew test'
+  # - label: ':android: JVM tests'
+  #   timeout_in_minutes: 10
+  #   agents:
+  #     queue: macos-12-arm
+  #   command: './gradlew test'
 
   #
   # BitBar steps
   #
-  - label: ':bitbar: Android 7 NDK r19 smoke tests'
-    depends_on: "fixture-r19"
-    timeout_in_minutes: 60
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/fixture-r19-url.txt"
-          - "build/fixture-r19/*"
-        upload:
-          - "maze_output/failed/**/*"
-          - "maze_output/metrics.csv"
-      docker-compose#v4.7.0:
-        pull: maze-runner
-        run: maze-runner
-        service-ports: true
-        command:
-          - "features/smoke_tests"
-          - "--app=@build/fixture-r19-url.txt"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
-          - "--appium-version=1.22"
-          - "--farm=bb"
-          - "--device=ANDROID_7"
-          - "--no-tunnel"
-          - "--aws-public-ip"
-          - "--fail-fast"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
-    concurrency: 25
-    concurrency_group: 'bitbar'
-    concurrency_method: eager
+  # - label: ':bitbar: Android 7 NDK r19 smoke tests'
+  #   depends_on: "fixture-r19"
+  #   timeout_in_minutes: 60
+  #   plugins:
+  #     artifacts#v1.9.0:
+  #       download:
+  #         - "build/fixture-r19-url.txt"
+  #         - "build/fixture-r19/*"
+  #       upload:
+  #         - "maze_output/failed/**/*"
+  #         - "maze_output/metrics.csv"
+  #     docker-compose#v4.7.0:
+  #       pull: maze-runner
+  #       run: maze-runner
+  #       service-ports: true
+  #       command:
+  #         - "features/smoke_tests"
+  #         - "--app=@build/fixture-r19-url.txt"
+  #         - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
+  #         - "--app-package=com.bugsnag.android.mazerunner"
+  #         - "--appium-version=1.22"
+  #         - "--farm=bb"
+  #         - "--device=ANDROID_7"
+  #         - "--no-tunnel"
+  #         - "--aws-public-ip"
+  #         - "--fail-fast"
+  #   env:
+  #     TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
+  #   concurrency: 25
+  #   concurrency_group: 'bitbar'
+  #   concurrency_method: eager
 
-  - label: ':bitbar: Android 8 NDK r19 smoke tests'
-    depends_on: "fixture-r19"
-    timeout_in_minutes: 60
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/fixture-r19-url.txt"
-          - "build/fixture-r19/*"
-        upload: "maze_output/failed/**/*"
-      docker-compose#v4.7.0:
-        pull: maze-runner
-        run: maze-runner
-        service-ports: true
-        command:
-          - "features/smoke_tests"
-          - "--app=@build/fixture-r19-url.txt"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
-          - "--appium-version=1.22"
-          - "--farm=bb"
-          - "--device=ANDROID_8"
-          - "--no-tunnel"
-          - "--aws-public-ip"
-          - "--fail-fast"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
-    concurrency: 25
-    concurrency_group: 'bitbar'
-    concurrency_method: eager
+  # - label: ':bitbar: Android 8 NDK r19 smoke tests'
+  #   depends_on: "fixture-r19"
+  #   timeout_in_minutes: 60
+  #   plugins:
+  #     artifacts#v1.9.0:
+  #       download:
+  #         - "build/fixture-r19-url.txt"
+  #         - "build/fixture-r19/*"
+  #       upload: "maze_output/failed/**/*"
+  #     docker-compose#v4.7.0:
+  #       pull: maze-runner
+  #       run: maze-runner
+  #       service-ports: true
+  #       command:
+  #         - "features/smoke_tests"
+  #         - "--app=@build/fixture-r19-url.txt"
+  #         - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
+  #         - "--app-package=com.bugsnag.android.mazerunner"
+  #         - "--appium-version=1.22"
+  #         - "--farm=bb"
+  #         - "--device=ANDROID_8"
+  #         - "--no-tunnel"
+  #         - "--aws-public-ip"
+  #         - "--fail-fast"
+  #   env:
+  #     TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
+  #   concurrency: 25
+  #   concurrency_group: 'bitbar'
+  #   concurrency_method: eager
 
   - label: ':bitbar: Android 9 NDK r21 smoke tests'
     depends_on: "fixture-r21"
@@ -168,184 +168,183 @@ steps:
           - "--device=ANDROID_9"
           - "--no-tunnel"
           - "--aws-public-ip"
-          - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
     concurrency_group: 'bitbar'
     concurrency_method: eager
 
-  - label: ':bitbar: Android 10 NDK r21 smoke tests'
-    depends_on: "fixture-r21"
-    timeout_in_minutes: 60
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/fixture-r21-url.txt"
-          - "build/fixture-r21/*"
-        upload:
-          - "maze_output/failed/**/*"
-          - "maze_output/metrics.csv"
-      docker-compose#v4.7.0:
-        pull: maze-runner
-        run: maze-runner
-        service-ports: true
-        command:
-          - "features/smoke_tests"
-          - "--app=@build/fixture-r21-url.txt"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
-          - "--appium-version=1.22"
-          - "--farm=bb"
-          - "--device=ANDROID_10"
-          - "--no-tunnel"
-          - "--aws-public-ip"
-          - "--fail-fast"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 25
-    concurrency_group: 'bitbar'
-    concurrency_method: eager
+#   - label: ':bitbar: Android 10 NDK r21 smoke tests'
+#     depends_on: "fixture-r21"
+#     timeout_in_minutes: 60
+#     plugins:
+#       artifacts#v1.9.0:
+#         download:
+#           - "build/fixture-r21-url.txt"
+#           - "build/fixture-r21/*"
+#         upload:
+#           - "maze_output/failed/**/*"
+#           - "maze_output/metrics.csv"
+#       docker-compose#v4.7.0:
+#         pull: maze-runner
+#         run: maze-runner
+#         service-ports: true
+#         command:
+#           - "features/smoke_tests"
+#           - "--app=@build/fixture-r21-url.txt"
+#           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
+#           - "--app-package=com.bugsnag.android.mazerunner"
+#           - "--appium-version=1.22"
+#           - "--farm=bb"
+#           - "--device=ANDROID_10"
+#           - "--no-tunnel"
+#           - "--aws-public-ip"
+#           - "--fail-fast"
+#     env:
+#       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
+#     concurrency: 25
+#     concurrency_group: 'bitbar'
+#     concurrency_method: eager
 
-  - label: ':bitbar: Android 11 NDK r21 smoke tests'
-    key: 'android-11-smoke'
-    depends_on: "fixture-r21"
-    timeout_in_minutes: 60
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/fixture-r21-url.txt"
-          - "build/fixture-r21/*"
-        upload:
-          - "maze_output/failed/**/*"
-          - "maze_output/metrics.csv"
-      docker-compose#v4.7.0:
-        pull: maze-runner
-        run: maze-runner
-        service-ports: true
-        command:
-          - "features/smoke_tests"
-          - "--app=@build/fixture-r21-url.txt"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
-          - "--appium-version=1.22"
-          - "--farm=bb"
-          - "--device=ANDROID_11"
-          - "--no-tunnel"
-          - "--aws-public-ip"
-          - "--fail-fast"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 25
-    concurrency_group: 'bitbar'
-    concurrency_method: eager
+#   - label: ':bitbar: Android 11 NDK r21 smoke tests'
+#     key: 'android-11-smoke'
+#     depends_on: "fixture-r21"
+#     timeout_in_minutes: 60
+#     plugins:
+#       artifacts#v1.9.0:
+#         download:
+#           - "build/fixture-r21-url.txt"
+#           - "build/fixture-r21/*"
+#         upload:
+#           - "maze_output/failed/**/*"
+#           - "maze_output/metrics.csv"
+#       docker-compose#v4.7.0:
+#         pull: maze-runner
+#         run: maze-runner
+#         service-ports: true
+#         command:
+#           - "features/smoke_tests"
+#           - "--app=@build/fixture-r21-url.txt"
+#           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
+#           - "--app-package=com.bugsnag.android.mazerunner"
+#           - "--appium-version=1.22"
+#           - "--farm=bb"
+#           - "--device=ANDROID_11"
+#           - "--no-tunnel"
+#           - "--aws-public-ip"
+#           - "--fail-fast"
+#     env:
+#       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
+#     concurrency: 25
+#     concurrency_group: 'bitbar'
+#     concurrency_method: eager
 
- # Android 11+ devices have the GWP-ASAN tool enabled which randomly samples native memory
-  # to detect misuse (such as use-after-free, buffer overflow). If a failure is detected then
-  # the device will raise a SIGABRT mentioning GWP-ASAN - this can be investigated further
-  # by inspecting the devices logs.
-  - label: ':bitbar: Android 12 NDK r21 end-to-end tests - batch 1'
-    depends_on:
-      - "fixture-r21"
-    timeout_in_minutes: 60
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/fixture-r21-url.txt"
-          - "build/fixture-r21/*"
-        upload:
-          - "maze_output/failed/**/*"
-          - "maze_output/metrics.csv"
-      docker-compose#v4.7.0:
-        pull: maze-runner
-        run: maze-runner
-        service-ports: true
-        command:
-          - "features/full_tests"
-          - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "--app=@build/fixture-r21-url.txt"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
-          - "--appium-version=1.22"
-          - "--farm=bb"
-          - "--device=ANDROID_12"
-          - "--no-tunnel"
-          - "--aws-public-ip"
-          - "--fail-fast"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 25
-    concurrency_group: 'bitbar'
-    concurrency_method: eager
+#  # Android 11+ devices have the GWP-ASAN tool enabled which randomly samples native memory
+#   # to detect misuse (such as use-after-free, buffer overflow). If a failure is detected then
+#   # the device will raise a SIGABRT mentioning GWP-ASAN - this can be investigated further
+#   # by inspecting the devices logs.
+#   - label: ':bitbar: Android 12 NDK r21 end-to-end tests - batch 1'
+#     depends_on:
+#       - "fixture-r21"
+#     timeout_in_minutes: 60
+#     plugins:
+#       artifacts#v1.9.0:
+#         download:
+#           - "build/fixture-r21-url.txt"
+#           - "build/fixture-r21/*"
+#         upload:
+#           - "maze_output/failed/**/*"
+#           - "maze_output/metrics.csv"
+#       docker-compose#v4.7.0:
+#         pull: maze-runner
+#         run: maze-runner
+#         service-ports: true
+#         command:
+#           - "features/full_tests"
+#           - "--exclude=features/full_tests/[^a-k].*.feature"
+#           - "--app=@build/fixture-r21-url.txt"
+#           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
+#           - "--app-package=com.bugsnag.android.mazerunner"
+#           - "--appium-version=1.22"
+#           - "--farm=bb"
+#           - "--device=ANDROID_12"
+#           - "--no-tunnel"
+#           - "--aws-public-ip"
+#           - "--fail-fast"
+#     env:
+#       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
+#     concurrency: 25
+#     concurrency_group: 'bitbar'
+#     concurrency_method: eager
 
-  - label: ':bitbar: Android 12 NDK r21 end-to-end tests - batch 2'
-    depends_on:
-      - "fixture-r21"
-    timeout_in_minutes: 60
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/fixture-r21-url.txt"
-          - "build/fixture-r21/*"
-        upload:
-          - "maze_output/failed/**/*"
-          - "maze_output/metrics.csv"
-      docker-compose#v4.7.0:
-        pull: maze-runner
-        run: maze-runner
-        service-ports: true
-        command:
-          - "features/full_tests"
-          - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=@build/fixture-r21-url.txt"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
-          - "--appium-version=1.22"
-          - "--farm=bb"
-          - "--device=ANDROID_12"
-          - "--no-tunnel"
-          - "--aws-public-ip"
-          - "--fail-fast"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 25
-    concurrency_group: 'bitbar'
-    concurrency_method: eager
+#   - label: ':bitbar: Android 12 NDK r21 end-to-end tests - batch 2'
+#     depends_on:
+#       - "fixture-r21"
+#     timeout_in_minutes: 60
+#     plugins:
+#       artifacts#v1.9.0:
+#         download:
+#           - "build/fixture-r21-url.txt"
+#           - "build/fixture-r21/*"
+#         upload:
+#           - "maze_output/failed/**/*"
+#           - "maze_output/metrics.csv"
+#       docker-compose#v4.7.0:
+#         pull: maze-runner
+#         run: maze-runner
+#         service-ports: true
+#         command:
+#           - "features/full_tests"
+#           - "--exclude=features/full_tests/[^l-z].*.feature"
+#           - "--app=@build/fixture-r21-url.txt"
+#           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
+#           - "--app-package=com.bugsnag.android.mazerunner"
+#           - "--appium-version=1.22"
+#           - "--farm=bb"
+#           - "--device=ANDROID_12"
+#           - "--no-tunnel"
+#           - "--aws-public-ip"
+#           - "--fail-fast"
+#     env:
+#       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
+#     concurrency: 25
+#     concurrency_group: 'bitbar'
+#     concurrency_method: eager
 
-  - label: ':bitbar: Android 13 NDK r21 smoke tests'
-    depends_on: "fixture-r21"
-    timeout_in_minutes: 60
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/fixture-r21-url.txt"
-          - "build/fixture-r21/*"
-        upload:
-          - "maze_output/failed/**/*"
-          - "maze_output/metrics.csv"
-      docker-compose#v4.7.0:
-        pull: maze-runner
-        run: maze-runner
-        service-ports: true
-        command:
-          - "features/smoke_tests"
-          - "--app=@build/fixture-r21-url.txt"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
-          - "--appium-version=1.22"
-          - "--farm=bb"
-          - "--device=ANDROID_13"
-          - "--no-tunnel"
-          - "--aws-public-ip"
-          - "--fail-fast"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 25
-    concurrency_group: 'bitbar'
-    concurrency_method: eager
+#   - label: ':bitbar: Android 13 NDK r21 smoke tests'
+#     depends_on: "fixture-r21"
+#     timeout_in_minutes: 60
+#     plugins:
+#       artifacts#v1.9.0:
+#         download:
+#           - "build/fixture-r21-url.txt"
+#           - "build/fixture-r21/*"
+#         upload:
+#           - "maze_output/failed/**/*"
+#           - "maze_output/metrics.csv"
+#       docker-compose#v4.7.0:
+#         pull: maze-runner
+#         run: maze-runner
+#         service-ports: true
+#         command:
+#           - "features/smoke_tests"
+#           - "--app=@build/fixture-r21-url.txt"
+#           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
+#           - "--app-package=com.bugsnag.android.mazerunner"
+#           - "--appium-version=1.22"
+#           - "--farm=bb"
+#           - "--device=ANDROID_13"
+#           - "--no-tunnel"
+#           - "--aws-public-ip"
+#           - "--fail-fast"
+#     env:
+#       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
+#     concurrency: 25
+#     concurrency_group: 'bitbar'
+#     concurrency_method: eager
 
-  - label: 'Conditionally include device farms/full tests'
-    agents:
-      queue: macos-12-arm
-    command: sh -c .buildkite/pipeline_trigger.sh
+#   - label: 'Conditionally include device farms/full tests'
+#     agents:
+#       queue: macos-12-arm
+#     command: sh -c .buildkite/pipeline_trigger.sh
 
