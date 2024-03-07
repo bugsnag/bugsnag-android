@@ -22,7 +22,6 @@ import com.bugsnag.android.internal.StateObserver
 import com.bugsnag.android.internal.TaskType
 import java.io.File
 import java.io.FileFilter
-import java.nio.charset.Charset
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.locks.ReentrantLock
@@ -102,30 +101,30 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
             is Install -> handleInstallMessage(event)
             DeliverPending -> deliverPendingReports()
             is AddMetadata -> handleAddMetadata(event)
-            is ClearMetadataSection -> clearMetadataTab(makeSafe(event.section))
+            is ClearMetadataSection -> clearMetadataTab(event.section)
             is ClearMetadataValue -> removeMetadata(
-                makeSafe(event.section),
-                makeSafe(event.key ?: "")
+                event.section,
+                event.key ?: ""
             )
             is AddBreadcrumb -> addBreadcrumb(
-                makeSafe(event.message),
-                makeSafe(event.type.toString()),
-                makeSafe(event.timestamp),
+                event.message,
+                event.type.toString(),
+                event.timestamp,
                 makeSafeMetadata(event.metadata)
             )
             NotifyHandled -> addHandledEvent()
             NotifyUnhandled -> addUnhandledEvent()
             PauseSession -> pausedSession()
             is StartSession -> startedSession(
-                makeSafe(event.id),
-                makeSafe(event.startedAt),
+                event.id,
+                event.startedAt,
                 event.handledCount,
                 event.unhandledCount
             )
-            is UpdateContext -> updateContext(makeSafe(event.context ?: ""))
+            is UpdateContext -> updateContext(event.context ?: "")
             is UpdateInForeground -> updateInForeground(
                 event.inForeground,
-                makeSafe(event.contextActivity ?: "")
+                event.contextActivity ?: ""
             )
             is StateEvent.UpdateLastRunInfo -> updateLastRunInfo(event.consecutiveLaunchCrashes)
             is StateEvent.UpdateIsLaunching -> {
@@ -138,19 +137,19 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
             }
             is UpdateOrientation -> updateOrientation(event.orientation ?: "")
             is UpdateUser -> {
-                updateUserId(makeSafe(event.user.id ?: ""))
-                updateUserName(makeSafe(event.user.name ?: ""))
-                updateUserEmail(makeSafe(event.user.email ?: ""))
+                updateUserId(event.user.id ?: "")
+                updateUserName(event.user.name ?: "")
+                updateUserEmail(event.user.email ?: "")
             }
             is StateEvent.UpdateMemoryTrimEvent -> updateLowMemory(
                 event.isLowMemory,
                 event.memoryTrimLevelDescription
             )
             is StateEvent.AddFeatureFlag -> addFeatureFlag(
-                makeSafe(event.name),
-                event.variant?.let { makeSafe(it) }
+                event.name,
+                event.variant
             )
-            is StateEvent.ClearFeatureFlag -> clearFeatureFlag(makeSafe(event.name))
+            is StateEvent.ClearFeatureFlag -> clearFeatureFlag(event.name)
             is StateEvent.ClearFeatureFlags -> clearFeatureFlags()
         }
     }
@@ -203,9 +202,9 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
             } else {
                 val reportPath = File(reportDirectory, "${UUID.randomUUID()}.crash").absolutePath
                 install(
-                    makeSafe(arg.apiKey),
+                    arg.apiKey,
                     reportPath,
-                    makeSafe(arg.lastRunInfoPath),
+                    arg.lastRunInfoPath,
                     arg.consecutiveLaunchCrashes,
                     arg.autoDetectNdkCrashes,
                     Build.VERSION.SDK_INT,
@@ -220,21 +219,12 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
     private fun handleAddMetadata(arg: AddMetadata) {
         if (arg.key != null) {
             when (val newValue = OpaqueValue.makeSafe(arg.value)) {
-                is String -> addMetadataString(arg.section, arg.key!!, makeSafe(newValue))
+                is String -> addMetadataString(arg.section, arg.key!!, newValue)
                 is Boolean -> addMetadataBoolean(arg.section, arg.key!!, newValue)
                 is Number -> addMetadataDouble(arg.section, arg.key!!, newValue.toDouble())
                 is OpaqueValue -> addMetadataOpaque(arg.section, arg.key!!, newValue.json)
                 else -> Unit
             }
         }
-    }
-
-    /**
-     * Ensure the string is safe to be passed to native layer by forcing the encoding
-     * to UTF-8.
-     */
-    private fun makeSafe(text: String): String {
-        // The Android platform default charset is always UTF-8
-        return String(text.toByteArray(Charset.defaultCharset()))
     }
 }
