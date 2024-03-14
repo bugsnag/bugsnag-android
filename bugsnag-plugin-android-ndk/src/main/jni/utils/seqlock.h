@@ -25,7 +25,7 @@ bsg_seqlock_status_t bsg_seqlock_optimistic_read(bsg_seqlock_t *lock);
 
 bool bsg_seqlock_validate(bsg_seqlock_t *lock, bsg_seqlock_status_t expected);
 
-#define bsg_seqlock_is_write_locked(c) (((c)&1uLL) != 0)
+#define bsg_seqlock_is_write_locked(c) (((c) & 1uLL) != 0)
 
 #ifdef __cplusplus
 }
