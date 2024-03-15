@@ -5,7 +5,6 @@ steps:
     agents:
       queue: macos-14
     commands:
-      - rbenv local 2.7.7
       - bundle install
       - ./scripts/audit-dependency-licenses.sh
 
