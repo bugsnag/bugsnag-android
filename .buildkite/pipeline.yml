@@ -4,7 +4,8 @@ steps:
     timeout_in_minutes: 30
     agents:
       queue: macos-14
-    commands: 
+    commands:
+      - rbenv local 2.7.7
       - bundle install
       - ./scripts/audit-dependency-licenses.sh
 
