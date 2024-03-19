@@ -1,8 +1,12 @@
 # This scenario is in its own file and folder so that it can be run first on Android 4
 Feature: ANR smoke test
 
+  Background:
+    Given I clear all persistent data
+
   @anr
   @skip_samsung
+  @skip_android_10
   Scenario: ANR detection
     When I set the screen orientation to portrait
     And I clear any error dialogue

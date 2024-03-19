@@ -54,6 +54,7 @@ class TestData {
                 }),
                 true,
                 true,
+                true,
                 null,
                 null,
                 Collections.singleton(Pattern.compile(".*password.*"))

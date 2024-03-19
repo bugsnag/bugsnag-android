@@ -45,6 +45,8 @@ Feature: Session functionality smoke tests
     And the error payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "AutoSessionSmokeScenario"
+    And the event "context" equals "SecondActivity"
+    And the event "metaData.app.activeScreen" equals "SecondActivity"
     And the event "user.id" is not null
     And the event "device.id" is not null
     And the error payload field "events.0.user.id" equals the stored value "automated_user_id"

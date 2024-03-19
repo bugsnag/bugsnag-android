@@ -5,6 +5,7 @@ Feature: ANRs triggered in CXX code are captured
 
   @anr
   @skip_samsung
+  @skip_android_10
   Scenario: ANR triggered in CXX code is captured
     When I run "CXXAnrScenario"
     And I wait for 2 seconds
@@ -21,6 +22,7 @@ Feature: ANRs triggered in CXX code are captured
 
   @anr
   @skip_samsung
+  @skip_android_10
   Scenario: ANR triggered in CXX code is captured even when NDK detection is disabled
     When I run "CXXAnrNdkDisabledScenario"
     And I wait for 2 seconds

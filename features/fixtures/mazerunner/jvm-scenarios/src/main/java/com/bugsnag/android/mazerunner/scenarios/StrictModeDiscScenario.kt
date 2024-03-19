@@ -19,7 +19,7 @@ internal class StrictModeDiscScenario(
     override fun startScenario() {
         super.startScenario()
         setupBugsnagStrictModeDetection()
-        val file = File(context.cacheDir, "fake")
+        val file = File(context.cacheDir, "StrictModeDiscScenarioFile")
         file.writeBytes("test".toByteArray())
     }
 

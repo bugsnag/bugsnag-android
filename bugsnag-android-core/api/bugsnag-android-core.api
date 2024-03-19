@@ -175,6 +175,7 @@ public class com/bugsnag/android/Configuration : com/bugsnag/android/CallbackAwa
 	public fun getEnabledErrorTypes ()Lcom/bugsnag/android/ErrorTypes;
 	public fun getEnabledReleaseStages ()Ljava/util/Set;
 	public fun getEndpoints ()Lcom/bugsnag/android/EndpointConfiguration;
+	public fun getGenerateAnonymousId ()Z
 	public fun getLaunchDurationMillis ()J
 	public fun getLogger ()Lcom/bugsnag/android/Logger;
 	public fun getMaxBreadcrumbs ()I
@@ -214,6 +215,7 @@ public class com/bugsnag/android/Configuration : com/bugsnag/android/CallbackAwa
 	public fun setEnabledErrorTypes (Lcom/bugsnag/android/ErrorTypes;)V
 	public fun setEnabledReleaseStages (Ljava/util/Set;)V
 	public fun setEndpoints (Lcom/bugsnag/android/EndpointConfiguration;)V
+	public fun setGenerateAnonymousId (Z)V
 	public fun setLaunchDurationMillis (J)V
 	public fun setLogger (Lcom/bugsnag/android/Logger;)V
 	public fun setMaxBreadcrumbs (I)V
@@ -861,7 +863,7 @@ public final class com/bugsnag/android/internal/DateUtils {
 }
 
 public final class com/bugsnag/android/internal/ImmutableConfig {
-	public fun <init> (Ljava/lang/String;ZLcom/bugsnag/android/ErrorTypes;ZLcom/bugsnag/android/ThreadSendPolicy;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Set;Ljava/util/Set;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/bugsnag/android/Delivery;Lcom/bugsnag/android/EndpointConfiguration;ZJLcom/bugsnag/android/Logger;IIIIJLkotlin/Lazy;ZZLandroid/content/pm/PackageInfo;Landroid/content/pm/ApplicationInfo;Ljava/util/Collection;)V
+	public fun <init> (Ljava/lang/String;ZLcom/bugsnag/android/ErrorTypes;ZLcom/bugsnag/android/ThreadSendPolicy;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Set;Ljava/util/Set;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/bugsnag/android/Delivery;Lcom/bugsnag/android/EndpointConfiguration;ZJLcom/bugsnag/android/Logger;IIIIJLkotlin/Lazy;ZZZLandroid/content/pm/PackageInfo;Landroid/content/pm/ApplicationInfo;Ljava/util/Collection;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component10 ()Ljava/util/Set;
 	public final fun component11 ()Ljava/lang/String;
@@ -883,18 +885,19 @@ public final class com/bugsnag/android/internal/ImmutableConfig {
 	public final fun component26 ()Lkotlin/Lazy;
 	public final fun component27 ()Z
 	public final fun component28 ()Z
-	public final fun component29 ()Landroid/content/pm/PackageInfo;
+	public final fun component29 ()Z
 	public final fun component3 ()Lcom/bugsnag/android/ErrorTypes;
-	public final fun component30 ()Landroid/content/pm/ApplicationInfo;
-	public final fun component31 ()Ljava/util/Collection;
+	public final fun component30 ()Landroid/content/pm/PackageInfo;
+	public final fun component31 ()Landroid/content/pm/ApplicationInfo;
+	public final fun component32 ()Ljava/util/Collection;
 	public final fun component4 ()Z
 	public final fun component5 ()Lcom/bugsnag/android/ThreadSendPolicy;
 	public final fun component6 ()Ljava/util/Collection;
 	public final fun component7 ()Ljava/util/Collection;
 	public final fun component8 ()Ljava/util/Collection;
 	public final fun component9 ()Ljava/util/Set;
-	public final fun copy (Ljava/lang/String;ZLcom/bugsnag/android/ErrorTypes;ZLcom/bugsnag/android/ThreadSendPolicy;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Set;Ljava/util/Set;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/bugsnag/android/Delivery;Lcom/bugsnag/android/EndpointConfiguration;ZJLcom/bugsnag/android/Logger;IIIIJLkotlin/Lazy;ZZLandroid/content/pm/PackageInfo;Landroid/content/pm/ApplicationInfo;Ljava/util/Collection;)Lcom/bugsnag/android/internal/ImmutableConfig;
-	public static synthetic fun copy$default (Lcom/bugsnag/android/internal/ImmutableConfig;Ljava/lang/String;ZLcom/bugsnag/android/ErrorTypes;ZLcom/bugsnag/android/ThreadSendPolicy;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Set;Ljava/util/Set;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/bugsnag/android/Delivery;Lcom/bugsnag/android/EndpointConfiguration;ZJLcom/bugsnag/android/Logger;IIIIJLkotlin/Lazy;ZZLandroid/content/pm/PackageInfo;Landroid/content/pm/ApplicationInfo;Ljava/util/Collection;ILjava/lang/Object;)Lcom/bugsnag/android/internal/ImmutableConfig;
+	public final fun copy (Ljava/lang/String;ZLcom/bugsnag/android/ErrorTypes;ZLcom/bugsnag/android/ThreadSendPolicy;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Set;Ljava/util/Set;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/bugsnag/android/Delivery;Lcom/bugsnag/android/EndpointConfiguration;ZJLcom/bugsnag/android/Logger;IIIIJLkotlin/Lazy;ZZZLandroid/content/pm/PackageInfo;Landroid/content/pm/ApplicationInfo;Ljava/util/Collection;)Lcom/bugsnag/android/internal/ImmutableConfig;
+	public static synthetic fun copy$default (Lcom/bugsnag/android/internal/ImmutableConfig;Ljava/lang/String;ZLcom/bugsnag/android/ErrorTypes;ZLcom/bugsnag/android/ThreadSendPolicy;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Set;Ljava/util/Set;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/bugsnag/android/Delivery;Lcom/bugsnag/android/EndpointConfiguration;ZJLcom/bugsnag/android/Logger;IIIIJLkotlin/Lazy;ZZZLandroid/content/pm/PackageInfo;Landroid/content/pm/ApplicationInfo;Ljava/util/Collection;ILjava/lang/Object;)Lcom/bugsnag/android/internal/ImmutableConfig;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getApiKey ()Ljava/lang/String;
 	public final fun getAppInfo ()Landroid/content/pm/ApplicationInfo;
@@ -910,6 +913,7 @@ public final class com/bugsnag/android/internal/ImmutableConfig {
 	public final fun getEnabledErrorTypes ()Lcom/bugsnag/android/ErrorTypes;
 	public final fun getEnabledReleaseStages ()Ljava/util/Collection;
 	public final fun getEndpoints ()Lcom/bugsnag/android/EndpointConfiguration;
+	public final fun getGenerateAnonymousId ()Z
 	public final fun getLaunchDurationMillis ()J
 	public final fun getLogger ()Lcom/bugsnag/android/Logger;
 	public final fun getMaxBreadcrumbs ()I

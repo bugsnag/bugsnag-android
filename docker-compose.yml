@@ -16,6 +16,7 @@ x-common-environment: &common-environment
   BUILDKITE_RETRY_COUNT:
   BUILDKITE_STEP_KEY:
   MAZE_BUGSNAG_API_KEY:
+  MAZE_SCENARIO_BUGSNAG_API_KEY:
   TEST_FIXTURE_SYMBOL_DIR:
 
 services:
@@ -47,7 +48,7 @@ services:
       PUBLISH_PASS:
 
   maze-runner:
-    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner-releases:latest-v8-cli
+    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner-releases:latest-v9-cli
     environment:
       <<: *common-environment
       BITBAR_USERNAME:

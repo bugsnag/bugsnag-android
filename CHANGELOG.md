@@ -1,5 +1,20 @@
 # Changelog
 
+## 6.3.0 (2024-03-19)
+
+### Enhancements
+
+* Introduced `generateAnonymousId` config option to control device-id generation
+  [#1989](https://github.com/bugsnag/bugsnag-android/pull/1989)
+
+### Bug fixes
+
+* Use PushLocalFrame/PopLocalFrame instead of DeleteLocalRef to avoid creating "holes" in the local ref table that are not always reused, leading to possible crashes in the ANR handler
+  [#1988](https://github.com/bugsnag/bugsnag-android/pull/1988)
+
+* Removed makeSafe as it is no longer applicable, and slows-down the creation of breadcrumbs and adding metadata
+  [#1990](https://github.com/bugsnag/bugsnag-android/pull/1990)
+
 ## 6.2.0 (2024-02-08)
 
 ### Enhancements

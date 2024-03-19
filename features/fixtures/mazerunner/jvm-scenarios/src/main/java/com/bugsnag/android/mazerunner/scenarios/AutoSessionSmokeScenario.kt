@@ -1,5 +1,6 @@
 package com.bugsnag.android.mazerunner.scenarios
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import com.bugsnag.android.Bugsnag
@@ -16,6 +17,8 @@ internal class AutoSessionSmokeScenario(
     eventMetadata: String?
 ) : Scenario(config, context, eventMetadata) {
 
+    private var sendError = true
+
     init {
         val baseDelivery = createDefaultDelivery()
         var intercept = true
@@ -23,13 +26,22 @@ internal class AutoSessionSmokeScenario(
         config.delivery = InterceptingDelivery(baseDelivery) {
             if (intercept) {
                 intercept = false
-                Bugsnag.notify(generateException())
+                continueScenario()
             }
         }
     }
 
-    override fun startScenario() {
-        super.startScenario()
+    override fun onActivityResumed(activity: Activity) {
+        if (!sendError) {
+            return
+        }
+
+        Bugsnag.notify(generateException())
+        sendError = false
+    }
+
+    private fun continueScenario() {
+        registerActivityLifecycleCallbacks()
         context.startActivity(Intent("com.bugsnag.android.mazerunner.UPDATE_CONTEXT"))
     }
 }
