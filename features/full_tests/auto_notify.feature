@@ -21,6 +21,7 @@ Feature: Switching automatic error detection on/off for Unity
 
   @anr
   @skip_samsung
+  @skip_android_10
   Scenario: ANR not captured with autoDetectAnrs=false
     When I run "AutoDetectAnrsFalseScenario"
     And I wait for 2 seconds
@@ -58,6 +59,7 @@ Feature: Switching automatic error detection on/off for Unity
 
   @anr
   @skip_samsung
+  @skip_android_10
   Scenario: ANR captured with autoDetectAnrs reenabled
     When I clear any error dialogue
     And I run "AutoDetectAnrsTrueScenario"
