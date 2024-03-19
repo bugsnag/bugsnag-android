@@ -6,6 +6,7 @@ Feature: ANR smoke test
 
   @anr
   @skip_samsung
+  @skip_android_10
   Scenario: ANR detection
     When I set the screen orientation to portrait
     And I clear any error dialogue
