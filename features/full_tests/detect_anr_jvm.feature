@@ -56,4 +56,10 @@ Feature: ANRs triggered in JVM code are captured
     When I run "JvmAnrOutsideReleaseStagesScenario"
     And I wait for 2 seconds
     And I tap the screen 3 times
-    Then I should receive no errors
+    And I wait for 10 seconds
+    And I close and relaunch the app after an ANR
+    And I configure Bugsnag for "JvmAnrOutsideReleaseStagesScenario"
+    Then Bugsnag confirms it has no errors to send
+    And I wait for 10 seconds
+    #  Wait extra 10 seconds in the end, so appium will have enough time to terminated the previous anr session
+
