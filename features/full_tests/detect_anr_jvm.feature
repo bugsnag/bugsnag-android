@@ -62,4 +62,3 @@ Feature: ANRs triggered in JVM code are captured
     Then Bugsnag confirms it has no errors to send
     And I wait for 10 seconds
     #  Wait extra 10 seconds in the end, so appium will have enough time to terminated the previous anr session
-
