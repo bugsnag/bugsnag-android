@@ -70,14 +70,22 @@ When("I configure Bugsnag for {string}") do |event_type|
   execute_command :start_bugsnag, event_type
 end
 
+When("I terminate the app") do
+  Maze.driver.terminate_app Maze.driver.app_id
+end
+
 When("I close and relaunch the app") do
-  if Maze.config.legacy_driver?
-    Maze.driver.close_app
-    Maze.driver.launch_app
-  else
+  Maze.driver.terminate_app Maze.driver.app_id
+  Maze.driver.activate_app Maze.driver.app_id
+end
+
+When("I close and relaunch the app after an ANR") do
+  begin
     Maze.driver.terminate_app Maze.driver.app_id
-    Maze.driver.activate_app Maze.driver.app_id
+  rescue Selenium::WebDriver::Error::ServerError
+    # Swallow any error, as Android may already have terminated the app
   end
+  Maze.driver.activate_app Maze.driver.app_id
 end
 
 When('I set the screen orientation to portrait') do
