@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+* FeatureFlags are now a copy-on-write structure, and so don't need to be defensive copied on a crashing thread
+  [#2005](https://github.com/bugsnag/bugsnag-android/pull/2005)
+
 ## 6.3.0 (2024-03-19)
 
 ### Enhancements
