@@ -3,14 +3,16 @@ steps:
   - label: 'Audit current licenses'
     timeout_in_minutes: 30
     agents:
-      queue: macos-12-arm
-    command: ./scripts/audit-dependency-licenses.sh
+      queue: macos-14
+    commands:
+      - bundle install
+      - ./scripts/audit-dependency-licenses.sh
 
   - label: ':android: Build fixture APK r19'
     key: "fixture-r19"
     timeout_in_minutes: 30
     agents:
-      queue: macos-12-arm
+      queue: macos-14
     artifact_paths:
       - "build/fixture-r19.apk"
       - "build/fixture-r19-url.txt"
@@ -24,7 +26,7 @@ steps:
     key: "fixture-r21"
     timeout_in_minutes: 30
     agents:
-      queue: macos-12-arm
+      queue: macos-14
     artifact_paths:
       - "build/fixture-r21.apk"
       - "build/fixture-r21-url.txt"
@@ -37,31 +39,31 @@ steps:
   - label: ':android: Coding standards checks'
     timeout_in_minutes: 20
     agents:
-      queue: macos-12-arm
+      queue: macos-14
     command: './gradlew --continue checkstyle detekt lint ktlintCheck'
 
   - label: ':android: Binary compatibility checks'
     timeout_in_minutes: 20
     agents:
-      queue: macos-12-arm
+      queue: macos-14
     command: './gradlew apiCheck'
 
   - label: ':android: CppCheck'
     timeout_in_minutes: 10
     agents:
-      queue: macos-12-arm
+      queue: macos-14
     command: 'bash ./scripts/run-cpp-check.sh'
 
   - label: ':android: ClangFormat'
     timeout_in_minutes: 10
     agents:
-      queue: macos-12-arm
+      queue: macos-14
     command: 'bash ./scripts/run-clang-format-ci-check.sh'
 
   - label: ':android: Lint mazerunner scenarios'
     timeout_in_minutes: 10
     agents:
-      queue: macos-12-arm
+      queue: macos-14
     commands:
       - cd features/fixtures/mazerunner
       - ./gradlew ktlintCheck detekt checkstyle
@@ -69,13 +71,13 @@ steps:
   - label: ':android: Android size reporting'
     timeout_in_minutes: 10
     agents:
-      queue: macos-12-arm
+      queue: macos-14
     command: scripts/run-sizer.sh
 
   - label: ':android: JVM tests'
     timeout_in_minutes: 10
     agents:
-      queue: macos-12-arm
+      queue: macos-14
     command: './gradlew test'
 
   #
@@ -346,6 +348,6 @@ steps:
 
   - label: 'Conditionally include device farms/full tests'
     agents:
-      queue: macos-12-arm
+      queue: macos-14
     command: sh -c .buildkite/pipeline_trigger.sh
 
