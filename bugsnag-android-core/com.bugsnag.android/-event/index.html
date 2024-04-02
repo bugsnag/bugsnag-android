@@ -1,456 +1,494 @@
-<html>
-  <head>
+<!DOCTYPE html>
+<html class="no-js">
+<head>
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
     <title>Event</title>
-<link href="../../../../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script><script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script><link href="../../../styles/style.css" rel="Stylesheet"><link href="../../../styles/logo-styles.css" rel="Stylesheet"><link href="../../../styles/jetbrains-mono.css" rel="Stylesheet"><link href="../../../styles/main.css" rel="Stylesheet"><script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script><script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script><script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script><script type="text/javascript" src="../../../scripts/main.js" async="async"></script>  </head>
-  <body>
-    <div id="container">
-      <div id="leftColumn"><a href="../../../index.html">
-          <div id="logo"></div>
-        </a>
-        <div id="paneSearch"></div>
-        <div id="sideMenu"></div>
-      </div>
-      <div id="main">
-        <div id="leftToggler"><span class="icon-toggler"></span></div>
-<script type="text/javascript" src="../../../scripts/main.js"></script>        <div class="main-content" id="content" pageIds="bugsnag-android-core::com.bugsnag.android/Event///PointingToDeclaration//-1317841657">
-          <div class="navigation-wrapper" id="navigation-wrapper">
-            <div class="breadcrumbs"><a href="../../../index.html">bugsnag-android-core</a>/<a href="../index.html">com.bugsnag.android</a>/<a href="index.html">Event</a></div>
-            <div class="pull-right d-flex">
-              <div id="searchBar"></div>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+                    <a class="library-name--link" href="../../../index.html">
+                            bugsnag-android-core
+                    </a>
+            </div>
+            <div class="library-version">
+6.3.0            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":bugsnag-android-core:dokkaHtml/release">androidJvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="bugsnag-android-core::com.bugsnag.android/Event///PointingToDeclaration//-1317841657">
+  <div class="breadcrumbs"><a href="../../../index.html">bugsnag-android-core</a><span class="delimiter">/</span><a href="../index.html">com.bugsnag.android</a><span class="delimiter">/</span><span class="current">Event</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Event</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="index.html">Event</a> : <a href="../-json-stream/-streamable/index.html">JsonStream.Streamable</a>, <span data-unresolved-link="com.bugsnag.android/MetadataAware///PointingToDeclaration/">MetadataAware</span>, <span data-unresolved-link="com.bugsnag.android/UserAware///PointingToDeclaration/">UserAware</span>, <span data-unresolved-link="com.bugsnag.android/FeatureFlagAware///PointingToDeclaration/">FeatureFlagAware</span></div><p class="paragraph">An Event object represents a Throwable captured by Bugsnag and is available as a parameter on an <a href="../-on-error-callback/index.html">OnErrorCallback</a>, where individual properties can be mutated before an error report is sent to Bugsnag's API.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="99045898%2FFunctions%2F-1317841657" anchor-label="addFeatureFlag" id="99045898%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="add-feature-flag.html"><span>add</span><wbr></wbr><span>Feature</span><wbr></wbr><span><span>Flag</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="99045898%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="add-feature-flag.html"><span class="token function">addFeatureFlag</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>name<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Add a single feature flag with no variant.</div><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="add-feature-flag.html"><span class="token function">addFeatureFlag</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>name<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a> </span>variant<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Add a single feature flag with an optional variant.</div></div></div>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="cover ">
-            <h1 class="cover"><span>Event</span></h1>
-            <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open class <a href="index.html">Event</a> : <a href="../-json-stream/-streamable/index.html">JsonStream.Streamable</a>, <span data-unresolved-link="com.bugsnag.android/MetadataAware///PointingToDeclaration/">MetadataAware</span>, <span data-unresolved-link="com.bugsnag.android/UserAware///PointingToDeclaration/">UserAware</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><p class="paragraph">An Event object represents a Throwable captured by Bugsnag and is available as a parameter on an <a href="../-on-error-callback/index.html">OnErrorCallback</a>, where individual properties can be mutated before an error report is sent to Bugsnag's API.</p></div></div>
+<a data-name="-708484539%2FFunctions%2F-1317841657" anchor-label="addFeatureFlags" id="-708484539%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="add-feature-flags.html"><span>add</span><wbr></wbr><span>Feature</span><wbr></wbr><span><span>Flags</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-708484539%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="add-feature-flags.html"><span class="token function">addFeatureFlags</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>featureFlags<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/Iterable.html">Iterable</a><span class="token operator">&lt;</span><a href="../-feature-flag/index.html">FeatureFlag</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><div class="brief ">Add a collection of feature flags.</div></div></div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="tabbedcontent">
-            <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="Functions">Functions</button></div>
-            <div class="tabs-section-body">
-              <h2 class="">Functions</h2>
-              <div class="table" data-togglable="Functions"><a data-name="-1319455409%2FFunctions%2F-1317841657" anchor-label="addMetadata" id="-1319455409%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
-                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="add-metadata.html">addMetadata</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1319455409%2FFunctions%2F-1317841657"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open fun <a href="add-metadata.html">addMetadata</a>(<span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>() </span>section: <a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a>, <span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>() </span>value: <a href="https://developer.android.com/reference/kotlin/java/util/Map.html">Map</a>&lt;<a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a>, out <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a>&gt;)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<a data-name="2092788032%2FFunctions%2F-1317841657" anchor-label="addMetadata" id="2092788032%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="2092788032%2FFunctions%2F-1317841657" anchor-label="addMetadata" id="2092788032%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Adds a map of multiple metadata key-value pairs to the specified section.</div></div>
-<div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">abstract fun <a href="index.html#-1646415124%2FFunctions%2F-1317841657">addMetadata</a>(section: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-null/index.html">Null</a>, value: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-null/index.html">Null</a>)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-<div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open fun <a href="add-metadata.html">addMetadata</a>(<span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>() </span>section: <a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a>, <span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>() </span>key: <a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a>, <span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html">Nullable</a>() </span>value: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a>)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<a data-name="404440405%2FFunctions%2F-1317841657" anchor-label="addMetadata" id="404440405%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="404440405%2FFunctions%2F-1317841657" anchor-label="addMetadata" id="404440405%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Adds the specified key and value in the specified section.</div></div>
-</div>
-                    </div>
-                  </div>
+<a data-name="990467273%2FFunctions%2F-1317841657" anchor-label="addMetadata" id="990467273%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="add-metadata.html"><span>add</span><wbr></wbr><span><span>Metadata</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="990467273%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="add-metadata.html"><span class="token function">addMetadata</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>section<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/Map.html">Map</a><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a><span class="token punctuation">, </span><span class="token keyword">out </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><div class="brief ">Adds a map of multiple metadata key-value pairs to the specified section.</div><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="add-metadata.html"><span class="token function">addMetadata</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>section<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>key<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a> </span>value<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Adds the specified key and value in the specified section.</div></div></div>
                 </div>
-<a data-name="-505934846%2FFunctions%2F-1317841657" anchor-label="clearMetadata" id="-505934846%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
-                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="clear-metadata.html">clearMetadata</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-505934846%2FFunctions%2F-1317841657"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open fun <a href="clear-metadata.html">clearMetadata</a>(<span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>() </span>section: <a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a>)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<a data-name="-2038589737%2FFunctions%2F-1317841657" anchor-label="clearMetadata" id="-2038589737%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="-2038589737%2FFunctions%2F-1317841657" anchor-label="clearMetadata" id="-2038589737%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Removes all the data from the specified section.</div></div>
-<div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">abstract fun <a href="index.html#462356224%2FFunctions%2F-1317841657">clearMetadata</a>(section: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-null/index.html">Null</a>)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-<div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open fun <a href="clear-metadata.html">clearMetadata</a>(<span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>() </span>section: <a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a>, <span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>() </span>key: <a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a>)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<a data-name="-444115837%2FFunctions%2F-1317841657" anchor-label="clearMetadata" id="-444115837%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="-444115837%2FFunctions%2F-1317841657" anchor-label="clearMetadata" id="-444115837%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Removes data with the specified key from the specified section.</div></div>
-</div>
-                    </div>
-                  </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1378496072%2FFunctions%2F-1317841657" anchor-label="clearFeatureFlag" id="1378496072%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="clear-feature-flag.html"><span>clear</span><wbr></wbr><span>Feature</span><wbr></wbr><span><span>Flag</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1378496072%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="clear-feature-flag.html"><span class="token function">clearFeatureFlag</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>name<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Remove a single feature flag regardless of its current status.</div></div></div>
                 </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-454086118%2FFunctions%2F-1317841657" anchor-label="clearFeatureFlags" id="-454086118%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="clear-feature-flags.html"><span>clear</span><wbr></wbr><span>Feature</span><wbr></wbr><span><span>Flags</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-454086118%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="clear-feature-flags.html"><span class="token function">clearFeatureFlags</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief ">Clear all of the feature flags.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1841387022%2FFunctions%2F-1317841657" anchor-label="clearMetadata" id="1841387022%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="clear-metadata.html"><span>clear</span><wbr></wbr><span><span>Metadata</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1841387022%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="clear-metadata.html"><span class="token function">clearMetadata</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>section<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Removes all the data from the specified section.</div><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="clear-metadata.html"><span class="token function">clearMetadata</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>section<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>key<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Removes data with the specified key from the specified section.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
 <a data-name="1960150781%2FFunctions%2F-1317841657" anchor-label="getApiKey" id="1960150781%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
-                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="get-api-key.html">getApiKey</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1960150781%2FFunctions%2F-1317841657"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block">@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>()</div></div>open fun <a href="get-api-key.html">getApiKey</a>(): <a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<a data-name="1960150781%2FFunctions%2F-1317841657" anchor-label="getApiKey" id="1960150781%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="1960150781%2FFunctions%2F-1317841657" anchor-label="getApiKey" id="1960150781%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>The API key used for events sent to Bugsnag.</div></div>
-</div>
-                    </div>
-                  </div>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-api-key.html"><span>get</span><wbr></wbr><span>Api</span><wbr></wbr><span><span>Key</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1960150781%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a></div></div><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="get-api-key.html"><span class="token function">getApiKey</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a></div><div class="brief ">The API key used for events sent to Bugsnag.</div></div></div>
                 </div>
+              </div>
+            </div>
+          </div>
 <a data-name="986870103%2FFunctions%2F-1317841657" anchor-label="getApp" id="986870103%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
-                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="get-app.html">getApp</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="986870103%2FFunctions%2F-1317841657"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block">@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>()</div></div>open fun <a href="get-app.html">getApp</a>(): <a href="../-app-with-state/index.html">AppWithState</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<a data-name="986870103%2FFunctions%2F-1317841657" anchor-label="getApp" id="986870103%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="986870103%2FFunctions%2F-1317841657" anchor-label="getApp" id="986870103%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Information set by the notifier about your app can be found in this field.</div></div>
-</div>
-                    </div>
-                  </div>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-app.html"><span>get</span><wbr></wbr><span><span>App</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="986870103%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a></div></div><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="get-app.html"><span class="token function">getApp</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-app-with-state/index.html">AppWithState</a></div><div class="brief ">Information set by the notifier about your app can be found in this field.</div></div></div>
                 </div>
+              </div>
+            </div>
+          </div>
 <a data-name="-1256136056%2FFunctions%2F-1317841657" anchor-label="getBreadcrumbs" id="-1256136056%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
-                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="get-breadcrumbs.html">getBreadcrumbs</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1256136056%2FFunctions%2F-1317841657"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block">@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>()</div></div>open fun <a href="get-breadcrumbs.html">getBreadcrumbs</a>(): <a href="https://developer.android.com/reference/kotlin/java/util/List.html">List</a>&lt;<a href="../-breadcrumb/index.html">Breadcrumb</a>&gt;<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<a data-name="-1256136056%2FFunctions%2F-1317841657" anchor-label="getBreadcrumbs" id="-1256136056%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="-1256136056%2FFunctions%2F-1317841657" anchor-label="getBreadcrumbs" id="-1256136056%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>A list of breadcrumbs leading up to the event.</div></div>
-</div>
-                    </div>
-                  </div>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-breadcrumbs.html"><span>get</span><wbr></wbr><span><span>Breadcrumbs</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1256136056%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a></div></div><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="get-breadcrumbs.html"><span class="token function">getBreadcrumbs</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/List.html">List</a><span class="token operator">&lt;</span><a href="../-breadcrumb/index.html">Breadcrumb</a><span class="token operator">&gt;</span></div><div class="brief ">A list of breadcrumbs leading up to the event.</div></div></div>
                 </div>
+              </div>
+            </div>
+          </div>
 <a data-name="-396268535%2FFunctions%2F-1317841657" anchor-label="getContext" id="-396268535%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
-                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="get-context.html">getContext</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-396268535%2FFunctions%2F-1317841657"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block">@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html">Nullable</a>()</div></div>open fun <a href="get-context.html">getContext</a>(): <a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<a data-name="-396268535%2FFunctions%2F-1317841657" anchor-label="getContext" id="-396268535%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="-396268535%2FFunctions%2F-1317841657" anchor-label="getContext" id="-396268535%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Returns the context of the error.</div></div>
-</div>
-                    </div>
-                  </div>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-context.html"><span>get</span><wbr></wbr><span><span>Context</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-396268535%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a></div></div><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="get-context.html"><span class="token function">getContext</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a></div><div class="brief ">Returns the context of the error.</div></div></div>
                 </div>
+              </div>
+            </div>
+          </div>
 <a data-name="1712674732%2FFunctions%2F-1317841657" anchor-label="getDevice" id="1712674732%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
-                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="get-device.html">getDevice</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1712674732%2FFunctions%2F-1317841657"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block">@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>()</div></div>open fun <a href="get-device.html">getDevice</a>(): <a href="../-device-with-state/index.html">DeviceWithState</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<a data-name="1712674732%2FFunctions%2F-1317841657" anchor-label="getDevice" id="1712674732%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="1712674732%2FFunctions%2F-1317841657" anchor-label="getDevice" id="1712674732%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Information set by the notifier about your device can be found in this field.</div></div>
-</div>
-                    </div>
-                  </div>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-device.html"><span>get</span><wbr></wbr><span><span>Device</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1712674732%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a></div></div><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="get-device.html"><span class="token function">getDevice</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-device-with-state/index.html">DeviceWithState</a></div><div class="brief ">Information set by the notifier about your device can be found in this field.</div></div></div>
                 </div>
+              </div>
+            </div>
+          </div>
 <a data-name="-116656073%2FFunctions%2F-1317841657" anchor-label="getErrors" id="-116656073%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
-                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="get-errors.html">getErrors</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-116656073%2FFunctions%2F-1317841657"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block">@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>()</div></div>open fun <a href="get-errors.html">getErrors</a>(): <a href="https://developer.android.com/reference/kotlin/java/util/List.html">List</a>&lt;<a href="../-error/index.html">Error</a>&gt;<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<a data-name="-116656073%2FFunctions%2F-1317841657" anchor-label="getErrors" id="-116656073%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="-116656073%2FFunctions%2F-1317841657" anchor-label="getErrors" id="-116656073%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Information extracted from the <a href="https://developer.android.com/reference/kotlin/java/lang/Throwable.html">Throwable</a> that caused the event can be found in this field.</div></div>
-</div>
-                    </div>
-                  </div>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-errors.html"><span>get</span><wbr></wbr><span><span>Errors</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-116656073%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a></div></div><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="get-errors.html"><span class="token function">getErrors</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/List.html">List</a><span class="token operator">&lt;</span><a href="../-error/index.html">Error</a><span class="token operator">&gt;</span></div><div class="brief ">Information extracted from the <a href="https://developer.android.com/reference/kotlin/java/lang/Throwable.html">Throwable</a> that caused the event can be found in this field.</div></div></div>
                 </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-26448527%2FFunctions%2F-1317841657" anchor-label="getFeatureFlags" id="-26448527%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-feature-flags.html"><span>get</span><wbr></wbr><span>Feature</span><wbr></wbr><span><span>Flags</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-26448527%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a></div></div><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="get-feature-flags.html"><span class="token function">getFeatureFlags</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/List.html">List</a><span class="token operator">&lt;</span><a href="../-feature-flag/index.html">FeatureFlag</a><span class="token operator">&gt;</span></div><div class="brief ">A list of feature flags active at the time of the event.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
 <a data-name="906408433%2FFunctions%2F-1317841657" anchor-label="getGroupingHash" id="906408433%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
-                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="get-grouping-hash.html">getGroupingHash</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="906408433%2FFunctions%2F-1317841657"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block">@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html">Nullable</a>()</div></div>open fun <a href="get-grouping-hash.html">getGroupingHash</a>(): <a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<a data-name="906408433%2FFunctions%2F-1317841657" anchor-label="getGroupingHash" id="906408433%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="906408433%2FFunctions%2F-1317841657" anchor-label="getGroupingHash" id="906408433%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Set the grouping hash of the event to override the default grouping on the dashboard.</div></div>
-</div>
-                    </div>
-                  </div>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-grouping-hash.html"><span>get</span><wbr></wbr><span>Grouping</span><wbr></wbr><span><span>Hash</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="906408433%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a></div></div><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="get-grouping-hash.html"><span class="token function">getGroupingHash</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a></div><div class="brief ">Set the grouping hash of the event to override the default grouping on the dashboard.</div></div></div>
                 </div>
-<a data-name="763283257%2FFunctions%2F-1317841657" anchor-label="getMetadata" id="763283257%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
-                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="get-metadata.html">getMetadata</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="763283257%2FFunctions%2F-1317841657"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block">@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html">Nullable</a>()</div></div>open fun <a href="get-metadata.html">getMetadata</a>(<span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>() </span>section: <a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a>): <a href="https://developer.android.com/reference/kotlin/java/util/Map.html">Map</a>&lt;<a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a>, <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a>&gt;<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<a data-name="-1920890962%2FFunctions%2F-1317841657" anchor-label="getMetadata" id="-1920890962%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="-1920890962%2FFunctions%2F-1317841657" anchor-label="getMetadata" id="-1920890962%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Returns a map of data in the specified section.</div></div>
-<div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">abstract fun <a href="index.html#-1616903913%2FFunctions%2F-1317841657">getMetadata</a>(section: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-null/index.html">Null</a>): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-null/index.html">Null</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-<div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block">@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html">Nullable</a>()</div></div>open fun <a href="get-metadata.html">getMetadata</a>(<span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>() </span>section: <a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a>, <span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>() </span>key: <a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a>): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<a data-name="1063668876%2FFunctions%2F-1317841657" anchor-label="getMetadata" id="1063668876%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="1063668876%2FFunctions%2F-1317841657" anchor-label="getMetadata" id="1063668876%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Returns the value of the specified key in the specified section.</div></div>
-</div>
-                    </div>
-                  </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-474175826%2FFunctions%2F-1317841657" anchor-label="getMetadata" id="-474175826%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-metadata.html"><span>get</span><wbr></wbr><span><span>Metadata</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-474175826%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a></div></div><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="get-metadata.html"><span class="token function">getMetadata</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>section<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/Map.html">Map</a><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a><span class="token operator">&gt;</span></div><div class="brief ">Returns a map of data in the specified section.</div><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a></div></div><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="get-metadata.html"><span class="token function">getMetadata</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>section<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>key<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a></div><div class="brief ">Returns the value of the specified key in the specified section.</div></div></div>
                 </div>
+              </div>
+            </div>
+          </div>
 <a data-name="1001392065%2FFunctions%2F-1317841657" anchor-label="getOriginalError" id="1001392065%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
-                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="get-original-error.html">getOriginalError</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1001392065%2FFunctions%2F-1317841657"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block">@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html">Nullable</a>()</div></div>open fun <a href="get-original-error.html">getOriginalError</a>(): <a href="https://developer.android.com/reference/kotlin/java/lang/Throwable.html">Throwable</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<a data-name="1001392065%2FFunctions%2F-1317841657" anchor-label="getOriginalError" id="1001392065%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="1001392065%2FFunctions%2F-1317841657" anchor-label="getOriginalError" id="1001392065%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>The Throwable object that caused the event in your application.</div></div>
-</div>
-                    </div>
-                  </div>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-original-error.html"><span>get</span><wbr></wbr><span>Original</span><wbr></wbr><span><span>Error</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1001392065%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a></div></div><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="get-original-error.html"><span class="token function">getOriginalError</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/Throwable.html">Throwable</a></div><div class="brief ">The Throwable object that caused the event in your application.</div></div></div>
                 </div>
+              </div>
+            </div>
+          </div>
 <a data-name="-1311780955%2FFunctions%2F-1317841657" anchor-label="getSeverity" id="-1311780955%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
-                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="get-severity.html">getSeverity</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1311780955%2FFunctions%2F-1317841657"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block">@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>()</div></div>open fun <a href="get-severity.html">getSeverity</a>(): <a href="../-severity/index.html">Severity</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<a data-name="-1311780955%2FFunctions%2F-1317841657" anchor-label="getSeverity" id="-1311780955%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="-1311780955%2FFunctions%2F-1317841657" anchor-label="getSeverity" id="-1311780955%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>The severity of the event.</div></div>
-</div>
-                    </div>
-                  </div>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-severity.html"><span>get</span><wbr></wbr><span><span>Severity</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1311780955%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a></div></div><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="get-severity.html"><span class="token function">getSeverity</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-severity/index.html">Severity</a></div><div class="brief ">The severity of the event.</div></div></div>
                 </div>
+              </div>
+            </div>
+          </div>
 <a data-name="-1194738865%2FFunctions%2F-1317841657" anchor-label="getThreads" id="-1194738865%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
-                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="get-threads.html">getThreads</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1194738865%2FFunctions%2F-1317841657"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block">@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>()</div></div>open fun <a href="get-threads.html">getThreads</a>(): <a href="https://developer.android.com/reference/kotlin/java/util/List.html">List</a>&lt;<a href="../-thread/index.html">Thread</a>&gt;<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<a data-name="-1194738865%2FFunctions%2F-1317841657" anchor-label="getThreads" id="-1194738865%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="-1194738865%2FFunctions%2F-1317841657" anchor-label="getThreads" id="-1194738865%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>If thread state is being captured along with the event, this field will contain a list of <a href="../-thread/index.html">Thread</a> objects.</div></div>
-</div>
-                    </div>
-                  </div>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-threads.html"><span>get</span><wbr></wbr><span><span>Threads</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1194738865%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a></div></div><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="get-threads.html"><span class="token function">getThreads</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/List.html">List</a><span class="token operator">&lt;</span><a href="../-thread/index.html">Thread</a><span class="token operator">&gt;</span></div><div class="brief ">If thread state is being captured along with the event, this field will contain a list of <a href="../-thread/index.html">Thread</a> objects.</div></div></div>
                 </div>
+              </div>
+            </div>
+          </div>
 <a data-name="288539927%2FFunctions%2F-1317841657" anchor-label="getUser" id="288539927%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
-                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="get-user.html">getUser</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="288539927%2FFunctions%2F-1317841657"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block">@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>()</div></div>open fun <a href="get-user.html">getUser</a>(): <a href="../-user/index.html">User</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<a data-name="288539927%2FFunctions%2F-1317841657" anchor-label="getUser" id="288539927%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="288539927%2FFunctions%2F-1317841657" anchor-label="getUser" id="288539927%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Returns the currently set User information.</div></div>
-</div>
-                    </div>
-                  </div>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-user.html"><span>get</span><wbr></wbr><span><span>User</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="288539927%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a></div></div><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="get-user.html"><span class="token function">getUser</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-user/index.html">User</a></div><div class="brief ">Returns the currently set User information.</div></div></div>
                 </div>
+              </div>
+            </div>
+          </div>
 <a data-name="236713567%2FFunctions%2F-1317841657" anchor-label="isUnhandled" id="236713567%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
-                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="is-unhandled.html">isUnhandled</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="236713567%2FFunctions%2F-1317841657"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open fun <a href="is-unhandled.html">isUnhandled</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<a data-name="236713567%2FFunctions%2F-1317841657" anchor-label="isUnhandled" id="236713567%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="236713567%2FFunctions%2F-1317841657" anchor-label="isUnhandled" id="236713567%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Whether the event was a crash (i.e.</div></div>
-</div>
-                    </div>
-                  </div>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-unhandled.html"><span>is</span><wbr></wbr><span><span>Unhandled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="236713567%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="is-unhandled.html"><span class="token function">isUnhandled</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief ">Whether the event was a crash (i.e.</div></div></div>
                 </div>
+              </div>
+            </div>
+          </div>
 <a data-name="776495212%2FFunctions%2F-1317841657" anchor-label="setApiKey" id="776495212%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
-                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="set-api-key.html">setApiKey</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="776495212%2FFunctions%2F-1317841657"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open fun <a href="set-api-key.html">setApiKey</a>(<span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>() </span>apiKey: <a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a>)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<a data-name="776495212%2FFunctions%2F-1317841657" anchor-label="setApiKey" id="776495212%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="776495212%2FFunctions%2F-1317841657" anchor-label="setApiKey" id="776495212%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>The API key used for events sent to Bugsnag.</div></div>
-</div>
-                    </div>
-                  </div>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-api-key.html"><span>set</span><wbr></wbr><span>Api</span><wbr></wbr><span><span>Key</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="776495212%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-api-key.html"><span class="token function">setApiKey</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>apiKey<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief ">The API key used for events sent to Bugsnag.</div></div></div>
                 </div>
+              </div>
+            </div>
+          </div>
 <a data-name="-1108195056%2FFunctions%2F-1317841657" anchor-label="setContext" id="-1108195056%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
-                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="set-context.html">setContext</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1108195056%2FFunctions%2F-1317841657"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open fun <a href="set-context.html">setContext</a>(<span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html">Nullable</a>() </span>context: <a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a>)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<a data-name="-1108195056%2FFunctions%2F-1317841657" anchor-label="setContext" id="-1108195056%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="-1108195056%2FFunctions%2F-1317841657" anchor-label="setContext" id="-1108195056%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Sets the context of the error.</div></div>
-</div>
-                    </div>
-                  </div>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-context.html"><span>set</span><wbr></wbr><span><span>Context</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1108195056%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-context.html"><span class="token function">setContext</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a> </span>context<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Sets the context of the error.</div></div></div>
                 </div>
+              </div>
+            </div>
+          </div>
 <a data-name="-396018592%2FFunctions%2F-1317841657" anchor-label="setGroupingHash" id="-396018592%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
-                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="set-grouping-hash.html">setGroupingHash</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-396018592%2FFunctions%2F-1317841657"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open fun <a href="set-grouping-hash.html">setGroupingHash</a>(<span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html">Nullable</a>() </span>groupingHash: <a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a>)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<a data-name="-396018592%2FFunctions%2F-1317841657" anchor-label="setGroupingHash" id="-396018592%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="-396018592%2FFunctions%2F-1317841657" anchor-label="setGroupingHash" id="-396018592%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Set the grouping hash of the event to override the default grouping on the dashboard.</div></div>
-</div>
-                    </div>
-                  </div>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-grouping-hash.html"><span>set</span><wbr></wbr><span>Grouping</span><wbr></wbr><span><span>Hash</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-396018592%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-grouping-hash.html"><span class="token function">setGroupingHash</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a> </span>groupingHash<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Set the grouping hash of the event to override the default grouping on the dashboard.</div></div></div>
                 </div>
+              </div>
+            </div>
+          </div>
 <a data-name="279321015%2FFunctions%2F-1317841657" anchor-label="setSeverity" id="279321015%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
-                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="set-severity.html">setSeverity</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="279321015%2FFunctions%2F-1317841657"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open fun <a href="set-severity.html">setSeverity</a>(<span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>() </span>severity: <a href="../-severity/index.html">Severity</a>)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<a data-name="279321015%2FFunctions%2F-1317841657" anchor-label="setSeverity" id="279321015%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="279321015%2FFunctions%2F-1317841657" anchor-label="setSeverity" id="279321015%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>The severity of the event.</div></div>
-</div>
-                    </div>
-                  </div>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-severity.html"><span>set</span><wbr></wbr><span><span>Severity</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="279321015%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-severity.html"><span class="token function">setSeverity</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>severity<span class="token operator">: </span><a href="../-severity/index.html">Severity</a></span></span><span class="token punctuation">)</span></div><div class="brief ">The severity of the event.</div></div></div>
                 </div>
+              </div>
+            </div>
+          </div>
 <a data-name="2022751225%2FFunctions%2F-1317841657" anchor-label="setUnhandled" id="2022751225%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
-                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="set-unhandled.html">setUnhandled</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2022751225%2FFunctions%2F-1317841657"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open fun <a href="set-unhandled.html">setUnhandled</a>(unhandled: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a>)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<a data-name="2022751225%2FFunctions%2F-1317841657" anchor-label="setUnhandled" id="2022751225%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="2022751225%2FFunctions%2F-1317841657" anchor-label="setUnhandled" id="2022751225%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Whether the event was a crash (i.e.</div></div>
-</div>
-                    </div>
-                  </div>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-unhandled.html"><span>set</span><wbr></wbr><span><span>Unhandled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2022751225%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-unhandled.html"><span class="token function">setUnhandled</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">unhandled<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Whether the event was a crash (i.e.</div></div></div>
                 </div>
-<a data-name="1951157893%2FFunctions%2F-1317841657" anchor-label="setUser" id="1951157893%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
-                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="set-user.html">setUser</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1951157893%2FFunctions%2F-1317841657"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open fun <a href="set-user.html">setUser</a>(<span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html">Nullable</a>() </span>id: <a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a>, <span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html">Nullable</a>() </span>email: <a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a>, <span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html">Nullable</a>() </span>name: <a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a>)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<a data-name="677288262%2FFunctions%2F-1317841657" anchor-label="setUser" id="677288262%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a><div class="brief "><a data-name="677288262%2FFunctions%2F-1317841657" anchor-label="setUser" id="677288262%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>Sets the user associated with the event.</div></div>
-<div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">abstract fun <a href="../-session/index.html#1845346379%2FFunctions%2F-1317841657">setUser</a>(id: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-null/index.html">Null</a>, email: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-null/index.html">Null</a>, name: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-null/index.html">Null</a>)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
-                    </div>
-                  </div>
+              </div>
+            </div>
+          </div>
+<a data-name="677288262%2FFunctions%2F-1317841657" anchor-label="setUser" id="677288262%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-user.html"><span>set</span><wbr></wbr><span><span>User</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="677288262%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="set-user.html"><span class="token function">setUser</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a> </span>id<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a> </span>email<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a> </span>name<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Sets the user associated with the event.</div></div></div>
                 </div>
+              </div>
+            </div>
+          </div>
 <a data-name="974721946%2FFunctions%2F-1317841657" anchor-label="toStream" id="974721946%2FFunctions%2F-1317841657" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"></a>
-                <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="to-stream.html">toStream</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="974721946%2FFunctions%2F-1317841657"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace">open fun <a href="to-stream.html">toStream</a>(<span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>() </span>stream: <a href="../-json-stream/index.html">JsonStream</a>)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
-                    </div>
-                  </div>
+          <div class="table-row" data-filterable-current=":bugsnag-android-core:dokkaHtml/release" data-filterable-set=":bugsnag-android-core:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-stream.html"><span>to</span><wbr></wbr><span><span>Stream</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="974721946%2FFunctions%2F-1317841657"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":bugsnag-android-core:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="to-stream.html"><span class="token function">toStream</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>stream<span class="token operator">: </span><a href="../-json-stream/index.html">JsonStream</a></span></span><span class="token punctuation">)</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="footer"><span class="go-to-top-icon"><a href="#content"></a></span><span>© 2021 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span></div>
       </div>
     </div>
-  </body>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Copyright</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
 </html>
-
