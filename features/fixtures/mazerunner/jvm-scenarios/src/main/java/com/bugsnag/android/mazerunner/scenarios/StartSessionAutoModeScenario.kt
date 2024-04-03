@@ -1,6 +1,5 @@
 package com.bugsnag.android.mazerunner.scenarios
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import com.bugsnag.android.Bugsnag
@@ -27,7 +26,6 @@ internal class StartSessionAutoModeScenario(
                 continueScenario()
             }
         }
-
     }
 
     private fun continueScenario() {

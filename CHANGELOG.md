@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+* Allow `Bugsnag.startSession` to be called with automatic session tracking, and not have the first manual session be over written by the first automatic session.
+  [#2006](https://github.com/bugsnag/bugsnag-android/pull/2006)
+
 ## 6.3.0 (2024-03-19)
 
 ### Enhancements
