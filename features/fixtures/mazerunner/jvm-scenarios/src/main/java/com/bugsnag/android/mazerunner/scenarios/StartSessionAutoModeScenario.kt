@@ -1,36 +1,27 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
-import android.content.Intent
-import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
-import com.bugsnag.android.createDefaultDelivery
-import com.bugsnag.android.mazerunner.InterceptingDelivery
+import kotlin.system.exitProcess
 
-/**
- * Sends an automated session payload to Bugsnag.
- */
 internal class StartSessionAutoModeScenario(
     config: Configuration,
     context: Context,
     eventMetadata: String?
 ) : Scenario(config, context, eventMetadata) {
+    override fun startScenario() {
+        context.applicationContext
+            .getSharedPreferences("SessionPreferences", Context.MODE_PRIVATE)
+            .edit()
+            .putBoolean("manualSession", MANUAL_START)
+            .putString("notify", config.endpoints.notify)
+            .putString("sessions", config.endpoints.sessions)
+            .commit()
 
-    init {
-        val baseDelivery = createDefaultDelivery()
-        var intercept = true
-        config.autoTrackSessions = true
-        config.delivery = InterceptingDelivery(baseDelivery) {
-            if (intercept) {
-                intercept = false
-                continueScenario()
-            }
-        }
+        exitProcess(0)
     }
 
-    private fun continueScenario() {
-        Bugsnag.startSession()
-        registerActivityLifecycleCallbacks()
-        context.startActivity(Intent("com.bugsnag.android.mazerunner.UPDATE_CONTEXT"))
+    companion object {
+        private const val MANUAL_START = true
     }
 }

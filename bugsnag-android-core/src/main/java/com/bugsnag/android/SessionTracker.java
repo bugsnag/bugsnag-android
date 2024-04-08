@@ -7,6 +7,7 @@ import com.bugsnag.android.internal.ImmutableConfig;
 import com.bugsnag.android.internal.TaskType;
 
 import android.app.Activity;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -104,18 +105,16 @@ class SessionTracker extends BaseObservable implements ForegroundDetector.OnActi
             return true;
         } else {
             Session existingSession = currentSession;
-            if (autoCaptured &&
-                    existingSession != null &&
-                    !existingSession.isAutoCaptured() &&
-                    shouldSuppressFirstAutoSession) {
-
+            if (autoCaptured
+                    && existingSession != null
+                    && !existingSession.isAutoCaptured()
+                    && shouldSuppressFirstAutoSession) {
                 shouldSuppressFirstAutoSession = true;
                 return true;
             }
         }
-
         return false;
-        }
+    }
 
 
     void pauseSession() {
