@@ -112,3 +112,6 @@ Feature: Session functionality smoke tests
     And the event "user.email" equals "ABC.CBA.CA"
     And the event "user.name" equals "ManualSessionSmokeScenario"
 
+  Scenario: Start session in auto mode
+    When I run "StartSessionAutoModeScenario"
+    And I wait to receive a session
