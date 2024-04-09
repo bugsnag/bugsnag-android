@@ -12,6 +12,11 @@
 * Allow `Bugsnag.startSession` to be called with automatic session tracking, and not have the first manual session be over written by the first automatic session.
   [#2006](https://github.com/bugsnag/bugsnag-android/pull/2006)
 
+### Bug fixes
+
+* Refreshing the NDK symbol table is now protected by a soft-lock to avoid possible double-free conditions
+  [#2007](https://github.com/bugsnag/bugsnag-android/pull/2007)
+
 ## 6.3.0 (2024-03-19)
 
 ### Enhancements
