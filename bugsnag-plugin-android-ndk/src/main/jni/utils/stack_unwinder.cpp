@@ -17,6 +17,9 @@ static unwindstack::Unwinder *crash_time_unwinder;
 // attempting to unwind. This isn't a "real" lock to avoid deadlocking in the
 // event of a crash while handling an ANR or the reverse.
 static std::atomic_bool unwinding_crash_stack = ATOMIC_VAR_INIT(false);
+// soft lock for refreshing the symbol tables - if active, bsg_unwinder_refresh
+// will refresh without doing any work avoiding possible reentrancy problems
+static std::atomic_bool refreshing_unwinder = ATOMIC_VAR_INIT(false);
 
 // Thread-safe, reusable unwinder - uses thread-specific memory caches
 static unwindstack::LocalUnwinder *current_time_unwinder;
@@ -122,6 +125,12 @@ static void populate_code_identifier(const unwindstack::FrameData &frame,
 }
 
 void bsg_unwinder_refresh(void) {
+  bool expected = false;
+  if (!std::atomic_compare_exchange_strong(&refreshing_unwinder, &expected,
+                                           true)) {
+    return;
+  }
+
   auto crash_time_maps = new unwindstack::LocalUpdatableMaps();
   if (crash_time_maps->Parse()) {
     std::shared_ptr<unwindstack::Memory> crash_time_memory(
@@ -137,11 +146,13 @@ void bsg_unwinder_refresh(void) {
     crash_time_unwinder = new_uwinder;
 
     // don't destroy an unwinder that is currently in use
-    if (!unwinding_crash_stack.load()) {
+    if (!std::atomic_load(&unwinding_crash_stack)) {
       delete old_unwinder->GetMaps();
       delete old_unwinder;
     }
   }
+
+  std::atomic_store(&refreshing_unwinder, false);
 }
 
 ssize_t bsg_unwind_crash_stack(bugsnag_stackframe stack[BUGSNAG_FRAMES_MAX],
