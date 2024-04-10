@@ -7,7 +7,7 @@
 * FeatureFlags are now a copy-on-write structure, and so don't need to be defensive copied on a crashing thread
   [#2005](https://github.com/bugsnag/bugsnag-android/pull/2005)
 * The default redactedKeys in ObjectJsonStreamer is now static and shared, reducing the overhead of some leaveBreadcrumb calls (those with complex metadata)
-  []()
+  [#2008](https://github.com/bugsnag/bugsnag-android/pull/2008)
 
 * Allow `Bugsnag.startSession` to be called with automatic session tracking, and not have the first manual session be over written by the first automatic session.
   [#2006](https://github.com/bugsnag/bugsnag-android/pull/2006)
