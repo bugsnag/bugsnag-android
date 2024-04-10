@@ -10,6 +10,7 @@ class MazerunnerApp : Application() {
         super.onCreate()
         triggerStartupAnrIfRequired()
         setupNonSdkUsageStrictMode()
+        triggerManualSessionIfRequired()
     }
 
     /**

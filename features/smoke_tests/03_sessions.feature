@@ -112,3 +112,8 @@ Feature: Session functionality smoke tests
     And the event "user.email" equals "ABC.CBA.CA"
     And the event "user.name" equals "ManualSessionSmokeScenario"
 
+  Scenario: Start session in auto mode
+    When I clear any error dialogue
+    And I run "StartSessionAutoModeScenario"
+    And I relaunch the app after a crash
+    Then I wait to receive a session
