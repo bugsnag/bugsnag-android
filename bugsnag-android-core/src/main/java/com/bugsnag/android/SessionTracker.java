@@ -133,7 +133,7 @@ class SessionTracker extends BaseObservable implements ForegroundDetector.OnActi
             session = startSession(false);
             resumed = false;
         } else {
-            resumed = session.isPaused.compareAndSet(true, false);
+            resumed = session.markPaused();
         }
 
         if (session != null) {
@@ -191,7 +191,7 @@ class SessionTracker extends BaseObservable implements ForegroundDetector.OnActi
         session.setDevice(client.getDeviceDataCollector().generateDevice());
         boolean deliverSession = callbackState.runOnSessionTasks(session, logger);
 
-        if (deliverSession && session.isTracked().compareAndSet(false, true)) {
+        if (deliverSession && session.markTracked()) {
             currentSession = session;
             notifySessionStartObserver(session);
             flushInMemorySession(session);
