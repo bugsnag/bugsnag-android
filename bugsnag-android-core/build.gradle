@@ -13,6 +13,10 @@ dokkaHtml.configure {
     dokkaSourceSets {
         named("main") {
             noAndroidSdkLink.set(false)
+            perPackageOption {
+                matchingRegex.set("com\\.bugsnag\\.android\\..*")
+                suppress.set(true)
+            }
         }
     }
 }

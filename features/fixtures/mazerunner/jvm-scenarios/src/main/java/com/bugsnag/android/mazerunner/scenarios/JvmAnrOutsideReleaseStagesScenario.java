@@ -1,6 +1,7 @@
 package com.bugsnag.android.mazerunner.scenarios;
 
 import static com.bugsnag.android.mazerunner.AnrHelperKt.createDeadlock;
+import static com.bugsnag.android.mazerunner.LogKt.getZeroEventsLogMessages;
 
 import com.bugsnag.android.Configuration;
 
@@ -10,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.Collections;
+import java.util.List;
 
 public class JvmAnrOutsideReleaseStagesScenario extends Scenario {
 
@@ -27,5 +29,10 @@ public class JvmAnrOutsideReleaseStagesScenario extends Scenario {
     public void startScenario() {
         super.startScenario();
         createDeadlock();
+    }
+
+    @Override
+    public List<String> getInterceptedLogMessages() {
+        return getZeroEventsLogMessages(getStartBugsnagOnly());
     }
 }

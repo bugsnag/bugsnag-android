@@ -100,7 +100,7 @@ static uint64_t get_called_api_array_slot_bit(bsg_called_api api) {
 }
 
 void bsg_notify_api_called(bugsnag_event *event, bsg_called_api api) {
-  if (!internal_metrics_enabled) {
+  if (!internal_metrics_enabled || event == NULL) {
     return;
   }
 
@@ -157,7 +157,7 @@ static void bsg_modify_callback_count(bugsnag_event *event, const char *api,
 
 void bsg_set_callback_count(bugsnag_event *event, const char *api,
                             int32_t count) {
-  if (!internal_metrics_enabled) {
+  if (!internal_metrics_enabled || event == NULL) {
     return;
   }
 
@@ -187,7 +187,7 @@ void bsg_set_callback_count(bugsnag_event *event, const char *api,
 }
 
 void bsg_notify_add_callback(bugsnag_event *event, const char *api) {
-  if (!internal_metrics_enabled) {
+  if (!internal_metrics_enabled || event == NULL) {
     return;
   }
 
@@ -195,7 +195,7 @@ void bsg_notify_add_callback(bugsnag_event *event, const char *api) {
 }
 
 void bsg_notify_remove_callback(bugsnag_event *event, const char *api) {
-  if (!internal_metrics_enabled) {
+  if (!internal_metrics_enabled || event == NULL) {
     return;
   }
 

@@ -2,37 +2,28 @@ package com.bugsnag.android
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
-import org.junit.Before
 import org.junit.Test
-import java.util.HashMap
 
 class ThreadDeserializerTest {
 
-    private val map = HashMap<String, Any>()
-
-    /**
-     * Generates a map for verifying the serializer
-     */
-    @Before
-    fun setup() {
-        val frame = HashMap<String, Any>()
-        frame["method"] = "foo()"
-        frame["file"] = "Bar.kt"
-        frame["lineNumber"] = 29
-        frame["inProject"] = true
-
-        map["stacktrace"] = listOf(frame)
-        map["id"] = 52L
-        map["type"] = "reactnativejs"
-        map["name"] = "thread-worker-02"
-        map["state"] = "RUNNABLE"
-        map["errorReportingThread"] = true
+    @Test
+    fun deserialize() {
+        val thread = ThreadDeserializer(StackframeDeserializer(), object : Logger {})
+            .deserialize(createThreadAsMap())
+        assertEquals("thread-id-as-string", thread.id)
+        assertCommonThreadContent(thread)
     }
 
     @Test
-    fun deserialize() {
-        val thread = ThreadDeserializer(StackframeDeserializer(), object : Logger {}).deserialize(map)
+    fun deserializeLegacyThread() {
+        val thread =
+            ThreadDeserializer(StackframeDeserializer(), object : Logger {})
+                .deserialize(createLegacyThreadAsMap())
         assertEquals("52", thread.id)
+        assertCommonThreadContent(thread)
+    }
+
+    private fun assertCommonThreadContent(thread: Thread) {
         assertEquals(ErrorType.REACTNATIVEJS, thread.type)
         assertEquals("thread-worker-02", thread.name)
         assertTrue(thread.errorReportingThread)
@@ -43,4 +34,23 @@ class ThreadDeserializerTest {
         assertEquals(29, frame.lineNumber)
         assertTrue(frame.inProject as Boolean)
     }
+
+    private fun createLegacyThreadAsMap(): Map<String, Any> = hashMapOf(
+        "stacktrace" to listOf(
+            hashMapOf(
+                "method" to "foo()",
+                "file" to "Bar.kt",
+                "lineNumber" to 29,
+                "inProject" to true
+            )
+        ),
+        "id" to 52L,
+        "type" to "reactnativejs",
+        "name" to "thread-worker-02",
+        "state" to "RUNNABLE",
+        "errorReportingThread" to true
+    )
+
+    private fun createThreadAsMap(): Map<String, Any> =
+        createLegacyThreadAsMap() + mapOf("id" to "thread-id-as-string")
 }
