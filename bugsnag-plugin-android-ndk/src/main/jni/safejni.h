@@ -193,6 +193,16 @@ void bsg_safe_release_string_utf_chars(JNIEnv *env, jstring string,
                                        const char *utf);
 
 /**
+ * A safe wrapper for the JNI's GetStringUTFRegion or GetStringUTFChars.
+ * This method checks if the parameters are NULL, and ensures that the
+ * buffer is in a valid state upon returning.
+ *
+ * Note: the buffer *must* be zeroed before calling this method.
+ */
+bool bsg_safe_read_string_into(JNIEnv *env, jstring string, char *buffer,
+                               const size_t buffer_size);
+
+/**
  * A safe wrapper for the JNI's ReleaseByteArrayElements. This method checks if
  * an exception is pending and if so clears it so that execution can continue.
  *

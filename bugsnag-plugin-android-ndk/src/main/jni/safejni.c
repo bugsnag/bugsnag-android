@@ -4,6 +4,8 @@
 #include "utils/stack_unwinder.h"
 #include <stdbool.h>
 #include <string.h>
+#include <sys/param.h>
+#include <time.h>
 #include <utils/string.h>
 
 bool bsg_check_and_clear_exc(JNIEnv *env) {
@@ -291,6 +293,51 @@ void bsg_safe_release_string_utf_chars(JNIEnv *env, jstring string,
     return;
   }
   (*env)->ReleaseStringUTFChars(env, string, utf);
+}
+
+// Android modified UTF-8 uses 4-byte encoding for surrogate pairs.
+// If Android starts emitting the expected 3 bytes for the parts of a
+// surrogate-pair, implementation will need to change. More detail & impl here:
+// https://cs.android.com/android/platform/superproject/main/+/971ba345c8b17ccadbe5456594d896982a19b918:art/runtime/jni/jni_internal.cc;l=218-224;bpv=0;bpt=0
+#define MAX_BYTES_PER_UTF16_CHAR 2
+
+bool bsg_safe_read_string_into(JNIEnv *env, jstring string, char *buffer,
+                               const size_t buffer_size) {
+
+  if (env == NULL || string == NULL || buffer == NULL || buffer_size == 0) {
+    return false;
+  }
+
+  const size_t string_length = (*env)->GetStringLength(env, string);
+  if (string_length == 0) {
+    // ensure the output buffer appears empty
+    *buffer = 0;
+    // empty string, early exit
+    return true;
+  }
+
+  // calculate the worst-case byte-string-length from the
+  // Java string.length * bytes-per-char + null-terminator
+  const size_t max_string_length = string_length * MAX_BYTES_PER_UTF16_CHAR + 1;
+  if (max_string_length <= buffer_size) {
+    // the mUTF string can *definitely* fit into the buffer, so we copy
+    // it directly
+    (*env)->GetStringUTFRegion(env, string, 0, string_length, buffer);
+  } else {
+    // it's not certain the string will fit in the output buffer, so we use
+    // an intermediate buffer that could handle a worst-case
+    // (MAX_BYTES_PER_UTF16_CHAR for every Java character)
+    const size_t chars_to_read = MIN(buffer_size - 1, string_length);
+    const size_t tmp_buffer_size =
+        (chars_to_read * MAX_BYTES_PER_UTF16_CHAR) + 1;
+    char tmp_buffer[tmp_buffer_size];
+    // GetStringUTFRegion does not null-terminate its output
+    memset(tmp_buffer, 0, max_string_length);
+    (*env)->GetStringUTFRegion(env, string, 0, chars_to_read, tmp_buffer);
+    bsg_strncpy(buffer, tmp_buffer, buffer_size);
+  }
+
+  return !bsg_check_and_clear_exc(env);
 }
 
 void bsg_safe_release_byte_array_elements(JNIEnv *env, jbyteArray array,

@@ -387,61 +387,62 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_pausedSession(
 }
 
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_addBreadcrumb(
-    JNIEnv *env, jobject _this, jstring name_, jint crumb_type,
-    jstring timestamp_, jobject metadata) {
+    JNIEnv *env, jobject _this, jstring name_, jint crumb_type, jstring timestamp_,
+    jobject metadata) {
 
   if (!bsg_jni_cache->initialized) {
     BUGSNAG_LOG("addBreadcrumb failed: JNI cache not initialized.");
     return;
   }
-  const char *name = bsg_safe_get_string_utf_chars(env, name_);
-  const char *timestamp = bsg_safe_get_string_utf_chars(env, timestamp_);
-
-  if (name != NULL && timestamp != NULL) {
-    bugsnag_breadcrumb *crumb = calloc(1, sizeof(bugsnag_breadcrumb));
-    bsg_strncpy(crumb->name, name, sizeof(crumb->name));
-    bsg_strncpy(crumb->timestamp, timestamp, sizeof(crumb->timestamp));
-
-    // the values of crumb_type are defined in
-    // NativeBridge.BreadcrumbType.toNativeValue()
-    switch (crumb_type) {
-    case 0:
-      crumb->type = BSG_CRUMB_ERROR;
-      break;
-    case 1:
-      crumb->type = BSG_CRUMB_LOG;
-      break;
-    case 2:
-      crumb->type = BSG_CRUMB_MANUAL;
-      break;
-    case 3:
-      crumb->type = BSG_CRUMB_NAVIGATION;
-      break;
-    case 4:
-      crumb->type = BSG_CRUMB_PROCESS;
-      break;
-    case 5:
-      crumb->type = BSG_CRUMB_REQUEST;
-      break;
-    case 6:
-      crumb->type = BSG_CRUMB_STATE;
-      break;
-    case 7:
-      crumb->type = BSG_CRUMB_USER;
-      break;
-    default:
-      crumb->type = BSG_CRUMB_MANUAL;
-    }
-
-    bsg_populate_crumb_metadata(env, crumb, metadata);
-    request_env_write_lock();
-    bsg_event_add_breadcrumb(&bsg_global_env->next_event, crumb);
-    release_env_write_lock();
-
-    free(crumb);
+  bugsnag_breadcrumb *crumb = calloc(1, sizeof(bugsnag_breadcrumb));
+  if (!bsg_safe_read_string_into(env, name_, crumb->name,
+                                 sizeof(crumb->name))) {
+    goto done;
   }
-  bsg_safe_release_string_utf_chars(env, name_, name);
-  bsg_safe_release_string_utf_chars(env, timestamp_, timestamp);
+
+  if (!bsg_safe_read_string_into(env, timestamp_, crumb->timestamp,
+                                 sizeof(crumb->timestamp))) {
+    goto done;
+  }
+
+  // the values of crumb_type are defined in
+  // NativeBridge.BreadcrumbType.toNativeValue()
+  switch (crumb_type) {
+  case 0:
+    crumb->type = BSG_CRUMB_ERROR;
+    break;
+  case 1:
+    crumb->type = BSG_CRUMB_LOG;
+    break;
+  case 2:
+    crumb->type = BSG_CRUMB_MANUAL;
+    break;
+  case 3:
+    crumb->type = BSG_CRUMB_NAVIGATION;
+    break;
+  case 4:
+    crumb->type = BSG_CRUMB_PROCESS;
+    break;
+  case 5:
+    crumb->type = BSG_CRUMB_REQUEST;
+    break;
+  case 6:
+    crumb->type = BSG_CRUMB_STATE;
+    break;
+  case 7:
+    crumb->type = BSG_CRUMB_USER;
+    break;
+  default:
+    crumb->type = BSG_CRUMB_MANUAL;
+  }
+
+  bsg_populate_crumb_metadata(env, crumb, metadata);
+  request_env_write_lock();
+  bsg_event_add_breadcrumb(&bsg_global_env->next_event, crumb);
+  release_env_write_lock();
+
+done:
+  free(crumb);
 }
 
 JNIEXPORT void JNICALL
