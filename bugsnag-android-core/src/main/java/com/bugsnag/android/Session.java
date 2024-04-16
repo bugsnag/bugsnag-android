@@ -32,7 +32,7 @@ public final class Session implements JsonStream.Streamable, UserAware {
     private final AtomicInteger unhandledCount = new AtomicInteger();
     private final AtomicInteger handledCount = new AtomicInteger();
     private final AtomicBoolean tracked = new AtomicBoolean(false);
-    final AtomicBoolean isPaused = new AtomicBoolean(false);
+    private final AtomicBoolean isPaused = new AtomicBoolean(false);
 
     private String apiKey;
 
@@ -202,8 +202,16 @@ public final class Session implements JsonStream.Streamable, UserAware {
         return tracked.compareAndSet(false, true);
     }
 
-    boolean markPaused() {
+    boolean markResumed() {
         return isPaused.compareAndSet(true, false);
+    }
+
+    void markPaused() {
+        isPaused.set(true);
+    }
+
+    boolean isPaused() {
+        return isPaused.get();
     }
 
     boolean isAutoCaptured() {

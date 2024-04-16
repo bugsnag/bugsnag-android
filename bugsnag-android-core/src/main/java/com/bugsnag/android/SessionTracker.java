@@ -120,7 +120,7 @@ class SessionTracker extends BaseObservable implements ForegroundDetector.OnActi
         Session session = currentSession;
 
         if (session != null) {
-            session.isPaused.set(true);
+            session.markPaused();
             updateState(StateEvent.PauseSession.INSTANCE);
         }
     }
@@ -133,7 +133,7 @@ class SessionTracker extends BaseObservable implements ForegroundDetector.OnActi
             session = startSession(false);
             resumed = false;
         } else {
-            resumed = session.markPaused();
+            resumed = session.markResumed();
         }
 
         if (session != null) {
@@ -205,7 +205,7 @@ class SessionTracker extends BaseObservable implements ForegroundDetector.OnActi
     Session getCurrentSession() {
         Session session = currentSession;
 
-        if (session != null && !session.isPaused.get()) {
+        if (session != null && !session.isPaused()) {
             return session;
         }
         return null;
