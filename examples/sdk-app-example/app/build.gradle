@@ -2,13 +2,13 @@ apply plugin: "com.android.application"
 apply plugin: "kotlin-android"
 
 android {
-    compileSdk 31
+    compileSdk 34
     ndkVersion "21.4.7075529"
 
     defaultConfig {
         applicationId "com.example.bugsnag.android"
         minSdkVersion 16
-        targetSdkVersion 31
+        targetSdkVersion 34
         versionCode 1
         versionName "1.0"
     }
@@ -38,15 +38,16 @@ android {
 
     buildFeatures.prefab = true
     packagingOptions.jniLibs.pickFirsts += ["**/libbugsnag-ndk.so"]
+    namespace 'com.example.bugsnag.android'
 }
 
 dependencies {
     implementation "com.bugsnag:bugsnag-android:6.4.0"
     implementation "com.bugsnag:bugsnag-plugin-android-okhttp:6.4.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "androidx.appcompat:appcompat:1.4.0"
-    implementation "com.google.android.material:material:1.4.0"
-    implementation "com.squareup.okhttp3:okhttp:4.10.0"
+    implementation "androidx.appcompat:appcompat:1.6.1"
+    implementation "com.google.android.material:material:1.11.0"
+    implementation "com.squareup.okhttp3:okhttp:4.12.0"
 }
 
 apply plugin: "com.bugsnag.android.gradle"
