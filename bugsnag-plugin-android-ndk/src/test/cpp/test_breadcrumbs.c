@@ -59,7 +59,7 @@ TEST test_add_breadcrumbs_over_max(void) {
   }
 
   // assertions assume that the crumb count is always 50
-  ASSERT_EQ(BUGSNAG_CRUMBS_MAX, event->crumb_count);
+  ASSERT_EQ(event->max_crumb_count, event->crumb_count);
   ASSERT_EQ(14, event->crumb_first_index);
 
   ASSERT_STR_EQ("crumb: 50", event->breadcrumbs[0].name);

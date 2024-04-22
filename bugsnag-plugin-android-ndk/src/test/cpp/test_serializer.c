@@ -108,12 +108,12 @@ void loadBreadcrumbsTestCase(bugsnag_event *event) {
     bugsnag_breadcrumb *crumb = calloc(1, sizeof(bugsnag_breadcrumb));
     memset(crumb, 0, sizeof(bugsnag_breadcrumb));
     event->crumb_count = 4;
-    event->crumb_first_index = BUGSNAG_CRUMBS_MAX - 2;
+    event->crumb_first_index = event->max_crumb_count - 2;
 
     // ensure that serialization loop is covered by test
 
     // first breadcrumb
-    crumb = &event->breadcrumbs[BUGSNAG_CRUMBS_MAX - 2];
+    crumb = &event->breadcrumbs[event->max_crumb_count - 2];
     crumb->type = BSG_CRUMB_USER;
     strcpy(crumb->name, "Jane");
     strcpy(crumb->timestamp, "2018-10-08T12:07:09Z");
@@ -127,7 +127,7 @@ void loadBreadcrumbsTestCase(bugsnag_event *event) {
     strcpy(data->values[0].char_value, "Foo");
 
     // second breadcrumb
-    crumb = &event->breadcrumbs[BUGSNAG_CRUMBS_MAX - 1];
+    crumb = &event->breadcrumbs[event->max_crumb_count - 1];
     crumb->type = BSG_CRUMB_MANUAL;
     strcpy(crumb->name, "Something went wrong");
     strcpy(crumb->timestamp, "2018-10-08T12:07:11Z");

@@ -52,7 +52,8 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
         autoDetectNdkCrashes: Boolean,
         apiLevel: Int,
         is32bit: Boolean,
-        threadSendPolicy: Int
+        threadSendPolicy: Int,
+        maxBreadcrumbs: Int,
     )
 
     external fun startedSession(
@@ -226,7 +227,8 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
                     arg.autoDetectNdkCrashes,
                     Build.VERSION.SDK_INT,
                     is32bit,
-                    arg.sendThreads.ordinal
+                    arg.sendThreads.ordinal,
+                    arg.maxBreadcrumbs
                 )
                 installed.set(true)
             }

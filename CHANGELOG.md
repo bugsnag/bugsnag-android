@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+* `Configuration.maxBreadcrumbs` is now obeyed by `bugsnag-plugin-android-ndk`, so native events will include the correct number of breadcrumbs
+  []()
+
 ## 6.4.0 (2024-04-15)
 
 ### Enhancements

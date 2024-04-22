@@ -150,7 +150,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
     JNIEnv *env, jobject _this, jstring _api_key, jstring _event_path,
     jstring _last_run_info_path, jint consecutive_launch_crashes,
     jboolean auto_detect_ndk_crashes, jint _api_level, jboolean is32bit,
-    jint send_threads) {
+    jint send_threads, jint max_breadcrumbs) {
 
   if (!bsg_jni_cache_init(env)) {
     BUGSNAG_LOG("Could not init JNI jni_cache.");
@@ -164,6 +164,14 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   bugsnag_env->consecutive_launch_crashes = consecutive_launch_crashes;
   bugsnag_env->send_threads = send_threads;
   bugsnag_env->handling_crash = ATOMIC_VAR_INIT(false);
+
+  bugsnag_env->next_event.max_crumb_count = max_breadcrumbs;
+  bugsnag_env->next_event.breadcrumbs =
+      calloc(max_breadcrumbs, sizeof(bugsnag_breadcrumb));
+
+  if (bugsnag_env->next_event.breadcrumbs == NULL) {
+    goto error;
+  }
 
   // copy event path to env struct
   const char *event_path = bsg_safe_get_string_utf_chars(env, _event_path);

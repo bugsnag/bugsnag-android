@@ -687,9 +687,10 @@ public final class com/bugsnag/android/StateEvent$Install : com/bugsnag/android/
 	public final field buildUuid Ljava/lang/String;
 	public final field consecutiveLaunchCrashes I
 	public final field lastRunInfoPath Ljava/lang/String;
+	public final field maxBreadcrumbs I
 	public final field releaseStage Ljava/lang/String;
 	public final field sendThreads Lcom/bugsnag/android/ThreadSendPolicy;
-	public fun <init> (Ljava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILcom/bugsnag/android/ThreadSendPolicy;)V
+	public fun <init> (Ljava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILcom/bugsnag/android/ThreadSendPolicy;I)V
 }
 
 public final class com/bugsnag/android/StateEvent$NotifyHandled : com/bugsnag/android/StateEvent {

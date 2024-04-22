@@ -12,12 +12,6 @@
  */
 #define BUGSNAG_METADATA_MAX 128
 #endif
-#ifndef BUGSNAG_CRUMBS_MAX
-/**
- *  Max number of breadcrumbs in an event. Configures a default if not defined.
- */
-#define BUGSNAG_CRUMBS_MAX 50
-#endif
 #ifndef BUGSNAG_DEFAULT_EX_TYPE
 /**
  * Type assigned to exceptions. Configures a default if not defined.
@@ -34,7 +28,7 @@
 /**
  * Version of the bugsnag_event struct. Serialized to report header.
  */
-#define BUGSNAG_EVENT_VERSION 13
+#define BUGSNAG_EVENT_VERSION 14
 
 #ifdef __cplusplus
 extern "C" {
@@ -229,7 +223,9 @@ typedef struct {
   // Breadcrumbs are a ring; the first index moves as the
   // structure is filled and replaced.
   int crumb_first_index;
-  bugsnag_breadcrumb breadcrumbs[BUGSNAG_CRUMBS_MAX];
+  // the maximum number of breadcrumbs that can be placed in the buffer
+  int max_crumb_count;
+  bugsnag_breadcrumb *breadcrumbs;
 
   char context[64];
   bugsnag_severity severity;
