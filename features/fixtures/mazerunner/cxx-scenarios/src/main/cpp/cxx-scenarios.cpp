@@ -274,5 +274,10 @@ Java_com_bugsnag_android_mazerunner_scenarios_UnhandledNdkAutoNotifyFalseScenari
   abort();
 }
 
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_CXXMaxBreadcrumbCrashScenario_activate(JNIEnv *env,
+                                                                                     jobject thiz) {
+    abort();
 }
 
+}
