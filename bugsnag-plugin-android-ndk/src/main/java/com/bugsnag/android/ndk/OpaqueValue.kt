@@ -28,7 +28,7 @@ internal class OpaqueValue(val json: String) {
 
         private fun encode(value: Any): String {
             val writer = StringWriter()
-            writer.use { JsonStream(it).value(value, true) }
+            writer.use { JsonStream(it).value(value, false) }
             return writer.toString()
         }
 
