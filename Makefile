@@ -64,7 +64,7 @@ fixture-debug: notifier
 example-app:
 	@./gradlew assembleRelease publishToMavenLocal -x check
 	# Build Android example app
-	@./examples/sdk-app-example/gradlew clean assembleRelease
+	@cd ./examples/sdk-app-example/ && ./gradlew clean assembleRelease
 
 bump:
 ifneq ($(shell git diff --staged),)

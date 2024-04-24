@@ -353,13 +353,13 @@ void bugsnag_event_set_user(void *event_ptr, const char *id, const char *email,
 
 void bsg_event_add_breadcrumb(bugsnag_event *event, bugsnag_breadcrumb *crumb) {
   int crumb_index;
-  if (event->crumb_count < BUGSNAG_CRUMBS_MAX) {
+  if (event->crumb_count < event->max_crumb_count) {
     crumb_index = event->crumb_count;
     event->crumb_count++;
   } else {
     crumb_index = event->crumb_first_index;
     event->crumb_first_index =
-        (event->crumb_first_index + 1) % BUGSNAG_CRUMBS_MAX;
+        (event->crumb_first_index + 1) % event->max_crumb_count;
   }
 
   bsg_free_opaque_metadata(&(event->breadcrumbs[crumb_index].metadata));

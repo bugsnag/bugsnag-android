@@ -23,3 +23,11 @@ Feature: Native Breadcrumbs API
     And the event "severity" equals "warning"
     And the event has a "process" breadcrumb named "Rerun field analysis"
     And the event "unhandled" is false
+
+  Scenario: Leaving the maximum number of native breadcrumbs
+    When I run "CXXMaxBreadcrumbCrashScenario" and relaunch the crashed app
+    And I configure Bugsnag for "CXXMaxBreadcrumbCrashScenario"
+    And I wait to receive an error
+    And the error payload contains a completed handled native report
+    And the event "unhandled" is true
+    And the event has 500 breadcrumbs

@@ -365,7 +365,7 @@ void bsg_serialize_breadcrumbs(const bugsnag_event *event, JSON_Array *crumbs) {
                              bsg_crumb_type_string(breadcrumb.type));
       bsg_serialize_breadcrumb_metadata(breadcrumb.metadata, crumb);
       current_index++;
-      if (current_index == BUGSNAG_CRUMBS_MAX) {
+      if (current_index == event->max_crumb_count) {
         current_index = 0;
       }
     }
