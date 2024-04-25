@@ -218,6 +218,8 @@ bool bsg_jni_cache_init(JNIEnv *env) {
   CACHE_CLASS(OpaqueValue, "com/bugsnag/android/ndk/OpaqueValue");
   CACHE_METHOD(OpaqueValue, OpaqueValue_getJson, "getJson",
                "()Ljava/lang/String;");
+  CACHE_STATIC_METHOD(OpaqueValue, OpaqueValue_makeSafe, "makeSafe",
+                      "(Ljava/lang/Object;)Ljava/lang/Object;");
 
   CACHE_ENUM_CONSTANT(ErrorType_C, "com/bugsnag/android/ErrorType", "C");
 
