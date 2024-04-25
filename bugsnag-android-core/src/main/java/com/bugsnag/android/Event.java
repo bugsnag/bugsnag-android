@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 /**
@@ -380,6 +381,21 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware, F
      */
     public void setUnhandled(boolean unhandled) {
         impl.setUnhandled(unhandled);
+    }
+
+    /**
+     * Associate this event with a specific trace. This is usually done automatically when
+     * using bugsnag-android-performance, but can also be set manually if required.
+     *
+     * @param traceId the ID of the trace the event occurred within
+     * @param spanId the ID of the span that the event occurred within
+     */
+    public void setTraceCorrelation(@NonNull UUID traceId, long spanId) {
+        if (traceId != null) {
+            impl.setTraceCorrelation(new TraceCorrelation(traceId, spanId));
+        } else {
+            logNull("traceId");
+        }
     }
 
     protected boolean shouldDiscardClass() {

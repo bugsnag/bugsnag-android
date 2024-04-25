@@ -378,6 +378,7 @@ public class com/bugsnag/android/Event : com/bugsnag/android/FeatureFlagAware, c
 	public fun setContext (Ljava/lang/String;)V
 	public fun setGroupingHash (Ljava/lang/String;)V
 	public fun setSeverity (Lcom/bugsnag/android/Severity;)V
+	public fun setTraceCorrelation (Ljava/util/UUID;J)V
 	public fun setUnhandled (Z)V
 	public fun setUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	protected fun shouldDiscardClass ()Z
