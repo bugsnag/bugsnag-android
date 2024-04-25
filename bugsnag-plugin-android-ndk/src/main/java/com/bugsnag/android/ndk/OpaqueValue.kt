@@ -10,6 +10,7 @@ internal class OpaqueValue(val json: String) {
     companion object {
         private const val MAX_NDK_STRING_LENGTH = 64
         private const val US_ASCII_MAX_CODEPOINT = 127
+        private const val INITIAL_BUFFER_SIZE = 256
 
         private fun isStringNDKSupported(value: String): Boolean {
             // anything over 63 characters is definitely not supported
@@ -27,8 +28,8 @@ internal class OpaqueValue(val json: String) {
         }
 
         private fun encode(value: Any): String {
-            val writer = StringWriter()
-            writer.use { JsonStream(it).value(value, true) }
+            val writer = StringWriter(INITIAL_BUFFER_SIZE)
+            writer.use { JsonStream(it).value(value, false) }
             return writer.toString()
         }
 
