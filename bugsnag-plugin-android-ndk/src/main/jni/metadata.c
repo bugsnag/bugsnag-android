@@ -343,24 +343,29 @@ static void populate_metadata_value(JNIEnv *env, bugsnag_metadata *dst,
     return;
   }
 
-  if (bsg_safe_is_instance_of(env, _value, bsg_jni_cache->number)) {
+  jobject safe_value = bsg_safe_call_static_object_method(
+      env, bsg_jni_cache->OpaqueValue, bsg_jni_cache->OpaqueValue_makeSafe,
+      _value);
+
+  if (bsg_safe_is_instance_of(env, safe_value, bsg_jni_cache->number)) {
     // add a double metadata value
     double value = bsg_safe_call_double_method(
-        env, _value, bsg_jni_cache->number_double_value);
+        env, safe_value, bsg_jni_cache->number_double_value);
     bsg_add_metadata_value_double(dst, section, name, value);
-  } else if (bsg_safe_is_instance_of(env, _value, bsg_jni_cache->Boolean)) {
+  } else if (bsg_safe_is_instance_of(env, safe_value, bsg_jni_cache->Boolean)) {
     // add a boolean metadata value
     bool value = bsg_safe_call_boolean_method(
-        env, _value, bsg_jni_cache->Boolean_booleanValue);
+        env, safe_value, bsg_jni_cache->Boolean_booleanValue);
     bsg_add_metadata_value_bool(dst, section, name, value);
-  } else if (bsg_safe_is_instance_of(env, _value, bsg_jni_cache->String)) {
-    const char *value = bsg_safe_get_string_utf_chars(env, _value);
+  } else if (bsg_safe_is_instance_of(env, safe_value, bsg_jni_cache->String)) {
+    const char *value = bsg_safe_get_string_utf_chars(env, safe_value);
     if (value != NULL) {
       bsg_add_metadata_value_str(dst, section, name, value);
     }
-  } else if (bsg_safe_is_instance_of(env, _value, bsg_jni_cache->OpaqueValue)) {
+  } else if (bsg_safe_is_instance_of(env, safe_value,
+                                     bsg_jni_cache->OpaqueValue)) {
     jstring _json = bsg_safe_call_object_method(
-        env, _value, bsg_jni_cache->OpaqueValue_getJson);
+        env, safe_value, bsg_jni_cache->OpaqueValue_getJson);
     const char *json = bsg_safe_get_string_utf_chars(env, _json);
 
     if (json != NULL) {
@@ -513,8 +518,8 @@ exit:
 
 void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,
                                  jobject metadata) {
-  jobject keyset = NULL;
-  jobject keylist = NULL;
+  jobject entryset = NULL;
+  jobject entries = NULL;
 
   if (metadata == NULL) {
     goto exit;
@@ -526,43 +531,48 @@ void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,
   // get size of metadata map
   jint map_size =
       bsg_safe_call_int_method(env, metadata, bsg_jni_cache->Map_size);
-  if (map_size == -1) {
+  if (map_size <= 0) {
     goto exit;
   }
 
   // create a list of metadata keys
-  keyset =
-      bsg_safe_call_object_method(env, metadata, bsg_jni_cache->Map_keySet);
-  if (keyset == NULL) {
+  entryset =
+      bsg_safe_call_object_method(env, metadata, bsg_jni_cache->Map_entrySet);
+  if (entryset == NULL) {
     goto exit;
   }
-  keylist = bsg_safe_new_object(env, bsg_jni_cache->ArrayList,
-                                bsg_jni_cache->ArrayList_constructor_collection,
-                                keyset);
-  if (keylist == NULL) {
+  entries =
+      bsg_safe_call_object_method(env, entryset, bsg_jni_cache->Set_iterator);
+  if (entries == NULL) {
     goto exit;
   }
 
-  for (int i = 0; i < map_size; i++) {
-    jstring _key = bsg_safe_call_object_method(
-        env, keylist, bsg_jni_cache->ArrayList_get, (jint)i);
-    jobject _value = bsg_safe_call_object_method(env, metadata,
-                                                 bsg_jni_cache->Map_get, _key);
+  while (bsg_safe_call_boolean_method(env, entries,
+                                      bsg_jni_cache->Iterator_hasNext)) {
+    (*env)->PushLocalFrame(env, 3);
+    {
+      jobject entry = bsg_safe_call_object_method(env, entries,
+                                                  bsg_jni_cache->Iterator_next);
+      jstring _key = bsg_safe_call_object_method(
+          env, entry, bsg_jni_cache->MapEntry_getKey);
+      jobject _value = bsg_safe_call_object_method(
+          env, entry, bsg_jni_cache->MapEntry_getValue);
 
-    if (_key != NULL && _value != NULL) {
-      const char *key = bsg_safe_get_string_utf_chars(env, _key);
-      if (key != NULL) {
-        populate_metadata_value(env, &crumb->metadata, "metaData", key, _value);
-        bsg_safe_release_string_utf_chars(env, _key, key);
+      if (_key != NULL && _value != NULL) {
+        const char *key = bsg_safe_get_string_utf_chars(env, _key);
+        if (key != NULL) {
+          populate_metadata_value(env, &crumb->metadata, "metaData", key,
+                                  _value);
+          bsg_safe_release_string_utf_chars(env, _key, key);
+        }
       }
     }
-    bsg_safe_delete_local_ref(env, _key);
-    bsg_safe_delete_local_ref(env, _value);
+    (*env)->PopLocalFrame(env, NULL);
   }
 
 exit:
-  bsg_safe_delete_local_ref(env, keyset);
-  bsg_safe_delete_local_ref(env, keylist);
+  bsg_safe_delete_local_ref(env, entries);
+  bsg_safe_delete_local_ref(env, entryset);
 }
 
 void bsg_populate_event(JNIEnv *env, bugsnag_event *event) {

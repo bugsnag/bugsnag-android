@@ -89,6 +89,7 @@ typedef struct {
 
   jclass OpaqueValue;
   jmethodID OpaqueValue_getJson;
+  jmethodID OpaqueValue_makeSafe;
 
   jobject ErrorType_C;
 } bsg_jni_cache_t;

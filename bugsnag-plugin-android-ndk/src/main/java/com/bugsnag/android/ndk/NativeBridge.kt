@@ -121,7 +121,7 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
                 event.message,
                 event.type.toNativeValue(),
                 event.timestamp,
-                makeSafeMetadata(event.metadata)
+                event.metadata
             )
 
             NotifyHandled -> addHandledEvent()
@@ -169,13 +169,6 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
 
             is StateEvent.ClearFeatureFlag -> clearFeatureFlag(event.name)
             is StateEvent.ClearFeatureFlags -> clearFeatureFlags()
-        }
-    }
-
-    private fun makeSafeMetadata(metadata: Map<String, Any?>): Map<String, Any?> {
-        if (metadata.isEmpty()) return metadata
-        return object : Map<String, Any?> by metadata {
-            override fun get(key: String): Any? = OpaqueValue.makeSafe(metadata[key])
         }
     }
 
