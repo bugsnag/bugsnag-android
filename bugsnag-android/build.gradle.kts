@@ -1,12 +1,11 @@
 plugins {
     id("bugsnag-build-plugin")
+    id("com.android.library")
 }
 
 bugsnagBuildOptions {
     compilesCode = false
 }
-
-apply(plugin = "com.android.library")
 
 dependencies {
     add("api", project(":bugsnag-android-core"))

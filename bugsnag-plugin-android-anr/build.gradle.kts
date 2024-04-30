@@ -1,14 +1,14 @@
 plugins {
     id("bugsnag-build-plugin")
+    id("com.android.library")
 }
 
 bugsnagBuildOptions {
     usesNdk = true
 }
 
-apply(plugin = "com.android.library")
-
 dependencies {
     add("api", project(":bugsnag-android-core"))
 }
+
 apply(from = "../gradle/kotlin.gradle")
