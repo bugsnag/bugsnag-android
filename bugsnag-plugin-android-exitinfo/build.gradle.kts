@@ -6,11 +6,6 @@ plugins {
 
 dependencies {
     api(project(":bugsnag-android-core"))
-}
-
-apply(from = "../gradle/kotlin.gradle")
-
-dependencies {
     implementation("com.google.protobuf:protobuf-javalite:3.24.2")
 }
 

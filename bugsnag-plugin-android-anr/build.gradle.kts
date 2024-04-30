@@ -10,5 +10,3 @@ bugsnagBuildOptions {
 dependencies {
     add("api", project(":bugsnag-android-core"))
 }
-
-apply(from = "../gradle/kotlin.gradle")

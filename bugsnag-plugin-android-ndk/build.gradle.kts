@@ -12,8 +12,6 @@ dependencies {
     api(project(":bugsnag-android-core"))
 }
 
-apply(from = "../gradle/kotlin.gradle")
-
 afterEvaluate {
     tasks.create("prefabReleasePackage") {
         doLast {

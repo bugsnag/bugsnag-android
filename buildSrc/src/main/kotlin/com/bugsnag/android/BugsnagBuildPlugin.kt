@@ -6,6 +6,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.dependencies
+import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import java.io.File
 
 /**
@@ -65,6 +66,8 @@ class BugsnagBuildPlugin : Plugin<Project> {
         project.apply(from = project.file("../gradle/license-check.gradle"))
 
         if (bugsnag.compilesCode) {
+            project.configureKotlinOptions()
+
             project.apply(from = project.file("../gradle/detekt.gradle"))
             project.apply(from = project.file("../gradle/checkstyle.gradle"))
         }
@@ -172,6 +175,21 @@ class BugsnagBuildPlugin : Plugin<Project> {
                 "androidTestImplementation",
                 "androidx.test.espresso:espresso-core:${Versions.espressoTestLib}"
             )
+        }
+    }
+
+    private fun Project.configureKotlinOptions() {
+        tasks.withType(KotlinCompile::class.java).configureEach {
+            kotlinOptions {
+                allWarningsAsErrors = true
+                apiVersion = Versions.kotlinLang
+                languageVersion = Versions.kotlinLang
+                freeCompilerArgs += listOf(
+                    "-Xno-call-assertions",
+                    "-Xno-receiver-assertions",
+                    "-Xno-param-assertions"
+                )
+            }
         }
     }
 

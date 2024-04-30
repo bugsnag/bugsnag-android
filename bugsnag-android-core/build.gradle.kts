@@ -23,8 +23,6 @@ tasks.getByName<DokkaTask>("dokkaHtml") {
     }
 }
 
-apply(from = "../gradle/kotlin.gradle")
-
 // pick up dsl-json by adding to the default sourcesets
 android {
     sourceSets {

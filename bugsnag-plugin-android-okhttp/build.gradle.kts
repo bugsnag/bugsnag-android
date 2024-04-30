@@ -3,8 +3,6 @@ plugins {
     id("com.android.library")
 }
 
-apply(from = "../gradle/kotlin.gradle")
-
 dependencies {
     add("api", project(":bugsnag-android-core"))
 
