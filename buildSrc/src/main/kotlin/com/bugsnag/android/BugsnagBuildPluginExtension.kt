@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import com.android.build.api.dsl.LibraryExtension
 import org.gradle.api.model.ObjectFactory
 
 /**
@@ -8,6 +9,8 @@ import org.gradle.api.model.ObjectFactory
  * can disable it.
  */
 open class BugsnagBuildPluginExtension(@Suppress("UNUSED_PARAMETER") objects: ObjectFactory) {
+
+     internal val androidConfiguration = ArrayList<LibraryExtension.() -> Unit>()
 
     /**
      * Whether this project compiles code or not. If this is set to false then unnecessary
@@ -25,4 +28,7 @@ open class BugsnagBuildPluginExtension(@Suppress("UNUSED_PARAMETER") objects: Ob
      */
     open var publishesPrefab: String? = null
 
+    fun android(config: LibraryExtension.() -> Unit) {
+        androidConfiguration.add(config)
+    }
 }

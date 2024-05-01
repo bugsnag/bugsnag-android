@@ -1,9 +1,0 @@
-plugins {
-    id("bugsnag-build-plugin")
-}
-
-apply plugin: "com.android.library"
-
-dependencies {
-    api(project(":bugsnag-android-core"))
-}
