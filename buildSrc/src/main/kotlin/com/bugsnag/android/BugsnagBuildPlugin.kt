@@ -40,7 +40,7 @@ class BugsnagBuildPlugin : Plugin<Project> {
         // load 3rd party gradle plugins
         project.applyPlugins(bugsnag)
 
-        val android = project.extensions.getByType(BaseExtension::class.java)
+        val android = project.extensions.getByType(LibraryExtension::class.java)
         android.apply {
             configureDefaults()
             configureAndroidLint(project)
@@ -51,10 +51,12 @@ class BugsnagBuildPlugin : Plugin<Project> {
                 configureNdk(project)
 
                 bugsnag.publishesPrefab?.let { prefabModuleName ->
-                    (android as? LibraryExtension)?.run {
-                        configurePrefabPublishing(prefabModuleName)
-                    }
+                    configurePrefabPublishing(prefabModuleName)
                 }
+            }
+
+            bugsnag.androidConfiguration.forEach { config ->
+                config(android)
             }
         }
 

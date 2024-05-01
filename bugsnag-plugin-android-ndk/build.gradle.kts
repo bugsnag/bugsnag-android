@@ -1,6 +1,5 @@
 plugins {
     id("bugsnag-build-plugin")
-    id("com.android.library")
 }
 
 bugsnagBuildOptions {
@@ -8,12 +7,14 @@ bugsnagBuildOptions {
     publishesPrefab = "bugsnag-ndk"
 }
 
+apply(plugin = "com.android.library")
+
 dependencies {
-    api(project(":bugsnag-android-core"))
+    add("api", project(":bugsnag-android-core"))
 }
 
 afterEvaluate {
-    tasks.create("prefabReleasePackage") {
+    tasks.getByName("prefabReleasePackage") {
         doLast {
             project.fileTree("build/intermediates/prefab_package/") {
                 include("**/abi.json")

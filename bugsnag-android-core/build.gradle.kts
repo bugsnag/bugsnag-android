@@ -1,14 +1,27 @@
+import kotlinx.validation.ApiValidationExtension
 import org.jetbrains.dokka.gradle.DokkaTask
 
 plugins {
     id("bugsnag-build-plugin")
-    id("com.android.library")
 }
 
 bugsnagBuildOptions {
     usesNdk = true
+
+    // pick up dsl-json by adding to the default sourcesets
+    android {
+        sourceSets {
+            named("main") {
+                java.srcDirs("dsl-json/library/src/main/java")
+            }
+            named("test") {
+                java.srcDirs("dsl-json/library/src/test/java")
+            }
+        }
+    }
 }
 
+apply(plugin = "com.android.library")
 apply(plugin = "org.jetbrains.dokka")
 
 tasks.getByName<DokkaTask>("dokkaHtml") {
@@ -23,16 +36,6 @@ tasks.getByName<DokkaTask>("dokkaHtml") {
     }
 }
 
-// pick up dsl-json by adding to the default sourcesets
-android {
-    sourceSets {
-        named("main") {
-            java.srcDirs("dsl-json/library/src/main/java")
-        }
-        named("test") {
-            java.srcDirs("dsl-json/library/src/test/java")
-        }
-    }
+plugins.withId("org.jetbrains.kotlinx.binary-compatibility-validator") {
+    project.extensions.getByType(ApiValidationExtension::class.java).ignoredPackages.add("com.bugsnag.android.repackaged.dslplatform.json")
 }
-
-apiValidation.ignoredPackages.add("com.bugsnag.android.repackaged.dslplatform.json")
