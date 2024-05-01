@@ -46,4 +46,4 @@ dependencies {
 }
 
 apply from: "../../../../gradle/detekt.gradle"
-apply from: "../../../../gradle/checkstyle.gradle"
+apply from: "../gradle/checkstyle.gradle"

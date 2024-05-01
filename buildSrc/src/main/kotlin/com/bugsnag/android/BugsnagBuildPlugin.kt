@@ -67,9 +67,9 @@ class BugsnagBuildPlugin : Plugin<Project> {
 
         if (bugsnag.compilesCode) {
             project.configureKotlinOptions()
+            project.configureCheckstyle()
 
             project.apply(from = project.file("../gradle/detekt.gradle"))
-            project.apply(from = project.file("../gradle/checkstyle.gradle"))
         }
     }
 
@@ -215,6 +215,7 @@ class BugsnagBuildPlugin : Plugin<Project> {
         plugins.apply("com.github.hierynomus.license")
 
         if (bugsnag.compilesCode) {
+            plugins.apply("checkstyle")
             plugins.apply("kotlin-android")
             plugins.apply("io.gitlab.arturbosch.detekt")
             plugins.apply("org.jlleitschuh.gradle.ktlint")
