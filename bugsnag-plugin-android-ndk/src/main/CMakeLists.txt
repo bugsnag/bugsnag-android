@@ -6,35 +6,37 @@ add_library( # Specifies the name of the library.
              SHARED
 
              # Provides a relative path to your source file(s).
-    jni/bugsnag_ndk.c
-    jni/bugsnag.c
-    jni/metadata.c
-    jni/safejni.c
-    jni/jni_cache.c
-    jni/event.c
-    jni/featureflags.c
-    jni/internal_metrics.c
-    jni/handlers/signal_handler.c
-    jni/handlers/cpp_handler.cpp
-    jni/utils/crash_info.c
-    jni/utils/serializer/buffered_writer.c
-    jni/utils/serializer/event_reader.c
-    jni/utils/serializer/event_writer.c
-    jni/utils/serializer/json_writer.c
-    jni/utils/stack_unwinder.cpp
-        jni/utils/seqlock.c
-    jni/utils/serializer.c
-    jni/utils/string.c
-    jni/utils/threads.c
-    jni/utils/memory.c
-    jni/deps/parson/parson.c
-             )
+            jni/bugsnag_ndk.c
+            jni/bugsnag.c
+            jni/metadata.c
+            jni/safejni.c
+            jni/jni_cache.c
+            jni/event.c
+            jni/featureflags.c
+            jni/internal_metrics.c
+            jni/handlers/signal_handler.c
+            jni/handlers/cpp_handler.cpp
+            jni/utils/crash_info.c
+            jni/utils/serializer/buffered_writer.c
+            jni/utils/serializer/event_reader.c
+            jni/utils/serializer/event_writer.c
+            jni/utils/serializer/json_writer.c
+            jni/utils/serializer/BSG_KSJSONCodec.c
+            jni/utils/serializer/BSG_KSCrashStringConversion.c
+            jni/utils/stack_unwinder.cpp
+            jni/utils/seqlock.c
+            jni/utils/serializer.c
+            jni/utils/string.c
+            jni/utils/threads.c
+            jni/utils/memory.c
+            jni/deps/parson/parson.c
+)
 
 include_directories(
     jni
     jni/deps
     jni/external/libunwindstack-ndk/include
-             )
+)
 
 target_include_directories(bugsnag-ndk PRIVATE ${BUGSNAG_DIR}/assets/include)
 
