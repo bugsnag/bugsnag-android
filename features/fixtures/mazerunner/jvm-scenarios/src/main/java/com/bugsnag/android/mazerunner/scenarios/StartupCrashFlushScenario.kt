@@ -2,6 +2,7 @@ package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
 import android.os.Handler
+import android.os.Looper
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.mazerunner.disableAllDelivery
 
@@ -35,7 +36,7 @@ internal class StartupCrashFlushScenario(
     override fun startScenario() {
         super.startScenario()
         if ("CrashOfflineWithDelay" == eventMetadata) {
-            Handler().postDelayed(
+            Handler(Looper.getMainLooper()).postDelayed(
                 Runnable {
                     throw RuntimeException("Regular crash")
                 },
