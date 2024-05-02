@@ -47,7 +47,6 @@
 #define BSG_KSLOG_ERROR(FMT, ...)
 #endif
 
-
 /** The work buffer size to use when escaping string values.
  * There's little reason to change this since nothing ever gets truncated.
  */
@@ -57,7 +56,8 @@
 
 /**
  * The maximum number of significant digits when printing floats.
- * 7 (6 + 1 whole digit in exp form) is the default used by the old sprintf code.
+ * 7 (6 + 1 whole digit in exp form) is the default used by the old sprintf
+ * code.
  */
 #define MAX_SIGNIFICANT_DIGITS 7
 
@@ -88,7 +88,6 @@ const char *bsg_ksjsonstringForError(const int error) {
   }
 }
 
-
 // ============================================================================
 #pragma mark - Encode -
 // ============================================================================
@@ -107,7 +106,7 @@ const char *bsg_ksjsonstringForError(const int error) {
  * @return true if the data was handled successfully.
  */
 #define addJSONData(CONTEXT, DATA, LENGTH)                                     \
-    (CONTEXT)->addJSONData(DATA, LENGTH, (CONTEXT)->userData)
+  (CONTEXT)->addJSONData(DATA, LENGTH, (CONTEXT)->userData)
 
 /** Escape a string portion for use with JSON and send to data handler.
  *
@@ -139,8 +138,8 @@ int bsg_ksjsoncodec_i_appendEscapedString(
   int result;
   for (; src < srcEnd; src++) {
 
-    // If we add an escaped control character this may exceed the buffer by up to
-    // 6 characters: add this chunk now, reset the buffer and carry on
+    // If we add an escaped control character this may exceed the buffer by up
+    // to 6 characters: add this chunk now, reset the buffer and carry on
     if (dst + 6 > workBuffer + BSG_KSJSONCODEC_WorkBufferSize) {
       size_t encLength = (size_t)(dst - workBuffer);
       unlikely_if((result = addJSONData(context, dst - encLength, encLength)) !=
@@ -223,8 +222,8 @@ int bsg_ksjsoncodec_i_addEscapedString(BSG_KSJSONEncodeContext *const context,
     unlikely_if(toAdd > BSG_KSJSONCODEC_WorkBufferSize) {
       toAdd = BSG_KSJSONCODEC_WorkBufferSize;
     }
-    result = bsg_ksjsoncodec_i_appendEscapedString(context, string + offset,
-                                                   toAdd);
+    result =
+        bsg_ksjsoncodec_i_appendEscapedString(context, string + offset, toAdd);
     unlikely_if(result != BSG_KSJSON_OK) { break; }
     offset += toAdd;
   }
@@ -275,8 +274,7 @@ int bsg_ksjsonbeginElement(BSG_KSJSONEncodeContext *const context,
       return result;
     }
     for (int i = 0; i < context->containerLevel; i++) {
-      unlikely_if((result = addJSONData(context, "    ", 4)) !=
-                  BSG_KSJSON_OK) {
+      unlikely_if((result = addJSONData(context, "    ", 4)) != BSG_KSJSON_OK) {
         return result;
       }
     }
@@ -293,14 +291,12 @@ int bsg_ksjsonbeginElement(BSG_KSJSONEncodeContext *const context,
       return result;
     }
     unlikely_if(context->prettyPrint) {
-      unlikely_if((result = addJSONData(context, ": ", 2)) !=
-                  BSG_KSJSON_OK) {
+      unlikely_if((result = addJSONData(context, ": ", 2)) != BSG_KSJSON_OK) {
         return result;
       }
     }
     else {
-      unlikely_if((result = addJSONData(context, ":", 1)) !=
-                  BSG_KSJSON_OK) {
+      unlikely_if((result = addJSONData(context, ":", 1)) != BSG_KSJSON_OK) {
         return result;
       }
     }
@@ -360,9 +356,9 @@ int bsg_ksjsonaddJSONElement(BSG_KSJSONEncodeContext *const context,
     return bsg_ksjsonaddNullElement(context, name);
   }
   size_t idx = 0;
-  while (idx < length && (element[idx] == ' ' || element[idx] == '\r' ||
-                          element[idx] == '\n' || element[idx] == '\t' ||
-                          element[idx] == '\f')) {
+  while (idx < length &&
+         (element[idx] == ' ' || element[idx] == '\r' || element[idx] == '\n' ||
+          element[idx] == '\t' || element[idx] == '\f')) {
     idx++;
   }
   unlikely_if(idx >= length) {
@@ -408,9 +404,7 @@ int bsg_ksjsonaddNullElement(BSG_KSJSONEncodeContext *const context,
 int bsg_ksjsonaddStringElement(BSG_KSJSONEncodeContext *const context,
                                const char *const name, const char *const value,
                                size_t length) {
-  unlikely_if(value == NULL) {
-    return bsg_ksjsonaddNullElement(context, name);
-  }
+  unlikely_if(value == NULL) { return bsg_ksjsonaddNullElement(context, name); }
   int result = bsg_ksjsonbeginElement(context, name);
   unlikely_if(result != BSG_KSJSON_OK) { return result; }
   if (length == BSG_KSJSON_SIZE_AUTOMATIC) {
@@ -517,8 +511,7 @@ int bsg_ksjsonendContainer(BSG_KSJSONEncodeContext *const context) {
       return result;
     }
     for (int i = 0; i < context->containerLevel; i++) {
-      unlikely_if((result = addJSONData(context, "    ", 4)) !=
-                  BSG_KSJSON_OK) {
+      unlikely_if((result = addJSONData(context, "    ", 4)) != BSG_KSJSON_OK) {
         return result;
       }
     }
@@ -541,8 +534,7 @@ void bsg_ksjsonbeginEncode(BSG_KSJSONEncodeContext *const context,
 int bsg_ksjsonendEncode(BSG_KSJSONEncodeContext *const context) {
   int result = BSG_KSJSON_OK;
   while (context->containerLevel > 0) {
-    unlikely_if((result = bsg_ksjsonendContainer(context)) !=
-                BSG_KSJSON_OK) {
+    unlikely_if((result = bsg_ksjsonendContainer(context)) != BSG_KSJSON_OK) {
       return result;
     }
   }

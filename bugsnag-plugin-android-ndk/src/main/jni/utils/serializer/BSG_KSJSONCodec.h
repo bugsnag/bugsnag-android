@@ -50,8 +50,8 @@ enum {
   BSG_KSJSON_ERROR_INVALID_CHARACTER = 1,
 
   /** Encoding: addJSONData could not handle the data.
-     * This code is not used by the decoder, but is meant to be returned by
-     * the addJSONData callback method if it couldn't handle the data.
+   * This code is not used by the decoder, but is meant to be returned by
+   * the addJSONData callback method if it couldn't handle the data.
    */
   BSG_KSJSON_ERROR_CANNOT_ADD_DATA = 2,
 
@@ -59,9 +59,9 @@ enum {
   BSG_KSJSON_ERROR_INCOMPLETE = 3,
 
   /** Decoding: Parsing failed due to bad data structure/type/contents.
-     * This code is not used by the decoder, but is meant to be returned
-     * by the user callback methods if the decoded data is incorrect for
-     * semantic or structural reasons.
+   * This code is not used by the decoder, but is meant to be returned
+   * by the user callback methods if the decoded data is incorrect for
+   * semantic or structural reasons.
    */
   BSG_KSJSON_ERROR_INVALID_DATA = 4,
 };
@@ -364,113 +364,6 @@ int bsg_ksjsonaddRawJSONData(BSG_KSJSONEncodeContext *const context,
  * @return BSG_KSJSON_OK if the process was successful.
  */
 int bsg_ksjsonendContainer(BSG_KSJSONEncodeContext *context);
-
-// ============================================================================
-// Decode
-// ============================================================================
-
-/**
- * Callbacks called during a JSON decode process.
- * All function pointers must point to valid functions.
- */
-typedef struct BSG_KSJSONDecodeCallbacks {
-  /** Called when a boolean element is decoded.
-     *
-     * @param name The element's name.
-     *
-     * @param value The element's value.
-     *
-     * @param userData Data that was specified when calling bsg_ksjsondecode().
-     *
-     * @return BSG_KSJSON_OK if decoding should continue.
-   */
-  int (*onBooleanElement)(const char *name, bool value, void *userData);
-
-  /** Called when a floating point element is decoded.
-     *
-     * @param name The element's name.
-     *
-     * @param value The element's value.
-     *
-     * @param userData Data that was specified when calling bsg_ksjsondecode().
-     *
-     * @return BSG_KSJSON_OK if decoding should continue.
-   */
-  int (*onFloatingPointElement)(const char *name, double value,
-                                void *userData);
-
-  /** Called when an integer element is decoded.
-     *
-     * @param name The element's name.
-     *
-     * @param value The element's value.
-     *
-     * @param userData Data that was specified when calling bsg_ksjsondecode().
-     *
-     * @return BSG_KSJSON_OK if decoding should continue.
-   */
-  int (*onIntegerElement)(const char *name, long long value, void *userData);
-
-  /** Called when a null element is decoded.
-     *
-     * @param name The element's name.
-     *
-     * @param userData Data that was specified when calling bsg_ksjsondecode().
-     *
-     * @return BSG_KSJSON_OK if decoding should continue.
-   */
-  int (*onNullElement)(const char *name, void *userData);
-
-  /** Called when a string element is decoded.
-     *
-     * @param name The element's name.
-     *
-     * @param value The element's value.
-     *
-     * @param userData Data that was specified when calling bsg_ksjsondecode().
-     *
-     * @return BSG_KSJSON_OK if decoding should continue.
-   */
-  int (*onStringElement)(const char *name, const char *value, void *userData);
-
-  /** Called when a new object is encountered.
-     *
-     * @param name The object's name.
-     *
-     * @param userData Data that was specified when calling bsg_ksjsondecode().
-     *
-     * @return BSG_KSJSON_OK if decoding should continue.
-   */
-  int (*onBeginObject)(const char *name, void *userData);
-
-  /** Called when a new array is encountered.
-     *
-     * @param name The array's name.
-     *
-     * @param userData Data that was specified when calling bsg_ksjsondecode().
-     *
-     * @return BSG_KSJSON_OK if decoding should continue.
-   */
-  int (*onBeginArray)(const char *name, void *userData);
-
-  /** Called when leaving the current container and returning to the next
-     * higher level container.
-     *
-     * @param userData Data that was specified when calling bsg_ksjsondecode().
-     *
-     * @return BSG_KSJSON_OK if decoding should continue.
-   */
-  int (*onEndContainer)(void *userData);
-
-  /** Called when the end of the input data is reached.
-     *
-     * @param userData Data that was specified when calling bsg_ksjsondecode().
-     *
-     * @return BSG_KSJSON_OK if decoding should continue.
-   */
-  int (*onEndData)(void *userData);
-
-} BSG_KSJSONDecodeCallbacks;
 
 #ifdef __cplusplus
 }
