@@ -80,7 +80,7 @@ abstract class Scenario(
     }
 
     fun measureBugsnagStartupDuration(context: Context, config: Configuration): Client {
-        return measureSpan("Bugsnag Startup Duration") {
+        return measureSpan("Bugsnag Startup") {
             Bugsnag.start(context, config)
         }
     }

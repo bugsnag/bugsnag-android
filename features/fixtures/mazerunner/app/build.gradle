@@ -15,7 +15,8 @@ android {
         manifestPlaceholders = [
                 // omit any of the following placeholders to use the default values
                 bugsnagApiKey: "abc12312312312312312312312312312",
-                bugsnagPerformanceApiKey: "abc12312312312312312312312312312",
+                bugsnagPerformanceApiKey: System.getenv("BUGSNAG_PERFORMANCE_API_KEY")
+                        ?: "abc12312312312312312312312312312",
                 bugsnagAppType: "test",
                 bugsnagAppVersion: "7.5.3",
                 bugsnagAutoDetectErrors: true,

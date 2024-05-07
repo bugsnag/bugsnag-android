@@ -12,7 +12,8 @@ android {
     defaultConfig {
         minSdkVersion 17
         manifestPlaceholders = [
-                bugsnagPerformanceApiKey: "abc12312312312312312312312312312",
+                bugsnagPerformanceApiKey: System.getenv("BUGSNAG_PERFORMANCE_API_KEY")
+                        ?: "abc12312312312312312312312312312",
         ]
     }
 
