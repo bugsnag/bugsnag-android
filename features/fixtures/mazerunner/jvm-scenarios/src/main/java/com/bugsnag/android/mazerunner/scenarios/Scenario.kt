@@ -14,12 +14,14 @@ import android.os.HandlerThread
 import android.os.Looper
 import android.util.Log
 import com.bugsnag.android.Bugsnag
+import com.bugsnag.android.Client
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.mazerunner.BugsnagIntentParams
 import com.bugsnag.android.mazerunner.MazerunnerHttpClient
 import com.bugsnag.android.mazerunner.log
 import com.bugsnag.android.mazerunner.multiprocess.MultiProcessService
 import com.bugsnag.android.mazerunner.multiprocess.findCurrentProcessName
+import com.bugsnag.android.performance.measureSpan
 import java.io.File
 import kotlin.system.measureNanoTime
 
@@ -77,13 +79,19 @@ abstract class Scenario(
         ) { startup() }
     }
 
+    fun measureBugsnagStartupDuration(context: Context, config: Configuration): Client {
+        return measureSpan("Bugsnag Startup Duration") {
+            Bugsnag.start(context, config)
+        }
+    }
+
     /**
      * Initializes Bugsnag. It is possible to override this method if the scenario requires
      * it - e.g., if the config needs to be loaded from the manifest.
      */
     open fun startBugsnag(startBugsnagOnly: Boolean) {
         this.startBugsnagOnly = startBugsnagOnly
-        reportBugsnagStartupDuration { Bugsnag.start(context, config) }
+        measureBugsnagStartupDuration(context, config)
     }
 
     /**
