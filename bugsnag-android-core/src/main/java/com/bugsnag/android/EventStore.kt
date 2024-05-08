@@ -208,7 +208,7 @@ internal class EventStore(
     }
 
     private fun handleEventFlushFailure(exc: Exception, eventFile: File) {
-        delegate?.onErrorIOFailure(exc, eventFile, "Crash Report Deserialization")
+        logger.e(exc.message ?: "Failed to send event", exc)
         deleteStoredFiles(setOf(eventFile))
     }
 
