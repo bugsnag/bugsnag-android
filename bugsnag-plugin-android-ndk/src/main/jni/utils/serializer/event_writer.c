@@ -121,9 +121,14 @@ bool bsg_write_event_file(bsg_environment *env, const char *filename) {
         json, "context", event->context,
         strnlen(event->context, sizeof(event->context))));
 
-    if (!bsg_write_metadata(json, &event->metadata)) {
-      goto error;
+    CHECKED(bsg_ksjsonbeginObject(json, "metaData"));
+    {
+      if (!bsg_write_metadata(json, &event->metadata)) {
+        goto error;
+      }
     }
+    CHECKED(bsg_ksjsonendContainer(json));
+
     if (!bsg_write_severity_reason(json, event)) {
       goto error;
     }
@@ -218,7 +223,6 @@ static bool bsg_write_metadata(BSG_KSJSONEncodeContext *json,
   // helps explain it).
   bool written[value_count];
 
-  CHECKED(bsg_ksjsonbeginObject(json, "metaData"));
   memset(written, 0, sizeof(bool) * value_count);
   for (int i = 0; i < value_count; i++) {
     bsg_metadata_value *value = &metadata->values[i];
@@ -251,7 +255,6 @@ static bool bsg_write_metadata(BSG_KSJSONEncodeContext *json,
     }
     CHECKED(bsg_ksjsonendContainer(json));
   }
-  CHECKED(bsg_ksjsonendContainer(json));
 
   return true;
 error:
