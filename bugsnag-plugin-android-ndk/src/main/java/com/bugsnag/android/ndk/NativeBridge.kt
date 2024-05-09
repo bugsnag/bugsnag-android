@@ -8,6 +8,7 @@ import com.bugsnag.android.StateEvent.AddBreadcrumb
 import com.bugsnag.android.StateEvent.AddMetadata
 import com.bugsnag.android.StateEvent.ClearMetadataSection
 import com.bugsnag.android.StateEvent.ClearMetadataValue
+import com.bugsnag.android.StateEvent.DeliverPending
 import com.bugsnag.android.StateEvent.Install
 import com.bugsnag.android.StateEvent.NotifyHandled
 import com.bugsnag.android.StateEvent.NotifyUnhandled
@@ -107,6 +108,7 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
 
         when (event) {
             is Install -> handleInstallMessage(event)
+            is DeliverPending -> deliverPendingReports()
             is AddMetadata -> handleAddMetadata(event)
             is ClearMetadataSection -> clearMetadataTab(event.section)
             is ClearMetadataValue -> removeMetadata(
@@ -166,6 +168,17 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
 
             is StateEvent.ClearFeatureFlag -> clearFeatureFlag(event.name)
             is StateEvent.ClearFeatureFlags -> clearFeatureFlags()
+        }
+    }
+
+    private fun deliverPendingReports() {
+        val discardScanner = ReportDiscardScanner(logger)
+        reportDirectory.listFiles()?.forEach { reportFile ->
+            if (discardScanner.shouldDiscard(reportFile)) {
+                reportFile.delete()
+            } else {
+                NativeInterface.deliverReport(reportFile)
+            }
         }
     }
 

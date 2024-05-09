@@ -193,8 +193,13 @@ static bool bsg_write_metadata_value(BSG_KSJSONEncodeContext *json,
     CHECKED(JSON_LIMITED_STRING_ELEMENT(value->name, value->char_value));
     break;
   case BSG_METADATA_NUMBER_VALUE:
-    CHECKED(bsg_ksjsonaddFloatingPointElement(json, value->name,
-                                              value->double_value));
+    if (value->double_value == (double)((long long)value->double_value)) {
+      CHECKED(bsg_ksjsonaddIntegerElement(json, value->name,
+                                          (long long)value->double_value));
+    } else {
+      CHECKED(bsg_ksjsonaddFloatingPointElement(json, value->name,
+                                                value->double_value));
+    }
     break;
   case BSG_METADATA_OPAQUE_VALUE:
     CHECKED(bsg_ksjsonbeginElement(json, value->name));

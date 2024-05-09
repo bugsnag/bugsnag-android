@@ -7,7 +7,6 @@ import com.bugsnag.android.internal.ImmutableConfig
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -22,6 +21,7 @@ import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
+import java.io.File
 import java.nio.file.Files
 
 /**
@@ -87,9 +87,10 @@ internal class NativeInterfaceApiTest {
     @Test
     fun getNativeReportPathPersistenceDirectory() {
         val customDir = Files.createTempDirectory("custom").toFile()
-        `when`(eventStore.storageDir).thenReturn(customDir)
+        `when`(immutableConfig.persistenceDirectory).thenReturn(lazy { customDir })
         val observed = NativeInterface.getNativeReportPath()
-        assertSame(customDir, observed)
+        val expected = File(customDir, "bugsnag/native")
+        assertEquals(expected, observed)
     }
 
     @Test
