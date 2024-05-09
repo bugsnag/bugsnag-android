@@ -81,15 +81,7 @@ public class NativeInterface {
      */
     @NonNull
     public static File getNativeReportPath() {
-        return getNativeReportPath(getPersistenceDirectory());
-    }
-
-    private static @NonNull File getNativeReportPath(@NonNull File persistenceDirectory) {
-        return new File(persistenceDirectory, "bugsnag/native");
-    }
-
-    private static @NonNull File getPersistenceDirectory() {
-        return getClient().getConfig().getPersistenceDirectory().getValue();
+        return getClient().getEventStore().getStorageDir();
     }
 
     /**

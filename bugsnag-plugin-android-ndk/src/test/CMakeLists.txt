@@ -12,7 +12,7 @@ add_library(bugsnag-ndk-test SHARED
     cpp/test_breadcrumbs.c
     cpp/test_bsg_event.c
     cpp/test_featureflags.c
-    cpp/migrations/EventOnDiskTests.cpp
+    cpp/test_bsg_event.c
     cpp/UnwindTest.cpp
 )
 target_link_libraries(bugsnag-ndk-test bugsnag-ndk)

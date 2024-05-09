@@ -18,9 +18,7 @@ add_library( # Specifies the name of the library.
             jni/handlers/cpp_handler.cpp
             jni/utils/crash_info.c
             jni/utils/serializer/buffered_writer.c
-            jni/utils/serializer/event_reader.c
             jni/utils/serializer/event_writer.c
-            jni/utils/serializer/json_writer.c
             jni/utils/serializer/BSG_KSJSONCodec.c
             jni/utils/serializer/BSG_KSCrashStringConversion.c
             jni/utils/stack_unwinder.cpp

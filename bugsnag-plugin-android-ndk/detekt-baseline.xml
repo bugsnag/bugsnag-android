@@ -4,7 +4,7 @@
   <CurrentIssues>
     <ID>CyclomaticComplexMethod:NativeBridge.kt$NativeBridge$override fun onStateChange(event: StateEvent)</ID>
     <ID>LongMethod:EventOnDiskTests.kt$EventOnDiskTests$@Test fun testEvent()</ID>
-    <ID>LongParameterList:NativeBridge.kt$NativeBridge$( apiKey: String, reportingDirectory: String, lastRunInfoPath: String, consecutiveLaunchCrashes: Int, autoDetectNdkCrashes: Boolean, apiLevel: Int, is32bit: Boolean, threadSendPolicy: Int, maxBreadcrumbs: Int, )</ID>
+    <ID>LongParameterList:NativeBridge.kt$NativeBridge$( apiKey: String, reportingDirectory: String, lastRunInfoPath: String, eventUUID: String, consecutiveLaunchCrashes: Int, autoDetectNdkCrashes: Boolean, apiLevel: Int, is32bit: Boolean, threadSendPolicy: Int, maxBreadcrumbs: Int, )</ID>
     <ID>NestedBlockDepth:NativeBridge.kt$NativeBridge$private fun deliverPendingReports()</ID>
     <ID>TooManyFunctions:NativeBridge.kt$NativeBridge : StateObserver</ID>
     <ID>UseCheckOrError:ResourceUtils.kt$throw IllegalStateException("Failed to read JSON from $resourceName")</ID>

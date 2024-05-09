@@ -24,12 +24,11 @@ typedef struct {
   /**
    * File path on disk where the next crash report will be written if needed.
    */
-  char next_event_path[384];
+  char event_path[384];
   /**
-   * File path on disk where the next crash report static data will be written
-   * if needed.
+   * The pre-generated UUID of the next crash report.
    */
-  char next_event_static_data_path[384];
+  char event_uuid[37];
   /**
    * File path on disk where the last run info will be written if needed.
    */

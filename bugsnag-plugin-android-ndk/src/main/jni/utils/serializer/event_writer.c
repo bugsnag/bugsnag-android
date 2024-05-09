@@ -2,6 +2,7 @@
 
 #include <fcntl.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
 
 #include "BSG_KSCrashStringConversion.h"
@@ -9,6 +10,7 @@
 #include "buffered_writer.h"
 #include "event.h"
 #include "internal_metrics.h"
+#include "utils/string.h"
 
 #define CHECKED(e)                                                             \
   if ((e) != BSG_KSJSON_OK) {                                                  \
@@ -23,6 +25,7 @@
                              strnlen((value), sizeof((value))))
 
 #define STRING_NOT_EMPTY(s) (*(s) != 0)
+#define STR_CONST_CAT(dst, src) bsg_strncpy((dst), (src), sizeof(src))
 
 static bool bsg_write_metadata(BSG_KSJSONEncodeContext *json,
                                bugsnag_metadata *metadata);
@@ -52,13 +55,61 @@ static int bsg_write(const char *data, size_t length, void *userData) {
                                              : BSG_KSJSON_ERROR_CANNOT_ADD_DATA;
 }
 
+/*
+ * Build the event filename in the same format as defined in EventFilenameInfo:
+ * "[timestamp]_[apiKey]_[errorTypes]_[UUID]_[startupcrash|not-jvm].json"
+ */
+static size_t build_filename(bsg_environment *env, char *out) {
+  time_t now;
+  time(&now);
+
+  int length = strnlen(env->event_path, sizeof(env->event_path));
+  memcpy(out, env->event_path, length);
+  out[length++] = '/';
+
+  // the timestamp is encoded as unix time
+  length += bsg_uint64_to_string(now, &out[length]);
+
+  // append the api_key to the filename
+  out[length++] = '_';
+  length += bsg_strncpy(out + length, env->next_event.api_key,
+                        sizeof(env->next_event.api_key));
+
+  // append the errorType (c)
+  out[length++] = '_';
+  out[length++] = 'c';
+  out[length++] = '_';
+
+  // use the pre-generated UUID in `env` - avoiding needing any source of
+  // randomness on the signal-handler path
+  length += bsg_strncpy(out + length, env->event_uuid, sizeof(env->event_uuid));
+
+  if (env->next_event.app.is_launching) {
+    length += STR_CONST_CAT(out + length, "_startupcrash");
+  } else {
+    length += STR_CONST_CAT(out + length, "_not-jvm");
+  }
+
+  length += STR_CONST_CAT(out + length, ".json");
+
+  return length;
+}
+
 bool bsg_event_write(bsg_environment *env) {
-  bsg_buffered_writer writer;
+  char filename[sizeof(env->event_path) + 256];
+  filename[0] = '\0';
+  build_filename(env, filename);
+
+  return bsg_write_event_file(env, filename);
+}
+
+bool bsg_write_event_file(bsg_environment *env, const char *filename) {
   BSG_KSJSONEncodeContext jsonContext;
+  bsg_buffered_writer writer;
   bugsnag_event *event = &env->next_event;
   BSG_KSJSONEncodeContext *json = &jsonContext;
 
-  if (!bsg_buffered_writer_open(&writer, env->next_event_path)) {
+  if (!bsg_buffered_writer_open(&writer, filename)) {
     return false;
   }
 

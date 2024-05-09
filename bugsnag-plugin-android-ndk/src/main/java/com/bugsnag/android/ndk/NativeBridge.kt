@@ -8,7 +8,6 @@ import com.bugsnag.android.StateEvent.AddBreadcrumb
 import com.bugsnag.android.StateEvent.AddMetadata
 import com.bugsnag.android.StateEvent.ClearMetadataSection
 import com.bugsnag.android.StateEvent.ClearMetadataValue
-import com.bugsnag.android.StateEvent.DeliverPending
 import com.bugsnag.android.StateEvent.Install
 import com.bugsnag.android.StateEvent.NotifyHandled
 import com.bugsnag.android.StateEvent.NotifyUnhandled
@@ -22,7 +21,6 @@ import com.bugsnag.android.internal.BackgroundTaskService
 import com.bugsnag.android.internal.StateObserver
 import com.bugsnag.android.internal.TaskType
 import java.io.File
-import java.io.FileFilter
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.locks.ReentrantLock
@@ -48,6 +46,7 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
         apiKey: String,
         reportingDirectory: String,
         lastRunInfoPath: String,
+        eventUUID: String,
         consecutiveLaunchCrashes: Int,
         autoDetectNdkCrashes: Boolean,
         apiLevel: Int,
@@ -63,7 +62,6 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
         unhandledCount: Int
     )
 
-    external fun deliverReportAtPath(filePath: String)
     fun addBreadcrumb(name: String, type: String, timestamp: String, metadata: Any) {
         val breadcrumbType = BreadcrumbType.values()
             .find { it.toString() == type }
@@ -109,7 +107,6 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
 
         when (event) {
             is Install -> handleInstallMessage(event)
-            DeliverPending -> deliverPendingReports()
             is AddMetadata -> handleAddMetadata(event)
             is ClearMetadataSection -> clearMetadataTab(event.section)
             is ClearMetadataValue -> removeMetadata(
@@ -183,39 +180,16 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
         return false
     }
 
-    private fun deliverPendingReports() {
-        val filenameRegex = """.*\.crash$""".toRegex()
-        lock.lock()
-        try {
-            val outDir = reportDirectory
-            if (outDir.exists()) {
-                val fileList =
-                    outDir.listFiles(FileFilter { filenameRegex.containsMatchIn(it.name) })
-                if (fileList != null) {
-                    for (file in fileList) {
-                        deliverReportAtPath(file.absolutePath)
-                    }
-                }
-            } else {
-                logger.w("Payload directory does not exist, cannot read pending reports")
-            }
-        } catch (ex: Exception) {
-            logger.w("Failed to parse/write pending reports: $ex")
-        } finally {
-            lock.unlock()
-        }
-    }
-
     private fun handleInstallMessage(arg: Install) {
         lock.withLock {
             if (installed.get()) {
                 logger.w("Received duplicate setup message with arg: $arg")
             } else {
-                val reportPath = File(reportDirectory, "${UUID.randomUUID()}.crash").absolutePath
                 install(
                     arg.apiKey,
-                    reportPath,
+                    reportDirectory.absolutePath,
                     arg.lastRunInfoPath,
+                    UUID.randomUUID().toString(),
                     arg.consecutiveLaunchCrashes,
                     arg.autoDetectNdkCrashes,
                     Build.VERSION.SDK_INT,
