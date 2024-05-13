@@ -589,17 +589,16 @@ error:
 static bool bsg_write_threads(BSG_KSJSONEncodeContext *json,
                               bsg_thread *threads, int thread_count) {
 
-  if (thread_count == 0) {
-    return true;
-  }
-
   CHECKED(bsg_ksjsonbeginArray(json, "threads"));
   {
     for (int i = 0; i < thread_count; i++) {
       bsg_thread *thread = &threads[i];
+      char id_string[30];
+      bsg_uint64_to_string(thread->id, id_string);
+
       CHECKED(bsg_ksjsonbeginObject(json, NULL));
       {
-        CHECKED(bsg_ksjsonaddUIntegerElement(json, "id", thread->id));
+        CHECKED(JSON_LIMITED_STRING_ELEMENT("id", id_string));
         CHECKED(JSON_LIMITED_STRING_ELEMENT("name", thread->name));
         CHECKED(JSON_LIMITED_STRING_ELEMENT("state", thread->state));
         CHECKED(JSON_CONSTANT_ELEMENT("type", "c"));
