@@ -5,6 +5,7 @@ import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.mazerunner.BugsnagIntentParams
+import java.io.File
 
 /**
  * User/device information is migrated from the legacy [SharedPreferences] location
@@ -21,6 +22,8 @@ internal class SharedPrefMigrationScenario(
 
     override fun startBugsnag(startBugsnagOnly: Boolean) {
         persistLegacyPrefs()
+        // make sure there is no "leftover" device-id file to interfere with the test
+        File(context.filesDir, "device-id").delete()
         super.startBugsnag(startBugsnagOnly)
     }
 

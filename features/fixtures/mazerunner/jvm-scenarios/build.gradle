@@ -10,7 +10,11 @@ android {
     compileSdkVersion 31
 
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 17
+        manifestPlaceholders = [
+                bugsnagPerformanceApiKey: System.getenv("BUGSNAG_PERFORMANCE_API_KEY")
+                        ?: "abc12312312312312312312312312312",
+        ]
     }
 
     buildTypes {
@@ -40,6 +44,7 @@ dependencies {
         project.logger.lifecycle("Using OkHttp 4 dependency in test fixture")
         implementation "com.squareup.okhttp3:okhttp:4.9.1"
     }
+    implementation "com.bugsnag:bugsnag-android-performance:1.2.2"
 }
 
 private boolean useLegacyOkHttp() {

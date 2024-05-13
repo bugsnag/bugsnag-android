@@ -30,8 +30,7 @@ internal class LoadConfigurationFromManifestScenario(
                 true
             }
         )
-
-        reportBugsnagStartupDuration { Bugsnag.start(this.context, testConfig) }
+        measureBugsnagStartupDuration(this.context, testConfig)
     }
 
     override fun startScenario() {

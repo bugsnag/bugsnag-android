@@ -8,13 +8,15 @@ android {
     ndkVersion parent.ext.ndkVersion
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 17
         targetSdkVersion 31
         versionCode 34
         versionName "1.1.14"
         manifestPlaceholders = [
                 // omit any of the following placeholders to use the default values
                 bugsnagApiKey: "abc12312312312312312312312312312",
+                bugsnagPerformanceApiKey: System.getenv("BUGSNAG_PERFORMANCE_API_KEY")
+                        ?: "abc12312312312312312312312312312",
                 bugsnagAppType: "test",
                 bugsnagAppVersion: "7.5.3",
                 bugsnagAutoDetectErrors: true,
@@ -90,6 +92,7 @@ dependencies {
     }
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.annotation:annotation:1.2.0"
+    implementation "com.bugsnag:bugsnag-android-performance:1.2.2"
 }
 
 apply from: "../bugsnag-dependency.gradle"

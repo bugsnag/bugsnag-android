@@ -14,7 +14,7 @@ class MultiThreadedStartupScenario(
 
     override fun startScenario() {
         val startThread = thread(name = "AsyncStart") {
-            reportBugsnagStartupDuration { Bugsnag.start(context, config) }
+            measureBugsnagStartupDuration(context, config)
         }
 
         thread(name = "leaveBreadcrumb") {
@@ -24,7 +24,7 @@ class MultiThreadedStartupScenario(
                 Bugsnag.leaveBreadcrumb("I'm leaving a breadcrumb on another thread")
                 Bugsnag.notify(Exception("Scenario complete"))
             } catch (e: Exception) {
-                reportBugsnagStartupDuration { Bugsnag.start(context, config) }
+                measureBugsnagStartupDuration(context, config)
                 Bugsnag.notify(e)
             }
         }
