@@ -25,6 +25,7 @@
                              strnlen((value), sizeof((value))))
 
 #define STRING_NOT_EMPTY(s) (*(s) != 0)
+#define STRING_IS_EMPTY(s) (*(s) == 0)
 #define STR_CONST_CAT(dst, src) bsg_strncpy((dst), (src), sizeof(src))
 
 static bool bsg_write_metadata(BSG_KSJSONEncodeContext *json,
@@ -601,6 +602,7 @@ static bool bsg_write_threads(BSG_KSJSONEncodeContext *json,
         CHECKED(bsg_ksjsonaddUIntegerElement(json, "id", thread->id));
         CHECKED(JSON_LIMITED_STRING_ELEMENT("name", thread->name));
         CHECKED(JSON_LIMITED_STRING_ELEMENT("state", thread->state));
+        CHECKED(JSON_CONSTANT_ELEMENT("type", "c"));
       }
       CHECKED(bsg_ksjsonendContainer(json));
     }
@@ -643,6 +645,11 @@ error:
 
 static bool bsg_write_session(BSG_KSJSONEncodeContext *json,
                               bugsnag_event *event) {
+
+  if (STRING_IS_EMPTY(event->session_id)) {
+    return true;
+  }
+
   CHECKED(bsg_ksjsonbeginObject(json, "session"));
   {
     CHECKED(JSON_LIMITED_STRING_ELEMENT("id", event->session_id));
