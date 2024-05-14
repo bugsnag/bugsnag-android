@@ -48,7 +48,7 @@ static bool bsg_write_feature_flags(BSG_KSJSONEncodeContext *json,
 static bool bsg_write_session(BSG_KSJSONEncodeContext *json,
                               bugsnag_event *event);
 static bool bsg_write_usage(BSG_KSJSONEncodeContext *json,
-                            bugsnag_event *event);
+                            bsg_environment *env);
 
 static int bsg_write(const char *data, size_t length, void *userData) {
   bsg_buffered_writer *writer = userData;
@@ -160,7 +160,7 @@ bool bsg_write_event_file(bsg_environment *env, const char *filename) {
       CHECKED(
           JSON_LIMITED_STRING_ELEMENT("groupingHash", event->grouping_hash));
     }
-    if (!bsg_write_usage(json, event)) {
+    if (!bsg_write_usage(json, env)) {
       goto error;
     }
     if (!bsg_write_threads(json, event->threads, event->thread_count)) {
@@ -671,7 +671,8 @@ error:
 }
 
 static bool bsg_write_usage(BSG_KSJSONEncodeContext *json,
-                            bugsnag_event *event) {
+                            bsg_environment *env) {
+  bugsnag_event *event = &env->next_event;
   CHECKED(bsg_ksjsonbeginObject(json, "usage"));
   {
     CHECKED(bsg_ksjsonbeginObject(json, "callbacks"));
@@ -695,6 +696,16 @@ static bool bsg_write_usage(BSG_KSJSONEncodeContext *json,
       }
     }
     CHECKED(bsg_ksjsonendContainer(json));
+
+    if (env->static_json_data != NULL) {
+      const size_t length = strlen(env->static_json_data);
+      // the static_json_data *must* be more than simply "{}"
+      if (length > 2) {
+        CHECKED(bsg_ksjsonaddRawJSONData(json, ",", 1));
+        CHECKED(bsg_ksjsonaddRawJSONData(json, &(env->static_json_data[1]),
+                                         length - 2));
+      }
+    }
   }
   CHECKED(bsg_ksjsonendContainer(json));
 
