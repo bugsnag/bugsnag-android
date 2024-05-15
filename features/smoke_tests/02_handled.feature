@@ -22,9 +22,9 @@ Feature: Handled smoke tests
     # Stacktrace validation
     And the error payload field "events.0.exceptions.0.stacktrace" is a non-empty array
     And the event "exceptions.0.stacktrace.0.method" ends with "HandledJavaSmokeScenario.startScenario"
-    And the exception "stacktrace.0.file" equals "HandledJavaSmokeScenario.java"
+    And the exception "stacktrace.0.file" equals "SourceFile"
     # R8 minification alters the lineNumber, see the mapping file/source code for the original value
-    And the event "exceptions.0.stacktrace.0.lineNumber" equals 8
+    And the event "exceptions.0.stacktrace.0.lineNumber" equals 56
     And the event "exceptions.0.stacktrace.0.inProject" is true
     And the error payload field "events.0.projectPackages" is a non-empty array
     And the event "projectPackages.0" equals "com.bugsnag.android.mazerunner"
@@ -133,9 +133,9 @@ Feature: Handled smoke tests
     # Stacktrace validation
     And the error payload field "events.0.exceptions.0.stacktrace" is a non-empty array
     And the event "exceptions.0.stacktrace.0.method" ends with "generateException"
-    And the exception "stacktrace.0.file" equals "Scenario.kt"
+    And the exception "stacktrace.0.file" equals "SourceFile"
     # R8 minification alters the lineNumber, see the mapping file/source code for the original value
-    And the event "exceptions.0.stacktrace.0.lineNumber" equals 1
+    And the event "exceptions.0.stacktrace.0.lineNumber" equals 11
     And the event "exceptions.0.stacktrace.0.inProject" is true
 
     # Overwritten App data
