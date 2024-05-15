@@ -21,6 +21,7 @@ Feature: Switching automatic error detection on/off for Unity
 
   @anr
   @skip_samsung
+  @skip_android_8
   @skip_android_10
   Scenario: ANR not captured with autoDetectAnrs=false
     When I run "AutoDetectAnrsFalseScenario"
