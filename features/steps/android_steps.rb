@@ -85,7 +85,11 @@ When("I close and relaunch the app after an ANR") do
   rescue Selenium::WebDriver::Error::ServerError
     # Swallow any error, as Android may already have terminated the app
   end
-  Maze.driver.activate_app Maze.driver.app_id
+  begin
+    Maze.driver.activate_app Maze.driver.app_id
+  rescue Selenium::WebDriver::Error::ServerError
+    # Swallow any error, as the ap may still be running
+  end
 end
 
 When('I set the screen orientation to portrait') do
