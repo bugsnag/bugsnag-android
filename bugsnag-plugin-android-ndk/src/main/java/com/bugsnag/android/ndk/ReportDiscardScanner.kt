@@ -2,11 +2,16 @@ package com.bugsnag.android.ndk
 
 import android.util.JsonReader
 import android.util.JsonToken
+import androidx.annotation.VisibleForTesting
 import com.bugsnag.android.Logger
 import com.bugsnag.android.NativeInterface
 import java.io.File
 
-internal class ReportDiscardScanner(private val logger: Logger) {
+internal class ReportDiscardScanner(
+    private val logger: Logger,
+    private val enabledReleaseStages: Collection<String> =
+        NativeInterface.getEnabledReleaseStages() ?: emptySet(),
+) {
     /**
      * Checks whether a given report file should be discarded due to its `releaseStage` or any of
      * the configured `discardClasses`.
@@ -14,6 +19,12 @@ internal class ReportDiscardScanner(private val logger: Logger) {
      * @return true if the report should be discarded instead of being sent
      */
     fun shouldDiscard(report: File): Boolean {
+        if (!report.name.endsWith(".json") ||
+            report.name.endsWith(".static_data.json")
+        ) {
+            return true
+        }
+
         return try {
             report.bufferedReader().use { reader ->
                 JsonReader(reader).use { json -> shouldDiscard(json) }
@@ -23,7 +34,8 @@ internal class ReportDiscardScanner(private val logger: Logger) {
         }
     }
 
-    private fun shouldDiscard(json: JsonReader): Boolean {
+    @VisibleForTesting
+    internal fun shouldDiscard(json: JsonReader): Boolean {
         json.beginObject()
         var pendingAppCheck = true
         var pendingExceptionsCheck = true
@@ -56,8 +68,7 @@ internal class ReportDiscardScanner(private val logger: Logger) {
     }
 
     private fun shouldDiscardForApp(json: JsonReader): Boolean {
-        val enabledReleaseStages = NativeInterface.getEnabledReleaseStages()
-        if (enabledReleaseStages.isNullOrEmpty()) {
+        if (enabledReleaseStages.isEmpty()) {
             json.skipValue()
             return false
         }
@@ -69,7 +80,6 @@ internal class ReportDiscardScanner(private val logger: Logger) {
                 "releaseStage" -> {
                     val releaseStage = json.nextString()
                     if (releaseStage !in enabledReleaseStages) {
-                        logger.d("Discarding native report due to releaseStage")
                         return true
                     }
                     // do not early exit, make sure the entire "app" object is consumed
