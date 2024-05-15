@@ -1,5 +1,14 @@
 # Changelog
 
+## 6.5.0 (2024-05-15)
+
+### Enhancements
+
+* `Configuration.maxBreadcrumbs` is now obeyed by `bugsnag-plugin-android-ndk`, so native events will include the correct number of breadcrumbs
+  [#2020](https://github.com/bugsnag/bugsnag-android/pull/2020)
+* `bugsnag-plugin-android-ndk` will no longer create an `ArrayList` copy of metadata keys when leaving breadcrumbs
+  [#2022](https://github.com/bugsnag/bugsnag-android/pull/2022)
+
 ## 6.4.0 (2024-04-15)
 
 ### Enhancements

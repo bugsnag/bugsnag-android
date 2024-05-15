@@ -191,6 +191,8 @@ JNIEXPORT jstring JNICALL
 Java_com_bugsnag_android_ndk_BreadcrumbStateSerializationTest_run(JNIEnv *env,
                                                                   jobject thiz) {
   bugsnag_event *event = calloc(1, sizeof(bugsnag_event));
+  event->max_crumb_count = 50;
+  event->breadcrumbs = calloc(event->max_crumb_count, sizeof(bugsnag_breadcrumb));
   loadBreadcrumbsTestCase(event);
   JSON_Value *eventVal = json_value_init_array();
   JSON_Array *eventAry = json_value_get_array(eventVal);

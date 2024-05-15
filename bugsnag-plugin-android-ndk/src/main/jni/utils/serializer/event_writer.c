@@ -8,11 +8,13 @@
 #include "buffered_writer.h"
 #include "utils/seqlock.h"
 
+bool bsg_write_breadcrumbs(bugsnag_event *event, bsg_buffered_writer *writer);
 bool bsg_write_feature_flags(bugsnag_event *event, bsg_buffered_writer *writer);
 
 bool bsg_write_opaque_metadata(bugsnag_event *event,
                                bsg_buffered_writer *writer);
 
+bool bsg_write_breadcrumbs(bugsnag_event *event, bsg_buffered_writer *writer);
 bool bsg_report_header_write(bsg_report_header *header, int fd) {
   ssize_t len = write(fd, header, sizeof(bsg_report_header));
 
@@ -30,7 +32,9 @@ bool bsg_event_write(bsg_environment *env) {
       bsg_report_header_write(&env->report_header, writer.fd) &&
       // add cached event info
       writer.write(&writer, &env->next_event, sizeof(bugsnag_event)) &&
-      // append feature flags after event structure
+      // append the breadcrumbs after the event structure
+      bsg_write_breadcrumbs(&env->next_event, &writer) &&
+      // append feature flags
       bsg_write_feature_flags(&env->next_event, &writer) &&
       // append opaque metadata after the feature flags
       bsg_write_opaque_metadata(&env->next_event, &writer);
@@ -83,6 +87,11 @@ static bool write_feature_flag(bsg_buffered_writer *writer,
   }
 
   return true;
+}
+
+bool bsg_write_breadcrumbs(bugsnag_event *event, bsg_buffered_writer *writer) {
+  return writer->write(writer, event->breadcrumbs,
+                       sizeof(bugsnag_breadcrumb) * event->max_crumb_count);
 }
 
 extern bsg_seqlock_t bsg_feature_flag_lock;

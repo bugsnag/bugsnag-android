@@ -2,6 +2,8 @@ package com.bugsnag.android;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -34,6 +36,7 @@ public class MemoryTrimTest {
     @Test
     public void onLowMemoryEvent() {
         when(context.getApplicationContext()).thenReturn(context);
+        doNothing().when(context).registerComponentCallbacks(any());
         Client client = new Client(context, BugsnagTestUtils.generateConfiguration());
 
         // block until observer is registered

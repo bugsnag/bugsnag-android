@@ -141,7 +141,10 @@ class SessionTest {
             assertEquals(startedAt, copy.startedAt)
             assertEquals(getUser(), copy.getUser()) // make a shallow copy
             assertEquals(isAutoCaptured, copy.isAutoCaptured)
-            assertEquals(isTracked.get(), copy.isTracked.get())
+            assertEquals(markTracked(), copy.markTracked())
+            assertEquals(markResumed(), copy.markResumed())
+            assertEquals(isPaused, copy.isPaused)
+            assertEquals(markPaused(), copy.markPaused())
             assertEquals(session.unhandledCount, copy.unhandledCount)
             assertEquals(session.handledCount, copy.handledCount)
         }

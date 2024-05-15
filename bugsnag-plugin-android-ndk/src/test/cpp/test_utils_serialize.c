@@ -87,6 +87,9 @@ void generate_basic_report(bugsnag_event *event) {
 
 bugsnag_event *bsg_generate_event(void) {
   bugsnag_event *report = calloc(1, sizeof(bugsnag_event));
+  report->max_crumb_count = 50;
+  report->breadcrumbs =
+      calloc(report->max_crumb_count, sizeof(bugsnag_breadcrumb));
   strcpy(report->grouping_hash, "foo-hash");
   strcpy(report->api_key, "5d1e5fbd39a74caa1200142706a90b20");
   strcpy(report->context, "SomeActivity");
@@ -177,6 +180,7 @@ TEST test_report_to_file(void) {
   strcpy(env->report_header.os_build, "macOS Sierra");
   strcpy(env->next_event_path, SERIALIZE_TEST_FILE);
   ASSERT(bsg_serialize_event_to_file(env));
+  free(report->breadcrumbs);
   free(report);
   free(env);
   PASS();
@@ -193,6 +197,7 @@ TEST test_report_with_feature_flags_to_file(void) {
   strcpy(env->report_header.os_build, "macOS Sierra");
   strcpy(env->next_event_path, SERIALIZE_TEST_FILE);
   ASSERT(bsg_serialize_event_to_file(env));
+  free(report->breadcrumbs);
   free(report);
   free(env);
   PASS();
@@ -212,6 +217,7 @@ TEST test_file_to_report(void) {
   ASSERT(report != NULL);
   ASSERT(strcmp("SIGBUS", report->error.errorClass) == 0);
   ASSERT(strcmp("POSIX is serious about oncoming traffic", report->error.errorMessage) == 0);
+  free(generated_report->breadcrumbs);
   free(generated_report);
   free(env);
   free(report);
@@ -234,6 +240,7 @@ TEST test_report_with_feature_flags_from_file(void) {
 
   ASSERT_EQ(2, event->feature_flag_count);
 
+  free(report->breadcrumbs);
   free(report);
   free(env);
   free(event);
@@ -259,6 +266,7 @@ TEST test_report_with_opaque_metadata_from_file(void) {
   ASSERT_EQ(BSG_METADATA_OPAQUE_VALUE, bugsnag_event_has_metadata(event, "opaque", "map"));
   ASSERT_EQ(BSG_METADATA_OPAQUE_VALUE, bugsnag_event_has_metadata(event, "opaque", "list"));
 
+  free(report->breadcrumbs);
   free(report);
   free(env);
   free(event);
@@ -271,6 +279,7 @@ JSON_Value *bsg_generate_json(void) {
   char *json = bsg_serialize_event_to_json_string(event);
   JSON_Value *root_value = json_parse_string(json);
   free(json);
+  free(event->breadcrumbs);
   free(event);
   return root_value;
 }

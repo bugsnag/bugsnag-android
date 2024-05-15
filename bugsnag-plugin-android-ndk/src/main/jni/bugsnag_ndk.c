@@ -150,7 +150,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
     JNIEnv *env, jobject _this, jstring _api_key, jstring _event_path,
     jstring _last_run_info_path, jint consecutive_launch_crashes,
     jboolean auto_detect_ndk_crashes, jint _api_level, jboolean is32bit,
-    jint send_threads) {
+    jint send_threads, jint max_breadcrumbs) {
 
   if (!bsg_jni_cache_init(env)) {
     BUGSNAG_LOG("Could not init JNI jni_cache.");
@@ -164,6 +164,14 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   bugsnag_env->consecutive_launch_crashes = consecutive_launch_crashes;
   bugsnag_env->send_threads = send_threads;
   bugsnag_env->handling_crash = ATOMIC_VAR_INIT(false);
+
+  bugsnag_env->next_event.max_crumb_count = max_breadcrumbs;
+  bugsnag_env->next_event.breadcrumbs =
+      calloc(max_breadcrumbs, sizeof(bugsnag_breadcrumb));
+
+  if (bugsnag_env->next_event.breadcrumbs == NULL) {
+    goto error;
+  }
 
   // copy event path to env struct
   const char *event_path = bsg_safe_get_string_utf_chars(env, _event_path);
@@ -387,7 +395,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_pausedSession(
 }
 
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_addBreadcrumb(
-    JNIEnv *env, jobject _this, jstring name_, jstring crumb_type,
+    JNIEnv *env, jobject _this, jstring name_, jint crumb_type,
     jstring timestamp_, jobject metadata) {
 
   if (!bsg_jni_cache->initialized) {
@@ -395,28 +403,41 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_addBreadcrumb(
     return;
   }
   const char *name = bsg_safe_get_string_utf_chars(env, name_);
-  const char *type = bsg_safe_get_string_utf_chars(env, crumb_type);
   const char *timestamp = bsg_safe_get_string_utf_chars(env, timestamp_);
 
-  if (name != NULL && type != NULL && timestamp != NULL) {
+  if (name != NULL && timestamp != NULL) {
     bugsnag_breadcrumb *crumb = calloc(1, sizeof(bugsnag_breadcrumb));
     bsg_strncpy(crumb->name, name, sizeof(crumb->name));
     bsg_strncpy(crumb->timestamp, timestamp, sizeof(crumb->timestamp));
-    if (strcmp(type, "user") == 0) {
-      crumb->type = BSG_CRUMB_USER;
-    } else if (strcmp(type, "error") == 0) {
+
+    // the values of crumb_type are defined in
+    // NativeBridge.BreadcrumbType.toNativeValue()
+    switch (crumb_type) {
+    case 0:
       crumb->type = BSG_CRUMB_ERROR;
-    } else if (strcmp(type, "log") == 0) {
+      break;
+    case 1:
       crumb->type = BSG_CRUMB_LOG;
-    } else if (strcmp(type, "navigation") == 0) {
+      break;
+    case 2:
+      crumb->type = BSG_CRUMB_MANUAL;
+      break;
+    case 3:
       crumb->type = BSG_CRUMB_NAVIGATION;
-    } else if (strcmp(type, "request") == 0) {
-      crumb->type = BSG_CRUMB_REQUEST;
-    } else if (strcmp(type, "state") == 0) {
-      crumb->type = BSG_CRUMB_STATE;
-    } else if (strcmp(type, "process") == 0) {
+      break;
+    case 4:
       crumb->type = BSG_CRUMB_PROCESS;
-    } else {
+      break;
+    case 5:
+      crumb->type = BSG_CRUMB_REQUEST;
+      break;
+    case 6:
+      crumb->type = BSG_CRUMB_STATE;
+      break;
+    case 7:
+      crumb->type = BSG_CRUMB_USER;
+      break;
+    default:
       crumb->type = BSG_CRUMB_MANUAL;
     }
 
@@ -428,7 +449,6 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_addBreadcrumb(
     free(crumb);
   }
   bsg_safe_release_string_utf_chars(env, name_, name);
-  bsg_safe_release_string_utf_chars(env, crumb_type, type);
   bsg_safe_release_string_utf_chars(env, timestamp_, timestamp);
 }
 

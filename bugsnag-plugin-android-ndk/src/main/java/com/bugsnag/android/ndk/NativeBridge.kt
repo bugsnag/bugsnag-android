@@ -1,6 +1,7 @@
 package com.bugsnag.android.ndk
 
 import android.os.Build
+import com.bugsnag.android.BreadcrumbType
 import com.bugsnag.android.NativeInterface
 import com.bugsnag.android.StateEvent
 import com.bugsnag.android.StateEvent.AddBreadcrumb
@@ -51,7 +52,8 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
         autoDetectNdkCrashes: Boolean,
         apiLevel: Int,
         is32bit: Boolean,
-        threadSendPolicy: Int
+        threadSendPolicy: Int,
+        maxBreadcrumbs: Int,
     )
 
     external fun startedSession(
@@ -62,7 +64,15 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
     )
 
     external fun deliverReportAtPath(filePath: String)
-    external fun addBreadcrumb(name: String, type: String, timestamp: String, metadata: Any)
+    fun addBreadcrumb(name: String, type: String, timestamp: String, metadata: Any) {
+        val breadcrumbType = BreadcrumbType.values()
+            .find { it.toString() == type }
+            ?: BreadcrumbType.MANUAL
+
+        addBreadcrumb(name, breadcrumbType.toNativeValue(), timestamp, metadata)
+    }
+
+    private external fun addBreadcrumb(name: String, type: Int, timestamp: String, metadata: Any)
     external fun addMetadataString(tab: String, key: String, value: String)
     external fun addMetadataDouble(tab: String, key: String, value: Double)
     external fun addMetadataBoolean(tab: String, key: String, value: Boolean)
@@ -106,12 +116,14 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
                 event.section,
                 event.key ?: ""
             )
+
             is AddBreadcrumb -> addBreadcrumb(
                 event.message,
-                event.type.toString(),
+                event.type.toNativeValue(),
                 event.timestamp,
-                makeSafeMetadata(event.metadata)
+                event.metadata
             )
+
             NotifyHandled -> addHandledEvent()
             NotifyUnhandled -> addUnhandledEvent()
             PauseSession -> pausedSession()
@@ -121,11 +133,13 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
                 event.handledCount,
                 event.unhandledCount
             )
+
             is UpdateContext -> updateContext(event.context ?: "")
             is UpdateInForeground -> updateInForeground(
                 event.inForeground,
                 event.contextActivity ?: ""
             )
+
             is StateEvent.UpdateLastRunInfo -> updateLastRunInfo(event.consecutiveLaunchCrashes)
             is StateEvent.UpdateIsLaunching -> {
                 updateIsLaunching(event.isLaunching)
@@ -135,29 +149,26 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
                     bgTaskService.submitTask(TaskType.DEFAULT, this::refreshSymbolTable)
                 }
             }
+
             is UpdateOrientation -> updateOrientation(event.orientation ?: "")
             is UpdateUser -> {
                 updateUserId(event.user.id ?: "")
                 updateUserName(event.user.name ?: "")
                 updateUserEmail(event.user.email ?: "")
             }
+
             is StateEvent.UpdateMemoryTrimEvent -> updateLowMemory(
                 event.isLowMemory,
                 event.memoryTrimLevelDescription
             )
+
             is StateEvent.AddFeatureFlag -> addFeatureFlag(
                 event.name,
                 event.variant
             )
+
             is StateEvent.ClearFeatureFlag -> clearFeatureFlag(event.name)
             is StateEvent.ClearFeatureFlags -> clearFeatureFlags()
-        }
-    }
-
-    private fun makeSafeMetadata(metadata: Map<String, Any?>): Map<String, Any?> {
-        if (metadata.isEmpty()) return metadata
-        return object : Map<String, Any?> by metadata {
-            override fun get(key: String): Any? = OpaqueValue.makeSafe(metadata[key])
         }
     }
 
@@ -209,7 +220,8 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
                     arg.autoDetectNdkCrashes,
                     Build.VERSION.SDK_INT,
                     is32bit,
-                    arg.sendThreads.ordinal
+                    arg.sendThreads.ordinal,
+                    arg.maxBreadcrumbs
                 )
                 installed.set(true)
             }
@@ -226,5 +238,22 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
                 else -> Unit
             }
         }
+    }
+
+    /**
+     * Convert a [BreadcrumbType] to the value expected by the [addBreadcrumb] implementation. This
+     * is implemented as an exhaustive when so that any changes to the `enum` are picked up and/or
+     * don't directly impact the implementation.
+     */
+    @Suppress("MagicNumber") // introducing consts would reduce readability
+    private fun BreadcrumbType.toNativeValue(): Int = when (this) {
+        BreadcrumbType.ERROR -> 0
+        BreadcrumbType.LOG -> 1
+        BreadcrumbType.MANUAL -> 2
+        BreadcrumbType.NAVIGATION -> 3
+        BreadcrumbType.PROCESS -> 4
+        BreadcrumbType.REQUEST -> 5
+        BreadcrumbType.STATE -> 6
+        BreadcrumbType.USER -> 7
     }
 }

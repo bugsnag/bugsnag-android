@@ -20,6 +20,9 @@ bugsnag_breadcrumb *init_breadcrumb(const char *name, const char *message, bugsn
 
 TEST test_add_breadcrumb(void) {
   bugsnag_event *event = calloc(1, sizeof(bugsnag_event));
+  event->max_crumb_count = 50;
+  event->breadcrumbs =
+      calloc(event->max_crumb_count, sizeof(bugsnag_breadcrumb));
   bugsnag_breadcrumb *crumb = init_breadcrumb("stroll", "this is a drill.", BSG_CRUMB_USER);
   bsg_event_add_breadcrumb(event, crumb);
   ASSERT_EQ(1, event->crumb_count);
@@ -39,6 +42,7 @@ TEST test_add_breadcrumb(void) {
   ASSERT(strcmp("message", event->breadcrumbs[1].metadata.values[0].name) == 0);
   ASSERT(strcmp("this is not a drill.", event->breadcrumbs[1].metadata.values[0].char_value) == 0);
 
+  free(event->breadcrumbs);
   free(event);
   free(crumb2);
   PASS();
@@ -46,6 +50,9 @@ TEST test_add_breadcrumb(void) {
 
 TEST test_add_breadcrumbs_over_max(void) {
   bugsnag_event *event = calloc(1, sizeof(bugsnag_event));
+  event->max_crumb_count = 50;
+  event->breadcrumbs =
+      calloc(event->max_crumb_count, sizeof(bugsnag_breadcrumb));
   int breadcrumb_count = 64;
 
   for (int i=0; i < breadcrumb_count; i++) {
@@ -59,7 +66,7 @@ TEST test_add_breadcrumbs_over_max(void) {
   }
 
   // assertions assume that the crumb count is always 50
-  ASSERT_EQ(BUGSNAG_CRUMBS_MAX, event->crumb_count);
+  ASSERT_EQ(event->max_crumb_count, event->crumb_count);
   ASSERT_EQ(14, event->crumb_first_index);
 
   ASSERT_STR_EQ("crumb: 50", event->breadcrumbs[0].name);
@@ -71,6 +78,7 @@ TEST test_add_breadcrumbs_over_max(void) {
   ASSERT_STR_EQ("crumb: 14", event->breadcrumbs[14].name);
   ASSERT_STR_EQ("crumb: 15", event->breadcrumbs[15].name);
   ASSERT_STR_EQ("crumb: 16", event->breadcrumbs[16].name);
+  free(event->breadcrumbs);
   free(event);
   PASS();
 }

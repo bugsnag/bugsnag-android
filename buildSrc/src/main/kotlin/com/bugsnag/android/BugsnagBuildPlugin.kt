@@ -6,6 +6,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.dependencies
+import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import java.io.File
 
 /**
@@ -39,7 +40,7 @@ class BugsnagBuildPlugin : Plugin<Project> {
         // load 3rd party gradle plugins
         project.applyPlugins(bugsnag)
 
-        val android = project.extensions.getByType(BaseExtension::class.java)
+        val android = project.extensions.getByType(LibraryExtension::class.java)
         android.apply {
             configureDefaults()
             configureAndroidLint(project)
@@ -50,10 +51,12 @@ class BugsnagBuildPlugin : Plugin<Project> {
                 configureNdk(project)
 
                 bugsnag.publishesPrefab?.let { prefabModuleName ->
-                    (android as? LibraryExtension)?.run {
-                        configurePrefabPublishing(prefabModuleName)
-                    }
+                    configurePrefabPublishing(prefabModuleName)
                 }
+            }
+
+            bugsnag.androidConfiguration.forEach { config ->
+                config(android)
             }
         }
 
@@ -65,8 +68,10 @@ class BugsnagBuildPlugin : Plugin<Project> {
         project.apply(from = project.file("../gradle/license-check.gradle"))
 
         if (bugsnag.compilesCode) {
+            project.configureKotlinOptions()
+            project.configureCheckstyle()
+
             project.apply(from = project.file("../gradle/detekt.gradle"))
-            project.apply(from = project.file("../gradle/checkstyle.gradle"))
         }
     }
 
@@ -175,6 +180,21 @@ class BugsnagBuildPlugin : Plugin<Project> {
         }
     }
 
+    private fun Project.configureKotlinOptions() {
+        tasks.withType(KotlinCompile::class.java).configureEach {
+            kotlinOptions {
+                allWarningsAsErrors = true
+                apiVersion = Versions.kotlinLang
+                languageVersion = Versions.kotlinLang
+                freeCompilerArgs += listOf(
+                    "-Xno-call-assertions",
+                    "-Xno-receiver-assertions",
+                    "-Xno-param-assertions"
+                )
+            }
+        }
+    }
+
     /**
      * Configures Android project defaults such as minSdkVersion.
      */
@@ -197,6 +217,7 @@ class BugsnagBuildPlugin : Plugin<Project> {
         plugins.apply("com.github.hierynomus.license")
 
         if (bugsnag.compilesCode) {
+            plugins.apply("checkstyle")
             plugins.apply("kotlin-android")
             plugins.apply("io.gitlab.arturbosch.detekt")
             plugins.apply("org.jlleitschuh.gradle.ktlint")

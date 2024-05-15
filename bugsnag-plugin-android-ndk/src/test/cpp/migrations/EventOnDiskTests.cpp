@@ -41,7 +41,9 @@ static void *create_full_event() {
   event->app.version_code = 8139512718;
 
   // breadcrumbs
-  auto max = 50;
+  event->max_crumb_count = 50;
+  event->breadcrumbs = new bugsnag_breadcrumb[event->max_crumb_count];
+  auto max = event->max_crumb_count;
   event->crumb_first_index = 2; // test the circular buffer logic
   char name[30];
   for (int i = event->crumb_first_index; i < max; i++) {
@@ -132,7 +134,7 @@ static void *create_full_event() {
 static const char *write_event(JNIEnv *env, jstring temp_file,
                                   void *(event_generator)()) {
   auto event_ctx = (bsg_environment *)calloc(1, sizeof(bsg_environment));
-  event_ctx->report_header.version = 13;
+  event_ctx->report_header.version = BUGSNAG_EVENT_VERSION;
   const char *path = (*env).GetStringUTFChars(temp_file, nullptr);
   sprintf(event_ctx->next_event_path, "%s", path);
 
@@ -185,6 +187,7 @@ Java_com_bugsnag_android_ndk_migrations_EventOnDiskTests_generateAndStoreEvent(
     free(parsed_event->feature_flags[i].name);
     free(parsed_event->feature_flags[i].variant);
   }
+  free(parsed_event->breadcrumbs);
   free(parsed_event->feature_flags);
   free(parsed_event);
 

@@ -2,6 +2,7 @@
 
 #include "../../event.h"
 #include "../string.h"
+#include "utils/logger.h"
 
 #include <fcntl.h>
 #include <malloc.h>
@@ -9,7 +10,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-const int BSG_MIGRATOR_CURRENT_VERSION = 13;
+const int BSG_MIGRATOR_CURRENT_VERSION = 14;
 
 void bsg_read_feature_flags(int fd, bool expect_verification,
                             bsg_feature_flag **out_feature_flags,
@@ -20,6 +21,8 @@ void bsg_read_opaque_metadata(int fd, bugsnag_metadata *metadata);
 void bsg_read_opaque_breadcrumb_metadata(int fd,
                                          bugsnag_breadcrumb *breadcrumbs,
                                          int crumb_count);
+
+bool bsg_read_breadcrumbs(int fd, bugsnag_event *event);
 
 bsg_report_header *bsg_report_header_read(int fd) {
   bsg_report_header *header = calloc(1, sizeof(bsg_report_header));
@@ -55,10 +58,13 @@ bugsnag_event *bsg_read_event(char *filepath) {
 
   ssize_t len = read(fd, event, event_size);
   if (len != event_size) {
-    free(event);
-    return NULL;
+    goto error;
   }
 
+  // read the breadcrumbs
+  if (!bsg_read_breadcrumbs(fd, event)) {
+    goto error;
+  }
   // read the feature flags, if possible
   bsg_read_feature_flags(fd, true, &event->feature_flags,
                          &event->feature_flag_count);
@@ -67,6 +73,31 @@ bugsnag_event *bsg_read_event(char *filepath) {
                                       event->crumb_count);
 
   return event;
+error:
+  free(event);
+  return NULL;
+}
+
+bool bsg_read_breadcrumbs(int fd, bugsnag_event *event) {
+  bugsnag_breadcrumb *breadcrumbs =
+      calloc(event->max_crumb_count, sizeof(bugsnag_breadcrumb));
+  if (breadcrumbs == NULL) {
+    goto error;
+  }
+  const size_t bytes_to_read =
+      event->max_crumb_count * sizeof(bugsnag_breadcrumb);
+  const ssize_t read_count = read(fd, breadcrumbs, bytes_to_read);
+  if (read_count != bytes_to_read) {
+    goto error;
+  }
+
+  event->breadcrumbs = breadcrumbs;
+  return true;
+error:
+  event->breadcrumbs = NULL;
+  event->crumb_count = 0;
+  event->crumb_first_index = 0;
+  return false;
 }
 
 static char *read_string(int fd) {
