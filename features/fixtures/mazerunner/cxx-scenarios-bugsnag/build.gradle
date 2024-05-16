@@ -37,6 +37,7 @@ android {
 
     buildFeatures.prefab = true
     packagingOptions.jniLibs.pickFirsts += ["**/libbugsnag-ndk.so"]
+    namespace 'com.bugsnag.android.mazerunner.cxxscenariosbugsnag'
 }
 
 dependencies {

@@ -21,6 +21,8 @@ steps:
       - bundle install
       - make fixture-r19
       - bundle exec upload-app --farm=bb --app=./build/fixture-r19.apk --app-id-file=build/fixture-r19-url.txt
+    env:
+      JAVA_VERSION: 17
 
   - label: ':android: Build fixture APK r21'
     key: "fixture-r21"
@@ -35,6 +37,8 @@ steps:
       - bundle install
       - make fixture-r21
       - bundle exec upload-app --farm=bb --app=./build/fixture-r21.apk --app-id-file=build/fixture-r21-url.txt
+    env:
+      JAVA_VERSION: 17
 
   - label: ':android: Coding standards checks'
     timeout_in_minutes: 20
@@ -67,6 +71,8 @@ steps:
     commands:
       - cd features/fixtures/mazerunner
       - ./gradlew ktlintCheck detekt checkstyle
+    env:
+      JAVA_VERSION: 17
 
   - label: ':android: Android size reporting'
     timeout_in_minutes: 10
