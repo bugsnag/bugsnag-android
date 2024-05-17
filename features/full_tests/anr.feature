@@ -3,192 +3,103 @@ Feature: Switching automatic error detection on/off for Unity
   Background:
     Given I clear all persistent data
 
-  @anr
-  Scenario: ANR triggered in JVM code is not captured when detectAnrs = false
-    When I run "JvmAnrDisabledScenario"
-    Then I wait to receive an error
-    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the error payload field "events" is an array with 1 elements
-    And the exception "errorClass" equals "java.lang.RuntimeException"
-    And the exception "message" equals "JvmAnrDisabledScenario"
+  Scenario: ANR not captured with autoDetectAnrs=false
+    When I run "AutoDetectAnrsFalseScenario"
+    And I wait for 2 seconds
+    And I tap the screen 3 times
+    And I wait for 10 seconds
+    And I close and relaunch the app after an ANR
+    And I configure Bugsnag for "AutoDetectAnrsFalseScenario"
+    Then Bugsnag confirms it has no errors to send
+    And I wait for 10 seconds
 
-  @anr
-  Scenario: ANR triggered in JVM code is not captured when detectAnrs = false
-    When I run "JvmAnrDisabledScenario"
-    Then I wait to receive an error
-    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the error payload field "events" is an array with 1 elements
-    And the exception "errorClass" equals "java.lang.RuntimeException"
-    And the exception "message" equals "JvmAnrDisabledScenario"
+  Scenario: ANR not captured with autoDetectAnrs=false
+    When I run "AutoDetectAnrsFalseScenario"
+    And I wait for 2 seconds
+    And I tap the screen 3 times
+    And I wait for 10 seconds
+    And I close and relaunch the app after an ANR
+    And I configure Bugsnag for "AutoDetectAnrsFalseScenario"
+    Then Bugsnag confirms it has no errors to send
+    And I wait for 10 seconds
 
-  @anr
-  Scenario: ANR triggered in JVM code is not captured when detectAnrs = false
-    When I run "JvmAnrDisabledScenario"
-    Then I wait to receive an error
-    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the error payload field "events" is an array with 1 elements
-    And the exception "errorClass" equals "java.lang.RuntimeException"
-    And the exception "message" equals "JvmAnrDisabledScenario"
+  Scenario: ANR not captured with autoDetectAnrs=false
+    When I run "AutoDetectAnrsFalseScenario"
+    And I wait for 2 seconds
+    And I tap the screen 3 times
+    And I wait for 10 seconds
+    And I close and relaunch the app after an ANR
+    And I configure Bugsnag for "AutoDetectAnrsFalseScenario"
+    Then Bugsnag confirms it has no errors to send
+    And I wait for 10 seconds
 
-  @anr
-  Scenario: ANR triggered in JVM code is not captured when detectAnrs = false
-    When I run "JvmAnrDisabledScenario"
-    Then I wait to receive an error
-    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the error payload field "events" is an array with 1 elements
-    And the exception "errorClass" equals "java.lang.RuntimeException"
-    And the exception "message" equals "JvmAnrDisabledScenario"
+  Scenario: ANR not captured with autoDetectAnrs=false
+    When I run "AutoDetectAnrsFalseScenario"
+    And I wait for 2 seconds
+    And I tap the screen 3 times
+    And I wait for 10 seconds
+    And I close and relaunch the app after an ANR
+    And I configure Bugsnag for "AutoDetectAnrsFalseScenario"
+    Then Bugsnag confirms it has no errors to send
+    And I wait for 10 seconds
 
-  @anr
-  Scenario: ANR triggered in JVM code is not captured when detectAnrs = false
-    When I run "JvmAnrDisabledScenario"
-    Then I wait to receive an error
-    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the error payload field "events" is an array with 1 elements
-    And the exception "errorClass" equals "java.lang.RuntimeException"
-    And the exception "message" equals "JvmAnrDisabledScenario"
+  Scenario: ANR not captured with autoDetectAnrs=false
+    When I run "AutoDetectAnrsFalseScenario"
+    And I wait for 2 seconds
+    And I tap the screen 3 times
+    And I wait for 10 seconds
+    And I close and relaunch the app after an ANR
+    And I configure Bugsnag for "AutoDetectAnrsFalseScenario"
+    Then Bugsnag confirms it has no errors to send
+    And I wait for 10 seconds
 
-  @anr
-  Scenario: ANR triggered in JVM code is not captured when detectAnrs = false
-    When I run "JvmAnrDisabledScenario"
-    Then I wait to receive an error
-    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the error payload field "events" is an array with 1 elements
-    And the exception "errorClass" equals "java.lang.RuntimeException"
-    And the exception "message" equals "JvmAnrDisabledScenario"
+  Scenario: ANR not captured with autoDetectAnrs=false
+    When I run "AutoDetectAnrsFalseScenario"
+    And I wait for 2 seconds
+    And I tap the screen 3 times
+    And I wait for 10 seconds
+    And I close and relaunch the app after an ANR
+    And I configure Bugsnag for "AutoDetectAnrsFalseScenario"
+    Then Bugsnag confirms it has no errors to send
+    And I wait for 10 seconds
 
-  @anr
-  Scenario: ANR triggered in JVM code is not captured when detectAnrs = false
-    When I run "JvmAnrDisabledScenario"
-    Then I wait to receive an error
-    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the error payload field "events" is an array with 1 elements
-    And the exception "errorClass" equals "java.lang.RuntimeException"
-    And the exception "message" equals "JvmAnrDisabledScenario"
+  Scenario: ANR not captured with autoDetectAnrs=false
+    When I run "AutoDetectAnrsFalseScenario"
+    And I wait for 2 seconds
+    And I tap the screen 3 times
+    And I wait for 10 seconds
+    And I close and relaunch the app after an ANR
+    And I configure Bugsnag for "AutoDetectAnrsFalseScenario"
+    Then Bugsnag confirms it has no errors to send
+    And I wait for 10 seconds
 
-  @anr
-  Scenario: ANR triggered in JVM code is not captured when detectAnrs = false
-    When I run "JvmAnrDisabledScenario"
-    Then I wait to receive an error
-    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the error payload field "events" is an array with 1 elements
-    And the exception "errorClass" equals "java.lang.RuntimeException"
-    And the exception "message" equals "JvmAnrDisabledScenario"
+  Scenario: ANR not captured with autoDetectAnrs=false
+    When I run "AutoDetectAnrsFalseScenario"
+    And I wait for 2 seconds
+    And I tap the screen 3 times
+    And I wait for 10 seconds
+    And I close and relaunch the app after an ANR
+    And I configure Bugsnag for "AutoDetectAnrsFalseScenario"
+    Then Bugsnag confirms it has no errors to send
+    And I wait for 10 seconds
 
-  @anr
-  Scenario: ANR triggered in JVM code is not captured when detectAnrs = false
-    When I run "JvmAnrDisabledScenario"
-    Then I wait to receive an error
-    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the error payload field "events" is an array with 1 elements
-    And the exception "errorClass" equals "java.lang.RuntimeException"
-    And the exception "message" equals "JvmAnrDisabledScenario"
+  Scenario: ANR not captured with autoDetectAnrs=false
+    When I run "AutoDetectAnrsFalseScenario"
+    And I wait for 2 seconds
+    And I tap the screen 3 times
+    And I wait for 10 seconds
+    And I close and relaunch the app after an ANR
+    And I configure Bugsnag for "AutoDetectAnrsFalseScenario"
+    Then Bugsnag confirms it has no errors to send
+    And I wait for 10 seconds
 
-  @anr
-  Scenario: ANR triggered in JVM code is not captured when detectAnrs = false
-    When I run "JvmAnrDisabledScenario"
-    Then I wait to receive an error
-    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the error payload field "events" is an array with 1 elements
-    And the exception "errorClass" equals "java.lang.RuntimeException"
-    And the exception "message" equals "JvmAnrDisabledScenario"
-
-  @anr
-  Scenario: ANR triggered in JVM code is not captured when detectAnrs = false
-    When I run "JvmAnrDisabledScenario"
-    Then I wait to receive an error
-    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the error payload field "events" is an array with 1 elements
-    And the exception "errorClass" equals "java.lang.RuntimeException"
-    And the exception "message" equals "JvmAnrDisabledScenario"
-
-  @anr
-  Scenario: ANR triggered in JVM code is not captured when detectAnrs = false
-    When I run "JvmAnrDisabledScenario"
-    Then I wait to receive an error
-    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the error payload field "events" is an array with 1 elements
-    And the exception "errorClass" equals "java.lang.RuntimeException"
-    And the exception "message" equals "JvmAnrDisabledScenario"
-
-  @anr
-  Scenario: ANR triggered in JVM code is not captured when detectAnrs = false
-    When I run "JvmAnrDisabledScenario"
-    Then I wait to receive an error
-    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the error payload field "events" is an array with 1 elements
-    And the exception "errorClass" equals "java.lang.RuntimeException"
-    And the exception "message" equals "JvmAnrDisabledScenario"
-
-  @anr
-  Scenario: ANR triggered in JVM code is not captured when detectAnrs = false
-    When I run "JvmAnrDisabledScenario"
-    Then I wait to receive an error
-    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the error payload field "events" is an array with 1 elements
-    And the exception "errorClass" equals "java.lang.RuntimeException"
-    And the exception "message" equals "JvmAnrDisabledScenario"
-
-  @anr
-  Scenario: ANR triggered in JVM code is not captured when detectAnrs = false
-    When I run "JvmAnrDisabledScenario"
-    Then I wait to receive an error
-    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the error payload field "events" is an array with 1 elements
-    And the exception "errorClass" equals "java.lang.RuntimeException"
-    And the exception "message" equals "JvmAnrDisabledScenario"
-
-  @anr
-  Scenario: ANR triggered in JVM code is not captured when detectAnrs = false
-    When I run "JvmAnrDisabledScenario"
-    Then I wait to receive an error
-    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the error payload field "events" is an array with 1 elements
-    And the exception "errorClass" equals "java.lang.RuntimeException"
-    And the exception "message" equals "JvmAnrDisabledScenario"
-
-  @anr
-  Scenario: ANR triggered in JVM code is not captured when detectAnrs = false
-    When I run "JvmAnrDisabledScenario"
-    Then I wait to receive an error
-    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the error payload field "events" is an array with 1 elements
-    And the exception "errorClass" equals "java.lang.RuntimeException"
-    And the exception "message" equals "JvmAnrDisabledScenario"
-
-  @anr
-  Scenario: ANR triggered in JVM code is not captured when detectAnrs = false
-    When I run "JvmAnrDisabledScenario"
-    Then I wait to receive an error
-    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the error payload field "events" is an array with 1 elements
-    And the exception "errorClass" equals "java.lang.RuntimeException"
-    And the exception "message" equals "JvmAnrDisabledScenario"
-
-  @anr
-  Scenario: ANR triggered in JVM code is not captured when detectAnrs = false
-    When I run "JvmAnrDisabledScenario"
-    Then I wait to receive an error
-    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the error payload field "events" is an array with 1 elements
-    And the exception "errorClass" equals "java.lang.RuntimeException"
-    And the exception "message" equals "JvmAnrDisabledScenario"
-
-  @anr
-  Scenario: ANR triggered in JVM code is not captured when detectAnrs = false
-    When I run "JvmAnrDisabledScenario"
-    Then I wait to receive an error
-    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the error payload field "events" is an array with 1 elements
-    And the exception "errorClass" equals "java.lang.RuntimeException"
-    And the exception "message" equals "JvmAnrDisabledScenario"
-
-  @anr
-  Scenario: ANR triggered in JVM code is not captured when detectAnrs = false
-    When I run "JvmAnrDisabledScenario"
-    Then I wait to receive an error
-    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the error payload field "events" is an array with 1 elements
-    And the exception "errorClass" equals "java.lang.RuntimeException"
-    And the exception "message" equals "JvmAnrDisabledScenario"
+  Scenario: ANR not captured with autoDetectAnrs=false
+    When I run "AutoDetectAnrsFalseScenario"
+    And I wait for 2 seconds
+    And I tap the screen 3 times
+    And I wait for 10 seconds
+    And I close and relaunch the app after an ANR
+    And I configure Bugsnag for "AutoDetectAnrsFalseScenario"
+    Then Bugsnag confirms it has no errors to send
+    And I wait for 10 seconds
 
