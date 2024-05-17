@@ -1,27 +1,27 @@
 steps:
 
-  - label: ':android: Build fixture APK r19'
-    key: "fixture-r19"
-    timeout_in_minutes: 30
-    agents:
-      queue: macos-14
-    artifact_paths:
-      - "build/fixture-r19.apk"
-      - "build/fixture-r19-url.txt"
-      - "build/fixture-r19/*"
-    commands:
-      - bundle install
-      - make fixture-r19
-      - bundle exec upload-app --farm=bb --app=./build/fixture-r19.apk --app-id-file=build/fixture-r19-url.txt
+#  - label: ':android: Build fixture APK r19'
+#    key: "fixture-r19"
+#    timeout_in_minutes: 30
+#    agents:
+#      queue: macos-14
+#    artifact_paths:
+#      - "build/fixture-r19.apk"
+#      - "build/fixture-r19-url.txt"
+#      - "build/fixture-r19/*"
+#    commands:
+#      - bundle install
+#      - make fixture-r19
+#      - bundle exec upload-app --farm=bb --app=./build/fixture-r19.apk --app-id-file=build/fixture-r19-url.txt
 
   - label: ':bitbar: Android 8 NDK r19 smoke tests'
-    depends_on: "fixture-r19"
+#    depends_on: "fixture-r19"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.9.0:
-        download:
-          - "build/fixture-r19-url.txt"
-          - "build/fixture-r19/*"
+#        download:
+#          - "build/fixture-r19-url.txt"
+#          - "build/fixture-r19/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
         pull: maze-runner
@@ -29,7 +29,8 @@ steps:
         service-ports: true
         command:
           - "features/full_tests/anr.feature"
-          - "--app=@build/fixture-r19-url.txt"
+#          - "--app=@build/fixture-r19-url.txt"
+          - "--app=228355761"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22"
