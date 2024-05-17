@@ -28,7 +28,7 @@ steps:
         run: maze-runner
         service-ports: true
         command:
-          - "features/full_tests/anr.feature"
+          - "features/full_tests/auto_notify.feature"
 #          - "--app=@build/fixture-r19-url.txt"
           - "--app=228355761"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
