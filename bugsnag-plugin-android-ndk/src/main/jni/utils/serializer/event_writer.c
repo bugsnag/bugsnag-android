@@ -24,8 +24,6 @@
   bsg_ksjsonaddStringElement(json, (name), (value),                            \
                              strnlen((value), sizeof((value))))
 
-#define STRING_NOT_EMPTY(s) (*(s) != 0)
-#define STRING_IS_EMPTY(s) (*(s) == 0)
 #define STR_CONST_CAT(dst, src) bsg_strncpy((dst), (src), sizeof(src))
 
 static bool bsg_write_metadata(BSG_KSJSONEncodeContext *json,
@@ -49,6 +47,14 @@ static bool bsg_write_session(BSG_KSJSONEncodeContext *json,
                               bugsnag_event *event);
 static bool bsg_write_usage(BSG_KSJSONEncodeContext *json,
                             bsg_environment *env);
+
+static inline bool string_is_not_empty(const char *restrict s) {
+  return (*(s) != 0);
+}
+
+static inline bool string_is_empty(const char *restrict s) {
+  return (*(s) == 0);
+}
 
 static int bsg_write(const char *data, size_t length, void *userData) {
   bsg_buffered_writer *writer = userData;
@@ -156,7 +162,7 @@ bool bsg_write_event_file(bsg_environment *env, const char *filename) {
                                event->max_crumb_count)) {
       goto error;
     }
-    if (STRING_NOT_EMPTY(event->grouping_hash)) {
+    if (string_is_not_empty(event->grouping_hash)) {
       CHECKED(
           JSON_LIMITED_STRING_ELEMENT("groupingHash", event->grouping_hash));
     }
@@ -339,18 +345,18 @@ static bool bsg_write_stackframe(BSG_KSJSONEncodeContext *json,
       CHECKED(bsg_ksjsonaddBooleanElement(json, "isPC", true));
     }
 
-    if (STRING_NOT_EMPTY(frame->filename)) {
+    if (string_is_not_empty(frame->filename)) {
       CHECKED(JSON_LIMITED_STRING_ELEMENT("file", frame->filename));
     }
 
-    if (STRING_NOT_EMPTY(frame->method)) {
+    if (string_is_not_empty(frame->method)) {
       CHECKED(JSON_LIMITED_STRING_ELEMENT("method", frame->method));
     } else {
       bsg_uint64_to_hex(frame->symbol_address, hex_output_buffer, 1);
       CHECKED(JSON_LIMITED_STRING_ELEMENT("method", hex_str));
     }
 
-    if (STRING_NOT_EMPTY(frame->code_identifier)) {
+    if (string_is_not_empty(frame->code_identifier)) {
       CHECKED(JSON_LIMITED_STRING_ELEMENT("codeIdentifier",
                                           frame->code_identifier));
     }
@@ -411,9 +417,9 @@ error:
 }
 
 static bool bsg_write_user(BSG_KSJSONEncodeContext *json, bugsnag_user *user) {
-  const bool has_id = STRING_NOT_EMPTY(user->id);
-  const bool has_name = STRING_NOT_EMPTY(user->name);
-  const bool has_email = STRING_NOT_EMPTY(user->email);
+  const bool has_id = string_is_not_empty(user->id);
+  const bool has_name = string_is_not_empty(user->name);
+  const bool has_email = string_is_not_empty(user->email);
 
   const bool has_user = has_id || has_name || has_email;
   if (has_user) {
@@ -448,7 +454,7 @@ static bool bsg_write_app(BSG_KSJSONEncodeContext *json, bsg_app_info *app) {
     CHECKED(JSON_LIMITED_STRING_ELEMENT("releaseStage", app->release_stage));
     CHECKED(
         bsg_ksjsonaddIntegerElement(json, "versionCode", app->version_code));
-    if (STRING_NOT_EMPTY(app->build_uuid)) {
+    if (string_is_not_empty(app->build_uuid)) {
       CHECKED(JSON_LIMITED_STRING_ELEMENT("buildUUID", app->build_uuid));
     }
 
@@ -645,7 +651,7 @@ error:
 static bool bsg_write_session(BSG_KSJSONEncodeContext *json,
                               bugsnag_event *event) {
 
-  if (STRING_IS_EMPTY(event->session_id)) {
+  if (string_is_empty(event->session_id)) {
     return true;
   }
 
