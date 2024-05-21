@@ -71,7 +71,7 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_NativeJsonSerializeTest_run(
   bugsnag_event *event = init_event();
   memcpy(&env.next_event, event, sizeof(bugsnag_event));
 
-  strcpy(env.event_path, dir);
+  env.event_path = strdup(dir);
   strcpy(env.event_uuid, "test-uuid");
 
   bsg_event_write(&env);

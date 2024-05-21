@@ -24,7 +24,7 @@ typedef struct {
   /**
    * File path on disk where the next crash report will be written if needed.
    */
-  char event_path[384];
+  char *event_path;
   /**
    * The pre-generated UUID of the next crash report.
    */

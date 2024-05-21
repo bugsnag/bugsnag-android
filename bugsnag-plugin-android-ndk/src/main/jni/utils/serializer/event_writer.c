@@ -70,7 +70,7 @@ static size_t build_filename(bsg_environment *env, char *out) {
   time_t now;
   time(&now);
 
-  int length = strnlen(env->event_path, sizeof(env->event_path));
+  int length = strnlen(env->event_path, 4096);
   memcpy(out, env->event_path, length);
   out[length++] = '/';
 

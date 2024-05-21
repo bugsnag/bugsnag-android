@@ -22,8 +22,6 @@
 extern "C" {
 #endif
 
-#define STATIC_DATA_FILENAME_EXTENSION ".static_data.json"
-
 static bsg_environment *bsg_global_env;
 static pthread_mutex_t bsg_global_env_write_mutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -178,8 +176,7 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   if (event_path == NULL) {
     goto error;
   }
-  bsg_strncpy(bugsnag_env->event_path, event_path,
-              sizeof(bugsnag_env->event_path));
+  bugsnag_env->event_path = strdup(event_path);
   bsg_safe_release_string_utf_chars(env, _event_path, event_path);
 
   // copy the event UUID to the env struct
