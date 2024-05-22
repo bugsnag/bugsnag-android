@@ -16,8 +16,6 @@ bool bsg_serialize_event_to_file(bsg_environment *env) __asyncsafe;
  */
 bool bsg_serialize_last_run_info_to_file(bsg_environment *env) __asyncsafe;
 
-bugsnag_event *bsg_deserialize_event_from_file(char *filepath);
-
 #ifdef __cplusplus
 }
 #endif

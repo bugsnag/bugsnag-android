@@ -21,7 +21,7 @@ size_t bsg_strlen(const char *str) __asyncsafe;
 /**
  * Copy a maximum number of bytes from src to dst
  */
-void bsg_strncpy(char *dst, const char *src, size_t len) __asyncsafe;
+size_t bsg_strncpy(char *dst, const char *src, size_t len) __asyncsafe;
 
 /**
  * Encode a number of bytes into dst while hex encoding the data.

@@ -1,8 +1,7 @@
 #include <greatest/greatest.h>
-#include <event.h>
 #include <utils/string.h>
 #include "../../main/jni/include/bugsnag.h"
-#include <event.h>
+#include "test_bsg_event.h"
 
 bugsnag_event *init_event() {
     bugsnag_event *event = calloc(1, sizeof(bugsnag_event));

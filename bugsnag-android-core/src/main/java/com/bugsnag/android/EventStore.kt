@@ -196,6 +196,7 @@ internal class EventStore(
                 return null
             }
         } catch (ioe: Exception) {
+            logger.w("could not parse event payload", ioe)
             eventSource.clear()
         }
         val processedEvent = eventSource.event
