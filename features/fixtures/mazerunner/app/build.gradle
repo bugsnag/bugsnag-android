@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         minSdkVersion 17
-        targetSdkVersion 31
+        targetSdkVersion 33
         versionCode 34
         versionName "1.1.14"
         manifestPlaceholders = [
@@ -79,6 +79,7 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    namespace 'com.bugsnag.android.mazerunner'
 }
 
 dependencies {

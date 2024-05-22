@@ -34,31 +34,31 @@ notifier:
 
 fixture-r19: notifier
 	# Build the r19 test fixture
-	@./gradlew -PTEST_FIXTURE_NDK_VERSION=19.2.5345600 \
+	@cd ./features/fixtures/mazerunner && ./gradlew -PTEST_FIXTURE_NDK_VERSION=19.2.5345600 \
                -PTEST_FIXTURE_NAME=fixture-r19.apk \
-	           -p=features/fixtures/mazerunner assembleRelease -x check
+                assembleRelease -x check
 	@ruby scripts/copy-build-files.rb release r19
 
 fixture-r21: notifier
 	# Build the r21 test fixture
-	@./gradlew -PTEST_FIXTURE_NDK_VERSION=21.4.7075529 \
+	@cd ./features/fixtures/mazerunner && ./gradlew -PTEST_FIXTURE_NDK_VERSION=21.4.7075529 \
                -PTEST_FIXTURE_NAME=fixture-r21.apk \
-               -p=features/fixtures/mazerunner assembleRelease -x check
+               assembleRelease -x check
 	@ruby scripts/copy-build-files.rb release r21
 
 fixture-minimal: notifier
 	# Build the minimal test fixture
-	@./gradlew -PMINIMAL_FIXTURE=true \
+	@cd ./features/fixtures/mazerunner && ./gradlew -PMINIMAL_FIXTURE=true \
 	           -PTEST_FIXTURE_NDK_VERSION=17.2.4988734 \
                -PTEST_FIXTURE_NAME=fixture-minimal.apk \
-               -p=features/fixtures/mazerunner assembleRelease -x check
+               assembleRelease -x check
 	@ruby scripts/copy-build-files.rb release minimal
 
 fixture-debug: notifier
 	# Build the minimal test fixture
-	@./gradlew -PTEST_FIXTURE_NDK_VERSION=17.2.4988734 \
+	@cd ./features/fixtures/mazerunner && ./gradlew -PTEST_FIXTURE_NDK_VERSION=17.2.4988734 \
                -PTEST_FIXTURE_NAME=fixture-debug.apk \
-               -p=features/fixtures/mazerunner assembleDebug -x check
+               assembleDebug -x check
 	@ruby scripts/copy-build-files.rb debug debug
 
 example-app:

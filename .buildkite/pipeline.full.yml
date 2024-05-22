@@ -6,14 +6,16 @@ steps:
       queue: macos-14
     artifact_paths: build/fixture-minimal.apk
     command: make fixture-minimal
+    env:
+      JAVA_VERSION: 17
 
   - label: ':android: Build Example App'
     timeout_in_minutes: 5
     agents:
       queue: macos-14
+    command: 'make example-app'
     env:
       JAVA_VERSION: 17
-    command: 'make example-app'
 
   - label: ':android: Build debug fixture APK'
     key: "fixture-debug"
@@ -24,6 +26,8 @@ steps:
       - "build/fixture-debug.apk"
       - "build/fixture-debug/*"
     command: make fixture-debug
+    env:
+      JAVA_VERSION: 17
 
   - label: ':android: Build Scan'
     timeout_in_minutes: 10
