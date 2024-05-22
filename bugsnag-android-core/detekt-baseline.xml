@@ -55,7 +55,6 @@
     <ID>SwallowedException:DeviceDataCollector.kt$DeviceDataCollector$exception: Exception</ID>
     <ID>SwallowedException:DeviceIdFilePersistence.kt$DeviceIdFilePersistence$exc: OverlappingFileLockException</ID>
     <ID>SwallowedException:EventStore.kt$EventStore$exception: RejectedExecutionException</ID>
-    <ID>SwallowedException:EventStore.kt$EventStore$ioe: Exception</ID>
     <ID>SwallowedException:ForegroundDetector.kt$ForegroundDetector$e: Exception</ID>
     <ID>SwallowedException:ImmutableConfig.kt$e: Exception</ID>
     <ID>SwallowedException:JsonHelperTest.kt$JsonHelperTest$e: IllegalArgumentException</ID>
