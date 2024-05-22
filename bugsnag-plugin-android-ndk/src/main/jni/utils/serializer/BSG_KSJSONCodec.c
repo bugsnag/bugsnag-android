@@ -324,6 +324,9 @@ int bsg_ksjsonaddFloatingPointElement(BSG_KSJSONEncodeContext *const context,
                                       const char *const name, double value) {
   int result = bsg_ksjsonbeginElement(context, name);
   unlikely_if(result != BSG_KSJSON_OK) { return result; }
+  unlikely_if(isnan(value) || isinf(value)) {
+    return addJSONData(context, "null", 4);
+  }
   char buff[30];
   bsg_double_to_string(value, buff, MAX_SIGNIFICANT_DIGITS);
   return addJSONData(context, buff, strlen(buff));
