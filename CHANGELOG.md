@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* Corrected the behavior when `Bugsnag.startSession` is called when `config.autoTrackSessions=true`, the first automatic session will now be correctly discarded
+  [#2033](https://github.com/bugsnag/bugsnag-android/pull/2033)
+
 ## 6.5.0 (2024-05-15)
 
 ### Enhancements
