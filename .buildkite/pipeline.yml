@@ -86,6 +86,13 @@ steps:
       queue: macos-14
     command: './gradlew test'
 
+  - label: ':android: Instrumentation tests'
+    timeout_in_minutes: 10
+    agents:
+      queue: macos-14-5
+    command: './scripts/run-connected-checks.rb'
+    env:
+      API_LEVEL: 30
   #
   # BitBar steps
   #
