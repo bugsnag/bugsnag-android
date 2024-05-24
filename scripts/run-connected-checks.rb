@@ -7,17 +7,14 @@ raise('API_LEVEL environment variable must be set') unless ENV['API_LEVEL']
 target_api_level = ENV['API_LEVEL']
 
 # Check if the appropriate AVD exists based on given API level
-puts `echo $PATH`
-puts `which avdmanager`
 avd_exists = `avdmanager list avd -c | grep test-sdk-#{ENV['API_LEVEL']}`.strip
 
 if avd_exists.empty?
   puts "AVD test-sdk-#{target_api_level} does not exist, creating it now"
   # Determine if we're running on x86 or ARM
   sys_arch = `uname -m`.strip
-
+  sys_arch = 'arm64-v8a' if sys_arch.eql?('arm64')
   # Check to see if the appropriate SDK is installed
-  puts `which sdkmanager`
   sdk_installed = `sdkmanager --list_installed | grep "system-images;android-#{target_api_level};google_apis;#{sys_arch}"`.strip
 
   if sdk_installed.empty?
