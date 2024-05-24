@@ -89,7 +89,7 @@ steps:
   - label: ':android: Instrumentation tests'
     timeout_in_minutes: 10
     agents:
-      queue: macos-14-5
+      queue: macos-14-4
     command: './scripts/run-connected-checks.rb'
     env:
       API_LEVEL: 30
