@@ -48,7 +48,7 @@ class StrictModeViolationTest {
         // validate first stackframe
         val frame = err.stacktrace.first()
         assertEquals(
-            "com.bugsnag.android.StrictModeViolationTet.testThreadViolationCapture",
+            "com.bugsnag.android.StrictModeViolationTest.testThreadViolationCapture",
             frame.method
         )
         assertEquals("StrictModeViolationTest.kt", frame.file)

@@ -93,7 +93,7 @@ steps:
         upload:
             - "bugsnag-*/build/reports/androidTests/connected/**/*.html"
     agents:
-      queue: macos-14-4
+      queue: macos-14
     command: './scripts/run-connected-checks.rb'
     env:
       API_LEVEL: 30
