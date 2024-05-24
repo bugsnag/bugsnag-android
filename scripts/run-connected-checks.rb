@@ -7,6 +7,7 @@ raise('API_LEVEL environment variable must be set') unless ENV['API_LEVEL']
 target_api_level = ENV['API_LEVEL']
 
 # Check if the appropriate AVD exists based on given API level
+puts `echo $PATH`
 puts `which avdmanager`
 avd_exists = `avdmanager list avd -c | grep test-sdk-#{ENV['API_LEVEL']}`.strip
 
