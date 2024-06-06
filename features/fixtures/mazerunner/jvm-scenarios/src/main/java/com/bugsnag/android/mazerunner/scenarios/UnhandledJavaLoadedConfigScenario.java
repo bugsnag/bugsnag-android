@@ -27,7 +27,8 @@ public class UnhandledJavaLoadedConfigScenario extends Scenario {
         testConfig.setContext("FooContext");
         Bugsnag.start(this.getContext(), testConfig);
         Bugsnag.addMetadata("TestData", "password", "NotTellingYou");
-        throw new RuntimeException("UnhandledJavaLoadedConfigScenario");
-    }
 
+        throw new RuntimeException("UnhandledJavaLoadedConfigScenario");
+
+    }
 }
