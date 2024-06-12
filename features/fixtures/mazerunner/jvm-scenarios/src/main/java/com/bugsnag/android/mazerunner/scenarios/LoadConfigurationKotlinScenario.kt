@@ -46,7 +46,7 @@ internal class LoadConfigurationKotlinScenario(
             }
         )
 
-        reportBugsnagStartupDuration { Bugsnag.start(this.context, testConfig) }
+        measureBugsnagStartupDuration(this.context, testConfig)
     }
 
     override fun startScenario() {

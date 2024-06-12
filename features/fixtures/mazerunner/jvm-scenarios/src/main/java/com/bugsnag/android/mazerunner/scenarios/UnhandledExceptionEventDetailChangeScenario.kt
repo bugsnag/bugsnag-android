@@ -17,7 +17,6 @@ internal class UnhandledExceptionEventDetailChangeScenario(
 ) : Scenario(config, context, eventMetadata) {
 
     init {
-
         config.addOnError(
             OnErrorCallback { event ->
                 event.apiKey = "0000111122223333aaaabbbbcccc9999"
@@ -75,12 +74,18 @@ internal class UnhandledExceptionEventDetailChangeScenario(
 
         Bugsnag.addMetadata("custom_data1", "data", "hello")
         Bugsnag.addMetadata("custom_data2", "data", "hello")
-        Bugsnag.addMetadata("custom_data3", "test data", "divert all available power to the crash reporter")
-
+        Bugsnag.addMetadata(
+            "custom_data3",
+            "test data",
+            "divert all available power to the crash reporter"
+        )
         Bugsnag.addFeatureFlag("test1")
         Bugsnag.addFeatureFlag("test2")
 
-        Bugsnag.notify(RuntimeException("UnhandledExceptionEventDetailChangeScenario"))
-        throw NullPointerException("something broke")
+        if (eventMetadata == "notify") {
+            Bugsnag.notify(RuntimeException("UnhandledExceptionEventDetailChangeScenario"))
+        } else {
+            throw NullPointerException("something broke")
+        }
     }
 }

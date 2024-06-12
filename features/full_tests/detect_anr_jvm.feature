@@ -41,8 +41,7 @@ Feature: ANRs triggered in JVM code are captured
   @skip_android_10
   Scenario: ANR triggered in JVM code is not captured when detectAnrs = false
     When I run "JvmAnrDisabledScenario"
-    And I wait for 2 seconds
-    And I tap the screen 3 times
+    # No screen taps for this scenario as it seems to break Appium with Android 8
     Then I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the error payload field "events" is an array with 1 elements

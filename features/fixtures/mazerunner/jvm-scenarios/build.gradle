@@ -10,7 +10,11 @@ android {
     compileSdkVersion 31
 
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 17
+        manifestPlaceholders = [
+                bugsnagPerformanceApiKey: System.getenv("BUGSNAG_PERFORMANCE_API_KEY")
+                        ?: "abc12312312312312312312312312312",
+        ]
     }
 
     buildTypes {
@@ -28,6 +32,7 @@ android {
     lintOptions {
         tasks.lint.enabled = false
     }
+    namespace 'com.bugsnag.android.mazerunner.jvmscenarios'
 }
 
 dependencies {
@@ -38,8 +43,9 @@ dependencies {
         implementation "com.squareup.okhttp3:okhttp:3.12.0"
     } else {
         project.logger.lifecycle("Using OkHttp 4 dependency in test fixture")
-        implementation "com.squareup.okhttp3:okhttp:4.9.1"
+        implementation "com.squareup.okhttp3:okhttp:4.12.0"
     }
+    implementation "com.bugsnag:bugsnag-android-performance:1.2.2"
 }
 
 private boolean useLegacyOkHttp() {
@@ -48,4 +54,4 @@ private boolean useLegacyOkHttp() {
 
 apply from: "../bugsnag-dependency.gradle"
 apply from: "../../../../gradle/detekt.gradle"
-apply from: "../../../../gradle/checkstyle.gradle"
+apply from: "../gradle/checkstyle.gradle"

@@ -16,12 +16,11 @@ public final class com/bugsnag/android/ndk/NativeBridge : com/bugsnag/android/in
 	public final fun clearFeatureFlag (Ljava/lang/String;)V
 	public final fun clearFeatureFlags ()V
 	public final fun clearMetadataTab (Ljava/lang/String;)V
-	public final fun deliverReportAtPath (Ljava/lang/String;)V
 	public final fun getCurrentCallbackSetCounts ()Ljava/util/Map;
 	public final fun getCurrentNativeApiCallUsage ()Ljava/util/Map;
 	public final fun getSignalUnwindStackFunction ()J
 	public final fun initCallbackCounts (Ljava/util/Map;)V
-	public final fun install (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IZIZII)V
+	public final fun install (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IZIZII)V
 	public final fun notifyAddCallback (Ljava/lang/String;)V
 	public final fun notifyRemoveCallback (Ljava/lang/String;)V
 	public fun onStateChange (Lcom/bugsnag/android/StateEvent;)V

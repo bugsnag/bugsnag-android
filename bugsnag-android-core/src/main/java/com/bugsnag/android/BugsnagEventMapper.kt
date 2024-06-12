@@ -246,6 +246,14 @@ internal class BugsnagEventMapper(
     }
 
     private fun String.toDate(): Date {
+        if (isNotEmpty() && this[0] == 't') {
+            // date is in the format 't{epoch millis}'
+            val timestamp = substring(1)
+            timestamp.toLongOrNull()?.let {
+                return Date(it)
+            }
+        }
+
         return try {
             DateUtils.fromIso8601(this)
         } catch (pe: IllegalArgumentException) {

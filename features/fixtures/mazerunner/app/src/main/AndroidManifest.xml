@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.bugsnag.android.mazerunner">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- always enable GWP ASAN tool to detect native memory bugs. see
         https://developer.android.com/ndk/guides/gwp-asan-->
@@ -35,6 +34,7 @@
             />
 
         <meta-data android:name="com.bugsnag.android.API_KEY" android:value="${bugsnagApiKey}"/>
+        <meta-data android:name="com.bugsnag.android.performance.API_KEY" android:value="${bugsnagPerformanceApiKey}"/>
         <meta-data android:name="com.bugsnag.android.APP_TYPE" android:value="${bugsnagAppType}"/>
         <meta-data android:name="com.bugsnag.android.APP_VERSION" android:value="${bugsnagAppVersion}"/>
         <meta-data android:name="com.bugsnag.android.AUTO_DETECT_ERRORS" android:value="${bugsnagAutoDetectErrors}"/>

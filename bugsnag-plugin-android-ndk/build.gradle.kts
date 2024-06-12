@@ -7,21 +7,19 @@ bugsnagBuildOptions {
     publishesPrefab = "bugsnag-ndk"
 }
 
-apply plugin: "com.android.library"
+apply(plugin = "com.android.library")
 
 dependencies {
-    api(project(":bugsnag-android-core"))
+    add("api", project(":bugsnag-android-core"))
 }
 
-apply from: "../gradle/kotlin.gradle"
-
 afterEvaluate {
-    tasks.named("prefabReleasePackage") {
+    tasks.getByName("prefabReleasePackage") {
         doLast {
             project.fileTree("build/intermediates/prefab_package/") {
                 include("**/abi.json")
             }.forEach { file ->
-                file.text = file.text.replace("c++_static", "none")
+                file.writeText(file.readText().replace("c++_static", "none"))
             }
         }
     }

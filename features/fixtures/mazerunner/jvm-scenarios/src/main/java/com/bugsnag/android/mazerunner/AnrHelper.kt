@@ -1,6 +1,7 @@
 package com.bugsnag.android.mazerunner
 
 import android.os.Handler
+import android.os.Looper
 
 val mutex = Any()
 
@@ -21,7 +22,7 @@ fun createDeadlock() {
         }
     ).start()
 
-    Handler().postDelayed(
+    Handler(Looper.getMainLooper()).postDelayed(
         object : java.lang.Runnable {
             override fun run() {
                 synchronized(mutex) { throw java.lang.IllegalStateException() }

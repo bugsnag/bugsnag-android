@@ -1,1 +1,0 @@
-[{"name":"Jane","timestamp":"2018-10-08T12:07:09Z","type":"user","metaData":{"str":"Foo"}},{"name":"Something went wrong","timestamp":"2018-10-08T12:07:11Z","type":"manual","metaData":{"bool":true}},{"name":"MainActivity","timestamp":"2018-10-08T12:07:15.563Z","type":"navigation"},{"name":"Updated store","timestamp":"2018-10-08T12:07:16Z","type":"state"}]

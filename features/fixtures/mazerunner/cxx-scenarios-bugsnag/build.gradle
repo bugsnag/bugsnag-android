@@ -37,6 +37,7 @@ android {
 
     buildFeatures.prefab = true
     packagingOptions.jniLibs.pickFirsts += ["**/libbugsnag-ndk.so"]
+    namespace 'com.bugsnag.android.mazerunner.cxxscenariosbugsnag'
 }
 
 dependencies {
@@ -46,4 +47,4 @@ dependencies {
 }
 
 apply from: "../../../../gradle/detekt.gradle"
-apply from: "../../../../gradle/checkstyle.gradle"
+apply from: "../gradle/checkstyle.gradle"

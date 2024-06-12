@@ -36,7 +36,7 @@ class SessionTracker extends BaseObservable implements ForegroundDetector.OnActi
     private volatile Session currentSession = null;
     final BackgroundTaskService backgroundTaskService;
     final Logger logger;
-    private boolean shouldSuppressFirstAutoSession = false;
+    private boolean shouldSuppressFirstAutoSession = true;
 
     SessionTracker(ImmutableConfig configuration,
                    CallbackState callbackState,
@@ -108,8 +108,12 @@ class SessionTracker extends BaseObservable implements ForegroundDetector.OnActi
                     && existingSession != null
                     && !existingSession.isAutoCaptured()
                     && shouldSuppressFirstAutoSession) {
-                shouldSuppressFirstAutoSession = true;
+                shouldSuppressFirstAutoSession = false;
                 return true;
+            }
+
+            if (autoCaptured) {
+                shouldSuppressFirstAutoSession = false;
             }
         }
         return false;

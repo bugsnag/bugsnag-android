@@ -3,6 +3,9 @@ package com.bugsnag.android.mazerunner
 import android.app.Application
 import android.os.Build
 import android.os.StrictMode
+import com.bugsnag.android.performance.BugsnagPerformance
+import com.bugsnag.android.performance.PerformanceConfiguration
+import com.bugsnag.android.performance.internal.InternalDebug
 
 class MazerunnerApp : Application() {
 
@@ -11,6 +14,8 @@ class MazerunnerApp : Application() {
         triggerStartupAnrIfRequired()
         setupNonSdkUsageStrictMode()
         triggerManualSessionIfRequired()
+        InternalDebug.spanBatchSizeSendTriggerPoint = 1
+        BugsnagPerformance.start(PerformanceConfiguration.load(this))
     }
 
     /**

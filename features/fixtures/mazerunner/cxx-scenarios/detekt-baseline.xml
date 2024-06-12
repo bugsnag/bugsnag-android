@@ -1,6 +1,6 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" ?>
 <SmellBaseline>
-  <ManuallySuppressedIssues/>
+  <ManuallySuppressedIssues></ManuallySuppressedIssues>
   <CurrentIssues>
     <ID>MagicNumber:CXXDelayedCrashScenario.kt$CXXDelayedCrashScenario$405</ID>
     <ID>MagicNumber:CXXIgnoredSigabrtScenario.kt$CXXIgnoredSigabrtScenario$2726</ID>
