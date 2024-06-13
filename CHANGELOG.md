@@ -2,6 +2,11 @@
 
 ## TBD
 
+### Enhancements
+
+* Support for Android Kernels with a 16kB page size
+  []()
+
 ### Bug fixes
 
 * Corrected the behavior when `Bugsnag.startSession` is called when `config.autoTrackSessions=true`, the first automatic session will now be correctly discarded
