@@ -9,6 +9,7 @@ import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameter
 import org.junit.runners.Parameterized.Parameters
 import java.util.Date
+import java.util.UUID
 
 @RunWith(Parameterized::class)
 internal class EventSerializationTest {
@@ -35,7 +36,8 @@ internal class EventSerializationTest {
                 createEvent {
                     val user = User("123", "foo@example.com", "Joe")
                     val apiKey = "BUGSNAG_API_KEY"
-                    it.session = Session("123", Date(0), user, false, Notifier(), NoopLogger, apiKey)
+                    it.session =
+                        Session("123", Date(0), user, false, Notifier(), NoopLogger, apiKey)
                 },
 
                 // threads included
@@ -82,6 +84,14 @@ internal class EventSerializationTest {
                 createEvent {
                     it.addFeatureFlag("no_variant")
                     it.addFeatureFlag("flag", "with_variant")
+                },
+
+                // with a trace correlation
+                createEvent {
+                    it.setTraceCorrelation(
+                        UUID(0x24b8b82900d34da3, -0x659434b74a5b9edc),
+                        0x3dbe7c7ae84945b9
+                    )
                 }
             )
         }

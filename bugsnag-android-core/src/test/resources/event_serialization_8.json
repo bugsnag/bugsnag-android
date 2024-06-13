@@ -1,0 +1,41 @@
+{
+  "metaData": {},
+  "severity": "warning",
+  "severityReason": {
+    "type": "handledException",
+    "unhandledOverridden": false
+  },
+  "unhandled": false,
+  "exceptions": [],
+  "projectPackages":[
+    "com.example.foo"
+  ],
+  "user": {},
+  "app": {
+    "type": "android",
+    "versionCode": 0
+  },
+  "device": {
+    "cpuAbi": [],
+    "manufacturer": "samsung",
+    "model": "s7",
+    "osName": "android",
+    "osVersion": "7.1",
+    "runtimeVersions": {
+      "osBuild": "bulldog",
+      "androidApiLevel": "24"
+    },
+    "totalMemory": 109230923452,
+    "freeDisk": 22234423124,
+    "freeMemory": 92340255592,
+    "orientation": "portrait",
+    "time": "1970-01-01T00:00:00.000Z"
+  },
+  "breadcrumbs": [],
+  "threads": [],
+  "featureFlags": [],
+  "correlation": {
+    "traceId": "24b8b82900d34da39a6bcb48b5a46124",
+    "spanId": "3dbe7c7ae84945b9"
+  }
+}

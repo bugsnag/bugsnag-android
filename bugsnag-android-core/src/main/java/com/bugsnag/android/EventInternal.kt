@@ -119,6 +119,8 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
      */
     internal var userImpl: User
 
+    var traceCorrelation: TraceCorrelation? = null
+
     fun getUnhandledOverridden(): Boolean = severityReason.unhandledOverridden
 
     fun getOriginalUnhandled(): Boolean = severityReason.originalUnhandled
@@ -192,6 +194,10 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
         writer.endArray()
 
         writer.name("featureFlags").value(featureFlags)
+
+        traceCorrelation?.let { correlation ->
+            writer.name("correlation").value(correlation)
+        }
 
         if (session != null) {
             val copy = Session.copySession(session)
