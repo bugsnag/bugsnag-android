@@ -35,7 +35,7 @@
   "threads": [],
   "featureFlags": [],
   "correlation": {
-    "traceid": "24b8b82900d34da39a6bcb48b5a46124",
-    "spanid": "3dbe7c7ae84945b9"
+    "traceId": "24b8b82900d34da39a6bcb48b5a46124",
+    "spanId": "3dbe7c7ae84945b9"
   }
 }

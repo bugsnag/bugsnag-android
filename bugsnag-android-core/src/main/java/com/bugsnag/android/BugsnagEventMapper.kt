@@ -96,8 +96,8 @@ internal class BugsnagEventMapper(
 
         // populate correlation
         (map["correlation"] as? Map<String, String>)?.let {
-            val traceId = parseTraceId(it["traceid"])
-            val spanId = it["spanid"]?.parseUnsignedLong()
+            val traceId = parseTraceId(it["traceId"])
+            val spanId = it["spanId"]?.parseUnsignedLong()
 
             if (traceId != null && spanId != null) {
                 event.traceCorrelation = TraceCorrelation(traceId, spanId)

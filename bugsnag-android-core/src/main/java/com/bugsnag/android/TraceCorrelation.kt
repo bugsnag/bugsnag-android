@@ -5,8 +5,8 @@ import java.util.UUID
 internal data class TraceCorrelation(val traceId: UUID, val spanId: Long) : JsonStream.Streamable {
     override fun toStream(writer: JsonStream) {
         writer.beginObject()
-            .name("traceid").value(traceId.toHexString())
-            .name("spanid").value(spanId.toHexString())
+            .name("traceId").value(traceId.toHexString())
+            .name("spanId").value(spanId.toHexString())
         writer.endObject()
     }
 
