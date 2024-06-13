@@ -5,7 +5,7 @@
 ### Enhancements
 
 * Support for Android Kernels with a 16kB page size
-  []()
+  [#2040](https://github.com/bugsnag/bugsnag-android/pull/2040)
 
 ### Bug fixes
 
