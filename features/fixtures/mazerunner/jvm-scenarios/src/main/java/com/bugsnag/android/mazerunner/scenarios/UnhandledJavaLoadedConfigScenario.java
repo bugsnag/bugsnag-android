@@ -17,6 +17,7 @@ public class UnhandledJavaLoadedConfigScenario extends Scenario {
                                              @NonNull Context context,
                                              @Nullable String eventMetadata) {
         super(config, context, eventMetadata);
+        config.getEnabledErrorTypes().setAnrs(false);
     }
 
     @Override
