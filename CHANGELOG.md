@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 6.6.0 (2024-06-19)
 
 ### Enhancements
 
