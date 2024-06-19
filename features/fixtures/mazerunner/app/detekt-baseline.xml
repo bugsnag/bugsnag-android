@@ -1,7 +1,8 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" ?>
 <SmellBaseline>
-  <ManuallySuppressedIssues/>
+  <ManuallySuppressedIssues></ManuallySuppressedIssues>
   <CurrentIssues>
+    <ID>ComplexMethod:MainActivity.kt$MainActivity$// Starts a thread to poll for Maze Runner actions to perform private fun startCommandRunner()</ID>
     <ID>MagicNumber:MainActivity.kt$MainActivity$1000</ID>
     <ID>MagicNumber:MainActivity.kt$MainActivity$250</ID>
     <ID>SwallowedException:NetworkStatus.kt$catch (e: Exception) { NetworkStatus.NO_INTERNET }</ID>

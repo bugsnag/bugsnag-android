@@ -16,14 +16,11 @@
 #include "metadata.h"
 #include "safejni.h"
 #include "utils/serializer.h"
-#include "utils/serializer/event_reader.h"
 #include "utils/string.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#define STATIC_DATA_FILENAME_EXTENSION ".static_data.json"
 
 static bsg_environment *bsg_global_env;
 static pthread_mutex_t bsg_global_env_write_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -148,9 +145,10 @@ void bsg_update_next_run_info(bsg_environment *env) {
 
 JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
     JNIEnv *env, jobject _this, jstring _api_key, jstring _event_path,
-    jstring _last_run_info_path, jint consecutive_launch_crashes,
-    jboolean auto_detect_ndk_crashes, jint _api_level, jboolean is32bit,
-    jint send_threads, jint max_breadcrumbs) {
+    jstring _last_run_info_path, jstring _event_uuid,
+    jint consecutive_launch_crashes, jboolean auto_detect_ndk_crashes,
+    jint _api_level, jboolean is32bit, jint send_threads,
+    jint max_breadcrumbs) {
 
   if (!bsg_jni_cache_init(env)) {
     BUGSNAG_LOG("Could not init JNI jni_cache.");
@@ -178,10 +176,17 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   if (event_path == NULL) {
     goto error;
   }
-  sprintf(bugsnag_env->next_event_path, "%s", event_path);
-  sprintf(bugsnag_env->next_event_static_data_path, "%s%s", event_path,
-          STATIC_DATA_FILENAME_EXTENSION);
+  bugsnag_env->event_path = strdup(event_path);
   bsg_safe_release_string_utf_chars(env, _event_path, event_path);
+
+  // copy the event UUID to the env struct
+  const char *event_uuid = bsg_safe_get_string_utf_chars(env, _event_uuid);
+  if (event_uuid == NULL) {
+    goto error;
+  }
+  bsg_strncpy(bugsnag_env->event_uuid, event_uuid,
+              sizeof(bugsnag_env->event_uuid));
+  bsg_safe_release_string_utf_chars(env, _event_uuid, event_uuid);
 
   // copy last run info path to env struct
   const char *last_run_info_path =
@@ -234,102 +239,6 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
 
 error:
   free(bugsnag_env);
-}
-
-JNIEXPORT void JNICALL
-Java_com_bugsnag_android_ndk_NativeBridge_deliverReportAtPath(
-    JNIEnv *env, jobject _this, jstring _report_path) {
-  static pthread_mutex_t bsg_native_delivery_mutex = PTHREAD_MUTEX_INITIALIZER;
-  pthread_mutex_lock(&bsg_native_delivery_mutex);
-
-  const char *event_path = NULL;
-  char static_data_path[384];
-  bugsnag_event *event = NULL;
-  jbyteArray jpayload = NULL;
-  jbyteArray jstage = NULL;
-  char *payload = NULL;
-  char *static_data = NULL;
-  jbyteArray jstatic_data = NULL;
-  jstring japi_key = NULL;
-  jstring errorClass = NULL;
-
-  if (!bsg_jni_cache->initialized) {
-    BUGSNAG_LOG("deliverReportAtPath failed: JNI cache not initialized.");
-    goto exit;
-  }
-
-  event_path = bsg_safe_get_string_utf_chars(env, _report_path);
-  if (event_path == NULL) {
-    goto exit;
-  }
-  event = bsg_deserialize_event_from_file((char *)event_path);
-
-  snprintf(static_data_path, sizeof(static_data_path), "%s%s", event_path,
-           STATIC_DATA_FILENAME_EXTENSION);
-  if (bsg_read_text_file(static_data_path, &static_data) > 0) {
-    jstatic_data = bsg_byte_ary_from_string(env, static_data);
-  }
-
-  // remove persisted NDK struct early - this reduces the chance of crash loops
-  // in delivery.
-  remove(event_path);
-  remove(static_data_path);
-
-  if (event == NULL) {
-    BUGSNAG_LOG("Failed to read event at file: %s", event_path);
-    goto exit;
-  }
-
-  errorClass = bsg_safe_new_string_utf(env, event->error.errorClass);
-  if (bsg_safe_call_static_boolean_method(
-          env, bsg_jni_cache->NativeInterface,
-          bsg_jni_cache->NativeInterface_isDiscardErrorClass, errorClass)) {
-    goto exit;
-  }
-
-  payload = bsg_serialize_event_to_json_string(event);
-  if (payload == NULL) {
-    BUGSNAG_LOG("Failed to serialize event as JSON: %s", event_path);
-    goto exit;
-  }
-
-  // generate payload bytearray
-  jpayload = bsg_byte_ary_from_string(env, payload);
-  if (jpayload == NULL) {
-    goto exit;
-  }
-
-  // generate releaseStage bytearray
-  jstage = bsg_byte_ary_from_string(env, event->app.release_stage);
-  if (jstage == NULL) {
-    goto exit;
-  }
-
-  // call NativeInterface.deliverReport()
-  japi_key = bsg_safe_new_string_utf(env, event->api_key);
-  if (japi_key != NULL) {
-    bool is_launching = event->app.is_launching;
-    bsg_safe_call_static_void_method(
-        env, bsg_jni_cache->NativeInterface,
-        bsg_jni_cache->NativeInterface_deliverReport, jstage, jpayload,
-        jstatic_data, japi_key, is_launching);
-  }
-
-exit:
-  bsg_safe_delete_local_ref(env, errorClass);
-  bsg_safe_release_string_utf_chars(env, _report_path, event_path);
-  if (event != NULL) {
-    bsg_safe_release_byte_array_elements(env, jstage,
-                                         (jbyte *)event->app.release_stage);
-    bsg_free_feature_flags(event);
-    free(event);
-  }
-  bsg_safe_release_byte_array_elements(env, jpayload, (jbyte *)payload);
-  free(payload);
-  bsg_safe_release_byte_array_elements(env, jstatic_data, (jbyte *)static_data);
-  free(static_data);
-
-  pthread_mutex_unlock(&bsg_native_delivery_mutex);
 }
 
 JNIEXPORT void JNICALL

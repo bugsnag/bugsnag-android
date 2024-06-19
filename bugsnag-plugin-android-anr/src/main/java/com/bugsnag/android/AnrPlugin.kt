@@ -67,22 +67,25 @@ internal class AnrPlugin : Plugin {
     }
 
     private fun performOneTimeSetup(client: Client) {
-        libraryLoader.loadLibrary("bugsnag-plugin-android-anr", client) {
+        val isLoaded = libraryLoader.loadLibrary("bugsnag-plugin-android-anr", client) {
             val error = it.errors[0]
             error.errorClass = "AnrLinkError"
             error.errorMessage = LOAD_ERR_MSG
             true
         }
-        @Suppress("UNCHECKED_CAST")
-        val clz = loadClass("com.bugsnag.android.NdkPlugin") as Class<Plugin>?
-        if (clz != null) {
-            val ndkPlugin = client.getPlugin(clz)
-            if (ndkPlugin != null) {
-                val method = ndkPlugin.javaClass.getMethod("getSignalUnwindStackFunction")
 
-                @Suppress("UNCHECKED_CAST")
-                val function = method.invoke(ndkPlugin) as Long
-                setUnwindFunction(function)
+        if (isLoaded) {
+            @Suppress("UNCHECKED_CAST")
+            val clz = loadClass("com.bugsnag.android.NdkPlugin") as Class<Plugin>?
+            if (clz != null) {
+                val ndkPlugin = client.getPlugin(clz)
+                if (ndkPlugin != null) {
+                    val method = ndkPlugin.javaClass.getMethod("getSignalUnwindStackFunction")
+
+                    @Suppress("UNCHECKED_CAST")
+                    val function = method.invoke(ndkPlugin) as Long
+                    setUnwindFunction(function)
+                }
             }
         }
     }

@@ -5,8 +5,13 @@
 extern "C" {
 int __attribute__((optnone)) __attribute__((noinline)) crash_stack_overflow(int counter, char *input) {
   char stack[7];
+  char *output = stack;
 
-  strcpy(stack, input);
+  while (*input) {
+    *output = *input;
+    input++;
+    output++;
+  }
 
   return 4 / counter;
 }

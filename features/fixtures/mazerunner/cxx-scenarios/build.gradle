@@ -34,6 +34,7 @@ android {
             path "CMakeLists.txt"
         }
     }
+    namespace 'com.bugsnag.android.mazerunner.cxxscenarios'
 }
 
 dependencies {

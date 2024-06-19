@@ -21,6 +21,8 @@ steps:
       - bundle install
       - make fixture-r19
       - bundle exec upload-app --farm=bb --app=./build/fixture-r19.apk --app-id-file=build/fixture-r19-url.txt
+    env:
+      JAVA_VERSION: 17
 
   - label: ':android: Build fixture APK r21'
     key: "fixture-r21"
@@ -35,6 +37,8 @@ steps:
       - bundle install
       - make fixture-r21
       - bundle exec upload-app --farm=bb --app=./build/fixture-r21.apk --app-id-file=build/fixture-r21-url.txt
+    env:
+      JAVA_VERSION: 17
 
   - label: ':android: Coding standards checks'
     timeout_in_minutes: 20
@@ -67,6 +71,8 @@ steps:
     commands:
       - cd features/fixtures/mazerunner
       - ./gradlew ktlintCheck detekt checkstyle
+    env:
+      JAVA_VERSION: 17
 
   - label: ':android: Android size reporting'
     timeout_in_minutes: 10
@@ -80,6 +86,16 @@ steps:
       queue: macos-14
     command: './gradlew test'
 
+  - label: ':android: Instrumentation tests'
+    timeout_in_minutes: 10
+    plugins:
+      artifacts#v1.9.0:
+        upload: "bugsnag-*/build/reports/androidTests/connected/**/*.html"
+    agents:
+      queue: macos-14
+    command: './scripts/run-connected-checks.rb'
+    env:
+      API_LEVEL: 30
   #
   # BitBar steps
   #
@@ -337,6 +353,38 @@ steps:
           - "--appium-version=1.22"
           - "--farm=bb"
           - "--device=ANDROID_13"
+          - "--no-tunnel"
+          - "--aws-public-ip"
+          - "--fail-fast"
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
+    concurrency: 25
+    concurrency_group: 'bitbar'
+    concurrency_method: eager
+
+  - label: ':bitbar: Android 14 NDK r21 smoke tests'
+    depends_on: "fixture-r21"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.9.0:
+        download:
+          - "build/fixture-r21-url.txt"
+          - "build/fixture-r21/*"
+        upload:
+          - "maze_output/failed/**/*"
+          - "maze_output/metrics.csv"
+      docker-compose#v4.7.0:
+        pull: maze-runner
+        run: maze-runner
+        service-ports: true
+        command:
+          - "features/smoke_tests"
+          - "--app=@build/fixture-r21-url.txt"
+          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
+          - "--app-package=com.bugsnag.android.mazerunner"
+          - "--appium-version=1.22"
+          - "--farm=bb"
+          - "--device=ANDROID_14"
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--fail-fast"

@@ -15,14 +15,15 @@ size_t bsg_strlen(const char *str) {
   return strnlen(str, STRING_MAX_LENGTH);
 }
 
-void bsg_strncpy(char *dst, const char *src, size_t dst_size) {
+size_t bsg_strncpy(char *dst, const char *src, size_t dst_size) {
   if (dst == NULL || dst_size == 0) {
-    return;
+    return 0;
   }
   dst[0] = '\0';
   if (src != NULL) {
-    strncat(dst, src, dst_size - 1);
+    return strlcat(dst, src, dst_size);
   }
+  return 0;
 }
 
 void bsg_hex_encode(char *dst, const void *src, size_t byte_count,

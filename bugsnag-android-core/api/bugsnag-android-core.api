@@ -378,6 +378,7 @@ public class com/bugsnag/android/Event : com/bugsnag/android/FeatureFlagAware, c
 	public fun setContext (Ljava/lang/String;)V
 	public fun setGroupingHash (Ljava/lang/String;)V
 	public fun setSeverity (Lcom/bugsnag/android/Severity;)V
+	public fun setTraceCorrelation (Ljava/util/UUID;J)V
 	public fun setUnhandled (Z)V
 	public fun setUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	protected fun shouldDiscardClass ()Z
@@ -476,6 +477,7 @@ public class com/bugsnag/android/NativeInterface {
 	public static fun addMetadata (Ljava/lang/String;Ljava/util/Map;)V
 	public static fun clearMetadata (Ljava/lang/String;Ljava/lang/String;)V
 	public static fun createEvent (Ljava/lang/Throwable;Lcom/bugsnag/android/Client;Lcom/bugsnag/android/SeverityReason;)Lcom/bugsnag/android/Event;
+	public static fun deliverReport (Ljava/io/File;)V
 	public static fun deliverReport ([B[B[BLjava/lang/String;Z)V
 	public static fun getApp ()Ljava/util/Map;
 	public static fun getAppVersion ()Ljava/lang/String;

@@ -1,5 +1,19 @@
 # Changelog
 
+## 6.6.0 (2024-06-19)
+
+### Enhancements
+
+* Support for Android Kernels with a 16kB page size
+  [#2040](https://github.com/bugsnag/bugsnag-android/pull/2040)
+
+### Bug fixes
+
+* Corrected the behavior when `Bugsnag.startSession` is called when `config.autoTrackSessions=true`, the first automatic session will now be correctly discarded
+  [#2033](https://github.com/bugsnag/bugsnag-android/pull/2033)
+* Avoid a possible crash in the ANR plugin when the native ANR library failed to load.
+  [#2039](https://github.com/bugsnag/bugsnag-android/pull/2039)
+
 ## 6.5.0 (2024-05-15)
 
 ### Enhancements
