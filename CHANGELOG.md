@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.32.3 (2024-06-27)
+
+### Bug fixes
+
+* Prevent rare secondary crashes that could occur when certain APIs were in-use during a native crash
+  [#2046](https://github.com/bugsnag/bugsnag-android/pull/2046)
+
 ## 5.32.2 (2024-02-12)
 
 ### Bug fixes
