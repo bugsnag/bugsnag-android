@@ -87,6 +87,7 @@ internal class SessionStoppingScenario(
             }
         },
         END {
+            @Suppress("UseCheckOrError")
             override fun performAction(): ScenarioState =
                 throw IllegalStateException("One too many delivery attempts")
         };

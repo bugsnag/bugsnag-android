@@ -1,4 +1,4 @@
-package com.bugsnag.android.mazerunner.multiprocess
+package com.bugsnag.android.multiprocess
 
 import android.annotation.SuppressLint
 import android.app.Application

@@ -30,6 +30,7 @@ val Context.networkStatus: NetworkStatus
                 connectivityManager.activeNetworkInfo ?: return NetworkStatus.NO_NETWORK
 
             if (networkInfo.isAvailable && networkInfo.isConnected) {
+                @Suppress("SwallowedException")
                 return try {
                     URL("https://www.google.com").readText()
                     NetworkStatus.CONNECTED

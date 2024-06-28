@@ -29,9 +29,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <service android:name=".multiprocess.MultiProcessService"
-            android:process="com.example.bugsnag.android.mazerunner.multiprocess"
-            />
 
         <meta-data android:name="com.bugsnag.android.API_KEY" android:value="${bugsnagApiKey}"/>
         <meta-data android:name="com.bugsnag.android.performance.API_KEY" android:value="${bugsnagPerformanceApiKey}"/>
