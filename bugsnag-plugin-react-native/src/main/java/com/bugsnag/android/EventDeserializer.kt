@@ -1,5 +1,7 @@
 package com.bugsnag.android
 
+import java.util.UUID
+
 internal class EventDeserializer(
     private val client: Client,
     private val projectPackages: Collection<String>
@@ -86,17 +88,61 @@ internal class EventDeserializer(
         metadata.forEach {
             event.addMetadata(it.key, it.value as Map<String, Any>)
         }
+
+        val correlation = map["correlation"] as? Map<String, Any?>
+        correlation?.let {
+            deserializeCorrelation(it, event)
+        }
+
         return event
+    }
+
+    private fun deserializeCorrelation(
+        correlation: Map<String, Any?>,
+        event: Event
+    ) {
+        val traceId = (correlation["traceId"] as? String)
+            ?.takeIf { it.length == TRACE_ID_LENGTH }
+            ?.let {
+                val mostSigBits = it.substring(0, HEX_LONG_LENGTH).hexToLong()
+                val leastSigBits = it.substring(HEX_LONG_LENGTH).hexToLong()
+
+                if (mostSigBits != null && leastSigBits != null) {
+                    UUID(mostSigBits, leastSigBits)
+                } else {
+                    null
+                }
+            }
+        val spanId = (correlation["spanId"] as? String)
+            ?.takeIf { it.length == HEX_LONG_LENGTH }
+            ?.hexToLong()
+
+        if (traceId != null && spanId != null) {
+            event.setTraceCorrelation(traceId, spanId)
+        }
     }
 
     private fun getOriginalUnhandled(
         map: Map<String, Any>,
         unhandled: Boolean
     ): Boolean {
-        val unhandledOverridden = map.getOrElse("unhandledOverridden", { false }) as Boolean
+        val unhandledOverridden = (map.getOrElse("unhandledOverridden") { false }) as Boolean
         return when {
             unhandledOverridden -> !unhandled
             else -> unhandled
         }
+    }
+
+    @Suppress("MagicNumber")
+    private fun String.hexToLong(): Long? {
+        if (length != HEX_LONG_LENGTH || this[0] == '-' || this[3] == '-') return null
+        val firstByte = this.substring(0, 2).toLongOrNull(HEX_LONG_LENGTH) ?: return null
+        val remaining = this.substring(2).toLongOrNull(HEX_LONG_LENGTH) ?: return null
+        return (firstByte shl 56) or remaining
+    }
+
+    companion object {
+        private const val TRACE_ID_LENGTH = 32
+        private const val HEX_LONG_LENGTH = 16
     }
 }
