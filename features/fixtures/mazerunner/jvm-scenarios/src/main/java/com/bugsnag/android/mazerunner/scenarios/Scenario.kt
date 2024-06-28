@@ -19,8 +19,8 @@ import com.bugsnag.android.Configuration
 import com.bugsnag.android.mazerunner.BugsnagIntentParams
 import com.bugsnag.android.mazerunner.MazerunnerHttpClient
 import com.bugsnag.android.mazerunner.log
-import com.bugsnag.android.mazerunner.multiprocess.MultiProcessService
-import com.bugsnag.android.mazerunner.multiprocess.findCurrentProcessName
+import com.bugsnag.android.multiprocess.MultiProcessService
+import com.bugsnag.android.multiprocess.findCurrentProcessName
 import com.bugsnag.android.performance.measureSpan
 import java.io.File
 import kotlin.system.measureNanoTime
@@ -119,7 +119,6 @@ abstract class Scenario(
         context.registerReceiver(
             object : BroadcastReceiver() {
                 override fun onReceive(context: Context?, intent: Intent?) {
-
                     // explicitly post on the main thread to avoid
                     // the broadcast receiver wrapping exceptions
                     Handler(Looper.getMainLooper()).post {
@@ -186,7 +185,8 @@ abstract class Scenario(
                     Unit
 
                 override fun onLowMemory() = Unit
-            })
+            }
+        )
     }
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}

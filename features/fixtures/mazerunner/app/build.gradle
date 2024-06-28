@@ -4,12 +4,12 @@ apply plugin: "io.gitlab.arturbosch.detekt"
 apply plugin: "org.jlleitschuh.gradle.ktlint"
 
 android {
-    compileSdkVersion 31
+    compileSdk 34
     ndkVersion parent.ext.ndkVersion
 
     defaultConfig {
         minSdkVersion 17
-        targetSdkVersion 33
+        targetSdkVersion 34
         versionCode 34
         versionName "1.1.14"
         manifestPlaceholders = [
@@ -47,7 +47,7 @@ android {
     buildTypes {
         release {
             minifyEnabled true // obfuscation disabled to simplify maze
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             signingConfig signingConfigs.release
         }
     }
