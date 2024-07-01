@@ -12,6 +12,7 @@ import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
 import java.util.Date
+import java.util.UUID
 
 @RunWith(MockitoJUnitRunner::class)
 class EventDeserializerTest {
@@ -39,6 +40,10 @@ class EventDeserializerTest {
         map["app"] = mapOf(Pair("id", "app-id"))
         map["device"] =
             mapOf(Pair("id", "device-id"), Pair("runtimeVersions", mutableMapOf<String, Any>()))
+        map["correlation"] = mapOf(
+            "traceId" to "b39e53513eec3c68b5e5c34dc43611e0",
+            "spanId" to "51d886b3a693a406"
+        )
 
         `when`(client.config).thenReturn(TestData.generateConfig())
         `when`(client.getLogger()).thenReturn(object : Logger {})
@@ -91,6 +96,13 @@ class EventDeserializerTest {
         assertEquals("device-id", event.device.id)
         assertEquals("123", event.getMetadata("custom", "id"))
         assertEquals(TestData.generateConfig().apiKey, event.apiKey)
+
+        assertEquals(
+            UUID(-5503870086187041688L, -5339647044406079008L),
+            TestHooks.getCorrelatedTraceId(event)
+        )
+
+        assertEquals(5897611818193626118L, TestHooks.getCorrelatedSpanId(event))
     }
 
     @Test
