@@ -289,8 +289,6 @@ steps:
           - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_12"
-          - "--no-tunnel"
-          - "--aws-public-ip"
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
@@ -323,8 +321,6 @@ steps:
           - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_12"
-          - "--no-tunnel"
-          - "--aws-public-ip"
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
