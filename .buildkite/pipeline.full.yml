@@ -123,8 +123,8 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
   - label: ':browserstack: Android 7 NDK r19 end-to-end tests - batch 2'
@@ -154,8 +154,8 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
   - label: ':browserstack: Android 8 NDK r19 end-to-end tests - batch 1'
@@ -183,8 +183,8 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
   - label: ':browserstack: Android 8 NDK r19 end-to-end tests - batch 2'
@@ -212,8 +212,8 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
   - label: ':browserstack: Android 9 NDK r21 end-to-end tests - batch 1'
@@ -243,8 +243,8 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
   - label: ':browserstack: Android 9 NDK r21 end-to-end tests - batch 2'
@@ -274,8 +274,8 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
   - label: ':browserstack: Android 10 NDK r21 end-to-end tests - batch 1'
@@ -305,8 +305,8 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
   - label: ':browserstack: Android 10 NDK r21 end-to-end tests - batch 2'
@@ -336,8 +336,8 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
   # Android 11+ devices have the GWP-ASAN tool enabled which randomly samples native memory
@@ -371,8 +371,8 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
   - label: ':browserstack: Android 11 NDK r21 end-to-end tests - batch 2'
@@ -402,8 +402,8 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
   - label: ':browserstack: Android 13 NDK r21 end-to-end tests - batch 1'
@@ -433,8 +433,8 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
   - label: ':browserstack: Android 13 NDK r21 end-to-end tests - batch 2'
@@ -464,8 +464,8 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
   - label: ':browserstack: Android 14 NDK r21 end-to-end tests - batch 1'
@@ -495,8 +495,8 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
   - label: ':browserstack: Android 14 NDK r21 end-to-end tests - batch 2'
@@ -526,8 +526,8 @@ steps:
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
   # If there is a tag present activate a manual publishing step
