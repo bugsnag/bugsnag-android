@@ -96,13 +96,13 @@ steps:
     concurrency_group: 'bitbar'
     concurrency_method: eager
 
-  - label: ':bitbar: Android 7 NDK r19 end-to-end tests - batch 1'
+  - label: ':browserstack: Android 7 NDK r19 end-to-end tests - batch 1'
     depends_on: "fixture-r19"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r19-url.txt"
+          - "build/bs-fixture-r19-url.txt"
           - "build/fixture-r19/*"
         upload:
           - "maze_output/failed/**/*"
@@ -113,14 +113,12 @@ steps:
         service-ports: true
         command:
           - "features/full_tests"
-          - "--app=@build/fixture-r19-url.txt"
+          - "--app=@build/bs-fixture-r19-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
-          - "--appium-version=1.22"
+          - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_7"
-          - "--no-tunnel"
-          - "--aws-public-ip"
           - "--exclude=features/full_tests/[^a-k].*.feature"
           - "--fail-fast"
     env:
@@ -129,13 +127,13 @@ steps:
     concurrency_group: 'bitbar'
     concurrency_method: eager
 
-  - label: ':bitbar: Android 7 NDK r19 end-to-end tests - batch 2'
+  - label: ':browserstack: Android 7 NDK r19 end-to-end tests - batch 2'
     depends_on: "fixture-r19"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r19-url.txt"
+          - "build/bs-fixture-r19-url.txt"
           - "build/fixture-r19/*"
         upload:
           - "maze_output/failed/**/*"
@@ -147,14 +145,12 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=@build/fixture-r19-url.txt"
+          - "--app=@build/bs-fixture-r19-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
-          - "--appium-version=1.22"
+          - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_7"
-          - "--no-tunnel"
-          - "--aws-public-ip"
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
@@ -162,13 +158,13 @@ steps:
     concurrency_group: 'bitbar'
     concurrency_method: eager
 
-  - label: ':bitbar: Android 8 NDK r19 end-to-end tests - batch 1'
+  - label: ':browserstack: Android 8 NDK r19 end-to-end tests - batch 1'
     depends_on: "fixture-r19"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r19-url.txt"
+          - "build/bs-fixture-r19-url.txt"
           - "build/fixture-r19/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
@@ -177,14 +173,12 @@ steps:
         service-ports: true
         command:
           - "features/full_tests"
-          - "--app=@build/fixture-r19-url.txt"
+          - "--app=@build/bs-fixture-r19-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
-          - "--appium-version=1.22"
+          - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_8"
-          - "--no-tunnel"
-          - "--aws-public-ip"
           - "--exclude=features/full_tests/[^a-k].*.feature"
           - "--fail-fast"
     env:
@@ -193,13 +187,13 @@ steps:
     concurrency_group: 'bitbar'
     concurrency_method: eager
 
-  - label: ':bitbar: Android 8 NDK r19 end-to-end tests - batch 2'
+  - label: ':browserstack: Android 8 NDK r19 end-to-end tests - batch 2'
     depends_on: "fixture-r19"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r19-url.txt"
+          - "build/bs-fixture-r19-url.txt"
           - "build/fixture-r19/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
@@ -209,14 +203,12 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=@build/fixture-r19-url.txt"
+          - "--app=@build/bs-fixture-r19-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
-          - "--appium-version=1.22"
+          - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_8"
-          - "--no-tunnel"
-          - "--aws-public-ip"
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
@@ -224,13 +216,13 @@ steps:
     concurrency_group: 'bitbar'
     concurrency_method: eager
 
-  - label: ':bitbar: Android 9 NDK r21 end-to-end tests - batch 1'
+  - label: ':browserstack: Android 9 NDK r21 end-to-end tests - batch 1'
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r21-url.txt"
+          - "build/bs-fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -241,14 +233,12 @@ steps:
         service-ports: true
         command:
           - "features/full_tests"
-          - "--app=@build/fixture-r21-url.txt"
+          - "--app=@build/bs-fixture-r21-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
-          - "--appium-version=1.22"
+          - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_9"
-          - "--no-tunnel"
-          - "--aws-public-ip"
           - "--exclude=features/full_tests/[^a-k].*.feature"
           - "--fail-fast"
     env:
@@ -257,13 +247,13 @@ steps:
     concurrency_group: 'bitbar'
     concurrency_method: eager
 
-  - label: ':bitbar: Android 9 NDK r21 end-to-end tests - batch 2'
+  - label: ':browserstack: Android 9 NDK r21 end-to-end tests - batch 2'
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r21-url.txt"
+          - "build/bs-fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -275,14 +265,12 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=@build/fixture-r21-url.txt"
+          - "--app=@build/bs-fixture-r21-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
-          - "--appium-version=1.22"
+          - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_9"
-          - "--no-tunnel"
-          - "--aws-public-ip"
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
@@ -290,13 +278,13 @@ steps:
     concurrency_group: 'bitbar'
     concurrency_method: eager
 
-  - label: ':bitbar: Android 10 NDK r21 end-to-end tests - batch 1'
+  - label: ':browserstack: Android 10 NDK r21 end-to-end tests - batch 1'
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r21-url.txt"
+          - "build/bs-fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -308,14 +296,12 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "--app=@build/fixture-r21-url.txt"
+          - "--app=@build/bs-fixture-r21-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
-          - "--appium-version=1.22"
+          - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_10"
-          - "--no-tunnel"
-          - "--aws-public-ip"
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
@@ -323,13 +309,13 @@ steps:
     concurrency_group: 'bitbar'
     concurrency_method: eager
 
-  - label: ':bitbar: Android 10 NDK r21 end-to-end tests - batch 2'
+  - label: ':browserstack: Android 10 NDK r21 end-to-end tests - batch 2'
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r21-url.txt"
+          - "build/bs-fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -341,14 +327,12 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=@build/fixture-r21-url.txt"
+          - "--app=@build/bs-fixture-r21-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
-          - "--appium-version=1.22"
+          - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_10"
-          - "--no-tunnel"
-          - "--aws-public-ip"
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
@@ -360,13 +344,13 @@ steps:
   # to detect misuse (such as use-after-free, buffer overflow). If a failure is detected then
   # the device will raise a SIGABRT mentioning GWP-ASAN - this can be investigated further
   # by inspecting the devices logs.
-  - label: ':bitbar: Android 11 NDK r21 end-to-end tests - batch 1'
+  - label: ':browserstack: Android 11 NDK r21 end-to-end tests - batch 1'
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r21-url.txt"
+          - "build/bs-fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -378,14 +362,12 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "--app=@build/fixture-r21-url.txt"
+          - "--app=@build/bs-fixture-r21-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
-          - "--appium-version=1.22"
+          - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_11"
-          - "--no-tunnel"
-          - "--aws-public-ip"
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
@@ -393,13 +375,13 @@ steps:
     concurrency_group: 'bitbar'
     concurrency_method: eager
 
-  - label: ':bitbar: Android 11 NDK r21 end-to-end tests - batch 2'
+  - label: ':browserstack: Android 11 NDK r21 end-to-end tests - batch 2'
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r21-url.txt"
+          - "build/bs-fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -411,14 +393,12 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=@build/fixture-r21-url.txt"
+          - "--app=@build/bs-fixture-r21-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
-          - "--appium-version=1.22"
+          - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_11"
-          - "--no-tunnel"
-          - "--aws-public-ip"
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
@@ -426,13 +406,13 @@ steps:
     concurrency_group: 'bitbar'
     concurrency_method: eager
 
-  - label: ':bitbar: Android 13 NDK r21 end-to-end tests - batch 1'
+  - label: ':browserstack: Android 13 NDK r21 end-to-end tests - batch 1'
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r21-url.txt"
+          - "build/bs-fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -444,14 +424,12 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "--app=@build/fixture-r21-url.txt"
+          - "--app=@build/bs-fixture-r21-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
-          - "--appium-version=1.22"
+          - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_13"
-          - "--no-tunnel"
-          - "--aws-public-ip"
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
@@ -459,13 +437,13 @@ steps:
     concurrency_group: 'bitbar'
     concurrency_method: eager
 
-  - label: ':bitbar: Android 13 NDK r21 end-to-end tests - batch 2'
+  - label: ':browserstack: Android 13 NDK r21 end-to-end tests - batch 2'
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r21-url.txt"
+          - "build/bs-fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -477,14 +455,12 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=@build/fixture-r21-url.txt"
+          - "--app=@build/bs-fixture-r21-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
-          - "--appium-version=1.22"
+          - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_13"
-          - "--no-tunnel"
-          - "--aws-public-ip"
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
@@ -492,13 +468,13 @@ steps:
     concurrency_group: 'bitbar'
     concurrency_method: eager
 
-  - label: ':bitbar: Android 14 NDK r21 end-to-end tests - batch 1'
+  - label: ':browserstack: Android 14 NDK r21 end-to-end tests - batch 1'
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r21-url.txt"
+          - "build/bs-fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -510,14 +486,12 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "--app=@build/fixture-r21-url.txt"
+          - "--app=@build/bs-fixture-r21-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
-          - "--appium-version=1.22"
+          - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_14"
-          - "--no-tunnel"
-          - "--aws-public-ip"
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
@@ -525,13 +499,13 @@ steps:
     concurrency_group: 'bitbar'
     concurrency_method: eager
 
-  - label: ':bitbar: Android 14 NDK r21 end-to-end tests - batch 2'
+  - label: ':browserstack: Android 14 NDK r21 end-to-end tests - batch 2'
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r21-url.txt"
+          - "build/bs-fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -543,14 +517,12 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=@build/fixture-r21-url.txt"
+          - "--app=@build/bs-fixture-r21-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
-          - "--appium-version=1.22"
+          - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_14"
-          - "--no-tunnel"
-          - "--aws-public-ip"
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
