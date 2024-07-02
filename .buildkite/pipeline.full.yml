@@ -39,7 +39,7 @@ steps:
   # BitBar steps
   #
 
-  - label: ':bitbar: Minimal fixture end-to-end tests'
+  - label: ':browserstack: Minimal fixture end-to-end tests'
     depends_on: "fixture-minimal"
     timeout_in_minutes: 30
     plugins:
@@ -55,14 +55,12 @@ steps:
           - "--app=/app/build/fixture-minimal.apk"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
-          - "--appium-version=1.22"
-          - "--farm=bb"
+          - "--appium-version=1.22.0"
+          - "--farm=bs"
           - "--device=ANDROID_9"
-          - "--no-tunnel"
-          - "--aws-public-ip"
           - "--fail-fast"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
   - label: ':bitbar: Debug fixture smoke tests'
