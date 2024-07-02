@@ -15,12 +15,14 @@ steps:
       queue: macos-14
     artifact_paths:
       - "build/fixture-r19.apk"
-      - "build/fixture-r19-url.txt"
+      - "build/bb-fixture-r19-url.txt"
+      - "build/bs-fixture-r19-url.txt"
       - "build/fixture-r19/*"
     commands:
       - bundle install
       - make fixture-r19
-      - bundle exec upload-app --farm=bb --app=./build/fixture-r19.apk --app-id-file=build/fixture-r19-url.txt
+      - bundle exec upload-app --farm=bb --app=./build/fixture-r19.apk --app-id-file=build/bb-fixture-r19-url.txt
+      - bundle exec upload-app --app=./build/fixture-r19.apk --app-id-file=build/bs-fixture-r19-url.txt
     env:
       JAVA_VERSION: 17
 
@@ -107,7 +109,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r19-url.txt"
+          - "build/bb-fixture-r19-url.txt"
           - "build/fixture-r19/*"
         upload:
           - "maze_output/failed/**/*"
@@ -118,7 +120,7 @@ steps:
         service-ports: true
         command:
           - "features/smoke_tests"
-          - "--app=@build/fixture-r19-url.txt"
+          - "--app=@build/bb-fixture-r19-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22"
@@ -139,7 +141,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r19-url.txt"
+          - "build/bb-fixture-r19-url.txt"
           - "build/fixture-r19/*"
         upload: "maze_output/failed/**/*"
       docker-compose#v4.7.0:
@@ -148,7 +150,7 @@ steps:
         service-ports: true
         command:
           - "features/smoke_tests"
-          - "--app=@build/fixture-r19-url.txt"
+          - "--app=@build/bb-fixture-r19-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22"
