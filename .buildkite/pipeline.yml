@@ -31,13 +31,14 @@ steps:
       queue: macos-14
     artifact_paths:
       - "build/fixture-r21.apk"
-      - "build/fixture-r21-url.txt"
+      - "build/bs-fixture-r21-url.txt"
+      - "build/bb-fixture-r21-url.txt"
       - "build/fixture-r21/*"
     commands:
       - bundle install
       - make fixture-r21
-      - bundle exec upload-app --app=./build/fixture-r21.apk --app-id-file=build/fixture-r21-url.txt
-#      - bundle exec upload-app --farm=bb --app=./build/fixture-r21.apk --app-id-file=build/fixture-r21-url.txt
+      - bundle exec upload-app --app=./build/fixture-r21.apk --app-id-file=build/bs-fixture-r21-url.txt
+      - bundle exec upload-app --farm=bb --app=./build/fixture-r21.apk --app-id-file=build/bb-fixture-r21-url.txt
     env:
       JAVA_VERSION: 17
 
@@ -168,7 +169,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r21-url.txt"
+          - "build/bb-fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -179,7 +180,7 @@ steps:
         service-ports: true
         command:
           - "features/smoke_tests"
-          - "--app=@build/fixture-r21-url.txt"
+          - "--app=@build/bb-fixture-r21-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22"
@@ -200,7 +201,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r21-url.txt"
+          - "build/bb-fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -211,7 +212,7 @@ steps:
         service-ports: true
         command:
           - "features/smoke_tests"
-          - "--app=@build/fixture-r21-url.txt"
+          - "--app=@build/bb-fixture-r21-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22"
@@ -233,7 +234,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r21-url.txt"
+          - "build/bb-fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -244,7 +245,7 @@ steps:
         service-ports: true
         command:
           - "features/smoke_tests"
-          - "--app=@build/fixture-r21-url.txt"
+          - "--app=@build/bb-fixture-r21-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22"
@@ -263,14 +264,14 @@ steps:
   # to detect misuse (such as use-after-free, buffer overflow). If a failure is detected then
   # the device will raise a SIGABRT mentioning GWP-ASAN - this can be investigated further
   # by inspecting the devices logs.
-  - label: ':bitbar: Android 12 NDK r21 end-to-end tests - batch 1'
+  - label: ':browserstack: Android 12 NDK r21 end-to-end tests - batch 1'
     depends_on:
       - "fixture-r21"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r21-url.txt"
+          - "build/bs-fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -282,10 +283,10 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "--app=@build/fixture-r21-url.txt"
+          - "--app=@build/bs-fixture-r21-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
-          - "--appium-version=1.22"
+          - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_12"
           - "--no-tunnel"
@@ -297,14 +298,14 @@ steps:
     concurrency_group: 'bitbar'
     concurrency_method: eager
 
-  - label: ':bitbar: Android 12 NDK r21 end-to-end tests - batch 2'
+  - label: ':browserstack: Android 12 NDK r21 end-to-end tests - batch 2'
     depends_on:
       - "fixture-r21"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r21-url.txt"
+          - "build/bs-fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -316,10 +317,10 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--app=@build/fixture-r21-url.txt"
+          - "--app=@build/bs-fixture-r21-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
-          - "--appium-version=1.22"
+          - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_12"
           - "--no-tunnel"
@@ -337,7 +338,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r21-url.txt"
+          - "build/bb-fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -348,7 +349,7 @@ steps:
         service-ports: true
         command:
           - "features/smoke_tests"
-          - "--app=@build/fixture-r21-url.txt"
+          - "--app=@build/bb-fixture-r21-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22"
@@ -369,7 +370,7 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r21-url.txt"
+          - "build/bb-fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -380,7 +381,7 @@ steps:
         service-ports: true
         command:
           - "features/smoke_tests"
-          - "--app=@build/fixture-r21-url.txt"
+          - "--app=@build/bb-fixture-r21-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22"
