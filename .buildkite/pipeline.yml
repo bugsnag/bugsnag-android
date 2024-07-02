@@ -36,7 +36,8 @@ steps:
     commands:
       - bundle install
       - make fixture-r21
-      - bundle exec upload-app --farm=bb --app=./build/fixture-r21.apk --app-id-file=build/fixture-r21-url.txt
+      - bundle exec upload-app --app=./build/fixture-r21.apk --app-id-file=build/fixture-r21-url.txt
+#      - bundle exec upload-app --farm=bb --app=./build/fixture-r21.apk --app-id-file=build/fixture-r21-url.txt
     env:
       JAVA_VERSION: 17
 
