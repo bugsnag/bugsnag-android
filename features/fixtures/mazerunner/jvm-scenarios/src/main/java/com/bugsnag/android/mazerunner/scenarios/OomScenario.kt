@@ -12,8 +12,11 @@ internal class OomScenario(
     context: Context,
     eventMetadata: String
 ) : Scenario(config, context, eventMetadata) {
-
     private val queue = LinkedList<Array<String>>()
+
+    init {
+        config.enabledErrorTypes.anrs = false
+    }
 
     override fun startScenario() {
         super.startScenario()
