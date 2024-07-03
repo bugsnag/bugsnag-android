@@ -61,8 +61,34 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--fail-fast"
+          - "--tags 'not @anr'"
     concurrency: 25
     concurrency_group: 'bitbar'
+    concurrency_method: eager
+
+  - label: ':browserstack: Minimal ANR fixture end-to-end tests'
+    depends_on: "fixture-minimal"
+    timeout_in_minutes: 30
+    plugins:
+      artifacts#v1.9.0:
+        download: "build/fixture-minimal.apk"
+        upload: "maze_output/failed/**/*"
+      docker-compose#v4.7.0:
+        pull: maze-runner
+        run: maze-runner
+        service-ports: true
+        command:
+          - "features/minimal"
+          - "--app=/app/build/fixture-minimal.apk"
+          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
+          - "--app-package=com.bugsnag.android.mazerunner"
+          - "--appium-version=1.22"
+          - "--farm=sb"
+          - "--device=ANDROID_9"
+          - "--fail-fast"
+          - "--tags @anr"
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
   - label: ':bitbar: Debug fixture smoke tests'
