@@ -1,5 +1,14 @@
 # Changelog
 
+## 6.6.1 (2024-07-03)
+
+### Bug fixes
+
+* Allow ReactNative applications to set the `correlation` property on Events
+  [#2050](https://github.com/bugsnag/bugsnag-android/pull/2050)
+* Avoid possible crashes in apps the use custom proguard rules that don't include protection for `Enum.values()`
+  [#2049](https://github.com/bugsnag/bugsnag-android/pull/2049)
+
 ## 6.6.0 (2024-06-19)
 
 ### Enhancements
