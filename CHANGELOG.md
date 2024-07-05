@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+* Include additional Intent information for Activity.onCreate breadcrumbs (action, categories, type, flags, id, extra keys)
+  [#2057](https://github.com/bugsnag/bugsnag-android/pull/2057)
+
 ## 6.6.1 (2024-07-03)
 
 ### Bug fixes
