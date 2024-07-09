@@ -7,6 +7,11 @@
 * Include additional Intent information for Activity.onCreate breadcrumbs (action, categories, type, flags, id, extra keys)
   [#2057](https://github.com/bugsnag/bugsnag-android/pull/2057)
 
+### Bug fixes
+
+* Handle rare cases where we need to deserialize threads that don't have a valid `state` property
+  [#2058](https://github.com/bugsnag/bugsnag-android/pull/2058)
+
 ## 6.6.1 (2024-07-03)
 
 ### Bug fixes

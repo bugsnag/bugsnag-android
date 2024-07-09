@@ -195,7 +195,7 @@ internal class BugsnagEventMapper(
             thread.readEntry("name"),
             ErrorType.fromDescriptor(thread.readEntry("type")) ?: ErrorType.ANDROID,
             thread["errorReportingThread"] == true,
-            thread.readEntry("state"),
+            thread["state"] as? String ?: "",
             (thread["stacktrace"] as? List<Map<String, Any?>>)?.let { convertStacktrace(it) }
                 ?: Stacktrace(emptyList())
         )
