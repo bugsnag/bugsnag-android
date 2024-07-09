@@ -61,7 +61,7 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--fail-fast"
-          - "--tags 'not @anr'"
+          - "--tags='not @anr'"
     concurrency: 25
     concurrency_group: 'bitbar'
     concurrency_method: eager
@@ -86,7 +86,7 @@ steps:
           - "--farm=sb"
           - "--device=ANDROID_9"
           - "--fail-fast"
-          - "--tags @anr"
+          - "--tags=@anr"
     concurrency: 5
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
@@ -116,10 +116,41 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--fail-fast"
+          - "--tags='not @anr'"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-debug"
     concurrency: 25
     concurrency_group: 'bitbar'
+    concurrency_method: eager
+
+  - label: ':browserstack: Debug ANR fixture smoke tests'
+    depends_on: "fixture-debug"
+    timeout_in_minutes: 30
+    plugins:
+      artifacts#v1.9.0:
+        download:
+          - "build/fixture-debug.apk"
+          - "build/fixture-debug/*"
+        upload: "maze_output/failed/**/*"
+      docker-compose#v4.7.0:
+        pull: maze-runner
+        run: maze-runner
+        service-ports: true
+        command:
+          - "features/smoke_tests"
+          - "--tags=debug-safe"
+          - "--app=/app/build/fixture-debug.apk"
+          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
+          - "--app-package=com.bugsnag.android.mazerunner"
+          - "--appium-version=1.22"
+          - "--farm=bb"
+          - "--device=ANDROID_9"
+          - "--fail-fast"
+          - "--tags=@anr"
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-debug"
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
   - label: ':bitbar: Android 7 NDK r19 end-to-end tests - batch 1'
