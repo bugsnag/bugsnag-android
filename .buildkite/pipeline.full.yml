@@ -61,7 +61,7 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--fail-fast"
-          - "--tags='not @anr'"
+          - "--tags=~@anr"
     concurrency: 25
     concurrency_group: 'bitbar'
     concurrency_method: eager
@@ -116,7 +116,7 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--fail-fast"
-          - "--tags='not @anr'"
+          - "--tags= ~@anr"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-debug"
     concurrency: 25
@@ -142,8 +142,8 @@ steps:
           - "--app=/app/build/fixture-debug.apk"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
-          - "--appium-version=1.22"
-          - "--farm=bb"
+          - "--appium-version=1.22.0"
+          - "--farm=bs"
           - "--device=ANDROID_9"
           - "--fail-fast"
           - "--tags=@anr"
