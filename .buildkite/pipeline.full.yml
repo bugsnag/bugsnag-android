@@ -61,7 +61,7 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--fail-fast"
-          - "--tags=~@anr"
+          - "--tags='not @anr'"
     concurrency: 25
     concurrency_group: 'bitbar'
     concurrency_method: eager
@@ -116,7 +116,7 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--fail-fast"
-          - "--tags= ~@anr"
+          - "--tags='not @anr'"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-debug"
     concurrency: 25
