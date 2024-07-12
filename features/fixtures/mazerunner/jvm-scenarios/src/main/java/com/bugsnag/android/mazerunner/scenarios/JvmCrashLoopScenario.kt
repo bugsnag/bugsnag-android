@@ -31,6 +31,7 @@ internal class JvmCrashLoopScenario(
         )
     }
 
+    @Suppress("UseCheckOrError")
     override fun startScenario() {
         super.startScenario()
         val lastRunInfo = Bugsnag.getLastRunInfo()

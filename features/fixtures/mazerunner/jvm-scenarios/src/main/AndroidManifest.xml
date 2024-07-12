@@ -1,2 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <service
+            android:name="com.bugsnag.android.multiprocess.MultiProcessService"
+            android:process="com.example.bugsnag.android.mazerunner.multiprocess" />
+    </application>
+</manifest>
