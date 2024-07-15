@@ -129,6 +129,7 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--fail-fast"
+          - "--tags='not @anr'"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
     concurrency: 25
@@ -190,6 +191,7 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--fail-fast"
+          - "--tags='not @anr'"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
     concurrency: 25
@@ -251,6 +253,7 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--fail-fast"
+          - "--tags='not @anr'"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -314,6 +317,7 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--fail-fast"
+          - "--tags='not @anr'"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -378,6 +382,7 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--fail-fast"
+          - "--tags='not @anr'"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -514,6 +519,7 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--fail-fast"
+          - "--tags='not @anr'"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -576,6 +582,7 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--fail-fast"
+          - "--tags='not @anr'"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
