@@ -191,7 +191,7 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--fail-fast"
-          - "--tags=/"not @anr/""
+          - "--tags=`not @anr`"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
     concurrency: 25
