@@ -7,7 +7,7 @@ internal class ErrorInternal @JvmOverloads internal constructor(
     var type: ErrorType = ErrorType.ANDROID
 ) : JsonStream.Streamable {
 
-    val stacktrace: List<Stackframe> = stacktrace.trace
+    val stacktrace: MutableList<Stackframe> = stacktrace.trace
 
     internal companion object {
         fun createError(
@@ -37,10 +37,19 @@ internal class ErrorInternal @JvmOverloads internal constructor(
         writer.endObject()
     }
 
-    fun addStackTrace(element: List<StackTraceElement>) {
-        val stackFrame = element.flatMap {
-            listOf(Stackframe(it.methodName, it.fileName, it.lineNumber, null))
-        }
-        stacktrace.toMutableList().addAll(stackFrame)
+    fun addStackframe(
+        element: StackTraceElement,
+        projectPackages: Collection<String>,
+        logger: Logger
+    ): Stackframe? {
+        val frame = Stacktrace.serializeStackframe(element, projectPackages, logger)
+        frame?.let { stacktrace.add(it) }
+        return frame
+    }
+
+    fun addStackframe(method: String?, file: String?, lineNumber: Number?): Stackframe {
+        val frame = Stackframe(method, file, lineNumber, null)
+        stacktrace.add(frame)
+        return frame
     }
 }

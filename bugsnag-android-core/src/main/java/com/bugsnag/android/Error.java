@@ -99,8 +99,25 @@ public class Error implements JsonStream.Streamable {
         return ErrorInternal.Companion.createError(exc, projectPackages, logger);
     }
 
+    /**
+     * A stackframe can be added to an error in an event
+     */
 
-    public void addStackframe(@NonNull List<StackTraceElement> element) {
-        impl.addStackTrace(element);
+    @Nullable
+    public Stackframe addStackframe(@Nullable StackTraceElement element,
+                                    @NonNull Collection<String> projectPackages) {
+        if (element != null) {
+            return impl.addStackframe(element, projectPackages, logger);
+        } else {
+            logNull("stackframe");
+        }
+        return null;
+    }
+
+    @NonNull
+    public Stackframe addStackframe(@Nullable String method,
+                                    @Nullable String file,
+                                    @Nullable Number lineNumber) {
+        return impl.addStackframe(method, file, lineNumber);
     }
 }

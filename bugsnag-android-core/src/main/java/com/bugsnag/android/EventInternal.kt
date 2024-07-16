@@ -6,6 +6,7 @@ import com.bugsnag.android.internal.InternalMetricsNoop
 import com.bugsnag.android.internal.JsonHelper
 import com.bugsnag.android.internal.TrimMetrics
 import java.io.IOException
+import java.util.Date
 import java.util.regex.Pattern
 
 internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, MetadataAware, UserAware {
@@ -326,12 +327,12 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
     override fun clearFeatureFlags() = featureFlags.clearFeatureFlags()
 
     fun addError(throwError: Throwable): Error? {
-        val error = Error.createError(throwError, projectPackages, logger)
-        errors.addAll(error)
-        return error.firstOrNull()
+        val newErrors = Error.createError(throwError, projectPackages, logger)
+        errors.addAll(newErrors)
+        return newErrors.firstOrNull()
     }
 
-    fun addError(errorClass: String, errorMessage: String, errorType: ErrorType): Error {
+    fun addError(errorClass: String, errorMessage: String?, errorType: ErrorType): Error {
         val error = Error(
             ErrorInternal(errorClass, errorMessage, Stacktrace(ArrayList()), errorType),
             logger
@@ -340,8 +341,44 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
         return error
     }
 
-    fun addThread(thread: Thread): Thread {
+    fun addThread(
+        id: String,
+        name: String,
+        errorType: ErrorType,
+        isErrorReportingThread: Boolean,
+        state: String
+    ): Thread {
+        val thread = Thread(
+            ThreadInternal(
+                id,
+                name,
+                errorType,
+                isErrorReportingThread,
+                state,
+                Stacktrace(ArrayList())
+            ),
+            logger
+        )
         threads.add(thread)
         return thread
+    }
+
+    fun leaveBreadcrumb(
+        message: String,
+        type: BreadcrumbType,
+        metadata: MutableMap<String, Any?>?,
+        timestamp: Date
+    ): Breadcrumb {
+        val breadcrumb = Breadcrumb(message, type, metadata, timestamp, logger)
+        breadcrumbs.add(breadcrumb)
+        return breadcrumb
+    }
+
+    fun leaveBreadcrumb(
+        message: String
+    ): Breadcrumb {
+        val breadcrumb = Breadcrumb(message, logger)
+        breadcrumbs.add(breadcrumb)
+        return breadcrumb
     }
 }

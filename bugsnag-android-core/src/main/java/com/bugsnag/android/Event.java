@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -66,7 +67,7 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware, F
      * Information extracted from the {@link Throwable} that caused the event can be found in this
      * field. The list contains at least one {@link Error} that represents the thrown object
      * with subsequent elements in the list populated from {@link Throwable#getCause()}.
-     * <p>
+     *
      * A reference to the actual {@link Throwable} object that caused the event is available
      * through {@link Event#getOriginalError()} ()}.
      */
@@ -167,7 +168,7 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware, F
      * All events with the same grouping hash will be grouped together into one error. This is an
      * advanced usage of the library and mis-using it will cause your events not to group properly
      * in your dashboard.
-     * <p>
+     *
      * As the name implies, this option accepts a hash of sorts.
      */
     public void setGroupingHash(@Nullable String groupingHash) {
@@ -179,7 +180,7 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware, F
      * All events with the same grouping hash will be grouped together into one error. This is an
      * advanced usage of the library and mis-using it will cause your events not to group properly
      * in your dashboard.
-     * <p>
+     *
      * As the name implies, this option accepts a hash of sorts.
      */
     @Nullable
@@ -362,7 +363,7 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware, F
     /**
      * Whether the event was a crash (i.e. unhandled) or handled error in which the system
      * continued running.
-     * <p>
+     *
      * Unhandled errors count towards your stability score. If you don't want certain errors
      * to count towards your stability score, you can alter this property through an
      * {@link OnErrorCallback}.
@@ -374,7 +375,7 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware, F
     /**
      * Whether the event was a crash (i.e. unhandled) or handled error in which the system
      * continued running.
-     * <p>
+     *
      * Unhandled errors count towards your stability score. If you don't want certain errors
      * to count towards your stability score, you can alter this property through an
      * {@link OnErrorCallback}.
@@ -443,25 +444,46 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware, F
         impl.setInternalMetrics(metrics);
     }
 
-    public Error addError(Throwable error) {
+    /**
+     * Open API for adding errors, threads and breadcrumbs to the event.
+     */
+
+    @Nullable
+    public Error addError(@NonNull Throwable error) {
         if (error == null) {
             return null;
         }
         return impl.addError(error);
     }
 
-    public Error addError(String errorClass, String errorMessage) {
+    @Nullable
+    public Error addError(@NonNull String errorClass, @NonNull String errorMessage) {
         return impl.addError(errorClass, errorMessage, ErrorType.ANDROID);
     }
 
-
-    public Error addError(String errorClass, String errorMessage, ErrorType errorType) {
+    @Nullable
+    public Error addError(@NonNull String errorClass,
+                          @NonNull String errorMessage,
+                          @NonNull ErrorType errorType) {
         return impl.addError(errorClass, errorMessage, errorType);
     }
 
-    public Thread addThread(Thread thread) {
-        return impl.addThread(thread);
+    @Nullable
+    public Thread addThread(@NonNull String id,
+                            @NonNull String name) {
+        return impl.addThread(id, name, ErrorType.ANDROID, false,
+                Thread.State.RUNNABLE.getDescriptor());
     }
 
+    @NonNull
+    public Breadcrumb leaveBreadcrumb(@NonNull String message,
+                                      @NonNull BreadcrumbType type,
+                                      @Nullable Map<String, Object> metadata) {
+        return impl.leaveBreadcrumb(message, type, metadata, new Date());
+    }
 
+    @NonNull
+    public Breadcrumb leaveBreadcrumb(@NonNull String message) {
+        return impl.leaveBreadcrumb(message);
+    }
 }
