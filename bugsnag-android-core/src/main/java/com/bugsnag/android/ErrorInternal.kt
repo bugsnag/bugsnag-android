@@ -10,7 +10,11 @@ internal class ErrorInternal @JvmOverloads internal constructor(
     val stacktrace: List<Stackframe> = stacktrace.trace
 
     internal companion object {
-        fun createError(exc: Throwable, projectPackages: Collection<String>, logger: Logger): MutableList<Error> {
+        fun createError(
+            exc: Throwable,
+            projectPackages: Collection<String>,
+            logger: Logger
+        ): MutableList<Error> {
             return exc.safeUnrollCauses()
                 .mapTo(mutableListOf()) { currentEx ->
                     // Somehow it's possible for stackTrace to be null in rare cases
@@ -31,5 +35,12 @@ internal class ErrorInternal @JvmOverloads internal constructor(
         writer.name("type").value(type.desc)
         writer.name("stacktrace").value(stacktrace)
         writer.endObject()
+    }
+
+    fun addStackTrace(element: List<StackTraceElement>) {
+        val stackFrame = element.flatMap {
+            listOf(Stackframe(it.methodName, it.fileName, it.lineNumber, null))
+        }
+        stacktrace.toMutableList().addAll(stackFrame)
     }
 }

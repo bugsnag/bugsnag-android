@@ -98,4 +98,9 @@ public class Error implements JsonStream.Streamable {
                                    @NonNull Logger logger) {
         return ErrorInternal.Companion.createError(exc, projectPackages, logger);
     }
+
+
+    public void addStackframe(@NonNull List<StackTraceElement> element) {
+        impl.addStackTrace(element);
+    }
 }
