@@ -118,7 +118,7 @@ steps:
         pull: maze-runner
         run: maze-runner
         service-ports: true
-        command:
+        commands:
           - features/smoke_tests
             --app=@build/fixture-r19-url.txt
             --app-activity=com.bugsnag.android.mazerunner.MainActivity
@@ -242,7 +242,7 @@ steps:
         pull: maze-runner
         run: maze-runner
         service-ports: true
-        command:
+        commands:
           - features/smoke_tests
             --app=@build/fixture-r21-url.txt
             --app-activity=com.bugsnag.android.mazerunner.MainActivity
@@ -306,7 +306,7 @@ steps:
         pull: maze-runner
         run: maze-runner
         service-ports: true
-        command:
+        commands:
           - features/smoke_tests
             --app=@build/fixture-r21-url.txt
             --app-activity=com.bugsnag.android.mazerunner.MainActivity
@@ -371,7 +371,7 @@ steps:
         pull: maze-runner
         run: maze-runner
         service-ports: true
-        command:
+        commands:
           - features/smoke_tests
             --app=@build/fixture-r21-url.txt
             --app-activity=com.bugsnag.android.mazerunner.MainActivity
@@ -441,7 +441,7 @@ steps:
         pull: maze-runner
         run: maze-runner
         service-ports: true
-        command:
+        commands:
           - features/smoke_tests
             --app=@build/fixture-r21-url.txt
             --app-activity=com.bugsnag.android.mazerunner.MainActivity
@@ -508,7 +508,7 @@ steps:
         pull: maze-runner
         run: maze-runner
         service-ports: true
-        command:
+        commands:
           - features/smoke_tests
             --app=@build/fixture-r21-url.txt
             --app-activity=com.bugsnag.android.mazerunner.MainActivity
@@ -571,7 +571,7 @@ steps:
         pull: maze-runner
         run: maze-runner
         service-ports: true
-        command:
+        commands:
           - features/smoke_tests
             --app=@build/fixture-r21-url.txt
             --app-activity=com.bugsnag.android.mazerunner.MainActivity
