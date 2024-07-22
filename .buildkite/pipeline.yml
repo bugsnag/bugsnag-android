@@ -118,18 +118,18 @@ steps:
         pull: maze-runner
         run: maze-runner
         service-ports: true
-        commands:
-          - features/smoke_tests \
-            --app=@build/fixture-r19-url.txt \
-            --app-activity=com.bugsnag.android.mazerunner.MainActivity \
-            --app-package=com.bugsnag.android.mazerunner \
-            --appium-version=1.22 \
-            --farm=bb \
-            --device=ANDROID_7 \
-            --no-tunnel \
-            --aws-public-ip \
-            --fail-fast \
-            --tags='not anr'
+        command:
+          - features/smoke_tests
+          - --app=@build/fixture-r19-url.txt
+          - --app-activity=com.bugsnag.android.mazerunner.MainActivity
+          - --app-package=com.bugsnag.android.mazerunner
+          - --appium-version=1.22
+          - --farm=bb
+          - --device=ANDROID_7
+          - --no-tunnel
+          - --aws-public-ip
+          - --fail-fast
+          - --tags='not\ anr'
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
     concurrency: 25
