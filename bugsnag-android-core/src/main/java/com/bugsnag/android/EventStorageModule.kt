@@ -22,8 +22,8 @@ internal class EventStorageModule(
 
     private val cfg = configModule.config
 
-    private val delegate by future {
-        if (cfg.telemetry.contains(Telemetry.INTERNAL_ERRORS) == true)
+    private val delegate by lazy {
+        if (cfg.telemetry.contains(Telemetry.INTERNAL_ERRORS))
             InternalReportDelegate(
                 contextModule.ctx,
                 cfg.logger,
@@ -37,7 +37,7 @@ internal class EventStorageModule(
             ) else null
     }
 
-    val eventStore by future {
+    val eventStore by lazy {
         EventStore(
             cfg,
             cfg.logger,

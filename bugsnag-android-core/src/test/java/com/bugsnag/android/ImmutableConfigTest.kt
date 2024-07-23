@@ -32,7 +32,9 @@ import java.util.regex.Pattern
 @RunWith(MockitoJUnitRunner::class)
 internal class ImmutableConfigTest {
 
-    private val seed = generateConfiguration()
+    private val seed = generateConfiguration().apply {
+        projectPackages = setOf("com.example.foo")
+    }
 
     @Mock
     lateinit var delivery: Delivery

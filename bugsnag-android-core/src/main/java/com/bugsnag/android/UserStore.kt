@@ -3,6 +3,7 @@ package com.bugsnag.android
 import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.StateObserver
 import java.io.File
+import java.util.concurrent.Future
 import java.util.concurrent.atomic.AtomicReference
 
 /**
@@ -10,9 +11,9 @@ import java.util.concurrent.atomic.AtomicReference
  */
 internal class UserStore @JvmOverloads constructor(
     private val config: ImmutableConfig,
-    private val deviceId: String?,
+    private val deviceIdStore: Future<DeviceIdStore.DeviceIds?>,
     file: File = File(config.persistenceDirectory.value, "bugsnag/user-info"),
-    private val sharedPrefMigrator: SharedPrefMigrator,
+    private val sharedPrefMigrator: Future<SharedPrefMigrator>,
     private val logger: Logger
 ) {
 
@@ -50,7 +51,7 @@ internal class UserStore @JvmOverloads constructor(
             loadedUser != null && validUser(loadedUser) -> UserState(loadedUser)
             // if generateAnonymousId config option is false, the deviceId should already be null
             // here
-            else -> UserState(User(deviceId, null, null))
+            else -> UserState(User(deviceIdStore.get()?.deviceId, null, null))
         }
 
         userState.addObserver(
@@ -81,8 +82,8 @@ internal class UserStore @JvmOverloads constructor(
         user.id != null || user.name != null || user.email != null
 
     private fun loadPersistedUser(): User? {
-        return if (sharedPrefMigrator.hasPrefs()) {
-            val legacyUser = sharedPrefMigrator.loadUser(deviceId)
+        return if (sharedPrefMigrator.get().hasPrefs()) {
+            val legacyUser = sharedPrefMigrator.get().loadUser(deviceIdStore.get()?.deviceId)
             save(legacyUser)
             legacyUser
         } else if (
