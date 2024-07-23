@@ -31,10 +31,6 @@ internal abstract class FileStore(
     private val lock: Lock = ReentrantLock()
     private val queuedFiles: MutableCollection<File> = ConcurrentSkipListSet()
 
-    init {
-        isStorageDirValid(storageDir)
-    }
-
     /**
      * Checks whether the storage directory is a writable directory. If it is not,
      * this method will attempt to create the directory.

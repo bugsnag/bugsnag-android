@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import com.bugsnag.android.BugsnagTestUtils.generateAppWithState
+import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import com.bugsnag.android.BugsnagTestUtils.generateDeviceWithState
 import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
 import org.junit.Test
@@ -99,7 +100,11 @@ internal class EventSerializationTest {
         private fun createEvent(cb: (event: Event) -> Unit = {}): Event {
             val event = Event(
                 null,
-                generateImmutableConfig(),
+                generateImmutableConfig(
+                    generateConfiguration().apply {
+                        projectPackages = setOf("com.example.foo")
+                    }
+                ),
                 SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION),
                 NoopLogger
             )

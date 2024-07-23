@@ -1,7 +1,9 @@
 package com.bugsnag.android
 
 import android.content.Context
+import com.bugsnag.android.internal.BackgroundTaskService
 import com.bugsnag.android.internal.ImmutableConfig
+import com.bugsnag.android.internal.TaskType
 import com.bugsnag.android.internal.dag.DependencyModule
 
 /**
@@ -10,47 +12,46 @@ import com.bugsnag.android.internal.dag.DependencyModule
 internal class StorageModule(
     appContext: Context,
     immutableConfig: ImmutableConfig,
-    logger: Logger
+    bgTaskService: BackgroundTaskService
 ) : DependencyModule() {
 
-    val sharedPrefMigrator by future { SharedPrefMigrator(appContext) }
+    val sharedPrefMigrator = bgTaskService.submitTask(
+        TaskType.IO,
+        SharedPrefMigrator(appContext)
+    )
 
-    private val deviceIdStore by future {
+    val deviceIdStore = bgTaskService.submitTask(
+        TaskType.IO,
         DeviceIdStore(
             appContext,
             sharedPrefMigrator = sharedPrefMigrator,
-            logger = logger,
+            logger = immutableConfig.logger,
             config = immutableConfig
         )
-    }
+    )
 
-    val deviceId by future { deviceIdStore.loadDeviceId() }
+    val userStore = UserStore(
+        immutableConfig,
+        deviceIdStore,
+        sharedPrefMigrator = sharedPrefMigrator,
+        logger = immutableConfig.logger
+    )
 
-    val internalDeviceId by future { deviceIdStore.loadInternalDeviceId() }
+    val lastRunInfoStore = LastRunInfoStore(immutableConfig)
 
-    val userStore by future {
-        UserStore(
-            immutableConfig,
-            deviceId,
-            sharedPrefMigrator = sharedPrefMigrator,
-            logger = logger
-        )
-    }
-
-    val lastRunInfoStore by future { LastRunInfoStore(immutableConfig) }
-
-    val sessionStore by future {
+    val sessionStore =
         SessionStore(
             immutableConfig,
-            logger,
+            immutableConfig.logger,
             null
         )
-    }
 
-    val lastRunInfo by future {
+    val lastRunInfo = lastRunInfo()
+
+    private fun lastRunInfo(): LastRunInfo? {
         val info = lastRunInfoStore.load()
         val currentRunInfo = LastRunInfo(0, crashed = false, crashedDuringLaunch = false)
         lastRunInfoStore.persist(currentRunInfo)
-        info
+        return info
     }
 }
