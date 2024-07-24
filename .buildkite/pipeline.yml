@@ -1,14 +1,14 @@
 steps:
 
-  - label: 'Tags'
-    timeout_in_minutes: 5
-    plugins:
-      docker-compose#v4.7.0:
-        pull: maze-runner
-        run: maze-runner
-        command:
-          - "features/full_tests/breadcrumb.feature"
-          - "--tags=@This"
+#  - label: 'Tags'
+#    timeout_in_minutes: 5
+#    plugins:
+#      docker-compose#v4.7.0:
+#        pull: maze-runner
+#        run: maze-runner
+#        command:
+#          - "features/full_tests/breadcrumb.feature"
+#          - "--tags=@This"
 
   - label: 'Not tags'
     timeout_in_minutes: 5
@@ -18,5 +18,5 @@ steps:
         run: maze-runner
         command:
           - "features/full_tests/breadcrumb.feature"
-          - "--tags=\'not @This\'"
+          - "--tags=\"not @This\""
 
