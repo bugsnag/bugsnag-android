@@ -13,10 +13,10 @@ steps:
   - label: 'Not tags'
     timeout_in_minutes: 5
     plugins:
-      docker-compose#v4.7.0:
+      docker-compose#v5.3.0:
         pull: maze-runner
         run: maze-runner
-        command:
+        commands:
+          - "--tags='not @This'"
           - "features/full_tests/breadcrumb.feature"
-          - "--tags=\\\"not @This\\\""
 
