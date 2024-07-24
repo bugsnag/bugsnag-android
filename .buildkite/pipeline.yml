@@ -18,5 +18,5 @@ steps:
         run: maze-runner
         command:
           - "features/full_tests/breadcrumb.feature"
-          - "--tags='not @This'"
+          - "--tags=\'not @This\'"
 
