@@ -16,7 +16,8 @@ steps:
       docker-compose#v5.3.0:
         pull: maze-runner
         run: maze-runner
-        commands:
-          - "--tags='not @This'"
-          - "features/full_tests/breadcrumb.feature"
+        command: [
+          "--tags='not @This'",
+          "features/full_tests/breadcrumb.feature"
+        ]
 
