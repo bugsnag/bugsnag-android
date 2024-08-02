@@ -165,15 +165,15 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
                     + "Bugsnag.start(context.getApplicationContext()). "
                     + "For further info see: "
                     + "https://docs.bugsnag.com/platforms/android/#basic-configuration");
-
         }
 
         BugsnagStoreMigrator.moveToNewDirectory(
-                immutableConfig.getPersistenceDirectory().getValue());
+                immutableConfig.getPersistenceDirectory().getValue()
+        );
 
         // setup storage as soon as possible
         final StorageModule storageModule = new StorageModule(appContext,
-                immutableConfig, logger);
+                immutableConfig, bgTaskService);
 
         // setup state trackers for bugsnag
         BugsnagStateModule bugsnagStateModule = new BugsnagStateModule(
@@ -188,9 +188,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         // lookup system services
         final SystemServiceModule systemServiceModule = new SystemServiceModule(contextModule);
 
-        // block until storage module has resolved everything
-        storageModule.resolveDependencies(bgTaskService, TaskType.IO);
-
         // setup further state trackers and data collection
         TrackerModule trackerModule = new TrackerModule(configModule,
                 storageModule, this, bgTaskService, callbackState);
@@ -199,20 +196,17 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
         DataCollectionModule dataCollectionModule = new DataCollectionModule(contextModule,
                 configModule, systemServiceModule, trackerModule,
-                bgTaskService, connectivity, storageModule.getDeviceId(),
-                storageModule.getInternalDeviceId(), memoryTrimState);
-        dataCollectionModule.resolveDependencies(bgTaskService, TaskType.IO);
+                bgTaskService, connectivity, storageModule.getDeviceIdStore(),
+                memoryTrimState);
         appDataCollector = dataCollectionModule.getAppDataCollector();
         deviceDataCollector = dataCollectionModule.getDeviceDataCollector();
 
         // load the device + user information
         userState = storageModule.getUserStore().load(configuration.getUser());
-        storageModule.getSharedPrefMigrator().deleteLegacyPrefs();
 
         EventStorageModule eventStorageModule = new EventStorageModule(contextModule, configModule,
                 dataCollectionModule, bgTaskService, trackerModule, systemServiceModule, notifier,
                 callbackState);
-        eventStorageModule.resolveDependencies(bgTaskService, TaskType.IO);
         eventStore = eventStorageModule.getEventStore();
 
         deliveryDelegate = new DeliveryDelegate(logger, eventStore,

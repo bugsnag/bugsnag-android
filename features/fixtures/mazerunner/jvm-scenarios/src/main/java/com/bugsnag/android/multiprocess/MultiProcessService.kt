@@ -23,7 +23,11 @@ class MultiProcessService : Service() {
         if (intent != null) {
             val params = BugsnagIntentParams.decode(intent)
             log("Multiprocess service received start command: $params")
-            sendBroadcast(Intent(ACTION_LAUNCHED_MULTI_PROCESS))
+            sendBroadcast(
+                Intent(ACTION_LAUNCHED_MULTI_PROCESS).apply {
+                    `package` = this@MultiProcessService.packageName
+                }
+            )
 
             // start work in a background thread like regular services
             val handlerThread = HandlerThread("multi-process-service")

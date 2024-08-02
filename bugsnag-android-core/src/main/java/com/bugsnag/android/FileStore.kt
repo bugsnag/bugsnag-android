@@ -8,7 +8,6 @@ import java.io.FileOutputStream
 import java.io.OutputStreamWriter
 import java.io.Writer
 import java.util.Collections
-import java.util.Comparator
 import java.util.concurrent.ConcurrentSkipListSet
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
@@ -33,10 +32,6 @@ internal abstract class FileStore(
 
     private val lock: Lock = ReentrantLock()
     private val queuedFiles: MutableCollection<File> = ConcurrentSkipListSet()
-
-    init {
-        isStorageDirValid(storageDir)
-    }
 
     /**
      * Checks whether the storage directory is a writable directory. If it is not,

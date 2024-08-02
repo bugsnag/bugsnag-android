@@ -16,7 +16,7 @@ import java.io.File
 import kotlin.concurrent.thread
 
 @RunWith(MockitoJUnitRunner.Silent::class)
-class DataCollectorTest {
+internal class DataCollectorTest {
 
     private lateinit var collector: DeviceDataCollector
 
@@ -35,11 +35,10 @@ class DataCollectorTest {
             Mockito.mock(Connectivity::class.java),
             Mockito.mock(Context::class.java),
             res,
-            "fakeDevice",
-            "internalFakeDevice",
+            ValueFuture(DeviceIdStore.DeviceIds("fakeDevice", "internalFakeDevice")),
             Mockito.mock(DeviceBuildInfo::class.java),
             File("/tmp/javatest"),
-            Mockito.mock(RootDetector::class.java),
+            ValueFuture(false),
             Mockito.mock(BackgroundTaskService::class.java),
             Mockito.mock(Logger::class.java)
         )

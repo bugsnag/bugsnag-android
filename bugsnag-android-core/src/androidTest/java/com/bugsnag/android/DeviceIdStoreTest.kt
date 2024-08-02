@@ -68,13 +68,15 @@ internal class DeviceIdStoreTest {
             uuidProvider(0),
             nonExistentInternalFile,
             uuidProvider(1),
-            sharedPrefMigrator = prefMigrator,
+            sharedPrefMigrator = ValueFuture(prefMigrator),
             logger = NoopLogger,
             config = generateConfig(true)
         )
 
-        assertEquals(ids[0], store.loadDeviceId()!!)
-        assertEquals(ids[1], store.loadInternalDeviceId()!!)
+        val loaded = store.call()
+
+        assertEquals(ids[0], loaded?.deviceId)
+        assertEquals(ids[1], loaded?.internalDeviceId)
     }
 
     /**
@@ -92,13 +94,15 @@ internal class DeviceIdStoreTest {
             uuidProvider(0),
             fileInternal,
             uuidProvider(1),
-            prefMigrator,
+            ValueFuture(prefMigrator),
             logger = NoopLogger,
             config = generateConfig(true)
         )
 
-        assertEquals(ids[0], store.loadDeviceId()!!)
-        assertEquals(ids[1], store.loadInternalDeviceId()!!)
+        val loaded = store.call()
+
+        assertEquals(ids[0], loaded?.deviceId)
+        assertEquals(ids[1], loaded?.internalDeviceId)
     }
 
     /**
@@ -114,13 +118,15 @@ internal class DeviceIdStoreTest {
             uuidProvider(0),
             fileInternal,
             uuidProvider(1),
-            prefMigrator,
+            ValueFuture(prefMigrator),
             logger = NoopLogger,
             config = generateConfig(true)
         )
 
-        assertEquals(ids[0], store.loadDeviceId()!!)
-        assertEquals(ids[1], store.loadInternalDeviceId()!!)
+        val loaded = store.call()
+
+        assertEquals(ids[0], loaded?.deviceId)
+        assertEquals(ids[1], loaded?.internalDeviceId)
     }
 
     /**
@@ -136,7 +142,7 @@ internal class DeviceIdStoreTest {
             uuidProvider(2),
             fileInternal,
             uuidProvider(3),
-            prefMigrator,
+            ValueFuture(prefMigrator),
             logger = NoopLogger,
             config = generateConfig(true)
         )
@@ -146,18 +152,21 @@ internal class DeviceIdStoreTest {
             uuidProvider(0),
             fileInternal,
             uuidProvider(1),
-            prefMigrator,
+            ValueFuture(prefMigrator),
             logger = NoopLogger,
             config = generateConfig(true)
         )
 
+        val loadedA = storeA.call()
+        val loadedB = storeB.call()
+
         // device ID is loaded without writing file
-        assertEquals(ids[0], storeA.loadDeviceId()!!)
-        assertEquals(ids[1], storeA.loadInternalDeviceId()!!)
+        assertEquals(ids[0], loadedA?.deviceId)
+        assertEquals(ids[1], loadedA?.internalDeviceId)
 
         // same device ID is retrieved as before
-        assertEquals(ids[0], storeB.loadDeviceId()!!)
-        assertEquals(ids[1], storeB.loadInternalDeviceId()!!)
+        assertEquals(ids[0], loadedB?.deviceId)
+        assertEquals(ids[1], loadedB?.internalDeviceId)
     }
 
     /**
@@ -181,12 +190,13 @@ internal class DeviceIdStoreTest {
             uuidProvider(0),
             nonReadableInternalFile,
             uuidProvider(1),
-            prefMigrator,
+            ValueFuture(prefMigrator),
             logger = NoopLogger,
             config = generateConfig(true)
         )
-        assertNull(store.loadDeviceId())
-        assertNull(store.loadInternalDeviceId())
+
+        val loaded = store.call()
+        assertNull(loaded)
     }
 
     /**
@@ -200,7 +210,7 @@ internal class DeviceIdStoreTest {
             uuidProvider(0),
             fileInternal,
             uuidProvider(1),
-            prefMigrator,
+            ValueFuture(prefMigrator),
             logger = NoopLogger,
             config = generateConfig(true)
         )
@@ -215,7 +225,7 @@ internal class DeviceIdStoreTest {
 
         repeat(attempts) {
             executor.submit {
-                deviceIds.add(store.loadDeviceId()!!)
+                store.call()?.deviceId?.let { deviceIds.add(it) }
                 latch.countDown()
             }
         }
@@ -237,7 +247,7 @@ internal class DeviceIdStoreTest {
             uuidProvider(0),
             fileInternal,
             uuidProvider(1),
-            prefMigrator,
+            ValueFuture(prefMigrator),
             logger = NoopLogger,
             config = generateConfig(true)
         )
@@ -247,8 +257,13 @@ internal class DeviceIdStoreTest {
             context.getSharedPreferences("com.bugsnag.android", Context.MODE_PRIVATE)
         prefs.edit().putString("install.iud", prefsId).commit()
 
-        val prefDeviceId = SharedPrefMigrator(context).loadDeviceId(false)
-        val storeDeviceId = store.loadDeviceId()!!
+        val prefDeviceId = prefMigrator
+            .apply { call() }
+            .loadDeviceId(false)
+
+        val loaded = store.call()
+
+        val storeDeviceId = loaded?.deviceId
         assertEquals(prefsId, storeDeviceId)
         assertEquals(prefDeviceId, storeDeviceId)
     }
@@ -266,12 +281,12 @@ internal class DeviceIdStoreTest {
             uuidProvider(0),
             fileInternal,
             uuidProvider(1),
-            sharedPrefMigrator = prefMigrator,
+            sharedPrefMigrator = ValueFuture(prefMigrator),
             logger = NoopLogger,
             config = generateConfig(false)
         )
 
-        assertNull(store.loadDeviceId())
-        assertNull(store.loadInternalDeviceId())
+        val loaded = store.call()
+        assertNull(loaded)
     }
 }
