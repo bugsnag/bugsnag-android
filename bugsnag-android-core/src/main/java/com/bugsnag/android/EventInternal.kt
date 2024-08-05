@@ -347,7 +347,7 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
     }
 
     fun addThread(
-        id: String,
+        id: String?,
         name: String?,
         errorType: ErrorType,
         isErrorReportingThread: Boolean,
@@ -355,7 +355,7 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
     ): Thread {
         val thread = Thread(
             ThreadInternal(
-                id,
+                id.toString(),
                 name.toString(),
                 errorType,
                 isErrorReportingThread,
