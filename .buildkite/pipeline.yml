@@ -16,6 +16,7 @@ steps:
     artifact_paths:
       - "build/fixture-r19.apk"
       - "build/fixture-r19-url.txt"
+      - "build/bs-fixture-r19-url.txt"
       - "build/fixture-r19/*"
     commands:
       - bundle install
@@ -33,6 +34,7 @@ steps:
     artifact_paths:
       - "build/fixture-r21.apk"
       - "build/fixture-r21-url.txt"
+      - "build/bs-fixture-r21-url.txt"
       - "build/fixture-r21/*"
     commands:
       - bundle install
