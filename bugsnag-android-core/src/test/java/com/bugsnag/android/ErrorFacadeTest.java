@@ -89,4 +89,15 @@ public class ErrorFacadeTest {
         assertEquals("NoSuchFile.dat", frame.getFile());
         assertEquals(1234L, frame.getLineNumber());
     }
+
+    @Test
+    public void addStackframeWithNulls() {
+        Stackframe frame = error.addStackframe(null, null, -1L);
+
+        // check the new frame is the last frame in the error stacktrace
+        assertSame(frame, error.getStacktrace().get(error.getStacktrace().size() - 1));
+        assertNull(frame.getMethod());
+        assertNull(frame.getFile());
+        assertEquals(-1L, frame.getLineNumber());
+    }
 }
