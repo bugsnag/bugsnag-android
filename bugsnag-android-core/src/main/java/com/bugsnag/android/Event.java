@@ -85,8 +85,8 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware, F
     }
 
     /**
-     * Add a new empty error to this report and return its Error data. The new Error will appear
-     * at the end of the {@link #getErrors() errors list}.
+     * Add a new empty {@link ErrorType#ANDROID android} error to this report and return its Error
+     * data. The new Error will appear at the end of the {@link #getErrors() errors list}.
      */
     @NonNull
     public Error addError(@NonNull String errorClass, @Nullable String errorMessage) {
