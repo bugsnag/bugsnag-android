@@ -329,12 +329,17 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
     fun addError(throwError: Throwable): Error? {
         val newErrors = Error.createError(throwError, projectPackages, logger)
         errors.addAll(newErrors)
-        return newErrors.firstOrNull()
+        return newErrors.first()
     }
 
-    fun addError(errorClass: String, errorMessage: String?, errorType: ErrorType): Error {
+    fun addError(errorClass: String?, errorMessage: String?, errorType: ErrorType?): Error {
         val error = Error(
-            ErrorInternal(errorClass, errorMessage, Stacktrace(ArrayList()), errorType),
+            ErrorInternal(
+                errorClass.toString(),
+                errorMessage,
+                Stacktrace(ArrayList()),
+                errorType ?: ErrorType.ANDROID
+            ),
             logger
         )
         errors.add(error)
@@ -343,7 +348,7 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
 
     fun addThread(
         id: String,
-        name: String,
+        name: String?,
         errorType: ErrorType,
         isErrorReportingThread: Boolean,
         state: String
@@ -351,7 +356,7 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
         val thread = Thread(
             ThreadInternal(
                 id,
-                name,
+                name.toString(),
                 errorType,
                 isErrorReportingThread,
                 state,
@@ -364,20 +369,18 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
     }
 
     fun leaveBreadcrumb(
-        message: String,
-        type: BreadcrumbType,
-        metadata: MutableMap<String, Any?>?,
-        timestamp: Date
+        message: String?,
+        type: BreadcrumbType?,
+        metadata: MutableMap<String, Any?>?
     ): Breadcrumb {
-        val breadcrumb = Breadcrumb(message, type, metadata, timestamp, logger)
-        breadcrumbs.add(breadcrumb)
-        return breadcrumb
-    }
+        val breadcrumb = Breadcrumb(
+            message.toString(),
+            type ?: BreadcrumbType.MANUAL,
+            metadata,
+            Date(),
+            logger
+        )
 
-    fun leaveBreadcrumb(
-        message: String
-    ): Breadcrumb {
-        val breadcrumb = Breadcrumb(message, logger)
         breadcrumbs.add(breadcrumb)
         return breadcrumb
     }
