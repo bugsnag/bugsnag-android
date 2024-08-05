@@ -26,7 +26,7 @@ internal class Stacktrace : JsonStream.Streamable {
             }
         }
 
-        public fun serializeStackframe(
+        fun serializeStackframe(
             el: StackTraceElement,
             projectPackages: Collection<String>,
             logger: Logger
@@ -63,7 +63,7 @@ internal class Stacktrace : JsonStream.Streamable {
         logger: Logger
     ) {
         val frames = limitTraceLength(stacktrace)
-        trace = frames.mapNotNullTo(ArrayList()) { Companion.serializeStackframe(it, projectPackages, logger) }
+        trace = frames.mapNotNullTo(ArrayList()) { serializeStackframe(it, projectPackages, logger) }
     }
 
     private fun limitTraceLength(frames: Array<StackTraceElement>): Array<StackTraceElement> {

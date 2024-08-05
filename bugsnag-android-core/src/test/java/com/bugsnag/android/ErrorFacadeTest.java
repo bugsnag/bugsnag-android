@@ -3,6 +3,7 @@ package com.bugsnag.android;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -72,5 +73,20 @@ public class ErrorFacadeTest {
     @Test
     public void stacktraceValid() {
         assertEquals(trace, error.getStacktrace());
+    }
+
+    @Test
+    public void addStackframe() {
+        Stackframe frame = error.addStackframe(
+                "SomeClass.fakeMethod",
+                "NoSuchFile.dat",
+                1234L
+        );
+
+        // check the new frame is the last frame in the error stacktrace
+        assertSame(frame, error.getStacktrace().get(error.getStacktrace().size() - 1));
+        assertEquals("SomeClass.fakeMethod", frame.getMethod());
+        assertEquals("NoSuchFile.dat", frame.getFile());
+        assertEquals(1234L, frame.getLineNumber());
     }
 }

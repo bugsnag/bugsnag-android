@@ -88,6 +88,16 @@ public class Error implements JsonStream.Streamable {
         return impl.getStacktrace();
     }
 
+    /**
+     * Add a new stackframe to the end of this Error returning the new Stackframe data object.
+     */
+    @NonNull
+    public Stackframe addStackframe(@Nullable String method,
+                                    @Nullable String file,
+                                    long lineNumber) {
+        return impl.addStackframe(method, file, lineNumber);
+    }
+
     @Override
     public void toStream(@NonNull JsonStream stream) throws IOException {
         impl.toStream(stream);
@@ -97,27 +107,5 @@ public class Error implements JsonStream.Streamable {
                                    @NonNull Collection<String> projectPackages,
                                    @NonNull Logger logger) {
         return ErrorInternal.Companion.createError(exc, projectPackages, logger);
-    }
-
-    /**
-     * A stackframe can be added to an error in an event
-     */
-
-    @Nullable
-    public Stackframe addStackframe(@Nullable StackTraceElement element,
-                                    @NonNull Collection<String> projectPackages) {
-        if (element != null) {
-            return impl.addStackframe(element, projectPackages, logger);
-        } else {
-            logNull("stackframe");
-        }
-        return null;
-    }
-
-    @NonNull
-    public Stackframe addStackframe(@Nullable String method,
-                                    @Nullable String file,
-                                    @Nullable Number lineNumber) {
-        return impl.addStackframe(method, file, lineNumber);
     }
 }

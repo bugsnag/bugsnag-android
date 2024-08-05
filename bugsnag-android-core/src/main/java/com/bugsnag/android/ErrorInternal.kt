@@ -9,6 +9,12 @@ internal class ErrorInternal @JvmOverloads internal constructor(
 
     val stacktrace: MutableList<Stackframe> = stacktrace.trace
 
+    fun addStackframe(method: String?, file: String?, lineNumber: Long): Stackframe {
+        val frame = Stackframe(method, file, lineNumber, null)
+        stacktrace.add(frame)
+        return frame
+    }
+
     internal companion object {
         fun createError(
             exc: Throwable,
@@ -20,8 +26,11 @@ internal class ErrorInternal @JvmOverloads internal constructor(
                     // Somehow it's possible for stackTrace to be null in rare cases
                     val stacktrace = currentEx.stackTrace ?: arrayOf<StackTraceElement>()
                     val trace = Stacktrace(stacktrace, projectPackages, logger)
-                    val errorInternal =
-                        ErrorInternal(currentEx.javaClass.name, currentEx.localizedMessage, trace)
+                    val errorInternal = ErrorInternal(
+                        currentEx.javaClass.name,
+                        currentEx.localizedMessage,
+                        trace
+                    )
 
                     return@mapTo Error(errorInternal, logger)
                 }
@@ -35,21 +44,5 @@ internal class ErrorInternal @JvmOverloads internal constructor(
         writer.name("type").value(type.desc)
         writer.name("stacktrace").value(stacktrace)
         writer.endObject()
-    }
-
-    fun addStackframe(
-        element: StackTraceElement,
-        projectPackages: Collection<String>,
-        logger: Logger
-    ): Stackframe? {
-        val frame = Stacktrace.serializeStackframe(element, projectPackages, logger)
-        frame?.let { stacktrace.add(it) }
-        return frame
-    }
-
-    fun addStackframe(method: String?, file: String?, lineNumber: Number?): Stackframe {
-        val frame = Stackframe(method, file, lineNumber, null)
-        stacktrace.add(frame)
-        return frame
     }
 }
