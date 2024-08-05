@@ -382,7 +382,7 @@ steps:
     concurrency_method: eager
 
   - label: ':browserstack: Android 11 NDK r21 ANR smoke tests'
-    key: 'android-11-smoke'
+    key: 'android-11-anr-smoke'
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
