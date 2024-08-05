@@ -81,7 +81,7 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware, F
      */
     @NonNull
     public Error addError(@NonNull Throwable error) {
-        return impl.addError(error != null ? error : new Throwable());
+        return impl.addError(error);
     }
 
     /**
@@ -89,7 +89,7 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware, F
      * at the end of the {@link #getErrors() errors list}.
      */
     @NonNull
-    public Error addError(@NonNull String errorClass, @NonNull String errorMessage) {
+    public Error addError(@NonNull String errorClass, @Nullable String errorMessage) {
         return impl.addError(errorClass, errorMessage, ErrorType.ANDROID);
     }
 
@@ -99,7 +99,7 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware, F
      */
     @NonNull
     public Error addError(@NonNull String errorClass,
-                          @NonNull String errorMessage,
+                          @Nullable String errorMessage,
                           @NonNull ErrorType errorType) {
         return impl.addError(errorClass, errorMessage, errorType);
     }

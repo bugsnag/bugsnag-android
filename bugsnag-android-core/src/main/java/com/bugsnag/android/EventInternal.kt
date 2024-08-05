@@ -326,10 +326,19 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
 
     override fun clearFeatureFlags() = featureFlags.clearFeatureFlags()
 
-    fun addError(throwError: Throwable): Error? {
-        val newErrors = Error.createError(throwError, projectPackages, logger)
-        errors.addAll(newErrors)
-        return newErrors.first()
+    fun addError(thrownError: Throwable?): Error {
+        if (thrownError == null) {
+            val newError = Error(
+                ErrorInternal("null", null, Stacktrace(ArrayList())),
+                logger
+            )
+            errors.add(newError)
+            return newError
+        } else {
+            val newErrors = Error.createError(thrownError, projectPackages, logger)
+            errors.addAll(newErrors)
+            return newErrors.first()
+        }
     }
 
     fun addError(errorClass: String?, errorMessage: String?, errorType: ErrorType?): Error {
