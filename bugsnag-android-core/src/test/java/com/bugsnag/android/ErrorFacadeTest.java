@@ -8,6 +8,7 @@ import static org.junit.Assert.assertSame;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class ErrorFacadeTest {
     @Before
     public void setUp() {
         logger = new InterceptingLogger();
-        trace = Collections.emptyList();
+        trace = new ArrayList<>();
         ErrorInternal impl = new ErrorInternal("com.bar.CrashyClass",
                 "Whoops", new Stacktrace(trace), ErrorType.ANDROID);
         error = new Error(impl, logger);

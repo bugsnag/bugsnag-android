@@ -6,7 +6,7 @@
 
 * Include additional Intent information for Activity.onCreate breadcrumbs (action, categories, type, flags, id, extra keys)
   [#2057](https://github.com/bugsnag/bugsnag-android/pull/2057)
-* New APIs allowing new `Error`s, `Thread`s, and `Stackframe`s to be added to error reports (`Event`s)
+* New APIs allowing new `Error`s, `Thread`s, and `Stackframe`s to be added to `Event`s
   [#2060](https://github.com/bugsnag/bugsnag-android/pull/2060)
 
 ### Bug fixes

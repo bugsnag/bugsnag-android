@@ -7,7 +7,7 @@ class StacktraceTest {
 
     @Test
     fun stackframeListTrimmed() {
-        val stackList = (1..300).map { index ->
+        val stackList = (1..300).mapTo(ArrayList()) { index ->
             Stackframe("A", "B", index, true)
         }
         val stacktrace = Stacktrace(stackList)

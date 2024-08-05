@@ -76,7 +76,7 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware, F
     }
 
     /**
-     * Add a new error to this report and return its Error data. The new Error will appear at the
+     * Add a new error to this event and return its Error data. The new Error will appear at the
      * end of the {@link #getErrors() errors list}.
      */
     @NonNull
@@ -85,7 +85,7 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware, F
     }
 
     /**
-     * Add a new empty {@link ErrorType#ANDROID android} error to this report and return its Error
+     * Add a new empty {@link ErrorType#ANDROID android} error to this event and return its Error
      * data. The new Error will appear at the end of the {@link #getErrors() errors list}.
      */
     @NonNull
@@ -94,7 +94,7 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware, F
     }
 
     /**
-     * Add a new empty error to this report and return its Error data. The new Error will appear
+     * Add a new empty error to this event and return its Error data. The new Error will appear
      * at the end of the {@link #getErrors() errors list}.
      */
     @NonNull
@@ -115,8 +115,8 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware, F
 
     /**
      * Create, add and return a new empty {@link Thread} object to this event with a given id
-     * and name. This can be used to augment the report with thread data that would not be picked
-     * up as part of a normal report being generated (for example: native threads managed
+     * and name. This can be used to augment the event with thread data that would not be picked
+     * up as part of a normal event being generated (for example: native threads managed
      * by cross-platform toolkits).
      *
      * @return a new Thread object of type {@link ErrorType#ANDROID} with no stacktrace
@@ -135,8 +135,8 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware, F
 
     /**
      * Create, add and return a new empty {@link Thread} object to this event with a given id
-     * and name. This can be used to augment the report with thread data that would not be picked
-     * up as part of a normal report being generated (for example: native threads managed
+     * and name. This can be used to augment the event with thread data that would not be picked
+     * up as part of a normal event being generated (for example: native threads managed
      * by cross-platform toolkits).
      *
      * @return a new Thread object of type {@link ErrorType#ANDROID} with no stacktrace
