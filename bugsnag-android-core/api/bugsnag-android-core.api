@@ -312,8 +312,7 @@ public final class com/bugsnag/android/EndpointConfiguration {
 }
 
 public class com/bugsnag/android/Error : com/bugsnag/android/JsonStream$Streamable {
-	public fun addStackframe (Ljava/lang/StackTraceElement;Ljava/util/Collection;)Lcom/bugsnag/android/Stackframe;
-	public fun addStackframe (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Number;)Lcom/bugsnag/android/Stackframe;
+	public fun addStackframe (Ljava/lang/String;Ljava/lang/String;J)Lcom/bugsnag/android/Stackframe;
 	public fun getErrorClass ()Ljava/lang/String;
 	public fun getErrorMessage ()Ljava/lang/String;
 	public fun getStacktrace ()Ljava/util/List;
@@ -360,6 +359,7 @@ public class com/bugsnag/android/Event : com/bugsnag/android/FeatureFlagAware, c
 	public fun addFeatureFlags (Ljava/lang/Iterable;)V
 	public fun addMetadata (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;)V
 	public fun addMetadata (Ljava/lang/String;Ljava/util/Map;)V
+	public fun addThread (JLjava/lang/String;)Lcom/bugsnag/android/Thread;
 	public fun addThread (Ljava/lang/String;Ljava/lang/String;)Lcom/bugsnag/android/Thread;
 	public fun clearFeatureFlag (Ljava/lang/String;)V
 	public fun clearFeatureFlags ()V
@@ -770,6 +770,7 @@ public final class com/bugsnag/android/Telemetry : java/lang/Enum {
 }
 
 public class com/bugsnag/android/Thread : com/bugsnag/android/JsonStream$Streamable {
+	public fun addStackframe (Ljava/lang/String;Ljava/lang/String;J)Lcom/bugsnag/android/Stackframe;
 	public fun getErrorReportingThread ()Z
 	public fun getId ()Ljava/lang/String;
 	public fun getName ()Ljava/lang/String;
@@ -800,6 +801,7 @@ public final class com/bugsnag/android/Thread$State : java/lang/Enum {
 }
 
 public final class com/bugsnag/android/ThreadInternal : com/bugsnag/android/JsonStream$Streamable {
+	public final fun addStackframe (Ljava/lang/String;Ljava/lang/String;J)Lcom/bugsnag/android/Stackframe;
 	public final fun getId ()Ljava/lang/String;
 	public final fun getName ()Ljava/lang/String;
 	public final fun getStacktrace ()Ljava/util/List;
