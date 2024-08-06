@@ -19,7 +19,7 @@ class ErrorDeserializer implements MapDeserializer<Error> {
     public Error deserialize(Map<String, Object> map) {
         String type = MapUtils.getOrThrow(map, "type");
         List<Map<String, Object>> stacktrace = MapUtils.getOrThrow(map, "stacktrace");
-        List<Stackframe> frames = new ArrayList<>();
+        List<Stackframe> frames = new ArrayList<>(stacktrace.size());
 
         for (Map<String, Object> frame : stacktrace) {
             frames.add(stackframeDeserializer.deserialize(frame));

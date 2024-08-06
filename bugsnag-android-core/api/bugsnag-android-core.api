@@ -312,6 +312,7 @@ public final class com/bugsnag/android/EndpointConfiguration {
 }
 
 public class com/bugsnag/android/Error : com/bugsnag/android/JsonStream$Streamable {
+	public fun addStackframe (Ljava/lang/String;Ljava/lang/String;J)Lcom/bugsnag/android/Stackframe;
 	public fun getErrorClass ()Ljava/lang/String;
 	public fun getErrorMessage ()Ljava/lang/String;
 	public fun getStacktrace ()Ljava/util/List;
@@ -350,11 +351,16 @@ public final class com/bugsnag/android/ErrorTypes {
 }
 
 public class com/bugsnag/android/Event : com/bugsnag/android/FeatureFlagAware, com/bugsnag/android/JsonStream$Streamable, com/bugsnag/android/MetadataAware, com/bugsnag/android/UserAware {
+	public fun addError (Ljava/lang/String;Ljava/lang/String;)Lcom/bugsnag/android/Error;
+	public fun addError (Ljava/lang/String;Ljava/lang/String;Lcom/bugsnag/android/ErrorType;)Lcom/bugsnag/android/Error;
+	public fun addError (Ljava/lang/Throwable;)Lcom/bugsnag/android/Error;
 	public fun addFeatureFlag (Ljava/lang/String;)V
 	public fun addFeatureFlag (Ljava/lang/String;Ljava/lang/String;)V
 	public fun addFeatureFlags (Ljava/lang/Iterable;)V
 	public fun addMetadata (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;)V
 	public fun addMetadata (Ljava/lang/String;Ljava/util/Map;)V
+	public fun addThread (JLjava/lang/String;)Lcom/bugsnag/android/Thread;
+	public fun addThread (Ljava/lang/String;Ljava/lang/String;)Lcom/bugsnag/android/Thread;
 	public fun clearFeatureFlag (Ljava/lang/String;)V
 	public fun clearFeatureFlags ()V
 	public fun clearMetadata (Ljava/lang/String;)V
@@ -374,6 +380,8 @@ public class com/bugsnag/android/Event : com/bugsnag/android/FeatureFlagAware, c
 	public fun getThreads ()Ljava/util/List;
 	public fun getUser ()Lcom/bugsnag/android/User;
 	public fun isUnhandled ()Z
+	public fun leaveBreadcrumb (Ljava/lang/String;)Lcom/bugsnag/android/Breadcrumb;
+	public fun leaveBreadcrumb (Ljava/lang/String;Lcom/bugsnag/android/BreadcrumbType;Ljava/util/Map;)Lcom/bugsnag/android/Breadcrumb;
 	public fun setApiKey (Ljava/lang/String;)V
 	public fun setContext (Ljava/lang/String;)V
 	public fun setGroupingHash (Ljava/lang/String;)V
@@ -762,6 +770,7 @@ public final class com/bugsnag/android/Telemetry : java/lang/Enum {
 }
 
 public class com/bugsnag/android/Thread : com/bugsnag/android/JsonStream$Streamable {
+	public fun addStackframe (Ljava/lang/String;Ljava/lang/String;J)Lcom/bugsnag/android/Stackframe;
 	public fun getErrorReportingThread ()Z
 	public fun getId ()Ljava/lang/String;
 	public fun getName ()Ljava/lang/String;
@@ -792,6 +801,7 @@ public final class com/bugsnag/android/Thread$State : java/lang/Enum {
 }
 
 public final class com/bugsnag/android/ThreadInternal : com/bugsnag/android/JsonStream$Streamable {
+	public final fun addStackframe (Ljava/lang/String;Ljava/lang/String;J)Lcom/bugsnag/android/Stackframe;
 	public final fun getId ()Ljava/lang/String;
 	public final fun getName ()Ljava/lang/String;
 	public final fun getStacktrace ()Ljava/util/List;

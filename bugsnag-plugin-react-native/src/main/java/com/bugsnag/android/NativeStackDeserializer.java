@@ -30,7 +30,7 @@ class NativeStackDeserializer implements MapDeserializer<List<Stackframe>> {
     @Override
     public List<Stackframe> deserialize(Map<String, Object> map) {
         List<Map<String, Object>> nativeStack = MapUtils.getOrThrow(map, "nativeStack");
-        List<Stackframe> frames = new ArrayList<>();
+        List<Stackframe> frames = new ArrayList<>(nativeStack.size());
 
         for (Map<String, Object> frame : nativeStack) {
             frames.add(deserializeStackframe(frame, projectPackages));

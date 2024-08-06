@@ -21,7 +21,7 @@ class ThreadDeserializationTest {
                         ErrorType.C,
                         false,
                         "",
-                        Stacktrace(emptyList())
+                        Stacktrace(mutableListOf())
                     ),
                     NoopLogger
                 ),
@@ -32,7 +32,7 @@ class ThreadDeserializationTest {
                         ErrorType.ANDROID,
                         false,
                         "",
-                        Stacktrace(emptyList())
+                        Stacktrace(mutableListOf())
                     ),
                     NoopLogger
                 ),
@@ -47,7 +47,7 @@ class ThreadDeserializationTest {
                         ErrorType.ANDROID,
                         false,
                         "happy",
-                        Stacktrace(emptyList())
+                        Stacktrace(mutableListOf())
                     ),
                     NoopLogger
                 )
