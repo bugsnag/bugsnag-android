@@ -1,5 +1,6 @@
 package com.bugsnag.android.mazerunner.scenarios
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.content.BroadcastReceiver
@@ -24,6 +25,8 @@ import com.bugsnag.android.multiprocess.findCurrentProcessName
 import com.bugsnag.android.performance.measureSpan
 import java.io.File
 import kotlin.system.measureNanoTime
+
+private const val RECEIVER_EXPORTED = 2
 
 abstract class Scenario(
     protected val config: Configuration,
@@ -116,21 +119,27 @@ abstract class Scenario(
         callback: () -> Unit = {}
     ) {
         val filter = IntentFilter(MultiProcessService.ACTION_LAUNCHED_MULTI_PROCESS)
-        context.registerReceiver(
-            object : BroadcastReceiver() {
-                override fun onReceive(context: Context?, intent: Intent?) {
-                    // explicitly post on the main thread to avoid
-                    // the broadcast receiver wrapping exceptions
-                    Handler(Looper.getMainLooper()).post {
-                        callback()
-                    }
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                log("Received '${MultiProcessService.ACTION_LAUNCHED_MULTI_PROCESS}' broadcast")
+                // explicitly post on the main thread to avoid
+                // the broadcast receiver wrapping exceptions
+                Handler(Looper.getMainLooper()).post {
+                    callback()
                 }
-            },
-            filter
-        )
+            }
+        }
+
+        @SuppressLint("WrongConstant")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.registerReceiver(receiver, filter, RECEIVER_EXPORTED)
+        } else {
+            context.registerReceiver(receiver, filter)
+        }
 
         val intent = Intent(context, MultiProcessService::class.java)
         params.encode(intent)
+        log("Starting MultiProcessService")
         context.startService(intent)
     }
 

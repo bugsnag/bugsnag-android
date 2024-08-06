@@ -140,7 +140,8 @@ static void bsg_modify_callback_count(bugsnag_event *event, const char *api,
   for (; i < total_callbacks && event->set_callback_counts[i].name[0] != 0;
        i++) {
     set_callback_count *callback_counter = &event->set_callback_counts[i];
-    if (strcmp(callback_counter->name, api) == 0) {
+    if (strncmp(callback_counter->name, api, sizeof(callback_counter->name)) ==
+        0) {
       callback_counter->count += delta;
       if (callback_counter->count < 0) {
         callback_counter->count = 0;
@@ -157,13 +158,14 @@ static void bsg_modify_callback_count(bugsnag_event *event, const char *api,
 
 void bsg_set_callback_count(bugsnag_event *event, const char *api,
                             int32_t count) {
-  if (!internal_metrics_enabled || event == NULL) {
+  if (!internal_metrics_enabled || event == NULL || !api) {
     return;
   }
 
   static const int total_callbacks =
       sizeof(event->set_callback_counts) / sizeof(*event->set_callback_counts);
-  if (strlen(api) >= sizeof(event->set_callback_counts[0].name)) {
+  if (strnlen(api, sizeof(event->set_callback_counts[0].name)) >=
+      sizeof(event->set_callback_counts[0].name)) {
     // API name is too big to store.
     return;
   }
