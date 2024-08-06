@@ -3,7 +3,6 @@ package com.bugsnag.android;
 import static com.bugsnag.android.SeverityReason.REASON_HANDLED_EXCEPTION;
 
 import com.bugsnag.android.internal.BackgroundTaskService;
-import com.bugsnag.android.internal.BugsnagStoreMigrator;
 import com.bugsnag.android.internal.ForegroundDetector;
 import com.bugsnag.android.internal.ImmutableConfig;
 import com.bugsnag.android.internal.InternalMetrics;
@@ -125,7 +124,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
      * @param configuration  a configuration for the Client
      */
     public Client(@NonNull Context androidContext, @NonNull final Configuration configuration) {
-        ContextModule contextModule = new ContextModule(androidContext);
+        ContextModule contextModule = new ContextModule(androidContext, bgTaskService);
         appContext = contextModule.getCtx();
 
         notifier = configuration.getNotifier();
@@ -167,17 +166,13 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
                     + "https://docs.bugsnag.com/platforms/android/#basic-configuration");
         }
 
-        BugsnagStoreMigrator.moveToNewDirectory(
-                immutableConfig.getPersistenceDirectory().getValue()
-        );
-
         // setup storage as soon as possible
         final StorageModule storageModule = new StorageModule(appContext,
                 immutableConfig, bgTaskService);
 
         // setup state trackers for bugsnag
-        BugsnagStateModule bugsnagStateModule = new BugsnagStateModule(
-                immutableConfig, configuration);
+        BugsnagStateModule bugsnagStateModule =
+                new BugsnagStateModule(immutableConfig, configuration);
         clientObservable = bugsnagStateModule.getClientObservable();
         callbackState = bugsnagStateModule.getCallbackState();
         breadcrumbState = bugsnagStateModule.getBreadcrumbState();
@@ -186,28 +181,26 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         featureFlagState = bugsnagStateModule.getFeatureFlagState();
 
         // lookup system services
-        final SystemServiceModule systemServiceModule = new SystemServiceModule(contextModule);
+        final SystemServiceModule systemServiceModule =
+                new SystemServiceModule(contextModule, bgTaskService);
 
         // setup further state trackers and data collection
         TrackerModule trackerModule = new TrackerModule(configModule,
                 storageModule, this, bgTaskService, callbackState);
-        launchCrashTracker = trackerModule.getLaunchCrashTracker();
-        sessionTracker = trackerModule.getSessionTracker();
 
         DataCollectionModule dataCollectionModule = new DataCollectionModule(contextModule,
                 configModule, systemServiceModule, trackerModule,
                 bgTaskService, connectivity, storageModule.getDeviceIdStore(),
                 memoryTrimState);
-        appDataCollector = dataCollectionModule.getAppDataCollector();
-        deviceDataCollector = dataCollectionModule.getDeviceDataCollector();
 
         // load the device + user information
-        userState = storageModule.getUserStore().load(configuration.getUser());
+        userState = storageModule.getUserStore().get().load(configuration.getUser());
 
         EventStorageModule eventStorageModule = new EventStorageModule(contextModule, configModule,
                 dataCollectionModule, bgTaskService, trackerModule, systemServiceModule, notifier,
                 callbackState);
-        eventStore = eventStorageModule.getEventStore();
+
+        eventStore = eventStorageModule.getEventStore().get();
 
         deliveryDelegate = new DeliveryDelegate(logger, eventStore,
                 immutableConfig, callbackState, notifier, bgTaskService);
@@ -215,8 +208,13 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         exceptionHandler = new ExceptionHandler(this, logger);
 
         // load last run info
-        lastRunInfoStore = storageModule.getLastRunInfoStore();
-        lastRunInfo = storageModule.getLastRunInfo();
+        lastRunInfoStore = storageModule.getLastRunInfoStore().getOrNull();
+        lastRunInfo = storageModule.getLastRunInfo().getOrNull();
+
+        launchCrashTracker = trackerModule.getLaunchCrashTracker();
+        sessionTracker = trackerModule.getSessionTracker().get();
+        appDataCollector = dataCollectionModule.getAppDataCollector().get();
+        deviceDataCollector = dataCollectionModule.getDeviceDataCollector().get();
 
         Set<Plugin> userPlugins = configuration.getPlugins();
         pluginClient = new PluginClient(userPlugins, immutableConfig, logger);

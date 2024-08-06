@@ -51,10 +51,10 @@ internal class ConfigChangeReceiverTest {
         connectivity,
         appContext,
         resources,
-        ValueFuture(null),
+        ValueProvider(null),
         buildInfo,
         dataDirectory,
-        ValueFuture(false),
+        ValueProvider(false),
         bgTaskService,
         NoopLogger
     )

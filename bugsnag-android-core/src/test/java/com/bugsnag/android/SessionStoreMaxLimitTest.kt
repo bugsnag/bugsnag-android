@@ -34,9 +34,6 @@ class SessionStoreMaxLimitTest {
 
     @Test
     fun testDefaultLimit() {
-        val config = generateConfiguration().apply {
-            persistenceDirectory = storageDir
-        }
         val sessionStore = createSessionStore(convertToImmutableConfig(config))
 
         val session = generateSession()
@@ -79,7 +76,9 @@ class SessionStoreMaxLimitTest {
 
     private fun createSessionStore(config: ImmutableConfig): SessionStore {
         return SessionStore(
-            config,
+            config.persistenceDirectory.value,
+            config.maxPersistedSessions,
+            config.apiKey,
             NoopLogger,
             object : Delegate {
                 override fun onErrorIOFailure(

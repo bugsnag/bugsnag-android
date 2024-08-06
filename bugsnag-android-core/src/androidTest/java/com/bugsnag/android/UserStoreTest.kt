@@ -3,7 +3,6 @@ package com.bugsnag.android
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.test.core.app.ApplicationProvider
-import com.bugsnag.android.internal.ImmutableConfig
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -36,12 +35,6 @@ internal class UserStoreTest {
         prefs.edit().clear().commit()
     }
 
-    private fun generateConfig(persistUser: Boolean): ImmutableConfig {
-        val config = BugsnagTestUtils.generateConfiguration()
-        config.persistUser = persistUser
-        return BugsnagTestUtils.convert(config)
-    }
-
     @Test
     fun sharedPrefMigration() {
         prefs.edit()
@@ -54,10 +47,11 @@ internal class UserStoreTest {
         prefMigrator.call()
 
         val store = UserStore(
-            generateConfig(true),
-            ValueFuture(DeviceIdStore.DeviceIds("0asdf", null)),
+            true,
+            ValueProvider(storageDir),
+            ValueProvider(DeviceIdStore.DeviceIds("0asdf", null)),
             file,
-            ValueFuture(prefMigrator),
+            ValueProvider(prefMigrator),
             NoopLogger
         )
         val user = store.load(User()).user
@@ -74,10 +68,11 @@ internal class UserStoreTest {
         val nonExistentFile = File(storageDir, "foo")
         nonExistentFile.delete()
         val store = UserStore(
-            generateConfig(true),
-            ValueFuture(DeviceIdStore.DeviceIds("device-id", null)),
+            true,
+            ValueProvider(storageDir),
+            ValueProvider(DeviceIdStore.DeviceIds("device-id", null)),
             file,
-            ValueFuture(prefMigrator),
+            ValueProvider(prefMigrator),
             NoopLogger
         )
         val user = store.load(User()).user
@@ -92,10 +87,11 @@ internal class UserStoreTest {
     @Test
     fun emptyFile() {
         val store = UserStore(
-            generateConfig(true),
-            ValueFuture(DeviceIdStore.DeviceIds("device-id", null)),
+            true,
+            ValueProvider(storageDir),
+            ValueProvider(DeviceIdStore.DeviceIds("device-id", null)),
             file,
-            ValueFuture(prefMigrator),
+            ValueProvider(prefMigrator),
             NoopLogger
         )
         val user = store.load(User()).user
@@ -111,10 +107,11 @@ internal class UserStoreTest {
     fun invalidFileContents() {
         file.writeText("{\"hamster\": 2}")
         val store = UserStore(
-            generateConfig(true),
-            ValueFuture(DeviceIdStore.DeviceIds("device-id", null)),
+            true,
+            ValueProvider(storageDir),
+            ValueProvider(DeviceIdStore.DeviceIds("device-id", null)),
             file,
-            ValueFuture(prefMigrator),
+            ValueProvider(prefMigrator),
             NoopLogger
         )
         val user = store.load(User()).user
@@ -134,10 +131,11 @@ internal class UserStoreTest {
             setWritable(false)
         }
         val store = UserStore(
-            generateConfig(true),
-            ValueFuture(DeviceIdStore.DeviceIds("device-id", null)),
+            true,
+            ValueProvider(storageDir),
+            ValueProvider(DeviceIdStore.DeviceIds("device-id", null)),
             nonReadableFile,
-            ValueFuture(prefMigrator),
+            ValueProvider(prefMigrator),
             NoopLogger
         )
         val user = store.load(User()).user
@@ -154,10 +152,11 @@ internal class UserStoreTest {
         file.writeText("{\"id\":\"jf123\",\"email\":\"test@example.com\",\"name\":\"Jane Fonda\"}")
 
         val store = UserStore(
-            generateConfig(true),
-            ValueFuture(DeviceIdStore.DeviceIds("0asdf", null)),
+            true,
+            ValueProvider(storageDir),
+            ValueProvider(DeviceIdStore.DeviceIds("0asdf", null)),
             file,
-            ValueFuture(prefMigrator),
+            ValueProvider(prefMigrator),
             NoopLogger
         )
         val user = store.load(User()).user
@@ -172,10 +171,11 @@ internal class UserStoreTest {
     @Test
     fun loadWithoutPersistUser() {
         val store = UserStore(
-            generateConfig(false),
-            ValueFuture(DeviceIdStore.DeviceIds("device-id-123", null)),
+            false,
+            ValueProvider(storageDir),
+            ValueProvider(DeviceIdStore.DeviceIds("device-id-123", null)),
             file,
-            ValueFuture(prefMigrator),
+            ValueProvider(prefMigrator),
             NoopLogger
         )
         store.load(User()).user
@@ -188,10 +188,11 @@ internal class UserStoreTest {
     @Test
     fun saveWithoutPersistUser() {
         val store = UserStore(
-            generateConfig(false),
-            ValueFuture(DeviceIdStore.DeviceIds("", null)),
+            false,
+            ValueProvider(storageDir),
+            ValueProvider(DeviceIdStore.DeviceIds("", null)),
             file,
-            ValueFuture(prefMigrator),
+            ValueProvider(prefMigrator),
             NoopLogger
         )
         store.save(User("123", "joe@yahoo.com", "Joe Bloggs"))
@@ -204,10 +205,11 @@ internal class UserStoreTest {
     @Test
     fun saveWithPersistUser() {
         val store = UserStore(
-            generateConfig(true),
-            ValueFuture(DeviceIdStore.DeviceIds("0asdf", null)),
+            true,
+            ValueProvider(storageDir),
+            ValueProvider(DeviceIdStore.DeviceIds("0asdf", null)),
             file,
-            ValueFuture(prefMigrator),
+            ValueProvider(prefMigrator),
             NoopLogger
         )
         val user = User("jf123", "test@example.com", "Jane Fonda")
@@ -222,10 +224,11 @@ internal class UserStoreTest {
     @Test
     fun userRequiresChangeForDiskIO() {
         val store = UserStore(
-            generateConfig(true),
-            ValueFuture(DeviceIdStore.DeviceIds("0asdf", null)),
+            true,
+            ValueProvider(storageDir),
+            ValueProvider(DeviceIdStore.DeviceIds("0asdf", null)),
             file,
-            ValueFuture(prefMigrator),
+            ValueProvider(prefMigrator),
             NoopLogger
         )
         val user = User("jf123", "test@example.com", "Jane Fonda")

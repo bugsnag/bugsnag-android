@@ -53,10 +53,10 @@ internal class DeviceMetadataSerializationTest {
                 connectivity,
                 context,
                 res,
-                ValueFuture(DeviceIdStore.DeviceIds("123", "456")),
+                ValueProvider(DeviceIdStore.DeviceIds("123", "456")),
                 buildInfo,
                 File(""),
-                ValueFuture(false),
+                ValueProvider(false),
                 BackgroundTaskService(),
                 NoopLogger
             )

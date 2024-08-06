@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit
 private const val WAIT_TIME_MS = 200L
 private const val CONFINEMENT_TEST_ATTEMPTS = 20
 
-internal class BackgroundTaskServiceTest {
+internal class BackgroundRunnableProviderServiceTest {
 
     /**
      * Verifies that the task type submits a Runnable to the correct executor.

@@ -2,7 +2,6 @@ package com.bugsnag.android
 
 import com.bugsnag.android.internal.ImmutableConfig
 import java.io.File
-import java.util.concurrent.Callable
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.withLock
 
@@ -15,23 +14,11 @@ private const val KEY_CRASHED_DURING_LAUNCH = "crashedDuringLaunch"
  * Persists/loads [LastRunInfo] on disk, which allows Bugsnag to determine
  * whether the previous application launch crashed or not. This class is thread-safe.
  */
-internal class LastRunInfoStore(config: ImmutableConfig) : Callable<LastRunInfoStore> {
+internal class LastRunInfoStore(config: ImmutableConfig) {
 
     val file: File = File(config.persistenceDirectory.value, "bugsnag/last-run-info")
     private val logger: Logger = config.logger
     private val lock = ReentrantReadWriteLock()
-
-    var lastRunInfo: LastRunInfo? = null
-
-    override fun call(): LastRunInfoStore {
-        val info = load()
-        val currentRunInfo = LastRunInfo(0, crashed = false, crashedDuringLaunch = false)
-        persist(currentRunInfo)
-
-        lastRunInfo = info
-
-        return this
-    }
 
     fun persist(lastRunInfo: LastRunInfo) {
         lock.writeLock().withLock {
