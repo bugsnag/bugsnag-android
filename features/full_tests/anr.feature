@@ -1,4 +1,4 @@
-Feature: ANRs triggered in CXX code are captured
+Feature: ANRs triggered in CXX/JVM code are captured and Switching automatic error detection on/off for Unity ANR
 
   Background:
     Given I clear all persistent data
@@ -36,12 +36,6 @@ Feature: ANRs triggered in CXX code are captured
     And the error payload field "events.0.exceptions.0.stacktrace.0.type" is null
     And the error payload field "events.0.threads.0.type" equals "android"
     And the error payload field "events.0.threads.0.stacktrace.0.type" is null
-
-
-Feature: ANRs triggered in JVM code are captured
-
-  Background:
-    Given I clear all persistent data
 
   @anr
   @skip_samsung
@@ -101,12 +95,6 @@ Feature: ANRs triggered in JVM code are captured
     Then Bugsnag confirms it has no errors to send
     And I wait for 10 seconds
     #  Wait extra 10 seconds in the end, so appium will have enough time to terminated the previous anr session
-
-
-Feature: Switching automatic error detection on/off for Unity ANR
-
-  Background:
-    Given I clear all persistent data
 
   @anr
   @skip_samsung
