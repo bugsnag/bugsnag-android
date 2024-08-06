@@ -116,7 +116,7 @@ public class ClientFacadeTest {
                 metadataState,
                 contextState,
                 callbackState,
-                userState,
+                new ValueProvider<UserState>(userState),
                 featureFlagState,
                 clientObservable,
                 appContext,

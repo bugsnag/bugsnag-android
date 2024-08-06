@@ -35,10 +35,10 @@ internal class DataCollectorTest {
             Mockito.mock(Connectivity::class.java),
             Mockito.mock(Context::class.java),
             res,
-            ValueFuture(DeviceIdStore.DeviceIds("fakeDevice", "internalFakeDevice")),
+            ValueProvider(DeviceIdStore.DeviceIds("fakeDevice", "internalFakeDevice")),
             Mockito.mock(DeviceBuildInfo::class.java),
             File("/tmp/javatest"),
-            ValueFuture(false),
+            ValueProvider(false),
             Mockito.mock(BackgroundTaskService::class.java),
             Mockito.mock(Logger::class.java)
         )

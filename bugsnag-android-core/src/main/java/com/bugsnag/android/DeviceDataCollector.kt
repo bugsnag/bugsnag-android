@@ -13,6 +13,7 @@ import android.os.Build
 import android.provider.Settings
 import com.bugsnag.android.internal.BackgroundTaskService
 import com.bugsnag.android.internal.TaskType
+import com.bugsnag.android.internal.dag.Provider
 import java.io.File
 import java.util.Date
 import java.util.Locale
@@ -28,10 +29,10 @@ internal class DeviceDataCollector(
     private val connectivity: Connectivity,
     private val appContext: Context,
     resources: Resources,
-    private val deviceIdStore: Future<DeviceIdStore.DeviceIds?>,
+    private val deviceIdStore: Provider<DeviceIdStore.DeviceIds?>,
     private val buildInfo: DeviceBuildInfo,
     private val dataDirectory: File,
-    private val rootedFuture: Future<Boolean>?,
+    private val rootedFuture: Provider<Boolean>?,
     private val bgTaskService: BackgroundTaskService,
     private val logger: Logger
 ) {

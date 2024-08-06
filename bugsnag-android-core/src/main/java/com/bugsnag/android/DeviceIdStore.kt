@@ -1,12 +1,10 @@
 package com.bugsnag.android
 
 import android.content.Context
-import com.bugsnag.android.DeviceIdStore.DeviceIds
 import com.bugsnag.android.internal.ImmutableConfig
+import com.bugsnag.android.internal.dag.Provider
 import java.io.File
 import java.util.UUID
-import java.util.concurrent.Callable
-import java.util.concurrent.Future
 
 /**
  * This class is responsible for persisting and retrieving the device ID and internal device ID,
@@ -18,16 +16,15 @@ internal class DeviceIdStore @JvmOverloads @Suppress("LongParameterList") constr
     private val deviceIdGenerator: () -> UUID = { UUID.randomUUID() },
     private val internalDeviceIdFile: File = File(context.filesDir, "internal-device-id"),
     private val internalDeviceIdGenerator: () -> UUID = { UUID.randomUUID() },
-    private val sharedPrefMigrator: Future<SharedPrefMigrator>,
+    private val sharedPrefMigrator: Provider<SharedPrefMigrator>,
     config: ImmutableConfig,
     private val logger: Logger
-) : Callable<DeviceIds?> {
+) {
 
     private lateinit var persistence: DeviceIdPersistence
     private lateinit var internalPersistence: DeviceIdPersistence
     private val generateId = config.generateAnonymousId
-
-    var deviceIds: DeviceIds? = null
+    private var deviceIds: DeviceIds? = null
 
     /**
      * Loads the device ID from
@@ -65,7 +62,11 @@ internal class DeviceIdStore @JvmOverloads @Suppress("LongParameterList") constr
         return internalPersistence.loadDeviceId(true)
     }
 
-    override fun call(): DeviceIds? {
+    fun load(): DeviceIds? {
+        if (deviceIds != null) {
+            return deviceIds
+        }
+
         persistence = DeviceIdFilePersistence(deviceIdFile, deviceIdGenerator, logger)
         internalPersistence =
             DeviceIdFilePersistence(internalDeviceIdFile, internalDeviceIdGenerator, logger)
