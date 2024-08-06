@@ -53,7 +53,7 @@ internal class InternalEventPayloadDelegateTest {
             config,
             storageManager,
             appDataCollector,
-            deviceDataCollector,
+            ValueProvider(deviceDataCollector),
             sessionTracker,
             Notifier(),
             BackgroundTaskService()
