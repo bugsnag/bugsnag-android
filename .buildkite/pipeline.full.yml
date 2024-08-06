@@ -234,7 +234,7 @@ steps:
         run: maze-runner
         service-ports: true
         command:
-          - "features/full_tests/anr.feature
+          - "features/full_tests/anr.feature"
           - "--app=@build/bs-fixture-r19-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
