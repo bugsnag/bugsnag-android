@@ -474,7 +474,6 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--exclude=features/full_tests/[^a-z]_anr.feature"
           - "--app=@build/fixture-r21-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
