@@ -8,6 +8,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import com.bugsnag.android.internal.DateUtils;
 import com.bugsnag.android.internal.StateObserver;
 
 import androidx.annotation.NonNull;
@@ -176,6 +177,8 @@ public class ObserverInterfaceTest {
         assertEquals(BreadcrumbType.MANUAL, crumb.type);
         assertEquals("Drift 4 units left", crumb.message);
         assertTrue(crumb.metadata.isEmpty());
+        // DateUtils.fromIso8601 throws an exception on failure, but we also check for nulls
+        assertNotNull(DateUtils.fromIso8601(crumb.timestamp));
     }
 
     @Test
