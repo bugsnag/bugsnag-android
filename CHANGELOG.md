@@ -15,6 +15,8 @@
   [#2058](https://github.com/bugsnag/bugsnag-android/pull/2058)
 * Avoid racing ourselves in the `bugsnag-plugin-android-ndk` during multi-threaded startups
   [#2064](https://github.com/bugsnag/bugsnag-android/pull/2064)
+* Fixed a timestamp formatting issue that caused NDK crash breadcrumbs to be dropped
+  []()
 
 ## 6.6.1 (2024-07-03)
 
