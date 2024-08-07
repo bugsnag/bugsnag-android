@@ -5,7 +5,6 @@ Feature: ANR smoke test
     Given I clear all persistent data
 
   @anr
-  @skip_samsung
   @skip_android_10
   Scenario: ANR detection
     When I set the screen orientation to portrait
