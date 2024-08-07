@@ -4,7 +4,6 @@ Feature: ANRs triggered in CXX/JVM code are captured and Switching automatic err
     Given I clear all persistent data
 
   @anr
-  @skip_samsung
   @skip_android_10
   Scenario: ANR triggered in CXX code is captured
     When I run "CXXAnrScenario"
@@ -21,7 +20,6 @@ Feature: ANRs triggered in CXX/JVM code are captured and Switching automatic err
     And the error payload field "events.0.threads.0.stacktrace.0.type" is null
 
   @anr
-  @skip_samsung
   @skip_android_10
   Scenario: ANR triggered in CXX code is captured even when NDK detection is disabled
     When I run "CXXAnrNdkDisabledScenario"
@@ -38,7 +36,6 @@ Feature: ANRs triggered in CXX/JVM code are captured and Switching automatic err
     And the error payload field "events.0.threads.0.stacktrace.0.type" is null
 
   @anr
-  @skip_samsung
   @skip_android_10
   Scenario: ANR triggered in JVM loop code is captured
     When I clear any error dialogue
@@ -56,7 +53,6 @@ Feature: ANRs triggered in CXX/JVM code are captured and Switching automatic err
     And the error payload field "events.0.threads.0.stacktrace.0.type" is null
 
   @anr
-  @skip_samsung
   @skip_android_10
   Scenario: ANR triggered in JVM sleep code is captured
     When I clear any error dialogue
@@ -71,7 +67,6 @@ Feature: ANRs triggered in CXX/JVM code are captured and Switching automatic err
     And the error payload field "events.0.exceptions.0.type" equals "android"
 
   @anr
-  @skip_samsung
   @skip_android_10
   Scenario: ANR triggered in JVM code is not captured when detectAnrs = false
     When I run "JvmAnrDisabledScenario"
@@ -83,7 +78,6 @@ Feature: ANRs triggered in CXX/JVM code are captured and Switching automatic err
     And the exception "message" equals "JvmAnrDisabledScenario"
 
   @anr
-  @skip_samsung
   @skip_android_10
   Scenario: ANR triggered in JVM code is not captured when outside of release stage
     When I run "JvmAnrOutsideReleaseStagesScenario"
@@ -97,7 +91,6 @@ Feature: ANRs triggered in CXX/JVM code are captured and Switching automatic err
     #  Wait extra 10 seconds in the end, so appium will have enough time to terminated the previous anr session
 
   @anr
-  @skip_samsung
   @skip_android_10
   Scenario: ANR not captured with autoDetectAnrs=false
     When I run "AutoDetectAnrsFalseScenario"
@@ -111,7 +104,6 @@ Feature: ANRs triggered in CXX/JVM code are captured and Switching automatic err
     #  Wait extra 10 seconds in the end, so appium will have enough time to terminated the previous anr session
 
   @anr
-  @skip_samsung
   @skip_android_10
   Scenario: ANR captured with autoDetectAnrs reenabled
     When I clear any error dialogue
