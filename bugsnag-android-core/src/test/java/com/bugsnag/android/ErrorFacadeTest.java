@@ -3,10 +3,12 @@ package com.bugsnag.android;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,7 +25,7 @@ public class ErrorFacadeTest {
     @Before
     public void setUp() {
         logger = new InterceptingLogger();
-        trace = Collections.emptyList();
+        trace = new ArrayList<>();
         ErrorInternal impl = new ErrorInternal("com.bar.CrashyClass",
                 "Whoops", new Stacktrace(trace), ErrorType.ANDROID);
         error = new Error(impl, logger);
@@ -72,5 +74,31 @@ public class ErrorFacadeTest {
     @Test
     public void stacktraceValid() {
         assertEquals(trace, error.getStacktrace());
+    }
+
+    @Test
+    public void addStackframe() {
+        Stackframe frame = error.addStackframe(
+                "SomeClass.fakeMethod",
+                "NoSuchFile.dat",
+                1234L
+        );
+
+        // check the new frame is the last frame in the error stacktrace
+        assertSame(frame, error.getStacktrace().get(error.getStacktrace().size() - 1));
+        assertEquals("SomeClass.fakeMethod", frame.getMethod());
+        assertEquals("NoSuchFile.dat", frame.getFile());
+        assertEquals(1234L, frame.getLineNumber());
+    }
+
+    @Test
+    public void addStackframeWithNulls() {
+        Stackframe frame = error.addStackframe(null, null, -1L);
+
+        // check the new frame is the last frame in the error stacktrace
+        assertSame(frame, error.getStacktrace().get(error.getStacktrace().size() - 1));
+        assertNull(frame.getMethod());
+        assertNull(frame.getFile());
+        assertEquals(-1L, frame.getLineNumber());
     }
 }

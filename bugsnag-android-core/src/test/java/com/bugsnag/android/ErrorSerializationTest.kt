@@ -14,13 +14,13 @@ internal class ErrorSerializationTest {
         @Parameters
         fun testCases() = generateSerializationTestCases(
             "error",
-            Error(ErrorInternal("foo", "bar", Stacktrace(listOf())), NoopLogger),
+            Error(ErrorInternal("foo", "bar", Stacktrace(mutableListOf())), NoopLogger),
             Error(
                 ErrorInternal(
                     "foo",
                     "bar",
                     Stacktrace(
-                        listOf(
+                        mutableListOf(
                             Stackframe(
                                 method = "foo()",
                                 file = "Bar.kt",
@@ -39,7 +39,7 @@ internal class ErrorSerializationTest {
                     "com.bugsnag.android.StacktraceSerializationTest",
                     "bar",
                     Stacktrace(
-                        listOf(
+                        mutableListOf(
                             Stackframe(
                                 method = "com.bugsnag.android.StacktraceSerializationTest\$Companion.inProject",
                                 file = "StacktraceSerializationTest.kt",

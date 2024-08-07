@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +35,7 @@ public class ThreadSerializerTest {
         frame.put("inProject", true);
 
         Stackframe stackframe = new Stackframe("foo()", "Bar.kt", 55, true);
-        List<Stackframe> frames = Collections.singletonList(stackframe);
+        List<Stackframe> frames = new ArrayList<>(Collections.singletonList(stackframe));
         Stacktrace stacktrace = new Stacktrace(frames);
         thread = new Thread("1", "fake-thread", ErrorType.ANDROID,
                 true, Thread.State.RUNNABLE, stacktrace, NoopLogger.INSTANCE);
