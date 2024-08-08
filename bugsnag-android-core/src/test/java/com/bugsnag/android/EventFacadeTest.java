@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import com.bugsnag.android.internal.ImmutableConfig;
@@ -194,5 +195,67 @@ public class EventFacadeTest {
         assertTrue(event.isUnhandled());
         event.setUnhandled(false);
         assertFalse(event.isUnhandled());
+    }
+
+    @Test
+    public void addThread() {
+        Thread newThread = event.addThread(123L, "Magic Thread");
+        assertSame(newThread, event.getThreads().get(event.getThreads().size() - 1));
+        assertEquals("123", newThread.getId());
+        assertEquals("Magic Thread", newThread.getName());
+        assertEquals(ErrorType.ANDROID, newThread.getType());
+        assertEquals(Thread.State.RUNNABLE, newThread.getState());
+        assertEquals(0, newThread.getStacktrace().size());
+    }
+
+    @Test
+    public void addError() {
+        Error newError = event.addError("ErrorClass", "No error message");
+        assertSame(newError, event.getErrors().get(event.getErrors().size() - 1));
+        assertEquals("ErrorClass", newError.getErrorClass());
+        assertEquals("No error message", newError.getErrorMessage());
+        assertEquals(ErrorType.ANDROID, newError.getType());
+        assertEquals(0, newError.getStacktrace().size());
+    }
+
+    @Test
+    public void addErrorWithType() {
+        Error newError = event.addError("ErrorClass", "No error message", ErrorType.DART);
+        assertSame(newError, event.getErrors().get(event.getErrors().size() - 1));
+        assertEquals("ErrorClass", newError.getErrorClass());
+        assertEquals("No error message", newError.getErrorMessage());
+        assertEquals(ErrorType.DART, newError.getType());
+        assertEquals(0, newError.getStacktrace().size());
+    }
+
+    @Test
+    public void addErrorNullThrowable() {
+        Error newError = event.addError(null);
+        assertSame(newError, event.getErrors().get(event.getErrors().size() - 1));
+        assertEquals("null", newError.getErrorClass());
+        assertNull(newError.getErrorMessage());
+        assertEquals(ErrorType.ANDROID, newError.getType());
+        assertEquals(0, newError.getStacktrace().size());
+    }
+
+    @Test
+    public void addThreadWithNulls() {
+        Thread newThread = event.addThread(null, null);
+        assertSame(newThread, event.getThreads().get(event.getThreads().size() - 1));
+        assertEquals("null", newThread.getId());
+        assertEquals("null", newThread.getName());
+        assertEquals(ErrorType.ANDROID, newThread.getType());
+        assertEquals(Thread.State.RUNNABLE, newThread.getState());
+        assertEquals(0, newThread.getStacktrace().size());
+    }
+
+    @Test
+    public void addBadError() {
+        Error newError = event.addError(null, null);
+        assertSame(newError, event.getErrors().get(event.getErrors().size() - 1));
+        assertEquals("null", newError.getErrorClass());
+        assertNull(newError.getErrorMessage());
+        assertEquals(ErrorType.ANDROID, newError.getType());
+        assertEquals(0, newError.getStacktrace().size());
     }
 }

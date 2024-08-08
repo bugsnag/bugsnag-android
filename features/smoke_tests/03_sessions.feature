@@ -57,6 +57,11 @@ Feature: Session functionality smoke tests
     And the event "session.events.unhandled" equals 0
     And the event "severityReason.unhandledOverridden" is false
 
+    And the event has a "state" breadcrumb named "SecondActivity#onCreate()"
+    And the breadcrumb named "SecondActivity#onCreate()" has "metaData.action" equal to "com.bugsnag.android.mazerunner.UPDATE_CONTEXT"
+    And the breadcrumb named "SecondActivity#onCreate()" has "metaData.hasBundle" is false
+    And the breadcrumb named "SecondActivity#onCreate()" has "metaData.hasExtras" is false
+
   @debug-safe
   Scenario: Manual session control works
     When I run "ManualSessionSmokeScenario" and relaunch the crashed app

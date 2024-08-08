@@ -3,6 +3,8 @@ package com.bugsnag.android;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
@@ -95,5 +97,31 @@ public class ThreadFacadeTest {
         thread.setStacktrace(null);
         assertEquals(stacktrace.getTrace(), thread.getStacktrace());
         assertNotNull(logger.getMsg());
+    }
+
+    @Test
+    public void addStackframe() {
+        Stackframe frame = thread.addStackframe(
+                "SomeClass.fakeMethod",
+                "NoSuchFile.dat",
+                1234L
+        );
+
+        // check the new frame is the last frame in the thread stacktrace
+        assertSame(frame, thread.getStacktrace().get(thread.getStacktrace().size() - 1));
+        assertEquals("SomeClass.fakeMethod", frame.getMethod());
+        assertEquals("NoSuchFile.dat", frame.getFile());
+        assertEquals(1234L, frame.getLineNumber());
+    }
+
+    @Test
+    public void addStackframeWithNulls() {
+        Stackframe frame = thread.addStackframe(null, null, -1L);
+
+        // check the new frame is the last frame in the thread stacktrace
+        assertSame(frame, thread.getStacktrace().get(thread.getStacktrace().size() - 1));
+        assertNull(frame.getMethod());
+        assertNull(frame.getFile());
+        assertEquals(-1L, frame.getLineNumber());
     }
 }

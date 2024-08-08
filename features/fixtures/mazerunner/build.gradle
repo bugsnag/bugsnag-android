@@ -23,14 +23,14 @@ buildscript {
     dependencies {
         def agpVersion = project.hasProperty("USE_AGP_VERSION")
                 ? project.property("USE_AGP_VERSION")
-                : "8.3.2"
+                : "8.5.0"
 
         project.logger.lifecycle("Using AGP $agpVersion")
         classpath "com.android.tools.build:gradle:$agpVersion"
         classpath "com.bugsnag:bugsnag-android-gradle-plugin:8.1.0"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.18.1"
-        classpath "org.jlleitschuh.gradle:ktlint-gradle:10.2.0"
+        classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.23.5"
+        classpath "org.jlleitschuh.gradle:ktlint-gradle:11.3.1"
     }
 }
 

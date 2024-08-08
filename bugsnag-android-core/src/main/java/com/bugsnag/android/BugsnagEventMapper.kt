@@ -195,14 +195,14 @@ internal class BugsnagEventMapper(
             thread.readEntry("name"),
             ErrorType.fromDescriptor(thread.readEntry("type")) ?: ErrorType.ANDROID,
             thread["errorReportingThread"] == true,
-            thread.readEntry("state"),
+            thread["state"] as? String ?: "",
             (thread["stacktrace"] as? List<Map<String, Any?>>)?.let { convertStacktrace(it) }
-                ?: Stacktrace(emptyList())
+                ?: Stacktrace(mutableListOf())
         )
     }
 
     internal fun convertStacktrace(trace: List<Map<String, Any?>>): Stacktrace {
-        return Stacktrace(trace.map { Stackframe(it) })
+        return Stacktrace(trace.mapTo(ArrayList(trace.size)) { Stackframe(it) })
     }
 
     internal fun deserializeSeverityReason(

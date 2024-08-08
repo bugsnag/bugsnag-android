@@ -1,5 +1,23 @@
 # Changelog
 
+## 6.7.0 (2024-08-08)
+
+### Enhancements
+
+* Include additional Intent information for Activity.onCreate breadcrumbs (action, categories, type, flags, id, extra keys)
+  [#2057](https://github.com/bugsnag/bugsnag-android/pull/2057)
+* New APIs allowing new `Error`s, `Thread`s, and `Stackframe`s to be added to `Event`s
+  [#2060](https://github.com/bugsnag/bugsnag-android/pull/2060)
+
+### Bug fixes
+
+* Handle rare cases where we need to deserialize threads that don't have a valid `state` property
+  [#2058](https://github.com/bugsnag/bugsnag-android/pull/2058)
+* Avoid racing ourselves in the `bugsnag-plugin-android-ndk` during multi-threaded startups
+  [#2064](https://github.com/bugsnag/bugsnag-android/pull/2064)
+* Fixed a timestamp formatting issue that caused NDK crash breadcrumbs to be dropped
+  [#2066](https://github.com/bugsnag/bugsnag-android/pull/2066)
+
 ## 6.6.1 (2024-07-03)
 
 ### Bug fixes

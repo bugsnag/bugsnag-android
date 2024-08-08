@@ -23,13 +23,17 @@ val Context.networkStatus: NetworkStatus
             val capabilities = connectivityManager.getNetworkCapabilities(network)
                 ?: return NetworkStatus.UNKNOWN_CAPABILITIES
 
-            return if (capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) NetworkStatus.CONNECTED
-            else NetworkStatus.NO_INTERNET
+            return if (capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) {
+                NetworkStatus.CONNECTED
+            } else {
+                NetworkStatus.NO_INTERNET
+            }
         } else {
             val networkInfo =
                 connectivityManager.activeNetworkInfo ?: return NetworkStatus.NO_NETWORK
 
             if (networkInfo.isAvailable && networkInfo.isConnected) {
+                @Suppress("SwallowedException")
                 return try {
                     URL("https://www.google.com").readText()
                     NetworkStatus.CONNECTED

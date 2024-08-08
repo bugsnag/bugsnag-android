@@ -74,8 +74,8 @@ static size_t build_filename(bsg_environment *env, char *out) {
   memcpy(out, env->event_path, length);
   out[length++] = '/';
 
-  // the timestamp is encoded as unix time
-  length += bsg_uint64_to_string(now, &out[length]);
+  // the timestamp is encoded as unix time in millis
+  length += bsg_uint64_to_string(now * 1000uL, &out[length]);
 
   // append the api_key to the filename
   out[length++] = '_';

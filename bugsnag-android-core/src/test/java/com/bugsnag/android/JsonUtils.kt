@@ -3,7 +3,6 @@ package com.bugsnag.android
 import com.bugsnag.android.internal.JsonHelper
 import org.junit.Assert
 import java.io.StringWriter
-import java.lang.NullPointerException
 
 /**
  * Serializes a [JsonStream.Streamable] object into JSON and compares its equality against a JSON
@@ -86,15 +85,26 @@ internal fun verifyJsonParser(
 }
 
 /**
- * Generates parameterised test cases from a variable number of [JsonStream.Streamable] elements.
+ * Generates parameterised test cases from a variable number of elements.
  * The expected JSON file for each element should match the naming format
  * '$filename_serialization_$index.json'
  */
-internal fun <T> generateSerializationTestCases(
+internal fun <T> generateSerializationTestCases(filename: String, vararg elements: T) =
+    generateJsonTestCases(elements, "${filename}_serialization_")
+
+/**
+ * Generates parameterised test cases from a variable number of elements.
+ * The expected JSON file for each element should match the naming format
+ * '$filename_serialization_$index.json'
+ */
+internal fun <T> generateDeserializationTestCases(filename: String, vararg elements: T) =
+    generateJsonTestCases(elements, "${filename}_deserialization_")
+
+private fun <T> generateJsonTestCases(
+    elements: Array<out T>,
     filename: String,
-    vararg elements: T
 ): Collection<Pair<T, String>> {
     return elements.mapIndexed { index, obj ->
-        Pair(obj, "${filename}_serialization_$index.json")
+        Pair(obj, "${filename}$index.json")
     }
 }

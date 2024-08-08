@@ -298,7 +298,6 @@ class MainActivity : Activity() {
         sessionsUrl: String,
         notifyUrl: String
     ): Scenario {
-
         val apiKeyField = findViewById<EditText>(R.id.manualApiKey)
 
         val manualMode = apiKeyField.text.isNotEmpty()
