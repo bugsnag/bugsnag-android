@@ -52,6 +52,7 @@ steps:
         service-ports: true
         command:
           - "features/minimal"
+          - "--exclude=features/minimal/detect_anr_minimal.feature"
           - "--app=/app/build/fixture-minimal.apk"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
@@ -63,6 +64,30 @@ steps:
           - "--fail-fast"
     concurrency: 25
     concurrency_group: 'bitbar'
+    concurrency_method: eager
+
+  - label: ':browserstack: Minimal fixture ANR end-to-end tests'
+    depends_on: "fixture-minimal"
+    timeout_in_minutes: 30
+    plugins:
+      artifacts#v1.9.0:
+        download: "build/fixture-minimal.apk"
+        upload: "maze_output/failed/**/*"
+      docker-compose#v4.7.0:
+        pull: maze-runner
+        run: maze-runner
+        service-ports: true
+        command:
+          - "features/minimal/detect_anr_minimal.feature"
+          - "--app=/app/build/fixture-minimal.apk"
+          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
+          - "--app-package=com.bugsnag.android.mazerunner"
+          - "--appium-version=1.22.0"
+          - "--farm=bs"
+          - "--device=ANDROID_9"
+          - "--fail-fast"
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
   - label: ':bitbar: Debug fixture smoke tests'
@@ -80,6 +105,7 @@ steps:
         service-ports: true
         command:
           - "features/smoke_tests"
+          - "--exclude=features/smoke_tests/01_anr.feature"
           - "--tags=debug-safe"
           - "--app=/app/build/fixture-debug.apk"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
@@ -94,6 +120,34 @@ steps:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-debug"
     concurrency: 25
     concurrency_group: 'bitbar'
+    concurrency_method: eager
+
+  - label: ':browserstack: Debug fixture ANR smoke tests'
+    depends_on: "fixture-debug"
+    timeout_in_minutes: 30
+    plugins:
+      artifacts#v1.9.0:
+        download:
+          - "build/fixture-debug.apk"
+          - "build/fixture-debug/*"
+        upload: "maze_output/failed/**/*"
+      docker-compose#v4.7.0:
+        pull: maze-runner
+        run: maze-runner
+        service-ports: true
+        command:
+          - "features/smoke_tests/01_anr.feature"
+          - "--app=/app/build/fixture-debug.apk"
+          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
+          - "--app-package=com.bugsnag.android.mazerunner"
+          - "--appium-version=1.22.0"
+          - "--farm=bs"
+          - "--device=ANDROID_9"
+          - "--fail-fast"
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-debug"
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
   - label: ':bitbar: Android 7 NDK r19 end-to-end tests - batch 1'
@@ -122,6 +176,7 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--exclude=features/full_tests/[^a-k].*.feature"
+          - "--exclude=features/full_tests/anr.feature"
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
@@ -162,6 +217,37 @@ steps:
     concurrency_group: 'bitbar'
     concurrency_method: eager
 
+
+  - label: ':browserstack: Android 7 NDK r19 end-to-end tests - batch ANR'
+    depends_on: "fixture-r19"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.9.0:
+        download:
+          - "build/bs-fixture-r19-url.txt"
+          - "build/fixture-r19/*"
+        upload:
+          - "maze_output/failed/**/*"
+          - "maze_output/metrics.csv"
+      docker-compose#v4.7.0:
+        pull: maze-runner
+        run: maze-runner
+        service-ports: true
+        command:
+          - "features/full_tests/anr.feature"
+          - "--app=@build/bs-fixture-r19-url.txt"
+          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
+          - "--app-package=com.bugsnag.android.mazerunner"
+          - "--appium-version=1.22.0"
+          - "--farm=bs"
+          - "--device=ANDROID_7"
+          - "--fail-fast"
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
+    concurrency_method: eager
+
   - label: ':bitbar: Android 8 NDK r19 end-to-end tests - batch 1'
     depends_on: "fixture-r19"
     timeout_in_minutes: 60
@@ -186,6 +272,7 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--exclude=features/full_tests/[^a-k].*.feature"
+          - "--exclude=features/full_tests/anr.feature"
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
@@ -209,6 +296,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
+          - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r19-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
@@ -222,6 +310,35 @@ steps:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
     concurrency: 25
     concurrency_group: 'bitbar'
+    concurrency_method: eager
+
+
+  - label: ':browserstack: Android 8 NDK r19 end-to-end tests - batch ANR'
+    depends_on: "fixture-r19"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.9.0:
+        download:
+          - "build/bs-fixture-r19-url.txt"
+          - "build/fixture-r19/*"
+        upload: "maze_output/failed/**/*"
+      docker-compose#v4.7.0:
+        pull: maze-runner
+        run: maze-runner
+        service-ports: true
+        command:
+          - "features/full_tests/anr.feature"
+          - "--app=@build/bs-fixture-r19-url.txt"
+          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
+          - "--app-package=com.bugsnag.android.mazerunner"
+          - "--appium-version=1.22.0"
+          - "--farm=bs"
+          - "--device=ANDROID_8"
+          - "--fail-fast"
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
   - label: ':bitbar: Android 9 NDK r21 end-to-end tests - batch 1'
@@ -250,6 +367,7 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--exclude=features/full_tests/[^a-k].*.feature"
+          - "--exclude=features/full_tests/anr.feature"
           - "--fail-fast"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
@@ -275,6 +393,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
+          - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
@@ -288,6 +407,37 @@ steps:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
     concurrency_group: 'bitbar'
+    concurrency_method: eager
+
+
+  - label: ':bitbar: Android 9 NDK r21 end-to-end tests - batch ANR'
+    depends_on: "fixture-r21"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.9.0:
+        download:
+          - "build/bs-fixture-r21-url.txt"
+          - "build/fixture-r21/*"
+        upload:
+          - "maze_output/failed/**/*"
+          - "maze_output/metrics.csv"
+      docker-compose#v4.7.0:
+        pull: maze-runner
+        run: maze-runner
+        service-ports: true
+        command:
+          - "features/full_tests/anr.feature"
+          - "--app=@build/bs-fixture-r21-url.txt"
+          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
+          - "--app-package=com.bugsnag.android.mazerunner"
+          - "--appium-version=1.22.0"
+          - "--farm=bs"
+          - "--device=ANDROID_9"
+          - "--fail-fast"
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
   - label: ':bitbar: Android 10 NDK r21 end-to-end tests - batch 1'
@@ -308,6 +458,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^a-k].*.feature"
+          - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
@@ -341,6 +492,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
+          - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
@@ -354,6 +506,36 @@ steps:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
     concurrency_group: 'bitbar'
+    concurrency_method: eager
+
+  - label: ':browserstack: Android 10 NDK r21 end-to-end tests - batch ANR'
+    depends_on: "fixture-r21"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.9.0:
+        download:
+          - "build/bs-fixture-r21-url.txt"
+          - "build/fixture-r21/*"
+        upload:
+          - "maze_output/failed/**/*"
+          - "maze_output/metrics.csv"
+      docker-compose#v4.7.0:
+        pull: maze-runner
+        run: maze-runner
+        service-ports: true
+        command:
+          - "features/full_tests/anr.feature"
+          - "--app=@build/bs-fixture-r21-url.txt"
+          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
+          - "--app-package=com.bugsnag.android.mazerunner"
+          - "--appium-version=1.22.0"
+          - "--farm=bs"
+          - "--device=ANDROID_10"
+          - "--fail-fast"
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
   # Android 11+ devices have the GWP-ASAN tool enabled which randomly samples native memory
@@ -378,6 +560,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^a-k].*.feature"
+          - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
@@ -411,6 +594,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
+          - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
@@ -424,6 +608,36 @@ steps:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
     concurrency_group: 'bitbar'
+    concurrency_method: eager
+
+  - label: ':browserstack: Android 11 NDK r21 end-to-end tests - batch ANR'
+    depends_on: "fixture-r21"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.9.0:
+        download:
+          - "build/bs-fixture-r21-url.txt"
+          - "build/fixture-r21/*"
+        upload:
+          - "maze_output/failed/**/*"
+          - "maze_output/metrics.csv"
+      docker-compose#v4.7.0:
+        pull: maze-runner
+        run: maze-runner
+        service-ports: true
+        command:
+          - "features/full_tests/anr.feature"
+          - "--app=@build/bs-fixture-r21-url.txt"
+          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
+          - "--app-package=com.bugsnag.android.mazerunner"
+          - "--appium-version=1.22.0"
+          - "--farm=bs"
+          - "--device=ANDROID_11"
+          - "--fail-fast"
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
   - label: ':bitbar: Android 13 NDK r21 end-to-end tests - batch 1'
@@ -444,6 +658,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^a-k].*.feature"
+          - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
@@ -477,6 +692,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
+          - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
@@ -490,6 +706,36 @@ steps:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
     concurrency_group: 'bitbar'
+    concurrency_method: eager
+
+  - label: ':browserstack: Android 13 NDK r21 end-to-end tests - batch ANR'
+    depends_on: "fixture-r21"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.9.0:
+        download:
+          - "build/bs-fixture-r21-url.txt"
+          - "build/fixture-r21/*"
+        upload:
+          - "maze_output/failed/**/*"
+          - "maze_output/metrics.csv"
+      docker-compose#v4.7.0:
+        pull: maze-runner
+        run: maze-runner
+        service-ports: true
+        command:
+          - "features/full_tests/anr.feature"
+          - "--app=@build/bs-fixture-r21-url.txt"
+          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
+          - "--app-package=com.bugsnag.android.mazerunner"
+          - "--appium-version=1.22.0"
+          - "--farm=bs"
+          - "--device=ANDROID_13"
+          - "--fail-fast"
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
   - label: ':bitbar: Android 14 NDK r21 end-to-end tests - batch 1'
@@ -510,6 +756,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^a-k].*.feature"
+          - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
@@ -543,6 +790,7 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
+          - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
           - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
           - "--app-package=com.bugsnag.android.mazerunner"
@@ -556,6 +804,36 @@ steps:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
     concurrency_group: 'bitbar'
+    concurrency_method: eager
+
+  - label: ':browserstack: Android 14 NDK r21 end-to-end tests - batch ANR'
+    depends_on: "fixture-r21"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.9.0:
+        download:
+          - "build/bs-fixture-r21-url.txt"
+          - "build/fixture-r21/*"
+        upload:
+          - "maze_output/failed/**/*"
+          - "maze_output/metrics.csv"
+      docker-compose#v4.7.0:
+        pull: maze-runner
+        run: maze-runner
+        service-ports: true
+        command:
+          - "features/full_tests/anr.feature"
+          - "--app=@build/bs-fixture-r21-url.txt"
+          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
+          - "--app-package=com.bugsnag.android.mazerunner"
+          - "--appium-version=1.22.0"
+          - "--farm=bs"
+          - "--device=ANDROID_14"
+          - "--fail-fast"
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
   # If there is a tag present activate a manual publishing step

@@ -53,6 +53,8 @@ services:
       <<: *common-environment
       BITBAR_USERNAME:
       BITBAR_ACCESS_KEY:
+      BROWSER_STACK_USERNAME:
+      BROWSER_STACK_ACCESS_KEY:
     ports:
       - "9000-9499:9339"
     volumes:
