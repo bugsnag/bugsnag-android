@@ -69,6 +69,9 @@ internal class AnrPlugin : Plugin {
     private fun performOneTimeSetup(client: Client) {
         val isLoaded = libraryLoader.loadLibrary("bugsnag-plugin-android-anr", client) {
             val error = it.errors[0]
+            it.addMetadata("LinkError", "errorClass", error.errorClass)
+            it.addMetadata("LinkError", "errorMessage", error.errorMessage)
+
             error.errorClass = "AnrLinkError"
             error.errorMessage = LOAD_ERR_MSG
             true
