@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+* Add original error class and message to metadata for link errors loading BugSnag libraries
+  [#2070](https://github.com/bugsnag/bugsnag-android/pull/2070)
+
 ## 6.7.0 (2024-08-08)
 
 ### Enhancements
