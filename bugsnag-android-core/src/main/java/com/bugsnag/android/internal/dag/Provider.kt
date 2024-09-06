@@ -39,6 +39,11 @@ abstract class RunnableProvider<E> : Provider<E>, Runnable {
     @Volatile
     private var value: Any? = null
 
+    /**
+     * Calculate the value of this [Provider]. This function will be called at-most once by [run].
+     * Do not call this function directly, instead use [get] and [getOrNull] which implement the
+     * correct threading behaviour and will reuse the value if it has been previously calculated.
+     */
     abstract operator fun invoke(): E
 
     override fun getOrNull(): E? {
@@ -55,8 +60,16 @@ abstract class RunnableProvider<E> : Provider<E>, Runnable {
                 TASK_STATE_RUNNING -> awaitResult()
                 TASK_STATE_PENDING -> {
                     if (isMainThread()) {
+                        // When the calling thread is the 'main' thread, we *always* wait for the
+                        // background workers to [invoke] this Provider, assuming that the Provider
+                        // is performing some kind of IO that should be kept away from the main
+                        // thread. Ideally this doesn't happen, but this behaviour avoids the
+                        // need for complicated callback mechanisms.
                         awaitResult()
                     } else {
+                        // If the Provider has yet to be computed, we will try and run it on the
+                        // current thread. This potentially causes run() to happen on a different
+                        // Thread to the expected worker (TaskType), effectively like work-stealing.
                         run()
                     }
                 }
@@ -71,6 +84,10 @@ abstract class RunnableProvider<E> : Provider<E>, Runnable {
         return Thread.currentThread() === mainThread
     }
 
+    /**
+     * Cause the current thread to wait (block) until this `Provider` [isComplete]. Upon returning
+     * the [isComplete] function will return `true`.
+     */
     private fun awaitResult() {
         synchronized(this) {
             while (!isComplete()) {
@@ -85,6 +102,14 @@ abstract class RunnableProvider<E> : Provider<E>, Runnable {
         else -> true
     }
 
+    /**
+     * The main entry point for a provider, typically called by a worker thread from
+     * [BackgroundTaskService]. If [run] has already been called this will be a no-op (including
+     * a reentrant thread), as such the task state *must* be checked after calling this.
+     *
+     * This should not be called, and instead [get] or [getOrNull] should be used to obtain the
+     * value produced by [invoke].
+     */
     final override fun run() {
         if (state.compareAndSet(TASK_STATE_PENDING, TASK_STATE_RUNNING)) {
             try {
@@ -104,9 +129,28 @@ abstract class RunnableProvider<E> : Provider<E>, Runnable {
     }
 
     private companion object {
+        /**
+         * The `Provider` task state before the provider has started actually running. This state
+         * indicates that the task has been constructed, has typically been scheduled but has
+         * not actually started running yet.
+         */
         private const val TASK_STATE_PENDING = 0
+
+        /**
+         * The `Provider` task state when running. Once the [run] function returns the state will
+         * be either [TASK_STATE_COMPLETE] or [TASK_STATE_FAILED].
+         */
         private const val TASK_STATE_RUNNING = 1
+
+        /**
+         * The `Provider` state of a successfully completed task. When this is the state the
+         * provider value can be obtained immediately without error.
+         */
         private const val TASK_STATE_COMPLETE = 2
+
+        /**
+         * The `Provider` state of a task where [invoke] failed with an error or exception.
+         */
         private const val TASK_STATE_FAILED = 999
 
         private val mainThread = Looper.getMainLooper().thread
