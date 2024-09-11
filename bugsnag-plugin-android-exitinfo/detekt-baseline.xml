@@ -28,5 +28,6 @@
     <ID>ReturnCount:TraceParser.kt$TraceParser$@VisibleForTesting internal fun parseNativeFrame(line: String): Stackframe?</ID>
     <ID>SwallowedException:BugsnagExitInfoPlugin.kt$BugsnagExitInfoPlugin$e: Exception</ID>
     <ID>SwallowedException:ExitInfoCallback.kt$ExitInfoCallback$exc: Throwable</ID>
+    <ID>SwallowedException:ExitInfoPluginStore.kt$ExitInfoPluginStore$exc: Throwable</ID>
   </CurrentIssues>
 </SmellBaseline>

@@ -23,9 +23,10 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
             )
         }
 
-        val exitInfoPluginStore = ExitInfoPluginStore(client.immutableConfig)
-        val oldPid = exitInfoPluginStore.load()
-        exitInfoPluginStore.persist(android.os.Process.myPid())
+        val exitInfoPluginStore =
+            ExitInfoPluginStore(client.immutableConfig)
+        val (oldPid, exitInfoKeys) = exitInfoPluginStore.load()
+        exitInfoPluginStore.persist(android.os.Process.myPid(), exitInfoKeys)
 
         val exitInfoCallback = ExitInfoCallback(
             client.appContext,
