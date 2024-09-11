@@ -62,6 +62,12 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--fail-fast"
+          - "--format=junit"
+          - "--out=reports"
+          - "--format=pretty"
+      test-collector#v1.0.0:
+        files: "reports/TEST-*.xml"
+        format: "junit"
     concurrency: 25
     concurrency_group: 'bitbar'
     concurrency_method: eager
@@ -86,6 +92,12 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_9"
           - "--fail-fast"
+          - "--format=junit"
+          - "--out=reports"
+          - "--format=pretty"
+      test-collector#v1.0.0:
+        files: "reports/TEST-*.xml"
+        format: "junit"
     concurrency: 5
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
@@ -116,6 +128,12 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--fail-fast"
+          - "--format=junit"
+          - "--out=reports"
+          - "--format=pretty"
+      test-collector#v1.0.0:
+        files: "reports/TEST-*.xml"
+        format: "junit"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-debug"
     concurrency: 25
@@ -144,6 +162,12 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_9"
           - "--fail-fast"
+          - "--format=junit"
+          - "--out=reports"
+          - "--format=pretty"
+      test-collector#v1.0.0:
+        files: "reports/TEST-*.xml"
+        format: "junit"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-debug"
     concurrency: 5
@@ -178,6 +202,12 @@ steps:
           - "--exclude=features/full_tests/[^a-k].*.feature"
           - "--exclude=features/full_tests/anr.feature"
           - "--fail-fast"
+          - "--format=junit"
+          - "--out=reports"
+          - "--format=pretty"
+      test-collector#v1.0.0:
+        files: "reports/TEST-*.xml"
+        format: "junit"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
     concurrency: 25
@@ -211,6 +241,12 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--fail-fast"
+          - "--format=junit"
+          - "--out=reports"
+          - "--format=pretty"
+      test-collector#v1.0.0:
+        files: "reports/TEST-*.xml"
+        format: "junit"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
     concurrency: 25
@@ -242,6 +278,12 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_7"
           - "--fail-fast"
+          - "--format=junit"
+          - "--out=reports"
+          - "--format=pretty"
+      test-collector#v1.0.0:
+        files: "reports/TEST-*.xml"
+        format: "junit"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
     concurrency: 5
@@ -274,6 +316,12 @@ steps:
           - "--exclude=features/full_tests/[^a-k].*.feature"
           - "--exclude=features/full_tests/anr.feature"
           - "--fail-fast"
+          - "--format=junit"
+          - "--out=reports"
+          - "--format=pretty"
+      test-collector#v1.0.0:
+        files: "reports/TEST-*.xml"
+        format: "junit"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
     concurrency: 25
@@ -306,6 +354,12 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--fail-fast"
+          - "--format=junit"
+          - "--out=reports"
+          - "--format=pretty"
+      test-collector#v1.0.0:
+        files: "reports/TEST-*.xml"
+        format: "junit"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
     concurrency: 25
@@ -335,6 +389,12 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_8"
           - "--fail-fast"
+          - "--format=junit"
+          - "--out=reports"
+          - "--format=pretty"
+      test-collector#v1.0.0:
+        files: "reports/TEST-*.xml"
+        format: "junit"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
     concurrency: 5
@@ -369,6 +429,12 @@ steps:
           - "--exclude=features/full_tests/[^a-k].*.feature"
           - "--exclude=features/full_tests/anr.feature"
           - "--fail-fast"
+          - "--format=junit"
+          - "--out=reports"
+          - "--format=pretty"
+      test-collector#v1.0.0:
+        files: "reports/TEST-*.xml"
+        format: "junit"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -403,6 +469,12 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--fail-fast"
+          - "--format=junit"
+          - "--out=reports"
+          - "--format=pretty"
+      test-collector#v1.0.0:
+        files: "reports/TEST-*.xml"
+        format: "junit"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -434,6 +506,12 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_9"
           - "--fail-fast"
+          - "--format=junit"
+          - "--out=reports"
+          - "--format=pretty"
+      test-collector#v1.0.0:
+        files: "reports/TEST-*.xml"
+        format: "junit"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 5
@@ -468,6 +546,12 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--fail-fast"
+          - "--format=junit"
+          - "--out=reports"
+          - "--format=pretty"
+      test-collector#v1.0.0:
+        files: "reports/TEST-*.xml"
+        format: "junit"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -502,6 +586,12 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--fail-fast"
+          - "--format=junit"
+          - "--out=reports"
+          - "--format=pretty"
+      test-collector#v1.0.0:
+        files: "reports/TEST-*.xml"
+        format: "junit"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -532,6 +622,12 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_10"
           - "--fail-fast"
+          - "--format=junit"
+          - "--out=reports"
+          - "--format=pretty"
+      test-collector#v1.0.0:
+        files: "reports/TEST-*.xml"
+        format: "junit"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 5
@@ -570,6 +666,12 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--fail-fast"
+          - "--format=junit"
+          - "--out=reports"
+          - "--format=pretty"
+      test-collector#v1.0.0:
+        files: "reports/TEST-*.xml"
+        format: "junit"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -604,6 +706,12 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--fail-fast"
+          - "--format=junit"
+          - "--out=reports"
+          - "--format=pretty"
+      test-collector#v1.0.0:
+        files: "reports/TEST-*.xml"
+        format: "junit"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -634,6 +742,12 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_11"
           - "--fail-fast"
+          - "--format=junit"
+          - "--out=reports"
+          - "--format=pretty"
+      test-collector#v1.0.0:
+        files: "reports/TEST-*.xml"
+        format: "junit"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 5
@@ -668,6 +782,12 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--fail-fast"
+          - "--format=junit"
+          - "--out=reports"
+          - "--format=pretty"
+      test-collector#v1.0.0:
+        files: "reports/TEST-*.xml"
+        format: "junit"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -702,6 +822,12 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--fail-fast"
+          - "--format=junit"
+          - "--out=reports"
+          - "--format=pretty"
+      test-collector#v1.0.0:
+        files: "reports/TEST-*.xml"
+        format: "junit"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -732,6 +858,12 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_13"
           - "--fail-fast"
+          - "--format=junit"
+          - "--out=reports"
+          - "--format=pretty"
+      test-collector#v1.0.0:
+        files: "reports/TEST-*.xml"
+        format: "junit"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 5
@@ -766,6 +898,12 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--fail-fast"
+          - "--format=junit"
+          - "--out=reports"
+          - "--format=pretty"
+      test-collector#v1.0.0:
+        files: "reports/TEST-*.xml"
+        format: "junit"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -800,6 +938,12 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--fail-fast"
+          - "--format=junit"
+          - "--out=reports"
+          - "--format=pretty"
+      test-collector#v1.0.0:
+        files: "reports/TEST-*.xml"
+        format: "junit"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -830,6 +974,12 @@ steps:
           - "--farm=bs"
           - "--device=ANDROID_14"
           - "--fail-fast"
+          - "--format=junit"
+          - "--out=reports"
+          - "--format=pretty"
+      test-collector#v1.0.0:
+        files: "reports/TEST-*.xml"
+        format: "junit"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 5
