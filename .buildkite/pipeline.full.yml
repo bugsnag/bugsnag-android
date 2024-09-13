@@ -39,7 +39,9 @@ steps:
   # BitBar steps
   #
 
+  # Minimal tests job skipped as there are only ANR scenarios, run separately using BS
   - label: ':bitbar: Minimal fixture end-to-end tests'
+    skip: "Only ANR scenarios are run again the minimal fixture at present"
     depends_on: "fixture-minimal"
     timeout_in_minutes: 30
     plugins:
@@ -104,7 +106,9 @@ steps:
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
+  # Minimal tests job skipped as there are only ANR scenarios, run separately using BS
   - label: ':bitbar: Debug fixture smoke tests'
+    skip: "Only ANR scenarios are run again the minimal fixture at present"
     depends_on: "fixture-debug"
     timeout_in_minutes: 30
     plugins:
