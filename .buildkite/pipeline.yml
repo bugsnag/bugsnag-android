@@ -136,7 +136,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next\$"
+        branch: "^master|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
     concurrency: 25
@@ -173,7 +173,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next\$"
+        branch: "^master|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
     concurrency: 5
@@ -211,7 +211,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next\$"
+        branch: "^master|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
     concurrency: 25
@@ -246,7 +246,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next\$"
+        branch: "^master|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
     concurrency: 5
@@ -286,7 +286,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next\$"
+        branch: "^master|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -356,7 +356,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next\$"
+        branch: "^master|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -393,7 +393,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next\$"
+        branch: "^master|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 5
@@ -434,7 +434,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next\$"
+        branch: "^master|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -472,7 +472,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next\$"
+        branch: "^master|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 5
@@ -518,7 +518,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next\$"
+        branch: "^master|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -556,7 +556,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next\$"
+        branch: "^master|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 5
@@ -598,7 +598,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next\$"
+        branch: "^master|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -638,7 +638,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next\$"
+        branch: "^master|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -675,7 +675,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next\$"
+        branch: "^master|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 5
@@ -715,7 +715,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next\$"
+        branch: "^master|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -752,7 +752,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next\$"
+        branch: "^master|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 5
