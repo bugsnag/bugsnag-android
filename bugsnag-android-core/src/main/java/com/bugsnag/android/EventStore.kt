@@ -32,7 +32,6 @@ internal class EventStore(
 ) : FileStore(
     File(config.persistenceDirectory.value, "bugsnag/errors"),
     config.maxPersistedEvents,
-    EVENT_COMPARATOR,
     logger,
     delegate
 ) {
