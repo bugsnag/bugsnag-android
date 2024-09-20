@@ -1,15 +1,16 @@
 package com.bugsnag.android
 
+import android.os.SystemClock
 import com.bugsnag.android.EventFilenameInfo.Companion.findTimestampInFilename
 import com.bugsnag.android.EventFilenameInfo.Companion.fromEvent
 import com.bugsnag.android.EventFilenameInfo.Companion.fromFile
 import com.bugsnag.android.JsonStream.Streamable
 import com.bugsnag.android.internal.BackgroundTaskService
+import com.bugsnag.android.internal.ForegroundDetector
 import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.TaskType
 import java.io.File
 import java.util.Calendar
-import java.util.Comparator
 import java.util.Date
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutionException
@@ -17,10 +18,10 @@ import java.util.concurrent.Future
 import java.util.concurrent.RejectedExecutionException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
+import kotlin.math.max
 
 /**
- * Store and flush Event reports which couldn't be sent immediately due to
- * lack of network connectivity.
+ * Store and flush Event reports.
  */
 internal class EventStore(
     private val config: ImmutableConfig,
@@ -42,7 +43,8 @@ internal class EventStore(
     override val logger: Logger
 
     /**
-     * Flush startup crashes synchronously on the main thread
+     * Flush startup crashes synchronously on the main thread. Startup crashes block the main thread
+     * when being sent (subject to [Configuration.setSendLaunchCrashesSynchronously])
      */
     fun flushOnLaunch() {
         if (!config.sendLaunchCrashesSynchronously) {
@@ -58,13 +60,20 @@ internal class EventStore(
             return
         }
         try {
-            future.get(LAUNCH_CRASH_TIMEOUT_MS, TimeUnit.MILLISECONDS)
+            // Calculate the maximum amount of time we are prepared to block while sending
+            // startup crashes, based on how long we think startup has taken so-far.
+            // This attempts to mitigate possible startup ANRs that can occur when other SDKs
+            // have blocked the main thread before this code is reached.
+            val currentStartupDuration =
+                SystemClock.elapsedRealtime() - ForegroundDetector.startupTime
+            val timeout = max(0, LAUNCH_CRASH_TIMEOUT_MS - currentStartupDuration)
+            future.get(timeout, TimeUnit.MILLISECONDS)
         } catch (exc: InterruptedException) {
-            logger.d("Failed to send launch crash reports within 2s timeout, continuing.", exc)
+            logger.d("Failed to send launch crash reports within timeout, continuing.", exc)
         } catch (exc: ExecutionException) {
-            logger.d("Failed to send launch crash reports within 2s timeout, continuing.", exc)
+            logger.d("Failed to send launch crash reports within timeout, continuing.", exc)
         } catch (exc: TimeoutException) {
-            logger.d("Failed to send launch crash reports within 2s timeout, continuing.", exc)
+            logger.d("Failed to send launch crash reports within timeout, continuing.", exc)
         }
     }
 
@@ -159,6 +168,7 @@ internal class EventStore(
                 deleteStoredFiles(setOf(eventFile))
                 logger.i("Deleting sent error file $eventFile.name")
             }
+
             DeliveryStatus.UNDELIVERED -> undeliveredEventPayload(eventFile)
             DeliveryStatus.FAILURE -> {
                 val exc: Exception = RuntimeException("Failed to deliver event payload")

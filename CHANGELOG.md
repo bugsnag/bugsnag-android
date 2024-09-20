@@ -7,6 +7,11 @@
 * Add original error class and message to metadata for link errors loading BugSnag libraries
   [#2070](https://github.com/bugsnag/bugsnag-android/pull/2070)
 
+### Bug fixes
+
+* Sending startup crashes synchronously now uses a flexible timeout so that apps with slower startups don't ANR
+  [#2075](https://github.com/bugsnag/bugsnag-android/pull/2075)
+
 ## 6.7.0 (2024-08-08)
 
 ### Enhancements
