@@ -11,8 +11,10 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
 ) : Plugin {
 
     private val configuration = configuration.copy()
+    private lateinit var internalHooks: InternalHooks
 
     override fun load(client: Client) {
+        internalHooks = InternalHooks()
         if (!configuration.disableProcessStateSummaryOverride) {
             client.addOnSession(
                 OnSessionCallback { session: Session ->
