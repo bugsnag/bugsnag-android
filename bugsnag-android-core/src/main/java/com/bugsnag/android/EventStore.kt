@@ -9,7 +9,6 @@ import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.TaskType
 import java.io.File
 import java.util.Calendar
-import java.util.Comparator
 import java.util.Date
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutionException
@@ -40,6 +39,9 @@ internal class EventStore(
     private val bgTaskService: BackgroundTaskService
     private val callbackState: CallbackState
     override val logger: Logger
+
+    var onEventStoreEmptyCallback: () -> Unit = {}
+    private var isEmptyEventCallbackCalled: Boolean = false
 
     /**
      * Flush startup crashes synchronously on the main thread
@@ -117,6 +119,7 @@ internal class EventStore(
                 Runnable {
                     val storedFiles = findStoredFiles()
                     if (storedFiles.isEmpty()) {
+                        checkEventQueueEmpty()
                         logger.d("No regular events to flush to Bugsnag.")
                     }
                     flushReports(storedFiles)
@@ -157,12 +160,19 @@ internal class EventStore(
         when (delivery.deliver(payload, deliveryParams)) {
             DeliveryStatus.DELIVERED -> {
                 deleteStoredFiles(setOf(eventFile))
+                checkEventQueueEmpty()
                 logger.i("Deleting sent error file $eventFile.name")
             }
-            DeliveryStatus.UNDELIVERED -> undeliveredEventPayload(eventFile)
+
+            DeliveryStatus.UNDELIVERED -> {
+                undeliveredEventPayload(eventFile)
+                checkEventQueueEmpty()
+            }
+
             DeliveryStatus.FAILURE -> {
                 val exc: Exception = RuntimeException("Failed to deliver event payload")
                 handleEventFlushFailure(exc, eventFile)
+                checkEventQueueEmpty()
             }
         }
     }
@@ -240,6 +250,13 @@ internal class EventStore(
 
     private fun getCreationDate(file: File): Date {
         return Date(findTimestampInFilename(file))
+    }
+
+    private fun checkEventQueueEmpty() {
+        if (findStoredFiles().isEmpty() && !isEmptyEventCallbackCalled) {
+            onEventStoreEmptyCallback()
+            isEmptyEventCallbackCalled = true
+        }
     }
 
     companion object {
