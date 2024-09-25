@@ -146,8 +146,6 @@ steps:
           - "features/smoke_tests/01_anr.feature"
           - "--app=/app/build/fixture-debug.apk"
           - "--appium-version=1.22.0"
-          - "--no-tunnel"
-          - "--aws-public-ip"
           - "--farm=bs"
           - "--device=ANDROID_9"
       test-collector#v1.10.2:
@@ -230,7 +228,7 @@ steps:
     concurrency_method: eager
 
 
-  - label: ':browserstack: Android 7 NDK r19 end-to-end tests - batch ANR'
+  - label: ':browserstack: Android 7 NDK r19 end-to-end tests - ANRs'
     depends_on: "fixture-r19"
     timeout_in_minutes: 60
     plugins:
@@ -249,8 +247,6 @@ steps:
           - "features/full_tests/anr.feature"
           - "--app=@build/bs-fixture-r19-url.txt"
           - "--appium-version=1.22.0"
-          - "--no-tunnel"
-          - "--aws-public-ip"
           - "--farm=bs"
           - "--device=ANDROID_7"
       test-collector#v1.10.2:
@@ -330,7 +326,7 @@ steps:
     concurrency_method: eager
 
 
-  - label: ':browserstack: Android 8 NDK r19 end-to-end tests - batch ANR'
+  - label: ':browserstack: Android 8 NDK r19 end-to-end tests - ANRs'
     depends_on: "fixture-r19"
     timeout_in_minutes: 60
     plugins:
@@ -347,8 +343,6 @@ steps:
           - "features/full_tests/anr.feature"
           - "--app=@build/bs-fixture-r19-url.txt"
           - "--appium-version=1.22.0"
-          - "--no-tunnel"
-          - "--aws-public-ip"
           - "--farm=bs"
           - "--device=ANDROID_8"
       test-collector#v1.10.2:
@@ -432,7 +426,7 @@ steps:
     concurrency_method: eager
 
 
-  - label: ':bitbar: Android 9 NDK r21 end-to-end tests - batch ANR'
+  - label: ':bitbar: Android 9 NDK r21 end-to-end tests - ANRs'
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
@@ -451,8 +445,6 @@ steps:
           - "features/full_tests/anr.feature"
           - "--app=@build/bs-fixture-r21-url.txt"
           - "--appium-version=1.22.0"
-          - "--no-tunnel"
-          - "--aws-public-ip"
           - "--farm=bs"
           - "--device=ANDROID_9"
       test-collector#v1.10.2:
@@ -535,7 +527,7 @@ steps:
     concurrency_group: 'bitbar'
     concurrency_method: eager
 
-  - label: ':browserstack: Android 10 NDK r21 end-to-end tests - batch ANR'
+  - label: ':browserstack: Android 10 NDK r21 end-to-end tests - ANRs'
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
@@ -554,8 +546,6 @@ steps:
           - "features/full_tests/anr.feature"
           - "--app=@build/bs-fixture-r21-url.txt"
           - "--appium-version=1.22.0"
-          - "--no-tunnel"
-          - "--aws-public-ip"
           - "--farm=bs"
           - "--device=ANDROID_10"
       test-collector#v1.10.2:
@@ -642,7 +632,7 @@ steps:
     concurrency_group: 'bitbar'
     concurrency_method: eager
 
-  - label: ':browserstack: Android 11 NDK r21 end-to-end tests - batch ANR'
+  - label: ':browserstack: Android 11 NDK r21 end-to-end tests - ANRs'
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
@@ -661,8 +651,6 @@ steps:
           - "features/full_tests/anr.feature"
           - "--app=@build/bs-fixture-r21-url.txt"
           - "--appium-version=1.22.0"
-          - "--no-tunnel"
-          - "--aws-public-ip"
           - "--farm=bs"
           - "--device=ANDROID_11"
       test-collector#v1.10.2:
@@ -745,7 +733,7 @@ steps:
     concurrency_group: 'bitbar'
     concurrency_method: eager
 
-  - label: ':browserstack: Android 13 NDK r21 end-to-end tests - batch ANR'
+  - label: ':browserstack: Android 13 NDK r21 end-to-end tests - ANRs'
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
@@ -764,8 +752,6 @@ steps:
           - "features/full_tests/anr.feature"
           - "--app=@build/bs-fixture-r21-url.txt"
           - "--appium-version=1.22.0"
-          - "--no-tunnel"
-          - "--aws-public-ip"
           - "--farm=bs"
           - "--device=ANDROID_13"
       test-collector#v1.10.2:
@@ -848,7 +834,7 @@ steps:
     concurrency_group: 'bitbar'
     concurrency_method: eager
 
-  - label: ':browserstack: Android 14 NDK r21 end-to-end tests - batch ANR'
+  - label: ':browserstack: Android 14 NDK r21 end-to-end tests - ANRs'
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
@@ -867,8 +853,6 @@ steps:
           - "features/full_tests/anr.feature"
           - "--app=@build/bs-fixture-r21-url.txt"
           - "--appium-version=1.22.0"
-          - "--no-tunnel"
-          - "--aws-public-ip"
           - "--farm=bs"
           - "--device=ANDROID_14"
       test-collector#v1.10.2:
