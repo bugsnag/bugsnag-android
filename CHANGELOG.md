@@ -11,6 +11,7 @@
 
 * Sending startup crashes synchronously now uses a flexible timeout so that apps with slower startups don't ANR
   [#2075](https://github.com/bugsnag/bugsnag-android/pull/2075)
+  [#2080](https://github.com/bugsnag/bugsnag-android/pull/2080)
 
 ## 6.7.0 (2024-08-08)
 

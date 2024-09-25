@@ -65,16 +65,16 @@ internal class EventStore(
             // have blocked the main thread before this code is reached.
             val currentStartupDuration =
                 SystemClock.elapsedRealtime() - ForegroundDetector.startupTime
-            val timeout = LAUNCH_CRASH_TIMEOUT_MS - currentStartupDuration
+            var timeout = LAUNCH_CRASH_TIMEOUT_MS - currentStartupDuration
 
-            if (timeout > 0) {
-                future.get(timeout, TimeUnit.MILLISECONDS)
-            } else {
-                logger.d(
-                    "Startup delivery timeout has been exceeded, " +
-                        "launch crashes will be delivered asynchronously"
-                )
+            if (timeout <= 0) {
+                // if Bugsnag.start is called too long after Application.onCreate is expected to
+                // have returned, we use a full LAUNCH_CRASH_TIMEOUT_MS instead of a calculated one
+                // assuming that the app is already fully started
+                timeout = LAUNCH_CRASH_TIMEOUT_MS
             }
+
+            future.get(timeout, TimeUnit.MILLISECONDS)
         } catch (exc: InterruptedException) {
             logger.d("Failed to send launch crash reports within timeout, continuing.", exc)
         } catch (exc: ExecutionException) {
