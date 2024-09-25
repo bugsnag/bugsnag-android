@@ -18,7 +18,6 @@ import java.util.concurrent.Future
 import java.util.concurrent.RejectedExecutionException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
-import kotlin.math.max
 
 /**
  * Store and flush Event reports.
@@ -66,8 +65,16 @@ internal class EventStore(
             // have blocked the main thread before this code is reached.
             val currentStartupDuration =
                 SystemClock.elapsedRealtime() - ForegroundDetector.startupTime
-            val timeout = max(0, LAUNCH_CRASH_TIMEOUT_MS - currentStartupDuration)
-            future.get(timeout, TimeUnit.MILLISECONDS)
+            val timeout = LAUNCH_CRASH_TIMEOUT_MS - currentStartupDuration
+
+            if (timeout > 0) {
+                future.get(timeout, TimeUnit.MILLISECONDS)
+            } else {
+                logger.d(
+                    "Startup delivery timeout has been exceeded, " +
+                        "launch crashes will be delivered asynchronously"
+                )
+            }
         } catch (exc: InterruptedException) {
             logger.d("Failed to send launch crash reports within timeout, continuing.", exc)
         } catch (exc: ExecutionException) {
