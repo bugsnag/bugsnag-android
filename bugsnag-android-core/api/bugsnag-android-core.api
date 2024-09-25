@@ -585,6 +585,11 @@ public abstract interface class com/bugsnag/android/Plugin {
 	public abstract fun unload ()V
 }
 
+public final class com/bugsnag/android/SerializePayload {
+	public static final field INSTANCE Lcom/bugsnag/android/SerializePayload;
+	public final fun serializePayload (Lcom/bugsnag/android/EventPayload;Ljava/lang/String;ILcom/bugsnag/android/Logger;)[B
+}
+
 public final class com/bugsnag/android/Session : com/bugsnag/android/JsonStream$Streamable, com/bugsnag/android/UserAware {
 	public fun getApiKey ()Ljava/lang/String;
 	public fun getApp ()Lcom/bugsnag/android/App;
@@ -993,6 +998,19 @@ public final class com/bugsnag/android/internal/InternalMetricsNoop : com/bugsna
 	public fun setConfigDifferences (Ljava/util/Map;)V
 	public fun setMetadataTrimMetrics (II)V
 	public fun toJsonableMap ()Ljava/util/Map;
+}
+
+public final class com/bugsnag/android/internal/JsonHelper {
+	public static final field INSTANCE Lcom/bugsnag/android/internal/JsonHelper;
+	public final fun deserialize (Ljava/io/File;)Ljava/util/Map;
+	public final fun deserialize (Ljava/io/InputStream;)Ljava/util/Map;
+	public final fun deserialize ([B)Ljava/util/Map;
+	public final fun jsonToLong (Ljava/lang/Object;)Ljava/lang/Long;
+	public final fun serialize (Lcom/bugsnag/android/JsonStream$Streamable;)[B
+	public final fun serialize (Ljava/lang/Object;)[B
+	public final fun serialize (Ljava/lang/Object;Ljava/io/File;)V
+	public final fun serialize (Ljava/lang/Object;Ljava/io/OutputStream;)V
+	public final fun ulongToHex (Ljava/lang/Long;)Ljava/lang/String;
 }
 
 public abstract interface class com/bugsnag/android/internal/StateObserver {

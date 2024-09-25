@@ -14,7 +14,7 @@ import java.io.OutputStream
 import java.io.PrintWriter
 import java.util.Date
 
-internal object JsonHelper {
+object JsonHelper {
 
     // ignore deprecation warnings as there is no other API that allows
     // serializing a placeholder for a type and all its subtypes

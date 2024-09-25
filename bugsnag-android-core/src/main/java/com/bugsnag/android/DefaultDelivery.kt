@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import android.net.TrafficStats
+import com.bugsnag.android.SerializePayload.serializePayload
 import com.bugsnag.android.internal.JsonHelper
 import java.io.IOException
 import java.net.HttpURLConnection
@@ -31,41 +32,8 @@ internal class DefaultDelivery(
         return status
     }
 
-    private fun serializePayload(payload: EventPayload): ByteArray {
-        var json = JsonHelper.serialize(payload)
-        if (json.size <= maxPayloadSize) {
-            return json
-        }
-
-        var event = payload.event
-        if (event == null) {
-            event = MarshalledEventSource(payload.eventFile!!, apiKey, logger).invoke()
-            payload.event = event
-            payload.apiKey = apiKey
-        }
-
-        val (itemsTrimmed, dataTrimmed) = event.impl.trimMetadataStringsTo(maxStringValueLength)
-        event.impl.internalMetrics.setMetadataTrimMetrics(
-            itemsTrimmed,
-            dataTrimmed
-        )
-
-        json = JsonHelper.serialize(payload)
-        if (json.size <= maxPayloadSize) {
-            return json
-        }
-
-        val breadcrumbAndBytesRemovedCounts =
-            event.impl.trimBreadcrumbsBy(json.size - maxPayloadSize)
-        event.impl.internalMetrics.setBreadcrumbTrimMetrics(
-            breadcrumbAndBytesRemovedCounts.itemsTrimmed,
-            breadcrumbAndBytesRemovedCounts.dataTrimmed
-        )
-        return JsonHelper.serialize(payload)
-    }
-
     override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
-        val json = serializePayload(payload)
+        val json = serializePayload(payload, apiKey, maxStringValueLength, logger)
         val status = deliver(deliveryParams.endpoint, json, deliveryParams.headers)
         logger.i("Error API request finished with status $status")
         return status

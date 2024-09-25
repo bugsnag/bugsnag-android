@@ -30,3 +30,7 @@ style:
   ReturnCount:
     active: true
     max: 4
+
+naming:
+  MemberNameEqualsClassName:
+    active: false

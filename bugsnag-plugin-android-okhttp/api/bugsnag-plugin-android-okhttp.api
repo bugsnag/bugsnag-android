@@ -13,3 +13,15 @@ public final class com/bugsnag/android/okhttp/BugsnagOkHttpPlugin : okhttp3/Even
 	public fun unload ()V
 }
 
+public final class com/bugsnag/android/okhttp/OkHttpDelivery : com/bugsnag/android/Delivery {
+	public static final field Companion Lcom/bugsnag/android/okhttp/OkHttpDelivery$Companion;
+	public fun <init> (Lokhttp3/OkHttpClient;Ljava/lang/String;ILcom/bugsnag/android/Logger;)V
+	public fun deliver (Lcom/bugsnag/android/EventPayload;Lcom/bugsnag/android/DeliveryParams;)Lcom/bugsnag/android/DeliveryStatus;
+	public fun deliver (Lcom/bugsnag/android/Session;Lcom/bugsnag/android/DeliveryParams;)Lcom/bugsnag/android/DeliveryStatus;
+}
+
+public final class com/bugsnag/android/okhttp/OkHttpDelivery$Companion {
+	public final synthetic fun OkHttpDelivery (Lcom/bugsnag/android/Configuration;Lokhttp3/OkHttpClient;)Lcom/bugsnag/android/okhttp/OkHttpDelivery;
+	public final fun useOkHttpDelivery (Lcom/bugsnag/android/Configuration;Lokhttp3/OkHttpClient;)V
+}
+
