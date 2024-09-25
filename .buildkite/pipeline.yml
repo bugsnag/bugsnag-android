@@ -122,6 +122,7 @@ steps:
           - "features/smoke_tests"
           - "--exclude=features/smoke_tests/01_anr.feature"
           - "--app=@build/fixture-r19-url.txt"
+          - "--appium-version=1.22"
           - "--farm=bb"
           - "--device=ANDROID_7"
       test-collector#v1.10.2:
@@ -152,6 +153,7 @@ steps:
         command:
           - "features/smoke_tests/01_anr.feature"
           - "--app=@build/bs-fixture-r19-url.txt"
+          - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_7"
       test-collector#v1.10.2:
@@ -181,6 +183,7 @@ steps:
           - "features/smoke_tests"
           - "--exclude=features/smoke_tests/01_anr.feature"
           - "--app=@build/fixture-r19-url.txt"
+          - "--appium-version=1.22"
           - "--farm=bb"
           - "--device=ANDROID_8"
       test-collector#v1.10.2:
@@ -209,6 +212,7 @@ steps:
         command:
           - "features/smoke_tests/01_anr.feature"
           - "--app=@build/bs-fixture-r19-url.txt"
+          - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_8"
       test-collector#v1.10.2:
@@ -240,6 +244,7 @@ steps:
           - "features/smoke_tests"
           - "--exclude=features/smoke_tests/01_anr.feature"
           - "--app=@build/fixture-r21-url.txt"
+          - "--appium-version=1.22"
           - "--farm=bb"
           - "--device=ANDROID_9"
       test-collector#v1.10.2:
@@ -270,6 +275,7 @@ steps:
         command:
           - "features/smoke_tests/01_anr.feature"
           - "--app=@build/bs-fixture-r21-url.txt"
+          - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_9"
     env:
@@ -297,6 +303,7 @@ steps:
           - "features/smoke_tests"
           - "--exclude=features/smoke_tests/01_anr.feature"
           - "--app=@build/fixture-r21-url.txt"
+          - "--appium-version=1.22"
           - "--farm=bb"
           - "--device=ANDROID_10"
       test-collector#v1.10.2:
@@ -327,6 +334,7 @@ steps:
         command:
           - "features/smoke_tests/01_anr.feature"
           - "--app=@build/bs-fixture-r21-url.txt"
+          - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_10"
       test-collector#v1.10.2:
@@ -359,6 +367,7 @@ steps:
           - "features/smoke_tests"
           - "--exclude=features/smoke_tests/01_anr.feature"
           - "--app=@build/fixture-r21-url.txt"
+          - "--appium-version=1.22"
           - "--farm=bb"
           - "--device=ANDROID_11"
       test-collector#v1.10.2:
@@ -390,6 +399,7 @@ steps:
         command:
           - "features/smoke_tests/01_anr.feature"
           - "--app=@build/bs-fixture-r21-url.txt"
+          - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_11"
       test-collector#v1.10.2:
@@ -427,6 +437,7 @@ steps:
           - "--exclude=features/full_tests/[^a-k].*.feature"
           - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
+          - "--appium-version=1.22"
           - "--farm=bb"
           - "--device=ANDROID_12"
       test-collector#v1.10.2:
@@ -458,6 +469,7 @@ steps:
         command:
           - "features/full_tests/anr.feature"
           - "--app=@build/bs-fixture-r21-url.txt"
+          - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_12"
       test-collector#v1.10.2:
@@ -491,6 +503,7 @@ steps:
           - "--exclude=features/full_tests/[^l-z].*.feature"
           - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
+          - "--appium-version=1.22"
           - "--farm=bb"
           - "--device=ANDROID_12"
       test-collector#v1.10.2:
@@ -522,6 +535,7 @@ steps:
           - "features/smoke_tests"
           - "--exclude=features/smoke_tests/01_anr.feature"
           - "--app=@build/fixture-r21-url.txt"
+          - "--appium-version=1.22"
           - "--farm=bb"
           - "--device=ANDROID_13"
       test-collector#v1.10.2:
@@ -552,6 +566,7 @@ steps:
         command:
           - "features/smoke_tests/01_anr.feature"
           - "--app=@build/bs-fixture-r21-url.txt"
+          - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_13"
       test-collector#v1.10.2:
@@ -583,6 +598,7 @@ steps:
           - "features/smoke_tests"
           - "--exclude=features/smoke_tests/01_anr.feature"
           - "--app=@build/fixture-r21-url.txt"
+          - "--appium-version=1.22"
           - "--farm=bb"
           - "--device=ANDROID_14"
       test-collector#v1.10.2:
@@ -613,6 +629,7 @@ steps:
         command:
           - "features/smoke_tests/01_anr.feature"
           - "--app=@build/bs-fixture-r21-url.txt"
+          - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_14"
       test-collector#v1.10.2:
