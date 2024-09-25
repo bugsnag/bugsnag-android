@@ -7,9 +7,9 @@ import com.bugsnag.android.DeliveryParams
 import com.bugsnag.android.DeliveryStatus
 import com.bugsnag.android.EventPayload
 import com.bugsnag.android.Logger
-import com.bugsnag.android.SerializePayload.serializePayload
 import com.bugsnag.android.Session
 import com.bugsnag.android.internal.JsonHelper
+import com.bugsnag.android.internal.serializePayload
 import okhttp3.Headers
 import okhttp3.Headers.Companion.toHeaders
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -93,7 +93,7 @@ class OkHttpDelivery constructor(
     }
 
     @Suppress("MagicNumber")
-    private fun getDeliveryStatus(responseCode: Int): DeliveryStatus {
+    internal fun getDeliveryStatus(responseCode: Int): DeliveryStatus {
         return when {
             responseCode in 200..299 -> DeliveryStatus.DELIVERED
             isUnrecoverableStatusCode(responseCode) -> DeliveryStatus.FAILURE

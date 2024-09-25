@@ -1,8 +1,8 @@
 package com.bugsnag.android
 
 import android.net.TrafficStats
-import com.bugsnag.android.SerializePayload.serializePayload
 import com.bugsnag.android.internal.JsonHelper
+import com.bugsnag.android.internal.serializePayload
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.HttpURLConnection.HTTP_BAD_REQUEST

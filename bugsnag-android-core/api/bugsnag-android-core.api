@@ -585,11 +585,6 @@ public abstract interface class com/bugsnag/android/Plugin {
 	public abstract fun unload ()V
 }
 
-public final class com/bugsnag/android/SerializePayload {
-	public static final field INSTANCE Lcom/bugsnag/android/SerializePayload;
-	public final fun serializePayload (Lcom/bugsnag/android/EventPayload;Ljava/lang/String;ILcom/bugsnag/android/Logger;)[B
-}
-
 public final class com/bugsnag/android/Session : com/bugsnag/android/JsonStream$Streamable, com/bugsnag/android/UserAware {
 	public fun getApiKey ()Ljava/lang/String;
 	public fun getApp ()Lcom/bugsnag/android/App;
@@ -1011,6 +1006,10 @@ public final class com/bugsnag/android/internal/JsonHelper {
 	public final fun serialize (Ljava/lang/Object;Ljava/io/File;)V
 	public final fun serialize (Ljava/lang/Object;Ljava/io/OutputStream;)V
 	public final fun ulongToHex (Ljava/lang/Long;)Ljava/lang/String;
+}
+
+public final class com/bugsnag/android/internal/SerializePayloadKt {
+	public static final fun serializePayload (Lcom/bugsnag/android/EventPayload;Ljava/lang/String;ILcom/bugsnag/android/Logger;)[B
 }
 
 public abstract interface class com/bugsnag/android/internal/StateObserver {
