@@ -1,13 +1,11 @@
 package com.bugsnag.android
 
 import android.net.TrafficStats
+import com.bugsnag.android.internal.DeliveryHelper.getDeliveryStatus
+import com.bugsnag.android.internal.DeliveryHelper.serializePayload
 import com.bugsnag.android.internal.JsonHelper
-import com.bugsnag.android.internal.serializePayload
 import java.io.IOException
 import java.net.HttpURLConnection
-import java.net.HttpURLConnection.HTTP_BAD_REQUEST
-import java.net.HttpURLConnection.HTTP_CLIENT_TIMEOUT
-import java.net.HttpURLConnection.HTTP_OK
 import java.net.URL
 
 internal class DefaultDelivery(
@@ -127,17 +125,4 @@ internal class DefaultDelivery(
             }
         }
     }
-
-    internal fun getDeliveryStatus(responseCode: Int): DeliveryStatus {
-        return when {
-            responseCode in HTTP_OK..299 -> DeliveryStatus.DELIVERED
-            isUnrecoverableStatusCode(responseCode) -> DeliveryStatus.FAILURE
-            else -> DeliveryStatus.UNDELIVERED
-        }
-    }
-
-    private fun isUnrecoverableStatusCode(responseCode: Int) =
-        responseCode in HTTP_BAD_REQUEST..499 && // 400-499 are considered unrecoverable
-            responseCode != HTTP_CLIENT_TIMEOUT && // except for 408
-            responseCode != 429 // and 429
 }

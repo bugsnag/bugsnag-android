@@ -31,6 +31,7 @@ style:
     active: true
     max: 4
 
+# allow for utility function naming in OkHttpDelivery
 naming:
   MemberNameEqualsClassName:
     active: false

@@ -875,6 +875,14 @@ public final class com/bugsnag/android/internal/DateUtils {
 	public static final fun toIso8601 (Ljava/util/Date;)Ljava/lang/String;
 }
 
+public final class com/bugsnag/android/internal/DeliveryHelper {
+	public static final field INSTANCE Lcom/bugsnag/android/internal/DeliveryHelper;
+	public final fun getDeliveryStatus (I)Lcom/bugsnag/android/DeliveryStatus;
+	public final fun isUnrecoverableStatusCode (I)Z
+	public final fun retrieveSha1Digest ([B)Ljava/lang/String;
+	public final fun serializePayload (Lcom/bugsnag/android/EventPayload;Ljava/lang/String;ILcom/bugsnag/android/Logger;)[B
+}
+
 public final class com/bugsnag/android/internal/ImmutableConfig {
 	public fun <init> (Ljava/lang/String;ZLcom/bugsnag/android/ErrorTypes;ZLcom/bugsnag/android/ThreadSendPolicy;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Set;Ljava/util/Set;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/bugsnag/android/Delivery;Lcom/bugsnag/android/EndpointConfiguration;ZJLcom/bugsnag/android/Logger;IIIIJLkotlin/Lazy;ZZZLandroid/content/pm/PackageInfo;Landroid/content/pm/ApplicationInfo;Ljava/util/Collection;)V
 	public final fun component1 ()Ljava/lang/String;
@@ -1006,10 +1014,6 @@ public final class com/bugsnag/android/internal/JsonHelper {
 	public final fun serialize (Ljava/lang/Object;Ljava/io/File;)V
 	public final fun serialize (Ljava/lang/Object;Ljava/io/OutputStream;)V
 	public final fun ulongToHex (Ljava/lang/Long;)Ljava/lang/String;
-}
-
-public final class com/bugsnag/android/internal/SerializePayloadKt {
-	public static final fun serializePayload (Lcom/bugsnag/android/EventPayload;Ljava/lang/String;ILcom/bugsnag/android/Logger;)[B
 }
 
 public abstract interface class com/bugsnag/android/internal/StateObserver {
