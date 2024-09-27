@@ -1,7 +1,5 @@
 package com.bugsnag.android.okhttp
 
-import android.annotation.SuppressLint
-import com.bugsnag.android.Configuration
 import com.bugsnag.android.Delivery
 import com.bugsnag.android.DeliveryParams
 import com.bugsnag.android.DeliveryStatus
@@ -26,18 +24,6 @@ class OkHttpDelivery constructor(
     private val maxStringValueLength: Int,
     private val logger: Logger
 ) : Delivery {
-
-    companion object {
-        @SuppressLint("NotConstructor")
-        @JvmSynthetic
-        fun Configuration.OkHttpDelivery(okHttpClient: OkHttpClient): OkHttpDelivery {
-            return OkHttpDelivery(okHttpClient, apiKey, maxStringValueLength, logger!!)
-        }
-
-        fun Configuration.useOkHttpDelivery(okHttpClient: OkHttpClient) {
-            delivery = OkHttpDelivery(okHttpClient)
-        }
-    }
 
     override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
         val json = serializePayload(payload, apiKey, maxStringValueLength, logger)
