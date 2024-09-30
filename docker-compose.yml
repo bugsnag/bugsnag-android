@@ -53,12 +53,15 @@ services:
       <<: *common-environment
       BITBAR_USERNAME:
       BITBAR_ACCESS_KEY:
+      BROWSER_STACK_USERNAME:
+      BROWSER_STACK_ACCESS_KEY:
     ports:
       - "9000-9499:9339"
     volumes:
       - ./build:/app/build
       - ./features/:/app/features/
       - ./maze_output:/app/maze_output
+      - ./reports/:/app/reports/
       - /var/run/docker.sock:/var/run/docker.sock
 
   android-license-audit:

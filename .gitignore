@@ -25,3 +25,4 @@ bugsnag_test
 .cxx/
 .project
 decisions.yml
+Gemfile.lock
