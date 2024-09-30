@@ -9,7 +9,7 @@ import java.io.File
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
-private const val EVENT_CONFINEMENT_ATTEMPTS = 19
+private const val EVENT_CONFINEMENT_ATTEMPTS = 20
 
 /**
  * Confirms that delivery of events is confined to a single thread, resulting in no
