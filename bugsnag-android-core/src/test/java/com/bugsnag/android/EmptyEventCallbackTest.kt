@@ -31,7 +31,7 @@ class EmptyEventCallbackTest {
     }
 
     @Test
-    fun emptyEventQueue() {
+    fun emptyQueuedEventTriggerEventStoreEmptyCallback() {
         val config = generateConfiguration().apply {
             maxPersistedEvents = 0
             persistenceDirectory = storageDir
@@ -40,14 +40,14 @@ class EmptyEventCallbackTest {
 
         val event = generateEvent()
         eventStore.write(event)
-        val callbackInvokeTimes = CountDownLatch(1)
-        eventStore.onEventStoreEmptyCallback = { callbackInvokeTimes.countDown() }
+        val callbackLatch = CountDownLatch(1)
+        eventStore.onEventStoreEmptyCallback = { callbackLatch.countDown() }
         eventStore.flushAsync()
-        callbackInvokeTimes.await()
+        callbackLatch.await()
     }
 
     @Test
-    fun multipleEventQueue() {
+    fun multipleQueueEvents() {
         val config = generateConfiguration().apply {
             maxPersistedEvents = 1
             persistenceDirectory = storageDir
@@ -56,10 +56,10 @@ class EmptyEventCallbackTest {
 
         val event = generateEvent()
         eventStore.write(event)
-        val callbackInvokeTimes = CountDownLatch(0)
-        eventStore.onEventStoreEmptyCallback = { callbackInvokeTimes.countDown() }
+        val callbackLatch = CountDownLatch(0)
+        eventStore.onEventStoreEmptyCallback = { callbackLatch.countDown() }
         eventStore.flushAsync()
-        callbackInvokeTimes.await()
+        callbackLatch.await()
     }
 
     private fun createEventStore(config: ImmutableConfig): EventStore {

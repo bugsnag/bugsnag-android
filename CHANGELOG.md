@@ -7,6 +7,14 @@
 * Add original error class and message to metadata for link errors loading BugSnag libraries
   [#2070](https://github.com/bugsnag/bugsnag-android/pull/2070)
 
+### Bug fixes
+
+* Sending startup crashes synchronously now uses a flexible timeout so that apps with slower startups don't ANR
+  [#2075](https://github.com/bugsnag/bugsnag-android/pull/2075)
+  [#2080](https://github.com/bugsnag/bugsnag-android/pull/2080)
+* Work around a possible platform NullPointerException when calling `Intent.getExtras` (https://github.com/bugsnag/bugsnag-android/issues/2082)
+  [#2083](https://github.com/bugsnag/bugsnag-android/pull/2083)
+
 ## 6.7.0 (2024-08-08)
 
 ### Enhancements
