@@ -135,8 +135,7 @@ internal class EventStore(
                 TaskType.ERROR_REQUEST,
                 Runnable {
                     val storedFiles = findStoredFiles()
-                    if (storedFiles.isEmpty()) {
-                        checkEventQueueEmpty()
+                    notifyEventQueueEmpty().also {
                         logger.d("No regular events to flush to Bugsnag.")
                     }
                     flushReports(storedFiles)
@@ -177,21 +176,19 @@ internal class EventStore(
         when (delivery.deliver(payload, deliveryParams)) {
             DeliveryStatus.DELIVERED -> {
                 deleteStoredFiles(setOf(eventFile))
-                checkEventQueueEmpty()
                 logger.i("Deleting sent error file $eventFile.name")
             }
 
             DeliveryStatus.UNDELIVERED -> {
                 undeliveredEventPayload(eventFile)
-                checkEventQueueEmpty()
             }
 
             DeliveryStatus.FAILURE -> {
                 val exc: Exception = RuntimeException("Failed to deliver event payload")
                 handleEventFlushFailure(exc, eventFile)
-                checkEventQueueEmpty()
             }
         }
+        notifyEventQueueEmpty()
     }
 
     private fun undeliveredEventPayload(eventFile: File) {
@@ -269,8 +266,8 @@ internal class EventStore(
         return Date(findTimestampInFilename(file))
     }
 
-    private fun checkEventQueueEmpty() {
-        if (!isEmptyEventCallbackCalled) {
+    private fun notifyEventQueueEmpty() {
+        if (!isEmptyEventCallbackCalled && findStoredFiles().isEmpty()) {
             onEventStoreEmptyCallback()
             isEmptyEventCallbackCalled = true
         }
