@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -10,6 +11,8 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
@@ -119,5 +122,16 @@ internal class ActivityLifecycleBreadcrumbTest {
 
         tracker.onActivityStarted(activity2)
         assertEquals("onCreate()", resultMetadata!!["previous"])
+    }
+
+    @Test
+    fun failGetExtras() {
+        val mockIntent = mock(Intent::class.java)
+        `when`(mockIntent.extras).thenThrow(NullPointerException())
+        `when`(activity.intent).thenReturn(mockIntent)
+
+        tracker.onActivityCreated(activity, null)
+        assertFalse(resultMetadata!!["hasBundle"] as Boolean)
+        assertFalse(resultMetadata!!["hasData"] as Boolean)
     }
 }
