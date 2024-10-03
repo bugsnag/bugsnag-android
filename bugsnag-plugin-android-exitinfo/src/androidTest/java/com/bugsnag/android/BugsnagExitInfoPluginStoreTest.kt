@@ -94,6 +94,20 @@ internal class BugsnagExitInfoPluginStoreTest {
         assertEquals(expectedExitInfoKeys, storageExitInfoKeys2)
     }
 
+    @Test
+    fun addExitInfoKeyToFileContents() {
+        file.writeText("12345")
+        exitInfoPluginStore = ExitInfoPluginStore(immutableConfig)
+        val expectedPid1 = requireNotNull(exitInfoPluginStore.load())
+        assertEquals(12345, expectedPid1.first)
+
+        val expectedExitInfoKey = ExitInfoKey(111, 100L)
+        exitInfoPluginStore.addExitInfoKey(expectedExitInfoKey)
+        val (expectedPid2, storageExitInfoKeys2) = requireNotNull(exitInfoPluginStore.load())
+        assertEquals(expectedPid1.first, expectedPid2)
+        assertEquals(setOf(expectedExitInfoKey), storageExitInfoKeys2)
+    }
+
     private fun generateConfiguration(): Configuration {
         val configuration = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
         configuration.delivery = generateDelivery()

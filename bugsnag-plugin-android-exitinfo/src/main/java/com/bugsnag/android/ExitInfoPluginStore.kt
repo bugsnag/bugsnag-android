@@ -72,4 +72,10 @@ internal class ExitInfoPluginStore(config: ImmutableConfig) {
             return null
         }
     }
+
+    fun addExitInfoKey(exitInfoKey: ExitInfoKey) {
+        val (oldPid, exitInfoKeys) = load()
+        val newExitInfoKeys = exitInfoKeys.toMutableSet().plus(exitInfoKey)
+        oldPid?.let { persist(it, newExitInfoKeys) }
+    }
 }
