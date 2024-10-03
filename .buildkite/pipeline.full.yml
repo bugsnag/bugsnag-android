@@ -56,17 +56,11 @@ steps:
           - "features/minimal"
           - "--exclude=features/minimal/detect_anr_minimal.feature"
           - "--app=/app/build/fixture-minimal.apk"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22"
-          - "--farm=bb"
-          - "--device=ANDROID_9"
           - "--no-tunnel"
           - "--aws-public-ip"
-          - "--fail-fast"
-          - "--format=junit"
-          - "--out=reports"
-          - "--format=pretty"
+          - "--farm=bb"
+          - "--device=ANDROID_9"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -89,15 +83,9 @@ steps:
         command:
           - "features/minimal/detect_anr_minimal.feature"
           - "--app=/app/build/fixture-minimal.apk"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_9"
-          - "--fail-fast"
-          - "--format=junit"
-          - "--out=reports"
-          - "--format=pretty"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -126,17 +114,11 @@ steps:
           - "--exclude=features/smoke_tests/01_anr.feature"
           - "--tags=debug-safe"
           - "--app=/app/build/fixture-debug.apk"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22"
-          - "--farm=bb"
-          - "--device=ANDROID_9"
           - "--no-tunnel"
           - "--aws-public-ip"
-          - "--fail-fast"
-          - "--format=junit"
-          - "--out=reports"
-          - "--format=pretty"
+          - "--farm=bb"
+          - "--device=ANDROID_9"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -163,15 +145,9 @@ steps:
         command:
           - "features/smoke_tests/01_anr.feature"
           - "--app=/app/build/fixture-debug.apk"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_9"
-          - "--fail-fast"
-          - "--format=junit"
-          - "--out=reports"
-          - "--format=pretty"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -200,19 +176,13 @@ steps:
         command:
           - "features/full_tests"
           - "--app=@build/fixture-r19-url.txt"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22"
-          - "--farm=bb"
-          - "--device=ANDROID_7"
           - "--no-tunnel"
           - "--aws-public-ip"
+          - "--farm=bb"
+          - "--device=ANDROID_7"
           - "--exclude=features/full_tests/[^a-k].*.feature"
           - "--exclude=features/full_tests/anr.feature"
-          - "--fail-fast"
-          - "--format=junit"
-          - "--out=reports"
-          - "--format=pretty"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -242,17 +212,11 @@ steps:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
           - "--app=@build/fixture-r19-url.txt"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22"
-          - "--farm=bb"
-          - "--device=ANDROID_7"
           - "--no-tunnel"
           - "--aws-public-ip"
-          - "--fail-fast"
-          - "--format=junit"
-          - "--out=reports"
-          - "--format=pretty"
+          - "--farm=bb"
+          - "--device=ANDROID_7"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -264,7 +228,7 @@ steps:
     concurrency_method: eager
 
 
-  - label: ':browserstack: Android 7 NDK r19 end-to-end tests - batch ANR'
+  - label: ':browserstack: Android 7 NDK r19 end-to-end tests - ANRs'
     depends_on: "fixture-r19"
     timeout_in_minutes: 60
     plugins:
@@ -282,15 +246,9 @@ steps:
         command:
           - "features/full_tests/anr.feature"
           - "--app=@build/bs-fixture-r19-url.txt"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_7"
-          - "--fail-fast"
-          - "--format=junit"
-          - "--out=reports"
-          - "--format=pretty"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -317,19 +275,13 @@ steps:
         command:
           - "features/full_tests"
           - "--app=@build/fixture-r19-url.txt"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22"
-          - "--farm=bb"
-          - "--device=ANDROID_8"
           - "--no-tunnel"
           - "--aws-public-ip"
+          - "--farm=bb"
+          - "--device=ANDROID_8"
           - "--exclude=features/full_tests/[^a-k].*.feature"
           - "--exclude=features/full_tests/anr.feature"
-          - "--fail-fast"
-          - "--format=junit"
-          - "--out=reports"
-          - "--format=pretty"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -358,17 +310,11 @@ steps:
           - "--exclude=features/full_tests/[^l-z].*.feature"
           - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r19-url.txt"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22"
-          - "--farm=bb"
-          - "--device=ANDROID_8"
           - "--no-tunnel"
           - "--aws-public-ip"
-          - "--fail-fast"
-          - "--format=junit"
-          - "--out=reports"
-          - "--format=pretty"
+          - "--farm=bb"
+          - "--device=ANDROID_8"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -380,7 +326,7 @@ steps:
     concurrency_method: eager
 
 
-  - label: ':browserstack: Android 8 NDK r19 end-to-end tests - batch ANR'
+  - label: ':browserstack: Android 8 NDK r19 end-to-end tests - ANRs'
     depends_on: "fixture-r19"
     timeout_in_minutes: 60
     plugins:
@@ -396,15 +342,9 @@ steps:
         command:
           - "features/full_tests/anr.feature"
           - "--app=@build/bs-fixture-r19-url.txt"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_8"
-          - "--fail-fast"
-          - "--format=junit"
-          - "--out=reports"
-          - "--format=pretty"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -433,19 +373,13 @@ steps:
         command:
           - "features/full_tests"
           - "--app=@build/fixture-r21-url.txt"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22"
-          - "--farm=bb"
-          - "--device=ANDROID_9"
           - "--no-tunnel"
           - "--aws-public-ip"
+          - "--farm=bb"
+          - "--device=ANDROID_9"
           - "--exclude=features/full_tests/[^a-k].*.feature"
           - "--exclude=features/full_tests/anr.feature"
-          - "--fail-fast"
-          - "--format=junit"
-          - "--out=reports"
-          - "--format=pretty"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -476,17 +410,11 @@ steps:
           - "--exclude=features/full_tests/[^l-z].*.feature"
           - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22"
-          - "--farm=bb"
-          - "--device=ANDROID_9"
           - "--no-tunnel"
           - "--aws-public-ip"
-          - "--fail-fast"
-          - "--format=junit"
-          - "--out=reports"
-          - "--format=pretty"
+          - "--farm=bb"
+          - "--device=ANDROID_9"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -498,7 +426,7 @@ steps:
     concurrency_method: eager
 
 
-  - label: ':bitbar: Android 9 NDK r21 end-to-end tests - batch ANR'
+  - label: ':bitbar: Android 9 NDK r21 end-to-end tests - ANRs'
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
@@ -516,15 +444,9 @@ steps:
         command:
           - "features/full_tests/anr.feature"
           - "--app=@build/bs-fixture-r21-url.txt"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_9"
-          - "--fail-fast"
-          - "--format=junit"
-          - "--out=reports"
-          - "--format=pretty"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -555,17 +477,11 @@ steps:
           - "--exclude=features/full_tests/[^a-k].*.feature"
           - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22"
-          - "--farm=bb"
-          - "--device=ANDROID_10"
           - "--no-tunnel"
           - "--aws-public-ip"
-          - "--fail-fast"
-          - "--format=junit"
-          - "--out=reports"
-          - "--format=pretty"
+          - "--farm=bb"
+          - "--device=ANDROID_10"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -596,17 +512,11 @@ steps:
           - "--exclude=features/full_tests/[^l-z].*.feature"
           - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22"
-          - "--farm=bb"
-          - "--device=ANDROID_10"
           - "--no-tunnel"
           - "--aws-public-ip"
-          - "--fail-fast"
-          - "--format=junit"
-          - "--out=reports"
-          - "--format=pretty"
+          - "--farm=bb"
+          - "--device=ANDROID_10"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -617,7 +527,7 @@ steps:
     concurrency_group: 'bitbar'
     concurrency_method: eager
 
-  - label: ':browserstack: Android 10 NDK r21 end-to-end tests - batch ANR'
+  - label: ':browserstack: Android 10 NDK r21 end-to-end tests - ANRs'
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
@@ -635,15 +545,9 @@ steps:
         command:
           - "features/full_tests/anr.feature"
           - "--app=@build/bs-fixture-r21-url.txt"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_10"
-          - "--fail-fast"
-          - "--format=junit"
-          - "--out=reports"
-          - "--format=pretty"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -678,17 +582,11 @@ steps:
           - "--exclude=features/full_tests/[^a-k].*.feature"
           - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22"
-          - "--farm=bb"
-          - "--device=ANDROID_11"
           - "--no-tunnel"
           - "--aws-public-ip"
-          - "--fail-fast"
-          - "--format=junit"
-          - "--out=reports"
-          - "--format=pretty"
+          - "--farm=bb"
+          - "--device=ANDROID_11"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -719,17 +617,11 @@ steps:
           - "--exclude=features/full_tests/[^l-z].*.feature"
           - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22"
-          - "--farm=bb"
-          - "--device=ANDROID_11"
           - "--no-tunnel"
           - "--aws-public-ip"
-          - "--fail-fast"
-          - "--format=junit"
-          - "--out=reports"
-          - "--format=pretty"
+          - "--farm=bb"
+          - "--device=ANDROID_11"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -740,7 +632,7 @@ steps:
     concurrency_group: 'bitbar'
     concurrency_method: eager
 
-  - label: ':browserstack: Android 11 NDK r21 end-to-end tests - batch ANR'
+  - label: ':browserstack: Android 11 NDK r21 end-to-end tests - ANRs'
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
@@ -758,15 +650,9 @@ steps:
         command:
           - "features/full_tests/anr.feature"
           - "--app=@build/bs-fixture-r21-url.txt"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_11"
-          - "--fail-fast"
-          - "--format=junit"
-          - "--out=reports"
-          - "--format=pretty"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -797,17 +683,11 @@ steps:
           - "--exclude=features/full_tests/[^a-k].*.feature"
           - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22"
-          - "--farm=bb"
-          - "--device=ANDROID_13"
           - "--no-tunnel"
           - "--aws-public-ip"
-          - "--fail-fast"
-          - "--format=junit"
-          - "--out=reports"
-          - "--format=pretty"
+          - "--farm=bb"
+          - "--device=ANDROID_13"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -838,17 +718,11 @@ steps:
           - "--exclude=features/full_tests/[^l-z].*.feature"
           - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22"
-          - "--farm=bb"
-          - "--device=ANDROID_13"
           - "--no-tunnel"
           - "--aws-public-ip"
-          - "--fail-fast"
-          - "--format=junit"
-          - "--out=reports"
-          - "--format=pretty"
+          - "--farm=bb"
+          - "--device=ANDROID_13"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -859,7 +733,7 @@ steps:
     concurrency_group: 'bitbar'
     concurrency_method: eager
 
-  - label: ':browserstack: Android 13 NDK r21 end-to-end tests - batch ANR'
+  - label: ':browserstack: Android 13 NDK r21 end-to-end tests - ANRs'
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
@@ -877,15 +751,9 @@ steps:
         command:
           - "features/full_tests/anr.feature"
           - "--app=@build/bs-fixture-r21-url.txt"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_13"
-          - "--fail-fast"
-          - "--format=junit"
-          - "--out=reports"
-          - "--format=pretty"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -916,17 +784,11 @@ steps:
           - "--exclude=features/full_tests/[^a-k].*.feature"
           - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22"
-          - "--farm=bb"
-          - "--device=ANDROID_14"
           - "--no-tunnel"
           - "--aws-public-ip"
-          - "--fail-fast"
-          - "--format=junit"
-          - "--out=reports"
-          - "--format=pretty"
+          - "--farm=bb"
+          - "--device=ANDROID_14"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -957,17 +819,11 @@ steps:
           - "--exclude=features/full_tests/[^l-z].*.feature"
           - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22"
-          - "--farm=bb"
-          - "--device=ANDROID_14"
           - "--no-tunnel"
           - "--aws-public-ip"
-          - "--fail-fast"
-          - "--format=junit"
-          - "--out=reports"
-          - "--format=pretty"
+          - "--farm=bb"
+          - "--device=ANDROID_14"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -978,7 +834,7 @@ steps:
     concurrency_group: 'bitbar'
     concurrency_method: eager
 
-  - label: ':browserstack: Android 14 NDK r21 end-to-end tests - batch ANR'
+  - label: ':browserstack: Android 14 NDK r21 end-to-end tests - ANRs'
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
@@ -996,15 +852,9 @@ steps:
         command:
           - "features/full_tests/anr.feature"
           - "--app=@build/bs-fixture-r21-url.txt"
-          - "--app-activity=com.bugsnag.android.mazerunner.MainActivity"
-          - "--app-package=com.bugsnag.android.mazerunner"
           - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_14"
-          - "--fail-fast"
-          - "--format=junit"
-          - "--out=reports"
-          - "--format=pretty"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
