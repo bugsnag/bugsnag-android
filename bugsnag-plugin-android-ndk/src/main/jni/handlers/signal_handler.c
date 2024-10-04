@@ -188,7 +188,7 @@ void bsg_handle_signal(int signum, siginfo_t *info,
 
   if (bsg_global_env->send_threads != SEND_THREADS_NEVER) {
     bsg_global_env->next_event.thread_count = bsg_capture_thread_states(
-        bsg_global_env->next_event.threads, BUGSNAG_THREADS_MAX);
+        gettid(), bsg_global_env->next_event.threads, BUGSNAG_THREADS_MAX);
   } else {
     bsg_global_env->next_event.thread_count = 0;
   }

@@ -191,6 +191,7 @@ typedef struct {
 
 typedef struct {
   pid_t id;
+  bool is_reporting_thread;
   char name[16];
   char state[13];
 } bsg_thread;

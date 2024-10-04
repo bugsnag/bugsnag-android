@@ -4,6 +4,7 @@
 #include <pthread.h>
 #include <stdexcept>
 #include <string>
+#include <unistd.h>
 
 #include "../utils/crash_info.h"
 #include "../utils/serializer.h"
@@ -58,7 +59,7 @@ void bsg_handle_cpp_terminate() {
 
   if (bsg_global_env->send_threads != SEND_THREADS_NEVER) {
     bsg_global_env->next_event.thread_count = bsg_capture_thread_states(
-        bsg_global_env->next_event.threads, BUGSNAG_THREADS_MAX);
+        gettid(), bsg_global_env->next_event.threads, BUGSNAG_THREADS_MAX);
   } else {
     bsg_global_env->next_event.thread_count = 0;
   }
