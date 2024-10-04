@@ -1,6 +1,7 @@
 package com.bugsnag.android.internal.dag
 
 import android.os.Looper
+import androidx.annotation.VisibleForTesting
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -128,7 +129,8 @@ abstract class RunnableProvider<E> : Provider<E>, Runnable {
         }
     }
 
-    private companion object {
+    @VisibleForTesting
+    internal companion object {
         /**
          * The `Provider` task state before the provider has started actually running. This state
          * indicates that the task has been constructed, has typically been scheduled but has
@@ -153,6 +155,27 @@ abstract class RunnableProvider<E> : Provider<E>, Runnable {
          */
         private const val TASK_STATE_FAILED = 999
 
-        private val mainThread = Looper.getMainLooper().thread
+        /**
+         * We cache the main thread to avoid any locks within [Looper.getMainLooper]. This is
+         * settable for unit tests, so that there doesn't have to be a valid Looper when they run.
+         *
+         * Actually access is done via the [mainThread] property.
+         */
+        @VisibleForTesting
+        @Suppress("ObjectPropertyNaming") // backing property from 'mainThread'
+        internal var _mainThread: Thread? = null
+            get() {
+                if (field == null) {
+                    field = Looper.getMainLooper().thread
+                }
+                return field
+            }
+
+        internal val mainThread: Thread get() = _mainThread!!
     }
+}
+
+data class ValueProvider<T>(private val value: T) : Provider<T> {
+    override fun getOrNull(): T? = get()
+    override fun get(): T = value
 }
