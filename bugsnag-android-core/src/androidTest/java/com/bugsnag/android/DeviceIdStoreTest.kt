@@ -3,6 +3,7 @@ package com.bugsnag.android
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.bugsnag.android.internal.ImmutableConfig
+import com.bugsnag.android.internal.dag.ValueProvider
 import junit.framework.TestCase.assertNull
 import org.junit.Assert.assertEquals
 import org.junit.Before

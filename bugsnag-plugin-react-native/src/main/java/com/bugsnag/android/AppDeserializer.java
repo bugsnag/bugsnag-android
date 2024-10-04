@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import com.bugsnag.android.internal.dag.ValueProvider;
+
 import java.util.Map;
 
 class AppDeserializer implements MapDeserializer<AppWithState> {
@@ -12,7 +14,7 @@ class AppDeserializer implements MapDeserializer<AppWithState> {
                 MapUtils.<String>getOrNull(map, "releaseStage"),
                 MapUtils.<String>getOrNull(map, "version"),
                 MapUtils.<String>getOrNull(map, "codeBundleId"),
-                MapUtils.<String>getOrNull(map, "buildUuid"),
+                new ValueProvider<>(MapUtils.getOrNull(map, "buildUuid")),
                 MapUtils.<String>getOrNull(map, "type"),
                 MapUtils.<Number>getOrNull(map, "versionCode"),
                 MapUtils.<Number>getOrNull(map, "duration"),

@@ -6,6 +6,7 @@ import com.bugsnag.android.BugsnagTestUtils.generateAppWithState
 import com.bugsnag.android.BugsnagTestUtils.generateDeviceWithState
 import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
 import com.bugsnag.android.internal.BackgroundTaskService
+import com.bugsnag.android.internal.dag.ValueProvider
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test
