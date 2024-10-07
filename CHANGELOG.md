@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+* Native crashes will now identify the crashing/error reporting thread
+  [#2087](https://github.com/bugsnag/bugsnag-android/pull/2087)
+
 ## 6.8.0 (2024-09-30)
 
 ### Enhancements
