@@ -55,7 +55,10 @@ internal class EventStore(
         val future = try {
             bgTaskService.submitTask(
                 TaskType.ERROR_REQUEST,
-                Runnable { flushLaunchCrashReport() }
+                Runnable {
+                    flushLaunchCrashReport()
+                    notifyEventQueueEmpty()
+                }
             )
         } catch (exc: RejectedExecutionException) {
             logger.d("Failed to flush launch crash reports, continuing.", exc)
@@ -136,10 +139,10 @@ internal class EventStore(
                 Runnable {
                     val storedFiles = findStoredFiles()
                     if (storedFiles.isEmpty()) {
-                        checkEventQueueEmpty()
                         logger.d("No regular events to flush to Bugsnag.")
                     }
                     flushReports(storedFiles)
+                    notifyEventQueueEmpty()
                 }
             )
         } catch (exception: RejectedExecutionException) {
@@ -177,19 +180,14 @@ internal class EventStore(
         when (delivery.deliver(payload, deliveryParams)) {
             DeliveryStatus.DELIVERED -> {
                 deleteStoredFiles(setOf(eventFile))
-                checkEventQueueEmpty()
                 logger.i("Deleting sent error file $eventFile.name")
             }
 
-            DeliveryStatus.UNDELIVERED -> {
-                undeliveredEventPayload(eventFile)
-                checkEventQueueEmpty()
-            }
+            DeliveryStatus.UNDELIVERED -> undeliveredEventPayload(eventFile)
 
             DeliveryStatus.FAILURE -> {
                 val exc: Exception = RuntimeException("Failed to deliver event payload")
                 handleEventFlushFailure(exc, eventFile)
-                checkEventQueueEmpty()
             }
         }
     }
@@ -269,8 +267,8 @@ internal class EventStore(
         return Date(findTimestampInFilename(file))
     }
 
-    private fun checkEventQueueEmpty() {
-        if (!isEmptyEventCallbackCalled) {
+    private fun notifyEventQueueEmpty() {
+        if (isEmpty() && !isEmptyEventCallbackCalled) {
             onEventStoreEmptyCallback()
             isEmptyEventCallbackCalled = true
         }
