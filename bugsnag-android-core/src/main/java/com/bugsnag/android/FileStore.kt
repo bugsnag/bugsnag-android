@@ -8,7 +8,6 @@ import java.io.FileOutputStream
 import java.io.OutputStreamWriter
 import java.io.Writer
 import java.util.Collections
-import java.util.Comparator
 import java.util.concurrent.ConcurrentSkipListSet
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
@@ -53,6 +52,11 @@ internal abstract class FileStore(
         }
         return true
     }
+
+    /**
+     * Test whether this `FileStore` is definitely empty
+     */
+    fun isEmpty(): Boolean = queuedFiles.isEmpty() && storageDir.list().isNullOrEmpty()
 
     fun enqueueContentForDelivery(content: String?, filename: String) {
         if (!isStorageDirValid(storageDir)) {

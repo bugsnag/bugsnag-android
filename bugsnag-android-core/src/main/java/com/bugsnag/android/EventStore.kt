@@ -55,7 +55,10 @@ internal class EventStore(
         val future = try {
             bgTaskService.submitTask(
                 TaskType.ERROR_REQUEST,
-                Runnable { flushLaunchCrashReport() }
+                Runnable {
+                    flushLaunchCrashReport()
+                    notifyEventQueueEmpty()
+                }
             )
         } catch (exc: RejectedExecutionException) {
             logger.d("Failed to flush launch crash reports, continuing.", exc)
@@ -135,10 +138,11 @@ internal class EventStore(
                 TaskType.ERROR_REQUEST,
                 Runnable {
                     val storedFiles = findStoredFiles()
-                    notifyEventQueueEmpty().also {
+                    if (storedFiles.isEmpty()) {
                         logger.d("No regular events to flush to Bugsnag.")
                     }
                     flushReports(storedFiles)
+                    notifyEventQueueEmpty()
                 }
             )
         } catch (exception: RejectedExecutionException) {
@@ -179,16 +183,13 @@ internal class EventStore(
                 logger.i("Deleting sent error file $eventFile.name")
             }
 
-            DeliveryStatus.UNDELIVERED -> {
-                undeliveredEventPayload(eventFile)
-            }
+            DeliveryStatus.UNDELIVERED -> undeliveredEventPayload(eventFile)
 
             DeliveryStatus.FAILURE -> {
                 val exc: Exception = RuntimeException("Failed to deliver event payload")
                 handleEventFlushFailure(exc, eventFile)
             }
         }
-        notifyEventQueueEmpty()
     }
 
     private fun undeliveredEventPayload(eventFile: File) {
@@ -267,7 +268,7 @@ internal class EventStore(
     }
 
     private fun notifyEventQueueEmpty() {
-        if (!isEmptyEventCallbackCalled && findStoredFiles().isEmpty()) {
+        if (isEmpty() && !isEmptyEventCallbackCalled) {
             onEventStoreEmptyCallback()
             isEmptyEventCallbackCalled = true
         }
