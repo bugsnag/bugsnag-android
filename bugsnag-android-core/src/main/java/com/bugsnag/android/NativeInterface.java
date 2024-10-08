@@ -51,6 +51,7 @@ public class NativeInterface {
      * will populate the Error and then pass the Event object to
      * {@link Client#populateAndNotifyAndroidEvent(Event, OnErrorCallback)}.
      */
+    @NonNull
     public static Event createEmptyEvent() {
         Client client = getClient();
 
