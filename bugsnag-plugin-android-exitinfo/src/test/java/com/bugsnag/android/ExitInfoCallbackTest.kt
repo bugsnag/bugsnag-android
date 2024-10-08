@@ -45,7 +45,7 @@ internal class ExitInfoCallbackTest {
 
     @Before
     fun setUp() {
-        exitInfoCallback = ExitInfoCallback(context, 100, nativeEnhancer, anrEventEnhancer)
+        exitInfoCallback = ExitInfoCallback(context, 100, nativeEnhancer, anrEventEnhancer, null)
         exitInfos = listOf(exitInfo1)
         `when`(context.getSystemService(any())).thenReturn(am)
         `when`(am.getHistoricalProcessExitReasons(any(), anyInt(), anyInt()))

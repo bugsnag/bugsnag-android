@@ -41,6 +41,9 @@ internal class EventStore(
     private val callbackState: CallbackState
     override val logger: Logger
 
+    var onEventStoreEmptyCallback: () -> Unit = {}
+    private var isEmptyEventCallbackCalled: Boolean = false
+
     /**
      * Flush startup crashes synchronously on the main thread. Startup crashes block the main thread
      * when being sent (subject to [Configuration.setSendLaunchCrashesSynchronously])
@@ -52,7 +55,10 @@ internal class EventStore(
         val future = try {
             bgTaskService.submitTask(
                 TaskType.ERROR_REQUEST,
-                Runnable { flushLaunchCrashReport() }
+                Runnable {
+                    flushLaunchCrashReport()
+                    notifyEventQueueEmpty()
+                }
             )
         } catch (exc: RejectedExecutionException) {
             logger.d("Failed to flush launch crash reports, continuing.", exc)
@@ -136,6 +142,7 @@ internal class EventStore(
                         logger.d("No regular events to flush to Bugsnag.")
                     }
                     flushReports(storedFiles)
+                    notifyEventQueueEmpty()
                 }
             )
         } catch (exception: RejectedExecutionException) {
@@ -177,6 +184,7 @@ internal class EventStore(
             }
 
             DeliveryStatus.UNDELIVERED -> undeliveredEventPayload(eventFile)
+
             DeliveryStatus.FAILURE -> {
                 val exc: Exception = RuntimeException("Failed to deliver event payload")
                 handleEventFlushFailure(exc, eventFile)
@@ -257,6 +265,13 @@ internal class EventStore(
 
     private fun getCreationDate(file: File): Date {
         return Date(findTimestampInFilename(file))
+    }
+
+    private fun notifyEventQueueEmpty() {
+        if (isEmpty() && !isEmptyEventCallbackCalled) {
+            onEventStoreEmptyCallback()
+            isEmptyEventCallbackCalled = true
+        }
     }
 
     companion object {

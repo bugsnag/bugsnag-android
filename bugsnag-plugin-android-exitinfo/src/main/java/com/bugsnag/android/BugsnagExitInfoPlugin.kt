@@ -39,7 +39,8 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
             TraceEventEnhancer(
                 client.logger,
                 client.immutableConfig.projectPackages
-            )
+            ),
+            exitInfoPluginStore
         )
 
         client.addOnSend(exitInfoCallback)
