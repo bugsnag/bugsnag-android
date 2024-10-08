@@ -75,7 +75,7 @@ class EmptyEventCallbackTest {
             eventStore.write(generateEvent())
         }
 
-        // the EventStore should not be considered empty with 10 events in it
+        // the EventStore should not be considered empty with 3 events in it
         assertFalse(eventStore.isEmpty())
 
         var eventStoreEmptyCount = 0
@@ -115,7 +115,7 @@ class EmptyEventCallbackTest {
             eventStore.write(generateEvent())
         }
 
-        // the EventStore should not be considered empty with 10 events in it
+        // the EventStore should not be considered empty with 3 events in it
         assertFalse(eventStore.isEmpty())
 
         var eventStoreEmptyCount = 0

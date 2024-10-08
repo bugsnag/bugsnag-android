@@ -31,10 +31,10 @@ internal class ExitInfoCallback(
 ) : OnSendCallback {
 
     override fun onSend(event: Event): Boolean {
-        val am = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        val allExitInfo = am.getHistoricalProcessExitReasons(context.packageName, 0, MAX_EXIT_INFO)
-        val sessionIdBytes = event.session?.id?.toByteArray() ?: return true
-        val exitInfo = findExitInfoBySessionId(allExitInfo, sessionIdBytes)
+        val am: ActivityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val allExitInfo: List<ApplicationExitInfo> = am.getHistoricalProcessExitReasons(context.packageName, 0, MAX_EXIT_INFO)
+        val sessionIdBytes: ByteArray = event.session?.id?.toByteArray() ?: return true
+        val exitInfo: ApplicationExitInfo = findExitInfoBySessionId(allExitInfo, sessionIdBytes)
             ?: findExitInfoByPid(allExitInfo) ?: return true
         exitInfoPluginStore?.addExitInfoKey(ExitInfoKey(exitInfo.pid, exitInfo.timestamp))
 
