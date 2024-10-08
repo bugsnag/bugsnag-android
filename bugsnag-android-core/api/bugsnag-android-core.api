@@ -484,6 +484,7 @@ public class com/bugsnag/android/NativeInterface {
 	public static fun addMetadata (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;)V
 	public static fun addMetadata (Ljava/lang/String;Ljava/util/Map;)V
 	public static fun clearMetadata (Ljava/lang/String;Ljava/lang/String;)V
+	public static fun createEmptyEvent ()Lcom/bugsnag/android/Event;
 	public static fun createEvent (Ljava/lang/Throwable;Lcom/bugsnag/android/Client;Lcom/bugsnag/android/SeverityReason;)Lcom/bugsnag/android/Event;
 	public static fun deliverReport (Ljava/io/File;)V
 	public static fun deliverReport ([B[B[BLjava/lang/String;Z)V
