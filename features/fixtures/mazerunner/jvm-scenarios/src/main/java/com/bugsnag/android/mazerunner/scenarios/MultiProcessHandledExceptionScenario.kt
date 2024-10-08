@@ -4,6 +4,7 @@ import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.mazerunner.BugsnagIntentParams
+import com.bugsnag.android.mazerunner.log
 
 /**
  * Sends handled exceptions to Bugsnag from two different processes
@@ -24,10 +25,16 @@ internal class MultiProcessHandledExceptionScenario(
                     eventMetadata
                 )
             ) {
-                Bugsnag.setUser("2", "background@example.com", "MultiProcessHandledExceptionScenario")
+                log("Sending event from background")
+                Bugsnag.setUser(
+                    "2",
+                    "background@example.com",
+                    "MultiProcessHandledExceptionScenario"
+                )
                 Bugsnag.notify(generateException())
             }
         } else {
+            log("Sending event from foreground")
             Bugsnag.setUser("1", "foreground@example.com", "MultiProcessHandledExceptionScenario")
             Bugsnag.notify(generateException())
         }

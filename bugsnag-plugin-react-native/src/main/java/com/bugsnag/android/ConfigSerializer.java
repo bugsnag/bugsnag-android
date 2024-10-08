@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import com.bugsnag.android.internal.ImmutableConfig;
+import com.bugsnag.android.internal.dag.Provider;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -19,7 +20,10 @@ class ConfigSerializer implements MapSerializer<ImmutableConfig> {
         map.put("projectPackages", config.getProjectPackages());
         map.put("enabledReleaseStages", config.getEnabledReleaseStages());
         map.put("releaseStage", config.getReleaseStage());
-        map.put("buildUuid", config.getBuildUuid());
+        Provider<String> buildUuid = config.getBuildUuid();
+        if (buildUuid != null) {
+            map.put("buildUuid", buildUuid.getOrNull());
+        }
         if (config.getAppVersion() != null) {
             map.put("appVersion", config.getAppVersion());
         }

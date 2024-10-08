@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import com.bugsnag.android.internal.ImmutableConfig;
+import com.bugsnag.android.internal.dag.ValueProvider;
 
 import kotlin.LazyKt;
 import kotlin.jvm.functions.Function0;
@@ -28,7 +29,7 @@ class TestData {
                 new HashSet<>(Collections.singletonList(BreadcrumbType.MANUAL)),
                 EnumSet.of(Telemetry.INTERNAL_ERRORS, Telemetry.USAGE),
                 "production",
-                "builduuid-123",
+                new ValueProvider<>("builduuid-123"),
                 "1.4.3",
                 55,
                 "android",

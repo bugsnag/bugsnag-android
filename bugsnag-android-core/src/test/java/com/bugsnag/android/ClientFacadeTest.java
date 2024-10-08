@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import com.bugsnag.android.internal.ImmutableConfig;
 import com.bugsnag.android.internal.InternalMetrics;
 import com.bugsnag.android.internal.StateObserver;
+import com.bugsnag.android.internal.dag.ValueProvider;
 
 import android.content.Context;
 
@@ -116,7 +117,7 @@ public class ClientFacadeTest {
                 metadataState,
                 contextState,
                 callbackState,
-                userState,
+                new ValueProvider<UserState>(userState),
                 featureFlagState,
                 clientObservable,
                 appContext,

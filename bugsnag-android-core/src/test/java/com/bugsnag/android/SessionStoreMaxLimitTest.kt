@@ -79,7 +79,9 @@ class SessionStoreMaxLimitTest {
 
     private fun createSessionStore(config: ImmutableConfig): SessionStore {
         return SessionStore(
-            config,
+            File(config.persistenceDirectory.value, "bugsnag"),
+            config.maxPersistedSessions,
+            config.apiKey,
             NoopLogger,
             object : Delegate {
                 override fun onErrorIOFailure(

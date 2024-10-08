@@ -4,11 +4,18 @@ import com.bugsnag.android.internal.ImmutableConfig;
 import com.bugsnag.android.internal.ImmutableConfigKt;
 
 import androidx.annotation.NonNull;
+import androidx.test.core.app.ApplicationProvider;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -25,7 +32,6 @@ final class BugsnagTestUtils {
         Configuration configuration = new Configuration("5d1ec5bd39a74caa1267142706a7fb21");
         configuration.setDelivery(generateDelivery());
         configuration.setLogger(NoopLogger.INSTANCE);
-        configuration.setProjectPackages(Collections.singleton("com.example.foo"));
         try {
             File dir = Files.createTempDirectory("test").toFile();
             configuration.setPersistenceDirectory(dir);
@@ -131,5 +137,40 @@ final class BugsnagTestUtils {
 
     static MetadataState generateMetadataState() {
         return new MetadataState();
+    }
+
+    private static String streamableToString(JsonStream.Streamable streamable) throws IOException {
+        StringWriter writer = new StringWriter();
+        JsonStream jsonStream = new JsonStream(writer);
+        streamable.toStream(jsonStream);
+        return writer.toString();
+    }
+
+    static JSONObject streamableToJson(JsonStream.Streamable streamable)
+            throws JSONException, IOException {
+        return new JSONObject(streamableToString(streamable));
+    }
+
+    static JSONArray streamableToJsonArray(JsonStream.Streamable streamable)
+            throws JSONException, IOException {
+        return new JSONArray(streamableToString(streamable));
+    }
+
+    static Client generateClient(Configuration config) {
+        config.setDelivery(generateDelivery());
+        return new Client(ApplicationProvider.getApplicationContext(), config);
+    }
+
+    static Client generateClient() {
+        return generateClient(new Configuration("5d1ec5bd39a74caa1267142706a7fb21"));
+    }
+
+    static Comparator<FeatureFlag> featureFlagComparator() {
+        return new Comparator<FeatureFlag>() {
+            @Override
+            public int compare(FeatureFlag f1, FeatureFlag f2) {
+                return f1.getName().compareTo(f2.getName());
+            }
+        };
     }
 }

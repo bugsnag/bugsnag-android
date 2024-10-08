@@ -7,6 +7,7 @@ import android.content.res.Resources
 import android.util.DisplayMetrics
 import com.bugsnag.android.BugsnagTestUtils.generateDeviceBuildInfo
 import com.bugsnag.android.internal.BackgroundTaskService
+import com.bugsnag.android.internal.dag.ValueProvider
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -28,7 +29,6 @@ internal class DeviceMetadataSerializationTest {
             val res = mock(Resources::class.java)
             val conf = mock(Configuration::class.java)
             val connectivity = mock(Connectivity::class.java)
-            val rootDetector = mock(RootDetector::class.java)
 
             val prefs = mock(SharedPreferences::class.java)
             val editor = mock(SharedPreferences.Editor::class.java)
@@ -54,11 +54,10 @@ internal class DeviceMetadataSerializationTest {
                 connectivity,
                 context,
                 res,
-                "123",
-                "456",
+                ValueProvider(DeviceIdStore.DeviceIds("123", "456")),
                 buildInfo,
                 File(""),
-                rootDetector,
+                ValueProvider(false),
                 BackgroundTaskService(),
                 NoopLogger
             )

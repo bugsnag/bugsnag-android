@@ -71,6 +71,7 @@ internal class LastRunInfoStoreTest {
      */
     @Test
     fun readValidFileContents() {
+        file.parentFile?.mkdirs()
         file.writeText("consecutiveLaunchCrashes=5\ncrashed=true\ncrashedDuringLaunch=false\n")
         val info = requireNotNull(lastRunInfoStore.load())
         assertEquals(5, info.consecutiveLaunchCrashes)
@@ -116,6 +117,7 @@ internal class LastRunInfoStoreTest {
     fun nonWritableFile() {
         file.apply {
             delete()
+            parentFile?.mkdirs()
             createNewFile()
             setWritable(false)
         }

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
 import com.bugsnag.android.internal.BackgroundTaskService
+import com.bugsnag.android.internal.dag.ValueProvider
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -16,7 +17,7 @@ import java.io.File
 import kotlin.concurrent.thread
 
 @RunWith(MockitoJUnitRunner.Silent::class)
-class DataCollectorTest {
+internal class DataCollectorTest {
 
     private lateinit var collector: DeviceDataCollector
 
@@ -35,11 +36,10 @@ class DataCollectorTest {
             Mockito.mock(Connectivity::class.java),
             Mockito.mock(Context::class.java),
             res,
-            "fakeDevice",
-            "internalFakeDevice",
+            ValueProvider(DeviceIdStore.DeviceIds("fakeDevice", "internalFakeDevice")),
             Mockito.mock(DeviceBuildInfo::class.java),
             File("/tmp/javatest"),
-            Mockito.mock(RootDetector::class.java),
+            ValueProvider(false),
             Mockito.mock(BackgroundTaskService::class.java),
             Mockito.mock(Logger::class.java)
         )
