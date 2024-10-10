@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.content.Context
 import android.os.Build
@@ -12,6 +13,7 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
 
     private val configuration = configuration.copy()
 
+    @SuppressLint("VisibleForTests")
     override fun load(client: Client) {
         if (!configuration.disableProcessStateSummaryOverride) {
             client.addOnSession(
