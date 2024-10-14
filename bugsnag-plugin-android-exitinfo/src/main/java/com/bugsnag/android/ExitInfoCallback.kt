@@ -20,10 +20,8 @@ import android.app.ApplicationExitInfo
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.annotation.VisibleForTesting
 
 @RequiresApi(Build.VERSION_CODES.R)
-@VisibleForTesting
 internal class ExitInfoCallback(
     private val context: Context,
     private val pid: Int?,

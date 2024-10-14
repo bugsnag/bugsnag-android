@@ -2,6 +2,7 @@ package com.bugsnag.android
 
 import android.annotation.SuppressLint
 import android.app.ActivityManager
+import android.app.ApplicationExitInfo
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -24,12 +25,22 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
                 }
             )
         }
-
         val exitInfoPluginStore =
             ExitInfoPluginStore(client.immutableConfig)
         val (oldPid, exitInfoKeys) = exitInfoPluginStore.load()
         exitInfoPluginStore.persist(android.os.Process.myPid(), exitInfoKeys)
+        val exitInfoCallback = createExitInfoCallback(client, oldPid, exitInfoPluginStore)
+        InternalHooks.setEventStoreEmptyCallback(client) {
+            synthesizeNewEvents(client, exitInfoPluginStore)
+        }
+        client.addOnSend(exitInfoCallback)
+    }
 
+    private fun createExitInfoCallback(
+        client: Client,
+        oldPid: Int?,
+        exitInfoPluginStore: ExitInfoPluginStore
+    ): ExitInfoCallback {
         val exitInfoCallback = ExitInfoCallback(
             client.appContext,
             oldPid,
@@ -44,8 +55,31 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
             ),
             exitInfoPluginStore
         )
+        return exitInfoCallback
+    }
 
-        client.addOnSend(exitInfoCallback)
+    private fun synthesizeNewEvents(
+        client: Client,
+        exitInfoPluginStore: ExitInfoPluginStore
+    ) {
+        val eventSynthesizer = EventSynthesizer(
+            TraceEventEnhancer(
+                client.logger,
+                client.immutableConfig.projectPackages
+            ),
+            exitInfoPluginStore
+        )
+        val context = client.appContext
+        val am: ActivityManager =
+            context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val allExitInfo: List<ApplicationExitInfo> =
+            am.getHistoricalProcessExitReasons(context.packageName, 0, 100)
+        allExitInfo.forEach {
+            val newEvent = eventSynthesizer.createEventWithAnrExitInfo(it)
+            if (newEvent != null) {
+                InternalHooks.deliver(client, newEvent)
+            }
+        }
     }
 
     override fun unload() = Unit
