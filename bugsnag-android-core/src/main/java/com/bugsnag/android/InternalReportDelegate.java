@@ -3,11 +3,6 @@ package com.bugsnag.android;
 import static com.bugsnag.android.DeliveryHeadersKt.HEADER_INTERNAL_ERROR;
 import static com.bugsnag.android.SeverityReason.REASON_UNHANDLED_EXCEPTION;
 
-import com.bugsnag.android.internal.BackgroundTaskService;
-import com.bugsnag.android.internal.ImmutableConfig;
-import com.bugsnag.android.internal.JsonHelper;
-import com.bugsnag.android.internal.TaskType;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Build;
@@ -15,6 +10,10 @@ import android.os.storage.StorageManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.bugsnag.android.internal.BackgroundTaskService;
+import com.bugsnag.android.internal.ImmutableConfig;
+import com.bugsnag.android.internal.TaskType;
 
 import java.io.File;
 import java.io.IOException;
@@ -126,7 +125,8 @@ class InternalReportDelegate implements EventStore.Delegate {
                             DefaultDelivery defaultDelivery = (DefaultDelivery) delivery;
                             defaultDelivery.deliver(
                                     params.getEndpoint(),
-                                    JsonHelper.INSTANCE.serialize(payload),
+                                    payload.toByteArray(),
+                                    payload.getIntegrityToken(),
                                     headers
                             );
                         }
