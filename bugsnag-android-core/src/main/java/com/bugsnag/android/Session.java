@@ -1,9 +1,10 @@
 package com.bugsnag.android;
 
-import com.bugsnag.android.internal.DateUtils;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.bugsnag.android.internal.DateUtils;
+import com.bugsnag.android.internal.JsonHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -256,6 +257,10 @@ public final class Session implements JsonStream.Streamable, UserAware {
             writer.endArray();
             writer.endObject();
         }
+    }
+
+    public byte[] toByteArray() throws IOException {
+        return JsonHelper.INSTANCE.serialize(this);
     }
 
     private void serializePayload(@NonNull JsonStream writer) throws IOException {

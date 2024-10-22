@@ -60,24 +60,6 @@ internal fun sessionApiHeaders(apiKey: String): Map<String, String?> = mapOf(
     HEADER_BUGSNAG_SENT_AT to DateUtils.toIso8601(Date())
 )
 
-internal fun computeSha1Digest(payload: ByteArray): String? {
-    runCatching {
-        val shaDigest = MessageDigest.getInstance("SHA-1")
-        val builder = StringBuilder("sha1 ")
-
-        // Pipe the object through a no-op output stream
-        DigestOutputStream(NullOutputStream(), shaDigest).use { stream ->
-            stream.buffered().use { writer ->
-                writer.write(payload)
-            }
-            shaDigest.digest().forEach { byte ->
-                builder.append(String.format("%02x", byte))
-            }
-        }
-        return builder.toString()
-    }.getOrElse { return null }
-}
-
 internal class NullOutputStream : OutputStream() {
     override fun write(b: Int) = Unit
 }
