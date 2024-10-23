@@ -18,15 +18,20 @@ class OkHttpDelivery @JvmOverloads constructor(
 ) : Delivery {
     override fun deliver(payload: Session, deliveryParams: DeliveryParams): DeliveryStatus {
         val requestBody = payload.toByteArray().toRequestBody()
+        val integrityHeader = payload.integrityToken
 
-        val call = client.newCall(
-            Request.Builder()
-                .url(deliveryParams.endpoint)
-                .headers(deliveryParams.toHeaders())
-                .post(requestBody)
-                .build()
-        )
+        val requestBuilder = Request.Builder()
+            .url(deliveryParams.endpoint)
 
+        if (integrityHeader != null) {
+            requestBuilder.header("Bugsnag-Integrity", integrityHeader)
+        }
+
+        requestBuilder
+            .headers(deliveryParams.toHeaders())
+            .post(requestBody)
+
+        val call = client.newCall(requestBuilder.build())
         val response = call.execute()
         return DeliveryStatus.forHttpResponseCode(response.code)
     }

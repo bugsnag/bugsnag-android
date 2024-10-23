@@ -15,7 +15,7 @@ internal class DefaultDelivery(
         val status = deliver(
             deliveryParams.endpoint,
             JsonHelper.serialize(payload),
-            null,
+            payload.integrityToken,
             deliveryParams.headers
         )
         logger.i("Session API request finished with status $status")
