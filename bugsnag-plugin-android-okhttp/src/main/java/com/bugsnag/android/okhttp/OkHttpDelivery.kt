@@ -12,7 +12,7 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
 
-class OkHttpDelivery(
+class OkHttpDelivery @JvmOverloads constructor(
     private val client: OkHttpClient = OkHttpClient.Builder().build(),
     private val logger: Logger? = null,
 ) : Delivery {
