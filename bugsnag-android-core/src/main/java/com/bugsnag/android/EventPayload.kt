@@ -29,7 +29,7 @@ class EventPayload @JvmOverloads internal constructor(
     internal var eventFile: File? = eventFile
         private set
 
-    private var cachedPayloadBytes: ByteArray? = null
+    private var cachedBytes: ByteArray? = null
 
     private val logger: Logger get() = config.logger
 
@@ -40,12 +40,13 @@ class EventPayload @JvmOverloads internal constructor(
     internal fun getErrorTypes(): Set<ErrorType> {
         val event = this.event
 
-        return event?.impl?.getErrorTypesFromStackframes()
-            ?: (eventFile?.let { EventFilenameInfo.fromFile(it, config).errorTypes }
-                ?: emptySet())
+        return event?.impl?.getErrorTypesFromStackframes() ?: (
+            eventFile?.let { EventFilenameInfo.fromFile(it, config).errorTypes }
+                ?: emptySet()
+            )
     }
 
-    internal fun decodedEvent(): Event {
+    private fun decodedEvent(): Event {
         val localEvent = event
         if (localEvent != null) {
             return localEvent
@@ -61,14 +62,18 @@ class EventPayload @JvmOverloads internal constructor(
     }
 
     /**
-     * Returns a new EventPayload that will typically encode to less than the specified number of
-     * bytes. If this `EventPayload` already encodes to fewer bytes it is returned unchanged.
+     * If required trim this `EventPayload` so that its [encoded data](toByteArray) will usually be
+     * less-than or equal to [maxSizeBytes]. This function may make no changes to the payload, and
+     * may also not achieve the requested [maxSizeBytes]. The default use of the function is
+     * configured to [DEFAULT_MAX_PAYLOAD_SIZE].
+     *
+     * @return `this` for call chaining
      */
     @JvmOverloads
-    fun trimToSize(maxSizeBytes: Int = DEFAULT_MAX_PAYLOAD_SIZE) {
+    fun trimToSize(maxSizeBytes: Int = DEFAULT_MAX_PAYLOAD_SIZE): EventPayload {
         var json = toByteArray()
         if (json.size <= maxSizeBytes) {
-            return
+            return this
         }
 
         val event = decodedEvent()
@@ -77,12 +82,10 @@ class EventPayload @JvmOverloads internal constructor(
             itemsTrimmed,
             dataTrimmed
         )
-        cachedPayloadBytes = null
 
-        json = toByteArray()
+        json = rebuildCachedBytes()
         if (json.size <= maxSizeBytes) {
-            cachedPayloadBytes = json
-            return
+            return this
         }
 
         val breadcrumbAndBytesRemovedCounts =
@@ -91,7 +94,8 @@ class EventPayload @JvmOverloads internal constructor(
             breadcrumbAndBytesRemovedCounts.itemsTrimmed,
             breadcrumbAndBytesRemovedCounts.dataTrimmed
         )
-        cachedPayloadBytes = null
+
+        return this
     }
 
     @Throws(IOException::class)
@@ -112,14 +116,23 @@ class EventPayload @JvmOverloads internal constructor(
         writer.endObject()
     }
 
+    /**
+     * Transform this `EventPayload` to a byte array suitable for delivery to a BugSnag event
+     * endpoint (typically configured using [EndpointConfiguration.notify]).
+     */
     @Throws(IOException::class)
     fun toByteArray(): ByteArray {
-        var bytes = cachedPayloadBytes
-        if (bytes == null) {
-            bytes = JsonHelper.serialize(this)
-            cachedPayloadBytes = bytes
+        var payload = cachedBytes
+        if (payload == null) {
+            payload = JsonHelper.serialize(this)
+            cachedBytes = payload
         }
-        return bytes
+        return payload
+    }
+
+    private fun rebuildCachedBytes(): ByteArray {
+        cachedBytes = null
+        return toByteArray()
     }
 
     /**
@@ -146,6 +159,10 @@ class EventPayload @JvmOverloads internal constructor(
         }
 
     companion object {
+        /**
+         * The default maximum payload size for [trimToSize], payloads larger than this will
+         * typically be rejected by BugSnag.
+         */
         // 1MB with some fiddle room in case of encoding overhead
         const val DEFAULT_MAX_PAYLOAD_SIZE = 999700
     }

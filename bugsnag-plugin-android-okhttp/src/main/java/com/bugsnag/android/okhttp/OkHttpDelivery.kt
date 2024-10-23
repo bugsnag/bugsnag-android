@@ -33,7 +33,7 @@ class OkHttpDelivery(
 
     override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
         try {
-            val requestBody = payload.toByteArray().toRequestBody()
+            val requestBody = payload.trimToSize().toByteArray().toRequestBody()
             val integrityHeader = payload.integrityToken
 
             val requestBuilder = Request.Builder()
