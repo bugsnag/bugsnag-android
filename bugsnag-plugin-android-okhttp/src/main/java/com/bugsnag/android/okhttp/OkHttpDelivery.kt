@@ -12,6 +12,8 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
 
+private const val BUGSNAG_INTEGRITY_HEADER = "Bugsnag-Integrity"
+
 class OkHttpDelivery @JvmOverloads constructor(
     private val client: OkHttpClient = OkHttpClient.Builder().build(),
     private val logger: Logger? = null,
@@ -22,14 +24,12 @@ class OkHttpDelivery @JvmOverloads constructor(
 
         val requestBuilder = Request.Builder()
             .url(deliveryParams.endpoint)
-
-        if (integrityHeader != null) {
-            requestBuilder.header("Bugsnag-Integrity", integrityHeader)
-        }
-
-        requestBuilder
             .headers(deliveryParams.toHeaders())
             .post(requestBody)
+
+        if (integrityHeader != null) {
+            requestBuilder.header(BUGSNAG_INTEGRITY_HEADER, integrityHeader)
+        }
 
         val call = client.newCall(requestBuilder.build())
         val response = call.execute()
@@ -43,14 +43,12 @@ class OkHttpDelivery @JvmOverloads constructor(
 
             val requestBuilder = Request.Builder()
                 .url(deliveryParams.endpoint)
-
-            if (integrityHeader != null) {
-                requestBuilder.header("Bugsnag-Integrity", integrityHeader)
-            }
-
-            requestBuilder
                 .headers(deliveryParams.toHeaders())
                 .post(requestBody)
+
+            if (integrityHeader != null) {
+                requestBuilder.header(BUGSNAG_INTEGRITY_HEADER, integrityHeader)
+            }
 
             val call = client.newCall(requestBuilder.build())
             val response = call.execute()

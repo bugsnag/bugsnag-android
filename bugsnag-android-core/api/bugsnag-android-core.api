@@ -237,12 +237,8 @@ public class com/bugsnag/android/Configuration : com/bugsnag/android/CallbackAwa
 }
 
 public abstract interface class com/bugsnag/android/Deliverable {
-	public abstract fun getIntegrityToken ()Ljava/lang/String;
+	public fun getIntegrityToken ()Ljava/lang/String;
 	public abstract fun toByteArray ()[B
-}
-
-public final class com/bugsnag/android/Deliverable$DefaultImpls {
-	public static fun getIntegrityToken (Lcom/bugsnag/android/Deliverable;)Ljava/lang/String;
 }
 
 public abstract interface class com/bugsnag/android/Delivery {
@@ -415,7 +411,7 @@ public final class com/bugsnag/android/EventPayload : com/bugsnag/android/Delive
 	public fun <init> (Ljava/lang/String;Lcom/bugsnag/android/Event;Lcom/bugsnag/android/Notifier;Lcom/bugsnag/android/internal/ImmutableConfig;)V
 	public fun <init> (Ljava/lang/String;Lcom/bugsnag/android/Notifier;Lcom/bugsnag/android/internal/ImmutableConfig;)V
 	public final fun getApiKey ()Ljava/lang/String;
-	public fun getIntegrityToken ()Ljava/lang/String;
+	public final fun getEvent ()Lcom/bugsnag/android/Event;
 	public final fun setApiKey (Ljava/lang/String;)V
 	public fun toByteArray ()[B
 	public fun toStream (Lcom/bugsnag/android/JsonStream;)V
@@ -481,25 +477,14 @@ public final class com/bugsnag/android/LastRunInfo {
 }
 
 public abstract interface class com/bugsnag/android/Logger {
-	public abstract fun d (Ljava/lang/String;)V
-	public abstract fun d (Ljava/lang/String;Ljava/lang/Throwable;)V
-	public abstract fun e (Ljava/lang/String;)V
-	public abstract fun e (Ljava/lang/String;Ljava/lang/Throwable;)V
-	public abstract fun i (Ljava/lang/String;)V
-	public abstract fun i (Ljava/lang/String;Ljava/lang/Throwable;)V
-	public abstract fun w (Ljava/lang/String;)V
-	public abstract fun w (Ljava/lang/String;Ljava/lang/Throwable;)V
-}
-
-public final class com/bugsnag/android/Logger$DefaultImpls {
-	public static fun d (Lcom/bugsnag/android/Logger;Ljava/lang/String;)V
-	public static fun d (Lcom/bugsnag/android/Logger;Ljava/lang/String;Ljava/lang/Throwable;)V
-	public static fun e (Lcom/bugsnag/android/Logger;Ljava/lang/String;)V
-	public static fun e (Lcom/bugsnag/android/Logger;Ljava/lang/String;Ljava/lang/Throwable;)V
-	public static fun i (Lcom/bugsnag/android/Logger;Ljava/lang/String;)V
-	public static fun i (Lcom/bugsnag/android/Logger;Ljava/lang/String;Ljava/lang/Throwable;)V
-	public static fun w (Lcom/bugsnag/android/Logger;Ljava/lang/String;)V
-	public static fun w (Lcom/bugsnag/android/Logger;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public fun d (Ljava/lang/String;)V
+	public fun d (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public fun e (Ljava/lang/String;)V
+	public fun e (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public fun i (Ljava/lang/String;)V
+	public fun i (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public fun w (Ljava/lang/String;)V
+	public fun w (Ljava/lang/String;Ljava/lang/Throwable;)V
 }
 
 public class com/bugsnag/android/NativeInterface {
@@ -613,7 +598,6 @@ public final class com/bugsnag/android/Session : com/bugsnag/android/Deliverable
 	public fun getApp ()Lcom/bugsnag/android/App;
 	public fun getDevice ()Lcom/bugsnag/android/Device;
 	public fun getId ()Ljava/lang/String;
-	public fun getIntegrityToken ()Ljava/lang/String;
 	public fun getStartedAt ()Ljava/util/Date;
 	public fun getUser ()Lcom/bugsnag/android/User;
 	public fun setApiKey (Ljava/lang/String;)V

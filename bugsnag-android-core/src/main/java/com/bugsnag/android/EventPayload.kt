@@ -20,9 +20,8 @@ class EventPayload @JvmOverloads internal constructor(
     private val config: ImmutableConfig
 ) : JsonStream.Streamable, Deliverable {
 
-    @VisibleForTesting
-    internal var event: Event? = event
-        private set
+    var event: Event? = event
+        internal set
 
     internal var eventFile: File? = eventFile
         private set
