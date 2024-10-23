@@ -92,6 +92,7 @@ class EventPayload @JvmOverloads internal constructor(
             breadcrumbAndBytesRemovedCounts.dataTrimmed
         )
 
+        rebuildPayloadCache()
         return this
     }
 
