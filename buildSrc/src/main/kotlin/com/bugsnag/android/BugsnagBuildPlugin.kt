@@ -189,7 +189,8 @@ class BugsnagBuildPlugin : Plugin<Project> {
                 freeCompilerArgs += listOf(
                     "-Xno-call-assertions",
                     "-Xno-receiver-assertions",
-                    "-Xno-param-assertions"
+                    "-Xno-param-assertions",
+                    "-Xjvm-default=all"
                 )
             }
         }

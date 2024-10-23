@@ -8,6 +8,9 @@ import java.security.MessageDigest
  * Denotes objects that are expected to be delivered over a network.
  */
 interface Deliverable {
+    /**
+     * Return the byte representation of this `Deliverable`.
+     */
     @Throws(IOException::class)
     fun toByteArray(): ByteArray
 
