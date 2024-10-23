@@ -56,7 +56,7 @@ public class JavaHooks {
 
     @NonNull
     public static Delivery createDefaultDelivery() {
-        return new DefaultDelivery(null, "test-api-key", 10000, NoopLogger.INSTANCE);
+        return new DefaultDelivery(null, NoopLogger.INSTANCE);
     }
 
     /**
