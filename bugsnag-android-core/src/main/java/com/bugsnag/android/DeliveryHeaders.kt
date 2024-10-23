@@ -2,8 +2,6 @@ package com.bugsnag.android
 
 import com.bugsnag.android.internal.DateUtils
 import java.io.OutputStream
-import java.security.DigestOutputStream
-import java.security.MessageDigest
 import java.util.Date
 
 private const val HEADER_API_PAYLOAD_VERSION = "Bugsnag-Payload-Version"

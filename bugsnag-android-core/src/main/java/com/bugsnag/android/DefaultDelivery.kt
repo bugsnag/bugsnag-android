@@ -23,7 +23,7 @@ internal class DefaultDelivery(
     }
 
     override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
-        val json = payload.toByteArray()
+        val json = payload.trimToSize().toByteArray()
         val status = deliver(deliveryParams.endpoint, json, payload.integrityToken, deliveryParams.headers)
         logger.i("Error API request finished with status $status")
         return status

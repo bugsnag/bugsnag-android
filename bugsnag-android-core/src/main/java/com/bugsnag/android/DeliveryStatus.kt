@@ -36,7 +36,7 @@ enum class DeliveryStatus {
 
         private fun isUnrecoverableStatusCode(responseCode: Int) =
             responseCode in HTTP_BAD_REQUEST..499 && // 400-499 are considered unrecoverable
-                    responseCode != HTTP_CLIENT_TIMEOUT && // except for 408
-                    responseCode != 429 // and 429
+                responseCode != HTTP_CLIENT_TIMEOUT && // except for 408
+                responseCode != 429 // and 429
     }
 }
