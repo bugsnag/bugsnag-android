@@ -25,13 +25,36 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
                 }
             )
         }
+
+        val tombstoneEventEnhancer = TombstoneEventEnhancer(
+            client.logger,
+            configuration.listOpenFds,
+            configuration.includeLogcat
+        )
+        val traceEventEnhancer = TraceEventEnhancer(
+            client.logger,
+            client.immutableConfig.projectPackages
+        )
+
         val exitInfoPluginStore =
             ExitInfoPluginStore(client.immutableConfig)
         val (oldPid, exitInfoKeys) = exitInfoPluginStore.load()
         exitInfoPluginStore.persist(android.os.Process.myPid(), exitInfoKeys)
-        val exitInfoCallback = createExitInfoCallback(client, oldPid, exitInfoPluginStore)
+
+        val exitInfoCallback = createExitInfoCallback(
+            client,
+            oldPid,
+            exitInfoPluginStore,
+            tombstoneEventEnhancer,
+            traceEventEnhancer
+        )
         InternalHooks.setEventStoreEmptyCallback(client) {
-            synthesizeNewEvents(client, exitInfoPluginStore)
+            synthesizeNewEvents(
+                client,
+                exitInfoPluginStore,
+                tombstoneEventEnhancer,
+                traceEventEnhancer
+            )
         }
         client.addOnSend(exitInfoCallback)
     }
@@ -39,43 +62,34 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
     private fun createExitInfoCallback(
         client: Client,
         oldPid: Int?,
-        exitInfoPluginStore: ExitInfoPluginStore
-    ): ExitInfoCallback {
-        val exitInfoCallback = ExitInfoCallback(
-            client.appContext,
-            oldPid,
-            TombstoneEventEnhancer(
-                client.logger,
-                configuration.listOpenFds,
-                configuration.includeLogcat
-            ),
-            TraceEventEnhancer(
-                client.logger,
-                client.immutableConfig.projectPackages
-            ),
-            exitInfoPluginStore
-        )
-        return exitInfoCallback
-    }
+        exitInfoPluginStore: ExitInfoPluginStore,
+        tombstoneEventEnhancer: TombstoneEventEnhancer,
+        traceEventEnhancer: TraceEventEnhancer
+    ): ExitInfoCallback = ExitInfoCallback(
+        client.appContext,
+        oldPid,
+        tombstoneEventEnhancer,
+        traceEventEnhancer,
+        exitInfoPluginStore
+    )
 
     private fun synthesizeNewEvents(
         client: Client,
-        exitInfoPluginStore: ExitInfoPluginStore
+        exitInfoPluginStore: ExitInfoPluginStore,
+        tombstoneEventEnhancer: TombstoneEventEnhancer,
+        traceEventEnhancer: TraceEventEnhancer
     ) {
         val eventSynthesizer = EventSynthesizer(
-            TraceEventEnhancer(
-                client.logger,
-                client.immutableConfig.projectPackages
-            ),
+            traceEventEnhancer,
+            tombstoneEventEnhancer,
             exitInfoPluginStore
         )
         val context = client.appContext
-        val am: ActivityManager =
-            context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val am: ActivityManager = context.safeGetActivityManager() ?: return
         val allExitInfo: List<ApplicationExitInfo> =
             am.getHistoricalProcessExitReasons(context.packageName, 0, 100)
         allExitInfo.forEach {
-            val newEvent = eventSynthesizer.createEventWithAnrExitInfo(it)
+            val newEvent = eventSynthesizer.createEventWithExitInfo(it)
             if (newEvent != null) {
                 InternalHooks.deliver(client, newEvent)
             }

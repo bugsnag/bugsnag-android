@@ -62,7 +62,6 @@ Feature: Session functionality smoke tests
     And the breadcrumb named "SecondActivity#onCreate()" has "metaData.hasBundle" is false
     And the breadcrumb named "SecondActivity#onCreate()" has "metaData.hasExtras" is false
 
-  @skip
   @debug-safe
   Scenario: Manual session control works
     When I run "ManualSessionSmokeScenario" and relaunch the crashed app

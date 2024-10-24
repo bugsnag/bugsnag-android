@@ -19,24 +19,47 @@ import androidx.annotation.RequiresApi
 @RequiresApi(Build.VERSION_CODES.R)
 internal class EventSynthesizer(
     private val anrEventEnhancer: (Event, ApplicationExitInfo) -> Unit,
+    private val nativeEnhancer: (Event, ApplicationExitInfo) -> Unit,
     private val exitInfoPluginStore: ExitInfoPluginStore
 ) {
-    fun createEventWithAnrExitInfo(appExitInfo: ApplicationExitInfo): Event? {
-        val (_, exitInfoKeys) = exitInfoPluginStore.load()
+    fun createEventWithExitInfo(appExitInfo: ApplicationExitInfo): Event? {
+        val (_, knownExitInfoKeys) = exitInfoPluginStore.load()
         val exitInfoKey = ExitInfoKey(appExitInfo)
-        if (appExitInfo.reason == ApplicationExitInfo.REASON_ANR &&
-            exitInfoKey !in exitInfoKeys
-        ) {
-            exitInfoPluginStore.addExitInfoKey(exitInfoKey)
-            val newEvent = InternalHooks.createEmptyANR(exitInfoKey.timestamp)
-            addExitInfoMetadata(newEvent, appExitInfo)
-            anrEventEnhancer(newEvent, appExitInfo)
-            val thread = newEvent.threads.find { it.name == "main" } ?: newEvent.threads.first()
-            val error = newEvent.addError("ANR", appExitInfo.description)
-            error.stacktrace.addAll(thread.stacktrace)
-            return newEvent
+
+        if (knownExitInfoKeys.contains(exitInfoKey)) return null else exitInfoPluginStore.addExitInfoKey(
+            exitInfoKey
+        )
+
+        when (appExitInfo.reason) {
+            ApplicationExitInfo.REASON_ANR
+            -> {
+                val newAnrEvent = InternalHooks.createEmptyANR(exitInfoKey.timestamp)
+                addExitInfoMetadata(newAnrEvent, appExitInfo)
+                anrEventEnhancer(newAnrEvent, appExitInfo)
+                val thread =
+                    newAnrEvent.threads.find { it.name == "main" }
+                        ?: newAnrEvent.threads.firstOrNull()
+                val error = newAnrEvent.addError("ANR", appExitInfo.description)
+                thread?.let { error.stacktrace.addAll(it.stacktrace) }
+
+                return newAnrEvent
+            }
+
+            ApplicationExitInfo.REASON_CRASH_NATIVE
+            -> {
+                val newNativeEvent = InternalHooks.createEmptyCrash(exitInfoKey.timestamp)
+                addExitInfoMetadata(newNativeEvent, appExitInfo)
+                nativeEnhancer(newNativeEvent, appExitInfo)
+                val thread =
+                    newNativeEvent.threads.find { it.name == "main" }
+                        ?: newNativeEvent.threads.firstOrNull()
+                val error = newNativeEvent.addError("Native", appExitInfo.description)
+                thread?.let { error.stacktrace.addAll(it.stacktrace) }
+                return newNativeEvent
+            }
+
+            else -> return null
         }
-        return null
     }
 
     private fun addExitInfoMetadata(
@@ -53,25 +76,23 @@ internal class EventSynthesizer(
         newEvent.addMetadata("exitinfo", "rss", appExitInfo.rss)
     }
 
-    private fun getExitInfoImportance(importance: Int): String {
-        return when (importance) {
-            IMPORTANCE_FOREGROUND -> "foreground"
-            IMPORTANCE_FOREGROUND_SERVICE -> "foreground service"
-            IMPORTANCE_TOP_SLEEPING -> "top sleeping"
-            IMPORTANCE_TOP_SLEEPING_PRE_28 -> "top sleeping"
-            IMPORTANCE_VISIBLE -> "visible"
-            IMPORTANCE_PERCEPTIBLE -> "perceptible"
-            IMPORTANCE_PERCEPTIBLE_PRE_26 -> "perceptible"
-            IMPORTANCE_CANT_SAVE_STATE -> "can't save state"
-            IMPORTANCE_CANT_SAVE_STATE_PRE_26 -> "can't save state"
-            IMPORTANCE_SERVICE -> "service"
-            IMPORTANCE_CACHED -> "cached/background"
-            IMPORTANCE_GONE -> "gone"
-            IMPORTANCE_EMPTY -> "empty"
-            REASON_PROVIDER_IN_USE -> "provider in use"
-            REASON_SERVICE_IN_USE -> "service in use"
-            else -> "unknown importance ($importance)"
-        }
+    private fun getExitInfoImportance(importance: Int): String = when (importance) {
+        IMPORTANCE_FOREGROUND -> "foreground"
+        IMPORTANCE_FOREGROUND_SERVICE -> "foreground service"
+        IMPORTANCE_TOP_SLEEPING -> "top sleeping"
+        IMPORTANCE_TOP_SLEEPING_PRE_28 -> "top sleeping"
+        IMPORTANCE_VISIBLE -> "visible"
+        IMPORTANCE_PERCEPTIBLE -> "perceptible"
+        IMPORTANCE_PERCEPTIBLE_PRE_26 -> "perceptible"
+        IMPORTANCE_CANT_SAVE_STATE -> "can't save state"
+        IMPORTANCE_CANT_SAVE_STATE_PRE_26 -> "can't save state"
+        IMPORTANCE_SERVICE -> "service"
+        IMPORTANCE_CACHED -> "cached/background"
+        IMPORTANCE_GONE -> "gone"
+        IMPORTANCE_EMPTY -> "empty"
+        REASON_PROVIDER_IN_USE -> "provider in use"
+        REASON_SERVICE_IN_USE -> "service in use"
+        else -> "unknown importance ($importance)"
     }
 
     companion object {

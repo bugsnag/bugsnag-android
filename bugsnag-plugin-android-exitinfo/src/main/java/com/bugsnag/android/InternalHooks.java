@@ -2,6 +2,8 @@ package com.bugsnag.android;
 
 import static com.bugsnag.android.Bugsnag.client;
 
+import androidx.annotation.NonNull;
+
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 
@@ -14,12 +16,11 @@ class InternalHooks {
         client.eventStore.setOnEventStoreEmptyCallback(callback);
     }
 
-    public static void deliver(Client client, Event event) {
+    static void deliver(@NonNull Client client, @NonNull Event event) {
         client.deliveryDelegate.deliver(event);
     }
 
-
-    public static Event createEmptyANR(Long exitInfoTimeStamp) {
+    static Event createEmptyANR(long exitInfoTimeStamp) {
         Event event = NativeInterface.createEmptyEvent();
         event.setDevice(client.deviceDataCollector
                 .generateEmptyEventDeviceWithState(exitInfoTimeStamp));
@@ -28,9 +29,12 @@ class InternalHooks {
         return event;
     }
 
-    public static Event createEmptyCrash() {
+    static Event createEmptyCrash(long exitInfoTimeStamp) {
         Event event = NativeInterface.createEmptyEvent();
-        event.updateSeverityReason(SeverityReason.REASON_ANR);
+        event.setDevice(client.deviceDataCollector
+                .generateEmptyEventDeviceWithState(exitInfoTimeStamp));
+        event.setApp(client.appDataCollector.generateEmptyEventAppWithState());
+        event.updateSeverityReason(SeverityReason.REASON_SIGNAL);
         return event;
     }
 
