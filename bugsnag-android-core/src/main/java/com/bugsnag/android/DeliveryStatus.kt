@@ -26,17 +26,16 @@ enum class DeliveryStatus {
     FAILURE;
 
     companion object {
+        @JvmStatic
         fun forHttpResponseCode(responseCode: Int): DeliveryStatus {
             return when {
                 responseCode in HTTP_OK..299 -> DELIVERED
-                isUnrecoverableStatusCode(responseCode) -> FAILURE
+                responseCode in HTTP_BAD_REQUEST..499 && // 400-499 are considered unrecoverable
+                    responseCode != HTTP_CLIENT_TIMEOUT && // except for 408
+                    responseCode != 429 -> FAILURE
+
                 else -> UNDELIVERED
             }
         }
-
-        private fun isUnrecoverableStatusCode(responseCode: Int) =
-            responseCode in HTTP_BAD_REQUEST..499 && // 400-499 are considered unrecoverable
-                responseCode != HTTP_CLIENT_TIMEOUT && // except for 408
-                responseCode != 429 // and 429
     }
 }
