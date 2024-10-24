@@ -257,6 +257,7 @@ public final class com/bugsnag/android/DeliveryStatus : java/lang/Enum {
 	public static final field DELIVERED Lcom/bugsnag/android/DeliveryStatus;
 	public static final field FAILURE Lcom/bugsnag/android/DeliveryStatus;
 	public static final field UNDELIVERED Lcom/bugsnag/android/DeliveryStatus;
+	public static final fun forHttpResponseCode (I)Lcom/bugsnag/android/DeliveryStatus;
 	public static fun valueOf (Ljava/lang/String;)Lcom/bugsnag/android/DeliveryStatus;
 	public static fun values ()[Lcom/bugsnag/android/DeliveryStatus;
 }
