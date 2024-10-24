@@ -32,7 +32,7 @@ class TestData {
                 "1.4.3",
                 55,
                 "android",
-                new DefaultDelivery(null, "myApiKey", 10000, NoopLogger.INSTANCE),
+                new DefaultDelivery(null, NoopLogger.INSTANCE),
                 new EndpointConfiguration(),
                 true,
                 55,
@@ -41,6 +41,7 @@ class TestData {
                 32,
                 32,
                 1000,
+                10000,
                 500,
                 LazyKt.lazy(new Function0<File>() {
                     @Override
