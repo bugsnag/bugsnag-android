@@ -264,6 +264,12 @@ public final class Session implements JsonStream.Streamable, Deliverable, UserAw
         return JsonHelper.INSTANCE.serialize(this);
     }
 
+    @Nullable
+    @Override
+    public String getIntegrityToken() {
+        return Deliverable.DefaultImpls.getIntegrityToken(this);
+    }
+
     private void serializePayload(@NonNull JsonStream writer) throws IOException {
         writer.value(file);
     }
