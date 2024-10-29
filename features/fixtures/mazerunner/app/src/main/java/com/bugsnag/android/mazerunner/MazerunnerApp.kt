@@ -29,7 +29,7 @@ class MazerunnerApp : Application() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             val policy = StrictMode.VmPolicy.Builder()
                 .detectNonSdkApiUsage()
-                .penaltyDeath()
+                .penaltyLog()
                 .build()
             StrictMode.setVmPolicy(policy)
         }
