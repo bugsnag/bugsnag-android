@@ -10,7 +10,10 @@ internal class ExitInfoPluginStore(config: ImmutableConfig) {
     private val file: File = File(config.persistenceDirectory.value, "bugsnag-exit-reasons")
     private val logger: Logger = config.logger
     private val lock = ReentrantReadWriteLock()
-    private val isFirstRun: Boolean = !file.exists()
+    internal val isFirstRun: Boolean = !file.exists()
+
+    internal var legacyStore: Boolean = false
+        private set
 
     fun persist(currentPid: Int, exitInfoKeys: Set<ExitInfoKey>) {
         lock.writeLock().withLock {
@@ -31,10 +34,11 @@ internal class ExitInfoPluginStore(config: ImmutableConfig) {
     }
 
     fun load(): Pair<Int?, Set<ExitInfoKey>> {
-        if (isFirstRun) {
-            return null to emptySet()
+        return if (isFirstRun) {
+            null to emptySet()
+        } else {
+            tryLoadJson() ?: (tryLoadLegacy() to emptySet())
         }
-        return tryLoadJson() ?: (tryLoadLegacy() to emptySet())
     }
 
     private fun tryLoadJson(): Pair<Int?, Set<ExitInfoKey>>? {
@@ -62,6 +66,7 @@ internal class ExitInfoPluginStore(config: ImmutableConfig) {
     private fun tryLoadLegacy(): Int? {
         try {
             val content = file.readText()
+            legacyStore = true
             if (content.isEmpty()) {
                 logger.w("PID is empty")
                 return null
@@ -75,7 +80,7 @@ internal class ExitInfoPluginStore(config: ImmutableConfig) {
 
     fun addExitInfoKey(exitInfoKey: ExitInfoKey) {
         val (oldPid, exitInfoKeys) = load()
-        val newExitInfoKeys = exitInfoKeys.toMutableSet().plus(exitInfoKey)
+        val newExitInfoKeys = exitInfoKeys + exitInfoKey
         oldPid?.let { persist(it, newExitInfoKeys) }
     }
 }

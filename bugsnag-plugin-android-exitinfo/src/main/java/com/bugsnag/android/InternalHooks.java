@@ -23,8 +23,8 @@ class InternalHooks {
     static Event createEmptyANR(long exitInfoTimeStamp) {
         Event event = NativeInterface.createEmptyEvent();
         event.setDevice(client.deviceDataCollector
-                .generateEmptyEventDeviceWithState(exitInfoTimeStamp));
-        event.setApp(client.appDataCollector.generateEmptyEventAppWithState());
+                .generateHistoricDeviceWithState(exitInfoTimeStamp));
+        event.setApp(client.appDataCollector.generateHistoricAppWithState());
         event.updateSeverityReason(SeverityReason.REASON_ANR);
         return event;
     }
@@ -32,8 +32,8 @@ class InternalHooks {
     static Event createEmptyCrash(long exitInfoTimeStamp) {
         Event event = NativeInterface.createEmptyEvent();
         event.setDevice(client.deviceDataCollector
-                .generateEmptyEventDeviceWithState(exitInfoTimeStamp));
-        event.setApp(client.appDataCollector.generateEmptyEventAppWithState());
+                .generateHistoricDeviceWithState(exitInfoTimeStamp));
+        event.setApp(client.appDataCollector.generateHistoricAppWithState());
         event.updateSeverityReason(SeverityReason.REASON_SIGNAL);
         return event;
     }

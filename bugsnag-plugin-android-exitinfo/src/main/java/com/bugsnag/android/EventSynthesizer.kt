@@ -13,6 +13,8 @@ import android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE
 import android.app.ActivityManager.RunningAppProcessInfo.REASON_PROVIDER_IN_USE
 import android.app.ActivityManager.RunningAppProcessInfo.REASON_SERVICE_IN_USE
 import android.app.ApplicationExitInfo
+import android.app.ApplicationExitInfo.REASON_ANR
+import android.app.ApplicationExitInfo.REASON_CRASH_NATIVE
 import android.os.Build
 import androidx.annotation.RequiresApi
 
@@ -20,46 +22,71 @@ import androidx.annotation.RequiresApi
 internal class EventSynthesizer(
     private val anrEventEnhancer: (Event, ApplicationExitInfo) -> Unit,
     private val nativeEnhancer: (Event, ApplicationExitInfo) -> Unit,
-    private val exitInfoPluginStore: ExitInfoPluginStore
+    private val exitInfoPluginStore: ExitInfoPluginStore,
+    private val reportUnmatchedAnrs: Boolean,
+    private val reportUnmatchedNativeCrashes: Boolean
 ) {
     fun createEventWithExitInfo(appExitInfo: ApplicationExitInfo): Event? {
         val (_, knownExitInfoKeys) = exitInfoPluginStore.load()
         val exitInfoKey = ExitInfoKey(appExitInfo)
 
-        if (knownExitInfoKeys.contains(exitInfoKey)) return null else exitInfoPluginStore.addExitInfoKey(
-            exitInfoKey
-        )
+        if (knownExitInfoKeys.contains(exitInfoKey)) return null
+        else exitInfoPluginStore.addExitInfoKey(exitInfoKey)
 
         when (appExitInfo.reason) {
-            ApplicationExitInfo.REASON_ANR
-            -> {
-                val newAnrEvent = InternalHooks.createEmptyANR(exitInfoKey.timestamp)
-                addExitInfoMetadata(newAnrEvent, appExitInfo)
-                anrEventEnhancer(newAnrEvent, appExitInfo)
-                val thread =
-                    newAnrEvent.threads.find { it.name == "main" }
-                        ?: newAnrEvent.threads.firstOrNull()
-                val error = newAnrEvent.addError("ANR", appExitInfo.description)
-                thread?.let { error.stacktrace.addAll(it.stacktrace) }
-
-                return newAnrEvent
+            REASON_ANR -> {
+                return createEventWithUnmatchedAnrsReport(exitInfoKey, appExitInfo)
             }
 
-            ApplicationExitInfo.REASON_CRASH_NATIVE
-            -> {
-                val newNativeEvent = InternalHooks.createEmptyCrash(exitInfoKey.timestamp)
-                addExitInfoMetadata(newNativeEvent, appExitInfo)
-                nativeEnhancer(newNativeEvent, appExitInfo)
-                val thread =
-                    newNativeEvent.threads.find { it.name == "main" }
-                        ?: newNativeEvent.threads.firstOrNull()
-                val error = newNativeEvent.addError("Native", appExitInfo.description)
-                thread?.let { error.stacktrace.addAll(it.stacktrace) }
-                return newNativeEvent
+            REASON_CRASH_NATIVE -> {
+                return createEventWithUnmatchedNativeCrashesReport(exitInfoKey, appExitInfo)
             }
 
             else -> return null
         }
+    }
+
+    private fun createEventWithUnmatchedAnrsReport(
+        exitInfoKey: ExitInfoKey,
+        appExitInfo: ApplicationExitInfo
+    ): Event? {
+        if (reportUnmatchedAnrs) {
+            val newAnrEvent = InternalHooks.createEmptyANR(exitInfoKey.timestamp)
+            addExitInfoMetadata(newAnrEvent, appExitInfo)
+            anrEventEnhancer(newAnrEvent, appExitInfo)
+            val thread = getErrorThread(newAnrEvent)
+            val error = newAnrEvent.addError("ANR", appExitInfo.description)
+            thread?.let { error.stacktrace.addAll(it.stacktrace) }
+
+            return newAnrEvent
+        } else {
+            return null
+        }
+    }
+
+    private fun createEventWithUnmatchedNativeCrashesReport(
+        exitInfoKey: ExitInfoKey,
+        appExitInfo: ApplicationExitInfo
+    ): Event? {
+        if (reportUnmatchedNativeCrashes) {
+            val newNativeEvent = InternalHooks.createEmptyCrash(exitInfoKey.timestamp)
+            addExitInfoMetadata(newNativeEvent, appExitInfo)
+            nativeEnhancer(newNativeEvent, appExitInfo)
+            val thread =
+                getErrorThread(newNativeEvent)
+            val error = newNativeEvent.addError("Native", appExitInfo.description)
+            thread?.let { error.stacktrace.addAll(it.stacktrace) }
+            return newNativeEvent
+        } else {
+            return null
+        }
+    }
+
+    private fun getErrorThread(newNativeEvent: Event): Thread? {
+        val thread =
+            newNativeEvent.threads.find { it.name == "main" }
+                ?: newNativeEvent.threads.firstOrNull()
+        return thread
     }
 
     private fun addExitInfoMetadata(
@@ -72,8 +99,12 @@ internal class EventSynthesizer(
             "importance",
             getExitInfoImportance(appExitInfo.importance)
         )
-        newEvent.addMetadata("exitinfo", "pss", appExitInfo.pss)
-        newEvent.addMetadata("exitinfo", "rss", appExitInfo.rss)
+        newEvent.addMetadata(
+            "exitinfo", "Proportional Set Size (PSS)", "${appExitInfo.pss} kB"
+        )
+        newEvent.addMetadata(
+            "exitinfo", "Resident Set Size (RSS)", "${appExitInfo.rss} kB"
+        )
     }
 
     private fun getExitInfoImportance(importance: Int): String = when (importance) {

@@ -104,7 +104,7 @@ internal class DeviceDataCollector(
         Date(now)
     )
 
-    fun generateEmptyEventDeviceWithState(timeStamp: Long) =
+    fun generateHistoricDeviceWithState(timeStamp: Long) =
         DeviceWithState(
             buildInfo,
             checkIsRooted(),

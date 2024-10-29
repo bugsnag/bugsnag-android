@@ -49,8 +49,10 @@ internal class ExitInfoCallback(
                 exitInfo.reason == ApplicationExitInfo.REASON_SIGNALED
             ) {
                 nativeEnhancer(event, exitInfo)
+                exitInfoPluginStore?.addExitInfoKey(ExitInfoKey(exitInfo))
             } else if (exitInfo.reason == ApplicationExitInfo.REASON_ANR) {
                 anrEventEnhancer(event, exitInfo)
+                exitInfoPluginStore?.addExitInfoKey(ExitInfoKey(exitInfo))
             }
         } catch (exc: Throwable) {
             return true

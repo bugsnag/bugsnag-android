@@ -38,6 +38,7 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
 
         val exitInfoPluginStore =
             ExitInfoPluginStore(client.immutableConfig)
+        addAllExitInfoAtFirstRun(client, exitInfoPluginStore)
         val (oldPid, exitInfoKeys) = exitInfoPluginStore.load()
         exitInfoPluginStore.persist(android.os.Process.myPid(), exitInfoKeys)
 
@@ -57,6 +58,25 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
             )
         }
         client.addOnSend(exitInfoCallback)
+    }
+
+    private fun addAllExitInfoAtFirstRun(
+        client: Client,
+        exitInfoPluginStore: ExitInfoPluginStore
+    ) {
+        if (exitInfoPluginStore.isFirstRun || exitInfoPluginStore.legacyStore) {
+            val am: ActivityManager = client.appContext.safeGetActivityManager() ?: return
+            val allExitInfo: List<ApplicationExitInfo> =
+                am.getHistoricalProcessExitReasons(
+                    client.appContext.packageName,
+                    MATCH_ALL,
+                    MAX_EXIT_REASONS
+                )
+
+            allExitInfo.forEach { exitInfo ->
+                exitInfoPluginStore.addExitInfoKey(ExitInfoKey(exitInfo.pid, exitInfo.timestamp))
+            }
+        }
     }
 
     private fun createExitInfoCallback(
@@ -82,7 +102,9 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
         val eventSynthesizer = EventSynthesizer(
             traceEventEnhancer,
             tombstoneEventEnhancer,
-            exitInfoPluginStore
+            exitInfoPluginStore,
+            configuration.reportUnmatchedAnrs,
+            configuration.reportUnmatchedNativeCrashes
         )
         val context = client.appContext
         val am: ActivityManager = context.safeGetActivityManager() ?: return
@@ -102,5 +124,10 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
         getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
     } catch (e: Exception) {
         null
+    }
+
+    companion object {
+        private const val MATCH_ALL = 0
+        private const val MAX_EXIT_REASONS = 100
     }
 }
