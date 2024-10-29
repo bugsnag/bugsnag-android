@@ -1,5 +1,6 @@
 package com.bugsnag.android.okhttp
 
+import android.net.TrafficStats
 import com.bugsnag.android.Delivery
 import com.bugsnag.android.DeliveryParams
 import com.bugsnag.android.DeliveryStatus
@@ -32,8 +33,13 @@ class OkHttpDelivery @JvmOverloads constructor(
         }
 
         val call = client.newCall(requestBuilder.build())
-        val response = call.execute()
-        return DeliveryStatus.forHttpResponseCode(response.code)
+        try {
+            TrafficStats.setThreadStatsTag(1)
+            val response = call.execute()
+            return DeliveryStatus.forHttpResponseCode(response.code)
+        } finally {
+            TrafficStats.clearThreadStatsTag()
+        }
     }
 
     override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
@@ -51,9 +57,14 @@ class OkHttpDelivery @JvmOverloads constructor(
             }
 
             val call = client.newCall(requestBuilder.build())
-            val response = call.execute()
 
-            return DeliveryStatus.forHttpResponseCode(response.code)
+            try {
+                TrafficStats.setThreadStatsTag(1)
+                val response = call.execute()
+                return DeliveryStatus.forHttpResponseCode(response.code)
+            } finally {
+                TrafficStats.clearThreadStatsTag()
+            }
         } catch (oom: OutOfMemoryError) {
             // attempt to persist the payload on disk. This approach uses streams to write to a
             // file, which takes less memory than serializing the payload into a ByteArray, and
