@@ -6,6 +6,7 @@ import com.bugsnag.android.Configuration
 import com.bugsnag.android.createDefaultDelivery
 import com.bugsnag.android.mazerunner.InterceptingDelivery
 import java.util.concurrent.CountDownLatch
+import kotlin.concurrent.thread
 
 /**
  * Sends an exception after pausing the session
@@ -27,23 +28,25 @@ internal class ManualSessionSmokeScenario(
 
     override fun startScenario() {
         super.startScenario()
-        Bugsnag.setUser("123", "ABC.CBA.CA", "ManualSessionSmokeScenario")
+        thread {
+            Bugsnag.setUser("123", "ABC.CBA.CA", "ManualSessionSmokeScenario")
 
-        // send session
-        Bugsnag.startSession()
+            // send session
+            Bugsnag.startSession()
 
-        // send exception with session
-        Bugsnag.notify(generateException())
+            // send exception with session
+            Bugsnag.notify(generateException())
 
-        // send exception without session
-        Bugsnag.pauseSession()
-        Bugsnag.notify(generateException())
+            // send exception without session
+            Bugsnag.pauseSession()
+            Bugsnag.notify(generateException())
 
-        // override to ensure request order, as the order of fatal errors
-        // can be indeterminate if they are persisted to disk at the same
-        // millisecond as another error.
-        deliveryLatch.await()
-        Bugsnag.resumeSession()
-        throw generateException()
+            // override to ensure request order, as the order of fatal errors
+            // can be indeterminate if they are persisted to disk at the same
+            // millisecond as another error.
+            deliveryLatch.await()
+            Bugsnag.resumeSession()
+            throw generateException()
+        }
     }
 }
