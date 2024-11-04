@@ -20,22 +20,23 @@ class OkHttpDelivery @JvmOverloads constructor(
     private val logger: Logger? = null,
 ) : Delivery {
     override fun deliver(payload: Session, deliveryParams: DeliveryParams): DeliveryStatus {
-        val requestBody = payload.toByteArray().toRequestBody()
-        val integrityHeader = payload.integrityToken
-
-        val requestBuilder = Request.Builder()
-            .url(deliveryParams.endpoint)
-            .headers(deliveryParams.toHeaders())
-            .post(requestBody)
-
-        if (integrityHeader != null) {
-            requestBuilder.header(BUGSNAG_INTEGRITY_HEADER, integrityHeader)
-        }
-
-        val call = client.newCall(requestBuilder.build())
+        TrafficStats.setThreadStatsTag(1)
         try {
-            TrafficStats.setThreadStatsTag(1)
+            val requestBody = payload.toByteArray().toRequestBody()
+            val integrityHeader = payload.integrityToken
+
+            val requestBuilder = Request.Builder()
+                .url(deliveryParams.endpoint)
+                .headers(deliveryParams.toHeaders())
+                .post(requestBody)
+
+            if (integrityHeader != null) {
+                requestBuilder.header(BUGSNAG_INTEGRITY_HEADER, integrityHeader)
+            }
+
+            val call = client.newCall(requestBuilder.build())
             val response = call.execute()
+
             return DeliveryStatus.forHttpResponseCode(response.code)
         } finally {
             TrafficStats.clearThreadStatsTag()
@@ -43,6 +44,7 @@ class OkHttpDelivery @JvmOverloads constructor(
     }
 
     override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
+        TrafficStats.setThreadStatsTag(1)
         try {
             val requestBody = payload.trimToSize().toByteArray().toRequestBody()
             val integrityHeader = payload.integrityToken
@@ -58,13 +60,8 @@ class OkHttpDelivery @JvmOverloads constructor(
 
             val call = client.newCall(requestBuilder.build())
 
-            try {
-                TrafficStats.setThreadStatsTag(1)
-                val response = call.execute()
-                return DeliveryStatus.forHttpResponseCode(response.code)
-            } finally {
-                TrafficStats.clearThreadStatsTag()
-            }
+            val response = call.execute()
+            return DeliveryStatus.forHttpResponseCode(response.code)
         } catch (oom: OutOfMemoryError) {
             // attempt to persist the payload on disk. This approach uses streams to write to a
             // file, which takes less memory than serializing the payload into a ByteArray, and
@@ -77,6 +74,8 @@ class OkHttpDelivery @JvmOverloads constructor(
         } catch (exception: Exception) {
             logger?.w("Unexpected error delivering payload", exception)
             return DeliveryStatus.FAILURE
+        } finally {
+            TrafficStats.clearThreadStatsTag()
         }
     }
 
