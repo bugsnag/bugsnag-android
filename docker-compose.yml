@@ -49,7 +49,7 @@ services:
       PUBLISH_PASS:
 
   maze-runner:
-    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner-releases:latest-v9-cli
+    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner:noise-improvements-dead-appium-sessions-cli
     environment:
       <<: *common-environment
       BITBAR_USERNAME:
