@@ -1,5 +1,6 @@
 package com.bugsnag.android;
 
+import android.os.Build;
 import android.os.StrictMode;
 
 import androidx.annotation.NonNull;
@@ -72,7 +73,19 @@ class ExceptionHandler implements UncaughtExceptionHandler {
             // the runtime would ignore any exceptions here, we make that absolutely clear
             // to avoid any possible unhandled-exception loops
         } finally {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                disableAnrDetection();
+            }
+
             forwardToOriginalHandler(thread, throwable);
+        }
+    }
+
+    private void disableAnrDetection() {
+        try {
+            client.pluginClient.setAutoDetectAnrs(client, false);
+        } catch (Throwable ignored) {
+
         }
     }
 
