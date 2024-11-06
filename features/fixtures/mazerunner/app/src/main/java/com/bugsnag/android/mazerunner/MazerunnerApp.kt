@@ -30,6 +30,7 @@ class MazerunnerApp : Application() {
             val policy = StrictMode.VmPolicy.Builder()
                 .detectNonSdkApiUsage()
                 .penaltyDeath()
+                .penaltyLog()
                 .build()
             StrictMode.setVmPolicy(policy)
         }
