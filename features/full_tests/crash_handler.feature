@@ -21,3 +21,12 @@ Feature: Reporting with other exception handlers installed
     And the exception "errorClass" equals "java.lang.RuntimeException"
     And the exception "message" equals "DeliverOnCrashScenario"
     And the event "usage.config.attemptDeliveryOnCrash" is true
+
+  Scenario: OkHttpDelivery is used to deliver payloads
+    When I run "OkHttpDeliveryScenario" and relaunch the crashed app
+    And I configure Bugsnag for "OkHttpDeliveryScenario"
+    And I wait to receive an error
+    Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And the error payload field "events" is an array with 1 elements
+    And the exception "errorClass" equals "java.lang.RuntimeException"
+    And the exception "message" equals "Unhandled Error"

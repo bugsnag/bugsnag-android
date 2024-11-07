@@ -21,7 +21,6 @@ internal class SessionStore(
         config.persistenceDirectory.value, "bugsnag/sessions"
     ),
     config.maxPersistedSessions,
-    SESSION_COMPARATOR,
     logger,
     delegate
 ) {

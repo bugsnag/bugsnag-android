@@ -5,7 +5,6 @@ import static com.bugsnag.android.SeverityReason.REASON_UNHANDLED_EXCEPTION;
 
 import com.bugsnag.android.internal.BackgroundTaskService;
 import com.bugsnag.android.internal.ImmutableConfig;
-import com.bugsnag.android.internal.JsonHelper;
 import com.bugsnag.android.internal.TaskType;
 
 import android.annotation.SuppressLint;
@@ -126,7 +125,8 @@ class InternalReportDelegate implements EventStore.Delegate {
                             DefaultDelivery defaultDelivery = (DefaultDelivery) delivery;
                             defaultDelivery.deliver(
                                     params.getEndpoint(),
-                                    JsonHelper.INSTANCE.serialize(payload),
+                                    payload.toByteArray(),
+                                    payload.getIntegrityToken(),
                                     headers
                             );
                         }

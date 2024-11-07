@@ -3,7 +3,6 @@ package com.bugsnag.android
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import com.bugsnag.android.BugsnagTestUtils.generateEventPayload
 import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
-import com.bugsnag.android.internal.JsonHelper
 import com.bugsnag.android.internal.convertToImmutableConfig
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
@@ -26,10 +25,8 @@ class DeliveryHeadersTest {
     @Test
     fun computeSha1Digest() {
         val payload = generateEventPayload(generateImmutableConfig())
-        val payload1 = JsonHelper.serialize(payload)
-        val firstSha = requireNotNull(computeSha1Digest(payload1))
-        val payload2 = JsonHelper.serialize(payload)
-        val secondSha = requireNotNull(computeSha1Digest(payload2))
+        val firstSha = requireNotNull(payload.integrityToken)
+        val secondSha = requireNotNull(payload.integrityToken)
 
         // the hash equals the expected value
         assertTrue(firstSha.matches(sha1Regex))
@@ -39,8 +36,8 @@ class DeliveryHeadersTest {
 
         // altering the streamable alters the hash
         payload.event!!.device.id = "50923"
-        val payload3 = JsonHelper.serialize(payload)
-        val differentSha = requireNotNull(computeSha1Digest(payload3))
+        payload.rebuildPayloadCache()
+        val differentSha = requireNotNull(payload.integrityToken)
         assertNotEquals(firstSha, differentSha)
         assertTrue(differentSha.matches(sha1Regex))
     }

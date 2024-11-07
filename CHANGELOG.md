@@ -1,5 +1,14 @@
 # Changelog
 
+## 6.9.0 (2024-11-07)
+
+### Enhancements
+
+* Native crashes will now identify the crashing/error reporting thread
+  [#2087](https://github.com/bugsnag/bugsnag-android/pull/2087)
+* A new `OkHttpDelivery` delivery implementation is available in the [bugsnag-plugin-android-okhttp](bugsnag-plugin-android-okhttp) module
+  [#2092](https://github.com/bugsnag/bugsnag-android/pull/2092)
+
 ## 6.8.0 (2024-09-30)
 
 ### Enhancements

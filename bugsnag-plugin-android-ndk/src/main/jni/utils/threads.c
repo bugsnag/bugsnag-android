@@ -167,7 +167,8 @@ static bool read_thread_state(bsg_thread *dest, const char *tid) {
   return parse_success;
 }
 
-size_t bsg_capture_thread_states(bsg_thread *threads, size_t max_threads) {
+size_t bsg_capture_thread_states(pid_t reporting_tid, bsg_thread *threads,
+                                 size_t max_threads) {
   size_t total_thread_count = 0;
   struct dirent64 *entry;
   char buffer[1024];
@@ -187,6 +188,8 @@ size_t bsg_capture_thread_states(bsg_thread *threads, size_t max_threads) {
     for (offset = 0; offset < available && total_thread_count < max_threads;) {
       entry = (struct dirent64 *)(buffer + offset);
       if (read_thread_state(&threads[total_thread_count], entry->d_name)) {
+        threads[total_thread_count].is_reporting_thread =
+            threads[total_thread_count].id == reporting_tid;
         total_thread_count += 1;
       }
 
