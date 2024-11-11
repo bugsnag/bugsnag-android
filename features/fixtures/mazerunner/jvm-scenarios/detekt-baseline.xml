@@ -26,6 +26,7 @@
     <ID>MagicNumber:TrimmedStacktraceScenario.kt$TrimmedStacktraceScenario$100000</ID>
     <ID>MagicNumber:UnhandledExceptionEventDetailChangeScenario.kt$UnhandledExceptionEventDetailChangeScenario$123</ID>
     <ID>MagicNumber:UnhandledExceptionEventDetailChangeScenario.kt$UnhandledExceptionEventDetailChangeScenario$123456</ID>
+    <ID>MaxLineLength:OkHttpDeliveryScenario.kt$OkHttpDeliveryScenario$// StrictMode policy violation: android.os.strictmode.NonSdkApiUsedViolation: Lcom/android/org/conscrypt/OpenSSLSocketImpl;-&gt;setUseSessionTickets(Z)V</ID>
     <ID>ThrowingExceptionsWithoutMessageOrCause:AnrHelper.kt$&lt;no name provided&gt;$IllegalStateException()</ID>
     <ID>ThrowingExceptionsWithoutMessageOrCause:BugsnagInitScenario.kt$BugsnagInitScenario$RuntimeException()</ID>
     <ID>ThrowingExceptionsWithoutMessageOrCause:CustomPluginNotifierDescriptionScenario.kt$CustomPluginNotifierDescriptionScenario$RuntimeException()</ID>
@@ -36,6 +37,7 @@
     <ID>TooGenericExceptionThrown:DeliverOnCrashScenario.kt$DeliverOnCrashScenario$throw RuntimeException("DeliverOnCrashScenario")</ID>
     <ID>TooGenericExceptionThrown:DisableAutoDetectErrorsScenario.kt$DisableAutoDetectErrorsScenario$throw RuntimeException("Should never appear")</ID>
     <ID>TooGenericExceptionThrown:FeatureFlagScenario.kt$FeatureFlagScenario$throw RuntimeException("FeatureFlagScenario unhandled")</ID>
+    <ID>TooGenericExceptionThrown:OkHttpDeliveryScenario.kt$OkHttpDeliveryScenario$throw RuntimeException("Unhandled Error")</ID>
     <ID>TooGenericExceptionThrown:OnSendCallbackScenario.kt$OnSendCallbackScenario$throw RuntimeException("Unhandled Error")</ID>
     <ID>TooGenericExceptionThrown:ReportCacheScenario.kt$ReportCacheScenario$throw RuntimeException("ReportCacheScenario")</ID>
     <ID>TooGenericExceptionThrown:StartupCrashFlushScenario.kt$StartupCrashFlushScenario$throw RuntimeException("Regular crash")</ID>

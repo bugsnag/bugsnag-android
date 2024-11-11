@@ -42,8 +42,8 @@ android {
 }
 
 dependencies {
-    implementation "com.bugsnag:bugsnag-android:6.8.0"
-    implementation "com.bugsnag:bugsnag-plugin-android-okhttp:6.8.0"
+    implementation "com.bugsnag:bugsnag-android:6.9.0"
+    implementation "com.bugsnag:bugsnag-plugin-android-okhttp:6.9.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.appcompat:appcompat:1.6.1"
     implementation "com.google.android.material:material:1.11.0"

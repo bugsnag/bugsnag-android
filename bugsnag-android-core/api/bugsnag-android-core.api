@@ -236,6 +236,15 @@ public class com/bugsnag/android/Configuration : com/bugsnag/android/CallbackAwa
 	public fun setVersionCode (Ljava/lang/Integer;)V
 }
 
+public abstract interface class com/bugsnag/android/Deliverable {
+	public abstract fun getIntegrityToken ()Ljava/lang/String;
+	public abstract fun toByteArray ()[B
+}
+
+public final class com/bugsnag/android/Deliverable$DefaultImpls {
+	public static fun getIntegrityToken (Lcom/bugsnag/android/Deliverable;)Ljava/lang/String;
+}
+
 public abstract interface class com/bugsnag/android/Delivery {
 	public abstract fun deliver (Lcom/bugsnag/android/EventPayload;Lcom/bugsnag/android/DeliveryParams;)Lcom/bugsnag/android/DeliveryStatus;
 	public abstract fun deliver (Lcom/bugsnag/android/Session;Lcom/bugsnag/android/DeliveryParams;)Lcom/bugsnag/android/DeliveryStatus;
@@ -248,11 +257,17 @@ public final class com/bugsnag/android/DeliveryParams {
 }
 
 public final class com/bugsnag/android/DeliveryStatus : java/lang/Enum {
+	public static final field Companion Lcom/bugsnag/android/DeliveryStatus$Companion;
 	public static final field DELIVERED Lcom/bugsnag/android/DeliveryStatus;
 	public static final field FAILURE Lcom/bugsnag/android/DeliveryStatus;
 	public static final field UNDELIVERED Lcom/bugsnag/android/DeliveryStatus;
+	public static final fun forHttpResponseCode (I)Lcom/bugsnag/android/DeliveryStatus;
 	public static fun valueOf (Ljava/lang/String;)Lcom/bugsnag/android/DeliveryStatus;
 	public static fun values ()[Lcom/bugsnag/android/DeliveryStatus;
+}
+
+public final class com/bugsnag/android/DeliveryStatus$Companion {
+	public final fun forHttpResponseCode (I)Lcom/bugsnag/android/DeliveryStatus;
 }
 
 public class com/bugsnag/android/Device : com/bugsnag/android/JsonStream$Streamable {
@@ -395,13 +410,23 @@ public class com/bugsnag/android/Event : com/bugsnag/android/FeatureFlagAware, c
 	protected fun updateSeverityReason (Ljava/lang/String;)V
 }
 
-public final class com/bugsnag/android/EventPayload : com/bugsnag/android/JsonStream$Streamable {
+public final class com/bugsnag/android/EventPayload : com/bugsnag/android/Deliverable, com/bugsnag/android/JsonStream$Streamable {
+	public static final field Companion Lcom/bugsnag/android/EventPayload$Companion;
+	public static final field DEFAULT_MAX_PAYLOAD_SIZE I
 	public fun <init> (Ljava/lang/String;Lcom/bugsnag/android/Event;Lcom/bugsnag/android/Notifier;Lcom/bugsnag/android/internal/ImmutableConfig;)V
 	public fun <init> (Ljava/lang/String;Lcom/bugsnag/android/Notifier;Lcom/bugsnag/android/internal/ImmutableConfig;)V
 	public final fun getApiKey ()Ljava/lang/String;
 	public final fun getEvent ()Lcom/bugsnag/android/Event;
+	public fun getIntegrityToken ()Ljava/lang/String;
 	public final fun setApiKey (Ljava/lang/String;)V
+	public fun toByteArray ()[B
 	public fun toStream (Lcom/bugsnag/android/JsonStream;)V
+	public final fun trimToSize ()Lcom/bugsnag/android/EventPayload;
+	public final fun trimToSize (I)Lcom/bugsnag/android/EventPayload;
+	public static synthetic fun trimToSize$default (Lcom/bugsnag/android/EventPayload;IILjava/lang/Object;)Lcom/bugsnag/android/EventPayload;
+}
+
+public final class com/bugsnag/android/EventPayload$Companion {
 }
 
 public final class com/bugsnag/android/FeatureFlag : java/util/Map$Entry {
@@ -585,17 +610,19 @@ public abstract interface class com/bugsnag/android/Plugin {
 	public abstract fun unload ()V
 }
 
-public final class com/bugsnag/android/Session : com/bugsnag/android/JsonStream$Streamable, com/bugsnag/android/UserAware {
+public final class com/bugsnag/android/Session : com/bugsnag/android/Deliverable, com/bugsnag/android/JsonStream$Streamable, com/bugsnag/android/UserAware {
 	public fun getApiKey ()Ljava/lang/String;
 	public fun getApp ()Lcom/bugsnag/android/App;
 	public fun getDevice ()Lcom/bugsnag/android/Device;
 	public fun getId ()Ljava/lang/String;
+	public fun getIntegrityToken ()Ljava/lang/String;
 	public fun getStartedAt ()Ljava/util/Date;
 	public fun getUser ()Lcom/bugsnag/android/User;
 	public fun setApiKey (Ljava/lang/String;)V
 	public fun setId (Ljava/lang/String;)V
 	public fun setStartedAt (Ljava/util/Date;)V
 	public fun setUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public fun toByteArray ()[B
 	public fun toStream (Lcom/bugsnag/android/JsonStream;)V
 }
 
@@ -878,7 +905,7 @@ public final class com/bugsnag/android/internal/DateUtils {
 }
 
 public final class com/bugsnag/android/internal/ImmutableConfig {
-	public fun <init> (Ljava/lang/String;ZLcom/bugsnag/android/ErrorTypes;ZLcom/bugsnag/android/ThreadSendPolicy;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Set;Ljava/util/Set;Ljava/lang/String;Lcom/bugsnag/android/internal/dag/Provider;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/bugsnag/android/Delivery;Lcom/bugsnag/android/EndpointConfiguration;ZJLcom/bugsnag/android/Logger;IIIIJLkotlin/Lazy;ZZZLandroid/content/pm/PackageInfo;Landroid/content/pm/ApplicationInfo;Ljava/util/Collection;)V
+	public fun <init> (Ljava/lang/String;ZLcom/bugsnag/android/ErrorTypes;ZLcom/bugsnag/android/ThreadSendPolicy;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Set;Ljava/util/Set;Ljava/lang/String;Lcom/bugsnag/android/internal/dag/Provider;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/bugsnag/android/Delivery;Lcom/bugsnag/android/EndpointConfiguration;ZJLcom/bugsnag/android/Logger;IIIIIJLkotlin/Lazy;ZZZLandroid/content/pm/PackageInfo;Landroid/content/pm/ApplicationInfo;Ljava/util/Collection;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component10 ()Ljava/util/Set;
 	public final fun component11 ()Ljava/lang/String;
@@ -896,23 +923,24 @@ public final class com/bugsnag/android/internal/ImmutableConfig {
 	public final fun component22 ()I
 	public final fun component23 ()I
 	public final fun component24 ()I
-	public final fun component25 ()J
-	public final fun component26 ()Lkotlin/Lazy;
-	public final fun component27 ()Z
+	public final fun component25 ()I
+	public final fun component26 ()J
+	public final fun component27 ()Lkotlin/Lazy;
 	public final fun component28 ()Z
 	public final fun component29 ()Z
 	public final fun component3 ()Lcom/bugsnag/android/ErrorTypes;
-	public final fun component30 ()Landroid/content/pm/PackageInfo;
-	public final fun component31 ()Landroid/content/pm/ApplicationInfo;
-	public final fun component32 ()Ljava/util/Collection;
+	public final fun component30 ()Z
+	public final fun component31 ()Landroid/content/pm/PackageInfo;
+	public final fun component32 ()Landroid/content/pm/ApplicationInfo;
+	public final fun component33 ()Ljava/util/Collection;
 	public final fun component4 ()Z
 	public final fun component5 ()Lcom/bugsnag/android/ThreadSendPolicy;
 	public final fun component6 ()Ljava/util/Collection;
 	public final fun component7 ()Ljava/util/Collection;
 	public final fun component8 ()Ljava/util/Collection;
 	public final fun component9 ()Ljava/util/Set;
-	public final fun copy (Ljava/lang/String;ZLcom/bugsnag/android/ErrorTypes;ZLcom/bugsnag/android/ThreadSendPolicy;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Set;Ljava/util/Set;Ljava/lang/String;Lcom/bugsnag/android/internal/dag/Provider;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/bugsnag/android/Delivery;Lcom/bugsnag/android/EndpointConfiguration;ZJLcom/bugsnag/android/Logger;IIIIJLkotlin/Lazy;ZZZLandroid/content/pm/PackageInfo;Landroid/content/pm/ApplicationInfo;Ljava/util/Collection;)Lcom/bugsnag/android/internal/ImmutableConfig;
-	public static synthetic fun copy$default (Lcom/bugsnag/android/internal/ImmutableConfig;Ljava/lang/String;ZLcom/bugsnag/android/ErrorTypes;ZLcom/bugsnag/android/ThreadSendPolicy;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Set;Ljava/util/Set;Ljava/lang/String;Lcom/bugsnag/android/internal/dag/Provider;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/bugsnag/android/Delivery;Lcom/bugsnag/android/EndpointConfiguration;ZJLcom/bugsnag/android/Logger;IIIIJLkotlin/Lazy;ZZZLandroid/content/pm/PackageInfo;Landroid/content/pm/ApplicationInfo;Ljava/util/Collection;ILjava/lang/Object;)Lcom/bugsnag/android/internal/ImmutableConfig;
+	public final fun copy (Ljava/lang/String;ZLcom/bugsnag/android/ErrorTypes;ZLcom/bugsnag/android/ThreadSendPolicy;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Set;Ljava/util/Set;Ljava/lang/String;Lcom/bugsnag/android/internal/dag/Provider;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/bugsnag/android/Delivery;Lcom/bugsnag/android/EndpointConfiguration;ZJLcom/bugsnag/android/Logger;IIIIIJLkotlin/Lazy;ZZZLandroid/content/pm/PackageInfo;Landroid/content/pm/ApplicationInfo;Ljava/util/Collection;)Lcom/bugsnag/android/internal/ImmutableConfig;
+	public static synthetic fun copy$default (Lcom/bugsnag/android/internal/ImmutableConfig;Ljava/lang/String;ZLcom/bugsnag/android/ErrorTypes;ZLcom/bugsnag/android/ThreadSendPolicy;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Set;Ljava/util/Set;Ljava/lang/String;Lcom/bugsnag/android/internal/dag/Provider;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/bugsnag/android/Delivery;Lcom/bugsnag/android/EndpointConfiguration;ZJLcom/bugsnag/android/Logger;IIIIIJLkotlin/Lazy;ZZZLandroid/content/pm/PackageInfo;Landroid/content/pm/ApplicationInfo;Ljava/util/Collection;IILjava/lang/Object;)Lcom/bugsnag/android/internal/ImmutableConfig;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getApiKey ()Ljava/lang/String;
 	public final fun getAppInfo ()Landroid/content/pm/ApplicationInfo;
@@ -935,6 +963,7 @@ public final class com/bugsnag/android/internal/ImmutableConfig {
 	public final fun getMaxPersistedEvents ()I
 	public final fun getMaxPersistedSessions ()I
 	public final fun getMaxReportedThreads ()I
+	public final fun getMaxStringValueLength ()I
 	public final fun getPackageInfo ()Landroid/content/pm/PackageInfo;
 	public final fun getPersistUser ()Z
 	public final fun getPersistenceDirectory ()Lkotlin/Lazy;

@@ -54,6 +54,7 @@ data class ImmutableConfig(
     val maxPersistedEvents: Int,
     val maxPersistedSessions: Int,
     val maxReportedThreads: Int,
+    val maxStringValueLength: Int,
     val threadCollectionTimeLimitMillis: Long,
     val persistenceDirectory: Lazy<File>,
     val sendLaunchCrashesSynchronously: Boolean,
@@ -175,6 +176,7 @@ internal fun convertToImmutableConfig(
         maxPersistedEvents = config.maxPersistedEvents,
         maxPersistedSessions = config.maxPersistedSessions,
         maxReportedThreads = config.maxReportedThreads,
+        maxStringValueLength = config.maxStringValueLength,
         threadCollectionTimeLimitMillis = config.threadCollectionTimeLimitMillis,
         enabledBreadcrumbTypes = config.enabledBreadcrumbTypes?.toSet(),
         telemetry = config.telemetry.toSet(),
@@ -257,12 +259,7 @@ internal fun sanitiseConfiguration(
 
     @Suppress("SENSELESS_COMPARISON")
     if (configuration.delivery == null) {
-        configuration.delivery = DefaultDelivery(
-            connectivity,
-            configuration.apiKey,
-            configuration.maxStringValueLength,
-            configuration.logger!!
-        )
+        configuration.delivery = DefaultDelivery(connectivity, configuration.logger!!)
     }
     return convertToImmutableConfig(
         configuration,
