@@ -13,6 +13,7 @@ object Versions {
     val java = JavaVersion.VERSION_1_8
     val kotlin = "1.5.10"
     val kotlinLang = "1.5"
+    val cmakeVersion = "3.22.1"
 
     // plugins
     val androidGradlePlugin = "7.0.4"
