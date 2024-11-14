@@ -10,6 +10,10 @@ internal class ExitInfoPluginStore(config: ImmutableConfig) {
     private val file: File = File(config.persistenceDirectory.value, "bugsnag-exit-reasons")
     private val logger: Logger = config.logger
     private val lock = ReentrantReadWriteLock()
+    internal val isFirstRun: Boolean = !file.exists()
+
+    internal var legacyStore: Boolean = false
+        private set
 
     var previousPid: Int = 0
         private set
@@ -43,7 +47,7 @@ internal class ExitInfoPluginStore(config: ImmutableConfig) {
         }
     }
 
-    fun persist() {
+    private fun persist() {
         lock.writeLock().withLock {
             try {
                 file.writer().buffered().use { writer ->

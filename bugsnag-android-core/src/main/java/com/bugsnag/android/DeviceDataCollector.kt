@@ -104,6 +104,20 @@ internal class DeviceDataCollector(
         Date(now)
     )
 
+    fun generateHistoricDeviceWithState(timeStamp: Long) =
+        DeviceWithState(
+            buildInfo,
+            checkIsRooted(),
+            internalDeviceId,
+            locale,
+            null,
+            runtimeVersions.toMutableMap(),
+            null,
+            null,
+            getOrientationAsString(),
+            Date(timeStamp)
+        )
+
     fun getDeviceMetadata(): Map<String, Any?> {
         val map = HashMap<String, Any?>()
         populateBatteryInfo(into = map)
