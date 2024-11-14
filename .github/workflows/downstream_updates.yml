@@ -1,4 +1,5 @@
 name: downstream-updates
+permissions: read-all
 
 on:
   release:
