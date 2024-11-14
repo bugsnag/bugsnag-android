@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.bugsnag.android.internal.ImmutableConfig
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import java.io.File
@@ -24,7 +23,6 @@ internal class BugsnagExitInfoPluginStoreTest {
         )
         file = File(immutableConfig.persistenceDirectory.value, "bugsnag-exit-reasons")
         file.delete()
-        exitInfoPluginStore = ExitInfoPluginStore(immutableConfig)
     }
 
     /**
@@ -32,8 +30,10 @@ internal class BugsnagExitInfoPluginStoreTest {
      */
     @Test
     fun readNonExistentFile() {
-        val expectedResult = null to emptySet<ExitInfoKey>()
-        assertEquals(expectedResult, exitInfoPluginStore.load())
+        exitInfoPluginStore = ExitInfoPluginStore(immutableConfig)
+        assertEquals(0, exitInfoPluginStore.currentPid)
+        assertEquals(0, exitInfoPluginStore.previousPid)
+        assertEquals(emptySet<ExitInfoKey>(), exitInfoPluginStore.exitInfoKeys)
     }
 
     /**
@@ -42,8 +42,11 @@ internal class BugsnagExitInfoPluginStoreTest {
     @Test
     fun readEmptyFile() {
         file.createNewFile()
-        val expectedResult = null to emptySet<ExitInfoKey>()
-        assertEquals(expectedResult, exitInfoPluginStore.load())
+        exitInfoPluginStore = ExitInfoPluginStore(immutableConfig)
+
+        assertEquals(0, exitInfoPluginStore.currentPid)
+        assertEquals(0, exitInfoPluginStore.previousPid)
+        assertEquals(emptySet<ExitInfoKey>(), exitInfoPluginStore.exitInfoKeys)
     }
 
     /**
@@ -52,8 +55,11 @@ internal class BugsnagExitInfoPluginStoreTest {
     @Test
     fun readInvalidFileContents() {
         file.writeText("{\"hamster\": 2}")
-        val expectedResult = null to emptySet<ExitInfoKey>()
-        assertEquals(expectedResult, exitInfoPluginStore.load())
+        exitInfoPluginStore = ExitInfoPluginStore(immutableConfig)
+
+        assertEquals(0, exitInfoPluginStore.currentPid)
+        assertEquals(0, exitInfoPluginStore.previousPid)
+        assertEquals(emptySet<ExitInfoKey>(), exitInfoPluginStore.exitInfoKeys)
     }
 
     /**
@@ -63,49 +69,27 @@ internal class BugsnagExitInfoPluginStoreTest {
     fun readLegacyFileContents() {
         file.writeText("12345")
         exitInfoPluginStore = ExitInfoPluginStore(immutableConfig)
-        val info = requireNotNull(exitInfoPluginStore.load())
-        assertEquals(12345, info.first)
+        assertEquals(12345, exitInfoPluginStore.previousPid)
+        assertEquals(0, exitInfoPluginStore.currentPid)
     }
 
     @Test
-    fun writableFileWithEmptyExitInfo() {
-        exitInfoPluginStore.persist(12345, emptySet())
-        val firstPid = exitInfoPluginStore.load().first
-        assertNull(firstPid)
-        exitInfoPluginStore = ExitInfoPluginStore(immutableConfig)
-        val (storedPid, storageExitInfoKeys) = exitInfoPluginStore.load()
-        assertEquals(12345, storedPid)
-        assertEquals(emptySet<ExitInfoKey>(), storageExitInfoKeys)
-    }
-
-    @Test
-    fun writableFile() {
-        val expectedPid = 12345
-        val expectedExitInfoKeys = setOf(ExitInfoKey(111, 100L))
-        exitInfoPluginStore.persist(expectedPid, expectedExitInfoKeys)
-
-        val (storedPid, storageExitInfoKeys) = exitInfoPluginStore.load()
-        assertNull(storedPid)
-        assertEquals(emptySet<ExitInfoKey>(), storageExitInfoKeys)
-
-        exitInfoPluginStore = ExitInfoPluginStore(immutableConfig)
-        val (storedPid2, storageExitInfoKeys2) = exitInfoPluginStore.load()
-        assertEquals(expectedPid, storedPid2)
-        assertEquals(expectedExitInfoKeys, storageExitInfoKeys2)
-    }
-
-    @Test
-    fun addExitInfoKeyToFileContents() {
+    fun addExitInfoKey() {
         file.writeText("12345")
         exitInfoPluginStore = ExitInfoPluginStore(immutableConfig)
-        val expectedPid1 = requireNotNull(exitInfoPluginStore.load())
-        assertEquals(12345, expectedPid1.first)
+        exitInfoPluginStore.currentPid = 54321
+
+        assertEquals(12345, exitInfoPluginStore.previousPid)
 
         val expectedExitInfoKey = ExitInfoKey(111, 100L)
         exitInfoPluginStore.addExitInfoKey(expectedExitInfoKey)
-        val (expectedPid2, storageExitInfoKeys2) = requireNotNull(exitInfoPluginStore.load())
-        assertEquals(expectedPid1.first, expectedPid2)
-        assertEquals(setOf(expectedExitInfoKey), storageExitInfoKeys2)
+
+        // reload the ExitInfoPluginStore
+        exitInfoPluginStore = ExitInfoPluginStore(immutableConfig)
+
+        assertEquals(54321, exitInfoPluginStore.previousPid)
+        assertEquals(0, exitInfoPluginStore.currentPid)
+        assertEquals(setOf(expectedExitInfoKey), exitInfoPluginStore.exitInfoKeys)
     }
 
     private fun generateConfiguration(): Configuration {
