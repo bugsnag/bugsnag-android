@@ -27,7 +27,7 @@ internal class EventSynthesizer(
     private val reportUnmatchedNativeCrashes: Boolean
 ) {
     fun createEventWithExitInfo(appExitInfo: ApplicationExitInfo): Event? {
-        val (_, knownExitInfoKeys) = exitInfoPluginStore.load()
+        val knownExitInfoKeys = exitInfoPluginStore.exitInfoKeys
         val exitInfoKey = ExitInfoKey(appExitInfo)
 
         if (knownExitInfoKeys.contains(exitInfoKey)) return null

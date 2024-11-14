@@ -15,7 +15,39 @@ internal class ExitInfoPluginStore(config: ImmutableConfig) {
     internal var legacyStore: Boolean = false
         private set
 
-    fun persist(currentPid: Int, exitInfoKeys: Set<ExitInfoKey>) {
+    var previousPid: Int = 0
+        private set
+
+    var currentPid: Int = 0
+
+    private var _exitInfoKeys = HashSet<ExitInfoKey>()
+    val exitInfoKeys: Set<ExitInfoKey> get() = _exitInfoKeys
+
+    init {
+        load()
+    }
+
+    private fun load() {
+        lock.readLock().withLock {
+            val json = tryLoadJson()
+            if (json != null) {
+                if (previousPid == 0) {
+                    previousPid = json.first ?: 0
+                } else {
+                    currentPid = json.first ?: 0
+                }
+
+                _exitInfoKeys = json.second
+            } else {
+                val legacy = tryLoadLegacy()
+                if (legacy != null) {
+                    previousPid = legacy
+                }
+            }
+        }
+    }
+
+    private fun persist() {
         lock.writeLock().withLock {
             try {
                 file.writer().buffered().use { writer ->
@@ -33,20 +65,12 @@ internal class ExitInfoPluginStore(config: ImmutableConfig) {
         }
     }
 
-    fun load(): Pair<Int?, Set<ExitInfoKey>> {
-        return if (isFirstRun) {
-            null to emptySet()
-        } else {
-            tryLoadJson() ?: (tryLoadLegacy() to emptySet())
-        }
-    }
-
-    private fun tryLoadJson(): Pair<Int?, Set<ExitInfoKey>>? {
+    private fun tryLoadJson(): Pair<Int?, HashSet<ExitInfoKey>>? {
         try {
             val fileContents = file.readText()
             val jsonObject = JSONObject(fileContents)
             val currentPid = jsonObject.getInt("pid")
-            val exitInfoKeys = mutableSetOf<ExitInfoKey>()
+            val exitInfoKeys = HashSet<ExitInfoKey>()
             val jsonArray = jsonObject.getJSONArray("exitInfoKeys")
             for (i in 0 until jsonArray.length()) {
                 val exitInfoKeyObject = jsonArray.getJSONObject(i)
@@ -66,7 +90,6 @@ internal class ExitInfoPluginStore(config: ImmutableConfig) {
     private fun tryLoadLegacy(): Int? {
         try {
             val content = file.readText()
-            legacyStore = true
             if (content.isEmpty()) {
                 logger.w("PID is empty")
                 return null
@@ -79,8 +102,7 @@ internal class ExitInfoPluginStore(config: ImmutableConfig) {
     }
 
     fun addExitInfoKey(exitInfoKey: ExitInfoKey) {
-        val (oldPid, exitInfoKeys) = load()
-        val newExitInfoKeys = exitInfoKeys + exitInfoKey
-        oldPid?.let { persist(it, newExitInfoKeys) }
+        _exitInfoKeys.add(exitInfoKey)
+        persist()
     }
 }

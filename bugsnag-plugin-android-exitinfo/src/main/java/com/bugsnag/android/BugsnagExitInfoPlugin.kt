@@ -39,13 +39,11 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
         val exitInfoPluginStore =
             ExitInfoPluginStore(client.immutableConfig)
         addAllExitInfoAtFirstRun(client, exitInfoPluginStore)
-        val (oldPid, exitInfoKeys) = exitInfoPluginStore.load()
-        exitInfoPluginStore.persist(android.os.Process.myPid(), exitInfoKeys)
+        exitInfoPluginStore.currentPid = android.os.Process.myPid()
 
         val exitInfoCallback = createExitInfoCallback(
             client,
-            oldPid,
-            exitInfoPluginStore,
+            exitInfoPluginStore.previousPid, exitInfoPluginStore,
             tombstoneEventEnhancer,
             traceEventEnhancer
         )
