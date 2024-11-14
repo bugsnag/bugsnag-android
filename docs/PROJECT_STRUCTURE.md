@@ -9,7 +9,8 @@ The project consists of [6 Gradle modules](https://gradle.org/), which are linke
 - [bugsnag-android-core](../bugsnag-android-core/README.md) - contains the core functionality required to capture and deliver JVM errors to Bugsnag.
 - [bugsnag-plugin-android-ndk](../bugsnag-plugin-android-ndk/README.md) - contains optional functionality that installs signal handlers and captures NDK errors.
 - [bugsnag-plugin-android-anr](../bugsnag-plugin-android-ndk/README.md) - contains optional functionality that installs a signal handler to capture ANR errors.
-- [bugsnag-plugin-android-okhttp](../bugsnag-plugin-android-okhttp/README.md) - contains optional functionality that captures breadcrumbs for OkHttp requests.
+- [bugsnag-plugin-android-okhttp](../bugsnag-plugin-android-okhttp/README.md) - contains optional functionality for OkHttp.
+- [bugsnag-plugin-android-exitinfo](../bugsnag-plugin-android-exitinfo) - contains optional functionality to collect additional data using [historical process exit reasons](https://developer.android.com/reference/android/app/ActivityManager#getHistoricalProcessExitReasons(java.lang.String,%20int,%20int)).
 - [bugsnag-plugin-react-native](../bugsnag-plugin-react-native/README.md) - contains optional functionality that serializes information into a format that can be understood by the React Native bridge.
 - [bugsnag-android](../bugsnag-android/README.md) - an anchor package which allows users to pull in all the required modules.
 - [bugsnag-android-ndk](../bugsnag-android-ndk/README.md) - an anchor package which allows users to pull in all the required modules. Published for legacy reasons.

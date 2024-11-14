@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.4.1)
+project(cxx-scenarios-bugsnag)
 
 find_package(bugsnag-plugin-android-ndk REQUIRED CONFIG)
 

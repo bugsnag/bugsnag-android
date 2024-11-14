@@ -1,4 +1,5 @@
-cmake_minimum_required(VERSION 3.8.0)
+cmake_minimum_required(VERSION 3.19)
+project(bugsnag-plugin-android-ndk)
 project(TEST)
 add_subdirectory(src/main)
 
