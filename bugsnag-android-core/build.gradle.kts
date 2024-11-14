@@ -15,7 +15,15 @@ bugsnagBuildOptions {
                 java.srcDirs("dsl-json/library/src/main/java")
             }
             named("test") {
-                java.srcDirs("dsl-json/library/src/test/java")
+                java.srcDirs(
+                    "dsl-json/library/src/test/java",
+                    "src/sharedTest/java"
+                )
+            }
+            named("androidTest") {
+                java.srcDirs(
+                    "src/sharedTest/java"
+                )
             }
         }
     }

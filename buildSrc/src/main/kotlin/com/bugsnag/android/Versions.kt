@@ -13,6 +13,7 @@ object Versions {
     val java = JavaVersion.VERSION_1_8
     val kotlin = "1.5.10"
     val kotlinLang = "1.5"
+    val cmakeVersion = "3.22.1"
 
     // plugins
     val androidGradlePlugin = "7.0.4"
@@ -25,6 +26,6 @@ object Versions {
     val supportLib = "1.1.0"
     val supportTestLib = "1.2.0"
     val espressoTestLib = "3.1.0"
-    val junitTestLib = "4.12"
-    val mockitoTestLib = "2.28.2"
+    val junitTestLib = "4.13.2"
+    val mockitoTestLib = "4.11.0"
 }
