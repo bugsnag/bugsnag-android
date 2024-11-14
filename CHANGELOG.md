@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+* Restructured Bugsnag.start to reduce the chance of deadlocks and allow further reductions in startup overhead
+  [#2089](https://github.com/bugsnag/bugsnag-android/pull/2089)
+
 ## 6.9.0 (2024-11-07)
 
 ### Enhancements
