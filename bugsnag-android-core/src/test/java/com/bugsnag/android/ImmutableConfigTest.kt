@@ -8,6 +8,8 @@ import android.os.Bundle
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import com.bugsnag.android.internal.BackgroundTaskService
 import com.bugsnag.android.internal.convertToImmutableConfig
+import com.bugsnag.android.internal.dag.RunnableProvider
+import com.bugsnag.android.internal.dag.ValueProvider
 import com.bugsnag.android.internal.isInvalidApiKey
 import com.bugsnag.android.internal.sanitiseConfiguration
 import org.junit.After
@@ -32,7 +34,9 @@ import java.util.regex.Pattern
 @RunWith(MockitoJUnitRunner::class)
 internal class ImmutableConfigTest {
 
-    private val seed = generateConfiguration()
+    private val seed = generateConfiguration().apply {
+        projectPackages = setOf("com.example.foo")
+    }
 
     @Mock
     lateinit var delivery: Delivery
@@ -54,6 +58,8 @@ internal class ImmutableConfigTest {
         // on the config object
         seed.delivery = delivery
         seed.logger = NoopLogger
+
+        RunnableProvider._mainThread = java.lang.Thread.currentThread()
 
         // we use a real BackgroundTaskService
         backgroundTaskService = BackgroundTaskService()
@@ -133,7 +139,7 @@ internal class ImmutableConfigTest {
         seed.sendLaunchCrashesSynchronously = false
 
         // verify overrides are copied across
-        with(convertToImmutableConfig(seed, "f7ab")) {
+        with(convertToImmutableConfig(seed, ValueProvider("f7ab"))) {
             assertEquals("5d1ec5bd39a74caa1267142706a7fb21", apiKey)
 
             // detection
@@ -152,7 +158,7 @@ internal class ImmutableConfigTest {
 
             // identifiers
             assertEquals("1.2.3", seed.appVersion)
-            assertEquals("f7ab", buildUuid)
+            assertEquals("f7ab", buildUuid?.getOrNull())
             assertEquals("custom", seed.appType)
 
             // network config
@@ -240,7 +246,7 @@ internal class ImmutableConfigTest {
         // validate build uuid
         val seed = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
         val config = sanitiseConfiguration(context, seed, connectivity, backgroundTaskService)
-        assertEquals("6533e9f7-0e98-40fe-84b4-0e4ed6df6866", config.buildUuid)
+        assertEquals("6533e9f7-0e98-40fe-84b4-0e4ed6df6866", config.buildUuid?.getOrNull())
     }
 
     @Test
@@ -258,7 +264,7 @@ internal class ImmutableConfigTest {
         // validate build uuid
         val seed = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
         val config = sanitiseConfiguration(context, seed, connectivity, backgroundTaskService)
-        assertNull(config.buildUuid)
+        assertNull(config.buildUuid?.getOrNull())
     }
 
     @Test
@@ -277,7 +283,7 @@ internal class ImmutableConfigTest {
         // validate build uuid
         val seed = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
         val config = sanitiseConfiguration(context, seed, connectivity, backgroundTaskService)
-        assertEquals("590265330", config.buildUuid)
+        assertEquals("590265330", config.buildUuid?.getOrNull())
     }
 
     @Test
@@ -294,7 +300,7 @@ internal class ImmutableConfigTest {
         // validate build uuid
         val seed = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
         val config = sanitiseConfiguration(context, seed, connectivity, backgroundTaskService)
-        assertNull(config.buildUuid)
+        assertNull(config.buildUuid?.getOrNull())
     }
 
     @Test(expected = IllegalArgumentException::class)

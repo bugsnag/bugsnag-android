@@ -35,7 +35,7 @@ class BugsnagStoreMigratorTest {
         filesToMove.forEach { (from, to) ->
             val file = File(tmpdir, from).apply { mkdirs() }
             val newDir = File(tmpdir, to)
-            BugsnagStoreMigrator.moveToNewDirectory(tmpdir)
+            BugsnagStoreMigrator.migrateLegacyFiles(lazyOf(tmpdir))
             assertFalse(file.isDirectory)
             assertFalse(file.exists())
             assertTrue(newDir.isDirectory)
@@ -47,7 +47,7 @@ class BugsnagStoreMigratorTest {
     fun testMoveOneFileToNewDirectory() {
         val file = File(tmpdir, "bugsnag-native").apply { mkdirs() }
         val newDirFile = File(tmpdir, "bugsnag/native")
-        BugsnagStoreMigrator.moveToNewDirectory(tmpdir)
+        BugsnagStoreMigrator.migrateLegacyFiles(lazyOf(tmpdir))
         assertFalse(file.isDirectory)
         assertFalse(file.exists())
         assertTrue(newDirFile.exists())
@@ -63,7 +63,7 @@ class BugsnagStoreMigratorTest {
         }
         assertTrue(file.isDirectory)
         assertTrue(file.exists())
-        BugsnagStoreMigrator.moveToNewDirectory(tmpdir)
+        BugsnagStoreMigrator.migrateLegacyFiles(lazyOf(tmpdir))
         assertFalse(newDirFile.isDirectory)
         assertFalse(newDirFile.exists())
         assertTrue(file.isDirectory)
@@ -74,7 +74,7 @@ class BugsnagStoreMigratorTest {
     fun testDeepPathUndefinedFile() {
         val file = File(tmpdir, "test/tes2/test3").apply { mkdirs() }
         val newDirFile = File(tmpdir, "bugsnag/test/tes2/test3")
-        BugsnagStoreMigrator.moveToNewDirectory(tmpdir)
+        BugsnagStoreMigrator.migrateLegacyFiles(lazyOf(tmpdir))
         assertFalse(newDirFile.exists())
         assertTrue(file.isDirectory)
         assertTrue(file.exists())
@@ -85,7 +85,7 @@ class BugsnagStoreMigratorTest {
         val file = File(tmpdir, "bugsnag-sessions").apply { mkdirs() }
         File(file, "test1/tes2/test3").apply { mkdirs() }
         val newDirFile = File(tmpdir, "bugsnag/sessions/test1/tes2/test3")
-        BugsnagStoreMigrator.moveToNewDirectory(tmpdir)
+        BugsnagStoreMigrator.migrateLegacyFiles(lazyOf(tmpdir))
         assertTrue(newDirFile.exists())
         assertFalse(file.isDirectory)
         assertFalse(file.exists())
@@ -102,7 +102,7 @@ class BugsnagStoreMigratorTest {
         val test1moved = File(tmpdir, "bugsnag/errors/test1")
         val test2moved = File(tmpdir, "bugsnag/errors/test2")
 
-        BugsnagStoreMigrator.moveToNewDirectory(tmpdir)
+        BugsnagStoreMigrator.migrateLegacyFiles(lazyOf(tmpdir))
         assertFalse(file.isDirectory)
         assertFalse(file.exists())
         assertFalse(test1From.exists())
