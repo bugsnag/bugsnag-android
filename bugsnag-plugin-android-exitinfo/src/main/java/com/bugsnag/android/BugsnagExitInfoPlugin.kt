@@ -5,6 +5,7 @@ import android.app.ActivityManager
 import android.app.ApplicationExitInfo
 import android.content.Context
 import android.os.Build
+import android.os.Process
 import androidx.annotation.RequiresApi
 
 @RequiresApi(Build.VERSION_CODES.R)
@@ -26,6 +27,11 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
             )
         }
 
+        val exitInfoCallback = createExitInfoCallback(client)
+        client.addOnSend(exitInfoCallback)
+    }
+
+    private fun createExitInfoCallback(client: Client): ExitInfoCallback {
         val tombstoneEventEnhancer = TombstoneEventEnhancer(
             client.logger,
             configuration.listOpenFds,
@@ -39,7 +45,7 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
         val exitInfoPluginStore =
             ExitInfoPluginStore(client.immutableConfig)
         addAllExitInfoAtFirstRun(client, exitInfoPluginStore)
-        exitInfoPluginStore.currentPid = android.os.Process.myPid()
+        exitInfoPluginStore.currentPid = Process.myPid()
 
         val exitInfoCallback = createExitInfoCallback(
             client,
@@ -55,7 +61,7 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
                 traceEventEnhancer
             )
         }
-        client.addOnSend(exitInfoCallback)
+        return exitInfoCallback
     }
 
     private fun addAllExitInfoAtFirstRun(
