@@ -302,3 +302,9 @@ Feature: Unhandled smoke tests
     # Breadcrumbs
     And the event has a "manual" breadcrumb named "CXXExceptionSmokeScenario"
 
+    # Threads validation
+    And the error payload field "events.0.threads" is a non-empty array
+    And the event "threads.0.id" matches "^[0-9]+$"
+    And the event "threads.0.name" is not null
+    And the event "threads.0.type" equals "c"
+    And the thread with name "roid.mazerunner" contains the error reporting flag

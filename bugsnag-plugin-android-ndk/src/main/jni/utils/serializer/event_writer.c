@@ -605,6 +605,12 @@ static bool bsg_write_threads(BSG_KSJSONEncodeContext *json,
       CHECKED(bsg_ksjsonbeginObject(json, NULL));
       {
         CHECKED(JSON_LIMITED_STRING_ELEMENT("id", id_string));
+
+        if (thread->is_reporting_thread) {
+          CHECKED(
+              bsg_ksjsonaddBooleanElement(json, "errorReportingThread", true));
+        }
+
         CHECKED(JSON_LIMITED_STRING_ELEMENT("name", thread->name));
         CHECKED(JSON_LIMITED_STRING_ELEMENT("state", thread->state));
         CHECKED(JSON_CONSTANT_ELEMENT("type", "c"));

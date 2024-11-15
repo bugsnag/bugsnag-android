@@ -10,7 +10,7 @@ extern "C" {
 
 #define MAX_STAT_PATH_LENGTH 64
 
-size_t bsg_capture_thread_states(bsg_thread *threads,
+size_t bsg_capture_thread_states(pid_t reporting_tid, bsg_thread *threads,
                                  size_t max_threads) __asyncsafe;
 
 #ifdef __cplusplus

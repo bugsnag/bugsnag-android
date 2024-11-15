@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.4.1)
+project(cxx-scenarios)
 
 add_library(cxx-scenarios SHARED
         src/main/cpp/cxx-scenarios.cpp

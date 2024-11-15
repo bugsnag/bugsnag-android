@@ -92,6 +92,7 @@ class BugsnagBuildPlugin : Plugin<Project> {
                 "-DANDROID_STL=c++_static"
             )
 
+
             val override: String? = project.findProperty("ABI_FILTERS") as String?
             val abis = override?.split(",") ?: mutableSetOf(
                 "arm64-v8a",
@@ -102,6 +103,7 @@ class BugsnagBuildPlugin : Plugin<Project> {
             ndk.setAbiFilters(abis)
         }
         externalNativeBuild.cmake.path = project.file("CMakeLists.txt")
+        externalNativeBuild.cmake.version = Versions.cmakeVersion
     }
 
     /**
@@ -165,6 +167,7 @@ class BugsnagBuildPlugin : Plugin<Project> {
             add("testImplementation", "junit:junit:${Versions.junitTestLib}")
             add("testImplementation", "org.mockito:mockito-core:${Versions.mockitoTestLib}")
             add("testImplementation", "org.mockito:mockito-inline:${Versions.mockitoTestLib}")
+            add("testImplementation", "androidx.test:core:${Versions.supportTestLib}")
 
             add(
                 "androidTestImplementation",

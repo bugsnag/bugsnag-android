@@ -4,15 +4,16 @@
   <CurrentIssues>
     <ID>CyclomaticComplexMethod:AppDataCollector.kt$AppDataCollector$@SuppressLint("SwitchIntDef") @Suppress("DEPRECATION") private fun getProcessImportance(): String?</ID>
     <ID>CyclomaticComplexMethod:ConfigInternal.kt$ConfigInternal$fun getConfigDifferences(): Map&lt;String, Any></ID>
-    <ID>ImplicitDefaultLocale:DeliveryHeaders.kt$String.format("%02x", byte)</ID>
-    <ID>LongParameterList:App.kt$App$( /** * The architecture of the running application binary */ var binaryArch: String?, /** * The package name of the application */ var id: String?, /** * The release stage set in [Configuration.releaseStage] */ var releaseStage: String?, /** * The version of the application set in [Configuration.version] */ var version: String?, /** The revision ID from the manifest (React Native apps only) */ var codeBundleId: String?, /** * The unique identifier for the build of the application set in [Configuration.buildUuid] */ var buildUuid: String?, /** * The application type set in [Configuration#version] */ var type: String?, /** * The version code of the application set in [Configuration.versionCode] */ var versionCode: Number? )</ID>
+    <ID>ImplicitDefaultLocale:Deliverable.kt$Deliverable$String.format("%02x", byte)</ID>
+    <ID>LongParameterList:App.kt$App$( /** * The architecture of the running application binary */ var binaryArch: String?, /** * The package name of the application */ var id: String?, /** * The release stage set in [Configuration.releaseStage] */ var releaseStage: String?, /** * The version of the application set in [Configuration.version] */ var version: String?, /** The revision ID from the manifest (React Native apps only) */ var codeBundleId: String?, /** * The unique identifier for the build of the application set in [Configuration.buildUuid] */ buildUuid: Provider&lt;String?>?, /** * The application type set in [Configuration#version] */ var type: String?, /** * The version code of the application set in [Configuration.versionCode] */ var versionCode: Number? )</ID>
     <ID>LongParameterList:AppDataCollector.kt$AppDataCollector$( appContext: Context, private val packageManager: PackageManager?, private val config: ImmutableConfig, private val sessionTracker: SessionTracker, private val activityManager: ActivityManager?, private val launchCrashTracker: LaunchCrashTracker, private val memoryTrimState: MemoryTrimState )</ID>
-    <ID>LongParameterList:AppWithState.kt$AppWithState$( binaryArch: String?, id: String?, releaseStage: String?, version: String?, codeBundleId: String?, buildUuid: String?, type: String?, versionCode: Number?, /** * The number of milliseconds the application was running before the event occurred */ var duration: Number?, /** * The number of milliseconds the application was running in the foreground before the * event occurred */ var durationInForeground: Number?, /** * Whether the application was in the foreground when the event occurred */ var inForeground: Boolean?, /** * Whether the application was launching when the event occurred */ var isLaunching: Boolean? )</ID>
+    <ID>LongParameterList:AppWithState.kt$AppWithState$( binaryArch: String?, id: String?, releaseStage: String?, version: String?, codeBundleId: String?, buildUuid: Provider&lt;String?>?, type: String?, versionCode: Number?, /** * The number of milliseconds the application was running before the event occurred */ var duration: Number?, /** * The number of milliseconds the application was running in the foreground before the * event occurred */ var durationInForeground: Number?, /** * Whether the application was in the foreground when the event occurred */ var inForeground: Boolean?, /** * Whether the application was launching when the event occurred */ var isLaunching: Boolean? )</ID>
+    <ID>LongParameterList:AppWithState.kt$AppWithState$( binaryArch: String?, id: String?, releaseStage: String?, version: String?, codeBundleId: String?, buildUuid: String?, type: String?, versionCode: Number?, /** * The number of milliseconds the application was running before the event occurred */ duration: Number?, /** * The number of milliseconds the application was running in the foreground before the * event occurred */ durationInForeground: Number?, /** * Whether the application was in the foreground when the event occurred */ inForeground: Boolean?, /** * Whether the application was launching when the event occurred */ isLaunching: Boolean? )</ID>
     <ID>LongParameterList:AppWithState.kt$AppWithState$( config: ImmutableConfig, binaryArch: String?, id: String?, releaseStage: String?, version: String?, codeBundleId: String?, duration: Number?, durationInForeground: Number?, inForeground: Boolean?, isLaunching: Boolean? )</ID>
-    <ID>LongParameterList:DataCollectionModule.kt$DataCollectionModule$( contextModule: ContextModule, configModule: ConfigModule, systemServiceModule: SystemServiceModule, trackerModule: TrackerModule, bgTaskService: BackgroundTaskService, connectivity: Connectivity, deviceId: String?, internalDeviceId: String?, memoryTrimState: MemoryTrimState )</ID>
+    <ID>LongParameterList:DataCollectionModule.kt$DataCollectionModule$( contextModule: ContextModule, configModule: ConfigModule, systemServiceModule: SystemServiceModule, trackerModule: TrackerModule, bgTaskService: BackgroundTaskService, connectivity: Connectivity, deviceIdStore: Provider&lt;DeviceIdStore>, memoryTrimState: MemoryTrimState )</ID>
     <ID>LongParameterList:Device.kt$Device$( buildInfo: DeviceBuildInfo, /** * The Application Binary Interface used */ var cpuAbi: Array&lt;String>?, /** * Whether the device has been jailbroken */ var jailbroken: Boolean?, /** * A UUID generated by Bugsnag and used for the individual application on a device */ var id: String?, /** * The IETF language tag of the locale used */ var locale: String?, /** * The total number of bytes of memory on the device */ var totalMemory: Long?, /** * A collection of names and their versions of the primary languages, frameworks or * runtimes that the application is running on */ runtimeVersions: MutableMap&lt;String, Any>? )</ID>
     <ID>LongParameterList:DeviceBuildInfo.kt$DeviceBuildInfo$( val manufacturer: String?, val model: String?, val osVersion: String?, val apiLevel: Int?, val osBuild: String?, val fingerprint: String?, val tags: String?, val brand: String?, val cpuAbis: Array&lt;String>? )</ID>
-    <ID>LongParameterList:DeviceDataCollector.kt$DeviceDataCollector$( private val connectivity: Connectivity, private val appContext: Context, resources: Resources, private val deviceId: String?, private val internalDeviceId: String?, private val buildInfo: DeviceBuildInfo, private val dataDirectory: File, rootDetector: RootDetector, private val bgTaskService: BackgroundTaskService, private val logger: Logger )</ID>
+    <ID>LongParameterList:DeviceDataCollector.kt$DeviceDataCollector$( private val connectivity: Connectivity, private val appContext: Context, resources: Resources, private val deviceIdStore: Provider&lt;DeviceIdStore.DeviceIds?>, private val buildInfo: DeviceBuildInfo, private val dataDirectory: File, private val rootedFuture: Provider&lt;Boolean>?, private val bgTaskService: BackgroundTaskService, private val logger: Logger )</ID>
     <ID>LongParameterList:DeviceWithState.kt$DeviceWithState$( buildInfo: DeviceBuildInfo, jailbroken: Boolean?, id: String?, locale: String?, totalMemory: Long?, runtimeVersions: MutableMap&lt;String, Any>, /** * The number of free bytes of storage available on the device */ var freeDisk: Long?, /** * The number of free bytes of memory available on the device */ var freeMemory: Long?, /** * The orientation of the device when the event occurred: either portrait or landscape */ var orientation: String?, /** * The timestamp on the device when the event occurred */ var time: Date? )</ID>
     <ID>LongParameterList:EventFilenameInfo.kt$EventFilenameInfo.Companion$( obj: Any, uuid: String = UUID.randomUUID().toString(), apiKey: String?, timestamp: Long = System.currentTimeMillis(), config: ImmutableConfig, isLaunching: Boolean? = null )</ID>
     <ID>LongParameterList:EventInternal.kt$EventInternal$( apiKey: String, logger: Logger, breadcrumbs: MutableList&lt;Breadcrumb> = mutableListOf(), discardClasses: Set&lt;Pattern> = setOf(), errors: MutableList&lt;Error> = mutableListOf(), metadata: Metadata = Metadata(), featureFlags: FeatureFlags = FeatureFlags(), originalError: Throwable? = null, projectPackages: Collection&lt;String> = setOf(), severityReason: SeverityReason = SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION), threads: MutableList&lt;Thread> = mutableListOf(), user: User = User(), redactionKeys: Set&lt;Pattern>? = null )</ID>
@@ -23,9 +24,9 @@
     <ID>MagicNumber:BugsnagEventMapper.kt$BugsnagEventMapper$16</ID>
     <ID>MagicNumber:BugsnagEventMapper.kt$BugsnagEventMapper$32</ID>
     <ID>MagicNumber:BugsnagEventMapper.kt$BugsnagEventMapper$56</ID>
-    <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$299</ID>
-    <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$429</ID>
-    <ID>MagicNumber:DefaultDelivery.kt$DefaultDelivery$499</ID>
+    <ID>MagicNumber:DeliveryStatus.kt$DeliveryStatus.Companion$299</ID>
+    <ID>MagicNumber:DeliveryStatus.kt$DeliveryStatus.Companion$429</ID>
+    <ID>MagicNumber:DeliveryStatus.kt$DeliveryStatus.Companion$499</ID>
     <ID>MagicNumber:EventStore.kt$EventStore$60</ID>
     <ID>MagicNumber:JsonHelper.kt$JsonHelper$0xff</ID>
     <ID>MagicNumber:JsonHelper.kt$JsonHelper$1000</ID>
@@ -39,7 +40,6 @@
     <ID>MaxLineLength:LastRunInfo.kt$LastRunInfo$return "LastRunInfo(consecutiveLaunchCrashes=$consecutiveLaunchCrashes, crashed=$crashed, crashedDuringLaunch=$crashedDuringLaunch)"</ID>
     <ID>MaxLineLength:ThreadState.kt$ThreadState$"[${allThreads.size - maxThreadCount} threads omitted as the maxReportedThreads limit ($maxThreadCount) was exceeded]"</ID>
     <ID>NestedBlockDepth:FileStore.kt$FileStore$fun deleteStoredFiles(storedFiles: Collection&lt;File>?)</ID>
-    <ID>NestedBlockDepth:FileStore.kt$FileStore$fun discardOldestFileIfNeeded()</ID>
     <ID>NestedBlockDepth:FileStore.kt$FileStore$fun findStoredFiles(): MutableList&lt;File></ID>
     <ID>NestedBlockDepth:JsonHelper.kt$JsonHelper$fun jsonToLong(value: Any?): Long?</ID>
     <ID>ProtectedMemberInFinalClass:ConfigInternal.kt$ConfigInternal$protected val plugins = HashSet&lt;Plugin>()</ID>
@@ -47,6 +47,8 @@
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun shouldDiscardClass(): Boolean</ID>
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun updateSeverityInternal(severity: Severity)</ID>
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun updateSeverityReason(@SeverityReason.SeverityReasonType reason: String)</ID>
+    <ID>ReturnCount:DefaultDelivery.kt$DefaultDelivery$fun deliver( urlString: String, json: ByteArray, integrity: String?, headers: Map&lt;String, String?> ): DeliveryStatus</ID>
+    <ID>SwallowedException:ActivityBreadcrumbCollector.kt$ActivityBreadcrumbCollector$re: Exception</ID>
     <ID>ReturnCount:DefaultDelivery.kt$DefaultDelivery$fun deliver( urlString: String, json: ByteArray, headers: Map&lt;String, String?> ): DeliveryStatus</ID>
     <ID>SpreadOperator:FileStore.kt$FileStore$(*listFiles)</ID>
     <ID>SwallowedException:ActivityBreadcrumbCollector.kt$ActivityBreadcrumbCollector$re: Exception</ID>
@@ -60,7 +62,6 @@
     <ID>SwallowedException:DeviceIdFilePersistence.kt$DeviceIdFilePersistence$exc: OverlappingFileLockException</ID>
     <ID>SwallowedException:EventStore.kt$EventStore$exception: RejectedExecutionException</ID>
     <ID>SwallowedException:ForegroundDetector.kt$ForegroundDetector$e: Exception</ID>
-    <ID>SwallowedException:ImmutableConfig.kt$e: Exception</ID>
     <ID>SwallowedException:JsonHelperTest.kt$JsonHelperTest$e: IllegalArgumentException</ID>
     <ID>SwallowedException:PluginClient.kt$PluginClient$exc: ClassNotFoundException</ID>
     <ID>SwallowedException:SharedPrefMigrator.kt$SharedPrefMigrator$e: RuntimeException</ID>
@@ -70,7 +71,7 @@
     <ID>TooManyFunctions:EventInternal.kt$EventInternal : FeatureFlagAwareStreamableMetadataAwareUserAware</ID>
     <ID>UnusedPrivateProperty:ManifestConfigLoader.kt$ManifestConfigLoader.Companion$private const val LAUNCH_CRASH_THRESHOLD_MS = "$BUGSNAG_NS.LAUNCH_CRASH_THRESHOLD_MS"</ID>
     <ID>UnusedPrivateProperty:ThreadStateTest.kt$ThreadStateTest$private val configuration = generateImmutableConfig()</ID>
-    <ID>UseCheckOrError:BackgroundTaskServiceTest.kt$BackgroundTaskServiceTest$throw IllegalStateException()</ID>
+    <ID>UseCheckOrError:BackgroundRunnableProviderServiceTest.kt$BackgroundRunnableProviderServiceTest$throw IllegalStateException()</ID>
     <ID>UseCheckOrError:BugsnagEventMapper.kt$BugsnagEventMapper$throw IllegalStateException("cannot find json property '$key'")</ID>
     <ID>UseCheckOrError:StacktraceSerializationTest.kt$StacktraceSerializationTest.Companion$throw IllegalStateException()</ID>
     <ID>UseCheckOrError:SynchronizedStreamableStoreTest.kt$CrashyStreamable$throw IllegalStateException()</ID>
