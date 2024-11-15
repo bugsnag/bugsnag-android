@@ -95,7 +95,7 @@ internal class DeviceDataCollector(
         DeviceWithState(
             buildInfo,
             checkIsRooted(),
-            internalDeviceId,
+            deviceIdStore.get()?.internalDeviceId,
             locale,
             null,
             runtimeVersions.toMutableMap(),

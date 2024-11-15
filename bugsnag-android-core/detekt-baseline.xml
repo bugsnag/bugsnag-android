@@ -49,9 +49,6 @@
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun updateSeverityReason(@SeverityReason.SeverityReasonType reason: String)</ID>
     <ID>ReturnCount:DefaultDelivery.kt$DefaultDelivery$fun deliver( urlString: String, json: ByteArray, integrity: String?, headers: Map&lt;String, String?> ): DeliveryStatus</ID>
     <ID>SwallowedException:ActivityBreadcrumbCollector.kt$ActivityBreadcrumbCollector$re: Exception</ID>
-    <ID>ReturnCount:DefaultDelivery.kt$DefaultDelivery$fun deliver( urlString: String, json: ByteArray, headers: Map&lt;String, String?> ): DeliveryStatus</ID>
-    <ID>SpreadOperator:FileStore.kt$FileStore$(*listFiles)</ID>
-    <ID>SwallowedException:ActivityBreadcrumbCollector.kt$ActivityBreadcrumbCollector$re: Exception</ID>
     <ID>SwallowedException:AppDataCollector.kt$AppDataCollector$e: Exception</ID>
     <ID>SwallowedException:BugsnagEventMapper.kt$BugsnagEventMapper$pe: IllegalArgumentException</ID>
     <ID>SwallowedException:ConnectivityCompat.kt$ConnectivityLegacy$e: NullPointerException</ID>
