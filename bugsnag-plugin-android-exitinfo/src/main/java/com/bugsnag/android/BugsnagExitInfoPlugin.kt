@@ -27,11 +27,6 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
             )
         }
 
-        val exitInfoCallback = createExitInfoCallback(client)
-        client.addOnSend(exitInfoCallback)
-    }
-
-    private fun createExitInfoCallback(client: Client): ExitInfoCallback {
         val tombstoneEventEnhancer = TombstoneEventEnhancer(
             client.logger,
             configuration.listOpenFds,
@@ -47,11 +42,17 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
         addAllExitInfoAtFirstRun(client, exitInfoPluginStore)
         exitInfoPluginStore.currentPid = Process.myPid()
 
+        val exitInfoMatcher = ApplicationExitInfoMatcher(
+            context = client.appContext,
+            pid = exitInfoPluginStore.previousPid
+        )
+
         val exitInfoCallback = createExitInfoCallback(
             client,
-            exitInfoPluginStore.previousPid, exitInfoPluginStore,
+            exitInfoPluginStore,
             tombstoneEventEnhancer,
-            traceEventEnhancer
+            traceEventEnhancer,
+            exitInfoMatcher
         )
         InternalHooks.setEventStoreEmptyCallback(client) {
             synthesizeNewEvents(
@@ -61,7 +62,13 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
                 traceEventEnhancer
             )
         }
-        return exitInfoCallback
+
+        InternalHooks.setDiscardEventCallback(client) { eventPayload ->
+            val exitInfo = eventPayload.event?.let { exitInfoMatcher.matchExitInfo(it) }
+            exitInfo?.let { exitInfoPluginStore.addExitInfoKey(ExitInfoKey(exitInfo)) }
+        }
+
+        client.addOnSend(exitInfoCallback)
     }
 
     private fun addAllExitInfoAtFirstRun(
@@ -85,16 +92,16 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
 
     private fun createExitInfoCallback(
         client: Client,
-        oldPid: Int?,
         exitInfoPluginStore: ExitInfoPluginStore,
         tombstoneEventEnhancer: TombstoneEventEnhancer,
-        traceEventEnhancer: TraceEventEnhancer
+        traceEventEnhancer: TraceEventEnhancer,
+        applicationExitInfoMatcher: ApplicationExitInfoMatcher
     ): ExitInfoCallback = ExitInfoCallback(
         client.appContext,
-        oldPid,
         tombstoneEventEnhancer,
         traceEventEnhancer,
-        exitInfoPluginStore
+        exitInfoPluginStore,
+        applicationExitInfoMatcher
     )
 
     private fun synthesizeNewEvents(

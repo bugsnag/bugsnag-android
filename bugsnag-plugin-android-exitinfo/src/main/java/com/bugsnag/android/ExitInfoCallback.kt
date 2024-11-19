@@ -24,18 +24,18 @@ import androidx.annotation.RequiresApi
 @RequiresApi(Build.VERSION_CODES.R)
 internal class ExitInfoCallback(
     private val context: Context,
-    private val pid: Int?,
     private val nativeEnhancer: (Event, ApplicationExitInfo) -> Unit,
     private val anrEventEnhancer: (Event, ApplicationExitInfo) -> Unit,
-    private val exitInfoPluginStore: ExitInfoPluginStore?
+    private val exitInfoPluginStore: ExitInfoPluginStore?,
+    private val applicationExitInfoMatcher: ApplicationExitInfoMatcher?,
 ) : OnSendCallback {
 
     override fun onSend(event: Event): Boolean {
         val am: ActivityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         val allExitInfo: List<ApplicationExitInfo> = am.getHistoricalProcessExitReasons(context.packageName, 0, MAX_EXIT_INFO)
         val sessionIdBytes: ByteArray = event.session?.id?.toByteArray() ?: return true
-        val exitInfo: ApplicationExitInfo = findExitInfoBySessionId(allExitInfo, sessionIdBytes)
-            ?: findExitInfoByPid(allExitInfo) ?: return true
+        val exitInfo: ApplicationExitInfo = applicationExitInfoMatcher?.findExitInfoBySessionId(allExitInfo, sessionIdBytes)
+            ?: applicationExitInfoMatcher?.findExitInfoByPid(allExitInfo) ?: return true
         exitInfoPluginStore?.addExitInfoKey(ExitInfoKey(exitInfo.pid, exitInfo.timestamp))
 
         try {
@@ -101,16 +101,6 @@ internal class ExitInfoCallback(
         REASON_SERVICE_IN_USE -> "service in use"
         else -> "unknown importance (${exitInfo.importance})"
     }
-
-    private fun findExitInfoBySessionId(
-        allExitInfo: List<ApplicationExitInfo>,
-        sessionIdBytes: ByteArray
-    ) = allExitInfo.find {
-        it.processStateSummary?.contentEquals(sessionIdBytes) == true
-    }
-
-    private fun findExitInfoByPid(allExitInfo: List<ApplicationExitInfo>) =
-        allExitInfo.find { it.pid == pid }
 
     internal companion object {
         private const val MAX_EXIT_INFO = 100

@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 
 class InternalHooks {
 
@@ -14,6 +15,12 @@ class InternalHooks {
 
     public static void setEventStoreEmptyCallback(Client client, Function0<Unit> callback) {
         client.eventStore.setOnEventStoreEmptyCallback(callback);
+    }
+
+    public static void setDiscardEventCallback(
+            Client client,
+            Function1<EventPayload, Unit> callback) {
+        client.eventStore.setOnDiscardEventCallback(callback);
     }
 
     static void deliver(@NonNull Client client, @NonNull Event event) {
@@ -37,5 +44,4 @@ class InternalHooks {
         event.updateSeverityReason(SeverityReason.REASON_SIGNAL);
         return event;
     }
-
 }
