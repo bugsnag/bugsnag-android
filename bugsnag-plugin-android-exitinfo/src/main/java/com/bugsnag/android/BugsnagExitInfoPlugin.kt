@@ -2,6 +2,7 @@ package com.bugsnag.android
 
 import android.annotation.SuppressLint
 import android.app.ActivityManager
+import android.app.Application
 import android.app.ApplicationExitInfo
 import android.content.Context
 import android.os.Build
@@ -37,8 +38,7 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
             client.immutableConfig.projectPackages
         )
 
-        val exitInfoPluginStore =
-            ExitInfoPluginStore(client.immutableConfig)
+        val exitInfoPluginStore = ExitInfoPluginStore(client.immutableConfig)
         addAllExitInfoAtFirstRun(client, exitInfoPluginStore)
         exitInfoPluginStore.currentPid = Process.myPid()
 
@@ -54,21 +54,38 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
             traceEventEnhancer,
             exitInfoMatcher
         )
+        client.addOnSend(exitInfoCallback)
+
+        if (client.appContext.isPrimaryProcess()) {
+            configureEventSynthesizer(
+                client,
+                exitInfoPluginStore,
+                traceEventEnhancer,
+                exitInfoMatcher
+            )
+        }
+    }
+
+    private fun configureEventSynthesizer(
+        client: Client,
+        exitInfoPluginStore: ExitInfoPluginStore,
+        traceEventEnhancer: TraceEventEnhancer,
+        exitInfoMatcher: ApplicationExitInfoMatcher
+    ) {
         InternalHooks.setEventStoreEmptyCallback(client) {
             synthesizeNewEvents(
                 client,
                 exitInfoPluginStore,
-                tombstoneEventEnhancer,
                 traceEventEnhancer
             )
         }
 
         InternalHooks.setDiscardEventCallback(client) { eventPayload ->
             val exitInfo = eventPayload.event?.let { exitInfoMatcher.matchExitInfo(it) }
-            exitInfo?.let { exitInfoPluginStore.addExitInfoKey(ExitInfoKey(exitInfo)) }
+            exitInfo?.let {
+                exitInfoPluginStore.addExitInfoKey(ExitInfoKey(exitInfo))
+            }
         }
-
-        client.addOnSend(exitInfoCallback)
     }
 
     private fun addAllExitInfoAtFirstRun(
@@ -107,15 +124,12 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
     private fun synthesizeNewEvents(
         client: Client,
         exitInfoPluginStore: ExitInfoPluginStore,
-        tombstoneEventEnhancer: TombstoneEventEnhancer,
         traceEventEnhancer: TraceEventEnhancer
     ) {
         val eventSynthesizer = EventSynthesizer(
             traceEventEnhancer,
-            tombstoneEventEnhancer,
             exitInfoPluginStore,
-            configuration.reportUnmatchedAnrs,
-            configuration.reportUnmatchedNativeCrashes
+            configuration.reportUnmatchedANR
         )
         val context = client.appContext
         val am: ActivityManager = context.safeGetActivityManager() ?: return
@@ -135,6 +149,10 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
         getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
     } catch (e: Exception) {
         null
+    }
+
+    private fun Context.isPrimaryProcess(): Boolean {
+        return Application.getProcessName() == packageName
     }
 
     companion object {

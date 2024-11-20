@@ -184,7 +184,6 @@ internal class EventStore(
             }
 
             DeliveryStatus.UNDELIVERED -> undeliveredEventPayload(eventFile)
-
             DeliveryStatus.FAILURE -> {
                 val exc: Exception = RuntimeException("Failed to deliver event payload")
                 handleEventFlushFailure(exc, eventFile)
