@@ -8,6 +8,7 @@ destination = "build/fixture-#{ndk_version}"
 
 FileUtils.mkdir_p destination
 FileUtils.cp "features/fixtures/mazerunner/app/build/outputs/apk/#{build_mode}/fixture-#{ndk_version}.apk", "build/fixture-#{ndk_version}.apk"
+FileUtils.cp "features/fixtures/mazerunner/app/build/outputs/mapping/#{build_mode}/mapping.txt", "#{destination}/mapping.txt"
 
 fixture_dir = 'features/fixtures/mazerunner'
 cxx_base = "#{fixture_dir}/cxx-scenarios/build/intermediates"
