@@ -15,7 +15,7 @@ internal class ApplicationExitInfoMatcher(
         val am: ActivityManager =
             context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         val allExitInfo: List<ApplicationExitInfo> =
-            am.getHistoricalProcessExitReasons(context.packageName, 0, MAX_EXIT_INFO)
+            am.getHistoricalProcessExitReasons(context.packageName, MATCH_ALL, MAX_EXIT_INFO)
         val sessionIdBytes: ByteArray =
             event.session?.id?.toByteArray() ?: return null
         val exitInfo: ApplicationExitInfo =
@@ -35,6 +35,7 @@ internal class ApplicationExitInfoMatcher(
         allExitInfo.find { it.pid == pid }
 
     internal companion object {
-        private const val MAX_EXIT_INFO = 100
+        const val MATCH_ALL = 0
+        const val MAX_EXIT_INFO = 100
     }
 }

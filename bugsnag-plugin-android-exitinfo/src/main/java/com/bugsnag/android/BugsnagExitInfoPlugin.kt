@@ -8,6 +8,8 @@ import android.content.Context
 import android.os.Build
 import android.os.Process
 import androidx.annotation.RequiresApi
+import com.bugsnag.android.ApplicationExitInfoMatcher.Companion.MATCH_ALL
+import com.bugsnag.android.ApplicationExitInfoMatcher.Companion.MAX_EXIT_INFO
 
 @RequiresApi(Build.VERSION_CODES.R)
 class BugsnagExitInfoPlugin @JvmOverloads constructor(
@@ -98,7 +100,7 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
                 am.getHistoricalProcessExitReasons(
                     client.appContext.packageName,
                     MATCH_ALL,
-                    MAX_EXIT_REASONS
+                    MAX_EXIT_INFO
                 )
 
             allExitInfo.forEach { exitInfo ->
@@ -134,7 +136,7 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
         val context = client.appContext
         val am: ActivityManager = context.safeGetActivityManager() ?: return
         val allExitInfo: List<ApplicationExitInfo> =
-            am.getHistoricalProcessExitReasons(context.packageName, 0, 100)
+            am.getHistoricalProcessExitReasons(context.packageName, MATCH_ALL, MAX_EXIT_INFO)
         allExitInfo.forEach {
             val newEvent = eventSynthesizer.createEventWithExitInfo(it)
             if (newEvent != null) {
@@ -153,10 +155,5 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
 
     private fun Context.isPrimaryProcess(): Boolean {
         return Application.getProcessName() == packageName
-    }
-
-    companion object {
-        private const val MATCH_ALL = 0
-        private const val MAX_EXIT_REASONS = 100
     }
 }

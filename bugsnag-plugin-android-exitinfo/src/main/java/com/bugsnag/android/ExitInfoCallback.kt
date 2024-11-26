@@ -5,6 +5,7 @@ import android.app.ApplicationExitInfo
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.bugsnag.android.ApplicationExitInfoMatcher.Companion.MATCH_ALL
 
 @RequiresApi(Build.VERSION_CODES.R)
 internal class ExitInfoCallback(
@@ -19,7 +20,7 @@ internal class ExitInfoCallback(
         val am: ActivityManager =
             context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         val allExitInfo: List<ApplicationExitInfo> =
-            am.getHistoricalProcessExitReasons(context.packageName, 0, MAX_EXIT_INFO)
+            am.getHistoricalProcessExitReasons(context.packageName, MATCH_ALL, MAX_EXIT_INFO)
         val sessionIdBytes: ByteArray = event.session?.id?.toByteArray() ?: return true
         val exitInfo: ApplicationExitInfo =
             applicationExitInfoMatcher?.findExitInfoBySessionId(allExitInfo, sessionIdBytes)

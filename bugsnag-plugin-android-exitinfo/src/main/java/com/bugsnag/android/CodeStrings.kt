@@ -38,26 +38,27 @@ import androidx.annotation.RequiresApi
 private const val IMPORTANCE_CANT_SAVE_STATE_PRE_26 = 170
 
 @RequiresApi(Build.VERSION_CODES.R)
-internal fun exitReasonOf(exitInfo: ApplicationExitInfo) = when (exitInfo.reason) {
-    ApplicationExitInfo.REASON_UNKNOWN -> "unknown reason (${exitInfo.reason})"
-    REASON_EXIT_SELF -> "exit self"
-    REASON_SIGNALED -> "signaled"
-    REASON_LOW_MEMORY -> "low memory"
-    REASON_CRASH -> "crash"
-    REASON_CRASH_NATIVE -> "crash native"
-    REASON_ANR -> "ANR"
-    REASON_INITIALIZATION_FAILURE -> "initialization failure"
-    REASON_PERMISSION_CHANGE -> "permission change"
-    REASON_EXCESSIVE_RESOURCE_USAGE -> "excessive resource usage"
-    REASON_USER_REQUESTED -> "user requested"
-    REASON_USER_STOPPED -> "user stopped"
-    REASON_DEPENDENCY_DIED -> "dependency died"
-    REASON_OTHER -> "other"
-    REASON_FREEZER -> "freezer"
-    REASON_PACKAGE_STATE_CHANGE -> "package state change"
-    REASON_PACKAGE_UPDATED -> "package updated"
-    else -> "unknown reason (${exitInfo.reason})"
-}
+internal fun exitReasonOf(exitInfo: ApplicationExitInfo) =
+    when (exitInfo.reason) {
+        ApplicationExitInfo.REASON_UNKNOWN -> "unknown reason (${exitInfo.reason})"
+        REASON_EXIT_SELF -> "exit self"
+        REASON_SIGNALED -> "signaled"
+        REASON_LOW_MEMORY -> "low memory"
+        REASON_CRASH -> "crash"
+        REASON_CRASH_NATIVE -> "crash native"
+        REASON_ANR -> "ANR"
+        REASON_INITIALIZATION_FAILURE -> "initialization failure"
+        REASON_PERMISSION_CHANGE -> "permission change"
+        REASON_EXCESSIVE_RESOURCE_USAGE -> "excessive resource usage"
+        REASON_USER_REQUESTED -> "user requested"
+        REASON_USER_STOPPED -> "user stopped"
+        REASON_DEPENDENCY_DIED -> "dependency died"
+        REASON_OTHER -> "other"
+        REASON_FREEZER -> "freezer"
+        REASON_PACKAGE_STATE_CHANGE -> "package state change"
+        REASON_PACKAGE_UPDATED -> "package updated"
+        else -> "unknown reason (${exitInfo.reason})"
+    }
 
 @RequiresApi(Build.VERSION_CODES.R)
 @SuppressLint("SwitchIntDef")
