@@ -1,5 +1,3 @@
-package com.bugsnag.android
-
 import org.gradle.api.Project
 import org.gradle.api.plugins.quality.Checkstyle
 import org.gradle.api.plugins.quality.CheckstyleExtension
