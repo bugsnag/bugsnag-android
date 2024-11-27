@@ -119,7 +119,7 @@ steps:
         run: maze-runner
         service-ports: true
         command:
-          - "features/smoke_tests"
+          - "features/test.feature"
           - "--exclude=features/smoke_tests/01_anr.feature"
           - "--app=@build/fixture-r19-url.txt"
           - "--appium-version=1.22"
