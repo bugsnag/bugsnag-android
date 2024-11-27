@@ -2,6 +2,10 @@ When('I clear all persistent data') do
   execute_command :clear_persistent_data
 end
 
+When('I run a buggy step') do
+  Maze.driver.click_element('btn_buggy')
+end
+
 def execute_command(action, scenario_name = '')
   command = {
     action: action,
