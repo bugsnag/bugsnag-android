@@ -1,3 +1,6 @@
+agents:
+  queue: 'opensource'
+
 steps:
 
   - label: 'Audit current licenses'
@@ -105,7 +108,7 @@ steps:
   #
   - label: ':bitbar: Android 7 NDK r19 smoke tests'
     depends_on: "fixture-r19"
-    timeout_in_minutes: 60
+    timeout_in_minutes: 30
     plugins:
       artifacts#v1.9.0:
         download:
@@ -139,7 +142,7 @@ steps:
 
   - label: ':browserstack: Android 7 NDK r19 ANR smoke tests'
     depends_on: "fixture-r19"
-    timeout_in_minutes: 60
+    timeout_in_minutes: 30
     plugins:
       artifacts#v1.9.0:
         download:
@@ -170,7 +173,7 @@ steps:
 
   - label: ':bitbar: Android 8 NDK r19 smoke tests'
     depends_on: "fixture-r19"
-    timeout_in_minutes: 60
+    timeout_in_minutes: 30
     plugins:
       artifacts#v1.9.0:
         download:
@@ -202,7 +205,7 @@ steps:
 
   - label: ':browserstack: Android 8 NDK r19 ANR smoke tests'
     depends_on: "fixture-r19"
-    timeout_in_minutes: 60
+    timeout_in_minutes: 30
     plugins:
       artifacts#v1.9.0:
         download:
@@ -231,7 +234,7 @@ steps:
 
   - label: ':bitbar: Android 9 NDK r21 smoke tests'
     depends_on: "fixture-r21"
-    timeout_in_minutes: 60
+    timeout_in_minutes: 30
     plugins:
       artifacts#v1.9.0:
         download:
@@ -265,7 +268,7 @@ steps:
 
   - label: ':browserstack: Android 9 NDK r21 ANR smoke tests'
     depends_on: "fixture-r21"
-    timeout_in_minutes: 60
+    timeout_in_minutes: 30
     plugins:
       artifacts#v1.9.0:
         download:
@@ -292,7 +295,7 @@ steps:
 
   - label: ':bitbar: Android 10 NDK r21 smoke tests'
     depends_on: "fixture-r21"
-    timeout_in_minutes: 60
+    timeout_in_minutes: 30
     plugins:
       artifacts#v1.9.0:
         download:
@@ -326,7 +329,7 @@ steps:
 
   - label: ':browserstack: Android 10 NDK r21 ANR smoke tests'
     depends_on: "fixture-r21"
-    timeout_in_minutes: 60
+    timeout_in_minutes: 30
     plugins:
       artifacts#v1.9.0:
         download:
@@ -358,7 +361,7 @@ steps:
   - label: ':bitbar: Android 11 NDK r21 smoke tests'
     key: 'android-11-smoke'
     depends_on: "fixture-r21"
-    timeout_in_minutes: 60
+    timeout_in_minutes: 30
     plugins:
       artifacts#v1.9.0:
         download:
@@ -393,7 +396,7 @@ steps:
   - label: ':browserstack: Android 11 NDK r21 ANR smoke tests'
     key: 'android-11-anr-smoke'
     depends_on: "fixture-r21"
-    timeout_in_minutes: 60
+    timeout_in_minutes: 30
     plugins:
       artifacts#v1.9.0:
         download:
@@ -532,7 +535,7 @@ steps:
 
   - label: ':bitbar: Android 13 NDK r21 smoke tests'
     depends_on: "fixture-r21"
-    timeout_in_minutes: 60
+    timeout_in_minutes: 30
     plugins:
       artifacts#v1.9.0:
         download:
@@ -566,7 +569,7 @@ steps:
 
   - label: ':browserstack: Android 13 NDK r21 ANR smoke tests'
     depends_on: "fixture-r21"
-    timeout_in_minutes: 60
+    timeout_in_minutes: 30
     plugins:
       artifacts#v1.9.0:
         download:
@@ -597,7 +600,7 @@ steps:
 
   - label: ':bitbar: Android 14 NDK r21 smoke tests'
     depends_on: "fixture-r21"
-    timeout_in_minutes: 60
+    timeout_in_minutes: 30
     plugins:
       artifacts#v1.9.0:
         download:
@@ -631,7 +634,7 @@ steps:
 
   - label: ':browserstack: Android 14 NDK r21 ANR smoke tests'
     depends_on: "fixture-r21"
-    timeout_in_minutes: 60
+    timeout_in_minutes: 30
     plugins:
       artifacts#v1.9.0:
         download:
@@ -660,9 +663,8 @@ steps:
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
-
   - label: 'Conditionally include device farms/full tests'
     agents:
-      queue: macos-14
+      queue: macos
     command: sh -c .buildkite/pipeline_trigger.sh
-
+    timeout_in_minutes: 10
