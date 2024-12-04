@@ -9,7 +9,6 @@ import com.bugsnag.android.DeliveryParams
 import com.bugsnag.android.DeliveryStatus
 import com.bugsnag.android.EndpointConfiguration
 import com.bugsnag.android.EventPayload
-import com.bugsnag.android.ExitInfoPluginConfiguration
 import com.bugsnag.android.Logger
 import com.bugsnag.android.Session
 import com.bugsnag.android.createDefaultDelivery
@@ -24,12 +23,7 @@ fun prepareConfig(
     val config = Configuration(apiKey)
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
         config.addPlugin(
-            BugsnagExitInfoPlugin(
-                ExitInfoPluginConfiguration(
-                    reportUnmatchedAnrs = false,
-                    reportUnmatchedNativeCrashes = false
-                )
-            )
+            BugsnagExitInfoPlugin()
         )
     }
 

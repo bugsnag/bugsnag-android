@@ -7,7 +7,9 @@ ndk_version = ARGV[1]
 destination = "build/fixture-#{ndk_version}"
 
 FileUtils.mkdir_p destination
-FileUtils.cp "features/fixtures/mazerunner/app/build/outputs/apk/#{build_mode}/fixture-#{ndk_version}.apk", "build/fixture-#{ndk_version}.apk"
+build_output = "features/fixtures/mazerunner/app/build/outputs"
+FileUtils.cp "#{build_output}/apk/#{build_mode}/fixture-#{ndk_version}.apk", "build/fixture-#{ndk_version}.apk"
+FileUtils.cp "#{build_output}/mapping/#{build_mode}/mapping.txt", "#{destination}/mapping.txt" if File.exist? "#{build_output}/mapping/#{build_mode}/mapping.txt"
 
 fixture_dir = 'features/fixtures/mazerunner'
 cxx_base = "#{fixture_dir}/cxx-scenarios/build/intermediates"

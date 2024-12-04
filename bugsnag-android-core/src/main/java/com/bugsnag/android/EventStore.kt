@@ -41,6 +41,7 @@ internal class EventStore(
     override val logger: Logger
 
     var onEventStoreEmptyCallback: () -> Unit = {}
+    var onDiscardEventCallback: (EventPayload) -> Unit = {}
     private var isEmptyEventCallbackCalled: Boolean = false
 
     /**
@@ -183,7 +184,6 @@ internal class EventStore(
             }
 
             DeliveryStatus.UNDELIVERED -> undeliveredEventPayload(eventFile)
-
             DeliveryStatus.FAILURE -> {
                 val exc: Exception = RuntimeException("Failed to deliver event payload")
                 handleEventFlushFailure(exc, eventFile)
@@ -196,11 +196,13 @@ internal class EventStore(
             logger.w(
                 "Discarding over-sized event (${eventFile.length()}) after failed delivery"
             )
+            discardEvents(eventFile)
             deleteStoredFiles(setOf(eventFile))
         } else if (isTooOld(eventFile)) {
             logger.w(
                 "Discarding historical event (from ${getCreationDate(eventFile)}) after failed delivery"
             )
+            discardEvents(eventFile)
             deleteStoredFiles(setOf(eventFile))
         } else {
             cancelQueuedFiles(setOf(eventFile))
@@ -271,6 +273,19 @@ internal class EventStore(
             onEventStoreEmptyCallback()
             isEmptyEventCallbackCalled = true
         }
+    }
+
+    private fun discardEvents(eventFile: File) {
+        val eventFilenameInfo = fromFile(eventFile, config)
+        onDiscardEventCallback(
+            EventPayload(
+                eventFilenameInfo.apiKey,
+                null,
+                eventFile,
+                notifier,
+                config
+            )
+        )
     }
 
     companion object {
