@@ -1,10 +1,16 @@
 plugins {
-    id("bugsnag-build-plugin")
-    id("com.android.library")
+    load(Versions.Plugins.AGP)
+    load(Versions.Plugins.licenseCheck)
 }
 
-bugsnagBuildOptions {
-    compilesCode = false
+android {
+    compileSdk = Versions.Android.Build.compileSdkVersion
+    namespace = "com.bugsnag.android"
+
+    defaultConfig {
+        minSdk = Versions.Android.Build.minSdkVersion
+        ndkVersion = Versions.Android.Build.ndk
+    }
 }
 
 dependencies {
