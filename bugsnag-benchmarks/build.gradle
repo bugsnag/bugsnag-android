@@ -1,6 +1,6 @@
 plugins {
     id "com.android.library"
-    id "androidx.benchmark"
+    id "androidx.benchmark" version "1.1.1"
     id "kotlin-android"
 }
 
