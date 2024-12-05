@@ -1,12 +1,18 @@
-# Bugsnag error monitoring & exception reporter for Android
+<div align="center">
+  <a href="https://www.bugsnag.com/platforms/android">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://assets.smartbear.com/m/3dab7e6cf880aa2b/original/BugSnag-Repository-Header-Dark.svg">
+      <img alt="SmartBear BugSnag logo" src="https://assets.smartbear.com/m/3945e02cdc983893/original/BugSnag-Repository-Header-Light.svg">
+    </picture>
+  </a>
+  <h1>Error monitoring &amp; exception reporter for Android</h1>
+</div>
+
 [![Documentation](https://img.shields.io/badge/documentation-latest-blue.svg)](https://docs.bugsnag.com/platforms/android/)
+[![Build status](https://badge.buildkite.com/ff6aa35c92e06a739cb095b58762dffab8011c7f05a1ce86e1.svg)](https://buildkite.com/bugsnag/bugsnag-android)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/bugsnag/bugsnag-android/badge)](https://scorecard.dev/viewer/?uri=github.com/bugsnag/bugsnag-android)
 
-Get comprehensive [Android crash reports](https://www.bugsnag.com/platforms/android/) to quickly debug errors.
-
-Bugsnag's [Android crash reporting](https://www.bugsnag.com/platforms/android/)
-library automatically detects crashes in your Android apps, collecting
-diagnostic information and immediately notifying your development team, helping
-you to understand and resolve issues as fast as possible.
+Detect crashes in your Android applications: collecting diagnostic information and immediately notifying your development team, helping you to understand and resolve issues as fast as possible.
 
 ## Features
 
@@ -30,17 +36,10 @@ you to understand and resolve issues as fast as possible.
 * [Search open and closed issues](https://github.com/bugsnag/bugsnag-android/issues?utf8=✓&q=is%3Aissue) for similar problems
 * [Report a bug or request a feature](https://github.com/bugsnag/bugsnag-android/issues/new)
 
-
 ## Contributing
 
-All contributors are welcome! For information on how to build, test
-and release `bugsnag-android`, see our
-[contributing guide](https://github.com/bugsnag/bugsnag-android/blob/master/CONTRIBUTING.md).
-
-Bugsnag employees should start by reading [the docs](docs/README.md).
+All contributors are welcome! For information on how to build, test and release `bugsnag-android`, see our [contributing guide](https://github.com/bugsnag/bugsnag-android/blob/main/CONTRIBUTING.md).
 
 ## License
 
-The Bugsnag Android notifier is free software released under the MIT License.
-See the [LICENSE](https://github.com/bugsnag/bugsnag-android/blob/master/LICENSE)
-for details.
+The BugSnag Android SDK is free software released under the MIT License. See the [LICENSE](https://github.com/bugsnag/bugsnag-android/blob/main/LICENSE) for details.
