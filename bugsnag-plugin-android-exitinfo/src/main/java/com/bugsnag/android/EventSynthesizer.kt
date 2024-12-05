@@ -59,23 +59,25 @@ internal class EventSynthesizer(
         newEvent: Event,
         appExitInfo: ApplicationExitInfo
     ) {
-        newEvent.addMetadata("exitinfo", "description", appExitInfo.description)
+        newEvent.addMetadata("exitInfo", "Description", appExitInfo.description)
         newEvent.addMetadata(
-            "exitinfo",
-            "importance",
+            "exitInfo",
+            "Importance",
             importanceDescriptionOf(appExitInfo)
         )
-        newEvent.addMetadata(
-            "exitinfo", "Proportional Set Size (PSS)", "${appExitInfo.pss} kB"
-        )
-        newEvent.addMetadata(
-            "exitinfo", "Resident Set Size (RSS)", "${appExitInfo.rss} kB"
-        )
-    }
 
-    companion object {
-        const val IMPORTANCE_EMPTY = 500
-        const val IMPORTANCE_CANT_SAVE_STATE_PRE_26 = 170
-        const val IMPORTANCE_TOP_SLEEPING_PRE_28 = 150
+        val pss = appExitInfo.pss
+        if (pss > 0) {
+            newEvent.addMetadata(
+                "exitInfo", "Proportional Set Size (PSS)", "$pss kB"
+            )
+        }
+
+        val rss = appExitInfo.rss
+        if (rss > 0) {
+            newEvent.addMetadata(
+                "exitInfo", "Resident Set Size (RSS)", "$rss kB"
+            )
+        }
     }
 }
