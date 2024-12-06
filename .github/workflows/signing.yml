@@ -1,5 +1,7 @@
 name: Sign release assets
 
+permissions: read-all
+
 on:
   release:
     types: [released]
