@@ -64,6 +64,13 @@ internal class AppDataCollector(
         )
     }
 
+    fun generateHistoricAppWithState(): AppWithState {
+        return AppWithState(
+            config, binaryArch, packageName, releaseStage, versionName, codeBundleId,
+            null, null, null, null
+        )
+    }
+
     @SuppressLint("SwitchIntDef")
     @Suppress("DEPRECATION")
     private fun getProcessImportance(): String? {

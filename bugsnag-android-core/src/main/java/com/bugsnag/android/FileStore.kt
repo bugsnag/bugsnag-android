@@ -47,6 +47,11 @@ internal abstract class FileStore(
         return true
     }
 
+    /**
+     * Test whether this `FileStore` is definitely empty
+     */
+    fun isEmpty(): Boolean = queuedFiles.isEmpty() && storageDir.list().isNullOrEmpty()
+
     fun enqueueContentForDelivery(content: String?, filename: String) {
         if (!isStorageDirValid(storageDir)) {
             return

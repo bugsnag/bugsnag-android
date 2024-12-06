@@ -9,14 +9,17 @@ public final class com/bugsnag/android/BugsnagExitInfoPlugin : com/bugsnag/andro
 public final class com/bugsnag/android/ExitInfoPluginConfiguration {
 	public fun <init> ()V
 	public fun <init> (ZZZ)V
-	public synthetic fun <init> (ZZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (ZZZZ)V
+	public synthetic fun <init> (ZZZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getDisableProcessStateSummaryOverride ()Z
 	public final fun getIncludeLogcat ()Z
 	public final fun getListOpenFds ()Z
+	public final fun getReportUnmatchedANR ()Z
 	public fun hashCode ()I
 	public final fun setDisableProcessStateSummaryOverride (Z)V
 	public final fun setIncludeLogcat (Z)V
 	public final fun setListOpenFds (Z)V
+	public final fun setReportUnmatchedANR (Z)V
 }
 
