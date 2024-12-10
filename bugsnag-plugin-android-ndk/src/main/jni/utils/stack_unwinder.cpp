@@ -256,3 +256,42 @@ bsg_unwind_concurrent_stack(bugsnag_stackframe stack[BUGSNAG_FRAMES_MAX],
   }
   return frame_count;
 }
+
+bool bsg_frame_info(const uint64_t pc, bugsnag_stackframe *out) {
+  if (current_time_unwinder == nullptr) {
+    return false;
+  }
+
+  auto maps = crash_time_unwinder->GetMaps();
+  if (maps == nullptr) {
+    return false;
+  }
+
+  auto map_info = maps->Find(pc);
+  if (map_info == nullptr) {
+    return false;
+  }
+
+  out->frame_address = pc;
+  out->load_address = map_info->start();
+  out->symbol_address = pc - map_info->offset();
+
+  unwindstack::SharedString function_name;
+  uint64_t function_offset;
+  if (map_info->GetFunctionName(pc, &function_name, &function_offset) &&
+      !function_name.empty()) {
+    bsg_strncpy(out->method, function_name.c_str(), sizeof(out->method));
+  }
+
+  bsg_strncpy(out->code_identifier, map_info->GetPrintableBuildID().c_str(),
+              sizeof(out->code_identifier));
+
+  if (bsg_check_invalid_libname(map_info->name())) {
+    bsg_strncpy(out->filename, map_info->elf()->GetSoname().c_str(),
+                sizeof(out->filename));
+  } else {
+    bsg_fallback_symbols(pc, out);
+  }
+
+  return true;
+}

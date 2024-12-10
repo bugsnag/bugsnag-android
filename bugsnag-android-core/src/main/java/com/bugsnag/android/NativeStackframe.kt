@@ -54,6 +54,18 @@ class NativeStackframe internal constructor(
     var codeIdentifier: String? = null,
 ) : JsonStream.Streamable {
 
+    constructor(frameAddress: Long) : this(
+        frameAddress = frameAddress,
+        type = ErrorType.C,
+        method = null,
+        file = null,
+        lineNumber = null,
+        symbolAddress = null,
+        loadAddress = null,
+        isPC = null,
+        codeIdentifier = null,
+    )
+
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) {
         writer.beginObject()

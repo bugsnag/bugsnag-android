@@ -48,6 +48,8 @@ ssize_t
 bsg_unwind_concurrent_stack(bugsnag_stackframe stack[BUGSNAG_FRAMES_MAX],
                             siginfo_t *info, void *user_context);
 
+bool bsg_frame_info(uint64_t pc, bugsnag_stackframe *out);
+
 #ifdef __cplusplus
 }
 #endif

@@ -551,6 +551,7 @@ public class com/bugsnag/android/NativeInterface {
 }
 
 public final class com/bugsnag/android/NativeStackframe : com/bugsnag/android/JsonStream$Streamable {
+	public fun <init> (J)V
 	public final fun getCodeIdentifier ()Ljava/lang/String;
 	public final fun getFile ()Ljava/lang/String;
 	public final fun getFrameAddress ()Ljava/lang/Long;

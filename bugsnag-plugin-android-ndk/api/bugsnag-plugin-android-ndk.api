@@ -25,6 +25,7 @@ public final class com/bugsnag/android/ndk/NativeBridge : com/bugsnag/android/in
 	public final fun notifyRemoveCallback (Ljava/lang/String;)V
 	public fun onStateChange (Lcom/bugsnag/android/StateEvent;)V
 	public final fun pausedSession ()V
+	public final fun populateStackframes (Ljava/util/List;)V
 	public final fun refreshSymbolTable ()V
 	public final fun removeMetadata (Ljava/lang/String;Ljava/lang/String;)V
 	public final fun setInternalMetricsEnabled (Z)V

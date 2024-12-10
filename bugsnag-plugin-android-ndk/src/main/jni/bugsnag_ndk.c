@@ -959,6 +959,65 @@ Java_com_bugsnag_android_ndk_NativeBridge_setInternalMetricsEnabled(
   bsg_set_internal_metrics_enabled(enabled);
 }
 
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_ndk_NativeBridge_populateStackframes(
+    JNIEnv *env, jobject thiz, jobject stack_trace) {
+
+  if (!bsg_jni_cache_init(env)) {
+    return;
+  }
+
+  if (!stack_trace) {
+    return;
+  }
+
+  bugsnag_stackframe stackframe;
+  const jint stack_frame_count = bsg_safe_call_int_method(
+      env, stack_trace, bsg_jni_cache->Collection_size);
+  for (jint index = 0; index < stack_frame_count; index++) {
+    jobject native_stackframe = bsg_safe_call_object_method(
+        env, stack_trace, bsg_jni_cache->ArrayList_get, index);
+    jobject frame_address = bsg_safe_call_object_method(
+        env, native_stackframe,
+        bsg_jni_cache->NativeStackframe_getFrameAddress);
+    jlong pc = bsg_safe_call_long_method(env, frame_address,
+                                         bsg_jni_cache->Number_longValue);
+
+    memset(&stackframe, 0, sizeof(bugsnag_stackframe));
+    if (bsg_frame_info(pc, &stackframe)) {
+      jobject load_address = bsg_safe_call_static_object_method(
+          env, bsg_jni_cache->Long, bsg_jni_cache->Long_valueOf,
+          stackframe.load_address);
+      jobject symbol_address = bsg_safe_call_static_object_method(
+          env, bsg_jni_cache->Long, bsg_jni_cache->Long_valueOf,
+          stackframe.symbol_address);
+      jstring code_identifier =
+          bsg_safe_new_string_utf(env, stackframe.code_identifier);
+      jstring method = *stackframe.method
+                           ? bsg_safe_new_string_utf(env, stackframe.method)
+                           : NULL;
+      jstring file = *stackframe.filename
+                         ? bsg_safe_new_string_utf(env, stackframe.filename)
+                         : NULL;
+
+      bsg_safe_call_void_method(env, native_stackframe,
+                                bsg_jni_cache->NativeStackframe_setLoadAddress,
+                                load_address);
+      bsg_safe_call_void_method(
+          env, native_stackframe,
+          bsg_jni_cache->NativeStackframe_setSymbolAddress, symbol_address);
+      bsg_safe_call_void_method(
+          env, native_stackframe,
+          bsg_jni_cache->NativeStackframe_setCodeIdentifier, code_identifier);
+      bsg_safe_call_void_method(env, native_stackframe,
+                                bsg_jni_cache->NativeStackframe_setMethod,
+                                method);
+      bsg_safe_call_void_method(env, native_stackframe,
+                                bsg_jni_cache->NativeStackframe_setFile, file);
+    }
+  }
+}
+
 #ifdef __cplusplus
 }
 #endif

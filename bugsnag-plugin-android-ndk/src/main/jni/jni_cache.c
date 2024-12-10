@@ -134,6 +134,7 @@ bool bsg_jni_cache_init(JNIEnv *env) {
 
   CACHE_CLASS(number, "java/lang/Number");
   CACHE_METHOD(number, number_double_value, "doubleValue", "()D");
+  CACHE_METHOD(number, Number_longValue, "longValue", "()J");
 
   CACHE_CLASS(Int, "java/lang/Integer");
   CACHE_METHOD(Int, Int_constructor, "<init>", "(I)V");
@@ -144,6 +145,9 @@ bool bsg_jni_cache_init(JNIEnv *env) {
   CACHE_METHOD(Long, Long_constructor, "<init>", "(J)V");
 
   CACHE_CLASS(String, "java/lang/String");
+
+  CACHE_CLASS(Collection, "java/util/Collection");
+  CACHE_METHOD(Collection, Collection_size, "size", "()I");
 
   CACHE_CLASS(ArrayList, "java/util/ArrayList");
   CACHE_METHOD(ArrayList, ArrayList_constructor_default, "<init>", "()V");
@@ -210,6 +214,16 @@ bool bsg_jni_cache_init(JNIEnv *env) {
       "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Number;"
       "Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Boolean;"
       "Lcom/bugsnag/android/ErrorType;Ljava/lang/String;)V");
+  CACHE_METHOD(NativeStackframe, NativeStackframe_getFrameAddress,
+               "getFrameAddress", "()Ljava/lang/Long;");
+  CACHE_METHOD(NativeStackframe, NativeStackframe_setLoadAddress,
+               "setLoadAddress", "(Ljava/lang/Long;)V");
+  CACHE_METHOD(NativeStackframe, NativeStackframe_setSymbolAddress,
+               "setSymbolAddress", "(Ljava/lang/Long;)V");
+  CACHE_METHOD(NativeStackframe, NativeStackframe_setFile,
+               "setFile", "(Ljava/lang/String;)V");
+  CACHE_METHOD(NativeStackframe, NativeStackframe_setCodeIdentifier,
+               "setCodeIdentifier", "(Ljava/lang/String;)V");
 
   CACHE_CLASS(Severity, "com/bugsnag/android/Severity");
 

@@ -34,6 +34,7 @@ typedef struct {
 
   jclass number;
   jmethodID number_double_value;
+  jmethodID Number_longValue;
 
   jclass String;
 
@@ -43,6 +44,9 @@ typedef struct {
   jclass Iterator;
   jmethodID Iterator_hasNext;
   jmethodID Iterator_next;
+
+  jclass Collection;
+  jmethodID Collection_size;
 
   jclass Map;
   jmethodID Map_get;
@@ -82,6 +86,12 @@ typedef struct {
 
   jclass NativeStackframe;
   jmethodID NativeStackframe_constructor;
+  jmethodID NativeStackframe_getFrameAddress;
+  jmethodID NativeStackframe_setLoadAddress;
+  jmethodID NativeStackframe_setSymbolAddress;
+  jmethodID NativeStackframe_setCodeIdentifier;
+  jmethodID NativeStackframe_setFile;
+  jmethodID NativeStackframe_setMethod;
 
   jclass Severity;
 

@@ -3,6 +3,7 @@ package com.bugsnag.android.ndk
 import android.os.Build
 import com.bugsnag.android.BreadcrumbType
 import com.bugsnag.android.NativeInterface
+import com.bugsnag.android.NativeStackframe
 import com.bugsnag.android.StateEvent
 import com.bugsnag.android.StateEvent.AddBreadcrumb
 import com.bugsnag.android.StateEvent.AddMetadata
@@ -102,6 +103,7 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
     external fun getCurrentNativeApiCallUsage(): Map<String, Boolean>?
     external fun setStaticJsonData(data: String)
     external fun setInternalMetricsEnabled(enabled: Boolean)
+    external fun populateStackframes(stackTrace: List<NativeStackframe>)
 
     override fun onStateChange(event: StateEvent) {
         if (isInvalidMessage(event)) return
