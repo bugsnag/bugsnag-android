@@ -1,3 +1,6 @@
+agents:
+  queue: 'opensource'
+
 steps:
   - label: ':android: Build minimal fixture APK'
     key: "fixture-minimal"
@@ -10,7 +13,7 @@ steps:
       JAVA_VERSION: 17
 
   - label: ':android: Build Example App'
-    timeout_in_minutes: 5
+    timeout_in_minutes: 10
     agents:
       queue: macos-14
     command: 'make example-app'
@@ -230,7 +233,7 @@ steps:
 
   - label: ':browserstack: Android 7 NDK r19 end-to-end tests - ANRs'
     depends_on: "fixture-r19"
-    timeout_in_minutes: 60
+    timeout_in_minutes: 30
     plugins:
       artifacts#v1.9.0:
         download:
@@ -328,7 +331,7 @@ steps:
 
   - label: ':browserstack: Android 8 NDK r19 end-to-end tests - ANRs'
     depends_on: "fixture-r19"
-    timeout_in_minutes: 60
+    timeout_in_minutes: 30
     plugins:
       artifacts#v1.9.0:
         download:
@@ -428,7 +431,7 @@ steps:
 
   - label: ':bitbar: Android 9 NDK r21 end-to-end tests - ANRs'
     depends_on: "fixture-r21"
-    timeout_in_minutes: 60
+    timeout_in_minutes: 30
     plugins:
       artifacts#v1.9.0:
         download:
@@ -529,7 +532,7 @@ steps:
 
   - label: ':browserstack: Android 10 NDK r21 end-to-end tests - ANRs'
     depends_on: "fixture-r21"
-    timeout_in_minutes: 60
+    timeout_in_minutes: 30
     plugins:
       artifacts#v1.9.0:
         download:
@@ -634,7 +637,7 @@ steps:
 
   - label: ':browserstack: Android 11 NDK r21 end-to-end tests - ANRs'
     depends_on: "fixture-r21"
-    timeout_in_minutes: 60
+    timeout_in_minutes: 30
     plugins:
       artifacts#v1.9.0:
         download:
@@ -735,7 +738,7 @@ steps:
 
   - label: ':browserstack: Android 13 NDK r21 end-to-end tests - ANRs'
     depends_on: "fixture-r21"
-    timeout_in_minutes: 60
+    timeout_in_minutes: 30
     plugins:
       artifacts#v1.9.0:
         download:
@@ -836,7 +839,7 @@ steps:
 
   - label: ':browserstack: Android 14 NDK r21 end-to-end tests - ANRs'
     depends_on: "fixture-r21"
-    timeout_in_minutes: 60
+    timeout_in_minutes: 30
     plugins:
       artifacts#v1.9.0:
         download:
@@ -891,6 +894,7 @@ steps:
   - label: 'Publish :rocket:'
     if: build.branch == "master"
     depends_on: 'android-common'
+    timeout_in_minutes: 30
     env:
       BUILDKITE_PLUGIN_S3_SECRETS_BUCKET_PREFIX: bugsnag-android-publish
     plugins:
