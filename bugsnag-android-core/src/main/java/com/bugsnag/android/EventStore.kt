@@ -40,6 +40,10 @@ internal class EventStore(
     private val callbackState: CallbackState
     override val logger: Logger
 
+    var onEventStoreEmptyCallback: () -> Unit = {}
+    var onDiscardEventCallback: (EventPayload) -> Unit = {}
+    private var isEmptyEventCallbackCalled: Boolean = false
+
     /**
      * Flush startup crashes synchronously on the main thread. Startup crashes block the main thread
      * when being sent (subject to [Configuration.setSendLaunchCrashesSynchronously])
@@ -51,7 +55,10 @@ internal class EventStore(
         val future = try {
             bgTaskService.submitTask(
                 TaskType.ERROR_REQUEST,
-                Runnable { flushLaunchCrashReport() }
+                Runnable {
+                    flushLaunchCrashReport()
+                    notifyEventQueueEmpty()
+                }
             )
         } catch (exc: RejectedExecutionException) {
             logger.d("Failed to flush launch crash reports, continuing.", exc)
@@ -135,6 +142,7 @@ internal class EventStore(
                         logger.d("No regular events to flush to Bugsnag.")
                     }
                     flushReports(storedFiles)
+                    notifyEventQueueEmpty()
                 }
             )
         } catch (exception: RejectedExecutionException) {
@@ -188,11 +196,13 @@ internal class EventStore(
             logger.w(
                 "Discarding over-sized event (${eventFile.length()}) after failed delivery"
             )
+            discardEvents(eventFile)
             deleteStoredFiles(setOf(eventFile))
         } else if (isTooOld(eventFile)) {
             logger.w(
                 "Discarding historical event (from ${getCreationDate(eventFile)}) after failed delivery"
             )
+            discardEvents(eventFile)
             deleteStoredFiles(setOf(eventFile))
         } else {
             cancelQueuedFiles(setOf(eventFile))
@@ -256,6 +266,26 @@ internal class EventStore(
 
     private fun getCreationDate(file: File): Date {
         return Date(findTimestampInFilename(file))
+    }
+
+    private fun notifyEventQueueEmpty() {
+        if (isEmpty() && !isEmptyEventCallbackCalled) {
+            onEventStoreEmptyCallback()
+            isEmptyEventCallbackCalled = true
+        }
+    }
+
+    private fun discardEvents(eventFile: File) {
+        val eventFilenameInfo = fromFile(eventFile, config)
+        onDiscardEventCallback(
+            EventPayload(
+                eventFilenameInfo.apiKey,
+                null,
+                eventFile,
+                notifier,
+                config
+            )
+        )
     }
 
     companion object {

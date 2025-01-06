@@ -214,6 +214,16 @@ Feature: Unhandled smoke tests
     And the event "metaData.opaque.array.1" equals "b"
     And the event "metaData.opaque.array.2" equals "c"
 
+
+  @skip_below_android_12
+  Scenario: Signal raised with exit info
+    When I set the screen orientation to portrait
+    And I run "CXXSignalSmokeScenario" and relaunch the crashed app
+    And I configure Bugsnag for "CXXSignalSmokeScenario"
+    And I wait to receive an error
+    And the event "metaData.Open FileDescriptors" is not null
+    And the event "metaData.app.exitReason" equals "crash native"
+
   @debug-safe
   Scenario: C++ exception thrown with overwritten config
     When I set the screen orientation to portrait

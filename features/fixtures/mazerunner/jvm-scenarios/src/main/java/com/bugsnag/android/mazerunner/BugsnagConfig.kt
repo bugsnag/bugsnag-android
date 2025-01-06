@@ -22,7 +22,9 @@ fun prepareConfig(
 ): Configuration {
     val config = Configuration(apiKey)
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-        config.addPlugin(BugsnagExitInfoPlugin())
+        config.addPlugin(
+            BugsnagExitInfoPlugin()
+        )
     }
 
     if (notify.isNotEmpty() && sessions.isNotEmpty()) {

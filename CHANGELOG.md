@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+* Introduced a new option in the `exitinfo` plugin for generating ANRs that does not have a matching Events (such as background ANRs)
+  [#2116](https://github.com/bugsnag/bugsnag-android/pull/2116)
+
 ## 6.10.0 (2024-11-14)
 
 ### Enhancements
