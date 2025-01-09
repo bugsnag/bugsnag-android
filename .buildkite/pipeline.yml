@@ -598,7 +598,7 @@ steps:
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
-  - label: ':bitbar: Android 14 NDK r21 smoke tests'
+  - label: ':bitbar: Android 15 NDK r21 smoke tests'
     depends_on: "fixture-r21"
     timeout_in_minutes: 30
     plugins:
@@ -621,7 +621,7 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--farm=bb"
-          - "--device=ANDROID_14"
+          - "--device=ANDROID_15"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -632,7 +632,7 @@ steps:
     concurrency_group: 'bitbar'
     concurrency_method: eager
 
-  - label: ':browserstack: Android 14 NDK r21 ANR smoke tests'
+  - label: ':browserstack: Android 15 NDK r21 ANR smoke tests'
     depends_on: "fixture-r21"
     timeout_in_minutes: 30
     plugins:
@@ -652,7 +652,7 @@ steps:
           - "--app=@build/bs-fixture-r21-url.txt"
           - "--appium-version=1.22.0"
           - "--farm=bs"
-          - "--device=ANDROID_14"
+          - "--device=ANDROID_15"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
