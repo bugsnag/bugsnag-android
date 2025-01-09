@@ -24,7 +24,7 @@ Feature: Session functionality smoke tests
     And the session payload field "app.releaseStage" equals "mazerunner"
     And the session payload field "app.type" equals "android"
     And the session payload field "app.version" equals "1.1.14"
-    And the session payload field "app.versionCode" equals 34
+    And the session payload field "app.versionCode" equals 35
 
     # Device data
     And the session payload field "device.cpuAbi" is a non-empty array

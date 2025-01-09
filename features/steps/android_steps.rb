@@ -174,7 +174,7 @@ Then("the report contains the required fields") do
     And the error payload field "events.0.app.releaseStage" is not null
     And the error payload field "events.0.app.type" equals "android"
     And the error payload field "events.0.app.version" is not null
-    And the error payload field "events.0.app.versionCode" equals 34
+    And the error payload field "events.0.app.versionCode" equals 35
     And the error payload field "events.0.device.id" is not null
     And the error payload field "events.0.device.locale" is not null
     And the error payload field "events.0.device.manufacturer" is not null

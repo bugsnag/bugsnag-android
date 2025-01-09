@@ -23,7 +23,7 @@ buildscript {
     dependencies {
         def agpVersion = project.hasProperty("USE_AGP_VERSION")
                 ? project.property("USE_AGP_VERSION")
-                : "8.5.0"
+                : "8.6.1"
 
         project.logger.lifecycle("Using AGP $agpVersion")
         classpath "com.android.tools.build:gradle:$agpVersion"

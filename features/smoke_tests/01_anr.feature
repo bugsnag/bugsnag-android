@@ -40,7 +40,7 @@ Feature: ANR smoke test
     And the event "app.releaseStage" equals "mazerunner"
     And the event "app.type" equals "android"
     And the event "app.version" equals "1.1.14"
-    And the event "app.versionCode" equals 34
+    And the event "app.versionCode" equals 35
     And the error payload field "events.0.app.duration" is an integer
     And the error payload field "events.0.app.durationInForeground" is an integer
     And the event "app.inForeground" is true
