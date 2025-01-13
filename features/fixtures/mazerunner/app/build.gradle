@@ -10,7 +10,7 @@ android {
     defaultConfig {
         minSdkVersion 17
         targetSdkVersion 35
-        versionCode 35
+        versionCode 1
         versionName "1.1.14"
         manifestPlaceholders = [
                 // omit any of the following placeholders to use the default values
