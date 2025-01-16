@@ -21,21 +21,15 @@ class DeliveryDelegate extends BaseObservable {
     final Logger logger;
     private final EventStore eventStore;
     private final ImmutableConfig immutableConfig;
-    private final Notifier notifier;
-    private final CallbackState callbackState;
     final BackgroundTaskService backgroundTaskService;
 
     DeliveryDelegate(Logger logger,
                      EventStore eventStore,
                      ImmutableConfig immutableConfig,
-                     CallbackState callbackState,
-                     Notifier notifier,
                      BackgroundTaskService backgroundTaskService) {
         this.logger = logger;
         this.eventStore = eventStore;
         this.immutableConfig = immutableConfig;
-        this.callbackState = callbackState;
-        this.notifier = notifier;
         this.backgroundTaskService = backgroundTaskService;
     }
 
@@ -65,11 +59,14 @@ class DeliveryDelegate extends BaseObservable {
             } else {
                 cacheEvent(event, false);
             }
-        } else if (callbackState.runOnSendTasks(event, logger)) {
-            // Build the eventPayload
-            String apiKey = event.getApiKey();
-            EventPayload eventPayload = new EventPayload(apiKey, event, notifier, immutableConfig);
-            deliverPayloadAsync(event, eventPayload);
+        } else {
+            backgroundTaskService.submitTask(TaskType.IO, new Runnable() {
+                @Override
+                public void run() {
+                    // always store events before attempting to deliver them
+                    cacheEvent(event, true);
+                }
+            });
         }
     }
 
@@ -134,7 +131,7 @@ class DeliveryDelegate extends BaseObservable {
         }
     }
 
-    private void cacheEvent(@NonNull Event event, boolean attemptSend) {
+    void cacheEvent(@NonNull Event event, boolean attemptSend) {
         eventStore.write(event);
         if (attemptSend) {
             eventStore.flushAsync();

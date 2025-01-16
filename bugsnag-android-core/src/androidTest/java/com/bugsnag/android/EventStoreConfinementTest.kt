@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import androidx.test.core.app.ApplicationProvider
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -31,6 +32,11 @@ internal class EventStoreConfinementTest {
         client = Client(ApplicationProvider.getApplicationContext(), cfg)
     }
 
+    @After
+    fun deleteEvents() {
+        retainingDelivery.files.forEach { it.delete() }
+    }
+
     /**
      * Calling notify() is confined to a single thread
      */
@@ -47,9 +53,11 @@ internal class EventStoreConfinementTest {
         assertEquals(EVENT_CONFINEMENT_ATTEMPTS, payloads.size)
         assertEquals(EVENT_CONFINEMENT_ATTEMPTS, payloads.toSet().size)
 
-        payloads.forEachIndexed { index, event ->
-            val exc = requireNotNull(event.originalError)
-            assertEquals("$index", exc.message)
+        payloads.indices.forEach { index ->
+            val deliveredEventFile = retainingDelivery.files[index]
+            val eventSource = MarshalledEventSource(deliveredEventFile, "", NoopLogger)
+            val event = eventSource()
+            assertEquals("$index", event.errors.first().errorMessage)
         }
     }
 
@@ -71,13 +79,16 @@ internal class EventStoreConfinementTest {
         retainingDelivery.latch.await(5, TimeUnit.SECONDS)
 
         // confirm that no dupe requests are sent
-        val filenames = retainingDelivery.files
+        val filenames = retainingDelivery.payloads.map { it.eventFile }
         assertEquals(EVENT_CONFINEMENT_ATTEMPTS, filenames.size)
         assertEquals(EVENT_CONFINEMENT_ATTEMPTS, filenames.toSet().size)
 
         val remainingExpectedApiKeys = filenames.indices.mapTo(hashSetOf()) { "$it" }
-        retainingDelivery.files.forEachIndexed { index, file ->
-            val eventInfo = EventFilenameInfo.fromFile(file, client.immutableConfig)
+        filenames.forEachIndexed { index, file ->
+            val eventInfo = EventFilenameInfo.fromFile(
+                requireNotNull(file) { "expected file at $index, but found null" },
+                client.immutableConfig
+            )
             assertTrue(
                 "unexpected file: $file ($index), expected one of $remainingExpectedApiKeys",
                 remainingExpectedApiKeys.remove(eventInfo.apiKey)
@@ -90,7 +101,7 @@ internal class EventStoreConfinementTest {
      */
     private class RetainingDelivery(attempts: Int) : Delivery {
         val files = mutableListOf<File>()
-        val payloads = mutableListOf<Event>()
+        val payloads = mutableListOf<EventPayload>()
         val latch = CountDownLatch(attempts)
 
         override fun deliver(payload: Session, deliveryParams: DeliveryParams) =
@@ -100,8 +111,10 @@ internal class EventStoreConfinementTest {
             payload: EventPayload,
             deliveryParams: DeliveryParams
         ): DeliveryStatus {
-            payload.event?.let(payloads::add)
-            payload.eventFile?.let(files::add)
+            val eventCopy = File.createTempFile("event", ".json")
+            payload.eventFile?.copyTo(eventCopy, overwrite = true)
+            files.add(eventCopy)
+            payloads.add(payload)
             latch.countDown()
             return DeliveryStatus.DELIVERED
         }

@@ -37,8 +37,6 @@ internal class DeliveryDelegateTest {
                 logger,
                 eventStore,
                 config,
-                callbackState,
-                notifier,
                 BackgroundTaskService()
             )
         event.session = Session("123", Date(), User(null, null, null), false, notifier, NoopLogger, apiKey)

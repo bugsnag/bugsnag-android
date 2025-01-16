@@ -130,6 +130,9 @@ internal data class CallbackState(
     }
 
     fun runOnSendTasks(event: Event, logger: Logger): Boolean {
+        if (onSendTasks.isEmpty()) {
+            return true
+        }
         onSendTasks.forEach {
             try {
                 if (!it.onSend(event)) {
