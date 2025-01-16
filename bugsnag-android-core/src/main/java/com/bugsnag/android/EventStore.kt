@@ -150,6 +150,22 @@ internal class EventStore(
         }
     }
 
+    fun flushAsync(filename: String) {
+        val file = File(filename)
+        if (file.canRead()) {
+            try {
+                bgTaskService.submitTask(
+                    TaskType.ERROR_REQUEST,
+                    Runnable {
+                        flushReports(setOf(file))
+                    }
+                )
+            } catch (exception: RejectedExecutionException) {
+                logger.w("Failed to flush all on-disk errors, retaining unsent errors for later.")
+            }
+        }
+    }
+
     private fun flushReports(storedReports: Collection<File>) {
         if (!storedReports.isEmpty()) {
             val size = storedReports.size

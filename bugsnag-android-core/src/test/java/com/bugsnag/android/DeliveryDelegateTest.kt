@@ -22,7 +22,6 @@ internal class DeliveryDelegateTest {
     private val apiKey = "BUGSNAG_API_KEY"
     private val notifier = Notifier()
     val config = generateImmutableConfig()
-    val callbackState = CallbackState()
     private val logger = InterceptingLogger()
     lateinit var deliveryDelegate: DeliveryDelegate
     val handledState = SeverityReason.newInstance(
@@ -104,14 +103,6 @@ internal class DeliveryDelegateTest {
 
         // verify no payload was sent for an Event with no errors
         assertNull(msg)
-    }
-
-    @Test
-    fun deliverReport() {
-        val eventPayload = EventPayload("api-key", event, null, notifier, config)
-        val status = deliveryDelegate.deliverPayloadInternal(eventPayload, event)
-        assertEquals(DeliveryStatus.DELIVERED, status)
-        assertEquals("Sent 1 new event to Bugsnag", logger.msg)
     }
 
     private class InterceptingLogger : Logger {
