@@ -18,3 +18,6 @@ dependencies {
     add("api", project(":bugsnag-plugin-android-anr"))
     add("api", project(":bugsnag-plugin-android-ndk"))
 }
+
+apply(from = rootProject.file("gradle/license-check.gradle"))
+apply(from = rootProject.file("gradle/release.gradle"))
