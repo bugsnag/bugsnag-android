@@ -67,23 +67,13 @@ example-app:
 	@cd ./examples/sdk-app-example/ && ./gradlew clean assembleRelease
 
 bump:
-ifneq ($(shell git diff --staged),)
-	@git diff --staged
-	@$(error You have uncommitted changes. Push or discard them to continue)
+ifneq ($(VERSION),)
+	@echo "Bumping version to $(VERSION)"
+	@./scripts/bump-version.sh $(VERSION)
+else
+	@echo "Please provide a version number"
+	@./scripts/bump-version.sh
 endif
-ifeq ($(VERSION),)
-	@$(error VERSION is not defined. Run with `make VERSION=number bump`)
-endif
-ifeq ($(shell echo $(VERSION) | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$$'),)
-	@$(error VERSION must be in the format MAJOR.MINOR.PATCH)
-endif
-	@echo Bumping the version number to $(VERSION)
-	@sed -i '' "s/bugsnag-android:.*\"/bugsnag-android:$(VERSION)\"/" examples/sdk-app-example/app/build.gradle
-	@sed -i '' "s/bugsnag-plugin-android-okhttp:.*\"/bugsnag-plugin-android-okhttp:$(VERSION)\"/" examples/sdk-app-example/app/build.gradle
-	@sed -i '' "s/VERSION_NAME=.*/VERSION_NAME=$(VERSION)/" gradle.properties
-	@sed -i '' "s/var version: String = .*/var version: String = \"$(VERSION)\",/"\
-	 bugsnag-android-core/src/main/java/com/bugsnag/android/Notifier.kt
-	@sed -i '' "s/## TBD/## $(VERSION) ($(shell date '+%Y-%m-%d'))/" CHANGELOG.md
 
 .PHONY: check
 check:
