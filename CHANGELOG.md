@@ -6,6 +6,8 @@
 
 * Introduced a new option in the `exitinfo` plugin for generating ANRs that does not have a matching Events (such as background ANRs)
   [#2116](https://github.com/bugsnag/bugsnag-android/pull/2116)
+* Add original error class and message to metadata for link errors loading BugSnag NDK libraries
+  [#2126](https://github.com/bugsnag/bugsnag-android/pull/2126)
 
 ## 6.10.0 (2024-11-14)
 
