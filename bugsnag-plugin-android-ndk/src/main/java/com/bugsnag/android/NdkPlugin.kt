@@ -46,6 +46,9 @@ internal class NdkPlugin : Plugin {
     private fun performOneTimeSetup(client: Client) {
         libraryLoader.loadLibrary("bugsnag-ndk", client) {
             val error = it.errors[0]
+            it.addMetadata("LinkError", "errorClass", error.errorClass)
+            it.addMetadata("LinkError", "errorMessage", error.errorMessage)
+
             error.errorClass = "NdkLinkError"
             error.errorMessage = LOAD_ERR_MSG
             true
