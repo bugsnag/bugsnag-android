@@ -74,6 +74,9 @@ endif
 ifeq ($(VERSION),)
 	@$(error VERSION is not defined. Run with `make VERSION=number bump`)
 endif
+ifeq ($(shell echo $(VERSION) | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$$'),)
+	@$(error VERSION must be in the format MAJOR.MINOR.PATCH)
+endif
 	@echo Bumping the version number to $(VERSION)
 	@sed -i '' "s/bugsnag-android:.*\"/bugsnag-android:$(VERSION)\"/" examples/sdk-app-example/app/build.gradle
 	@sed -i '' "s/bugsnag-plugin-android-okhttp:.*\"/bugsnag-plugin-android-okhttp:$(VERSION)\"/" examples/sdk-app-example/app/build.gradle
