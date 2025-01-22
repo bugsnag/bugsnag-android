@@ -1,0 +1,32 @@
+name: Sign release assets
+
+permissions: read-all
+
+on:
+  release:
+    types: [released]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to sign'
+        required: true
+        type: string
+jobs:
+  sign-assets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install gpg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gnupg
+      - name: Import GPG key
+        run: |
+          echo "${{ secrets.PLATFORMS_GPG_KEY_BASE64 }}" | base64 --decode | gpg --batch --import
+      - name: Sign assets
+        uses: bugsnag/platforms-release-signer@main
+        with:
+          github_token: ${{ secrets.PLATFORMS_SIGNING_GITHUB_TOKEN }}
+          full_repository: ${{ github.repository }}
+          release_tag: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.event.release.tag_name }}
+          key_id: ${{ secrets.PLATFORMS_GPG_KEY_ID }}
+          key_passphrase: ${{ secrets.PLATFORMS_GPG_KEY_PASSPHRASE }}

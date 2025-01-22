@@ -1,23 +1,8 @@
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-        maven(url = "https://plugins.gradle.org/m2/")
-    }
-
-    dependencies {
-        classpath("com.android.tools.build:gradle:7.0.4")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.10")
-        classpath("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.23.1")
-        classpath("org.jetbrains.dokka:dokka-gradle-plugin:1.9.0")
-        classpath("org.jlleitschuh.gradle:ktlint-gradle:10.2.0")
-        classpath("androidx.benchmark:benchmark-gradle-plugin:1.1.1")
-    }
-}
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("com.github.hierynomus.license") version "0.16.1"
-    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.13.1" apply false
+    load(Versions.Plugins.AGP) apply false
+    load(Versions.Plugins.kotlin) apply false
 }
 
 allprojects {
@@ -29,6 +14,21 @@ allprojects {
     gradle.projectsEvaluated {
         tasks.withType<JavaCompile> {
             options.compilerArgs.addAll(listOf("-Xlint:all", "-Werror"))
+        }
+    }
+}
+
+subprojects {
+    tasks.withType(KotlinCompile::class.java).configureEach {
+        kotlinOptions {
+            allWarningsAsErrors = true
+            apiVersion = Versions.kotlinLang
+            languageVersion = Versions.kotlinLang
+            freeCompilerArgs += listOf(
+                "-Xno-call-assertions",
+                "-Xno-receiver-assertions",
+                "-Xno-param-assertions"
+            )
         }
     }
 }

@@ -16,23 +16,54 @@ class ExitInfoPluginConfiguration(
      * [processStateSummary](ActivityManager.setProcessStateSummary) field. This can set to `true`
      * to stop `BugsnagExitInfoPlugin` overwriting the field if it is being used by the app.
      */
-    var disableProcessStateSummaryOverride: Boolean = false
+    var disableProcessStateSummaryOverride: Boolean = false,
+
+    /**
+     * Report [ApplicationExitInfo] ANRs that do not appear to correspond with BugSnag [Event]s
+     * as synthesized errors. These will appear on your dashboard without BugSnag data such as
+     * breadcrumbs and metadata, but will report crashes that BugSnag is otherwise unable to catch
+     * such as background ANRs.
+     */
+    var reportUnmatchedANR: Boolean = false
 ) {
-    constructor() : this(true, false, false)
+    constructor(
+        listOpenFds: Boolean,
+        includeLogcat: Boolean,
+        disableProcessStateSummaryOverride: Boolean
+    ) : this(
+        listOpenFds,
+        includeLogcat,
+        disableProcessStateSummaryOverride,
+        true
+    )
+
+    constructor() : this(
+        listOpenFds = true,
+        includeLogcat = false,
+        reportUnmatchedANR = false,
+        disableProcessStateSummaryOverride = false
+    )
 
     internal fun copy() =
-        ExitInfoPluginConfiguration(listOpenFds, includeLogcat, disableProcessStateSummaryOverride)
+        ExitInfoPluginConfiguration(
+            listOpenFds,
+            includeLogcat,
+            disableProcessStateSummaryOverride,
+            reportUnmatchedANR,
+        )
 
     override fun equals(other: Any?): Boolean {
         return other is ExitInfoPluginConfiguration &&
             listOpenFds == other.listOpenFds &&
             includeLogcat == other.includeLogcat &&
+            reportUnmatchedANR == other.reportUnmatchedANR &&
             disableProcessStateSummaryOverride == other.disableProcessStateSummaryOverride
     }
 
     override fun hashCode(): Int {
         var result = listOpenFds.hashCode()
         result = 31 * result + includeLogcat.hashCode()
+        result = 31 * result + reportUnmatchedANR.hashCode()
         result = 31 * result + disableProcessStateSummaryOverride.hashCode()
         return result
     }
