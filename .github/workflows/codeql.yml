@@ -27,7 +27,7 @@ env:
 jobs:
   analyze:
     name: Analyze
-    runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
+    runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-24.04' }}
     permissions:
       actions: read
       contents: read
@@ -52,7 +52,12 @@ jobs:
       - uses: actions/setup-java@0ab4596768b603586c0de567f2430c30f5b0d2b0 #v3.13.0
         with:
           distribution: 'zulu'
-          java-version: 11
+          java-version: 17
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3.2.2
+        with:
+          packages: 'cmake;3.22.1'
 
       - name: Gradle cache
         uses: gradle/gradle-build-action@a8f75513eafdebd8141bd1cd4e30fcd194af8dfa #v2.12.0
