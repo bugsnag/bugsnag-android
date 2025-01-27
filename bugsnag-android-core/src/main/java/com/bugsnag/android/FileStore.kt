@@ -52,32 +52,6 @@ internal abstract class FileStore(
      */
     fun isEmpty(): Boolean = queuedFiles.isEmpty() && storageDir.list().isNullOrEmpty()
 
-    fun enqueueContentForDelivery(content: String?, filename: String) {
-        if (!isStorageDirValid(storageDir)) {
-            return
-        }
-        discardOldestFileIfNeeded()
-        lock.lock()
-        var out: Writer? = null
-        val filePath = File(storageDir, filename).absolutePath
-        try {
-            val fos = FileOutputStream(filePath)
-            out = BufferedWriter(OutputStreamWriter(fos, "UTF-8"))
-            out.write(content)
-        } catch (exc: Exception) {
-            val eventFile = File(filePath)
-            delegate?.onErrorIOFailure(exc, eventFile, "NDK Crash report copy")
-            IOUtils.deleteFile(eventFile, logger)
-        } finally {
-            try {
-                out?.close()
-            } catch (exception: Exception) {
-                logger.w("Failed to close unsent payload writer: $filename", exception)
-            }
-            lock.unlock()
-        }
-    }
-
     fun write(streamable: Streamable): String? {
         if (!isStorageDirValid(storageDir)) {
             return null

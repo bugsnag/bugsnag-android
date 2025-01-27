@@ -1,5 +1,6 @@
 plugins {
     load(Versions.Plugins.AGP)
+    load(Versions.Plugins.kotlin)
     load(Versions.Plugins.licenseCheck)
 }
 

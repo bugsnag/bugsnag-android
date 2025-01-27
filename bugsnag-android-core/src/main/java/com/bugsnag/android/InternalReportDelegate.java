@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
 
-class InternalReportDelegate implements EventStore.Delegate {
+class InternalReportDelegate {
 
     static final String INTERNAL_DIAGNOSTICS_TAB = "BugsnagDiagnostics";
 
@@ -59,7 +59,6 @@ class InternalReportDelegate implements EventStore.Delegate {
         this.backgroundTaskService = backgroundTaskService;
     }
 
-    @Override
     public void onErrorIOFailure(Exception exc, File errorFile, String context) {
         // send an internal error to bugsnag with no cache
         SeverityReason severityReason = SeverityReason.newInstance(REASON_UNHANDLED_EXCEPTION);

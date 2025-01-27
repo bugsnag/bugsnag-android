@@ -2,7 +2,6 @@ package com.bugsnag.android
 
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import com.bugsnag.android.BugsnagTestUtils.generateEvent
-import com.bugsnag.android.FileStore.Delegate
 import com.bugsnag.android.internal.BackgroundTaskService
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -98,6 +97,9 @@ class LaunchCrashDeliveryTest {
         event.app.isLaunching = true
         event.apiKey = "First"
         eventStore.write(event)
+
+        // make absolutely certain there is a time difference between First and Second
+        Thread.sleep(1L)
         event.apiKey = "Second"
         eventStore.write(event)
 
@@ -161,14 +163,7 @@ class LaunchCrashDeliveryTest {
             NoopLogger,
             Notifier(),
             backgroundTaskService,
-            object : Delegate {
-                override fun onErrorIOFailure(
-                    exception: Exception?,
-                    errorFile: File?,
-                    context: String?
-                ) {
-                }
-            },
+            { _, _, _ -> },
             CallbackState()
         )
     }

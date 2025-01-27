@@ -1,14 +1,16 @@
 package com.bugsnag.android
 
 import android.os.SystemClock
+import androidx.annotation.VisibleForTesting
 import com.bugsnag.android.EventFilenameInfo.Companion.findTimestampInFilename
 import com.bugsnag.android.EventFilenameInfo.Companion.fromEvent
-import com.bugsnag.android.EventFilenameInfo.Companion.fromFile
 import com.bugsnag.android.JsonStream.Streamable
 import com.bugsnag.android.internal.BackgroundTaskService
+import com.bugsnag.android.internal.FileQueue
 import com.bugsnag.android.internal.ForegroundDetector
 import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.TaskType
+import com.bugsnag.android.internal.WriteErrorHandler
 import java.io.File
 import java.util.Calendar
 import java.util.Date
@@ -24,25 +26,30 @@ import java.util.concurrent.TimeoutException
  */
 internal class EventStore(
     private val config: ImmutableConfig,
-    logger: Logger,
-    notifier: Notifier,
-    bgTaskService: BackgroundTaskService,
-    delegate: Delegate?,
-    callbackState: CallbackState
-) : FileStore(
-    File(config.persistenceDirectory.value, "bugsnag/errors"),
-    config.maxPersistedEvents,
-    logger,
-    delegate
-) {
-    private val notifier: Notifier
-    private val bgTaskService: BackgroundTaskService
+    private val logger: Logger,
+    private val notifier: Notifier,
+    private val bgTaskService: BackgroundTaskService,
+    writeErrorHandler: WriteErrorHandler?,
     private val callbackState: CallbackState
-    override val logger: Logger
-
+) {
     var onEventStoreEmptyCallback: () -> Unit = {}
     var onDiscardEventCallback: (EventPayload) -> Unit = {}
     private var isEmptyEventCallbackCalled: Boolean = false
+
+    private val queue = FileQueue(
+        File(config.persistenceDirectory.value, "bugsnag/errors"),
+        config.maxPersistedEvents,
+        logger,
+        EVENT_COMPARATOR,
+        writeErrorHandler
+    ) {
+        if (!isEmptyEventCallbackCalled) {
+            onEventStoreEmptyCallback()
+            isEmptyEventCallbackCalled = true
+        }
+    }
+
+    val storageDir: File by queue::storageDir
 
     /**
      * Flush startup crashes synchronously on the main thread. Startup crashes block the main thread
@@ -53,13 +60,9 @@ internal class EventStore(
             return
         }
         val future = try {
-            bgTaskService.submitTask(
-                TaskType.ERROR_REQUEST,
-                Runnable {
-                    flushLaunchCrashReport()
-                    notifyEventQueueEmpty()
-                }
-            )
+            bgTaskService.submitTask(TaskType.ERROR_REQUEST) {
+                flushLaunchCrashReport()
+            }
         } catch (exc: RejectedExecutionException) {
             logger.d("Failed to flush launch crash reports, continuing.", exc)
             return
@@ -91,36 +94,35 @@ internal class EventStore(
     }
 
     private fun flushLaunchCrashReport() {
-        val storedFiles = findStoredFiles()
-        val launchCrashReport = findLaunchCrashReport(storedFiles)
-
-        // cancel non-launch crash reports
-        launchCrashReport?.let { storedFiles.remove(it) }
-        cancelQueuedFiles(storedFiles)
-        if (launchCrashReport != null) {
+        val startupCrashProcessed = queue.processLastFile(this::isLaunchCrash) { report ->
             logger.i("Attempting to send the most recent launch crash report")
-            flushReports(listOf(launchCrashReport))
+            flushEventFile(report)
             logger.i("Continuing with Bugsnag initialisation")
-        } else {
+        }
+
+        if (!startupCrashProcessed) {
             logger.d("No startupcrash events to flush to Bugsnag.")
         }
     }
 
-    fun findLaunchCrashReport(storedFiles: Collection<File>): File? {
-        return storedFiles
-            .asSequence()
-            .filter { fromFile(it, config).isLaunchCrashReport() }
-            .maxWithOrNull(EVENT_COMPARATOR)
+    fun write(event: Streamable): File? {
+        return queue.write(getFilename(event), event)
+    }
+
+    fun enqueueContentForDelivery(payload: String, filename: String) {
+        queue.write(filename) { out ->
+            out.write(payload)
+        }
     }
 
     fun writeAndDeliver(streamable: Streamable): Future<String>? {
-        val filename = write(streamable) ?: return null
+        val file = queue.write(getFilename(streamable), streamable) ?: return null
         try {
             return bgTaskService.submitTask(
                 TaskType.ERROR_REQUEST,
                 Callable {
-                    flushEventFile(File(filename))
-                    filename
+                    flushEventFile(file)
+                    file.absolutePath
                 }
             )
         } catch (exception: RejectedExecutionException) {
@@ -134,26 +136,24 @@ internal class EventStore(
      */
     fun flushAsync() {
         try {
-            bgTaskService.submitTask(
-                TaskType.ERROR_REQUEST,
-                Runnable {
-                    val storedFiles = findStoredFiles()
-                    if (storedFiles.isEmpty()) {
-                        logger.d("No regular events to flush to Bugsnag.")
-                    }
-                    flushReports(storedFiles)
-                    notifyEventQueueEmpty()
+            bgTaskService.submitTask(TaskType.ERROR_REQUEST) {
+                if (queue.isEmpty()) {
+                    logger.d("No regular events to flush to Bugsnag.")
                 }
-            )
+                flushReports()
+            }
         } catch (exception: RejectedExecutionException) {
             logger.w("Failed to flush all on-disk errors, retaining unsent errors for later.")
         }
     }
 
-    private fun flushReports(storedReports: Collection<File>) {
-        if (!storedReports.isEmpty()) {
+    fun isEmpty() = queue.isEmpty()
+
+    private fun flushReports() {
+        queue.processEnqueuedFiles { storedReports ->
             val size = storedReports.size
             logger.i("Sending $size saved error(s) to Bugsnag")
+
             for (eventFile in storedReports) {
                 flushEventFile(eventFile)
             }
@@ -162,11 +162,9 @@ internal class EventStore(
 
     private fun flushEventFile(eventFile: File) {
         try {
-            val (apiKey) = fromFile(eventFile, config)
+            val (apiKey) = EventFilenameInfo.fromFile(eventFile, config)
             val payload = createEventPayload(eventFile, apiKey)
-            if (payload == null) {
-                deleteStoredFiles(setOf(eventFile))
-            } else {
+            if (payload != null) {
                 deliverEventPayload(eventFile, payload)
             }
         } catch (exception: Exception) {
@@ -179,7 +177,7 @@ internal class EventStore(
         val delivery = config.delivery
         when (delivery.deliver(payload, deliveryParams)) {
             DeliveryStatus.DELIVERED -> {
-                deleteStoredFiles(setOf(eventFile))
+                queue.delete(eventFile)
                 logger.i("Deleting sent error file $eventFile.name")
             }
 
@@ -197,15 +195,14 @@ internal class EventStore(
                 "Discarding over-sized event (${eventFile.length()}) after failed delivery"
             )
             discardEvents(eventFile)
-            deleteStoredFiles(setOf(eventFile))
+            queue.delete(eventFile)
         } else if (isTooOld(eventFile)) {
             logger.w(
                 "Discarding historical event (from ${getCreationDate(eventFile)}) after failed delivery"
             )
             discardEvents(eventFile)
-            deleteStoredFiles(setOf(eventFile))
+            queue.delete(eventFile)
         } else {
-            cancelQueuedFiles(setOf(eventFile))
             logger.w(
                 "Could not send previously saved error(s) to Bugsnag, will try again later"
             )
@@ -236,22 +233,20 @@ internal class EventStore(
 
     private fun handleEventFlushFailure(exc: Exception, eventFile: File) {
         logger.e(exc.message ?: "Failed to send event", exc)
-        deleteStoredFiles(setOf(eventFile))
+        queue.delete(eventFile)
     }
 
-    override fun getFilename(obj: Any?): String {
+    @VisibleForTesting
+    internal fun isLaunchCrash(file: File): Boolean {
+        return EventFilenameInfo.fromFile(file, config).isLaunchCrashReport()
+    }
+
+    private fun getFilename(obj: Any?): String {
         return obj?.let { fromEvent(obj = it, apiKey = null, config = config) }?.encode() ?: ""
     }
 
     fun getNdkFilename(obj: Any?, apiKey: String?): String {
         return obj?.let { fromEvent(obj = it, apiKey = apiKey, config = config) }?.encode() ?: ""
-    }
-
-    init {
-        this.logger = logger
-        this.notifier = notifier
-        this.bgTaskService = bgTaskService
-        this.callbackState = callbackState
     }
 
     private fun isTooBig(file: File): Boolean {
@@ -268,15 +263,8 @@ internal class EventStore(
         return Date(findTimestampInFilename(file))
     }
 
-    private fun notifyEventQueueEmpty() {
-        if (isEmpty() && !isEmptyEventCallbackCalled) {
-            onEventStoreEmptyCallback()
-            isEmptyEventCallbackCalled = true
-        }
-    }
-
     private fun discardEvents(eventFile: File) {
-        val eventFilenameInfo = fromFile(eventFile, config)
+        val eventFilenameInfo = EventFilenameInfo.fromFile(eventFile, config)
         onDiscardEventCallback(
             EventPayload(
                 eventFilenameInfo.apiKey,
@@ -290,6 +278,8 @@ internal class EventStore(
 
     companion object {
         private const val LAUNCH_CRASH_TIMEOUT_MS: Long = 2000
+        private const val oneMegabyte = 1024L * 1024L
+
         val EVENT_COMPARATOR: Comparator<in File?> = Comparator { lhs, rhs ->
             when {
                 lhs == null && rhs == null -> 0
@@ -298,6 +288,5 @@ internal class EventStore(
                 else -> lhs.compareTo(rhs)
             }
         }
-        private const val oneMegabyte = 1024L * 1024L
     }
 }
