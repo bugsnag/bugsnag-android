@@ -83,7 +83,7 @@ static const char bsg_native_signal_code_names[BSG_HANDLED_SIGNAL_COUNT +
      "Trace/breakpoint trap, code 4 (TRAP_HWBKPT)",
      "Trace/breakpoint trap, code 5 (TRAP_UNK)",
      "Trace/breakpoint trap, code 6 (TRAP_PERF)"},
-    {},
+    {0},
     {"Bus error (bad memory access), code 1 (BUS_ADRALN)",
      "Bus error (bad memory access), code 2 (BUS_ADRERR)",
      "Bus error (bad memory access), code 3 (BUS_OBJERR)",
@@ -280,7 +280,7 @@ void bsg_handle_signal(int signum, siginfo_t *info,
                   sizeof(bsg_global_env->next_event.error.errorClass));
 
       const char *error_message = bsg_get_signal_code_description(signal);
-      if (error_message == NULL) {
+      if (error_message == NULL || *error_message == 0) {
         error_message = (char *)bsg_native_signal_msgs[i];
       }
       bsg_strncpy(bsg_global_env->next_event.error.errorMessage, error_message,

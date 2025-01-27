@@ -52,8 +52,8 @@ Feature: Native crash reporting
       | SIGILL  |
       | SIGTRAP |
     And the exception "message" equals one of:
-      | Illegal instruction   |
-      | Trace/breakpoint trap |
+      | Illegal instruction, code 4 (ILLTRP)   |
+      | Trace/breakpoint trap, code 5 (TRAP_UNK) |
     And the exception "type" equals "c"
     And the event "severity" equals "error"
     And the event "unhandled" is true
@@ -132,8 +132,8 @@ Feature: Native crash reporting
       | SIGILL  |
       | SIGTRAP |
     And the exception "message" equals one of:
-      | Illegal instruction   |
-      | Trace/breakpoint trap |
+      | Illegal instruction, code 4 (ILLTRP)   |
+      | Trace/breakpoint trap, code 5 (TRAP_UNK) |
     And the exception "type" equals "c"
     And the first significant stack frames match:
       | something_innocuous                                                                 | libmonochrome.so                    | (ignore) |
