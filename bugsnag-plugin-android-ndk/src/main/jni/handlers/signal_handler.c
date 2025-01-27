@@ -16,8 +16,8 @@
 #include "../utils/string.h"
 #include "../utils/threads.h"
 #define BSG_HANDLED_SIGNAL_COUNT 6
-
-/**
+#define BSG_SIGNAL_CODE_COUNT 15
+/**BSG_SIGNAL_CODE_COUNT
  * Function to capture signals and write reports to disk
  * @param signum The captured signal number
  * @param info handler info, flags
@@ -62,6 +62,85 @@ static const char bsg_native_signal_msgs[BSG_HANDLED_SIGNAL_COUNT + 1][60] = {
     "Bus error (bad memory access)",
     "Floating-point exception",
     "Segmentation violation (invalid memory reference)"};
+
+static const char bsg_native_signal_code_names[BSG_HANDLED_SIGNAL_COUNT +
+                                               1][BSG_SIGNAL_CODE_COUNT +
+                                                  1][72] = {
+    {"Illegal instruction, code 1 (ILLOPC)",
+     "Illegal instruction, code 2 (ILLOPN)",
+     "Illegal instruction, code 3 (ILLADR)",
+     "Illegal instruction, code 4 (ILLTRP)",
+     "Illegal instruction, code 5 (PRVOPC)",
+     "Illegal instruction, code 6 (PRVREG)",
+     "Illegal instruction, code 7 (COPROC)",
+     "Illegal instruction, code 8 (BADSTK)",
+     "Illegal instruction, code 9 (BADIADDR)",
+     "Illegal instruction, code 10 (BREAK)",
+     "Illegal instruction, code 11 (BNDMOD)"},
+    {"Trace/breakpoint trap, code 1 (TRAP_BRKPT)",
+     "Trace/breakpoint trap, code 2 (TRAP_TRACE)",
+     "Trace/breakpoint trap, code 3 (TRAP_BRANCH)",
+     "Trace/breakpoint trap, code 4 (TRAP_HWBKPT)",
+     "Trace/breakpoint trap, code 5 (TRAP_UNK)",
+     "Trace/breakpoint trap, code 6 (TRAP_PERF)"},
+    {},
+    {"Bus error (bad memory access), code 1 (BUS_ADRALN)",
+     "Bus error (bad memory access), code 2 (BUS_ADRERR)",
+     "Bus error (bad memory access), code 3 (BUS_OBJERR)",
+     "Bus error (bad memory access), code 4 (BUS_MCEERR_AR)",
+     "Bus error (bad memory access), code 5 (BUS_MCEERR_AO)"},
+
+    {"Floating-point exception, code 1 (FPE_INTDIV)",
+     "Floating-point exception, code 2 (FPE_INTOVF)",
+     "Floating-point exception, code 3 (FPE_FLTDIV)",
+     "Floating-point exception, code 4 (FPE_FLTOVF)",
+     "Floating-point exception, code 5 (FPE_FLTUND)",
+     "Floating-point exception, code 6 (FPE_FLTRES)",
+     "Floating-point exception, code 7 (FPE_FLTINV)",
+     "Floating-point exception, code 8 (FPE_FLTSUB)",
+     "Floating-point exception, code 9 (__FPE_DECOVF)",
+     "Floating-point exception, code 10 (__FPE_DECDIV)",
+     "Floating-point exception, code 11 (__FPE_DECERR)",
+     "Floating-point exception, code 12 (__FPE_INVASC)",
+     "Floating-point exception, code 13 (__FPE_INVDEC)",
+     "Floating-point exception, code 14 (FPE_FLTUNK)",
+     "Floating-point exception, code 15 (FPE_CONDTRAP)"},
+    {"Segmentation violation (invalid memory reference), code 1 (SEGV_MAPERR)",
+     "Segmentation violation (invalid memory reference), code 2 (SEGV_ACCERR)",
+     "Segmentation violation (invalid memory reference), code 3 (SEGV_BNDERR)",
+     "Segmentation violation (invalid memory reference), code 4 (SEGV_PKUERR)",
+     "Segmentation violation (invalid memory reference), code 5 (SEGV_ACCADI)",
+     "Segmentation violation (invalid memory reference), code 6 (SEGV_ADIDERR)",
+     "Segmentation violation (invalid memory reference), code 7 (SEGV_ADIPERR)",
+     "Segmentation violation (invalid memory reference), code 8 (SEGV_MTEAERR)",
+     "Segmentation violation (invalid memory reference), code 9 "
+     "(SEGV_MTESERR)"},
+};
+
+static const int bsg_native_signal_codes[BSG_HANDLED_SIGNAL_COUNT +
+                                         1][BSG_SIGNAL_CODE_COUNT + 1] = {
+    {ILL_ILLOPC, ILL_ILLOPN, ILL_ILLADR, ILL_ILLTRP, ILL_PRVOPC, ILL_PRVREG,
+     ILL_COPROC, ILL_BADSTK, ILL_BADIADDR, __ILL_BREAK, __ILL_BNDMOD},
+    {TRAP_BRKPT, TRAP_TRACE, TRAP_BRANCH, TRAP_HWBKPT, TRAP_UNK, TRAP_PERF},
+    {BUS_ADRALN, BUS_ADRERR, BUS_OBJERR, BUS_MCEERR_AR, BUS_MCEERR_AO},
+    {FPE_INTDIV, FPE_INTOVF, FPE_FLTDIV, FPE_FLTOVF, FPE_FLTUND, FPE_FLTRES,
+     FPE_FLTINV, FPE_FLTSUB, __FPE_DECOVF, __FPE_DECDIV, __FPE_DECERR,
+     __FPE_INVASC, __FPE_INVDEC, FPE_FLTUNK, FPE_CONDTRAP},
+    {SEGV_MAPERR, SEGV_ACCERR, SEGV_BNDERR, SEGV_PKUERR, SEGV_ACCADI,
+     SEGV_ADIDERR, SEGV_ADIPERR, SEGV_MTEAERR, SEGV_MTESERR}};
+
+const char *bsg_get_signal_code_description(const int signal) __asyncsafe {
+  for (int i = 0; i < BSG_HANDLED_SIGNAL_COUNT; i++) {
+    if (bsg_native_signals[i] == signal) {
+      for (int j = 0; j < BSG_SIGNAL_CODE_COUNT; j++) {
+        if (bsg_native_signal_codes[i][j] == signal) {
+          return bsg_native_signal_code_names[i][j];
+        }
+      }
+    }
+  }
+  return NULL;
+}
 
 bool bsg_handler_install_signal(bsg_environment *env) {
   if (bsg_global_env != NULL) {
@@ -199,8 +278,12 @@ void bsg_handle_signal(int signum, siginfo_t *info,
       bsg_strncpy(bsg_global_env->next_event.error.errorClass,
                   (char *)bsg_native_signal_names[i],
                   sizeof(bsg_global_env->next_event.error.errorClass));
-      bsg_strncpy(bsg_global_env->next_event.error.errorMessage,
-                  (char *)bsg_native_signal_msgs[i],
+
+      const char *error_message = bsg_get_signal_code_description(signal);
+      if (error_message == NULL) {
+        error_message = (char *)bsg_native_signal_msgs[i];
+      }
+      bsg_strncpy(bsg_global_env->next_event.error.errorMessage, error_message,
                   sizeof(bsg_global_env->next_event.error.errorMessage));
       break;
     }
