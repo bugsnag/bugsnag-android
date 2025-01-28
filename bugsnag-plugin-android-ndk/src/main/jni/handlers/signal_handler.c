@@ -132,12 +132,8 @@ const char *bsg_get_signal_code_description(const int signal,
   for (int i = 0; i < BSG_HANDLED_SIGNAL_COUNT; i++) {
     if (bsg_native_signals[i] == signal) {
       for (int j = 0; j < BSG_SIGNAL_CODE_COUNT; j++) {
-        printf("%s", "aaaaaaaaaaaaaaa,signal");
-        printf("%d", signal);
         if (bsg_native_signal_codes[i][j] == signal_code) {
           return bsg_native_signal_code_names[i][j];
-          printf("%s", "aaaaaaaaaaaaaaa,signal description");
-          printf("%s", bsg_native_signal_code_names[i][j]);
         }
       }
     }
@@ -286,12 +282,6 @@ void bsg_handle_signal(int signum, siginfo_t *info,
           bsg_get_signal_code_description(signal, signal_code);
       if (error_message == NULL || *error_message == 0) {
         error_message = (char *)bsg_native_signal_msgs[i];
-        printf("%s", "aaaaaaaaaaaaaaa, em is null or 0");
-
-      } else {
-        printf("%s", "aaaaaaaaaaaaaaa");
-        printf("%s", error_message);
-        printf("%d", signal_code);
       }
       bsg_strncpy(bsg_global_env->next_event.error.errorMessage, error_message,
                   sizeof(bsg_global_env->next_event.error.errorMessage));

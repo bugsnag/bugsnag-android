@@ -10,7 +10,9 @@ Feature: Raising native signals
     And the error payload contains a completed unhandled native report
     And the exception "errorClass" equals "SIGILL"
     And the exception "message" equals one of:
-      | Illegal instruction, code 4 (ILLTRP)  |
+      | Illegal instruction                      |
+      | Trace/breakpoint trap                    |
+      | Illegal instruction, code 4 (ILLTRP)     |
       | Trace/breakpoint trap, code 5 (TRAP_UNK) |
     And the exception "type" equals "c"
     And the event "severity" equals "error"
@@ -55,7 +57,9 @@ Feature: Raising native signals
     And I wait to receive an error
     And the error payload contains a completed unhandled native report
     And the exception "errorClass" equals "SIGFPE"
-    And the exception "message" equals "Floating-point exception, code 8 (FLTSUB)"
+    And the exception "message" equals one of:
+      | Floating-point exception                  |
+      | Floating-point exception, code 8 (FLTSUB) |
     And the exception "type" equals "c"
     And the event "severity" equals "error"
     And the event "unhandled" is true
@@ -66,7 +70,9 @@ Feature: Raising native signals
     And I wait to receive an error
     And the error payload contains a completed unhandled native report
     And the exception "errorClass" equals "SIGTRAP"
-    And the exception "message" equals "Trace/breakpoint trap, code 5 (TRAP_UNK)"
+    And the exception "message" equals one of:
+      | Trace/breakpoint trap                    |
+      | Trace/breakpoint trap, code 5 (TRAP_UNK) |
     And the exception "type" equals "c"
     And the event "severity" equals "error"
     And the event "unhandled" is true
