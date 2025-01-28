@@ -55,7 +55,7 @@ Feature: Raising native signals
     And I wait to receive an error
     And the error payload contains a completed unhandled native report
     And the exception "errorClass" equals "SIGFPE"
-    And the exception "message" equals "Floating-point exception, code 8 (FPE_FLTSUB)"
+    And the exception "message" equals "Floating-point exception, code 8 (FLTSUB)"
     And the exception "type" equals "c"
     And the event "severity" equals "error"
     And the event "unhandled" is true
