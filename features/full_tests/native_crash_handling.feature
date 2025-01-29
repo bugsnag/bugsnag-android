@@ -55,6 +55,7 @@ Feature: Native crash reporting
       | Illegal instruction                    |
       | Trace/breakpoint trap                  |
       | Illegal instruction, code 4 (ILLTRP)   |
+      | Illegal instruction, code 1 (ILLOPC)   |
       | Trace/breakpoint trap, code 1 (BRKPT)  |
     And the exception "type" equals "c"
     And the event "severity" equals "error"
@@ -136,7 +137,7 @@ Feature: Native crash reporting
     And the exception "message" equals one of:
       | Illegal instruction                    |
       | Trace/breakpoint trap                  |
-      | Illegal instruction, code 4 (ILLTRP)   |
+      | Illegal instruction, code 1 (ILLOPC)   |
       | Trace/breakpoint trap, code 1 (BRKPT)  |
     And the exception "type" equals "c"
     And the first significant stack frames match:
