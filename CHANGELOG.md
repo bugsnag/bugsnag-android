@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+* Native crashes will now include their signal code (where applicable) in the error message
+  [#2135](https://github.com/bugsnag/bugsnag-android/pull/2135)
+
 ## 6.11.0 (2025-01-22)
 
 ### Enhancements
