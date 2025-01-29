@@ -43,7 +43,7 @@ Feature: Loading values into the configuration
     And the event "app.releaseStage" is not null
     And the event "metaData.test.foo" equals "bar"
     And the event "metaData.test.filter_me" equals "foobar"
-    And the event "app.versionCode" equals 34
+    And the event "app.versionCode" equals 1
     And the event "app.buildUUID" is not null
     And the event "app.version" equals "1.1.14"
     And the event "app.type" is null
