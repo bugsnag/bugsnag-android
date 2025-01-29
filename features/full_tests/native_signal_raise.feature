@@ -12,7 +12,7 @@ Feature: Raising native signals
     And the exception "message" equals one of:
       | Illegal instruction                      |
       | Trace/breakpoint trap                    |
-      | Illegal instruction, code 4 (ILLTRP)     |
+      | Illegal instruction, code 4 (ILL_ILLTRP)     |
       | Trace/breakpoint trap, code 5 (TRAP_UNK) |
     And the exception "type" equals "c"
     And the event "severity" equals "error"
@@ -59,7 +59,7 @@ Feature: Raising native signals
     And the exception "errorClass" equals "SIGFPE"
     And the exception "message" equals one of:
       | Floating-point exception                  |
-      | Floating-point exception, code 8 (FLTSUB) |
+      | Floating-point exception, code 8 (FPE_FLTSUB) |
     And the exception "type" equals "c"
     And the event "severity" equals "error"
     And the event "unhandled" is true

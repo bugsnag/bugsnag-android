@@ -48,6 +48,17 @@ struct sigaction *bsg_global_sigaction;
 /* the previous signal handler array */
 struct sigaction *bsg_global_sigaction_previous;
 
+#define MSG_SIGILL "Illegal instruction"
+#define MSG_SIGTRAP "Trace/breakpoint trap"
+#define MSG_SIGABRT "Abort program"
+#define MSG_SIGBUS "Bus error (bad memory access)"
+#define MSG_SIGFPE "Floating-point exception"
+#define MSG_SIGSEGV "Segmentation violation (invalid memory reference)"
+
+#define xstr(s) str(s)
+#define str(s) #s
+#define SIG_CODE_MESSAGE(msg, code) (msg ", code " xstr(code) " (" #code ")")
+
 /**
  * Native signals which will be captured by the Bugsnag signal handler™
  */
@@ -56,64 +67,58 @@ static const int bsg_native_signals[BSG_HANDLED_SIGNAL_COUNT + 1] = {
 static const char bsg_native_signal_names[BSG_HANDLED_SIGNAL_COUNT + 1][8] = {
     "SIGILL", "SIGTRAP", "SIGABRT", "SIGBUS", "SIGFPE", "SIGSEGV"};
 static const char bsg_native_signal_msgs[BSG_HANDLED_SIGNAL_COUNT + 1][60] = {
-    "Illegal instruction",
-    "Trace/breakpoint trap",
-    "Abort program",
-    "Bus error (bad memory access)",
-    "Floating-point exception",
-    "Segmentation violation (invalid memory reference)"};
+    MSG_SIGILL, MSG_SIGTRAP, MSG_SIGABRT, MSG_SIGBUS, MSG_SIGFPE, MSG_SIGSEGV};
 
-static const char bsg_native_signal_code_names[BSG_HANDLED_SIGNAL_COUNT +
-                                               1][BSG_SIGNAL_CODE_COUNT +
-                                                  1][67] = {
-    {"Illegal instruction, code 1 (ILLOPC)",
-     "Illegal instruction, code 2 (ILLOPN)",
-     "Illegal instruction, code 3 (ILLADR)",
-     "Illegal instruction, code 4 (ILLTRP)",
-     "Illegal instruction, code 5 (PRVOPC)",
-     "Illegal instruction, code 6 (PRVREG)",
-     "Illegal instruction, code 7 (COPROC)",
-     "Illegal instruction, code 8 (BADSTK)",
-     "Illegal instruction, code 9 (BADIADDR)",
-     "Illegal instruction, code 10 (BREAK)",
-     "Illegal instruction, code 11 (BNDMOD)"},
-    {"Trace/breakpoint trap, code 1 (BRKPT)",
-     "Trace/breakpoint trap, code 2 (TRACE)",
-     "Trace/breakpoint trap, code 3 (BRANCH)",
-     "Trace/breakpoint trap, code 4 (HWBKPT)",
-     "Trace/breakpoint trap, code 5 (UNK)",
-     "Trace/breakpoint trap, code 6 (PERF)"},
-    {0},
-    {"Bus error (bad memory access), code 1 (ADRALN)",
-     "Bus error (bad memory access), code 2 (ADRERR)",
-     "Bus error (bad memory access), code 3 (OBJERR)",
-     "Bus error (bad memory access), code 4 (MCEERR_AR)",
-     "Bus error (bad memory access), code 5 (MCEERR_AO)"},
-
-    {"Floating-point exception, code 1 (INTDIV)",
-     "Floating-point exception, code 2 (INTOVF)",
-     "Floating-point exception, code 3 (FLTDIV)",
-     "Floating-point exception, code 4 (FLTOVF)",
-     "Floating-point exception, code 5 (FLTUND)",
-     "Floating-point exception, code 6 (FLTRES)",
-     "Floating-point exception, code 7 (FLTINV)",
-     "Floating-point exception, code 8 (FLTSUB)",
-     "Floating-point exception, code 9 (DECOVF)",
-     "Floating-point exception, code 10 (DECDIV)",
-     "Floating-point exception, code 11 (DECERR)",
-     "Floating-point exception, code 12 (INVASC)",
-     "Floating-point exception, code 13 (INVDEC)",
-     "Floating-point exception, code 14 (FLTUNK)",
-     "Floating-point exception, code 15 (CONDTRAP)"},
-    {"Segmentation violation (invalid memory reference), code 1 (MAPERR)",
-     "Segmentation violation (invalid memory reference), code 2 (ACCERR)",
-     "Segmentation violation (invalid memory reference), code 3 (BNDERR)",
-     "Segmentation violation (invalid memory reference), code 4 (PKUERR)",
-     "Segmentation violation (invalid memory reference), code 5 (ACCADI)",
-     "Segmentation violation (invalid memory reference), code 6 (ADIDERR)",
-     "Segmentation violation (invalid memory reference), code 7 (ADIPERR)",
-     "Segmentation violation (invalid memory reference), code 8 (MTEAERR)",
-     "Segmentation violation (invalid memory reference), code 9 (MTESERR)"}};
+static const char
+    bsg_native_signal_code_names[BSG_HANDLED_SIGNAL_COUNT +
+                                 1][BSG_SIGNAL_CODE_COUNT + 1][72] = {
+        {SIG_CODE_MESSAGE(MSG_SIGILL, ILL_ILLOPC),
+         SIG_CODE_MESSAGE(MSG_SIGILL, ILL_ILLOPN),
+         SIG_CODE_MESSAGE(MSG_SIGILL, ILL_ILLADR),
+         SIG_CODE_MESSAGE(MSG_SIGILL, ILL_ILLTRP),
+         SIG_CODE_MESSAGE(MSG_SIGILL, ILL_PRVOPC),
+         SIG_CODE_MESSAGE(MSG_SIGILL, ILL_PRVREG),
+         SIG_CODE_MESSAGE(MSG_SIGILL, ILL_COPROC),
+         SIG_CODE_MESSAGE(MSG_SIGILL, ILL_BADSTK),
+         SIG_CODE_MESSAGE(MSG_SIGILL, ILL_BADIADDR),
+         SIG_CODE_MESSAGE(MSG_SIGILL, __ILL_BREAK),
+         SIG_CODE_MESSAGE(MSG_SIGILL, __ILL_BNDMOD)},
+        {SIG_CODE_MESSAGE(MSG_SIGTRAP, TRAP_BRKPT),
+         SIG_CODE_MESSAGE(MSG_SIGTRAP, TRAP_TRACE),
+         SIG_CODE_MESSAGE(MSG_SIGTRAP, TRAP_BRANCH),
+         SIG_CODE_MESSAGE(MSG_SIGTRAP, TRAP_HWBKPT),
+         SIG_CODE_MESSAGE(MSG_SIGTRAP, TRAP_UNK),
+         SIG_CODE_MESSAGE(MSG_SIGTRAP, TRAP_PERF)},
+        {0},
+        {SIG_CODE_MESSAGE(MSG_SIGBUS, BUS_ADRALN),
+         SIG_CODE_MESSAGE(MSG_SIGBUS, BUS_ADRERR),
+         SIG_CODE_MESSAGE(MSG_SIGBUS, BUS_OBJERR),
+         SIG_CODE_MESSAGE(MSG_SIGBUS, BUS_MCEERR_AR),
+         SIG_CODE_MESSAGE(MSG_SIGBUS, BUS_MCEERR_AO)},
+        {SIG_CODE_MESSAGE(MSG_SIGFPE, FPE_INTDIV),
+         SIG_CODE_MESSAGE(MSG_SIGFPE, FPE_INTOVF),
+         SIG_CODE_MESSAGE(MSG_SIGFPE, FPE_FLTDIV),
+         SIG_CODE_MESSAGE(MSG_SIGFPE, FPE_FLTOVF),
+         SIG_CODE_MESSAGE(MSG_SIGFPE, FPE_FLTUND),
+         SIG_CODE_MESSAGE(MSG_SIGFPE, FPE_FLTRES),
+         SIG_CODE_MESSAGE(MSG_SIGFPE, FPE_FLTINV),
+         SIG_CODE_MESSAGE(MSG_SIGFPE, FPE_FLTSUB),
+         SIG_CODE_MESSAGE(MSG_SIGFPE, __FPE_DECOVF),
+         SIG_CODE_MESSAGE(MSG_SIGFPE, __FPE_DECDIV),
+         SIG_CODE_MESSAGE(MSG_SIGFPE, __FPE_DECERR),
+         SIG_CODE_MESSAGE(MSG_SIGFPE, __FPE_INVASC),
+         SIG_CODE_MESSAGE(MSG_SIGFPE, __FPE_INVDEC),
+         SIG_CODE_MESSAGE(MSG_SIGFPE, FPE_FLTUNK),
+         SIG_CODE_MESSAGE(MSG_SIGFPE, FPE_CONDTRAP)},
+        {SIG_CODE_MESSAGE(MSG_SIGSEGV, SEGV_MAPERR),
+         SIG_CODE_MESSAGE(MSG_SIGSEGV, SEGV_ACCERR),
+         SIG_CODE_MESSAGE(MSG_SIGSEGV, SEGV_BNDERR),
+         SIG_CODE_MESSAGE(MSG_SIGSEGV, SEGV_PKUERR),
+         SIG_CODE_MESSAGE(MSG_SIGSEGV, SEGV_ACCADI),
+         SIG_CODE_MESSAGE(MSG_SIGSEGV, SEGV_ADIDERR),
+         SIG_CODE_MESSAGE(MSG_SIGSEGV, SEGV_ADIPERR),
+         SIG_CODE_MESSAGE(MSG_SIGSEGV, SEGV_MTEAERR),
+         SIG_CODE_MESSAGE(MSG_SIGSEGV, SEGV_MTESERR)}};
 
 static const int bsg_native_signal_codes[BSG_HANDLED_SIGNAL_COUNT +
                                          1][BSG_SIGNAL_CODE_COUNT + 1] = {
@@ -127,13 +132,17 @@ static const int bsg_native_signal_codes[BSG_HANDLED_SIGNAL_COUNT +
     {SEGV_MAPERR, SEGV_ACCERR, SEGV_BNDERR, SEGV_PKUERR, SEGV_ACCADI,
      SEGV_ADIDERR, SEGV_ADIPERR, SEGV_MTEAERR, SEGV_MTESERR}};
 
-const char *bsg_get_signal_code_description(const int signal,
-                                            const int signal_code) __asyncsafe {
+static const char *
+bsg_get_signal_code_description(const int signal,
+                                const int signal_code) __asyncsafe {
   for (int i = 0; i < BSG_HANDLED_SIGNAL_COUNT; i++) {
     if (bsg_native_signals[i] == signal) {
       for (int j = 0; j < BSG_SIGNAL_CODE_COUNT; j++) {
         if (bsg_native_signal_codes[i][j] == signal_code) {
           return bsg_native_signal_code_names[i][j];
+        } else if (*bsg_native_signal_code_names[i][j] == 0) {
+          // NULL in the signal_code_name array indicates no more known codes
+          break;
         }
       }
     }
