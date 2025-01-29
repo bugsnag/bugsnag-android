@@ -64,10 +64,10 @@ internal class FileQueue(
 
     inline fun write(filename: String, writeContent: (Writer) -> Unit): File? = lock.withLock {
         if (!ensureStorageDirValid()) {
-            return null
+            return@withLock null
         }
         if (maxStoreCount == 0) {
-            return null
+            return@withLock null
         }
 
         ensureSpaceForNewFile()
@@ -79,7 +79,7 @@ internal class FileQueue(
             }
 
             logger.i("Saved payload to disk: '$filename'")
-            return file
+            return@withLock file
         } catch (exc: FileNotFoundException) {
             logger.w("Ignoring FileNotFoundException - unable to create file", exc)
         } catch (exc: Exception) {
@@ -87,7 +87,7 @@ internal class FileQueue(
             delete(file)
         }
 
-        return null
+        return@withLock null
     }
 
     /**
@@ -96,7 +96,7 @@ internal class FileQueue(
      */
     private fun ensureSpaceForNewFile() = lock.withLock {
         if (!ensureStorageDirValid()) {
-            return@withLock
+            return
         }
 
         val fileList = enqueuedFiles()
@@ -194,7 +194,7 @@ internal class FileQueue(
     }
 
     fun enqueuedFiles(): List<File> = lock.withLock {
-        val files = storageDir.listFiles()?.toMutableList() ?: return emptyList()
+        val files = storageDir.listFiles()?.toMutableList() ?: return@withLock emptyList()
         files.removeAll(blockedFiles)
         files.sortWith(comparator)
 
