@@ -2,7 +2,6 @@ package com.bugsnag.android
 
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import com.bugsnag.android.BugsnagTestUtils.generateEvent
-import com.bugsnag.android.FileStore.Delegate
 import com.bugsnag.android.internal.BackgroundTaskService
 import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.convertToImmutableConfig
@@ -39,7 +38,7 @@ class EmptyEventCallbackTest {
         backgroundTaskService.shutdown()
     }
 
-    @Test
+    @Test(timeout = 5_000L)
     fun emptyQueuedEventTriggerEventStoreEmptyCallback() {
         val config = generateConfiguration().apply {
             maxPersistedEvents = 0
@@ -47,13 +46,12 @@ class EmptyEventCallbackTest {
         }
         val eventStore = createEventStore(convertToImmutableConfig(config))
         eventStore.write(generateEvent())
+        assertTrue(eventStore.isEmpty())
 
         val callbackLatch = CountDownLatch(1)
         eventStore.onEventStoreEmptyCallback = { callbackLatch.countDown() }
         eventStore.flushAsync()
         callbackLatch.await()
-
-        assertTrue(eventStore.isEmpty())
     }
 
     @Test
@@ -124,9 +122,10 @@ class EmptyEventCallbackTest {
         backgroundTaskService.shutdown()
 
         // the last payload should not have been delivered
-        assertFalse(
+        assertEquals(
             "there should be one undelivered payload in the EventStore",
-            eventStore.isEmpty()
+            1,
+            eventStore.storageDir.list()!!.size
         )
 
         assertEquals(
@@ -142,14 +141,7 @@ class EmptyEventCallbackTest {
             NoopLogger,
             Notifier(),
             backgroundTaskService,
-            object : Delegate {
-                override fun onErrorIOFailure(
-                    exception: Exception?,
-                    errorFile: File?,
-                    context: String?
-                ) {
-                }
-            },
+            { _, _, _ -> },
             CallbackState()
         )
     }

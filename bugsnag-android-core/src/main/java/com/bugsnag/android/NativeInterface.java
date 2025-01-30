@@ -420,7 +420,7 @@ public class NativeInterface {
         Client client = getClient();
         ImmutableConfig config = client.getConfig();
         if (releaseStage == null
-                || releaseStage.length() == 0
+                || releaseStage.isEmpty()
                 || !config.shouldDiscardByReleaseStage()) {
             EventStore eventStore = client.getEventStore();
 

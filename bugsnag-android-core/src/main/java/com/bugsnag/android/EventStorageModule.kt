@@ -43,7 +43,9 @@ internal class EventStorageModule(
             cfg.logger,
             notifier,
             bgTaskService,
-            delegate.getOrNull(),
+            { exception, errorFile, context ->
+                delegate.getOrNull()?.onErrorIOFailure(exception, errorFile, context)
+            },
             callbackState
         )
     }

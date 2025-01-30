@@ -2,7 +2,6 @@ package com.bugsnag.android
 
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import com.bugsnag.android.BugsnagTestUtils.generateEvent
-import com.bugsnag.android.FileStore.Delegate
 import com.bugsnag.android.internal.BackgroundTaskService
 import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.convertToImmutableConfig
@@ -84,14 +83,7 @@ class EventStoreMaxLimitTest {
             NoopLogger,
             Notifier(),
             BackgroundTaskService(),
-            object : Delegate {
-                override fun onErrorIOFailure(
-                    exception: Exception?,
-                    errorFile: File?,
-                    context: String?
-                ) {
-                }
-            },
+            { _, _, _ -> },
             CallbackState()
         )
     }
