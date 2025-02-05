@@ -58,12 +58,12 @@ android {
 dependencies {
     addCommonModuleDependencies()
     api(project(":bugsnag-android-core"))
-    implementation("com.google.protobuf:protobuf-javalite:3.24.2")
+    implementation("com.google.protobuf:protobuf-javalite:3.25.5")
 }
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:3.24.2"
+        artifact = "com.google.protobuf:protoc:3.25.5"
     }
     generateProtoTasks {
         all().configureEach {
