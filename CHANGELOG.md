@@ -6,6 +6,8 @@
 
 * Native crashes will now include their signal code (where applicable) in the error message
   [#2135](https://github.com/bugsnag/bugsnag-android/pull/2135)
+* Bumped the version of `protobuf-javalite` used by [bugsnag-plugin-android-exitinfo](bugsnag-plugin-android-exitinfo) to 3.25.5
+  [#2144](https://github.com/bugsnag/bugsnag-android/pull/2144)
 
 ## 6.11.0 (2025-01-22)
 
