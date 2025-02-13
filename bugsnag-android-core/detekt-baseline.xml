@@ -47,7 +47,7 @@
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun shouldDiscardClass(): Boolean</ID>
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun updateSeverityInternal(severity: Severity)</ID>
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun updateSeverityReason(@SeverityReason.SeverityReasonType reason: String)</ID>
-    <ID>ReturnCount:DefaultDelivery.kt$DefaultDelivery$fun deliver( urlString: String, json: ByteArray, integrity: String?, headers: Map&lt;String, String?> ): DeliveryStatus</ID>
+    <ID>ReturnCount:DefaultDelivery.kt$DefaultDelivery$private fun deliverImpl( urlString: String, json: ByteArray, integrity: String?, headers: Map&lt;String, String?> ): Int</ID>
     <ID>SwallowedException:ActivityBreadcrumbCollector.kt$ActivityBreadcrumbCollector$re: Exception</ID>
     <ID>SwallowedException:AppDataCollector.kt$AppDataCollector$e: Exception</ID>
     <ID>SwallowedException:BugsnagEventMapper.kt$BugsnagEventMapper$pe: IllegalArgumentException</ID>

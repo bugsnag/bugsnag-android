@@ -4,6 +4,7 @@ import android.net.TrafficStats
 import com.bugsnag.android.internal.JsonHelper
 import java.io.IOException
 import java.net.HttpURLConnection
+import java.net.HttpURLConnection.HTTP_ENTITY_TOO_LARGE
 import java.net.URL
 
 internal class DefaultDelivery(
@@ -23,10 +24,50 @@ internal class DefaultDelivery(
     }
 
     override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
-        val json = payload.trimToSize().toByteArray()
-        val status = deliver(deliveryParams.endpoint, json, payload.integrityToken, deliveryParams.headers)
+        val json = payload.toByteArray()
+        val status = deliverImpl(deliveryParams.endpoint, json, payload.integrityToken, deliveryParams.headers)
+        if (status == HTTP_ENTITY_TOO_LARGE) {
+            val newJson = payload.trimToSize().toByteArray()
+            deliverImpl(deliveryParams.endpoint, newJson, payload.integrityToken, deliveryParams.headers)
+        }
         logger.i("Error API request finished with status $status")
-        return status
+        return DeliveryStatus.forHttpResponseCode(status)
+    }
+
+    private fun deliverImpl(
+        urlString: String,
+        json: ByteArray,
+        integrity: String?,
+        headers: Map<String, String?>
+    ): Int {
+
+        TrafficStats.setThreadStatsTag(1)
+        if (connectivity != null && !connectivity.hasNetworkConnection()) {
+            return UNDELIVERED
+        }
+        var conn: HttpURLConnection? = null
+        try {
+            conn = makeRequest(URL(urlString), json, integrity, headers)
+
+            // End the request, get the response code
+            val responseCode = conn.responseCode
+            logRequestInfo(responseCode, conn)
+            return responseCode
+        } catch (oom: OutOfMemoryError) {
+            // attempt to persist the payload on disk. This approach uses streams to write to a
+            // file, which takes less memory than serializing the payload into a ByteArray, and
+            // therefore has a reasonable chance of retaining the payload for future delivery.
+            logger.w("Encountered OOM delivering payload, falling back to persist on disk", oom)
+            return UNDELIVERED
+        } catch (exception: IOException) {
+            logger.w("IOException encountered in request", exception)
+            return UNDELIVERED
+        } catch (exception: Exception) {
+            logger.w("Unexpected error delivering payload", exception)
+            return FAILURE
+        } finally {
+            conn?.disconnect()
+        }
     }
 
     fun deliver(
@@ -35,36 +76,7 @@ internal class DefaultDelivery(
         integrity: String?,
         headers: Map<String, String?>
     ): DeliveryStatus {
-
-        TrafficStats.setThreadStatsTag(1)
-        if (connectivity != null && !connectivity.hasNetworkConnection()) {
-            return DeliveryStatus.UNDELIVERED
-        }
-        var conn: HttpURLConnection? = null
-
-        try {
-            conn = makeRequest(URL(urlString), json, integrity, headers)
-
-            // End the request, get the response code
-            val responseCode = conn.responseCode
-            val status = DeliveryStatus.forHttpResponseCode(responseCode)
-            logRequestInfo(responseCode, conn, status)
-            return status
-        } catch (oom: OutOfMemoryError) {
-            // attempt to persist the payload on disk. This approach uses streams to write to a
-            // file, which takes less memory than serializing the payload into a ByteArray, and
-            // therefore has a reasonable chance of retaining the payload for future delivery.
-            logger.w("Encountered OOM delivering payload, falling back to persist on disk", oom)
-            return DeliveryStatus.UNDELIVERED
-        } catch (exception: IOException) {
-            logger.w("IOException encountered in request", exception)
-            return DeliveryStatus.UNDELIVERED
-        } catch (exception: Exception) {
-            logger.w("Unexpected error delivering payload", exception)
-            return DeliveryStatus.FAILURE
-        } finally {
-            conn?.disconnect()
-        }
+        return DeliveryStatus.forHttpResponseCode(deliverImpl(urlString, json, integrity, headers))
     }
 
     private fun makeRequest(
@@ -96,7 +108,7 @@ internal class DefaultDelivery(
         return conn
     }
 
-    private fun logRequestInfo(code: Int, conn: HttpURLConnection, status: DeliveryStatus) {
+    private fun logRequestInfo(code: Int, conn: HttpURLConnection) {
         runCatching {
             logger.i(
                 "Request completed with code $code, " +
@@ -111,11 +123,17 @@ internal class DefaultDelivery(
         }
 
         runCatching {
-            if (status != DeliveryStatus.DELIVERED) {
+            if (code != DELIVERED) {
                 conn.errorStream.bufferedReader().use {
                     logger.w("Request error details: ${it.readText()}")
                 }
             }
         }
+    }
+
+    companion object {
+        const val DELIVERED = -1
+        const val UNDELIVERED = -2
+        const val FAILURE = -3
     }
 }
