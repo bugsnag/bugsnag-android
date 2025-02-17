@@ -74,11 +74,11 @@ class EventPayload @JvmOverloads internal constructor(
         }
 
         val event = decodedEvent()
-        val (itemsTrimmed, dataTrimmed) = event.impl.trimMetadataStringsTo(config.maxStringValueLength)
-        event.impl.internalMetrics.setMetadataTrimMetrics(
-            itemsTrimmed,
-            dataTrimmed
-        )
+//        val (itemsTrimmed, dataTrimmed) = event.impl.trimMetadataStringsTo(config.maxStringValueLength)
+//        event.impl.internalMetrics.setMetadataTrimMetrics(
+//            itemsTrimmed,
+//            dataTrimmed
+//        )
 
         json = rebuildPayloadCache()
         if (json.size <= maxSizeBytes) {

@@ -34,7 +34,8 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
         severityReason,
         ThreadState(originalError, severityReason.unhandled, config).threads,
         User(),
-        config.redactedKeys.toSet()
+        config.redactedKeys.toSet(),
+        config.maxStringValueLength,
     )
 
     internal constructor(
@@ -50,7 +51,8 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
         severityReason: SeverityReason = SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION),
         threads: MutableList<Thread> = mutableListOf(),
         user: User = User(),
-        redactionKeys: Set<Pattern>? = null
+        redactionKeys: Set<Pattern>? = null,
+        maxLength: Int? = null,
     ) {
         this.logger = logger
         this.apiKey = apiKey
@@ -68,6 +70,7 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
         redactionKeys?.let {
             this.redactedKeys = it
         }
+        this.maxLength = maxLength
     }
 
     val originalError: Throwable?
@@ -82,6 +85,7 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
     private val jsonStreamer: ObjectJsonStreamer = ObjectJsonStreamer().apply {
         redactedKeys = redactedKeys.toSet()
     }
+    val maxLength: Int?
 
     @JvmField
     internal var session: Session? = null
@@ -149,6 +153,10 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
 
     @Throws(IOException::class)
     override fun toStream(parentWriter: JsonStream) {
+        this.maxLength?.let {
+            val (itemsTrimmed, dataTrimmed) = trimMetadataStringsTo(this.maxLength)
+            internalMetrics.setMetadataTrimMetrics(itemsTrimmed, dataTrimmed)
+        }
         val writer = JsonStream(parentWriter, jsonStreamer)
         // Write error basics
         writer.beginObject()
