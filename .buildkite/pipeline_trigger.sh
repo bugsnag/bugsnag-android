@@ -1,8 +1,8 @@
 #!/usr/bin/env sh
 
 if [[ "$BUILDKITE_MESSAGE" == *"[full ci]"* ||
-  "$BUILDKITE_BRANCH" == "master" ||
-  "$BUILDKITE_PULL_REQUEST_BASE_BRANCH" == "master" ||
+  "$BUILDKITE_BRANCH" == "main" ||
+  "$BUILDKITE_PULL_REQUEST_BASE_BRANCH" == "main" ||
   ! -z "$FULL_SCHEDULED_BUILD" ]]; then
   # Full build
   buildkite-agent pipeline upload .buildkite/pipeline.full.yml
