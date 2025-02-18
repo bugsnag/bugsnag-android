@@ -337,7 +337,7 @@ bool custom_on_error_callback(void *event) {
 bugsnag_add_on_error(&custom_on_error_callback);
 ```
 
-Most of the fields in the `Event` class in the JVM are available in this callback using a set of functions (see [event.h](https://github.com/bugsnag/bugsnag-android/blob/master/bugsnag-plugin-android-ndk/src/main/assets/include/event.h))
+Most of the fields in the `Event` class in the JVM are available in this callback using a set of functions (see [event.h](https://github.com/bugsnag/bugsnag-android/blob/main/bugsnag-plugin-android-ndk/src/main/assets/include/event.h))
  that take the event pointer argument and either return data from the event or allow you to set it.
 Full examples are given in the [Event class documentation](https://docs.bugsnag.com/platforms/android/customizing-error-reports/#the-event-class).
 

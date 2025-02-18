@@ -26,7 +26,7 @@ This contains a prompt of checks which you may want to test, depending on the ex
   - [ ] Wait a few seconds before a native crash. Does the reported duration in
     foreground match your expectation? Is the value for "inForeground" correct?
   - [ ] Do the function names demangle correctly when using notify?
-- [ ] Have the installation instructions been updated on the [dashboard](https://github.com/bugsnag/dashboard-js/tree/master/js/dashboard/components/integration_instructions) as well as the [docs site](https://github.com/bugsnag/docs.bugsnag.com)?
+- [ ] Have the installation instructions been updated on the [dashboard](https://github.com/bugsnag/dashboard-js/tree/master/src/components/IntegrationInstructions) as well as the [docs site](https://github.com/bugsnag/docs.bugsnag.com)?
 - [ ] Do the installation instructions work for a manual integration?
 
 ## Making the release
@@ -36,15 +36,15 @@ This contains a prompt of checks which you may want to test, depending on the ex
 - Pull the release branch and update it locally:
   - [ ] Update the version number with `make VERSION=[number] bump`
   - [ ] Inspect the updated CHANGELOG, README, and version files to ensure they are correct
-- Open a Pull Request from the release branch to `master`
+- Open a Pull Request from the release branch to `main`
 - Once merged:
-  - Pull the latest changes (checking out `master` if necessary)
+  - Pull the latest changes (checking out `main` if necessary)
   - On CI:
     - Trigger the release step by allowing the `Trigger package publish` step to continue
     - Verify the `Publish` step runs correctly and the artefacts are upload to sonatype.
   - Release to GitHub:
-    - [ ] Create *and tag* the release from `master` on [GitHub Releases](https://github.com/bugsnag/bugsnag-android/releases)
-  - Checkout `master` and pull the latest changes
+    - [ ] Create *and tag* the release from `main` on [GitHub Releases](https://github.com/bugsnag/bugsnag-android/releases)
+  - Checkout `main` and pull the latest changes
   - [ ] Test the Sonatype artefacts in the example app by adding the newly created 'combugsnag-XXXX' repository to the build.gradle:  `maven {url "https://oss.sonatype.org/service/local/repositories/combugsnag-XXXX/content/"}`
   - [ ] "Promote" the release build on Maven Central:
     - Go to the [sonatype open source dashboard](https://oss.sonatype.org/index.html#stagingRepositories)

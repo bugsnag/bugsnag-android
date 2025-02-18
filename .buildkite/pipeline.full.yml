@@ -67,7 +67,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next$$"
+        branch: "^main|next$$"
     concurrency: 25
     concurrency_group: 'bitbar'
     concurrency_method: eager
@@ -92,7 +92,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next$$"
+        branch: "^main|next$$"
     concurrency: 5
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
@@ -125,7 +125,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next$$"
+        branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-debug"
     concurrency: 25
@@ -154,7 +154,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next$$"
+        branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-debug"
     concurrency: 5
@@ -189,7 +189,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next$$"
+        branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
     concurrency: 25
@@ -223,7 +223,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next$$"
+        branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
     concurrency: 25
@@ -255,7 +255,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next$$"
+        branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
     concurrency: 5
@@ -288,7 +288,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next$$"
+        branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
     concurrency: 25
@@ -321,7 +321,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next$$"
+        branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
     concurrency: 25
@@ -351,7 +351,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next$$"
+        branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
     concurrency: 5
@@ -386,7 +386,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next$$"
+        branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -421,7 +421,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next$$"
+        branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -453,7 +453,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next$$"
+        branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 5
@@ -488,7 +488,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next$$"
+        branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -523,7 +523,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next$$"
+        branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -554,7 +554,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next$$"
+        branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 5
@@ -593,7 +593,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next$$"
+        branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -628,7 +628,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next$$"
+        branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -659,7 +659,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next$$"
+        branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 5
@@ -694,7 +694,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next$$"
+        branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -729,7 +729,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next$$"
+        branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -760,7 +760,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next$$"
+        branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 5
@@ -795,7 +795,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next$$"
+        branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -830,7 +830,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next$$"
+        branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
@@ -861,7 +861,7 @@ steps:
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^master|next$$"
+        branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 5
@@ -871,12 +871,12 @@ steps:
   # If there is a tag present activate a manual publishing step
 
   - block: 'Trigger package publish'
-    if: build.branch == "master"
+    if: build.branch == "main"
     key: trigger-publish
     blocked_state: passed
 
   - label: ':docker: Build Android base image'
-    if: build.branch == "master"
+    if: build.branch == "main"
     key: 'android-common'
     timeout_in_minutes: 30
     depends_on: 'trigger-publish'
@@ -892,7 +892,7 @@ steps:
             - android-common:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:latest
 
   - label: 'Publish :rocket:'
-    if: build.branch == "master"
+    if: build.branch == "main"
     depends_on: 'android-common'
     timeout_in_minutes: 30
     env:
