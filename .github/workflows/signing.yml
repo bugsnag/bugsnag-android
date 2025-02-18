@@ -23,7 +23,7 @@ jobs:
         run: |
           echo "${{ secrets.PLATFORMS_GPG_KEY_BASE64 }}" | base64 --decode | gpg --batch --import
       - name: Sign assets
-        uses: bugsnag/platforms-release-signer@main
+        uses: bugsnag/platforms-release-signer@4d88944b11e503624f8a511cf6d0fa2901822b60 # v1.0.0
         with:
           github_token: ${{ secrets.PLATFORMS_SIGNING_GITHUB_TOKEN }}
           full_repository: ${{ github.repository }}

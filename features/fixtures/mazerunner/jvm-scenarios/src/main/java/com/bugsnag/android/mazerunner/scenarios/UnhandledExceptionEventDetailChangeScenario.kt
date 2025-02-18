@@ -55,7 +55,7 @@ internal class UnhandledExceptionEventDetailChangeScenario(
                 event.device.freeMemory = 123456
                 event.device.orientation = "portrait"
 
-                event.breadcrumbs.removeLast()
+                event.breadcrumbs.removeAt(event.breadcrumbs.lastIndex)
                 event.breadcrumbs.first().type = BreadcrumbType.ERROR
                 event.breadcrumbs.first().message = "new breadcrumb message"
                 event.breadcrumbs[1].type = BreadcrumbType.ERROR
