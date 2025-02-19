@@ -531,6 +531,7 @@ steps:
     concurrency_method: eager
 
   - label: ':browserstack: Android 10 NDK r21 end-to-end tests - ANRs'
+    skip: All ANR scenarios are skipped on Android 10
     depends_on: "fixture-r21"
     timeout_in_minutes: 30
     plugins:
