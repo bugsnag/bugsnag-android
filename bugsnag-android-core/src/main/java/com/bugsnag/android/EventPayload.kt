@@ -80,6 +80,10 @@ class EventPayload @JvmOverloads internal constructor(
             dataTrimmed
         )
 
+        if (event.threads.size > config.maxReportedThreads) {
+            event.threads.subList(config.maxReportedThreads, event.threads.size).clear()
+        }
+
         json = rebuildPayloadCache()
         if (json.size <= maxSizeBytes) {
             return this
