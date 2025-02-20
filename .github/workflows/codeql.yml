@@ -17,7 +17,7 @@ on:
     branches: [ "next", integration/**/*, main ]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ "next" ]
+    branches: [ "next", "main" ]
   schedule:
     - cron: '26 16 * * 1'
 

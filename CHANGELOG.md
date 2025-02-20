@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 6.12.0 (2025-02-18)
 
 ### Enhancements
 
