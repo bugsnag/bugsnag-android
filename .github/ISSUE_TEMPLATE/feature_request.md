@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-<!-- Before creating, please check if somebody else has already reported your feature request. -->
+<!-- Before creating, please check whether somebody else has already reported your feature request. -->
 
 ### Description
 <!-- Is your feature request related to a problem? Please describe.
