@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* Excess threads (over `Configuration.getMaxReportedThreads`) are trimmed more reliably when the payload is modified before sending (in an `OnSendCallback` for example) 
+  [#2148](https://github.com/bugsnag/bugsnag-android/pull/2148)
+
 ## 6.12.0 (2025-02-18)
 
 ### Enhancements
