@@ -7,6 +7,7 @@
 //
 
 #include "BSG_KSCrashStringConversion.h"
+#include "utils/logger.h"
 #include <math.h>
 #include <memory.h>
 #include <time.h>
@@ -218,9 +219,19 @@ static void safe_gmtime_r(time_t time, struct tm *out) {
   days -= quotient * days_per_4years;
   years += quotient * 4;
 
-  quotient = days / 365;
-  days -= quotient * 365;
-  years += quotient;
+  while (days >= 365) {
+    if (years % 4 == 0 && (years % 100 != 0 || years % 400 == 0)) {
+      if (days >= 366) {
+        days -= 366;
+        years += 1;
+      } else {
+        break;
+      }
+    } else {
+      days -= 365;
+      years += 1;
+    }
+  }
 
   out->tm_year = years - 1900;
   out->tm_yday = days;

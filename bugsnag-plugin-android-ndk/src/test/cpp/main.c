@@ -59,7 +59,7 @@ Java_com_bugsnag_android_ndk_NativeStringTest_run(JNIEnv *_env, jobject _this) {
 extern bool bsg_event_write(bsg_environment *env);
 
 JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_NativeJsonSerializeTest_run(
-    JNIEnv *_env, jobject _this, jstring _dir) {
+    JNIEnv *_env, jobject _this, jstring _dir, jlong timestamp) {
 
   const char *dir = (*_env)->GetStringUTFChars(_env, _dir, NULL);
   if (dir == NULL) {
@@ -71,12 +71,15 @@ JNIEXPORT int JNICALL Java_com_bugsnag_android_ndk_NativeJsonSerializeTest_run(
   bugsnag_event *event = init_event();
   memcpy(&env.next_event, event, sizeof(bugsnag_event));
 
+  env.next_event.device.time = (time_t) timestamp;
   env.event_path = strdup(dir);
+  env.static_json_data = NULL;
   strcpy(env.event_uuid, "test-uuid");
 
   bsg_event_write(&env);
 
   free(event);
+  free(env.event_path);
 
   (*_env)->ReleaseStringUTFChars(_env, _dir, dir);
 
