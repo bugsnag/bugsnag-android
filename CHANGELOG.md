@@ -8,7 +8,7 @@
   [#2148](https://github.com/bugsnag/bugsnag-android/pull/2148)
 
 * Fixed an error calculating the device time during NDK crashes
-  []()
+  [#2158](https://github.com/bugsnag/bugsnag-android/pull/2158)
 
 ## 6.12.0 (2025-02-18)
 
