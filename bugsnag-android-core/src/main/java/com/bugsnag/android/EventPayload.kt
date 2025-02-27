@@ -80,6 +80,29 @@ class EventPayload @JvmOverloads internal constructor(
             dataTrimmed
         )
 
+        val threadCount = event.threads.size
+        val maxReportedThreads = config.maxReportedThreads
+        if (threadCount > maxReportedThreads) {
+            event.threads.subList(maxReportedThreads, threadCount).clear()
+
+            event.threads.add(
+                Thread(
+                    "",
+                    "[${threadCount - maxReportedThreads} threads omitted as the " +
+                        "maxReportedThreads limit ($maxReportedThreads) was exceeded]",
+                    ErrorType.UNKNOWN,
+                    false,
+                    Thread.State.UNKNOWN,
+                    Stacktrace(
+                        arrayOf(StackTraceElement("", "", "-", 0)),
+                        config.projectPackages,
+                        logger
+                    ),
+                    logger
+                )
+            )
+        }
+
         json = rebuildPayloadCache()
         if (json.size <= maxSizeBytes) {
             return this
