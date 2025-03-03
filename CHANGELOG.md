@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 6.12.1 (2025-03-03)
 
 ### Bug fixes
 
