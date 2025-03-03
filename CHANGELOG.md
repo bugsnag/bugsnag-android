@@ -1,5 +1,15 @@
 # Changelog
 
+## 6.12.1 (2025-03-03)
+
+### Bug fixes
+
+* Excess threads (over `Configuration.getMaxReportedThreads`) are trimmed more reliably when the payload is modified before sending (in an `OnSendCallback` for example) 
+  [#2148](https://github.com/bugsnag/bugsnag-android/pull/2148)
+
+* Fixed an error calculating the device time during NDK crashes
+  [#2158](https://github.com/bugsnag/bugsnag-android/pull/2158)
+
 ## 6.12.0 (2025-02-18)
 
 ### Enhancements
