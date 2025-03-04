@@ -6,8 +6,8 @@
 #define GREATEST_FPRINTF(ignore, fmt, ...)                                     \
   __android_log_print(ANDROID_LOG_INFO, "BugsnagNDKTest", fmt, ##__VA_ARGS__)
 
+#include "parson/parson.h"
 #include <greatest/greatest.h>
-#include <parson/parson.h>
 
 #include "test_bsg_event.h"
 #include "test_serializer.h"
