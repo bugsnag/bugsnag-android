@@ -141,16 +141,8 @@ bool bsg_jni_cache_init(JNIEnv *env) {
 
   CACHE_CLASS(Long, "java/lang/Long");
   CACHE_STATIC_METHOD(Long, Long_valueOf, "valueOf", "(J)Ljava/lang/Long;");
-  CACHE_METHOD(Long, Long_constructor, "<init>", "(J)V");
 
   CACHE_CLASS(String, "java/lang/String");
-
-  CACHE_CLASS(ArrayList, "java/util/ArrayList");
-  CACHE_METHOD(ArrayList, ArrayList_constructor_default, "<init>", "()V");
-  CACHE_METHOD(ArrayList, ArrayList_constructor_collection, "<init>",
-               "(Ljava/util/Collection;)V");
-  CACHE_METHOD(ArrayList, ArrayList_get, "get", "(I)Ljava/lang/Object;");
-  CACHE_METHOD(ArrayList, ArrayList_add, "add", "(Ljava/lang/Object;)Z");
 
   CACHE_CLASS(Set, "java/util/Set");
   CACHE_METHOD(Set, Set_iterator, "iterator", "()Ljava/util/Iterator;");
@@ -160,7 +152,6 @@ bool bsg_jni_cache_init(JNIEnv *env) {
   CACHE_METHOD(Iterator, Iterator_next, "next", "()Ljava/lang/Object;");
 
   CACHE_CLASS(Map, "java/util/Map");
-  CACHE_METHOD(Map, Map_keySet, "keySet", "()Ljava/util/Set;");
   CACHE_METHOD(Map, Map_size, "size", "()I");
   CACHE_METHOD(Map, Map_get, "get", "(Ljava/lang/Object;)Ljava/lang/Object;");
   CACHE_METHOD(Map, Map_put, "put",
@@ -173,8 +164,6 @@ bool bsg_jni_cache_init(JNIEnv *env) {
 
   CACHE_CLASS(HashMap, "java/util/HashMap");
   CACHE_METHOD(HashMap, HashMap_constructor, "<init>", "()V");
-  CACHE_METHOD(HashMap, HashMap_keySet, "keySet", "()Ljava/util/Set;");
-  CACHE_METHOD(HashMap, HashMap_size, "size", "()I");
   CACHE_METHOD(HashMap, HashMap_get, "get",
                "(Ljava/lang/Object;)Ljava/lang/Object;");
   CACHE_METHOD(HashMap, HashMap_put, "put",
@@ -196,10 +185,6 @@ bool bsg_jni_cache_init(JNIEnv *env) {
   CACHE_STATIC_METHOD(NativeInterface, NativeInterface_notify, "notify",
                       "([B[BLcom/bugsnag/android/Severity;[Lcom/bugsnag/"
                       "android/NativeStackframe;)V");
-  CACHE_STATIC_METHOD(NativeInterface, NativeInterface_isDiscardErrorClass,
-                      "isDiscardErrorClass", "(Ljava/lang/String;)Z");
-  CACHE_STATIC_METHOD(NativeInterface, NativeInterface_deliverReport,
-                      "deliverReport", "([B[B[BLjava/lang/String;Z)V");
   CACHE_STATIC_METHOD(NativeInterface, NativeInterface_leaveBreadcrumb,
                       "leaveBreadcrumb",
                       "([BLcom/bugsnag/android/BreadcrumbType;)V");
