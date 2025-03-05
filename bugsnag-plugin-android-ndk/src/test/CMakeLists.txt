@@ -14,5 +14,6 @@ add_library(bugsnag-ndk-test SHARED
     cpp/test_featureflags.c
     cpp/test_bsg_event.c
     cpp/UnwindTest.cpp
+    cpp/parson/parson.h
 )
 target_link_libraries(bugsnag-ndk-test bugsnag-ndk)

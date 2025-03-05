@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 
-#include <parson/parson.h>
+#include "parson/parson.h"
 
 #include <utils/serializer.h>
 
@@ -12,8 +12,6 @@ typedef struct {
     char *expected_json;
 } test_case;
 
-enum greatest_test_res validate_serialized_json(const test_case *test_case,
-                                                JSON_Value *event_val);
 void loadUserTestCase(bugsnag_event *event);
 void loadAppTestCase(bugsnag_event *event);
 void loadAppMetadataTestCase(bugsnag_event *event);
