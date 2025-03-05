@@ -26,7 +26,6 @@ typedef struct {
   jmethodID Int_intValue;
 
   jclass Long;
-  jmethodID Long_constructor;
   jmethodID Long_valueOf;
 
   jclass Float;
@@ -48,7 +47,6 @@ typedef struct {
   jmethodID Map_get;
   jmethodID Map_put;
   jmethodID Map_size;
-  jmethodID Map_keySet;
   jmethodID Map_entrySet;
 
   jclass MapEntry;
@@ -59,14 +57,6 @@ typedef struct {
   jmethodID HashMap_constructor;
   jmethodID HashMap_get;
   jmethodID HashMap_put;
-  jmethodID HashMap_size;
-  jmethodID HashMap_keySet;
-
-  jclass ArrayList;
-  jmethodID ArrayList_constructor_default;
-  jmethodID ArrayList_constructor_collection;
-  jmethodID ArrayList_get;
-  jmethodID ArrayList_add;
 
   jclass NativeInterface;
   jmethodID NativeInterface_getApp;
@@ -77,8 +67,6 @@ typedef struct {
   jmethodID NativeInterface_getContext;
   jmethodID NativeInterface_notify;
   jmethodID NativeInterface_leaveBreadcrumb;
-  jmethodID NativeInterface_isDiscardErrorClass;
-  jmethodID NativeInterface_deliverReport;
 
   jclass NativeStackframe;
   jmethodID NativeStackframe_constructor;
