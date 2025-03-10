@@ -1,18 +1,6 @@
 #include <utils/string.h>
 #include "test_serializer.h"
 
-enum greatest_test_res validate_serialized_json(const test_case *test_case,
-                                                JSON_Value *event_val) {
-    // convert to string
-    char *serialized_string = json_serialize_to_string(event_val);
-    json_value_free(event_val);
-
-    // validate structure
-    char *expected = test_case->expected_json;
-    ASSERT_STR_EQ(expected, serialized_string);
-    PASS();
-}
-
 void loadUserTestCase(bugsnag_event *event) {
     bugsnag_user *user = &event->user;
     strcpy(user->name, "Fenton");
