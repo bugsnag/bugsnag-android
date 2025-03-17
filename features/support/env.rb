@@ -79,18 +79,3 @@ end
 Before('@skip_android_6') do |scenario|
   skip_this_scenario("Skipping scenario") if Maze.config.os_version.floor == 6
 end
-
-Before('@skip_samsung') do |scenario|
-  caps = Maze.driver.capabilities
-  options_cap = 'bitbar:options'
-  device_cap = 'device'
-
-  device = if caps.has_key?(options_cap)
-             caps[options_cap][device_cap]
-           else
-             caps[device_cap]
-           end
-
-  skip_this_scenario("Skipping scenario") if device&.downcase&.include? 'samsung'
-end
-
