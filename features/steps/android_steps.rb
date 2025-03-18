@@ -134,7 +134,7 @@ When("I tap the screen {int} times") do |count|
     begin
       press_at 500, 300
     rescue Selenium::WebDriver::Error::ElementNotInteractableError, Selenium::WebDriver::Error::InvalidElementStateError
-      # Ignore it§
+      # Ignore it
     end
     sleep(1)
   }
@@ -143,9 +143,7 @@ end
 When("I tap the back-button {int} times") do |count|
   manager = Maze::Api::Appium::DeviceManager.new
   (1..count).each { |i|
-    # TODO Uncomment when back button is implemented
-    # manager.back
-    Maze.driver.back
+    manager.back
     sleep(0.5)
   }
 end
