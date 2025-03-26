@@ -35,29 +35,29 @@ end
 
 buildOutputs(bugsnag: false, minified: false)
 
-apk_size = `stat -f "%z" #{RELEASE_APK}`.to_i
-aab_size = `stat -f "%z" #{STANDALONE_DIR + STANDALONE_HDPI_BASE}`.to_i
+apk_size = File.size(RELEASE_APK)
+aab_size = File.size(STANDALONE_DIR + STANDALONE_HDPI_BASE)
 
 buildOutputs(bugsnag: false, minified: true)
 
-min_apk_size = `stat -f "%z" #{RELEASE_APK}`.to_i
-min_aab_size = `stat -f "%z" #{STANDALONE_DIR + STANDALONE_HDPI_BASE}`.to_i
+min_apk_size = File.size(RELEASE_APK)
+min_aab_size = File.size(STANDALONE_DIR + STANDALONE_HDPI_BASE)
 
 buildOutputs(bugsnag: true, minified: false)
 
-apk_bugsnag_size = `stat -f "%z" #{RELEASE_APK}`.to_i
-arm64_bugsnag_size = `stat -f "%z" #{STANDALONE_DIR + STANDALONE_ARM64_V8A}`.to_i
-armeabi_v7a_bugsnag_size = `stat -f "%z" #{STANDALONE_DIR + STANDALONE_ARMEABI_V7A}`.to_i
-x86_64_bugsnag_size = `stat -f "%z" #{STANDALONE_DIR + STANDALONE_X86_64}`.to_i
-x86_bugsnag_size = `stat -f "%z" #{STANDALONE_DIR + STANDALONE_X86}`.to_i
+apk_bugsnag_size = File.size(RELEASE_APK)
+arm64_bugsnag_size = File.size(STANDALONE_DIR + STANDALONE_ARM64_V8A)
+armeabi_v7a_bugsnag_size = File.size(STANDALONE_DIR + STANDALONE_ARMEABI_V7A)
+x86_64_bugsnag_size = File.size(STANDALONE_DIR + STANDALONE_X86_64)
+x86_bugsnag_size = File.size(STANDALONE_DIR + STANDALONE_X86)
 
 buildOutputs(bugsnag: true, minified: true)
 
-min_apk_bugsnag_size = `stat -f "%z" #{RELEASE_APK}`.to_i
-min_arm64_bugsnag_size = `stat -f "%z" #{STANDALONE_DIR + STANDALONE_ARM64_V8A}`.to_i
-min_armeabi_v7a_bugsnag_size = `stat -f "%z" #{STANDALONE_DIR + STANDALONE_ARMEABI_V7A}`.to_i
-min_x86_64_bugsnag_size = `stat -f "%z" #{STANDALONE_DIR + STANDALONE_X86_64}`.to_i
-min_x86_bugsnag_size = `stat -f "%z" #{STANDALONE_DIR + STANDALONE_X86}`.to_i
+min_apk_bugsnag_size = File.size(RELEASE_APK)
+min_arm64_bugsnag_size = File.size(STANDALONE_DIR + STANDALONE_ARM64_V8A)
+min_armeabi_v7a_bugsnag_size = File.size(STANDALONE_DIR + STANDALONE_ARMEABI_V7A)
+min_x86_64_bugsnag_size = File.size(STANDALONE_DIR + STANDALONE_X86_64)
+min_x86_bugsnag_size = File.size(STANDALONE_DIR + STANDALONE_X86)
 
 calculated_sizes = {
   :arm64 => arm64_bugsnag_size - aab_size,
