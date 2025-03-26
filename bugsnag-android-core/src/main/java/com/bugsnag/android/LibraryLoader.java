@@ -39,8 +39,14 @@ class LibraryLoader {
             try {
                 System.loadLibrary(name);
                 loaded = true;
-            } catch (UnsatisfiedLinkError error) {
-                client.notify(error, callback);
+            } catch (UnsatisfiedLinkError ignored) {
+                // retry once in case the failure wasn't permanent
+                try {
+                    System.loadLibrary(name);
+                    loaded = true;
+                } catch (UnsatisfiedLinkError error) {
+                    client.notify(error, callback);
+                }
             }
         }
     }
