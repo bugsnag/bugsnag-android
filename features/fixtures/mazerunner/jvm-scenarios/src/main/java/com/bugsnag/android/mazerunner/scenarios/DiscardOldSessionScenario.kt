@@ -1,7 +1,6 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
-import android.util.Log
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.EndpointConfiguration
@@ -32,8 +31,7 @@ internal class DiscardOldSessionScenario(
     fun sessionDir(): File {
         log("Waiting for session folder to be created")
 
-        var folder: File? = null;
-
+        var folder: File? = null
         while (folder == null) {
             Thread.sleep(100)
             folder = File(context.cacheDir, "bugsnag/sessions")
