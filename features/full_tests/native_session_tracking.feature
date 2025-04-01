@@ -24,13 +24,17 @@ Feature: NDK Session Tracking
     And the error payload field "events.0.session.events.unhandled" equals 1
 
   Scenario: Starting a session, notifying, followed by a C crash
-    When I run "CXXSessionInfoCrashScenario" and relaunch the crashed app
-    And I configure Bugsnag for "CXXSessionInfoCrashScenario"
+    When I run "CXXSessionInfoCrashScenario"
     And I wait to receive a session
+    And I wait to receive 2 errors
+    And I discard the oldest session
+    And I discard the oldest error
+    And I discard the oldest error
+
+    And I relaunch the app after a crash
+    And I configure Bugsnag for "CXXSessionInfoCrashScenario"
+    # The fixture will now send the unhandled error plus the 2 handled errors
+    # again,  because they are invoked after the delivery of the session.
     And I wait to receive 3 errors
-    And I discard the oldest error
-    And I discard the oldest error
-    Then the error payload contains a completed handled native report
-    And the event contains session info
     And the error payload field "events.0.session.events.unhandled" equals 1
     And the error payload field "events.0.session.events.handled" equals 2
