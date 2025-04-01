@@ -1,9 +1,11 @@
 package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
+import android.util.Log
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.EndpointConfiguration
+import com.bugsnag.android.mazerunner.log
 import java.io.File
 import java.util.Calendar
 
@@ -28,14 +30,26 @@ internal class DiscardOldSessionScenario(
     }
 
     fun sessionDir(): File {
-        return File(context.cacheDir, "bugsnag/sessions")
+        log("Waiting for session folder to be created")
+
+        var folder: File? = null;
+
+        while (folder == null) {
+            Thread.sleep(100)
+            folder = File(context.cacheDir, "bugsnag/sessions")
+        }
+        log("Session folder has been created")
+
+        return folder
     }
 
     fun waitForSessionFile() {
         val dir = sessionDir()
+        log("Waiting for session files to be created")
         while (dir.listFiles()!!.isEmpty()) {
             Thread.sleep(100)
         }
+        log("Session files have been created")
     }
 
     fun oldifySessionFiles() {
