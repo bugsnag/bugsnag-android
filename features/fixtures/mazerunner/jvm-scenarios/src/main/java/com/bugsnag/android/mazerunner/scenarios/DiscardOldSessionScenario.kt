@@ -4,7 +4,6 @@ import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.EndpointConfiguration
-import com.bugsnag.android.mazerunner.log
 import java.io.File
 import java.util.Calendar
 
