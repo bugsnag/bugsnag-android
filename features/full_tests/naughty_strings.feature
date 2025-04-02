@@ -26,8 +26,6 @@ Feature: The notifier handles user data containing unusual strings
     And the error payload field "events.0.metaData.custom.val_13" equals "𝓣𝓱𝓮 𝓺𝓾𝓲𝓬𝓴 𝓫𝓻𝓸𝔀𝓷 𝓯𝓸𝔁 𝓳𝓾𝓶𝓹𝓼 𝓸𝓿𝓮𝓻 𝓽𝓱𝓮 𝓵𝓪𝔃𝔂 𝓭𝓸𝓰"
     And the error payload field "events.0.metaData.custom.val_14" equals "گچپژ"
 
-# commented out some failing unicode assertions and skipped Android <6 until PLAT-5606 is addressed
-  @skip_below_android_6
   Scenario: Test unhandled NDK error
     When I run "CXXNaughtyStringsScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXNaughtyStringsScenario"
