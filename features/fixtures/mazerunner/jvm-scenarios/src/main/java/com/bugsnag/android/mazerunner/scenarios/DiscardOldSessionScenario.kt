@@ -29,25 +29,14 @@ internal class DiscardOldSessionScenario(
     }
 
     fun sessionDir(): File {
-        log("Waiting for session folder to be created")
-
-        var folder: File? = null
-        while (folder == null) {
-            Thread.sleep(100)
-            folder = File(context.cacheDir, "bugsnag/sessions")
-        }
-        log("Session folder has been created")
-
-        return folder
+        return File(context.cacheDir, "bugsnag/sessions")
     }
 
     fun waitForSessionFile() {
         val dir = sessionDir()
-        log("Waiting for session files to be created")
-        while (dir.listFiles()!!.isEmpty()) {
+        while (dir.listFiles().isNullOrEmpty()) {
             Thread.sleep(100)
         }
-        log("Session files have been created")
     }
 
     fun oldifySessionFiles() {
