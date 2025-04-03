@@ -869,6 +869,108 @@ steps:
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
+
+  - label: ':bitbar: Android 15 NDK r21 end-to-end tests - batch 1'
+    depends_on: "fixture-r21"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.9.0:
+        download:
+          - "build/fixture-r21-url.txt"
+          - "build/fixture-r21/*"
+        upload:
+          - "maze_output/failed/**/*"
+          - "maze_output/metrics.csv"
+      docker-compose#v4.7.0:
+        pull: maze-runner
+        run: maze-runner
+        service-ports: true
+        command:
+          - "features/full_tests"
+          - "--exclude=features/full_tests/[^a-k].*.feature"
+          - "--exclude=features/full_tests/anr.feature"
+          - "--app=@build/fixture-r21-url.txt"
+          - "--appium-version=1.22"
+          - "--no-tunnel"
+          - "--aws-public-ip"
+          - "--farm=bb"
+          - "--device=ANDROID_15"
+      test-collector#v1.10.2:
+        files: "reports/TEST-*.xml"
+        format: "junit"
+        branch: "^main|next$$"
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
+    concurrency: 25
+    concurrency_group: 'bitbar'
+    concurrency_method: eager
+
+  - label: ':bitbar: Android 15 NDK r21 end-to-end tests - batch 2'
+    depends_on: "fixture-r21"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.9.0:
+        download:
+          - "build/fixture-r21-url.txt"
+          - "build/fixture-r21/*"
+        upload:
+          - "maze_output/failed/**/*"
+          - "maze_output/metrics.csv"
+      docker-compose#v4.7.0:
+        pull: maze-runner
+        run: maze-runner
+        service-ports: true
+        command:
+          - "features/full_tests"
+          - "--exclude=features/full_tests/[^l-z].*.feature"
+          - "--exclude=features/full_tests/anr.feature"
+          - "--app=@build/fixture-r21-url.txt"
+          - "--appium-version=1.22"
+          - "--no-tunnel"
+          - "--aws-public-ip"
+          - "--farm=bb"
+          - "--device=ANDROID_15"
+      test-collector#v1.10.2:
+        files: "reports/TEST-*.xml"
+        format: "junit"
+        branch: "^main|next$$"
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
+    concurrency: 25
+    concurrency_group: 'bitbar'
+    concurrency_method: eager
+
+  - label: ':browserstack: Android 15 NDK r21 end-to-end tests - ANRs'
+    depends_on: "fixture-r21"
+    timeout_in_minutes: 30
+    plugins:
+      artifacts#v1.9.0:
+        download:
+          - "build/bs-fixture-r21-url.txt"
+          - "build/fixture-r21/*"
+        upload:
+          - "maze_output/failed/**/*"
+          - "maze_output/metrics.csv"
+      docker-compose#v4.7.0:
+        pull: maze-runner
+        run: maze-runner
+        service-ports: true
+        command:
+          - "features/full_tests/anr.feature"
+          - "--app=@build/bs-fixture-r21-url.txt"
+          - "--appium-version=1.22.0"
+          - "--farm=bs"
+          - "--device=ANDROID_15"
+      test-collector#v1.10.2:
+        files: "reports/TEST-*.xml"
+        format: "junit"
+        branch: "^main|next$$"
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
+    concurrency_method: eager
+
   # If there is a tag present activate a manual publishing step
 
   - block: 'Trigger package publish'

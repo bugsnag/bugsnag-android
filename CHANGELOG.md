@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+* Attempt a second `System.loadLibrary` for native modules in case of library loading race-conditions
+  [#2170](https://github.com/bugsnag/bugsnag-android/pull/2170)
+
 ## 6.12.1 (2025-03-03)
 
 ### Bug fixes
