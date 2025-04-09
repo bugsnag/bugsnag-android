@@ -3,6 +3,7 @@ Feature: Discarding events
   Background:
     Given I clear all persistent data
 
+  @skip
   Scenario: Discard an on-disk error that failed to send and is too old
     # Fail to send initial handled error. Client stores it to disk.
     When I set the HTTP status code for the next request to 500

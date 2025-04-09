@@ -2,12 +2,12 @@ package com.bugsnag.android;
 
 import static com.bugsnag.android.SeverityReason.REASON_PROMISE_REJECTION;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
+
 import com.bugsnag.android.internal.BackgroundTaskService;
 import com.bugsnag.android.internal.ImmutableConfig;
 import com.bugsnag.android.internal.TaskType;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.VisibleForTesting;
 
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
@@ -65,11 +65,8 @@ class DeliveryDelegate extends BaseObservable {
             } else {
                 cacheEvent(event, false);
             }
-        } else if (callbackState.runOnSendTasks(event, logger)) {
-            // Build the eventPayload
-            String apiKey = event.getApiKey();
-            EventPayload eventPayload = new EventPayload(apiKey, event, notifier, immutableConfig);
-            deliverPayloadAsync(event, eventPayload);
+        } else {
+            cacheEvent(event, true);
         }
     }
 
