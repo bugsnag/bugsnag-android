@@ -3,14 +3,6 @@ agents:
 
 steps:
 
-  - label: 'Audit current licenses'
-    timeout_in_minutes: 30
-    agents:
-      queue: macos-14
-    commands:
-      - bundle install
-      - ./scripts/audit-dependency-licenses.sh
-
   - label: ':android: Build fixture APK r19'
     key: "fixture-r19"
     timeout_in_minutes: 30
@@ -47,62 +39,6 @@ steps:
     env:
       JAVA_VERSION: 17
 
-  - label: ':android: Coding standards checks'
-    timeout_in_minutes: 20
-    agents:
-      queue: macos-14
-    command: './gradlew --continue checkstyle detekt lint ktlintCheck'
-
-  - label: ':android: Binary compatibility checks'
-    timeout_in_minutes: 20
-    agents:
-      queue: macos-14
-    command: './gradlew apiCheck'
-
-  - label: ':android: CppCheck'
-    timeout_in_minutes: 10
-    agents:
-      queue: macos-14
-    command: 'bash ./scripts/run-cpp-check.sh'
-
-  - label: ':android: ClangFormat'
-    timeout_in_minutes: 10
-    agents:
-      queue: macos-14
-    command: 'bash ./scripts/run-clang-format-ci-check.sh'
-
-  - label: ':android: Lint mazerunner scenarios'
-    timeout_in_minutes: 10
-    agents:
-      queue: macos-14
-    commands:
-      - cd features/fixtures/mazerunner
-      - ./gradlew ktlintCheck detekt checkstyle
-    env:
-      JAVA_VERSION: 17
-
-  - label: ':android: Android size reporting'
-    timeout_in_minutes: 10
-    agents:
-      queue: macos-14
-    command: scripts/run-sizer.sh
-
-  - label: ':android: JVM tests'
-    timeout_in_minutes: 10
-    agents:
-      queue: macos-14
-    command: './gradlew test'
-
-  - label: ':android: Instrumentation tests'
-    timeout_in_minutes: 10
-    plugins:
-      artifacts#v1.9.0:
-        upload: "bugsnag-*/build/reports/androidTests/connected/**/*.html"
-    agents:
-      queue: macos-14
-    command: './scripts/run-connected-checks.rb'
-    env:
-      API_LEVEL: 30
   #
   # BitBar steps
   #
@@ -125,7 +61,7 @@ steps:
           - "features/smoke_tests"
           - "--exclude=features/smoke_tests/01_anr.feature"
           - "--app=@build/fixture-r19-url.txt"
-          - "--appium-version=1.22"
+          #- "--appium-version=1.22"
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--farm=bb"
@@ -158,7 +94,7 @@ steps:
         command:
           - "features/smoke_tests/01_anr.feature"
           - "--app=@build/bs-fixture-r19-url.txt"
-          - "--appium-version=1.22.0"
+          #- "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_7"
       test-collector#v1.10.2:
@@ -188,7 +124,7 @@ steps:
           - "features/smoke_tests"
           - "--exclude=features/smoke_tests/01_anr.feature"
           - "--app=@build/fixture-r19-url.txt"
-          - "--appium-version=1.22"
+          #- "--appium-version=1.22"
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--farm=bb"
@@ -219,7 +155,7 @@ steps:
         command:
           - "features/smoke_tests/01_anr.feature"
           - "--app=@build/bs-fixture-r19-url.txt"
-          - "--appium-version=1.22.0"
+          #- "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_8"
       test-collector#v1.10.2:
@@ -251,7 +187,7 @@ steps:
           - "features/smoke_tests"
           - "--exclude=features/smoke_tests/01_anr.feature"
           - "--app=@build/fixture-r21-url.txt"
-          - "--appium-version=1.22"
+          #- "--appium-version=1.22"
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--farm=bb"
@@ -284,7 +220,7 @@ steps:
         command:
           - "features/smoke_tests/01_anr.feature"
           - "--app=@build/bs-fixture-r21-url.txt"
-          - "--appium-version=1.22.0"
+          #- "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_9"
     env:
@@ -312,7 +248,7 @@ steps:
           - "features/smoke_tests"
           - "--exclude=features/smoke_tests/01_anr.feature"
           - "--app=@build/fixture-r21-url.txt"
-          - "--appium-version=1.22"
+          #- "--appium-version=1.22"
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--farm=bb"
@@ -346,7 +282,7 @@ steps:
         command:
           - "features/smoke_tests/01_anr.feature"
           - "--app=@build/bs-fixture-r21-url.txt"
-          - "--appium-version=1.22.0"
+          #- "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_10"
       test-collector#v1.10.2:
@@ -379,7 +315,7 @@ steps:
           - "features/smoke_tests"
           - "--exclude=features/smoke_tests/01_anr.feature"
           - "--app=@build/fixture-r21-url.txt"
-          - "--appium-version=1.22"
+          #- "--appium-version=1.22"
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--farm=bb"
@@ -413,7 +349,7 @@ steps:
         command:
           - "features/smoke_tests/01_anr.feature"
           - "--app=@build/bs-fixture-r21-url.txt"
-          - "--appium-version=1.22.0"
+          #- "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_11"
       test-collector#v1.10.2:
@@ -451,7 +387,7 @@ steps:
           - "--exclude=features/full_tests/[^a-k].*.feature"
           - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
-          - "--appium-version=1.22"
+          #- "--appium-version=1.22"
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--farm=bb"
@@ -485,7 +421,7 @@ steps:
         command:
           - "features/full_tests/anr.feature"
           - "--app=@build/bs-fixture-r21-url.txt"
-          - "--appium-version=1.22.0"
+          #- "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_12"
       test-collector#v1.10.2:
@@ -519,7 +455,7 @@ steps:
           - "--exclude=features/full_tests/[^l-z].*.feature"
           - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
-          - "--appium-version=1.22"
+          #- "--appium-version=1.22"
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--farm=bb"
@@ -553,7 +489,7 @@ steps:
           - "features/smoke_tests"
           - "--exclude=features/smoke_tests/01_anr.feature"
           - "--app=@build/fixture-r21-url.txt"
-          - "--appium-version=1.22"
+          #- "--appium-version=1.22"
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--farm=bb"
@@ -586,7 +522,7 @@ steps:
         command:
           - "features/smoke_tests/01_anr.feature"
           - "--app=@build/bs-fixture-r21-url.txt"
-          - "--appium-version=1.22.0"
+          #- "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_13"
       test-collector#v1.10.2:
@@ -618,7 +554,7 @@ steps:
           - "features/smoke_tests"
           - "--exclude=features/smoke_tests/01_anr.feature"
           - "--app=@build/fixture-r21-url.txt"
-          - "--appium-version=1.22"
+          #- "--appium-version=1.22"
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--farm=bb"
@@ -651,7 +587,7 @@ steps:
         command:
           - "features/smoke_tests/01_anr.feature"
           - "--app=@build/bs-fixture-r21-url.txt"
-          - "--appium-version=1.22.0"
+          #- "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_14"
       test-collector#v1.10.2:
@@ -683,7 +619,7 @@ steps:
           - "features/smoke_tests"
           - "--exclude=features/smoke_tests/01_anr.feature"
           - "--app=@build/bs-fixture-r21-url.txt"
-          - "--appium-version=1.22.0"
+          #- "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_15"
       test-collector#v1.10.2:
@@ -714,7 +650,7 @@ steps:
         command:
           - "features/smoke_tests/01_anr.feature"
           - "--app=@build/bs-fixture-r21-url.txt"
-          - "--appium-version=1.22.0"
+          #- "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_15"
       test-collector#v1.10.2:

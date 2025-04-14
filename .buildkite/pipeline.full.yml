@@ -59,7 +59,7 @@ steps:
           - "features/minimal"
           - "--exclude=features/minimal/detect_anr_minimal.feature"
           - "--app=/app/build/fixture-minimal.apk"
-          - "--appium-version=1.22"
+          #- "--appium-version=1.22"
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--farm=bb"
@@ -86,7 +86,7 @@ steps:
         command:
           - "features/minimal/detect_anr_minimal.feature"
           - "--app=/app/build/fixture-minimal.apk"
-          - "--appium-version=1.22.0"
+          #- "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_9"
       test-collector#v1.10.2:
@@ -117,7 +117,7 @@ steps:
           - "--exclude=features/smoke_tests/01_anr.feature"
           - "--tags=debug-safe"
           - "--app=/app/build/fixture-debug.apk"
-          - "--appium-version=1.22"
+          #- "--appium-version=1.22"
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--farm=bb"
@@ -148,7 +148,7 @@ steps:
         command:
           - "features/smoke_tests/01_anr.feature"
           - "--app=/app/build/fixture-debug.apk"
-          - "--appium-version=1.22.0"
+          #- "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_9"
       test-collector#v1.10.2:
@@ -179,7 +179,7 @@ steps:
         command:
           - "features/full_tests"
           - "--app=@build/fixture-r19-url.txt"
-          - "--appium-version=1.22"
+          #- "--appium-version=1.22"
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--farm=bb"
@@ -215,7 +215,7 @@ steps:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
           - "--app=@build/fixture-r19-url.txt"
-          - "--appium-version=1.22"
+          #- "--appium-version=1.22"
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--farm=bb"
@@ -249,7 +249,7 @@ steps:
         command:
           - "features/full_tests/anr.feature"
           - "--app=@build/bs-fixture-r19-url.txt"
-          - "--appium-version=1.22.0"
+          #- "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_7"
       test-collector#v1.10.2:
@@ -278,7 +278,7 @@ steps:
         command:
           - "features/full_tests"
           - "--app=@build/fixture-r19-url.txt"
-          - "--appium-version=1.22"
+          #- "--appium-version=1.22"
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--farm=bb"
@@ -313,7 +313,7 @@ steps:
           - "--exclude=features/full_tests/[^l-z].*.feature"
           - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r19-url.txt"
-          - "--appium-version=1.22"
+          #- "--appium-version=1.22"
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--farm=bb"
@@ -345,7 +345,7 @@ steps:
         command:
           - "features/full_tests/anr.feature"
           - "--app=@build/bs-fixture-r19-url.txt"
-          - "--appium-version=1.22.0"
+          #- "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_8"
       test-collector#v1.10.2:
@@ -376,7 +376,7 @@ steps:
         command:
           - "features/full_tests"
           - "--app=@build/fixture-r21-url.txt"
-          - "--appium-version=1.22"
+          #- "--appium-version=1.22"
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--farm=bb"
@@ -413,7 +413,7 @@ steps:
           - "--exclude=features/full_tests/[^l-z].*.feature"
           - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
-          - "--appium-version=1.22"
+          #- "--appium-version=1.22"
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--farm=bb"
@@ -447,7 +447,7 @@ steps:
         command:
           - "features/full_tests/anr.feature"
           - "--app=@build/bs-fixture-r21-url.txt"
-          - "--appium-version=1.22.0"
+          #- "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_9"
       test-collector#v1.10.2:
@@ -480,7 +480,7 @@ steps:
           - "--exclude=features/full_tests/[^a-k].*.feature"
           - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
-          - "--appium-version=1.22"
+          #- "--appium-version=1.22"
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--farm=bb"
@@ -515,7 +515,7 @@ steps:
           - "--exclude=features/full_tests/[^l-z].*.feature"
           - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
-          - "--appium-version=1.22"
+          #- "--appium-version=1.22"
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--farm=bb"
@@ -549,7 +549,7 @@ steps:
         command:
           - "features/full_tests/anr.feature"
           - "--app=@build/bs-fixture-r21-url.txt"
-          - "--appium-version=1.22.0"
+          #- "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_10"
       test-collector#v1.10.2:
@@ -586,7 +586,7 @@ steps:
           - "--exclude=features/full_tests/[^a-k].*.feature"
           - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
-          - "--appium-version=1.22"
+          #- "--appium-version=1.22"
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--farm=bb"
@@ -621,7 +621,7 @@ steps:
           - "--exclude=features/full_tests/[^l-z].*.feature"
           - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
-          - "--appium-version=1.22"
+          #- "--appium-version=1.22"
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--farm=bb"
@@ -654,7 +654,7 @@ steps:
         command:
           - "features/full_tests/anr.feature"
           - "--app=@build/bs-fixture-r21-url.txt"
-          - "--appium-version=1.22.0"
+          #- "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_11"
       test-collector#v1.10.2:
@@ -687,7 +687,7 @@ steps:
           - "--exclude=features/full_tests/[^a-k].*.feature"
           - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
-          - "--appium-version=1.22"
+          #- "--appium-version=1.22"
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--farm=bb"
@@ -722,7 +722,7 @@ steps:
           - "--exclude=features/full_tests/[^l-z].*.feature"
           - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
-          - "--appium-version=1.22"
+          #- "--appium-version=1.22"
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--farm=bb"
@@ -755,7 +755,7 @@ steps:
         command:
           - "features/full_tests/anr.feature"
           - "--app=@build/bs-fixture-r21-url.txt"
-          - "--appium-version=1.22.0"
+          #- "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_13"
       test-collector#v1.10.2:
@@ -788,7 +788,7 @@ steps:
           - "--exclude=features/full_tests/[^a-k].*.feature"
           - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
-          - "--appium-version=1.22"
+          #- "--appium-version=1.22"
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--farm=bb"
@@ -823,7 +823,7 @@ steps:
           - "--exclude=features/full_tests/[^l-z].*.feature"
           - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
-          - "--appium-version=1.22"
+          #- "--appium-version=1.22"
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--farm=bb"
@@ -856,7 +856,7 @@ steps:
         command:
           - "features/full_tests/anr.feature"
           - "--app=@build/bs-fixture-r21-url.txt"
-          - "--appium-version=1.22.0"
+          #- "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_14"
       test-collector#v1.10.2:
@@ -890,7 +890,7 @@ steps:
           - "--exclude=features/full_tests/[^a-k].*.feature"
           - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
-          - "--appium-version=1.22"
+          #- "--appium-version=1.22"
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--farm=bb"
@@ -925,7 +925,7 @@ steps:
           - "--exclude=features/full_tests/[^l-z].*.feature"
           - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
-          - "--appium-version=1.22"
+          #- "--appium-version=1.22"
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--farm=bb"
@@ -958,7 +958,7 @@ steps:
         command:
           - "features/full_tests/anr.feature"
           - "--app=@build/bs-fixture-r21-url.txt"
-          - "--appium-version=1.22.0"
+          #- "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_15"
       test-collector#v1.10.2:
