@@ -71,37 +71,38 @@ When("I configure Bugsnag for {string}") do |event_type|
 end
 
 When("I terminate the app") do
-  Maze.driver.terminate_app Maze.driver.app_id
+  Maze::Api::Appium::AppManager.new.terminate
 end
 
 When("I close and relaunch the app") do
-  Maze.driver.terminate_app Maze.driver.app_id
-  Maze.driver.activate_app Maze.driver.app_id
+  Maze::Api::Appium::AppManager.new.terminate
+  Maze::Api::Appium::AppManager.new.activate
 end
 
 When("I close and relaunch the app after an ANR") do
   begin
-    Maze.driver.terminate_app Maze.driver.app_id
+    Maze::Api::Appium::AppManager.new.terminate
   rescue Selenium::WebDriver::Error::ServerError
     # Swallow any error, as Android may already have terminated the app
   end
-  Maze.driver.activate_app Maze.driver.app_id
+  Maze::Api::Appium::AppManager.new.activate
 end
 
 When('I set the screen orientation to portrait') do
-  Maze.driver.set_rotation(:portrait)
+  Maze::Api::Appium::DeviceManager.new.set_rotation(:portrait)
 end
 
 # Waits for up to 10 seconds for the app to stop running.  It seems that Appium doesn't always
 # get the state correct (e.g. when backgrounding the app, or on old Android versions), so we
 # don't fail if it still says running after the time allowed.
 def wait_for_app_state(expected_state)
+  manager = Maze::Api::Appium::AppManager.new
   max_attempts = 20
   attempts = 0
-  state = Maze.driver.app_state('com.bugsnag.android.mazerunner')
+  state = manager.state
   until (attempts >= max_attempts) || state == expected_state
     attempts += 1
-    state = Maze.driver.app_state('com.bugsnag.android.mazerunner')
+    state = manager.state
     sleep 0.5
   end
   $logger.warn "App state #{state} instead of #{expected_state} after 10s" unless state == expected_state
@@ -113,17 +114,18 @@ When('the app is not running') do
 end
 
 When("I relaunch the app after a crash") do
+  manager = Maze::Api::Appium::AppManager.new
   state = wait_for_app_state :not_running
   if Maze.config.legacy_driver?
     if state != :not_running
-      Maze.driver.close_app
+      manager.close
     end
-    Maze.driver.launch_app
+    manager.launch
   else
     if state != :not_running
-      Maze.driver.terminate_app Maze.driver.app_id
+      manager.terminate
     end
-    Maze.driver.activate_app Maze.driver.app_id
+    manager.activate
   end
 end
 
@@ -132,15 +134,16 @@ When("I tap the screen {int} times") do |count|
     begin
       press_at 500, 300
     rescue Selenium::WebDriver::Error::ElementNotInteractableError, Selenium::WebDriver::Error::InvalidElementStateError
-      # Ignore it§
+      # Ignore it
     end
     sleep(1)
   }
 end
 
 When("I tap the back-button {int} times") do |count|
+  manager = Maze::Api::Appium::DeviceManager.new
   (1..count).each { |i|
-    Maze.driver.back
+    manager.back
     sleep(0.5)
   }
 end

@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "parson/parson.h"
 #include <greatest/greatest.h>
-#include <parson/parson.h>
 
 #include <featureflags.h>
 #include <utils/serializer.h>

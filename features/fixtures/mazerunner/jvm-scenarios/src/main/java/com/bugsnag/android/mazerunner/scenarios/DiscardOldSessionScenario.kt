@@ -33,7 +33,7 @@ internal class DiscardOldSessionScenario(
 
     fun waitForSessionFile() {
         val dir = sessionDir()
-        while (dir.listFiles()!!.isEmpty()) {
+        while (dir.listFiles().isNullOrEmpty()) {
             Thread.sleep(100)
         }
     }
