@@ -1,78 +1,92 @@
 #!/usr/bin/env ruby
+
 require 'pty'
 require 'open3'
+require 'timeout'
 
-# Ensure API_LEVEL is set
-raise('API_LEVEL environment variable must be set') unless ENV['API_LEVEL']
+# === CONFIGURATION ===
+raise('❌ API_LEVEL environment variable must be set') unless ENV['API_LEVEL']
+
 target_api_level = ENV['API_LEVEL']
-avd_name = "test-sdk-#{target_api_level}-#{ENV['BUILDKITE_AGENT_NAME']}" || "test-sdk-#{target_api_level}"
+agent_name = ENV['BUILDKITE_AGENT_NAME'] || 'default'
+avd_name = "test-sdk-#{target_api_level}-#{agent_name}"
+avd_port = ENV['AVD_PORT'] || '5037' # Note: 5554 is default emulator port; 5037 is ADB server
 
+# === DETERMINE ARCHITECTURE ===
+sys_arch = `uname -m`.strip
+sys_arch = 'arm64-v8a' if sys_arch == 'arm64'
 
-# Check if the appropriate AVD exists based on given API level
-avd_exists = `avdmanager list avd -c | grep #{avd_name}`.strip
+# === CHECK AVD EXISTS ===
+avd_list = `avdmanager list avd -c`
+if avd_list.lines.none? { |line| line.strip == avd_name }
+  puts "🔧 AVD '#{avd_name}' not found, creating..."
 
-if avd_exists.empty?
-  puts "AVD #{avd_name} does not exist, creating it now"
-  # Determine if we're running on x86 or ARM
-  sys_arch = `uname -m`.strip
-  sys_arch = 'arm64-v8a' if sys_arch.eql?('arm64')
-  # Check to see if the appropriate SDK is installed
-  sdk_installed = `sdkmanager --list_installed | grep "system-images;android-#{target_api_level};google_apis;#{sys_arch}"`.strip
-
-  if sdk_installed.empty?
-    # If not, install it
-    puts "The system image for API level #{target_api_level} is not installed, installing it now"
-    `sdkmanager "system-images;android-#{target_api_level};google_apis;#{sys_arch}"`
+  # Check SDK system image
+  sdk_path = "system-images;android-#{target_api_level};google_apis;#{sys_arch}"
+  unless `sdkmanager --list_installed`.include?(sdk_path)
+    puts "⬇️  Installing missing system image: #{sdk_path}"
+    system("sdkmanager '#{sdk_path}'") or raise("❌ Failed to install system image")
   end
-  # Create the AVD
-  `avdmanager -s create avd -n #{avd_name} -k "system-images;android-#{target_api_level};google_apis;#{sys_arch}"`
+
+  # Create AVD
+  system("avdmanager -s create avd -n #{avd_name} -k '#{sdk_path}'") or raise("❌ Failed to create AVD")
 else
-  puts "AVD #{avd_name} already exists, skipping creation"
+  puts "✅ AVD '#{avd_name}' already exists"
 end
 
+# === START EMULATOR ===
+emulator_pid = nil
+emulator_lines = Queue.new
+
+puts "🚀 Starting emulator: #{avd_name}"
+
+emulator_thread = Thread.new do
+  PTY.spawn('emulator', '-avd', avd_name,
+            '-no-window', '-gpu', 'swiftshader_indirect',
+            '-noaudio', '-no-boot-anim',
+            '-camera-back', 'none', '-no-snapshot-load',
+            '-port', avd_port) do |stdout, _stdin, pid|
+    emulator_pid = pid
+    stdout.each do |line|
+      puts line
+      emulator_lines << line
+    end
+  end
+end
+
+# === WAIT FOR BOOT ===
+puts "⏳ Waiting for emulator to boot..."
+
+booted = false
 begin
-  emulator_pid = nil
-  emulator_lines = []
-  emulator_thread = Thread.new do
-    port = ENV['AVD_PORT'] || '5037'  # Default to 5554 if not set
-    PTY.spawn('emulator', '-avd', avd_name,
-              '-no-window',
-              '-gpu', 'swiftshader_indirect',
-              '-noaudio',
-              '-no-boot-anim',
-              '-camera-back', 'none',
-              '-no-snapshot-load',
-              '-port', port) do |stdout, _stdin, pid|      emulator_pid = pid
-      stdout.each do |line|
-        emulator_lines << line
-        puts line
-      end
+  Timeout.timeout(90) do
+    until booted
+      line = emulator_lines.pop
+      booted = line.include?('Boot completed')
     end
   end
+rescue Timeout::Error
+  raise '❌ Emulator failed to boot within 90 seconds'
+end
 
-  # Wait for the emulator to boot
-  start_time = Time.now
-  until emulator_lines.any? { |line| line.include?('Boot completed') }
-    if Time.now - start_time > 60
-      raise 'Emulator did not boot in 60 seconds'
-    end
-  end
+puts '✅ Emulator booted successfully'
 
-  puts 'Emulator booted successfully'
+# === RUN TESTS ===
+exit_status = nil
+puts "🧪 Running connectedCheck tests..."
 
-  # Run the connectedCheck tests
-  exit_status = nil
-  Open3.popen2e('./gradlew connectedCheck -x :bugsnag-benchmarks:connectedCheck') do |_stdin, stdout_stderr, wait_thr|
-    stdout_stderr.each { |line| puts line }
-    exit_status = wait_thr.value
-  end
-ensure
-  # Stop the emulator
-  puts 'Stopping emulator process'
-  Process.kill('INT', emulator_pid) if emulator_pid
+Open3.popen2e('./gradlew connectedCheck -x :bugsnag-benchmarks:connectedCheck') do |_stdin, output, wait_thr|
+  output.each { |line| puts line }
+  exit_status = wait_thr.value
+end
+
+# === CLEANUP ===
+puts '🛑 Stopping emulator...'
+if emulator_pid
+  Process.kill('INT', emulator_pid)
   emulator_thread.join
 end
 
-unless exit_status.success?
-  exit(exit_status.exitstatus)
-end
+# === EXIT WITH TEST STATUS ===
+exit(exit_status.exitstatus) unless exit_status.success?
+puts '✅ Tests completed successfully'
