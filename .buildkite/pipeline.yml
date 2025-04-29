@@ -99,10 +99,132 @@ steps:
       artifacts#v1.9.0:
         upload: "bugsnag-*/build/reports/androidTests/connected/**/*.html"
     agents:
-      queue: macos-14-4
+      queue: macos-14
     command: './scripts/run-connected-checks.rb'
     env:
       API_LEVEL: 30
+
+  - label: ':android: Instrumentation tests'
+    timeout_in_minutes: 10
+    plugins:
+      artifacts#v1.9.0:
+        upload: "bugsnag-*/build/reports/androidTests/connected/**/*.html"
+    agents:
+      queue: macos-14
+    command: './scripts/run-connected-checks.rb'
+    env:
+      API_LEVEL: 30
+
+  - label: ':android: Instrumentation tests'
+    timeout_in_minutes: 10
+    plugins:
+      artifacts#v1.9.0:
+        upload: "bugsnag-*/build/reports/androidTests/connected/**/*.html"
+    agents:
+      queue: macos-14
+    command: './scripts/run-connected-checks.rb'
+    env:
+      API_LEVEL: 30
+
+  - label: ':android: Instrumentation tests'
+    timeout_in_minutes: 10
+    plugins:
+      artifacts#v1.9.0:
+        upload: "bugsnag-*/build/reports/androidTests/connected/**/*.html"
+    agents:
+      queue: macos-14
+    command: './scripts/run-connected-checks.rb'
+    env:
+      API_LEVEL: 30
+
+  - label: ':android: Instrumentation tests'
+    timeout_in_minutes: 10
+    plugins:
+      artifacts#v1.9.0:
+        upload: "bugsnag-*/build/reports/androidTests/connected/**/*.html"
+    agents:
+      queue: macos-14
+    command: './scripts/run-connected-checks.rb'
+    env:
+      API_LEVEL: 30
+
+  - label: ':android: Instrumentation tests'
+    timeout_in_minutes: 10
+    plugins:
+      artifacts#v1.9.0:
+        upload: "bugsnag-*/build/reports/androidTests/connected/**/*.html"
+    agents:
+      queue: macos-14
+    command: './scripts/run-connected-checks.rb'
+    env:
+      API_LEVEL: 30
+
+  - label: ':android: Instrumentation tests'
+    timeout_in_minutes: 10
+    plugins:
+      artifacts#v1.9.0:
+        upload: "bugsnag-*/build/reports/androidTests/connected/**/*.html"
+    agents:
+      queue: macos-14
+    command: './scripts/run-connected-checks.rb'
+    env:
+      API_LEVEL: 30
+
+  - label: ':android: Instrumentation tests'
+    timeout_in_minutes: 10
+    plugins:
+      artifacts#v1.9.0:
+        upload: "bugsnag-*/build/reports/androidTests/connected/**/*.html"
+    agents:
+      queue: macos-14
+    command: './scripts/run-connected-checks.rb'
+    env:
+      API_LEVEL: 30
+
+  - label: ':android: Instrumentation tests'
+    timeout_in_minutes: 10
+    plugins:
+      artifacts#v1.9.0:
+        upload: "bugsnag-*/build/reports/androidTests/connected/**/*.html"
+    agents:
+      queue: macos-14
+    command: './scripts/run-connected-checks.rb'
+    env:
+      API_LEVEL: 30
+
+  - label: ':android: Instrumentation tests'
+    timeout_in_minutes: 10
+    plugins:
+      artifacts#v1.9.0:
+        upload: "bugsnag-*/build/reports/androidTests/connected/**/*.html"
+    agents:
+      queue: macos-14
+    command: './scripts/run-connected-checks.rb'
+    env:
+      API_LEVEL: 30
+
+  - label: ':android: Instrumentation tests'
+    timeout_in_minutes: 10
+    plugins:
+      artifacts#v1.9.0:
+        upload: "bugsnag-*/build/reports/androidTests/connected/**/*.html"
+    agents:
+      queue: macos-14
+    command: './scripts/run-connected-checks.rb'
+    env:
+      API_LEVEL: 30
+
+  - label: ':android: Instrumentation tests'
+    timeout_in_minutes: 10
+    plugins:
+      artifacts#v1.9.0:
+        upload: "bugsnag-*/build/reports/androidTests/connected/**/*.html"
+    agents:
+      queue: macos-14
+    command: './scripts/run-connected-checks.rb'
+    env:
+      API_LEVEL: 30
+
 #  #
 #  # BitBar steps
 #  #
