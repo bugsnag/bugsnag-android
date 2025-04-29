@@ -6,43 +6,41 @@ require 'open3'
 raise('API_LEVEL environment variable must be set') unless ENV['API_LEVEL']
 target_api_level = ENV['API_LEVEL']
 
-# Fetch target API level once
-target_api_level = ENV['API_LEVEL']
-avd_name = "test-sdk-#{target_api_level}"
-
-# Check if the AVD exists
-avd_exists = `avdmanager list avd -c | grep #{avd_name}`.strip
+# Check if the appropriate AVD exists based on given API level
+avd_exists = `avdmanager list avd -c | grep test-sdk-#{ENV['API_LEVEL']}`.strip
 
 if avd_exists.empty?
-  puts "AVD #{avd_name} does not exist, creating it now"
-
-  # Detect system architecture
+  puts "AVD test-sdk-#{target_api_level} does not exist, creating it now"
+  # Determine if we're running on x86 or ARM
   sys_arch = `uname -m`.strip
-  sys_arch = 'arm64-v8a' if sys_arch == 'arm64'
-
-  # Define SDK path string
-  sdk_path = "system-images;android-#{target_api_level};google_apis;#{sys_arch}"
-
-  # Check if SDK is installed
-  sdk_installed = `sdkmanager --list_installed | grep "#{sdk_path}"`.strip
+  sys_arch = 'arm64-v8a' if sys_arch.eql?('arm64')
+  # Check to see if the appropriate SDK is installed
+  sdk_installed = `sdkmanager --list_installed | grep "system-images;android-#{target_api_level};google_apis;#{sys_arch}"`.strip
 
   if sdk_installed.empty?
-    puts "System image for API level #{target_api_level} is not installed, installing it now"
-    system("sdkmanager \"#{sdk_path}\"")
+    # If not, install it
+    puts "The system image for API level #{target_api_level} is not installed, installing it now"
+    `sdkmanager "system-images;android-#{target_api_level};google_apis;#{sys_arch}"`
   end
-
   # Create the AVD
-  system("avdmanager -s create avd -n #{avd_name} -k \"#{sdk_path}\"")
+  `avdmanager -s create avd -n test-sdk-#{target_api_level} -k "system-images;android-#{target_api_level};google_apis;#{sys_arch}"`
 else
-  puts "AVD #{avd_name} already exists, skipping creation"
+  puts "AVD test-sdk-#{target_api_level} already exists, skipping creation"
 end
 
 begin
   emulator_pid = nil
   emulator_lines = []
   emulator_thread = Thread.new do
-    PTY.spawn('emulator', '-avd', "test-sdk-#{target_api_level}", '-no-window', '-gpu', 'swiftshader_indirect', '-noaudio', '-no-boot-anim', '-camera-back', 'none', '-no-snapshot-load') do |stdout, _stdin, pid|
-      emulator_pid = pid
+    port = ENV['AVD_PORT'] || '5037'  # Default to 5554 if not set
+    PTY.spawn('emulator', '-avd', "test-sdk-#{target_api_level}",
+              '-no-window',
+              '-gpu', 'swiftshader_indirect',
+              '-noaudio',
+              '-no-boot-anim',
+              '-camera-back', 'none',
+              '-no-snapshot-load',
+              '-port', port) do |stdout, _stdin, pid|      emulator_pid = pid
       stdout.each do |line|
         emulator_lines << line
         puts line
