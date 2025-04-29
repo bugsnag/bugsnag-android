@@ -6,26 +6,35 @@ require 'open3'
 raise('API_LEVEL environment variable must be set') unless ENV['API_LEVEL']
 target_api_level = ENV['API_LEVEL']
 
-# Check if the appropriate AVD exists based on given API level
-avd_exists = `avdmanager list avd -c | grep test-sdk-#{ENV['API_LEVEL']}`.strip
+# Fetch target API level once
+target_api_level = ENV['API_LEVEL']
+avd_name = "test-sdk-#{target_api_level}"
+
+# Check if the AVD exists
+avd_exists = `avdmanager list avd -c | grep #{avd_name}`.strip
 
 if avd_exists.empty?
-  puts "AVD test-sdk-#{target_api_level} does not exist, creating it now"
-  # Determine if we're running on x86 or ARM
+  puts "AVD #{avd_name} does not exist, creating it now"
+
+  # Detect system architecture
   sys_arch = `uname -m`.strip
-  sys_arch = 'arm64-v8a' if sys_arch.eql?('arm64')
-  # Check to see if the appropriate SDK is installed
-  sdk_installed = `sdkmanager --list_installed | grep "system-images;android-#{target_api_level};google_apis;#{sys_arch}"`.strip
+  sys_arch = 'arm64-v8a' if sys_arch == 'arm64'
+
+  # Define SDK path string
+  sdk_path = "system-images;android-#{target_api_level};google_apis;#{sys_arch}"
+
+  # Check if SDK is installed
+  sdk_installed = `sdkmanager --list_installed | grep "#{sdk_path}"`.strip
 
   if sdk_installed.empty?
-    # If not, install it
-    puts "The system image for API level #{target_api_level} is not installed, installing it now"
-    `sdkmanager "system-images;android-#{target_api_level};google_apis;#{sys_arch}"`
+    puts "System image for API level #{target_api_level} is not installed, installing it now"
+    system("sdkmanager \"#{sdk_path}\"")
   end
+
   # Create the AVD
-  `avdmanager -s create avd -n test-sdk-#{target_api_level} -k "system-images;android-#{target_api_level};google_apis;#{sys_arch}"`
+  system("avdmanager -s create avd -n #{avd_name} -k \"#{sdk_path}\"")
 else
-  puts "AVD test-sdk-#{target_api_level} already exists, skipping creation"
+  puts "AVD #{avd_name} already exists, skipping creation"
 end
 
 begin
