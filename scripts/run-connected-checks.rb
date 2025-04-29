@@ -5,7 +5,7 @@ require 'open3'
 # Ensure API_LEVEL is set
 raise('API_LEVEL environment variable must be set') unless ENV['API_LEVEL']
 target_api_level = ENV['API_LEVEL']
-avd_name = "test-sdk-#{target_api_level}-#{ENV[BUILDKITE_AGENT_NAME]}" || "test-sdk-#{target_api_level}"
+avd_name = "test-sdk-#{target_api_level}-#{ENV['BUILDKITE_AGENT_NAME']}" || "test-sdk-#{target_api_level}"
 
 
 # Check if the appropriate AVD exists based on given API level
