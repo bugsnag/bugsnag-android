@@ -5,12 +5,14 @@ require 'open3'
 # Ensure API_LEVEL is set
 raise('API_LEVEL environment variable must be set') unless ENV['API_LEVEL']
 target_api_level = ENV['API_LEVEL']
+avd_name = "test-sdk-#{target_api_level}-#{ENV[BUILDKITE_AGENT_NAME]}" || "test-sdk-#{target_api_level}"
+
 
 # Check if the appropriate AVD exists based on given API level
-avd_exists = `avdmanager list avd -c | grep test-sdk-#{ENV['API_LEVEL']}`.strip
+avd_exists = `avdmanager list avd -c | grep #{avd_name}`.strip
 
 if avd_exists.empty?
-  puts "AVD test-sdk-#{target_api_level} does not exist, creating it now"
+  puts "AVD #{avd_name} does not exist, creating it now"
   # Determine if we're running on x86 or ARM
   sys_arch = `uname -m`.strip
   sys_arch = 'arm64-v8a' if sys_arch.eql?('arm64')
@@ -23,9 +25,9 @@ if avd_exists.empty?
     `sdkmanager "system-images;android-#{target_api_level};google_apis;#{sys_arch}"`
   end
   # Create the AVD
-  `avdmanager -s create avd -n test-sdk-#{target_api_level} -k "system-images;android-#{target_api_level};google_apis;#{sys_arch}"`
+  `avdmanager -s create avd -n #{avd_name} -k "system-images;android-#{target_api_level};google_apis;#{sys_arch}"`
 else
-  puts "AVD test-sdk-#{target_api_level} already exists, skipping creation"
+  puts "AVD #{avd_name} already exists, skipping creation"
 end
 
 begin
@@ -33,7 +35,7 @@ begin
   emulator_lines = []
   emulator_thread = Thread.new do
     port = ENV['AVD_PORT'] || '5037'  # Default to 5554 if not set
-    PTY.spawn('emulator', '-avd', "test-sdk-#{target_api_level}",
+    PTY.spawn('emulator', '-avd', avd_name,
               '-no-window',
               '-gpu', 'swiftshader_indirect',
               '-noaudio',
