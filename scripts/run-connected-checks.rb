@@ -32,7 +32,7 @@ begin
   emulator_pid = nil
   emulator_lines = []
   emulator_thread = Thread.new do
-    PTY.spawn('emulator', '-avd', "test-sdk-#{target_api_level}", '-no-window', '-gpu', 'swiftshader_indirect', '-noaudio', '-no-boot-anim', '-camera-back', 'none', '-no-snapshot-load', '-no-metrics', '-verbose') do |stdout, _stdin, pid|
+    PTY.spawn('emulator', '-avd', "test-sdk-#{target_api_level}", '-no-window', '-gpu', 'swiftshader_indirect', '-noaudio', '-no-boot-anim', '-camera-back', 'none', '-no-snapshot-load', '-no-boot-anim', '-accel', 'on', '-read-only', '-no-metrics', '-verbose') do |stdout, _stdin, pid|
       emulator_pid = pid
       stdout.each do |line|
         emulator_lines << line
@@ -44,8 +44,8 @@ begin
   # Wait for the emulator to boot
   start_time = Time.now
   until emulator_lines.any? { |line| line.include?('Boot completed') }
-    if Time.now - start_time > 60
-      raise 'Emulator did not boot in 60 seconds'
+    if Time.now - start_time > 180
+      raise 'Emulator did not boot in 180 seconds'
     end
   end
 
