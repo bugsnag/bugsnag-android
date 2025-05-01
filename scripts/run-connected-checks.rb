@@ -44,8 +44,8 @@ begin
   # Wait for the emulator to boot
   start_time = Time.now
   until emulator_lines.any? { |line| line.include?('Boot completed') }
-    if Time.now - start_time > 60
-      raise 'Emulator did not boot in 60 seconds'
+    if Time.now - start_time > 120
+      raise 'Emulator did not boot in 120 seconds'
     end
   end
 
