@@ -32,7 +32,7 @@ begin
   emulator_pid = nil
   emulator_lines = []
   emulator_thread = Thread.new do
-    PTY.spawn('emulator', '-avd', "test-sdk-#{target_api_level}", '-no-window', '-gpu', 'swiftshader_indirect', '-noaudio', '-no-boot-anim', '-camera-back', 'none', '-no-snapshot-load', '-no-metrics') do |stdout, _stdin, pid|
+    PTY.spawn('emulator', '-avd', "test-sdk-#{target_api_level}", '-no-window', '-gpu', 'swiftshader_indirect', '-noaudio', '-no-boot-anim', '-camera-back', 'none', '-no-snapshot-load', '-no-metrics', '-verbose') do |stdout, _stdin, pid|
       emulator_pid = pid
       stdout.each do |line|
         emulator_lines << line
