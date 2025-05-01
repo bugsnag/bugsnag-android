@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+* Allow the metadata in `leaveBreadcrumb` to be null rather than enforcing non-null, aligning `bugsnag-android` with our other SDKs
+  [#2180](https://github.com/bugsnag/bugsnag-android/pull/2180)
+
 ## 6.13.0 (2025-04-15)
 
 ### Enhancements

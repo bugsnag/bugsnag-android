@@ -961,9 +961,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
      * @param type     A category for the breadcrumb
      */
     public void leaveBreadcrumb(@NonNull String message,
-                                @NonNull Map<String, Object> metadata,
+                                @Nullable Map<String, Object> metadata,
                                 @NonNull BreadcrumbType type) {
-        if (message != null && type != null && metadata != null) {
+        if (message != null && type != null) {
             breadcrumbState.add(new Breadcrumb(message, type, metadata, new Date(), logger));
         } else {
             logNull("leaveBreadcrumb");

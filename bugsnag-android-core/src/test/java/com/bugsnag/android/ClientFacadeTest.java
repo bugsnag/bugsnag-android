@@ -473,9 +473,9 @@ public class ClientFacadeTest {
     }
 
     @Test
-    public void leaveComplexBreadcrumbInvalid3() {
+    public void leaveComplexBreadcrumbWithNullMetadata() {
         client.leaveBreadcrumb("foo", null, BreadcrumbType.NAVIGATION);
-        verify(breadcrumbState, times(0)).add(any(Breadcrumb.class));
+        verify(breadcrumbState, times(1)).add(any(Breadcrumb.class));
     }
 
     @Test
