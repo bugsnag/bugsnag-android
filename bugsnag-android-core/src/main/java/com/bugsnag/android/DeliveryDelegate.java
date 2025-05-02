@@ -5,6 +5,7 @@ import static com.bugsnag.android.SeverityReason.REASON_PROMISE_REJECTION;
 import com.bugsnag.android.internal.BackgroundTaskService;
 import com.bugsnag.android.internal.ImmutableConfig;
 import com.bugsnag.android.internal.TaskType;
+import com.bugsnag.android.internal.dag.Provider;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
@@ -19,14 +20,14 @@ class DeliveryDelegate extends BaseObservable {
     static long DELIVERY_TIMEOUT = 3000L;
 
     final Logger logger;
-    private final EventStore eventStore;
+    private final Provider<EventStore> eventStore;
     private final ImmutableConfig immutableConfig;
     private final Notifier notifier;
     private final CallbackState callbackState;
     final BackgroundTaskService backgroundTaskService;
 
     DeliveryDelegate(Logger logger,
-                     EventStore eventStore,
+                     Provider<EventStore> eventStore,
                      ImmutableConfig immutableConfig,
                      CallbackState callbackState,
                      Notifier notifier,
@@ -118,7 +119,7 @@ class DeliveryDelegate extends BaseObservable {
 
     private void cacheAndSendSynchronously(@NonNull Event event) {
         long cutoffTime = System.currentTimeMillis() + DELIVERY_TIMEOUT;
-        Future<String> task = eventStore.writeAndDeliver(event);
+        Future<String> task = eventStore().writeAndDeliver(event);
 
         long timeout = cutoffTime - System.currentTimeMillis();
         if (task != null && timeout > 0) {
@@ -135,9 +136,13 @@ class DeliveryDelegate extends BaseObservable {
     }
 
     private void cacheEvent(@NonNull Event event, boolean attemptSend) {
-        eventStore.write(event);
+        eventStore().write(event);
         if (attemptSend) {
-            eventStore.flushAsync();
+            eventStore().flushAsync();
         }
+    }
+
+    private EventStore eventStore() {
+        return eventStore.get();
     }
 }

@@ -203,7 +203,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
         eventStore = eventStorageModule.getEventStore().get();
 
-        deliveryDelegate = new DeliveryDelegate(logger, eventStore,
+        deliveryDelegate = new DeliveryDelegate(logger, eventStorageModule.getEventStore(),
                 immutableConfig, callbackState, notifier, bgTaskService);
 
         exceptionHandler = new ExceptionHandler(this, logger);
