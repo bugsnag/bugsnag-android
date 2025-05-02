@@ -305,7 +305,7 @@ public final class Bugsnag {
      * @param type     A category for the breadcrumb
      */
     public static void leaveBreadcrumb(@NonNull String message,
-                                       @NonNull Map<String, Object> metadata,
+                                       @Nullable Map<String, Object> metadata,
                                        @NonNull BreadcrumbType type) {
         getClient().leaveBreadcrumb(message, metadata, type);
     }
