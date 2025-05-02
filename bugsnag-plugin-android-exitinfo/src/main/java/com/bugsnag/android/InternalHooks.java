@@ -13,13 +13,13 @@ class InternalHooks {
     }
 
     public static void setEventStoreEmptyCallback(Client client, Function0<Unit> callback) {
-        client.eventStore.setOnEventStoreEmptyCallback(callback);
+        client.getEventStore().setOnEventStoreEmptyCallback(callback);
     }
 
     public static void setDiscardEventCallback(
             Client client,
             Function1<EventPayload, Unit> callback) {
-        client.eventStore.setOnDiscardEventCallback(callback);
+        client.getEventStore().setOnDiscardEventCallback(callback);
     }
 
     static void deliver(@NonNull Client client, @NonNull Event event) {

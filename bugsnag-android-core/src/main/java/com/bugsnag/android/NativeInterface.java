@@ -442,7 +442,7 @@ public class NativeInterface {
      * @param reportFile the file to enqueue for delivery
      */
     public static void deliverReport(@NonNull File reportFile) {
-        EventStore eventStore = getClient().eventStore;
+        EventStore eventStore = getClient().getEventStore();
         File eventFile = new File(eventStore.getStorageDir(), reportFile.getName());
         if (reportFile.renameTo(eventFile)) {
             eventStore.flushAsync();

@@ -124,7 +124,7 @@ public class ClientFacadeTest {
                 deviceDataCollector,
                 appDataCollector,
                 breadcrumbState,
-                eventStore,
+                new ValueProvider<EventStore>(eventStore),
                 systemBroadcastReceiver,
                 sessionTracker,
                 connectivity,
