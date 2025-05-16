@@ -109,7 +109,6 @@ public class com/bugsnag/android/BugsnagVmViolationListener : android/os/StrictM
 }
 
 public class com/bugsnag/android/Client : com/bugsnag/android/CallbackAware, com/bugsnag/android/FeatureFlagAware, com/bugsnag/android/MetadataAware, com/bugsnag/android/UserAware {
-	protected final field eventStore Lcom/bugsnag/android/EventStore;
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Lcom/bugsnag/android/Configuration;)V
 	public fun <init> (Landroid/content/Context;Ljava/lang/String;)V
