@@ -13,6 +13,8 @@
   [#2235](https://github.com/bugsnag/bugsnag-android/pull/2235)
 * Correct the reporting of the loadAddress for native system libraries and JIT frames
   [#2244](https://github.com/bugsnag/bugsnag-android/pull/2244)
+* Added deterministic sorting for `discardOldestFileIfNeeded` method to avoid potential crashes where mutliple files have the same last modified time
+  [#2181](https://github.com/bugsnag/bugsnag-android/pull/2189)
 
 ## 6.16.0 (2025-07-31)
 
