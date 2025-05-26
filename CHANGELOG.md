@@ -7,6 +7,9 @@
 * Allow the metadata in `leaveBreadcrumb` to be null rather than enforcing non-null, aligning `bugsnag-android` with our other SDKs
   [#2180](https://github.com/bugsnag/bugsnag-android/pull/2180)
 
+* Added deterministic sorting for `discardOldestFileIfNeeded` method to avoid potential crashes where mutliple files have the same last modified time
+  [#2181](https://github.com/bugsnag/bugsnag-android/pull/2189)
+
 ## 6.13.0 (2025-04-15)
 
 ### Enhancements
