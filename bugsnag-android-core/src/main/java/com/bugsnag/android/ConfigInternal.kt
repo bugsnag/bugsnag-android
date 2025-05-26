@@ -9,6 +9,14 @@ internal class ConfigInternal(
     var apiKey: String?
 ) : CallbackAware, MetadataAware, UserAware, FeatureFlagAware {
 
+    private companion object {
+        private const val DEFAULT_NOTIFY   = "https://notify.bugsnag.com"
+        private const val DEFAULT_SESSION  = "https://sessions.bugsnag.com"
+        private const val HUB_NOTIFY    = "https://notify.insighthub.smartbear.com"
+        private const val HUB_SESSION   = "https://sessions.insighthub.smartbear.com"
+        private const val HUB_PREFIX = "00000"
+    }
+
     private var user = User()
 
     @JvmField
@@ -39,7 +47,31 @@ internal class ConfigInternal(
             field = value ?: NoopLogger
         }
     var delivery: Delivery? = null
-    var endpoints: EndpointConfiguration = EndpointConfiguration()
+
+    private var _endpoints: EndpointConfiguration? = null
+    private fun isHubApiKey(): Boolean =
+        apiKey?.startsWith(HUB_PREFIX) == true
+
+    var endpoints: EndpointConfiguration
+        get() {
+            val current = _endpoints
+            val empty = current == null ||
+                    (current.notify.isBlank() && current.sessions.isBlank())
+
+            return if (empty) {
+                if (isHubApiKey()) {
+                    EndpointConfiguration(HUB_NOTIFY, HUB_SESSION)
+                } else {
+                    EndpointConfiguration(DEFAULT_NOTIFY, DEFAULT_SESSION)
+                }
+            } else {
+                current
+            }
+        }
+        set(value) {
+            _endpoints = value
+        }
+
     var maxBreadcrumbs: Int = DEFAULT_MAX_BREADCRUMBS
     var maxPersistedEvents: Int = DEFAULT_MAX_PERSISTED_EVENTS
     var maxPersistedSessions: Int = DEFAULT_MAX_PERSISTED_SESSIONS
