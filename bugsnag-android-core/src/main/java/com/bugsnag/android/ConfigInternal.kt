@@ -9,14 +9,6 @@ internal class ConfigInternal(
     var apiKey: String?
 ) : CallbackAware, MetadataAware, UserAware, FeatureFlagAware {
 
-    private companion object {
-        private const val DEFAULT_NOTIFY   = "https://notify.bugsnag.com"
-        private const val DEFAULT_SESSION  = "https://sessions.bugsnag.com"
-        private const val HUB_NOTIFY    = "https://notify.insighthub.smartbear.com"
-        private const val HUB_SESSION   = "https://sessions.insighthub.smartbear.com"
-        private const val HUB_PREFIX = "00000"
-    }
-
     private var user = User()
 
     @JvmField
@@ -192,7 +184,11 @@ internal class ConfigInternal(
         private const val DEFAULT_THREAD_COLLECTION_TIME_LIMIT_MS: Long = 5000
         private const val DEFAULT_LAUNCH_CRASH_THRESHOLD_MS: Long = 5000
         private const val DEFAULT_MAX_STRING_VALUE_LENGTH = 10000
-
+        private const val DEFAULT_NOTIFY   = "https://notify.bugsnag.com"
+        private const val DEFAULT_SESSION  = "https://sessions.bugsnag.com"
+        private const val HUB_NOTIFY    = "https://notify.insighthub.smartbear.com"
+        private const val HUB_SESSION   = "https://sessions.insighthub.smartbear.com"
+        private const val HUB_PREFIX = "00000"
         @JvmStatic
         fun load(context: Context): Configuration = load(context, null)
 
