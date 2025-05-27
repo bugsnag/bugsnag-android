@@ -120,7 +120,7 @@ internal abstract class FileStore(
                 file to file.lastModified()
             }
 
-            //sort by cached lastModified timesstamps
+            // Sort by cached lastModified timesstamps
             val sortedListFiles = fileMeta
                 .sortedBy { it.second }
                 .map { it.first }
