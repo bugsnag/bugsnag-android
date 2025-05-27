@@ -115,13 +115,21 @@ internal abstract class FileStore(
         if (isStorageDirValid(storageDir)) {
             val listFiles = storageDir.listFiles() ?: return
             if (listFiles.size < maxStoreCount) return
-            // ensures sorting deterministically when files have identical timestamps
-            val sortedListFiles = listFiles.sortedWith(
-                compareBy<File> { it.lastModified() }.thenBy { it.name }
-            )
+
+            // Store lastModified to ensure it doesn't change between sorting
+            val fileMeta = listFiles.map { file ->
+                file to file.lastModified()
+            }
+
+            //sort by cached lastModified timesstamps
+            val sortedListFiles = fileMeta
+                .sortedBy { it.second }
+                .map { it.first }
+
             // Number of files to discard takes into account that a new file may need to be written
             val numberToDiscard = listFiles.size - maxStoreCount + 1
             var discardedCount = 0
+
             for (file in sortedListFiles) {
                 if (discardedCount == numberToDiscard) {
                     return
