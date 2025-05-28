@@ -200,6 +200,7 @@ internal abstract class FileStore(
         }
     }
 }
+
 /**
  * A data holder for associating a {@link File} with its last modified timestamp.
  *
