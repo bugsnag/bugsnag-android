@@ -118,13 +118,13 @@ internal abstract class FileStore(
 
             // Store lastModified to ensure it doesn't change between sorting
             val fileMeta = listFiles.map { file ->
-                file to file.lastModified()
+                FileWithTimestamp(file, file.lastModified())
             }
 
             // Sort by cached lastModified timesstamps
             val sortedListFiles = fileMeta
-                .sortedBy { it.second }
-                .map { it.first }
+                .sorted()
+                .map(FileWithTimestamp::file)
 
             // Number of files to discard takes into account that a new file may need to be written
             val numberToDiscard = listFiles.size - maxStoreCount + 1
@@ -198,5 +198,16 @@ internal abstract class FileStore(
         } finally {
             lock.unlock()
         }
+    }
+}
+/**
+ * A data holder for associating a {@link File} with its last modified timestamp.
+ *
+ * @param file The file to associate with a timestamp.
+ * @param timestamp The last modified time of the file, cached to ensure consistent ordering.
+ */
+private data class FileWithTimestamp(val file: File, val timestamp: Long) : Comparable<FileWithTimestamp> {
+    override fun compareTo(other: FileWithTimestamp): Int {
+        return timestamp.compareTo(other.timestamp)
     }
 }
