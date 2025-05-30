@@ -4,6 +4,8 @@
 
 ### Enhancements
 
+* Set default endpoints based on API key [#2190](https://github.com/bugsnag/bugsnag-android/pull/2190)
+
 * Allow the metadata in `leaveBreadcrumb` to be null rather than enforcing non-null, aligning `bugsnag-android` with our other SDKs
   [#2180](https://github.com/bugsnag/bugsnag-android/pull/2180)
 
