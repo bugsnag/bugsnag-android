@@ -46,9 +46,7 @@ internal class ConfigInternal(
     private var _endpoints: EndpointConfiguration? = null
     var endpoints: EndpointConfiguration
         get() = _endpoints
-            ?.takeUnless { it.notify.isEmpty() && it.sessions.isEmpty() }
-            ?: if (isHubApiKey())
-                EndpointConfiguration(HUB_NOTIFY, HUB_SESSION)
+            ?: if (isHubApiKey()) EndpointConfiguration(HUB_NOTIFY, HUB_SESSION)
             else EndpointConfiguration(DEFAULT_NOTIFY, DEFAULT_SESSION)
         set(value) { _endpoints = value }
 

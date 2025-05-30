@@ -10,10 +10,10 @@ class EndpointConfiguration(
     /**
      * Configures the endpoint to which events should be sent
      */
-    val notify: String = "",
+    val notify: String = "https://notify.bugsnag.com",
 
     /**
      * Configures the endpoint to which sessions should be sent
      */
-    val sessions: String = ""
+    val sessions: String = "https://sessions.bugsnag.com"
 )
