@@ -321,8 +321,10 @@ public final class com/bugsnag/android/EndpointConfiguration {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
 	public final fun getNotify ()Ljava/lang/String;
 	public final fun getSessions ()Ljava/lang/String;
+	public fun hashCode ()I
 }
 
 public class com/bugsnag/android/Error : com/bugsnag/android/JsonStream$Streamable {
