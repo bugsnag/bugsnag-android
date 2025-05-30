@@ -16,7 +16,7 @@ class EndpointConfiguration(
      * Configures the endpoint to which sessions should be sent
      */
     val sessions: String = "https://sessions.bugsnag.com"
-){
+) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
