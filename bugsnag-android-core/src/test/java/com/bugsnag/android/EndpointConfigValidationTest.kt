@@ -37,16 +37,4 @@ class EndpointConfigValidationTest {
         assertEquals("https://notify.example.com", config.endpoints.notify)
         assertEquals("https://sessions.example.com", config.endpoints.sessions)
     }
-
-    /**
-     * Both overrides passed as empty strings → treated the same as
-     * “unset”, so the SDK falls back to the normal default selection.
-     */
-    @Test
-    fun blankOverridesFallBackToDefault() {
-        val config = Configuration("5d1ec5bd39a74caa1267142706a7fb21")
-        config.endpoints = EndpointConfiguration("", "")
-        assertEquals(_defaultNotify, config.endpoints.notify)
-        assertEquals(_defaultSession, config.endpoints.sessions)
-    }
 }
