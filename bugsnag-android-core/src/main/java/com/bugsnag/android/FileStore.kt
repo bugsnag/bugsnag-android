@@ -128,7 +128,8 @@ internal abstract class FileStore(
             val numberToDiscard = listFiles.size - maxStoreCount + 1
             var discardedCount = 0
 
-            for (file in timestampedFiles.map { it.file }) {
+            for (file in timestampedFiles) {
+                val file = fileMeta.file
                 if (discardedCount == numberToDiscard) {
                     return
                 } else if (!queuedFiles.contains(file)) {
