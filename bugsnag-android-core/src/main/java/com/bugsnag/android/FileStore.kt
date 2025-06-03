@@ -122,9 +122,7 @@ internal abstract class FileStore(
             }
 
             // Sort by cached lastModified timesstamps
-            val sortedListFiles = fileMeta
-                .sorted()
-                .map(FileWithTimestamp::file)
+            timestampedFiles.sort()
 
             // Number of files to discard takes into account that a new file may need to be written
             val numberToDiscard = listFiles.size - maxStoreCount + 1
