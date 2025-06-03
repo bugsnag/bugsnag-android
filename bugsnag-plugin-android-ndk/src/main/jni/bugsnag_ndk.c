@@ -164,6 +164,11 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_install(
   }
 
   bsg_environment *bugsnag_env = calloc(1, sizeof(bsg_environment));
+  if (bugsnag_env == NULL) {
+    BUGSNAG_LOG("Failed to allocate memory for bsg_environment");
+    return;
+  }
+
   bsg_unwinder_init();
   bugsnag_env->report_header.big_endian =
       htonl(47) == 47; // potentially too clever, see man 3 htonl
@@ -328,6 +333,10 @@ JNIEXPORT void JNICALL Java_com_bugsnag_android_ndk_NativeBridge_addBreadcrumb(
 
   if (name != NULL && timestamp != NULL) {
     bugsnag_breadcrumb *crumb = calloc(1, sizeof(bugsnag_breadcrumb));
+    if (crumb == NULL) {
+      goto end;
+    }
+
     bsg_strncpy(crumb->name, name, sizeof(crumb->name));
     bsg_strncpy(crumb->timestamp, timestamp, sizeof(crumb->timestamp));
 

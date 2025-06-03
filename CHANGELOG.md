@@ -4,8 +4,15 @@
 
 ### Enhancements
 
+* Set default endpoints based on API key [#2190](https://github.com/bugsnag/bugsnag-android/pull/2190)
+
 * Allow the metadata in `leaveBreadcrumb` to be null rather than enforcing non-null, aligning `bugsnag-android` with our other SDKs
   [#2180](https://github.com/bugsnag/bugsnag-android/pull/2180)
+
+### Bug fixes
+
+* Sanity check the allocation in the installation of `bugsnag-plugin-android-ndk` to avoid a possible crash when allocation fails
+  [#2191](https://github.com/bugsnag/bugsnag-android/pull/2191)
 
 * Added deterministic sorting for `discardOldestFileIfNeeded` method to avoid potential crashes when files are being written while sorting the queue
   [#2181](https://github.com/bugsnag/bugsnag-android/pull/2189)
