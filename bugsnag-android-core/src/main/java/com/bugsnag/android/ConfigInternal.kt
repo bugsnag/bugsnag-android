@@ -39,7 +39,17 @@ internal class ConfigInternal(
             field = value ?: NoopLogger
         }
     var delivery: Delivery? = null
-    var endpoints: EndpointConfiguration = EndpointConfiguration()
+
+    private fun isHubApiKey(): Boolean =
+        apiKey?.startsWith(HUB_PREFIX) == true
+
+    private var _endpoints: EndpointConfiguration? = null
+    var endpoints: EndpointConfiguration
+        get() = _endpoints
+            ?: if (isHubApiKey()) EndpointConfiguration(HUB_NOTIFY, HUB_SESSION)
+            else EndpointConfiguration(DEFAULT_NOTIFY, DEFAULT_SESSION)
+        set(value) { _endpoints = value }
+
     var maxBreadcrumbs: Int = DEFAULT_MAX_BREADCRUMBS
     var maxPersistedEvents: Int = DEFAULT_MAX_PERSISTED_EVENTS
     var maxPersistedSessions: Int = DEFAULT_MAX_PERSISTED_SESSIONS
@@ -160,7 +170,11 @@ internal class ConfigInternal(
         private const val DEFAULT_THREAD_COLLECTION_TIME_LIMIT_MS: Long = 5000
         private const val DEFAULT_LAUNCH_CRASH_THRESHOLD_MS: Long = 5000
         private const val DEFAULT_MAX_STRING_VALUE_LENGTH = 10000
-
+        private const val DEFAULT_NOTIFY = "https://notify.bugsnag.com"
+        private const val DEFAULT_SESSION = "https://sessions.bugsnag.com"
+        private const val HUB_NOTIFY = "https://notify.insighthub.smartbear.com"
+        private const val HUB_SESSION = "https://sessions.insighthub.smartbear.com"
+        private const val HUB_PREFIX = "00000"
         @JvmStatic
         fun load(context: Context): Configuration = load(context, null)
 

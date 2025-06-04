@@ -77,7 +77,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
     final MemoryTrimState memoryTrimState = new MemoryTrimState();
 
     @NonNull
-    protected final EventStore eventStore;
+    private final Provider<EventStore> eventStore;
 
     final SessionTracker sessionTracker;
 
@@ -138,7 +138,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
                 data.put("networkState", networkState);
                 leaveAutoBreadcrumb("Connectivity changed", BreadcrumbType.STATE, data);
                 if (hasConnection) {
-                    eventStore.flushAsync();
+                    getEventStore().flushAsync();
                     sessionTracker.flushAsync();
                 }
                 return null;
@@ -201,10 +201,10 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
                 dataCollectionModule, bgTaskService, trackerModule, systemServiceModule, notifier,
                 callbackState);
 
-        eventStore = eventStorageModule.getEventStore().get();
+        eventStore = eventStorageModule.getEventStore();
 
-        deliveryDelegate = new DeliveryDelegate(logger, eventStore,
-                immutableConfig, callbackState, notifier, bgTaskService);
+        deliveryDelegate = new DeliveryDelegate(logger, eventStore, immutableConfig, callbackState,
+                notifier, bgTaskService);
 
         exceptionHandler = new ExceptionHandler(this, logger);
 
@@ -245,7 +245,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
             @NonNull DeviceDataCollector deviceDataCollector,
             @NonNull AppDataCollector appDataCollector,
             @NonNull BreadcrumbState breadcrumbState,
-            @NonNull EventStore eventStore,
+            @NonNull Provider<EventStore> eventStore,
             SystemBroadcastReceiver systemBroadcastReceiver,
             SessionTracker sessionTracker,
             Connectivity connectivity,
@@ -296,8 +296,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         }
 
         // Flush any on-disk errors and sessions
-        eventStore.flushOnLaunch();
-        eventStore.flushAsync();
+        eventStore.get().flushOnLaunch();
+        eventStore.get().flushAsync();
         sessionTracker.flushAsync();
 
         // These call into NdkPluginCaller to sync with the native side, so they must happen later
@@ -961,9 +961,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
      * @param type     A category for the breadcrumb
      */
     public void leaveBreadcrumb(@NonNull String message,
-                                @NonNull Map<String, Object> metadata,
+                                @Nullable Map<String, Object> metadata,
                                 @NonNull BreadcrumbType type) {
-        if (message != null && type != null && metadata != null) {
+        if (message != null && type != null) {
             breadcrumbState.add(new Breadcrumb(message, type, metadata, new Date(), logger));
         } else {
             logNull("leaveBreadcrumb");
@@ -1091,7 +1091,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
     @NonNull
     EventStore getEventStore() {
-        return eventStore;
+        return eventStore.get();
     }
 
     /**

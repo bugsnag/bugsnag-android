@@ -1,5 +1,19 @@
 # Changelog
 
+## 6.14.0 (2025-06-04)
+
+### Enhancements
+
+* Set default endpoints based on API key [#2190](https://github.com/bugsnag/bugsnag-android/pull/2190)
+
+* Allow the metadata in `leaveBreadcrumb` to be null rather than enforcing non-null, aligning `bugsnag-android` with our other SDKs
+  [#2180](https://github.com/bugsnag/bugsnag-android/pull/2180)
+
+### Bug fixes
+
+* Sanity check the allocation in the installation of `bugsnag-plugin-android-ndk` to avoid a possible crash when allocation fails
+  [#2191](https://github.com/bugsnag/bugsnag-android/pull/2191)
+
 ## 6.13.0 (2025-04-15)
 
 ### Enhancements
