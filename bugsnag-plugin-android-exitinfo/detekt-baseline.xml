@@ -27,7 +27,8 @@
     <ID>MaxLineLength:TraceParserTest.kt$TraceParserTest$"void* std::__1::__thread_proxy&lt;std::__1::tuple&lt;std::__1::unique_ptr&lt;std::__1::__thread_struct, std::__1::default_delete&lt;std::__1::__thread_struct> >, void (android::AsyncWorker::*)(), android::AsyncWorker*> >(void*)"</ID>
     <ID>NestedBlockDepth:TraceParser.kt$TraceParser$private fun parseThreadAttributes(line: String)</ID>
     <ID>ReturnCount:TraceParser.kt$TraceParser$@VisibleForTesting internal fun parseNativeFrame(line: String): Stackframe?</ID>
-    <ID>SwallowedException:BugsnagExitInfoPlugin.kt$BugsnagExitInfoPlugin$e: Exception</ID>
+    <ID>SwallowedException:BugsnagExitInfoPlugin.kt$BugsnagExitInfoPlugin.SessionProcessStateSummaryCallback$e: Exception</ID>
+    <ID>SwallowedException:BugsnagExitInfoPlugin.kt$e: Exception</ID>
     <ID>SwallowedException:ExitInfoCallback.kt$ExitInfoCallback$exc: Throwable</ID>
     <ID>SwallowedException:ExitInfoPluginStore.kt$ExitInfoPluginStore$exc: Throwable</ID>
   </CurrentIssues>
