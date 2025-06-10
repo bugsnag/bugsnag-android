@@ -116,7 +116,7 @@ internal abstract class FileStore(
             val listFiles = storageDir.listFiles() ?: return
             if (listFiles.size < maxStoreCount) return
 
-            // Store lastModified to ensure it doesn't change between sorting
+            // Store lastModified to ensure it doesn't change during sort
             val timestampedFiles = listFiles.mapTo(ArrayList(listFiles.size)) { file ->
                 FileWithTimestamp(file, file.lastModified())
             }
