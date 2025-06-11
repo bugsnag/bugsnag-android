@@ -10,6 +10,7 @@ import android.os.Process
 import androidx.annotation.RequiresApi
 import com.bugsnag.android.ApplicationExitInfoMatcher.Companion.MATCH_ALL
 import com.bugsnag.android.ApplicationExitInfoMatcher.Companion.MAX_EXIT_INFO
+import com.bugsnag.android.internal.TaskType
 
 @RequiresApi(Build.VERSION_CODES.R)
 class BugsnagExitInfoPlugin @JvmOverloads constructor(
@@ -21,13 +22,7 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
     @SuppressLint("VisibleForTests")
     override fun load(client: Client) {
         if (!configuration.disableProcessStateSummaryOverride) {
-            client.addOnSession(
-                OnSessionCallback { session: Session ->
-                    val am = client.appContext.safeGetActivityManager()
-                    am?.setProcessStateSummary(session.id.toByteArray())
-                    return@OnSessionCallback true
-                }
-            )
+            client.addOnSession(SessionProcessStateSummaryCallback(client))
         }
 
         val tombstoneEventEnhancer = TombstoneEventEnhancer(
@@ -146,14 +141,29 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
     }
 
     override fun unload() = Unit
-
-    private fun Context.safeGetActivityManager(): ActivityManager? = try {
-        getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-    } catch (e: Exception) {
-        null
-    }
-
     private fun Context.isPrimaryProcess(): Boolean {
         return Application.getProcessName() == packageName
     }
+
+    private class SessionProcessStateSummaryCallback(
+        private val client: Client
+    ) : OnSessionCallback {
+        override fun onSession(session: Session): Boolean {
+            val am = client.appContext.safeGetActivityManager() ?: return true
+            client.bgTaskService.submitTask(TaskType.DEFAULT) {
+                try {
+                    am.setProcessStateSummary(session.id.toByteArray())
+                } catch (e: Exception) {
+                    // this can be rate limited by the system, so we ignore it
+                }
+            }
+            return true
+        }
+    }
+}
+
+internal fun Context.safeGetActivityManager(): ActivityManager? = try {
+    getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+} catch (e: Exception) {
+    null
 }
