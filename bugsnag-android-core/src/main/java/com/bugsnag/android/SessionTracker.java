@@ -5,6 +5,7 @@ import com.bugsnag.android.internal.DateUtils;
 import com.bugsnag.android.internal.ForegroundDetector;
 import com.bugsnag.android.internal.ImmutableConfig;
 import com.bugsnag.android.internal.TaskType;
+import com.bugsnag.android.internal.dag.Provider;
 
 import android.app.Activity;
 
@@ -32,7 +33,7 @@ class SessionTracker extends BaseObservable implements ForegroundDetector.OnActi
     private final ImmutableConfig configuration;
     private final CallbackState callbackState;
     private final Client client;
-    final SessionStore sessionStore;
+    final Provider<SessionStore> sessionStore;
     private volatile Session currentSession = null;
     final BackgroundTaskService backgroundTaskService;
     final Logger logger;
@@ -41,7 +42,7 @@ class SessionTracker extends BaseObservable implements ForegroundDetector.OnActi
     SessionTracker(ImmutableConfig configuration,
                    CallbackState callbackState,
                    Client client,
-                   SessionStore sessionStore,
+                   Provider<SessionStore> sessionStore,
                    Logger logger,
                    BackgroundTaskService backgroundTaskService) {
         this(configuration, callbackState, client, DEFAULT_TIMEOUT_MS,
@@ -52,7 +53,7 @@ class SessionTracker extends BaseObservable implements ForegroundDetector.OnActi
                    CallbackState callbackState,
                    Client client,
                    long timeoutMs,
-                   SessionStore sessionStore,
+                   Provider<SessionStore> sessionStore,
                    Logger logger,
                    BackgroundTaskService backgroundTaskService) {
         this.configuration = configuration;
@@ -263,7 +264,7 @@ class SessionTracker extends BaseObservable implements ForegroundDetector.OnActi
      * Attempts to flush session payloads stored on disk
      */
     void flushStoredSessions() {
-        List<File> storedFiles = sessionStore.findStoredFiles();
+        List<File> storedFiles = sessionStore.get().findStoredFiles();
 
         for (File storedFile : storedFiles) {
             flushStoredSession(storedFile);
@@ -282,27 +283,28 @@ class SessionTracker extends BaseObservable implements ForegroundDetector.OnActi
         }
 
         DeliveryStatus deliveryStatus = deliverSessionPayload(payload);
+        SessionStore store = sessionStore.get();
 
         switch (deliveryStatus) {
             case DELIVERED:
-                sessionStore.deleteStoredFiles(Collections.singletonList(storedFile));
+                store.deleteStoredFiles(Collections.singletonList(storedFile));
                 logger.d("Sent 1 new session to Bugsnag");
                 break;
             case UNDELIVERED:
-                if (sessionStore.isTooOld(storedFile)) {
+                if (store.isTooOld(storedFile)) {
                     logger.w("Discarding historical session (from {"
-                            + sessionStore.getCreationDate(storedFile)
+                            + store.getCreationDate(storedFile)
                             + "}) after failed delivery");
-                    sessionStore.deleteStoredFiles(Collections.singletonList(storedFile));
+                    store.deleteStoredFiles(Collections.singletonList(storedFile));
                 } else {
-                    sessionStore.cancelQueuedFiles(Collections.singletonList(storedFile));
+                    store.cancelQueuedFiles(Collections.singletonList(storedFile));
                     logger.w("Leaving session payload for future delivery");
                 }
                 break;
             case FAILURE:
                 // drop bad data
                 logger.w("Deleting invalid session tracking payload");
-                sessionStore.deleteStoredFiles(Collections.singletonList(storedFile));
+                store.deleteStoredFiles(Collections.singletonList(storedFile));
                 break;
             default:
                 break;
@@ -319,7 +321,7 @@ class SessionTracker extends BaseObservable implements ForegroundDetector.OnActi
             });
         } catch (RejectedExecutionException exception) {
             // This is on the current thread but there isn't much else we can do
-            sessionStore.write(session);
+            sessionStore.get().write(session);
         }
     }
 
@@ -331,7 +333,7 @@ class SessionTracker extends BaseObservable implements ForegroundDetector.OnActi
             switch (deliveryStatus) {
                 case UNDELIVERED:
                     logger.w("Storing session payload for future delivery");
-                    sessionStore.write(session);
+                    sessionStore.get().write(session);
                     break;
                 case FAILURE:
                     logger.w("Dropping invalid session tracking payload");
