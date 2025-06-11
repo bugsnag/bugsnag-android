@@ -3,6 +3,7 @@ package com.bugsnag.android
 import com.bugsnag.android.EventStore.Companion.EVENT_COMPARATOR
 import com.bugsnag.android.FileStore.Delegate
 import com.bugsnag.android.internal.BackgroundTaskService
+import com.bugsnag.android.internal.dag.ValueProvider
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -58,14 +59,16 @@ internal class EventFilenameTest {
             NoopLogger,
             Notifier(),
             BackgroundTaskService(),
-            object : Delegate {
-                override fun onErrorIOFailure(
-                    exception: Exception?,
-                    errorFile: File?,
-                    context: String?
-                ) {
+            ValueProvider(
+                object : Delegate {
+                    override fun onErrorIOFailure(
+                        exception: Exception?,
+                        errorFile: File?,
+                        context: String?
+                    ) {
+                    }
                 }
-            },
+            ),
             CallbackState()
         )
 
@@ -87,14 +90,16 @@ internal class EventFilenameTest {
             NoopLogger,
             Notifier(),
             BackgroundTaskService(),
-            object : Delegate {
-                override fun onErrorIOFailure(
-                    exception: Exception?,
-                    errorFile: File?,
-                    context: String?
-                ) {
+            ValueProvider(
+                object : Delegate {
+                    override fun onErrorIOFailure(
+                        exception: Exception?,
+                        errorFile: File?,
+                        context: String?
+                    ) {
+                    }
                 }
-            },
+            ),
             CallbackState()
         )
 
@@ -110,14 +115,16 @@ internal class EventFilenameTest {
             NoopLogger,
             Notifier(),
             BackgroundTaskService(),
-            object : Delegate {
-                override fun onErrorIOFailure(
-                    exception: Exception?,
-                    errorFile: File?,
-                    context: String?
-                ) {
+            ValueProvider(
+                object : Delegate {
+                    override fun onErrorIOFailure(
+                        exception: Exception?,
+                        errorFile: File?,
+                        context: String?
+                    ) {
+                    }
                 }
-            },
+            ),
             CallbackState()
         )
 

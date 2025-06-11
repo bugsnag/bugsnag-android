@@ -24,6 +24,7 @@ import android.os.Build.VERSION_CODES
 import android.os.Process
 import android.os.SystemClock
 import com.bugsnag.android.internal.ImmutableConfig
+import com.bugsnag.android.internal.dag.Provider
 
 /**
  * Collects various data on the application state
@@ -32,7 +33,7 @@ internal class AppDataCollector(
     appContext: Context,
     private val packageManager: PackageManager?,
     private val config: ImmutableConfig,
-    private val sessionTracker: SessionTracker,
+    private val sessionTracker: Provider<SessionTracker>,
     private val activityManager: ActivityManager?,
     private val launchCrashTracker: LaunchCrashTracker,
     private val memoryTrimState: MemoryTrimState
@@ -54,7 +55,7 @@ internal class AppDataCollector(
         App(config, binaryArch, packageName, releaseStage, versionName, codeBundleId)
 
     fun generateAppWithState(): AppWithState {
-        val inForeground = sessionTracker.isInForeground
+        val inForeground = sessionTracker.get().isInForeground
         val durationInForeground = calculateDurationInForeground(inForeground)
 
         return AppWithState(
@@ -118,7 +119,7 @@ internal class AppDataCollector(
     fun getAppDataMetadata(): MutableMap<String, Any?> {
         val map = HashMap<String, Any?>()
         map["name"] = appName
-        map["activeScreen"] = sessionTracker.contextActivity
+        map["activeScreen"] = sessionTracker.get().contextActivity
         map["lowMemory"] = memoryTrimState.isLowMemory
         map["memoryTrimLevel"] = memoryTrimState.trimLevelDescription
         map["processImportance"] = getProcessImportance()
@@ -168,7 +169,7 @@ internal class AppDataCollector(
      *
      * @return the duration in ms
      */
-    internal fun calculateDurationInForeground(inForeground: Boolean? = sessionTracker.isInForeground): Long? {
+    internal fun calculateDurationInForeground(inForeground: Boolean? = sessionTracker.get().isInForeground): Long? {
         if (inForeground == null) {
             return null
         }
@@ -176,7 +177,7 @@ internal class AppDataCollector(
         val nowMs = SystemClock.elapsedRealtime()
         var durationMs: Long = 0
 
-        val sessionStartTimeMs: Long = sessionTracker.lastEnteredForegroundMs
+        val sessionStartTimeMs: Long = sessionTracker.get().lastEnteredForegroundMs
 
         if (inForeground && sessionStartTimeMs != 0L) {
             durationMs = nowMs - sessionStartTimeMs

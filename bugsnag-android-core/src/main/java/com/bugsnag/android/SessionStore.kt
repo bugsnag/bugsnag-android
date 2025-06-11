@@ -2,6 +2,7 @@ package com.bugsnag.android
 
 import com.bugsnag.android.SessionFilenameInfo.Companion.defaultFilename
 import com.bugsnag.android.SessionFilenameInfo.Companion.findTimestampInFilename
+import com.bugsnag.android.internal.dag.Provider
 import java.io.File
 import java.util.Calendar
 import java.util.Comparator
@@ -16,7 +17,7 @@ internal class SessionStore(
     maxPersistedSessions: Int,
     private val apiKey: String,
     logger: Logger,
-    delegate: Delegate?
+    delegate: Provider<out Delegate?>?
 ) : FileStore(
     File(bugsnagDir, "sessions"),
     maxPersistedSessions,
