@@ -61,6 +61,7 @@
     <ID>SwallowedException:ForegroundDetector.kt$ForegroundDetector$e: Exception</ID>
     <ID>SwallowedException:JsonHelperTest.kt$JsonHelperTest$e: IllegalArgumentException</ID>
     <ID>SwallowedException:PluginClient.kt$PluginClient$exc: ClassNotFoundException</ID>
+    <ID>SwallowedException:RootDetector.kt$RootDetector$ex: IllegalThreadStateException</ID>
     <ID>SwallowedException:SharedPrefMigrator.kt$SharedPrefMigrator$e: RuntimeException</ID>
     <ID>ThrowsCount:JsonHelper.kt$JsonHelper$fun jsonToLong(value: Any?): Long?</ID>
     <ID>TooManyFunctions:ConfigInternal.kt$ConfigInternal : CallbackAwareMetadataAwareUserAwareFeatureFlagAware</ID>

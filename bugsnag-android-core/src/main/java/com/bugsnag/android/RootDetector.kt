@@ -1,9 +1,14 @@
 package com.bugsnag.android
 
+import android.os.Build
+import android.os.SystemClock
 import androidx.annotation.VisibleForTesting
 import java.io.File
 import java.io.IOException
 import java.io.Reader
+import java.lang.Thread
+import java.util.concurrent.TimeUnit
+import kotlin.math.min
 
 /**
  * Attempts to detect whether the device is rooted. Root detection errs on the side of false
@@ -21,6 +26,9 @@ internal class RootDetector @JvmOverloads constructor(
 ) {
 
     companion object {
+        private const val PROCESS_TIMEOUT = 250L
+        private const val PROCESS_POLL_DELAY = 50L
+
         private val BUILD_PROP_FILE = File("/system/build.prop")
 
         private val ROOT_INDICATORS = listOf(
@@ -120,7 +128,20 @@ internal class RootDetector @JvmOverloads constructor(
         var process: Process? = null
         return try {
             process = processBuilder.start()
+            val processComplete = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                process.waitFor(PROCESS_TIMEOUT, TimeUnit.MILLISECONDS)
+            } else {
+                process.fallbackWaitFor(PROCESS_TIMEOUT)
+            }
+
+            if (!processComplete) {
+                return false
+            }
+
             process.inputStream.bufferedReader().use { it.isNotBlank() }
+        } catch (ignored: InterruptedException) {
+            Thread.currentThread().interrupt() // restore the interrupted status
+            false
         } catch (ignored: IOException) {
             false
         } finally {
@@ -146,5 +167,20 @@ internal class RootDetector @JvmOverloads constructor(
     private fun nativeCheckRoot(): Boolean = when {
         libraryLoaded -> performNativeRootChecks()
         else -> false
+    }
+
+    private fun Process.fallbackWaitFor(timeout: Long): Boolean {
+        val endTime = SystemClock.elapsedRealtime() + timeout
+        while (SystemClock.elapsedRealtime() < endTime) {
+            try {
+                exitValue()
+                return true
+            } catch (ex: IllegalThreadStateException) {
+                // Process is still running, wait a bit before checking again
+                Thread.sleep(min(PROCESS_POLL_DELAY, endTime - SystemClock.elapsedRealtime()))
+            }
+        }
+
+        return false
     }
 }

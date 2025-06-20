@@ -8,6 +8,8 @@
   [#2197](https://github.com/bugsnag/bugsnag-android/pull/2197)
 * Improve the scoping of the build-id capturing in `bugsnag-plugin-android-ndk` to more reliably capture the build-id from the correct `.so` file
   [#2203](https://github.com/bugsnag/bugsnag-android/pull/2203)
+* Fixed a background ANR that could occur during startup if processes do not launch or run quickly enough
+  [#2202](https://github.com/bugsnag/bugsnag-android/pull/2202)
 
 ## 6.14.0 (2025-06-04)
 
