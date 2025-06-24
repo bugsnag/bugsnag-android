@@ -6,6 +6,8 @@
 
 * The `bugsnag-plugin-android-exitinfo` plugin now calls `setProcessState` (if configured) on a background thread and swallows any rate-limiting errors, so that it does not block the main thread during startup
   [#2197](https://github.com/bugsnag/bugsnag-android/pull/2197)
+* Improve the scoping of the build-id capturing in `bugsnag-plugin-android-ndk` to more reliably capture the build-id from the correct `.so` file
+  [#2203](https://github.com/bugsnag/bugsnag-android/pull/2203)
 
 ## 6.14.0 (2025-06-04)
 

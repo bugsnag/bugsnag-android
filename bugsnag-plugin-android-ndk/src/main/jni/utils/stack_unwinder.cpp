@@ -102,26 +102,28 @@ static void populate_code_identifier(const unwindstack::FrameData &frame,
   }
 
   auto shared_build_id = elf_fields->build_id_.load();
-  std::string_view build_id;
   if (shared_build_id == nullptr) {
     auto elf = elf_fields->elf_.get();
     if (elf == nullptr) {
       return;
     }
 
-    build_id = elf->GetBuildID();
-  } else {
-    build_id = *shared_build_id;
-  }
+    auto build_id = elf->GetBuildID();
+    if (build_id.empty()) {
+      return;
+    }
 
-  if (build_id.empty()) {
-    return;
+    // MapInfo.GetPrintableBuildID is *not* async-safe so we need our own
+    // safe hex encoder to copy BuildID into code_identifier.
+    bsg_hex_encode(dst_frame.code_identifier, build_id.data(),
+                   build_id.length(), sizeof(dst_frame.code_identifier));
+  } else if (!shared_build_id->empty()) {
+    std::string build_id = static_cast<std::string>(*shared_build_id);
+    // MapInfo.GetPrintableBuildID is *not* async-safe so we need our own
+    // safe hex encoder to copy BuildID into code_identifier.
+    bsg_hex_encode(dst_frame.code_identifier, build_id.data(),
+                   build_id.length(), sizeof(dst_frame.code_identifier));
   }
-
-  // MapInfo.GetPrintableBuildID is *not* async-safe so we need our own
-  // safe hex encoder to copy BuildID into code_identifier.
-  bsg_hex_encode(dst_frame.code_identifier, build_id.data(), build_id.length(),
-                 sizeof(dst_frame.code_identifier));
 }
 
 void bsg_unwinder_refresh(void) {
