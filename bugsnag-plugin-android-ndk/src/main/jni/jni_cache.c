@@ -208,6 +208,9 @@ bool bsg_jni_cache_init(JNIEnv *env) {
 
   CACHE_ENUM_CONSTANT(ErrorType_C, "com/bugsnag/android/ErrorType", "C");
 
+  CACHE_CLASS(NativeBridge, "com/bugsnag/android/ndk/NativeBridge");
+  CACHE_CLASS(NdkPlugin, "com/bugsnag/android/NdkPlugin");
+
   pthread_key_create(&jni_cleanup_key, detach_java_env);
 
   bsg_jni_cache->initialized = true;

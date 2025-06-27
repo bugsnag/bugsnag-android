@@ -80,6 +80,9 @@ typedef struct {
   jmethodID OpaqueValue_makeSafe;
 
   jobject ErrorType_C;
+
+  jclass NativeBridge;
+  jclass NdkPlugin;
 } bsg_jni_cache_t;
 
 extern bsg_jni_cache_t *const bsg_jni_cache;

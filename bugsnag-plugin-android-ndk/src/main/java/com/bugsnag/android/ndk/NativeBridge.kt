@@ -84,13 +84,12 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
     external fun updateContext(context: String)
     external fun updateInForeground(inForeground: Boolean, activityName: String)
     external fun updateIsLaunching(isLaunching: Boolean)
-    external fun updateLastRunInfo(consecutiveLaunchCrashes: Int)
     external fun updateOrientation(orientation: String)
     external fun updateUserId(newValue: String)
     external fun updateUserEmail(newValue: String)
     external fun updateUserName(newValue: String)
-    external fun getSignalUnwindStackFunction(): Long
     external fun updateLowMemory(newValue: Boolean, memoryTrimLevelDescription: String)
+    external fun getSignalUnwindStackFunction(): Long
     external fun addFeatureFlag(name: String, variant: String?)
     external fun clearFeatureFlag(name: String)
     external fun clearFeatureFlags()
@@ -139,7 +138,6 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
                 event.contextActivity ?: ""
             )
 
-            is StateEvent.UpdateLastRunInfo -> updateLastRunInfo(event.consecutiveLaunchCrashes)
             is StateEvent.UpdateIsLaunching -> {
                 updateIsLaunching(event.isLaunching)
 
