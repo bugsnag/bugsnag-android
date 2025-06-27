@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import com.bugsnag.android.internal.convertToImmutableConfig
+import com.bugsnag.android.internal.dag.ValueProvider
 import org.junit.Assert.assertNotNull
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -50,7 +51,7 @@ internal class AppMetadataSerializationTest {
                 context,
                 pm,
                 convertToImmutableConfig(config, null, null, ApplicationInfo()),
-                sessionTracker,
+                ValueProvider(sessionTracker),
                 am,
                 launchCrashTracker,
                 memoryTrimState

@@ -26,7 +26,7 @@ internal class TrackerModule(
             config,
             callbackState,
             client,
-            storageModule.sessionStore.get(),
+            storageModule.sessionStore,
             config.logger,
             bgTaskService
         )

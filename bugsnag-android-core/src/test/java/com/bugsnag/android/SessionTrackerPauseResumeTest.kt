@@ -5,6 +5,7 @@ import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import com.bugsnag.android.BugsnagTestUtils.generateDevice
 import com.bugsnag.android.internal.BackgroundTaskService
 import com.bugsnag.android.internal.ImmutableConfig
+import com.bugsnag.android.internal.dag.ValueProvider
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
@@ -60,7 +61,7 @@ internal class SessionTrackerPauseResumeTest {
             BugsnagTestUtils.generateImmutableConfig(),
             configuration.impl.callbackState,
             client,
-            sessionStore,
+            ValueProvider(sessionStore),
             NoopLogger,
             BackgroundTaskService()
         )

@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Process
 import androidx.test.core.app.ApplicationProvider
+import com.bugsnag.android.internal.dag.ValueProvider
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -49,7 +50,7 @@ class AppDataCollectorTest {
             context,
             context.packageManager,
             client.immutableConfig,
-            client.sessionTracker,
+            ValueProvider(client.sessionTracker),
             am,
             client.launchCrashTracker,
             client.memoryTrimState
@@ -70,7 +71,7 @@ class AppDataCollectorTest {
             context,
             context.packageManager,
             client.immutableConfig,
-            client.sessionTracker,
+            ValueProvider(client.sessionTracker),
             am,
             client.launchCrashTracker,
             client.memoryTrimState
@@ -93,7 +94,7 @@ class AppDataCollectorTest {
             context,
             context.packageManager,
             client.immutableConfig,
-            client.sessionTracker,
+            ValueProvider(client.sessionTracker),
             am,
             client.launchCrashTracker,
             client.memoryTrimState
@@ -115,7 +116,7 @@ class AppDataCollectorTest {
             context,
             packageManager,
             client.immutableConfig,
-            client.sessionTracker,
+            ValueProvider(client.sessionTracker),
             am,
             client.launchCrashTracker,
             client.memoryTrimState
@@ -144,7 +145,7 @@ class AppDataCollectorTest {
             context,
             packageManager,
             client.immutableConfig,
-            client.sessionTracker,
+            ValueProvider(client.sessionTracker),
             am,
             client.launchCrashTracker,
             client.memoryTrimState
@@ -171,7 +172,7 @@ class AppDataCollectorTest {
             context,
             packageManager,
             client.immutableConfig,
-            client.sessionTracker,
+            ValueProvider(client.sessionTracker),
             am,
             client.launchCrashTracker,
             client.memoryTrimState
@@ -198,7 +199,7 @@ class AppDataCollectorTest {
             context,
             packageManager,
             client.immutableConfig,
-            client.sessionTracker,
+            ValueProvider(client.sessionTracker),
             am,
             client.launchCrashTracker,
             client.memoryTrimState

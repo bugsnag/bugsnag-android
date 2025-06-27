@@ -2,6 +2,7 @@ package com.bugsnag.android
 
 import android.app.Application
 import androidx.test.core.app.ApplicationProvider
+import com.bugsnag.android.internal.dag.ValueProvider
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -48,6 +49,6 @@ internal class CustomFileStore(
     folder: File,
     maxStoreCount: Int,
     delegate: Delegate?
-) : FileStore(folder, maxStoreCount, NoopLogger, delegate) {
+) : FileStore(folder, maxStoreCount, NoopLogger, ValueProvider(delegate)) {
     override fun getFilename(obj: Any?) = "foo.json"
 }

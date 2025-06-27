@@ -29,9 +29,9 @@ internal class EventStorageModule(
                 cfg.logger,
                 cfg,
                 systemServiceModule.storageManager,
-                dataCollectionModule.appDataCollector.get(),
+                dataCollectionModule.appDataCollector,
                 dataCollectionModule.deviceDataCollector,
-                trackerModule.sessionTracker.get(),
+                trackerModule.sessionTracker,
                 notifier,
                 bgTaskService
             ) else null
@@ -43,7 +43,7 @@ internal class EventStorageModule(
             cfg.logger,
             notifier,
             bgTaskService,
-            delegate.getOrNull(),
+            delegate,
             callbackState
         )
     }

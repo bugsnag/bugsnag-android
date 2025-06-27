@@ -2,6 +2,7 @@ package com.bugsnag.android
 
 import android.content.Context
 import android.os.SystemClock
+import com.bugsnag.android.internal.dag.ValueProvider
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -41,7 +42,7 @@ class AppDataCollectorForegroundTest {
             appContext,
             null,
             config,
-            sessionTracker,
+            ValueProvider(sessionTracker),
             null,
             launchCrashTracker,
             memoryTrimState
