@@ -35,8 +35,6 @@ include_directories(
         jni/external/libunwindstack-ndk/include
 )
 
-target_include_directories(bugsnag-ndk PRIVATE ${BUGSNAG_DIR}/assets/include)
-
 target_link_libraries(
         # Specifies the target library.
         bugsnag-ndk

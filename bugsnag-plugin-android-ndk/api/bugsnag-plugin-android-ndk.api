@@ -33,7 +33,6 @@ public final class com/bugsnag/android/ndk/NativeBridge : com/bugsnag/android/in
 	public final fun updateContext (Ljava/lang/String;)V
 	public final fun updateInForeground (ZLjava/lang/String;)V
 	public final fun updateIsLaunching (Z)V
-	public final fun updateLastRunInfo (I)V
 	public final fun updateLowMemory (ZLjava/lang/String;)V
 	public final fun updateOrientation (Ljava/lang/String;)V
 	public final fun updateUserEmail (Ljava/lang/String;)V
