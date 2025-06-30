@@ -933,6 +933,9 @@ static void JNI_NativeBridge_setInternalMetricsEnabled(JNIEnv *env,
   bsg_set_internal_metrics_enabled(enabled);
 }
 
+// These headers are included here to ensure that the JNI methods are
+// declared (above) as static, avoiding the need to forward declare them
+
 #include "NativeBridge_JNI.h"
 #include "NdkPlugin_JNI.h"
 

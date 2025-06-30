@@ -8,7 +8,19 @@ import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
 
+/**
+ * Generates C header files for use with [RegisterNatives](docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/functions.html#RegisterNatives)
+ * for the Bugsnag Android SDK. This plugin ensures that the Java/Kotlin classes with native methods
+ * have corresponding C functions as part of the build process. When the headers are included
+ * in the C or C++ code, any missing implementations will cause a build error.
+ */
 class JNILinkTablePlugin : Plugin<Project> {
+    /*
+     * This plugin generates JNI headers for the Bugsnag Android SDK by registering an
+     * identity ASM transformer to AGP. The transformer processes the classes, but does not
+     * modify them. Instead it just captures the native method signatures to generate the headers.
+     */
+
     override fun apply(project: Project) {
         // Create a directory for generated headers
         val generatedHeadersDir = project.layout.buildDirectory.dir("generated/jni-headers")

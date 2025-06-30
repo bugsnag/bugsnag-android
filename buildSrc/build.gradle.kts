@@ -9,8 +9,8 @@ repositories {
 
 gradlePlugin {
     plugins {
-        register("bugsnag-ndk-table-plugin") {
-            id = "bugsnag-ndk-table-plugin"
+        register("bugsnag-jni-link-table-plugin") {
+            id = "bugsnag-jni-link-table-plugin"
             implementationClass = "com.bugsnag.android.gradle.JNILinkTablePlugin"
         }
     }

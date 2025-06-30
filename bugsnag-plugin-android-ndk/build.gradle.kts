@@ -1,6 +1,6 @@
 plugins {
     loadDefaultPlugins()
-    id("bugsnag-ndk-table-plugin")
+    id("bugsnag-jni-link-table-plugin")
 }
 
 android {
