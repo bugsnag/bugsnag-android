@@ -4,6 +4,7 @@ import androidx.annotation.VisibleForTesting
 import com.bugsnag.android.BreadcrumbType
 import com.bugsnag.android.Client
 import com.bugsnag.android.Plugin
+import com.bugsnag.android.okhttp.util.DelegateEventListener
 import com.bugsnag.android.shouldDiscardNetworkBreadcrumb
 import okhttp3.Call
 import okhttp3.EventListener
@@ -25,8 +26,9 @@ import java.util.concurrent.ConcurrentHashMap
  * https://square.github.io/okhttp/4.x/okhttp/okhttp3/-response-body/#the-response-body-must-be-closed
  */
 class BugsnagOkHttpPlugin @JvmOverloads constructor(
+    delegateEventListener: EventListener? = null,
     internal val timeProvider: () -> Long = { System.currentTimeMillis() }
-) : Plugin, EventListener() {
+) : Plugin, DelegateEventListener(delegateEventListener) {
 
     internal val requestMap = ConcurrentHashMap<Call, NetworkRequestMetadata>()
     private var client: Client? = null
@@ -40,24 +42,39 @@ class BugsnagOkHttpPlugin @JvmOverloads constructor(
     }
 
     override fun callStart(call: Call) {
+        super.callStart(call)
         requestMap[call] = NetworkRequestMetadata(timeProvider())
     }
 
     override fun requestBodyEnd(call: Call, byteCount: Long) {
+        super.requestBodyEnd(call, byteCount)
         requestMap[call]?.requestBodyCount = byteCount
     }
 
     override fun responseBodyEnd(call: Call, byteCount: Long) {
+        super.responseBodyEnd(call, byteCount)
         requestMap[call]?.responseBodyCount = byteCount
     }
 
     override fun responseHeadersEnd(call: Call, response: Response) {
+        super.responseHeadersEnd(call, response)
         requestMap[call]?.status = response.code
     }
 
-    override fun callEnd(call: Call) = captureNetworkBreadcrumb(call)
-    override fun callFailed(call: Call, ioe: IOException) = captureNetworkBreadcrumb(call)
-    override fun canceled(call: Call) = captureNetworkBreadcrumb(call)
+    override fun callEnd(call: Call) {
+        super.callEnd(call)
+        captureNetworkBreadcrumb(call)
+    }
+
+    override fun callFailed(call: Call, ioe: IOException) {
+        super.callFailed(call, ioe)
+        captureNetworkBreadcrumb(call)
+    }
+
+    override fun canceled(call: Call) {
+        super.canceled(call)
+        captureNetworkBreadcrumb(call)
+    }
 
     private fun captureNetworkBreadcrumb(call: Call) {
         client?.apply {
