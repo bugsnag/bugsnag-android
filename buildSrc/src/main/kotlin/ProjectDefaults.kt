@@ -1,4 +1,5 @@
 import org.gradle.api.Project
+import com.android.build.api.dsl.LibraryExtension
 
 const val SHARED_TEST_SRC_DIR = "../bugsnag-android-core/src/sharedTest/java"
 
@@ -21,4 +22,13 @@ fun Project.configureAbis(abiFilters: MutableSet<String>) {
 
     abiFilters.clear()
     abiFilters.addAll(abis)
+}
+
+fun LibraryExtension.configureRelease() {
+    publishing {
+        singleVariant("release") {
+            withJavadocJar()
+            withSourcesJar()
+        }
+    }
 }

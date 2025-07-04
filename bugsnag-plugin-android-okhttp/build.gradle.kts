@@ -13,6 +13,8 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     namespace = "com.bugsnag.android.okhttp"
 
+    configureRelease()
+
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
         ndkVersion = libs.versions.android.ndk.get()
@@ -22,11 +24,11 @@ android {
     }
 
     lint {
-        isAbortOnError = true
-        isWarningsAsErrors = true
-        isCheckAllWarnings = true
-        baseline(File(project.projectDir, "lint-baseline.xml"))
-        disable("GradleDependency", "NewerVersionAvailable")
+        abortOnError = true
+        warningsAsErrors = true
+        checkAllWarnings = true
+        baseline = File(project.projectDir, "lint-baseline.xml")
+        disable += setOf("GradleDependency", "NewerVersionAvailable")
     }
 
     buildFeatures {

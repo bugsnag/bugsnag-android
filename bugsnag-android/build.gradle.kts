@@ -7,6 +7,8 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     namespace = "com.bugsnag.android"
 
+    configureRelease()
+
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
         ndkVersion = libs.versions.android.ndk.get()
