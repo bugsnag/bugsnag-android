@@ -49,13 +49,21 @@ steps:
     timeout_in_minutes: 20
     agents:
       queue: macos-15
+    env:
+      JAVA_VERSION: 17
     command: './gradlew --continue checkstyle detekt lint ktlintCheck'
+    env:
+      JAVA_VERSION: 17
 
   - label: ':android: Binary compatibility checks'
     timeout_in_minutes: 20
     agents:
       queue: macos-15
+    env:
+      JAVA_VERSION: 17
     command: './gradlew apiCheck'
+    env:
+      JAVA_VERSION: 17
 
   - label: ':android: CppCheck'
     timeout_in_minutes: 10
@@ -89,7 +97,11 @@ steps:
     timeout_in_minutes: 10
     agents:
       queue: macos-15
+    env:
+      JAVA_VERSION: 17
     command: './gradlew test'
+    env:
+      JAVA_VERSION: 17
 
   - label: ':android: Instrumentation tests'
     timeout_in_minutes: 10
@@ -101,6 +113,8 @@ steps:
     command: './scripts/run-connected-checks.rb'
     env:
       API_LEVEL: 30
+      JAVA_VERSION: 17
+
   #
   # BitBar steps
   #

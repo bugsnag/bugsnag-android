@@ -14,6 +14,8 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     namespace = "com.bugsnag.android.exitinfo"
 
+    configureRelease()
+
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
         ndkVersion = libs.versions.android.ndk.get()
@@ -23,11 +25,11 @@ android {
     }
 
     lint {
-        isAbortOnError = true
-        isWarningsAsErrors = true
-        isCheckAllWarnings = true
-        baseline(File(project.projectDir, "lint-baseline.xml"))
-        disable("GradleDependency", "NewerVersionAvailable")
+        abortOnError = true
+        warningsAsErrors = true
+        checkAllWarnings = true
+        baseline = File(project.projectDir, "lint-baseline.xml")
+        disable += setOf("GradleDependency", "NewerVersionAvailable")
     }
 
     buildFeatures {
@@ -67,7 +69,7 @@ dependencies {
     testImplementation(libs.bundles.test.jvm)
     androidTestImplementation(libs.bundles.test.android)
     api(project(":bugsnag-android-core"))
-    implementation("com.google.protobuf:protobuf-javalite:3.25.5")
+    implementation(libs.protobuf.javalite)
 }
 
 protobuf {

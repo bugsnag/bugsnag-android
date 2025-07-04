@@ -36,6 +36,8 @@ steps:
     timeout_in_minutes: 10
     agents:
       queue: macos-15
+    env:
+      JAVA_VERSION: 17
     command: './gradlew clean assembleRelease check --scan'
 
   #
