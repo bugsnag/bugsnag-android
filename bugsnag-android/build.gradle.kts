@@ -1,15 +1,15 @@
 plugins {
-    load(Versions.Plugins.AGP)
-    load(Versions.Plugins.licenseCheck)
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.licenseCheck)
 }
 
 android {
-    compileSdk = Versions.Android.Build.compileSdkVersion
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
     namespace = "com.bugsnag.android"
 
     defaultConfig {
-        minSdk = Versions.Android.Build.minSdkVersion
-        ndkVersion = Versions.Android.Build.ndk
+        minSdk = libs.versions.android.minSdk.get().toInt()
+        ndkVersion = libs.versions.android.ndk.get()
     }
 }
 

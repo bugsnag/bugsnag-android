@@ -2,16 +2,23 @@ import kotlinx.validation.ApiValidationExtension
 import org.jetbrains.dokka.gradle.DokkaTask
 
 plugins {
-    loadDefaultPlugins()
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compatibility)
+    alias(libs.plugins.detekt)
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.ktlint)
+    alias(libs.plugins.licenseCheck)
+    checkstyle
 }
 
 android {
-    compileSdk = Versions.Android.Build.compileSdkVersion
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
     namespace = "com.bugsnag.android.core"
 
     defaultConfig {
-        minSdk = Versions.Android.Build.minSdkVersion
-        ndkVersion = Versions.Android.Build.ndk
+        minSdk = libs.versions.android.minSdk.get().toInt()
+        ndkVersion = libs.versions.android.ndk.get()
 
         consumerProguardFiles("proguard-rules.pro")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -67,11 +74,13 @@ android {
     }
 
     externalNativeBuild.cmake.path = project.file("CMakeLists.txt")
-    externalNativeBuild.cmake.version = Versions.Android.Build.cmakeVersion
+    externalNativeBuild.cmake.version = libs.versions.cmake.get()
 }
 
 dependencies {
-    addCommonModuleDependencies()
+    api(libs.bundles.common.api)
+    testImplementation(libs.bundles.test.jvm)
+    androidTestImplementation(libs.bundles.test.android)
 }
 
 tasks.getByName<DokkaTask>("dokkaHtml") {
