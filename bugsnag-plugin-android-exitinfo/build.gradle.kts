@@ -1,15 +1,22 @@
 plugins {
-    loadDefaultPlugins()
-    load(Versions.Plugins.protobuf)
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compatibility)
+    alias(libs.plugins.detekt)
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.ktlint)
+    alias(libs.plugins.licenseCheck)
+    alias(libs.plugins.protobuf)
+    checkstyle
 }
 
 android {
-    compileSdk = Versions.Android.Build.compileSdkVersion
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
     namespace = "com.bugsnag.android.exitinfo"
 
     defaultConfig {
-        minSdk = Versions.Android.Build.minSdkVersion
-        ndkVersion = Versions.Android.Build.ndk
+        minSdk = libs.versions.android.minSdk.get().toInt()
+        ndkVersion = libs.versions.android.ndk.get()
 
         consumerProguardFiles("proguard-rules.pro")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -56,7 +63,9 @@ android {
 }
 
 dependencies {
-    addCommonModuleDependencies()
+    api(libs.bundles.common.api)
+    testImplementation(libs.bundles.test.jvm)
+    androidTestImplementation(libs.bundles.test.android)
     api(project(":bugsnag-android-core"))
     implementation("com.google.protobuf:protobuf-javalite:3.25.5")
 }
