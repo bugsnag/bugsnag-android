@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.IntentFilter
@@ -25,12 +26,14 @@ class ContextExtensionsKtTest {
     lateinit var filter: IntentFilter
 
     @Test
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     fun registerReceiverSafe() {
         context.registerReceiverSafe(receiver, filter)
         verify(context, times(1)).registerReceiver(receiver, filter)
     }
 
     @Test
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     fun registerReceiverSecurityException() {
         val logger = InterceptingLogger()
         `when`(context.registerReceiver(receiver, filter)).thenThrow(SecurityException())

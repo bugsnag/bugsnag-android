@@ -6,6 +6,7 @@ plugins {
 
 android {
     compileSdk 31
+    namespace "com.bugsnag.android.benchmark"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -17,7 +18,7 @@ android {
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 30
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.benchmark.junit4.AndroidBenchmarkRunner"

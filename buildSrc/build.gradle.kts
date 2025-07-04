@@ -18,5 +18,5 @@ gradlePlugin {
 
 dependencies {
     compileOnly(gradleApi())
-    implementation("com.android.tools.build:gradle-api:7.0.4")
+    implementation(libs.android.gradle.api)
 }
