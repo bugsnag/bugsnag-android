@@ -34,7 +34,7 @@ internal class DataCollectionModule(
             ctx,
             ctx.packageManager,
             cfg,
-            trackerModule.sessionTracker.get(),
+            trackerModule.sessionTracker,
             systemServiceModule.activityManager,
             trackerModule.launchCrashTracker,
             memoryTrimState

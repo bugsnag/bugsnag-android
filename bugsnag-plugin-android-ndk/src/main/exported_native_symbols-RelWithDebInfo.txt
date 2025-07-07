@@ -6,6 +6,7 @@ global:
     __emutls_get_address;
     __gxx_personality_v0;
     Java_*;
+    JNI_OnLoad;
     extern "C++" {
         "std::get_terminate()";
         "std::set_terminate(void (*)())";

@@ -9,6 +9,7 @@ import com.bugsnag.android.internal.BackgroundTaskService
 import com.bugsnag.android.internal.ForegroundDetector
 import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.TaskType
+import com.bugsnag.android.internal.dag.Provider
 import java.io.File
 import java.util.Calendar
 import java.util.Date
@@ -27,7 +28,7 @@ internal class EventStore(
     logger: Logger,
     notifier: Notifier,
     bgTaskService: BackgroundTaskService,
-    delegate: Delegate?,
+    delegate: Provider<out Delegate?>?,
     callbackState: CallbackState
 ) : FileStore(
     File(config.persistenceDirectory.value, "bugsnag/errors"),

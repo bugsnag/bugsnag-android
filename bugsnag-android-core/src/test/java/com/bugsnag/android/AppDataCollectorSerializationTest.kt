@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import com.bugsnag.android.BugsnagTestUtils.convert
+import com.bugsnag.android.internal.dag.ValueProvider
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -49,7 +50,7 @@ internal class AppDataCollectorSerializationTest {
                 context,
                 pm,
                 convert(config),
-                sessionTracker,
+                ValueProvider(sessionTracker),
                 am,
                 launchCrashTracker,
                 memoryTrimState

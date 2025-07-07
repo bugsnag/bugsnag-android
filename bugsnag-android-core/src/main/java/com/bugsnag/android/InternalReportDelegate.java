@@ -32,10 +32,10 @@ class InternalReportDelegate implements EventStore.Delegate {
     @Nullable
     final StorageManager storageManager;
 
-    final AppDataCollector appDataCollector;
+    final Provider<AppDataCollector> appDataCollector;
     final Provider<DeviceDataCollector> deviceDataCollector;
     final Context appContext;
-    final SessionTracker sessionTracker;
+    final Provider<SessionTracker> sessionTracker;
     final Notifier notifier;
     final BackgroundTaskService backgroundTaskService;
 
@@ -43,9 +43,9 @@ class InternalReportDelegate implements EventStore.Delegate {
                            Logger logger,
                            ImmutableConfig immutableConfig,
                            @Nullable StorageManager storageManager,
-                           AppDataCollector appDataCollector,
+                           Provider<AppDataCollector> appDataCollector,
                            Provider<DeviceDataCollector> deviceDataCollector,
-                           SessionTracker sessionTracker,
+                           Provider<SessionTracker> sessionTracker,
                            Notifier notifier,
                            BackgroundTaskService backgroundTaskService) {
         this.logger = logger;
@@ -101,7 +101,7 @@ class InternalReportDelegate implements EventStore.Delegate {
      * This is intended for internal use only, and reports will not be visible to end-users.
      */
     void reportInternalBugsnagError(@NonNull Event event) {
-        event.setApp(appDataCollector.generateAppWithState());
+        event.setApp(appDataCollector.get().generateAppWithState());
         event.setDevice(deviceDataCollector.get().generateDeviceWithState(new Date().getTime()));
 
         event.addMetadata(INTERNAL_DIAGNOSTICS_TAB, "notifierName", notifier.getName());

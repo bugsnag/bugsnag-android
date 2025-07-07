@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import com.bugsnag.android.JsonStream.Streamable
+import com.bugsnag.android.internal.dag.Provider
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileNotFoundException
@@ -15,7 +16,7 @@ internal abstract class FileStore(
     val storageDir: File,
     private val maxStoreCount: Int,
     protected open val logger: Logger,
-    protected val delegate: Delegate?
+    protected val delegate: Provider<out Delegate?>?
 ) {
     internal fun interface Delegate {
         /**
@@ -66,7 +67,7 @@ internal abstract class FileStore(
             out.write(content)
         } catch (exc: Exception) {
             val eventFile = File(filePath)
-            delegate?.onErrorIOFailure(exc, eventFile, "NDK Crash report copy")
+            delegate?.getOrNull()?.onErrorIOFailure(exc, eventFile, "NDK Crash report copy")
             IOUtils.deleteFile(eventFile, logger)
         } finally {
             try {
@@ -100,7 +101,7 @@ internal abstract class FileStore(
             logger.w("Ignoring FileNotFoundException - unable to create file", exc)
         } catch (exc: Exception) {
             val eventFile = File(filename)
-            delegate?.onErrorIOFailure(exc, eventFile, "Crash report serialization")
+            delegate?.getOrNull()?.onErrorIOFailure(exc, eventFile, "Crash report serialization")
             IOUtils.deleteFile(eventFile, logger)
         } finally {
             IOUtils.closeQuietly(stream)

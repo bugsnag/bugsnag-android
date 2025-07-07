@@ -53,9 +53,9 @@ internal class InternalEventPayloadDelegateTest {
             NoopLogger,
             config,
             storageManager,
-            appDataCollector,
+            ValueProvider(appDataCollector),
             ValueProvider(deviceDataCollector),
-            sessionTracker,
+            ValueProvider(sessionTracker),
             Notifier(),
             BackgroundTaskService()
         )
