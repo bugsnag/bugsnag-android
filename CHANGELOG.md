@@ -30,6 +30,9 @@
 * Sanity check the allocation in the installation of `bugsnag-plugin-android-ndk` to avoid a possible crash when allocation fails
   [#2191](https://github.com/bugsnag/bugsnag-android/pull/2191)
 
+* Added deterministic sorting for `discardOldestFileIfNeeded` method to avoid potential crashes when files are being written while sorting the queue
+  [#2181](https://github.com/bugsnag/bugsnag-android/pull/2189)
+
 ## 6.13.0 (2025-04-15)
 
 ### Enhancements
