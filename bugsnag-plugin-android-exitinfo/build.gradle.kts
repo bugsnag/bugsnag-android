@@ -66,10 +66,12 @@ android {
 
 dependencies {
     api(libs.bundles.common.api)
+    api(project(":bugsnag-android-core"))
+
+    implementation(libs.protobuf.javalite)
+
     testImplementation(libs.bundles.test.jvm)
     androidTestImplementation(libs.bundles.test.android)
-    api(project(":bugsnag-android-core"))
-    implementation(libs.protobuf.javalite)
 }
 
 protobuf {

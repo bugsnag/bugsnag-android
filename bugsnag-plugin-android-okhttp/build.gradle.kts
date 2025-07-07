@@ -59,9 +59,6 @@ android {
 
 dependencies {
     api(libs.bundles.common.api)
-    testImplementation(libs.bundles.test.jvm)
-    androidTestImplementation(libs.bundles.test.android)
-
     add("api", project(":bugsnag-android-core"))
 
     add("compileOnly", "com.squareup.okhttp3:okhttp:4.9.1") {
@@ -71,6 +68,9 @@ dependencies {
     add("testImplementation", "com.squareup.okhttp3:mockwebserver:4.9.1") {
         exclude(group = "org.jetbrains.kotlin")
     }
+
+    testImplementation(libs.bundles.test.jvm)
+    androidTestImplementation(libs.bundles.test.android)
 }
 
 apply(from = rootProject.file("gradle/detekt.gradle"))

@@ -59,9 +59,10 @@ android {
 
 dependencies {
     api(libs.bundles.common.api)
+    add("api", project(":bugsnag-android-core"))
+
     testImplementation(libs.bundles.test.jvm)
     androidTestImplementation(libs.bundles.test.android)
-    add("api", project(":bugsnag-android-core"))
 }
 
 apply(from = rootProject.file("gradle/detekt.gradle"))
