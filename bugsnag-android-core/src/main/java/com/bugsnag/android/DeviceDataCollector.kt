@@ -244,17 +244,15 @@ internal class DeviceDataCollector(
      * Get the amount of memory remaining on the device
      */
     fun calculateFreeMemory(): Long? {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            try {
-                val freeMemory = appContext.getActivityManager()
-                    ?.let { am -> ActivityManager.MemoryInfo().also { am.getMemoryInfo(it) } }
-                    ?.availMem
-                if (freeMemory != null) {
-                    return freeMemory
-                }
-            } catch (e: Throwable) {
-                return null
+        try {
+            val freeMemory = appContext.getActivityManager()
+                ?.let { am -> ActivityManager.MemoryInfo().also { am.getMemoryInfo(it) } }
+                ?.availMem
+            if (freeMemory != null) {
+                return freeMemory
             }
+        } catch (e: Throwable) {
+            return null
         }
 
         return try {
@@ -283,14 +281,12 @@ internal class DeviceDataCollector(
     }
 
     private fun calculateTotalMemory(): Long? {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            val totalMemory = appContext.getActivityManager()
-                ?.let { am -> ActivityManager.MemoryInfo().also { am.getMemoryInfo(it) } }
-                ?.totalMem
+        val totalMemory = appContext.getActivityManager()
+            ?.let { am -> ActivityManager.MemoryInfo().also { am.getMemoryInfo(it) } }
+            ?.totalMem
 
-            if (totalMemory != null) {
-                return totalMemory
-            }
+        if (totalMemory != null) {
+            return totalMemory
         }
 
         // we try falling back to a reflective API

@@ -1,5 +1,5 @@
 import org.gradle.api.Project
-import org.gradle.plugin.use.PluginDependenciesSpec
+import com.android.build.api.dsl.LibraryExtension
 
 const val SHARED_TEST_SRC_DIR = "../bugsnag-android-core/src/sharedTest/java"
 
@@ -24,13 +24,11 @@ fun Project.configureAbis(abiFilters: MutableSet<String>) {
     abiFilters.addAll(abis)
 }
 
-fun PluginDependenciesSpec.loadDefaultPlugins() {
-    load(Versions.Plugins.AGP)
-    load(Versions.Plugins.kotlin)
-    load(Versions.Plugins.ktlint)
-    load(Versions.Plugins.dokka)
-    load(Versions.Plugins.detekt)
-    load(Versions.Plugins.licenseCheck)
-    load(Versions.Plugins.binaryCompatibilityCheck)
-    load(Versions.Plugins.checkstyle)
+fun LibraryExtension.configureRelease() {
+    publishing {
+        singleVariant("release") {
+            withJavadocJar()
+            withSourcesJar()
+        }
+    }
 }

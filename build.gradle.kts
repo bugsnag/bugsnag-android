@@ -1,8 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    load(Versions.Plugins.AGP) apply false
-    load(Versions.Plugins.kotlin) apply false
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.kotlin.compatibility) apply false
+    alias(libs.plugins.detekt) apply false
+    alias(libs.plugins.dokka) apply false
+    alias(libs.plugins.ktlint) apply false
 }
 
 allprojects {
@@ -22,8 +26,8 @@ subprojects {
     tasks.withType(KotlinCompile::class.java).configureEach {
         kotlinOptions {
             allWarningsAsErrors = true
-            apiVersion = Versions.kotlinLang
-            languageVersion = Versions.kotlinLang
+            apiVersion = libs.versions.kotlin.lang.get()
+            languageVersion = libs.versions.kotlin.lang.get()
             freeCompilerArgs += listOf(
                 "-Xno-call-assertions",
                 "-Xno-receiver-assertions",

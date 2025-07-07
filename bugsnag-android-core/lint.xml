@@ -1,0 +1,5 @@
+<lint>
+    <issue id="all">
+        <ignore path="dsl-json/**" />
+    </issue>
+</lint>

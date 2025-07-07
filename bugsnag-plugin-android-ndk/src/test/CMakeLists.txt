@@ -16,4 +16,5 @@ add_library(bugsnag-ndk-test SHARED
     cpp/UnwindTest.cpp
     cpp/parson/parson.h
 )
+target_link_options(bugsnag-ndk-test PRIVATE "-Wl,-z,max-page-size=16384")
 target_link_libraries(bugsnag-ndk-test bugsnag-ndk)

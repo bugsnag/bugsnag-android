@@ -1,25 +1,34 @@
 plugins {
-    loadDefaultPlugins()
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compatibility)
+    alias(libs.plugins.detekt)
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.ktlint)
+    alias(libs.plugins.licenseCheck)
+    checkstyle
 }
 
 android {
-    compileSdk = Versions.Android.Build.compileSdkVersion
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
     namespace = "com.bugsnag.android.reactnative"
 
+    configureRelease()
+
     defaultConfig {
-        minSdk = Versions.Android.Build.minSdkVersion
-        ndkVersion = Versions.Android.Build.ndk
+        minSdk = libs.versions.android.minSdk.get().toInt()
+        ndkVersion = libs.versions.android.ndk.get()
 
         consumerProguardFiles("proguard-rules.pro")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     lint {
-        isAbortOnError = true
-        isWarningsAsErrors = true
-        isCheckAllWarnings = true
-        baseline(File(project.projectDir, "lint-baseline.xml"))
-        disable("GradleDependency", "NewerVersionAvailable")
+        abortOnError = true
+        warningsAsErrors = true
+        checkAllWarnings = true
+        baseline = File(project.projectDir, "lint-baseline.xml")
+        disable += setOf("GradleDependency", "NewerVersionAvailable")
     }
 
     buildFeatures {
@@ -49,8 +58,11 @@ android {
 }
 
 dependencies {
-    addCommonModuleDependencies()
+    api(libs.bundles.common.api)
     add("api", project(":bugsnag-android-core"))
+
+    testImplementation(libs.bundles.test.jvm)
+    androidTestImplementation(libs.bundles.test.android)
 }
 
 apply(from = rootProject.file("gradle/detekt.gradle"))
