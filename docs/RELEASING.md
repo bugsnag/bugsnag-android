@@ -45,16 +45,13 @@ This contains a prompt of checks which you may want to test, depending on the ex
   - Release to GitHub:
     - [ ] Create *and tag* the release from `main` on [GitHub Releases](https://github.com/bugsnag/bugsnag-android/releases)
   - Checkout `main` and pull the latest changes
-  - [ ] Test the Sonatype artefacts in the example app by adding the newly created 'combugsnag-XXXX' repository to the build.gradle:  `maven {url "https://oss.sonatype.org/service/local/repositories/combugsnag-XXXX/content/"}`
+  - [ ] Test the changes in the example app with `rm -rf ~/.m2/repository/com/bugsnag` and `./gradlew publishToMavenlocal`
   - [ ] "Promote" the release build on Maven Central:
-    - Go to the [sonatype open source dashboard](https://oss.sonatype.org/index.html#stagingRepositories)
-    - Click the search box at the top right, and type “com.bugsnag”
-    - Select the com.bugsnag staging repository
-    - Ensure that AARs and POMs are present for each module, and that ProGuard rules are present for AARs which define ProGuard rules
-    - Click the “close” button in the toolbar, no message
-    - Click the “refresh” button
-    - Select the com.bugsnag closed repository
-    - Click the “release” button in the toolbar
+    - Go to the [sonatype open source dashboard](https://central.sonatype.com/publishing/deployments)
+    - Select the com.bugsnag deployments
+    - Ensure that AARs and POMs are present for each module
+    - Click the “Publish” button in the toolbar, no message
+    - Click the “refresh” button and see the deployment status change to "Published"
   - Merge outstanding docs PRs related to this release
   - Raise PRs to update the bugsnag-android dependency for [bugsnag-js](https://github.com/bugsnag/bugsnag-js), [bugsnag-unity](https://github.com/bugsnag/bugsnag-unity), [bugsnag-flutter](https://github.com/bugsnag/bugsnag-flutter) and [bugsnag-unreal](https://github.com/bugsnag/bugsnag-unreal)
     - Also consider a PR for [bugsnag-cocos2dx](https://github.com/bugsnag/bugsnag-cocos2dx) if there is a critical fix
