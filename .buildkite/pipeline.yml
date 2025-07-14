@@ -128,8 +128,8 @@ steps:
           - "--aws-public-ip"
           - "--farm=bb"
           - "--device=ANDROID_7"
-          - "--repeater-api-key=''"
-          - "--hub-repeater-api-key=''"
+          - "--repeater-api-key="
+          - "--hub-repeater-api-key="
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -161,8 +161,8 @@ steps:
           - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_7"
-          - "--repeater-api-key=''"
-          - "--hub-repeater-api-key=''"
+          - "--repeater-api-key="
+          - "--hub-repeater-api-key="
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -195,8 +195,8 @@ steps:
           - "--aws-public-ip"
           - "--farm=bb"
           - "--device=ANDROID_8"
-          - "--repeater-api-key=''"
-          - "--hub-repeater-api-key=''"
+          - "--repeater-api-key="
+          - "--hub-repeater-api-key="
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -226,8 +226,8 @@ steps:
           - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_8"
-          - "--repeater-api-key=''"
-          - "--hub-repeater-api-key=''"
+          - "--repeater-api-key="
+          - "--hub-repeater-api-key="
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
