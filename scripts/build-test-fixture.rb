@@ -1,11 +1,11 @@
 def upload_files(api_key, dest)
   Dir.chdir('features/fixtures/mazerunner') do
     upload = "bugsnag-cli upload"
-    options = "--api-key=#{api_key} --overwrite"
+    options = "--api-key=#{api_key} --overwrite --version-code=1"
     puts "Uploading symbol files to #{dest}"
     puts `#{upload} android-ndk #{options}`
     puts "Uploading mapping file to #{dest}"
-    puts `#{upload} android-proguard #{options} --version-code=1 --application-id=com.bugsnag.android.mazerunner`
+    puts `#{upload} android-proguard #{options} --application-id=com.bugsnag.android.mazerunner`
   end
 end
 
