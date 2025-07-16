@@ -40,11 +40,9 @@ steps:
       - "build/bs-fixture-r21-url.txt"
       - "build/fixture-r21/*"
     commands:
-      - bundle install
-      - make fixture-r21
-      - bundle exec upload-app --farm=bb --app=./build/fixture-r21.apk --app-id-file=build/fixture-r21-url.txt
-      - bundle exec upload-app --farm=bs --app=./build/fixture-r21.apk --app-id-file=build/bs-fixture-r21-url.txt
+      - ruby scripts/build-test-fixture.rb
     env:
+      ANDROID_NDK_ROOT: "/Users/administrator/Library/Android/sdk/ndk/26.1.10909125"
       JAVA_VERSION: 17
 
   - label: ':android: Coding standards checks'
@@ -130,6 +128,8 @@ steps:
           - "--aws-public-ip"
           - "--farm=bb"
           - "--device=ANDROID_7"
+          - "--repeater-api-key="
+          - "--hub-repeater-api-key="
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -163,6 +163,8 @@ steps:
           - "--aws-public-ip"
           - "--farm=bb"
           - "--device=ANDROID_7"
+          - "--repeater-api-key="
+          - "--hub-repeater-api-key="
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -195,6 +197,8 @@ steps:
           - "--aws-public-ip"
           - "--farm=bb"
           - "--device=ANDROID_8"
+          - "--repeater-api-key="
+          - "--hub-repeater-api-key="
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -224,6 +228,8 @@ steps:
           - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_8"
+          - "--repeater-api-key="
+          - "--hub-repeater-api-key="
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
