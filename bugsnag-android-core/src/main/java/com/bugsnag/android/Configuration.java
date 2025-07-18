@@ -567,7 +567,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
 
     /**
      * Sets the maximum time for collecting threads and traces.
-     * By default, up to 500 milliseconds are reported.
+     * By default, up to 5000 milliseconds are reported.
      */
     public void setThreadCollectionTimeLimitMillis(
             @IntRange(from = 0) long threadCollectionTimeLimitMillis
