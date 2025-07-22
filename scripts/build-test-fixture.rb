@@ -1,7 +1,8 @@
 def upload_files(api_key, dest)
   Dir.chdir('features/fixtures/mazerunner') do
     upload = "bugsnag-cli upload"
-    options = "--api-key=#{api_key} --overwrite --version-code=1"
+    version_code = ENV['BUILDKITE_BUILD_NUMBER']
+    options = "--api-key=#{api_key} --version-code=#{version_code}"
     puts "Uploading symbol files to #{dest}"
     puts `#{upload} android-ndk #{options}`
     puts "Uploading mapping file to #{dest}"

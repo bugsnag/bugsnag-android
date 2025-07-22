@@ -45,7 +45,7 @@ Feature: Loading values into the configuration
     And the event "metaData.test.filter_me" equals "foobar"
     And the event "app.versionCode" equals 1
     And the event "app.buildUUID" is not null
-    And the event "app.version" equals "1.1.14"
+    And the event app version matches the built app version
     And the event "app.type" is null
     And the event "user.id" is not null
     And the event "user.name" is null
