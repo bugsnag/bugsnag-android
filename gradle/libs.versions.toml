@@ -1,10 +1,9 @@
 [versions]
-agp = "8.11.0"
-android-compileSdk = "34"
+agp = "8.11.1"
+android-compileSdk = "35"
 android-minSdk = "16"
 android-ndk = "23.1.7779620"
 android-supportLib = "1.1.0"
-android-targetSdk = "34"
 cmake = "3.22.1"
 detekt = "1.23.1"
 dokka = "1.9.20"
