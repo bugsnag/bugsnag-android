@@ -1,0 +1,66 @@
+[versions]
+agp = "8.11.0"
+android-compileSdk = "34"
+android-minSdk = "16"
+android-ndk = "23.1.7779620"
+android-supportLib = "1.1.0"
+android-targetSdk = "34"
+cmake = "3.22.1"
+detekt = "1.23.1"
+dokka = "1.9.20"
+espressoTestLib = "3.1.0"
+junit = "4.13.2"
+kotlin = "1.6.0"
+kotlin-compatibility-check = "0.13.1"
+kotlin-lang = "1.5"
+ktlint = "10.2.0"
+licenseCheck = "0.16.1"
+mockito = "5.12.0"
+mockito-inline = "4.11.0"
+protobuf-plugin = "0.9.4"
+protobuf-javalite = "3.25.5"
+
+[libraries]
+android-annotations = { module = "androidx.annotation:annotation", version.ref = "android-supportLib" }
+android-test-core = { module = "androidx.test:core", version.ref = "android-supportLib" }
+android-test-rules = { module = "androidx.test:rules", version.ref = "android-supportLib" }
+android-test-runner = { module = "androidx.test:runner", version.ref = "android-supportLib" }
+android-gradle-api = { module = "com.android.tools.build:gradle-api", version.ref = "agp" }
+espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoTestLib" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+mockito-android = { module = "org.mockito:mockito-android", version.ref = "mockito" }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
+mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockito-inline" }
+protobuf-javalite = { module = "com.google.protobuf:protobuf-javalite", version.ref = "protobuf-javalite" }
+
+[plugins]
+android-library = { id = "com.android.library", version.ref = "agp" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-compatibility = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "kotlin-compatibility-check" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+licenseCheck = { id = "com.github.hierynomus.license", version.ref = "licenseCheck" }
+protobuf = { id = "com.google.protobuf", version.ref = "protobuf-plugin" }
+
+[bundles]
+common-api = [
+    "android-annotations",
+    "kotlin-stdlib",
+]
+
+test-jvm = [
+    "junit",
+    "mockito-core",
+    "mockito-inline",
+    "android-test-core"
+]
+
+test-android = [
+    "mockito-android",
+    "android-test-core",
+    "android-test-runner",
+    "android-test-rules",
+    "espresso-core"
+]

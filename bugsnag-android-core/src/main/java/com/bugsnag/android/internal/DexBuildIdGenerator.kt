@@ -38,7 +38,9 @@ internal object DexBuildIdGenerator {
 
     @VisibleForTesting
     internal fun generateApkBuildId(apk: File): ByteArray? {
-        ZipFile(apk, ZipFile.OPEN_READ).use { zip ->
+        var zip: ZipFile? = null
+        try {
+            zip = ZipFile(apk, ZipFile.OPEN_READ)
             var dexEntry = zip.getEntry("classes.dex") ?: return null
             val buildId = signatureFromZipEntry(zip, dexEntry) ?: return null
 
@@ -56,6 +58,8 @@ internal object DexBuildIdGenerator {
             }
 
             return buildId
+        } finally {
+            zip?.close()
         }
     }
 

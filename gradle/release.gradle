@@ -6,33 +6,9 @@ archivesBaseName = project.getProperties().get("artefactId")
 version = "${project.VERSION_NAME}"
 group = "${project.GROUP}"
 
-// Disable doclint:
-// https://github.com/GPars/GPars/blob/312c5ae87605a0552bc72e22e3b2bd2fa1fdf98c/build.gradle#L208-L214
-if (JavaVersion.current().isJava8Compatible()) {
-    tasks.withType(Javadoc) {
-        // disable the crazy super-strict doclint tool in Java 8
-        //noinspection SpellCheckingInspection
-        options.addStringOption("Xdoclint:none", "-quiet")
-    }
-}
-
-task javadoc(type: Javadoc) {
-    description = "Generates javadocs, ignoring any doclint errors, and places the artefact in the root of the project"
-    source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-    destinationDir = file("docs")
-    failOnError false
-}
-
-task sourceJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    classifier "sources"
-}
-
 // https://developer.android.com/studio/build/maven-publish-plugin
 project.afterEvaluate {
     publishing {
-
         repositories {
             maven {
                 name = 'ossrhStaging'
@@ -45,13 +21,11 @@ project.afterEvaluate {
         }
 
         publications {
-
             SDK(MavenPublication) {
                 from components.release
                 groupId = "com.bugsnag"
                 artifactId = archivesBaseName
                 version = version
-                artifact(sourceJar)
 
                 pom {
                     name = pomName
