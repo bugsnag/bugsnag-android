@@ -11,7 +11,7 @@ android {
         minSdkVersion 17
         targetSdkVersion 34
         versionCode 1
-        versionName "1.1.14"
+        versionName System.getenv("BUILDKITE_BUILD_NUMBER") ?: "1.1.14"
         manifestPlaceholders = [
                 // omit any of the following placeholders to use the default values
                 bugsnagApiKey: "abc12312312312312312312312312312",
