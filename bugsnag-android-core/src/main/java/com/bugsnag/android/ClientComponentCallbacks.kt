@@ -19,9 +19,11 @@ internal class ClientComponentCallbacks(
     }
 
     override fun onTrimMemory(level: Int) {
+        @Suppress("DEPRECATION")
         memoryCallback(level >= ComponentCallbacks2.TRIM_MEMORY_COMPLETE, level)
     }
 
+    @Suppress("OVERRIDE_DEPRECATION")
     override fun onLowMemory() {
         memoryCallback(true, null)
     }

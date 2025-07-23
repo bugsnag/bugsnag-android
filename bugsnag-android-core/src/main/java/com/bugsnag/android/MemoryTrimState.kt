@@ -27,6 +27,7 @@ internal class MemoryTrimState : BaseObservable() {
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun descriptionFor(memoryTrimLevel: Int?) = when (memoryTrimLevel) {
         null -> "None"
         ComponentCallbacks2.TRIM_MEMORY_COMPLETE -> "Complete"
