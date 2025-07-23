@@ -9,6 +9,7 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 
+@Suppress("DEPRECATION")
 @RunWith(MockitoJUnitRunner::class)
 class ClientComponentCallbacksMemoryCallbackTest {
 
