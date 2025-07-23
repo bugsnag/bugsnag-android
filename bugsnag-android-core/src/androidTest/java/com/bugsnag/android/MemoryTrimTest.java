@@ -34,6 +34,7 @@ public class MemoryTrimTest {
     ArgumentCaptor<ComponentCallbacks> componentCallbacksCaptor;
 
     @Test
+    @SuppressWarnings("deprecation")
     public void onLowMemoryEvent() {
         when(context.getApplicationContext()).thenReturn(context);
         doNothing().when(context).registerComponentCallbacks(any());
