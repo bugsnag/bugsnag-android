@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -16,6 +17,7 @@ import java.lang.RuntimeException
  * Calls [Context.registerReceiver] but swallows [SecurityException] and [RemoteException]
  * to avoid terminating the process in rare cases where the registration is unsuccessful.
  */
+@SuppressLint("UnspecifiedRegisterReceiverFlag")
 internal fun Context.registerReceiverSafe(
     receiver: BroadcastReceiver?,
     filter: IntentFilter?,
