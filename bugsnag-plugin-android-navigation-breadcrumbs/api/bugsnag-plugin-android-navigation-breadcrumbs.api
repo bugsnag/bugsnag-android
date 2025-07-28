@@ -1,0 +1,7 @@
+public final class com/bugsnag/android/BugsnagNavigationPlugin : com/bugsnag/android/Plugin {
+	public fun <init> (Landroidx/navigation/NavController;)V
+	public final fun getNavc ()Landroidx/navigation/NavController;
+	public fun load (Lcom/bugsnag/android/Client;)V
+	public fun unload ()V
+}
+

@@ -16,6 +16,7 @@ COPY bugsnag-plugin-android-exitinfo/ bugsnag-plugin-android-exitinfo/
 COPY bugsnag-plugin-android-ndk/ bugsnag-plugin-android-ndk/
 COPY bugsnag-plugin-android-okhttp/ bugsnag-plugin-android-okhttp/
 COPY bugsnag-plugin-react-native/ bugsnag-plugin-react-native/
+COPY bugsnag-plugin-react-native/ bugsnag-plugin-android-navigation-breadcrumbs/
 COPY scripts/ scripts/
 COPY config/ config/
 COPY LICENSE LICENSE
