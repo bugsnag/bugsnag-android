@@ -60,7 +60,11 @@ internal class ExitInfoPluginStore(config: ImmutableConfig) {
                     }
                 }
             } catch (exc: Throwable) {
-                logger.w("Unexpectedly failed to persist PID.", exc)
+                logger.d(
+                    "Unexpectedly failed to persist PID, historical exit reasons may " +
+                        "not be matchable if this process crashes.",
+                    exc
+                )
             }
         }
     }
@@ -91,12 +95,10 @@ internal class ExitInfoPluginStore(config: ImmutableConfig) {
         try {
             val content = file.readText()
             if (content.isEmpty()) {
-                logger.w("PID is empty")
                 return null
             }
             return content.toIntOrNull()
         } catch (exc: Throwable) {
-            logger.w("Unexpectedly failed to load PID.", exc)
             return null
         }
     }
