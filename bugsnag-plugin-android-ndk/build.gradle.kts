@@ -68,6 +68,10 @@ android {
 
     externalNativeBuild.cmake.path = project.file("CMakeLists.txt")
     externalNativeBuild.cmake.version = libs.versions.cmake.get()
+
+    kotlinOptions {
+        jvmTarget = Versions.java.toString()
+    }
 }
 
 dependencies {

@@ -55,6 +55,10 @@ android {
             java.srcDir(SHARED_TEST_SRC_DIR)
         }
     }
+
+    kotlinOptions {
+        jvmTarget = Versions.java.toString()
+    }
 }
 
 dependencies {

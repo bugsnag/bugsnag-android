@@ -41,6 +41,10 @@ android {
             isDefault = true
         }
     }
+
+    kotlinOptions {
+        jvmTarget = Versions.java.toString()
+    }
 }
 
 dependencies {

@@ -62,6 +62,10 @@ android {
             exclude("**/*.proto")
         }
     }
+
+    kotlinOptions {
+        jvmTarget = Versions.java.toString()
+    }
 }
 
 dependencies {
