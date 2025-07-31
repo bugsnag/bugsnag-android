@@ -1,5 +1,22 @@
 # Changelog
 
+## 6.16.0 (2025-07-31)
+
+### Changes
+
+* Bumped the `minSdk` to 16 (Android 4.1 Jelly Bean), and removed redundant `minSdk` checks in the codebase
+  [#2212](https://github.com/bugsnag/bugsnag-android/pull/2212)
+
+### Enhancements
+
+* Reduced the number of warnings emitted by `bugsnag-plugin-android-exitinfo` to reduce the noise in debug builds
+  [#2221](https://github.com/bugsnag/bugsnag-android/pull/2221)
+
+### Bug fixes
+
+* Synthesised ANR errors from `bugsnag-plugin-android-exitinfo` will now report the correct device-id
+  [#2222](https://github.com/bugsnag/bugsnag-android/pull/2222)
+
 ## 6.15.0 (2025-07-07)
 
 ### Enhancements

@@ -36,6 +36,8 @@ steps:
     timeout_in_minutes: 10
     agents:
       queue: macos-15
+    env:
+      JAVA_VERSION: 17
     command: './gradlew clean assembleRelease check --scan'
 
   #
@@ -64,6 +66,8 @@ steps:
           - "--aws-public-ip"
           - "--farm=bb"
           - "--device=ANDROID_9"
+          - "--repeater-api-key="
+          - "--hub-repeater-api-key="
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -89,6 +93,8 @@ steps:
           - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_9"
+          - "--repeater-api-key="
+          - "--hub-repeater-api-key="
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -122,6 +128,8 @@ steps:
           - "--aws-public-ip"
           - "--farm=bb"
           - "--device=ANDROID_9"
+          - "--repeater-api-key="
+          - "--hub-repeater-api-key="
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -151,6 +159,8 @@ steps:
           - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_9"
+          - "--repeater-api-key="
+          - "--hub-repeater-api-key="
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -186,6 +196,8 @@ steps:
           - "--device=ANDROID_7"
           - "--exclude=features/full_tests/[^a-k].*.feature"
           - "--exclude=features/full_tests/anr.feature"
+          - "--repeater-api-key="
+          - "--hub-repeater-api-key="
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -220,6 +232,8 @@ steps:
           - "--aws-public-ip"
           - "--farm=bb"
           - "--device=ANDROID_7"
+          - "--repeater-api-key="
+          - "--hub-repeater-api-key="
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -230,14 +244,13 @@ steps:
     concurrency_group: 'bitbar'
     concurrency_method: eager
 
-
-  - label: ':browserstack: Android 7 NDK r19 end-to-end tests - ANRs'
+  - label: ':bitbar: Android 7 NDK r19 end-to-end tests - ANRs'
     depends_on: "fixture-r19"
     timeout_in_minutes: 30
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/bs-fixture-r19-url.txt"
+          - "build/fixture-r19-url.txt"
           - "build/fixture-r19/*"
         upload:
           - "maze_output/failed/**/*"
@@ -248,18 +261,22 @@ steps:
         service-ports: true
         command:
           - "features/full_tests/anr.feature"
-          - "--app=@build/bs-fixture-r19-url.txt"
+          - "--app=@build/fixture-r19-url.txt"
           - "--appium-version=1.22.0"
-          - "--farm=bs"
+          - "--no-tunnel"
+          - "--aws-public-ip"
+          - "--farm=bb"
           - "--device=ANDROID_7"
+          - "--repeater-api-key="
+          - "--hub-repeater-api-key="
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
+    concurrency: 25
+    concurrency_group: 'bitbar'
     concurrency_method: eager
 
   - label: ':bitbar: Android 8 NDK r19 end-to-end tests - batch 1'
@@ -285,6 +302,8 @@ steps:
           - "--device=ANDROID_8"
           - "--exclude=features/full_tests/[^a-k].*.feature"
           - "--exclude=features/full_tests/anr.feature"
+          - "--repeater-api-key="
+          - "--hub-repeater-api-key="
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -318,6 +337,8 @@ steps:
           - "--aws-public-ip"
           - "--farm=bb"
           - "--device=ANDROID_8"
+          - "--repeater-api-key="
+          - "--hub-repeater-api-key="
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -348,6 +369,8 @@ steps:
           - "--appium-version=1.22.0"
           - "--farm=bs"
           - "--device=ANDROID_8"
+          - "--repeater-api-key="
+          - "--hub-repeater-api-key="
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"

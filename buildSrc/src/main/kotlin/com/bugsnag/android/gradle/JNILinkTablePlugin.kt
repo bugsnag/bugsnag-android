@@ -7,6 +7,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
+import java.util.Locale
 
 /**
  * Generates C header files for use with [RegisterNatives](docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/functions.html#RegisterNatives)
@@ -41,7 +42,7 @@ class JNILinkTablePlugin : Plugin<Project> {
         val externalNativeBuild = variant.externalNativeBuild ?: return
 
         // configure the variant to generate the headers from the class files
-        variant.transformClassesWith(
+        variant.instrumentation.transformClassesWith(
             GenerateJNILinkTableTransformFactory::class.java,
             InstrumentationScope.PROJECT
         ) { parameters ->
@@ -65,14 +66,15 @@ class JNILinkTablePlugin : Plugin<Project> {
     }
 
     private fun Project.fixTaskOrdering(variant: Variant) {
-        val variantName = variant.name.capitalize()
+        val variantName = variant.name.replaceFirstChar { it.uppercaseChar() }
         val transformTaskName = "transform${variantName}ClassesWithAsm"
         // Ensure the CMake task runs after the classes are transformed
         tasks.whenTaskAdded {
-            when (name) {
-                "buildCMakeDebug", "buildCMakeRelWithDebInfo" -> {
-                    dependsOn(transformTaskName)
-                }
+            if (name.startsWith("buildCMake") ||
+                name.startsWith("buildCMakeRelWithDebInfo")
+            ) {
+                // For CMake tasks, we need to ensure they depend on the ASM transform task
+                dependsOn(transformTaskName)
             }
         }
     }

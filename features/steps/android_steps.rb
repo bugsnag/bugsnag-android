@@ -304,3 +304,15 @@ Then("the event last breadcrumb has a message that matches the regex {string}") 
   regex = Regexp.new pattern
   Maze.check.match regex, lastBreadcrumbName
 end
+
+def expected_app_version
+  ENV['BUILDKITE_BUILD_NUMBER'] || '1.1.14'
+end
+
+Then("the session app version matches the built app version") do
+  step "the session payload field \"app.version\" equals \"#{expected_app_version}\""
+end
+
+Then("the event app version matches the built app version") do
+  step "the event \"app.version\" equals \"#{expected_app_version}\""
+end

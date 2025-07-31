@@ -21,7 +21,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
-import android.os.Process
 import android.os.SystemClock
 import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.dag.Provider
@@ -77,17 +76,7 @@ internal class AppDataCollector(
     private fun getProcessImportance(): String? {
         try {
             val appInfo = ActivityManager.RunningAppProcessInfo()
-            if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-                ActivityManager.getMyMemoryState(appInfo)
-            } else {
-                val expectedPid = Process.myPid()
-                activityManager?.runningAppProcesses
-                    ?.find { it.pid == expectedPid }
-                    ?.let {
-                        appInfo.importance = it.importance
-                        appInfo.pid = expectedPid
-                    }
-            }
+            ActivityManager.getMyMemoryState(appInfo)
 
             if (appInfo.pid == 0) {
                 return null
