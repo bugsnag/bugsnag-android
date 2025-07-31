@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 6.16.0 (2025-07-31)
 
 ### Changes
 
