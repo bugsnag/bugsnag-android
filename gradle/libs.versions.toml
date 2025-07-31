@@ -27,6 +27,7 @@ android-test-runner = { module = "androidx.test:runner", version.ref = "android-
 android-gradle-api = { module = "com.android.tools.build:gradle-api", version.ref = "agp" }
 espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoTestLib" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+json = { module = "org.json:json", version = "20250517" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 mockito-android = { module = "org.mockito:mockito-android", version.ref = "mockito" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }

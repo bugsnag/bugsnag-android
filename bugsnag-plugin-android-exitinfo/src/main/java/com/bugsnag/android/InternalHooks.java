@@ -9,27 +9,27 @@ import kotlin.jvm.functions.Function1;
 
 class InternalHooks {
 
-    private InternalHooks() {
+    private final Client client;
+
+    InternalHooks(Client client) {
+        this.client = client;
     }
 
-    public static void setEventStoreEmptyCallback(Client client, Function0<Unit> callback) {
+    void setEventStoreEmptyCallback(Function0<Unit> callback) {
         client.getEventStore().setOnEventStoreEmptyCallback(callback);
     }
 
-    public static void setDiscardEventCallback(
-            Client client,
-            Function1<EventPayload, Unit> callback) {
+    void setDiscardEventCallback(Function1<EventPayload, Unit> callback) {
         client.getEventStore().setOnDiscardEventCallback(callback);
     }
 
-    static void deliver(@NonNull Client client, @NonNull Event event) {
+    void deliver(@NonNull Event event) {
         client.deliveryDelegate.deliver(event);
     }
 
     @Nullable
-    static Event createEmptyANR(long exitInfoTimeStamp) {
+    Event createEmptyANR(long exitInfoTimeStamp) {
         try {
-            Client client = Bugsnag.getClient();
             DeviceDataCollector deviceDataCollector = client.getDeviceDataCollector();
 
             if (deviceDataCollector == null) {
@@ -52,9 +52,8 @@ class InternalHooks {
     }
 
     @Nullable
-    static Event createEmptyCrash(long exitInfoTimeStamp) {
+    Event createEmptyCrash(long exitInfoTimeStamp) {
         try {
-            Client client = Bugsnag.getClient();
             DeviceDataCollector deviceDataCollector = client.getDeviceDataCollector();
 
             if (deviceDataCollector == null) {
