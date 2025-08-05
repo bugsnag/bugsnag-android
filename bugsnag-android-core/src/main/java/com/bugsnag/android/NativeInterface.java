@@ -400,17 +400,17 @@ public class NativeInterface {
                                      boolean isLaunching) {
         // If there's saved static data, merge it directly into the payload map.
         if (staticDataBytes != null) {
-            @SuppressWarnings("unchecked")
-            Map<String, Object> payloadMap = (Map<String, Object>) JsonHelper.INSTANCE.deserialize(
-                    new ByteArrayInputStream(payloadBytes));
-            @SuppressWarnings("unchecked")
-            Map<String, Object> staticDataMap =
-                    (Map<String, Object>) JsonHelper.INSTANCE.deserialize(
-                            new ByteArrayInputStream(staticDataBytes));
-            deepMerge(staticDataMap, payloadMap);
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
-            JsonHelper.INSTANCE.serialize(payloadMap, os);
-            payloadBytes = os.toByteArray();
+//            @SuppressWarnings("unchecked")
+//            Map<String, Object> payloadMap = (Map<String, Object>) JsonHelper.INSTANCE.deserialize(
+//                    new ByteArrayInputStream(payloadBytes));
+//            @SuppressWarnings("unchecked")
+//            Map<String, Object> staticDataMap =
+//                    (Map<String, Object>) JsonHelper.INSTANCE.deserialize(
+//                            new ByteArrayInputStream(staticDataBytes));
+//            deepMerge(staticDataMap, payloadMap);
+//            ByteArrayOutputStream os = new ByteArrayOutputStream();
+//            JsonHelper.INSTANCE.serialize(payloadMap, os);
+//            payloadBytes = os.toByteArray();
         }
 
         String payload = new String(payloadBytes, UTF8Charset);

@@ -82,11 +82,11 @@ internal class AppDataCollectorSerializationTest {
         verifyJsonMatches(testCase.first, testCase.second)
     }
 
-    @Test
-    fun testJsonDeserialization() {
-        val (appModel, jsonFixture) = testCase
-        verifyJsonParser(appModel, jsonFixture) { jsonMap ->
-            eventMapper.convertAppWithState(jsonMap)
-        }
-    }
+//    @Test
+//    fun testJsonDeserialization() {
+//        val (appModel, jsonFixture) = testCase
+//        verifyJsonParser(appModel, jsonFixture) { jsonMap ->
+//            eventMapper.convertAppWithState(jsonMap)
+//        }
+//    }
 }

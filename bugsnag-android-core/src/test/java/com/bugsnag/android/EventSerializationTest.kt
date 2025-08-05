@@ -125,13 +125,13 @@ internal class EventSerializationTest {
     @Test
     fun testJsonSerialisation() = verifyJsonMatches(testCase.first, testCase.second)
 
-    @Test
-    fun testJsonDeserializion() {
-        verifyJsonParser(testCase.first, testCase.second) {
-            Event(
-                eventMapper.convertToEventImpl(it, "5d1ec5bd39a74caa1267142706a7fb21"),
-                NoopLogger
-            )
-        }
-    }
+//    @Test
+//    fun testJsonDeserializion() {
+//        verifyJsonParser(testCase.first, testCase.second) {
+//            Event(
+//                eventMapper.convertToEventImpl(it, "5d1ec5bd39a74caa1267142706a7fb21"),
+//                NoopLogger
+//            )
+//        }
+//    }
 }

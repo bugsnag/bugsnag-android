@@ -1,6 +1,6 @@
 package com.bugsnag.android
 
-import com.bugsnag.android.internal.JsonHelper
+import android.util.JsonReader
 import java.io.File
 
 internal class MarshalledEventSource(
@@ -33,10 +33,8 @@ internal class MarshalledEventSource(
 
     private fun unmarshall(): Event {
         val eventMapper = BugsnagEventMapper(logger)
-        val jsonMap = JsonHelper.deserialize(eventFile)
-        return Event(
-            eventMapper.convertToEventImpl(jsonMap, apiKey),
-            logger
-        )
+        return eventFile.bufferedReader().use { reader ->
+            eventMapper.convertToEvent(JsonReader(reader), apiKey)
+        }
     }
 }

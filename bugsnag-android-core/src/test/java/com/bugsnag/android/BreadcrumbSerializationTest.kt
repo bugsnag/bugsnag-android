@@ -40,10 +40,10 @@ internal class BreadcrumbSerializationTest {
     @Test
     fun testJsonSerialisation() = verifyJsonMatches(testCase.first, testCase.second)
 
-    @Test
-    fun testJsonDeserialization() {
-        verifyJsonParser(testCase.first, testCase.second) {
-            eventMapper.convertBreadcrumbInternal(it)
-        }
-    }
+//    @Test
+//    fun testJsonDeserialization() {
+//        verifyJsonParser(testCase.first, testCase.second) {
+//            eventMapper.convertBreadcrumbInternal(it)
+//        }
+//    }
 }

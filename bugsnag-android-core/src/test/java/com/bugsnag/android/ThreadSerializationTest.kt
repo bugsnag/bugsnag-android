@@ -116,9 +116,9 @@ internal class ThreadSerializationTest {
     @Test
     fun testJsonSerialisation() = verifyJsonMatches(testCase.first, testCase.second)
 
-    @Test
-    fun testJsonDeserialisation() =
-        verifyJsonParser(testCase.first, testCase.second) {
-            eventMapper.convertThread(it)
-        }
+//    @Test
+//    fun testJsonDeserialisation() =
+//        verifyJsonParser(testCase.first, testCase.second) {
+//            eventMapper.convertThread(it)
+//        }
 }

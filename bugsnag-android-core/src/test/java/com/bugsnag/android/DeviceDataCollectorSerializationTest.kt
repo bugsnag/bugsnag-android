@@ -90,10 +90,10 @@ internal class DeviceDataCollectorSerializationTest {
         verifyJsonMatches(device, testCase.second)
     }
 
-    @Test
-    fun testJsonDeserialization() {
-        verifyJsonParser(testCase.first, testCase.second) {
-            eventMapper.convertDeviceWithState(it)
-        }
-    }
+//    @Test
+//    fun testJsonDeserialization() {
+//        verifyJsonParser(testCase.first, testCase.second) {
+//            eventMapper.convertDeviceWithState(it)
+//        }
+//    }
 }

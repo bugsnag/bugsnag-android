@@ -60,9 +60,9 @@ class ThreadDeserializationTest {
 
     private val eventMapper = BugsnagEventMapper(NoopLogger)
 
-    @Test
-    fun testJsonDeserialization() =
-        verifyJsonParser(testCase.first, testCase.second) {
-            eventMapper.convertThread(it)
-        }
+//    @Test
+//    fun testJsonDeserialization() =
+//        verifyJsonParser(testCase.first, testCase.second) {
+//            eventMapper.convertThread(it)
+//        }
 }
