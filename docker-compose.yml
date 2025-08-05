@@ -1,5 +1,3 @@
-version: '3.6'
-
 x-common-environment: &common-environment
   DEBUG:
   BUILDKITE:
