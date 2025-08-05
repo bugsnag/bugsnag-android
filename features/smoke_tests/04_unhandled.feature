@@ -53,7 +53,6 @@ Feature: Unhandled smoke tests
 
     # Metadata
     And the event "metaData.app.name" equals "MazeRunner"
-    And the event "metaData.app.lowMemory" is false
     And the event "metaData.TestData.password" equals "[REDACTED]"
 
     # Device data

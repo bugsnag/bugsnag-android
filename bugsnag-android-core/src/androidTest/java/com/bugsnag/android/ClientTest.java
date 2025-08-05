@@ -171,14 +171,12 @@ public class ClientTest {
     public void testAppDataMetadata() {
         client = generateClient();
         Map<String, Object> app = client.getAppDataCollector().getAppDataMetadata();
-        assertEquals(11, app.size());
+        assertEquals(9, app.size());
         assertEquals("Bugsnag Android Tests", app.get("name"));
         assertEquals("com.bugsnag.android.core.test", app.get("processName"));
         assertNotNull(app.get("memoryUsage"));
         assertTrue(app.containsKey("activeScreen"));
         assertTrue(app.containsKey("installerPackage"));
-        assertNotNull(app.get("lowMemory"));
-        assertNotNull(app.get("memoryTrimLevel"));
     }
 
     @Test
