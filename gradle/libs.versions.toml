@@ -20,6 +20,7 @@ protobuf-plugin = "0.9.4"
 protobuf-javalite = "3.25.5"
 nav-version = "2.0.0"
 kotlin-serialization = "2.0.21"
+fragment-version = "1.8.8"
 
 [libraries]
 android-annotations = { module = "androidx.annotation:annotation", version.ref = "android-supportLib" }
@@ -35,6 +36,9 @@ mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockito-inline" }
 protobuf-javalite = { module = "com.google.protobuf:protobuf-javalite", version.ref = "protobuf-javalite" }
 navigation-runtime = { module = "androidx.navigation:navigation-runtime", version.ref = "nav-version" }
+fragment = { module = "androidx.fragment:fragment", version.ref = "fragment-version" }
+fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragment-version" }
+fragment-compose = { module = "androidx.fragment:fragment-compose", version.ref = "fragment-version" }
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "agp" }

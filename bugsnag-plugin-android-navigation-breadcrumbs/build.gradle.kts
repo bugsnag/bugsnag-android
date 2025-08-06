@@ -74,6 +74,9 @@ dependencies {
     androidTestImplementation(libs.bundles.test.android)
 
     implementation(libs.navigation.runtime)
+    implementation(libs.fragment)
+    implementation(libs.fragment.ktx)
+    implementation(libs.fragment.compose)
 }
 
 apply(from = rootProject.file("gradle/detekt.gradle"))

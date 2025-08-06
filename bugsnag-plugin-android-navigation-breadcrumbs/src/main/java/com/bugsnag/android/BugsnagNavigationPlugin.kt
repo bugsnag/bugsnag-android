@@ -1,18 +1,15 @@
 package com.bugsnag.android
 
-import androidx.navigation.NavController
+import android.app.Application
 
-class BugsnagNavigationPlugin(
-    val navc: NavController
-) : Plugin {
-    private val breadcrumbType: BreadcrumbType = BreadcrumbType.NAVIGATION
+class BugsnagNavigationPlugin : Plugin {
 
     override fun load(client: Client) {
-        navc.addOnDestinationChangedListener { _, destination, _ ->
-            val context = destination.label?.toString() ?: "Unknown"
-            Bugsnag.client.sessionTracker.updateContext(context, true)
-            Bugsnag.leaveBreadcrumb("Test for Navigation", mapOf("Navigation breadcrumb" to 11111111111), breadcrumbType)
-        }
+        val application = client.appContext as Application
+
+        application.registerActivityLifecycleCallbacks(
+            NavControllerAutomation(),
+        )
     }
 
     override fun unload() = Unit
