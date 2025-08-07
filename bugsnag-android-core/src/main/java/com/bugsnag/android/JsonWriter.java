@@ -131,7 +131,7 @@ import java.io.Writer;
  * @since 1.6
  */
 @SuppressWarnings("all")
-class JsonWriter implements Closeable, Flushable {
+public class JsonWriter implements Closeable, Flushable {
 
     /*
      * From RFC 7159, "All Unicode characters may be placed within the

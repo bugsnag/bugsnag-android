@@ -77,9 +77,8 @@ internal fun verifyJsonParser(
     parse: (MutableMap<String, Any?>) -> JsonStream.Streamable
 ) {
     val expectedJson = JsonParser().toJsonString(streamable)
-    val resourceStream = JsonParser::class.java.classLoader?.getResourceAsStream(resourceName)
-        ?: throw NullPointerException("cannot find resource: '$resourceName'")
-    val loadedObject = parse(JsonHelper.deserialize(resourceStream) as MutableMap<String, Any?>)
+    val resourceJson = JsonParser().read(resourceName)
+    val loadedObject = parse(JsonHelper.deserialize(resourceJson.byteInputStream()) as MutableMap<String, Any?>)
     val generatedJson = JsonParser().toJsonString(loadedObject)
     Assert.assertEquals(expectedJson, generatedJson)
 }
