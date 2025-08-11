@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* Correctly report the loadAddress for native system libraries
+  [#2240](https://github.com/bugsnag/bugsnag-android/pull/2240)
+
 ## 6.16.0 (2025-07-31)
 
 ### Changes
