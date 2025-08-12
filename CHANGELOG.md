@@ -11,6 +11,8 @@
 
 * Handle edge-cases to reduce the changes of duplicate ANR reporting from `bugsnag-plugin-android-exitinfo` when `reportUnmatchedANR = true && disableProcessStateSummaryOverride = true`
   [#2235](https://github.com/bugsnag/bugsnag-android/pull/2235)
+* Correct the reporting of the loadAddress for native system libraries and JIT frames
+  [#2244](https://github.com/bugsnag/bugsnag-android/pull/2244)
 
 ## 6.16.0 (2025-07-31)
 

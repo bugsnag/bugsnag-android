@@ -189,8 +189,16 @@ ssize_t bsg_unwind_crash_stack(bugsnag_stackframe stack[BUGSNAG_FRAMES_MAX],
     auto &dst_frame = stack[frame_count];
     dst_frame.frame_address = frame.pc;
     dst_frame.line_number = frame.rel_pc;
-    dst_frame.load_address = frame.map_start;
     dst_frame.symbol_address = frame.pc - frame.function_offset;
+
+    auto offset = frame.map_load_bias +
+                  (frame.map_exact_offset - frame.map_elf_start_offset);
+    if (offset < frame.map_start) {
+      dst_frame.load_address = frame.map_start - offset;
+    } else {
+      dst_frame.load_address = frame.map_start - (frame.map_exact_offset -
+                                                  frame.map_elf_start_offset);
+    }
 
     populate_code_identifier(frame, dst_frame);
 
@@ -227,28 +235,38 @@ bsg_unwind_concurrent_stack(bugsnag_stackframe stack[BUGSNAG_FRAMES_MAX],
     dst_frame.frame_address = frame.pc;
     if (frame.map_info != nullptr) {
       dst_frame.line_number = frame.rel_pc;
-      dst_frame.load_address = frame.map_info->start();
-      dst_frame.symbol_address = frame.pc - frame.map_info->offset();
+      auto map_info = frame.map_info;
+      dst_frame.symbol_address = frame.pc - map_info->offset();
+
+      auto offset = map_info->load_bias() +
+                    (map_info->offset() - map_info->elf_start_offset());
+
+      if (offset < map_info->start()) {
+        dst_frame.load_address = map_info->start() - offset;
+      } else {
+        dst_frame.load_address =
+            map_info->start() -
+            (map_info->offset() - map_info->elf_start_offset());
+      }
 
       bsg_strncpy(dst_frame.code_identifier,
-                  frame.map_info->GetPrintableBuildID().c_str(),
+                  map_info->GetPrintableBuildID().c_str(),
                   sizeof(dst_frame.code_identifier));
 
       // if the filename is empty or invalid, use the `Elf` info to get the
       // correct Soname if the function_name is empty as well, fallback to
       // dladdr for the symbol data
-      if (bsg_check_invalid_libname(frame.map_info->name()) &&
+      if (bsg_check_invalid_libname(map_info->name()) &&
           !frame.function_name.empty()) {
 
-        bsg_strncpy(dst_frame.filename,
-                    frame.map_info->elf()->GetSoname().c_str(),
+        bsg_strncpy(dst_frame.filename, map_info->elf()->GetSoname().c_str(),
                     sizeof(dst_frame.filename));
         bsg_strncpy(dst_frame.method, frame.function_name.c_str(),
                     sizeof(dst_frame.method));
       } else if (frame.function_name.empty()) {
         bsg_fallback_symbols(frame.pc, &dst_frame);
       } else {
-        bsg_strncpy(dst_frame.filename, frame.map_info->name().c_str(),
+        bsg_strncpy(dst_frame.filename, map_info->name().c_str(),
                     sizeof(dst_frame.filename));
         bsg_strncpy(dst_frame.method, frame.function_name.c_str(),
                     sizeof(dst_frame.method));
