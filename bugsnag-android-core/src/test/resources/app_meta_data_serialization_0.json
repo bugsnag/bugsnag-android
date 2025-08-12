@@ -1,6 +1,6 @@
 {
-  "memoryTrimLevel": "None",
+  "memoryTrimLevel": "Moderate",
   "activeScreen": "MyActivity",
   "name": "MyApp",
-  "lowMemory": false
+  "lowMemory": true
 }

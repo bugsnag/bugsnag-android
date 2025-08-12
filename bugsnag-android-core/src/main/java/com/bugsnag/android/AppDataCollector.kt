@@ -109,9 +109,14 @@ internal class AppDataCollector(
         val map = HashMap<String, Any?>()
         map["name"] = appName
         map["activeScreen"] = sessionTracker.get().contextActivity
-        map["lowMemory"] = memoryTrimState.isLowMemory
-        map["memoryTrimLevel"] = memoryTrimState.trimLevelDescription
         map["processImportance"] = getProcessImportance()
+
+        // only report the memory trim/low memory state if it has been captured
+        // more recent Android versions will not report these
+        if (memoryTrimState.memoryTrimLevel != null) {
+            map["lowMemory"] = memoryTrimState.isLowMemory
+            map["memoryTrimLevel"] = memoryTrimState.trimLevelDescription
+        }
 
         populateRuntimeMemoryMetadata(map)
 

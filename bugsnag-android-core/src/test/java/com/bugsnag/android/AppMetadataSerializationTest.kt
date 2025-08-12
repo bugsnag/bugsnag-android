@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import android.app.ActivityManager
+import android.content.ComponentCallbacks2
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
@@ -30,7 +31,11 @@ internal class AppMetadataSerializationTest {
             val sessionTracker = mock(SessionTracker::class.java)
             val launchCrashTracker = mock(LaunchCrashTracker::class.java)
             val config = BugsnagTestUtils.generateConfiguration()
+
             val memoryTrimState = MemoryTrimState()
+            memoryTrimState.isLowMemory = true
+            @Suppress("DEPRECATION")
+            memoryTrimState.memoryTrimLevel = ComponentCallbacks2.TRIM_MEMORY_MODERATE
 
             // populate summary fields
             config.appType = "React Native"
@@ -59,6 +64,19 @@ internal class AppMetadataSerializationTest {
             appData.codeBundleId = "foo-99"
             appData.setBinaryArch("x86")
 
+            val withMemoryTrim = prepareAppMetadata(appData)
+
+            memoryTrimState.memoryTrimLevel = null
+            val noMemoryTrim = prepareAppMetadata(appData)
+
+            return generateSerializationTestCases(
+                "app_meta_data",
+                withMemoryTrim,
+                noMemoryTrim
+            )
+        }
+
+        private fun prepareAppMetadata(appData: AppDataCollector): Map<String, Any> {
             val metadata = appData.getAppDataMetadata()
             assertNotNull(metadata.remove("memoryUsage"))
             assertNotNull(metadata.remove("totalMemory"))
@@ -66,7 +84,7 @@ internal class AppMetadataSerializationTest {
             assertNotNull(metadata.remove("memoryLimit"))
 
             @Suppress("UNCHECKED_CAST")
-            return generateSerializationTestCases("app_meta_data", metadata.toMap() as Map<String, Any>)
+            return metadata as Map<String, Any>
         }
     }
 

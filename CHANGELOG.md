@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+* `memoryTrimLevel` and `lowMemory` will not be reported when they are not set (newer versions of Android do not set these values)
+  [#2237](https://github.com/bugsnag/bugsnag-android/pull/2237)
+
 ## 6.16.0 (2025-07-31)
 
 ### Changes
