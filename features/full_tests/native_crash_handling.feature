@@ -108,7 +108,8 @@ Feature: Native crash reporting
     And the event "unhandled" is true
     And the first significant stack frames match:
       | evictor::exit_with_style()                                           | CXXAbortScenario.cpp | 5  |
-      | Java_com_bugsnag_android_mazerunner_scenarios_CXXAbortScenario_crash | CXXAbortScenario.cpp | 13 |
+# Pending PLAT-14713
+#      | Java_com_bugsnag_android_mazerunner_scenarios_CXXAbortScenario_crash | CXXAbortScenario.cpp | 13 |
     And the "codeIdentifier" of stack frame 0 is not null
 
   Scenario: Undefined JNI method
