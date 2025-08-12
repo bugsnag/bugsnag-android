@@ -19,8 +19,7 @@ if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
 fi
 
 echo Bumping the version number to $VERSION
-sed -i '' "s/bugsnag-android:.*\"/bugsnag-android:$VERSION\"/" examples/sdk-app-example/app/build.gradle.kts
-sed -i '' "s/bugsnag-plugin-android-okhttp:.*\"/bugsnag-plugin-android-okhttp:$VERSION\"/" examples/sdk-app-example/app/build.gradle.kts
+sed -i '' "s/bugsnag-android =.*/bugsnag-android=\"$VERSION\"/" examples/sdk-app-example/gradle/libs.versions.toml
 sed -i '' "s/VERSION_NAME=.*/VERSION_NAME=$VERSION/" gradle.properties
 sed -i '' "s/var version: String = .*/var version: String = \"$VERSION\",/"\
  bugsnag-android-core/src/main/java/com/bugsnag/android/Notifier.kt
