@@ -1,12 +1,10 @@
 package com.bugsnag.android
 
-import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.app.Application
 import android.app.ApplicationExitInfo
 import android.content.Context
 import android.os.Build
-import android.os.Process
 import androidx.annotation.RequiresApi
 import com.bugsnag.android.ApplicationExitInfoMatcher.Companion.MATCH_ALL
 import com.bugsnag.android.ApplicationExitInfoMatcher.Companion.MAX_EXIT_INFO
@@ -17,10 +15,14 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
     configuration: ExitInfoPluginConfiguration = ExitInfoPluginConfiguration()
 ) : Plugin {
 
-    private val configuration = configuration.copy()
+    private lateinit var internalHooks: InternalHooks
 
-    @SuppressLint("VisibleForTests")
+    private val configuration = configuration.copy()
+    private var applicationExitInfo: List<ApplicationExitInfo> = emptyList()
+
     override fun load(client: Client) {
+        internalHooks = InternalHooks(client)
+
         if (!configuration.disableProcessStateSummaryOverride) {
             client.addOnSession(SessionProcessStateSummaryCallback(client))
         }
@@ -30,6 +32,7 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
             configuration.listOpenFds,
             configuration.includeLogcat
         )
+
         val traceEventEnhancer = TraceEventEnhancer(
             client.logger,
             client.immutableConfig.projectPackages
@@ -37,15 +40,14 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
 
         val exitInfoPluginStore = ExitInfoPluginStore(client.immutableConfig)
         addAllExitInfoAtFirstRun(client, exitInfoPluginStore)
-        exitInfoPluginStore.currentPid = Process.myPid()
+        applicationExitInfo = getHistoricExitReasons(exitInfoPluginStore, client)
 
         val exitInfoMatcher = ApplicationExitInfoMatcher(
-            context = client.appContext,
-            pid = exitInfoPluginStore.previousPid
+            applicationExitInfo,
+            exitInfoPluginStore.previousState
         )
 
         val exitInfoCallback = createExitInfoCallback(
-            client,
             exitInfoPluginStore,
             tombstoneEventEnhancer,
             traceEventEnhancer,
@@ -53,9 +55,10 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
         )
         client.addOnSend(exitInfoCallback)
 
-        if (client.appContext.isPrimaryProcess()) {
+        if (client.appContext.isPrimaryProcess() &&
+            !configuration.disableProcessStateSummaryOverride
+        ) {
             configureEventSynthesizer(
-                client,
                 exitInfoPluginStore,
                 traceEventEnhancer,
                 exitInfoMatcher
@@ -64,24 +67,19 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
     }
 
     private fun configureEventSynthesizer(
-        client: Client,
         exitInfoPluginStore: ExitInfoPluginStore,
         traceEventEnhancer: TraceEventEnhancer,
         exitInfoMatcher: ApplicationExitInfoMatcher
     ) {
-        InternalHooks.setEventStoreEmptyCallback(client) {
-            synthesizeNewEvents(
-                client,
-                exitInfoPluginStore,
-                traceEventEnhancer
-            )
+        internalHooks.setDiscardEventCallback { eventPayload ->
+            // we track all of the discarded events as "processed" so that we do not
+            // synthesize them again later
+            val exitInfo = eventPayload.event?.let { exitInfoMatcher.matchExitInfo(it) }
+            exitInfo?.let { exitInfoPluginStore.addExitInfoKey(ExitInfoKey(exitInfo)) }
         }
 
-        InternalHooks.setDiscardEventCallback(client) { eventPayload ->
-            val exitInfo = eventPayload.event?.let { exitInfoMatcher.matchExitInfo(it) }
-            exitInfo?.let {
-                exitInfoPluginStore.addExitInfoKey(ExitInfoKey(exitInfo))
-            }
+        internalHooks.setEventStoreEmptyCallback {
+            synthesizeNewEventsIfRequired(exitInfoPluginStore, traceEventEnhancer)
         }
     }
 
@@ -89,7 +87,7 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
         client: Client,
         exitInfoPluginStore: ExitInfoPluginStore
     ) {
-        if (exitInfoPluginStore.isFirstRun || exitInfoPluginStore.legacyStore) {
+        if (exitInfoPluginStore.previousState == null) {
             val am: ActivityManager = client.appContext.safeGetActivityManager() ?: return
             val allExitInfo: List<ApplicationExitInfo> =
                 am.getHistoricalProcessExitReasons(
@@ -98,49 +96,60 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
                     MAX_EXIT_INFO
                 )
 
-            allExitInfo.forEach { exitInfo ->
-                exitInfoPluginStore.addExitInfoKey(ExitInfoKey(exitInfo.pid, exitInfo.timestamp))
-            }
+            exitInfoPluginStore.addExitInfoKeys(allExitInfo.map { ExitInfoKey(it) })
         }
     }
 
     private fun createExitInfoCallback(
-        client: Client,
         exitInfoPluginStore: ExitInfoPluginStore,
         tombstoneEventEnhancer: TombstoneEventEnhancer,
         traceEventEnhancer: TraceEventEnhancer,
         applicationExitInfoMatcher: ApplicationExitInfoMatcher
     ): ExitInfoCallback = ExitInfoCallback(
-        client.appContext,
+        applicationExitInfo,
         tombstoneEventEnhancer,
         traceEventEnhancer,
         exitInfoPluginStore,
         applicationExitInfoMatcher
     )
 
-    private fun synthesizeNewEvents(
-        client: Client,
+    private fun synthesizeNewEventsIfRequired(
         exitInfoPluginStore: ExitInfoPluginStore,
         traceEventEnhancer: TraceEventEnhancer
     ) {
         val eventSynthesizer = EventSynthesizer(
+            internalHooks::createEmptyANR,
             traceEventEnhancer,
             exitInfoPluginStore,
             configuration.reportUnmatchedANR
         )
-        val context = client.appContext
-        val am: ActivityManager = context.safeGetActivityManager() ?: return
-        val allExitInfo: List<ApplicationExitInfo> =
-            am.getHistoricalProcessExitReasons(context.packageName, MATCH_ALL, MAX_EXIT_INFO)
-        allExitInfo.forEach {
-            val newEvent = eventSynthesizer.createEventWithExitInfo(it)
-            if (newEvent != null) {
-                InternalHooks.deliver(client, newEvent)
+
+        applicationExitInfo.forEach { exitInfo ->
+            val synthesizedEvent = eventSynthesizer.createEventWithExitInfo(exitInfo)
+            if (synthesizedEvent != null) {
+                exitInfoPluginStore.addExitInfoKey(ExitInfoKey(exitInfo))
+                internalHooks.deliver(synthesizedEvent)
             }
         }
     }
 
+    private fun getHistoricExitReasons(
+        exitInfoPluginStore: ExitInfoPluginStore,
+        client: Client
+    ) = exitInfoPluginStore.previousState
+        ?.filterApplicationExitInfo(
+            client.appContext.safeGetActivityManager()
+                ?.getHistoricalProcessExitReasons(
+                    client.appContext.packageName,
+                    MATCH_ALL,
+                    MAX_EXIT_INFO
+                )
+                .orEmpty()
+        )
+        .orEmpty()
+
     override fun unload() = Unit
+
     private fun Context.isPrimaryProcess(): Boolean {
         return Application.getProcessName() == packageName
     }
