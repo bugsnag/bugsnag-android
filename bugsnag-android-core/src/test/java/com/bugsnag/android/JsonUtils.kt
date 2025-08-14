@@ -43,14 +43,20 @@ private fun removeUnquotedWhitespace(json: String): String {
 
         if (quoted) {
             when (ch) {
-                '\"' -> quoted = false
+                '\"' -> {
+                    quoted = false
+                    builder.append('\"')
+                }
+
                 '\\' -> {
                     builder.append('\\')
                     builder.append(json[index++])
                 }
-            }
 
-            builder.append(ch)
+                else -> {
+                    builder.append(ch)
+                }
+            }
         } else if (!ch.isWhitespace()) {
             builder.append(ch)
 
@@ -78,7 +84,8 @@ internal fun verifyJsonParser(
 ) {
     val expectedJson = JsonParser().toJsonString(streamable)
     val resourceJson = JsonParser().read(resourceName)
-    val loadedObject = parse(JsonHelper.deserialize(resourceJson.byteInputStream()) as MutableMap<String, Any?>)
+    val loadedObject =
+        parse(JsonHelper.deserialize(resourceJson.byteInputStream()) as MutableMap<String, Any?>)
     val generatedJson = JsonParser().toJsonString(loadedObject)
     Assert.assertEquals(expectedJson, generatedJson)
 }
