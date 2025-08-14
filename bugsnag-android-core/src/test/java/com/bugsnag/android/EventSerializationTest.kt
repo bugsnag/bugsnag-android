@@ -143,7 +143,8 @@ internal class EventSerializationTest {
 private fun createMetadataStressTest(event: Event) {
 
     event.addMetadata(
-        "structuralTests", mapOf(
+        "structuralTests",
+        mapOf(
             "arrayTests" to mapOf(
                 "empty" to emptyList<Any>(),
                 "nested" to listOf(
@@ -184,7 +185,8 @@ private fun createMetadataStressTest(event: Event) {
     )
 
     event.addMetadata(
-        "numberEdgeCases", mapOf(
+        "numberEdgeCases",
+        mapOf(
             "decimals" to mapOf(
                 "simpleDecimal" to 123.456,
                 "negativeDecimal" to -123.456,
