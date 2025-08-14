@@ -9,7 +9,7 @@ import java.io.InputStream
  * overheads associated with `Charset` and `Reader` implementations, and as such as no
  * "charset" parameter.
  */
-class JsonCollectionParser(private val input: InputStream) {
+internal class JsonCollectionParser(private val input: InputStream) {
     private var current = -1
     private var position = 0L
 
@@ -93,7 +93,7 @@ class JsonCollectionParser(private val input: InputStream) {
         if (current != expected) {
             throw JsonParseException(
                 "Expected '${expected.toChar()}' but got " +
-                        "'${if (current == -1) "EOF" else current.toChar()}' at position $position"
+                    "'${if (current == -1) "EOF" else current.toChar()}' at position $position"
             )
         }
         advance()

@@ -4,13 +4,11 @@ import com.bugsnag.android.JsonStream
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.io.PrintWriter
-import java.util.Date
 
 internal object JsonHelper {
 
@@ -104,7 +102,7 @@ internal object JsonHelper {
             null -> null
             is Number -> value.toLong()
             is String -> {
-                if (value.length == 0) {
+                if (value.isEmpty()) {
                     null
                 } else {
                     try {
@@ -131,8 +129,7 @@ internal object JsonHelper {
                             // This overflows and gives the "correct" signed result.
                             val headLength = value.length - 3
                             java.lang.Long.decode(value.substring(0, headLength)) *
-                                    1000 +
-                                    java.lang.Long.decode(value.substring(headLength, value.length))
+                                1000 + java.lang.Long.decode(value.substring(headLength, value.length))
                         }
                     }
                 }

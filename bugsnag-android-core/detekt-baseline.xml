@@ -8,6 +8,7 @@
     <ID>CyclomaticComplexMethod:JsonCollectionParser.kt$JsonCollectionParser$private fun readUtf8Char(): Int</ID>
     <ID>ImplicitDefaultLocale:Deliverable.kt$Deliverable$String.format("%02x", byte)</ID>
     <ID>LongMethod:EventSerializationTest.kt$EventSerializationTest.Companion$@JvmStatic @Parameters fun testCases(): Collection&lt;Pair&lt;Event, String>></ID>
+    <ID>LongMethod:EventSerializationTest.kt$private fun createMetadataStressTest(event: Event)</ID>
     <ID>LongParameterList:App.kt$App$( /** * The architecture of the running application binary */ var binaryArch: String?, /** * The package name of the application */ var id: String?, /** * The release stage set in [Configuration.releaseStage] */ var releaseStage: String?, /** * The version of the application set in [Configuration.version] */ var version: String?, /** The revision ID from the manifest (React Native apps only) */ var codeBundleId: String?, /** * The unique identifier for the build of the application set in [Configuration.buildUuid] */ buildUuid: Provider&lt;String?>?, /** * The application type set in [Configuration#version] */ var type: String?, /** * The version code of the application set in [Configuration.versionCode] */ var versionCode: Number? )</ID>
     <ID>LongParameterList:AppDataCollector.kt$AppDataCollector$( appContext: Context, private val packageManager: PackageManager?, private val config: ImmutableConfig, private val sessionTracker: Provider&lt;SessionTracker>, private val activityManager: ActivityManager?, private val launchCrashTracker: LaunchCrashTracker, private val memoryTrimState: MemoryTrimState )</ID>
     <ID>LongParameterList:AppWithState.kt$AppWithState$( binaryArch: String?, id: String?, releaseStage: String?, version: String?, codeBundleId: String?, buildUuid: Provider&lt;String?>?, type: String?, versionCode: Number?, /** * The number of milliseconds the application was running before the event occurred */ var duration: Number?, /** * The number of milliseconds the application was running in the foreground before the * event occurred */ var durationInForeground: Number?, /** * Whether the application was in the foreground when the event occurred */ var inForeground: Boolean?, /** * Whether the application was launching when the event occurred */ var isLaunching: Boolean? )</ID>
@@ -32,7 +33,6 @@
     <ID>MagicNumber:DeliveryStatus.kt$DeliveryStatus.Companion$429</ID>
     <ID>MagicNumber:DeliveryStatus.kt$DeliveryStatus.Companion$499</ID>
     <ID>MagicNumber:EventStore.kt$EventStore$60</ID>
-    <ID>MagicNumber:JsonCollectionParser.kt$JsonCollectionParser$0.1</ID>
     <ID>MagicNumber:JsonCollectionParser.kt$JsonCollectionParser$0x07</ID>
     <ID>MagicNumber:JsonCollectionParser.kt$JsonCollectionParser$0x10000</ID>
     <ID>MagicNumber:JsonCollectionParser.kt$JsonCollectionParser$0x10FFFF</ID>
@@ -66,7 +66,6 @@
     <ID>MaxLineLength:ThreadState.kt$ThreadState$"[${allThreads.size - maxThreadCount} threads omitted as the maxReportedThreads limit ($maxThreadCount) was exceeded]"</ID>
     <ID>NestedBlockDepth:FileStore.kt$FileStore$fun deleteStoredFiles(storedFiles: Collection&lt;File>?)</ID>
     <ID>NestedBlockDepth:FileStore.kt$FileStore$fun findStoredFiles(): MutableList&lt;File></ID>
-    <ID>NestedBlockDepth:JsonCollectionParser.kt$JsonCollectionParser$private fun parseNumber(): Number</ID>
     <ID>NestedBlockDepth:JsonHelper.kt$JsonHelper$fun jsonToLong(value: Any?): Long?</ID>
     <ID>ProtectedMemberInFinalClass:ConfigInternal.kt$ConfigInternal$protected val plugins = HashSet&lt;Plugin>()</ID>
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun isAnr(event: Event): Boolean</ID>

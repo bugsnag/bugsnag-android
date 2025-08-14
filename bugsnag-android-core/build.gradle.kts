@@ -1,4 +1,3 @@
-import kotlinx.validation.ApiValidationExtension
 import org.jetbrains.dokka.gradle.DokkaTask
 
 plugins {
