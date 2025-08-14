@@ -148,124 +148,90 @@ class JsonCollectionParser(private val input: InputStream) {
     }
 
     private fun parseNumber(): Number {
-        // Store the result type
-        var isDouble = false
-        var parsedLong: Long
-        var parsedDouble = 0.0
+        /*
+         * Implementation note: we use a StringBuilder to build the number as a string,
+         * then convert it to Long or Double as appropriate. This avoids the complexity of
+         * manually parsing the number and handling edge cases like rounding errors when
+         * dealing with large exponents. If this proves to be a performance bottleneck,
+         * we can optimize it later.
+         */
 
-        // Track if the number is negative
-        val isNegative = current == '-'.code
-        if (isNegative) {
+        // Reset the string builder
+        stringBuilder.clear()
+
+        // Track if this is has a decimal point or exponent
+        var isDouble = false
+
+        // Handle negative sign
+        if (current == '-'.code) {
+            stringBuilder.append('-')
             advance()
         }
 
-        // Parse as an integer until we find something that isn't a digit
-        parsedLong = 0L
+        // Parse integer part
         if (current == '0'.code) {
+            stringBuilder.append('0')
             advance()
         } else if (isDigit(current)) {
-            // Read first digit
-            parsedLong = (current - '0'.code).toLong()
-            advance()
-
-            // Read remaining digits
-            while (isDigit(current)) {
-                // Check for overflow
-                if (parsedLong > Long.MAX_VALUE / 10) {
-                    // Switch to double for large numbers
-                    parsedDouble = parsedLong.toDouble()
-                    isDouble = true
-
-                    // Continue parsing as double
-                    while (isDigit(current)) {
-                        parsedDouble = parsedDouble * 10 + (current - '0'.code)
-                        advance()
-                    }
-                    break
-                }
-
-                // Multiply by 10 and add the next digit
-                parsedLong = parsedLong * 10 + (current - '0'.code)
+            do {
+                stringBuilder.appendCodePoint(current)
                 advance()
-            }
+            } while (isDigit(current))
         } else {
             throw JsonParseException("Invalid number at position $position")
         }
 
-        // Apply sign for long values
-        if (isNegative && isDouble) {
-            parsedLong = -parsedLong
-        }
-
-        // Is this a double? if so: continue parsing as a double
+        // Handle decimal point
         if (current == '.'.code) {
-            // Switch to double
-            if (!isDouble) {
-                parsedDouble = parsedLong.toDouble()
-                isDouble = true
-            }
-
+            isDouble = true
+            stringBuilder.append('.')
             advance()
+
+            // Must have at least one digit after decimal
             if (!isDigit(current)) {
                 throw JsonParseException("Invalid number at position $position")
             }
 
-            var fraction = 0.0
-            var fractionMultiplier = 0.1
-
-            while (isDigit(current)) {
-                fraction += (current - '0'.code) * fractionMultiplier
-                fractionMultiplier *= 0.1
+            do {
+                stringBuilder.appendCodePoint(current)
                 advance()
-            }
-
-            parsedDouble += fraction
+            } while (isDigit(current))
         }
 
-        // do we have an exponent?
+        // Handle exponent
         if (current == 'e'.code || current == 'E'.code) {
-            // Switch to double
-            if (!isDouble) {
-                parsedDouble = parsedLong.toDouble()
-                isDouble = true
-            }
-
+            isDouble = true
+            stringBuilder.appendCodePoint(current)
             advance()
 
-            // Handle exponent sign
-            val exponentIsNegative = current == '-'.code
+            // Handle optional sign
             if (current == '+'.code || current == '-'.code) {
+                stringBuilder.appendCodePoint(current)
                 advance()
             }
 
+            // Must have at least one digit in exponent
             if (!isDigit(current)) {
                 throw JsonParseException("Invalid number at position $position")
             }
 
-            // Parse exponent value
-            var exponent = 0
-            while (isDigit(current)) {
-                exponent = exponent * 10 + (current - '0'.code)
+            do {
+                stringBuilder.appendCodePoint(current)
                 advance()
-            }
-
-            // Apply exponent
-            parsedDouble *= 10.0.pow(
-                if (exponentIsNegative) -exponent.toDouble()
-                else exponent.toDouble()
-            )
+            } while (isDigit(current))
         }
 
-        // Apply sign for double values
-        if (isNegative && isDouble) {
-            parsedDouble = -parsedDouble
-        }
-
-        // Return the appropriate type
-        return if (!isDouble) {
-            parsedLong
+        // Parse the complete string
+        val numStr = stringBuilder.toString()
+        return if (isDouble) {
+            numStr.toDouble()
         } else {
-            parsedDouble
+            try {
+                numStr.toLong()
+            } catch (_: NumberFormatException) {
+                // If the number is too large for Long, return as Double
+                numStr.toDouble()
+            }
         }
     }
 
@@ -446,6 +412,15 @@ class JsonCollectionParser(private val input: InputStream) {
             this['r'.code] = '\r'
             this['t'.code] = '\t'
         }
+
+        val SMALL_EXPONENTS = doubleArrayOf(
+            1.0e0,
+            1.0e1, 1.0e2, 1.0e3, 1.0e4, 1.0e5,
+            1.0e6, 1.0e7, 1.0e8, 1.0e9, 1.0e10,
+            1.0e11, 1.0e12, 1.0e13, 1.0e14, 1.0e15,
+            1.0e16, 1.0e17, 1.0e18, 1.0e19, 1.0e20,
+            1.0e21, 1.0e22
+        )
 
         internal inline fun lookupTable(init: BooleanArray.() -> Unit): BooleanArray {
             return BooleanArray(CHAR_LOOKUP_TABLE_SIZE).apply(init)
