@@ -1,13 +1,25 @@
 FROM ubuntu:20.04@sha256:8e5c4f0285ecbb4ead070431d29b576a530d3166df73ec44affc1cd27555141b
 
-RUN apt-get update > /dev/n
+RUN apt-get update > /dev/null
+
+# Install OpenJDK 17 for modern Gradle compatibility
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y openjdk-17-jdk
+
+# Set up Java environment using the proper Ubuntu alternatives system
+RUN update-java-alternatives --set java-1.17.0-openjdk-amd64 || true
+
+# Set JAVA_HOME by detecting actual installation path
+RUN JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java)))) && \
+    echo "export JAVA_HOME=$JAVA_HOME" >> /etc/environment && \
+    echo "JAVA_HOME=$JAVA_HOME"
+
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y wget maven gnupg1 cppcheck libncurses5 jq clang-format unzip curl git
 RUN apt-get clean > /dev/null
 
 ENV ANDROID_SDK_ROOT="/sdk"
 ENV ANDROID_CMDLINE_TOOLS="${ANDROID_SDK_ROOT}/cmdline-tools/latest"
 ENV PATH="${PATH}:${ANDROID_CMDLINE_TOOLS}/bin"
-ENV CMDLINE_TOOLS_NAME="commandlinetools-linux-6858069_latest.zip"
+ENV CMDLINE_TOOLS_NAME="commandlinetools-linux-13114758_latest.zip"
 WORKDIR $ANDROID_SDK_ROOT
 
 # Generate signing key
@@ -25,17 +37,17 @@ RUN unzip -q ${CMDLINE_TOOLS_NAME} -d /sdk/cmdline-tools
 RUN mv /sdk/cmdline-tools/cmdline-tools $ANDROID_CMDLINE_TOOLS
 RUN rm $CMDLINE_TOOLS_NAME
 
-# Install Android tools using sdkmanager
-RUN yes | sdkmanager "platform-tools" > /dev/null
-RUN yes | sdkmanager "platforms;android-31" > /dev/null
-RUN yes | sdkmanager "ndk;16.1.4479499" > /dev/null
-RUN yes | sdkmanager "ndk;17.2.4988734" > /dev/null
-RUN yes | sdkmanager "ndk;19.2.5345600" > /dev/null
-RUN yes | sdkmanager "ndk;21.4.7075529" > /dev/null
+# Accept all licenses
+RUN yes | sdkmanager --licenses && sdkmanager --version
 
-RUN yes | sdkmanager "cmake;3.6.4111459" > /dev/null
+# Install Android tools using sdkmanager
+RUN yes | sdkmanager "ndk;23.1.7779620" > /dev/null
+
 RUN yes | sdkmanager "cmake;3.22.1" > /dev/null
-RUN yes | sdkmanager "build-tools;30.0.3" > /dev/null
+RUN yes | sdkmanager "build-tools;35.0.0" > /dev/null
+
+RUN yes | sdkmanager "platform-tools" > /dev/null
+RUN yes | sdkmanager "platforms;android-35" > /dev/null
 
 # Install bundletool
 RUN wget -q https://github.com/google/bundletool/releases/download/1.4.0/bundletool-all-1.4.0.jar

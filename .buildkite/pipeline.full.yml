@@ -1013,7 +1013,6 @@ steps:
           image-repository: 855461928731.dkr.ecr.us-west-1.amazonaws.com/android
           cache-from:
             - android-common:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:latest
-      - docker-compose#v4.7.0:
           push:
             - android-common:855461928731.dkr.ecr.us-west-1.amazonaws.com/android:latest
 

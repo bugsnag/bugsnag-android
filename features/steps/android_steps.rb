@@ -263,6 +263,25 @@ Then("the event stacktrace identifies the program counter") do
   end
 end
 
+Then("the event stacktrace has valid addresses") do
+  trace = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.exceptions.0.stacktrace")
+  trace.each_with_index do |frame, index|
+    loadAddress = frame['loadAddress']
+    frameAddress = frame['frameAddress']
+    relPC = frame['lineNumber'].to_i
+
+    Maze.check.match(/^0x[0-9a-fA-F]+$/, loadAddress, "Frame #{index} loadAddress is not a valid hex value")
+    Maze.check.match(/^0x[0-9a-fA-F]+$/, frameAddress, "Frame #{index} frameAddress is not a valid hex value")
+
+    loadAddressInt = loadAddress.slice(2, loadAddress.length).to_i(16)
+    frameAddressInt = frameAddress.slice(2, frameAddress.length).to_i(16)
+
+    Maze.check.equal(relPC, frameAddressInt - loadAddressInt,
+      "lineNumber(#{relPC}) of frame #{index} does not match the frameAddress(#{frameAddress}) - loadAddress(#{loadAddress}) = #{frameAddressInt - loadAddressInt}"
+    )
+  end
+end
+
 # EventStore flushes multiple times on launch with access controlled via a semaphore,
 # which results in multiple similar log messages
 Then("Bugsnag confirms it has no errors to send") do

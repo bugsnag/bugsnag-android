@@ -52,8 +52,6 @@ steps:
     env:
       JAVA_VERSION: 17
     command: './gradlew --continue checkstyle detekt lint ktlintCheck'
-    env:
-      JAVA_VERSION: 17
 
   - label: ':android: Binary compatibility checks'
     timeout_in_minutes: 20
@@ -62,8 +60,6 @@ steps:
     env:
       JAVA_VERSION: 17
     command: './gradlew apiCheck'
-    env:
-      JAVA_VERSION: 17
 
   - label: ':android: CppCheck'
     timeout_in_minutes: 10
@@ -100,8 +96,6 @@ steps:
     env:
       JAVA_VERSION: 17
     command: './gradlew test'
-    env:
-      JAVA_VERSION: 17
 
   - label: ':android: Instrumentation tests'
     timeout_in_minutes: 10

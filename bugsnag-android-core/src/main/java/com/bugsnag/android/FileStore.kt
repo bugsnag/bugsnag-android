@@ -112,24 +112,32 @@ internal abstract class FileStore(
 
     fun discardOldestFileIfNeeded() {
         // Limit number of saved payloads to prevent disk space issues
-        if (isStorageDirValid(storageDir)) {
-            val listFiles = storageDir.listFiles() ?: return
-            if (listFiles.size < maxStoreCount) return
-            val sortedListFiles = listFiles.sortedBy { it.lastModified() }
-            // Number of files to discard takes into account that a new file may need to be written
-            val numberToDiscard = listFiles.size - maxStoreCount + 1
-            var discardedCount = 0
-            for (file in sortedListFiles) {
-                if (discardedCount == numberToDiscard) {
-                    return
-                } else if (!queuedFiles.contains(file)) {
-                    logger.w(
-                        "Discarding oldest error as stored error limit reached: '" +
-                            file.path + '\''
-                    )
-                    deleteStoredFiles(setOf(file))
-                    discardedCount++
-                }
+        if (!isStorageDirValid(storageDir)) return
+        val listFiles = storageDir.listFiles() ?: return
+        if (listFiles.size < maxStoreCount) return
+
+        // Store lastModified to ensure it doesn't change during sort
+        val timestampedFiles = listFiles.mapTo(ArrayList(listFiles.size)) { file ->
+            FileWithTimestamp(file, file.lastModified())
+        }
+
+        // Sort by cached lastModified timestamps
+        timestampedFiles.sort()
+
+        // Number of files to discard takes into account that a new file may need to be written
+        val numberToDiscard = listFiles.size - maxStoreCount + 1
+        var discardedCount = 0
+
+        for (fileMeta in timestampedFiles) {
+            val file = fileMeta.file
+            if (discardedCount == numberToDiscard) {
+                return
+            } else if (!queuedFiles.contains(file)) {
+                logger.w(
+                    "Discarding oldest error as stored error limit reached: '${file.path}'"
+                )
+                deleteStoredFiles(setOf(file))
+                discardedCount++
             }
         }
     }
@@ -187,5 +195,19 @@ internal abstract class FileStore(
         } finally {
             lock.unlock()
         }
+    }
+
+    /**
+     * A data holder for associating a {@link File} with its last modified timestamp.
+     *
+     * @param file The file to associate with a timestamp.
+     * @param timestamp The last modified time of the file, cached to ensure consistent ordering.
+     */
+    private data class FileWithTimestamp(
+        val file: File,
+        val timestamp: Long
+    ) : Comparable<FileWithTimestamp> {
+        override fun compareTo(other: FileWithTimestamp): Int =
+            timestamp.compareTo(other.timestamp)
     }
 }
