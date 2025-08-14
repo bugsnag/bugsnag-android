@@ -1,7 +1,6 @@
 package com.bugsnag.android.internal
 
 import java.io.InputStream
-import kotlin.math.pow
 
 /**
  * Fast and lightweight JSON parser that maps directly to Collection objects.
@@ -119,7 +118,7 @@ class JsonCollectionParser(private val input: InputStream) {
                         }
                         current.toChar().also { advance() }
                     }
-                    stringBuilder.append(String(hex).toInt(16).toChar())
+                    stringBuilder.appendCodePoint(String(hex).toInt(16))
                     continue
                 } else {
                     stringBuilder.append(ESCAPE_CHARS[current])
