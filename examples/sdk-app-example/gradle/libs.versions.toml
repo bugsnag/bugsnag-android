@@ -2,7 +2,7 @@
 activityCompose = "1.8.0"
 agp = "8.10.0"
 appcompat = "1.6.1"
-bugsnag-android = "6.16.0"
+bugsnag-android = "6.17.0"
 bugsnag-gradle = "0.4.0"
 composeBom = "2024.09.00"
 coreKtx = "1.16.0"
@@ -13,7 +13,7 @@ squareup-okhttp3 = "4.12.0"
 
 [libraries]
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat"}
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
@@ -24,12 +24,12 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 bugsnag-android = { group = "com.bugsnag", name = "bugsnag-android", version.ref = "bugsnag-android"}
-bugsnag-okhttp = {group = "com.bugsnag", name = "bugsnag-plugin-android-okhttp", version.ref = "bugsnag-android"}
-google-android-material = { group = "com.google.android.material", name = "material", version.ref = "google-android-material"}
-squareup-okhttp3 = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "squareup-okhttp3"}
+bugsnag-okhttp = { group = "com.bugsnag", name = "bugsnag-plugin-android-okhttp", version.ref = "bugsnag-android" }
+google-android-material = { group = "com.google.android.material", name = "material", version.ref = "google-android-material" }
+squareup-okhttp3 = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "squareup-okhttp3" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-bugsnag-gradle = { id = "com.bugsnag.gradle", version.ref = "bugsnag-gradle"}
+bugsnag-gradle = { id = "com.bugsnag.gradle", version.ref = "bugsnag-gradle" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
