@@ -119,7 +119,7 @@ class JsonCollectionParser(private val input: InputStream) {
                         }
                         current.toChar().also { advance() }
                     }
-                    stringBuilder.append(hex.contentToString().toInt(16).toChar())
+                    stringBuilder.append(String(hex).toInt(16).toChar())
                     continue
                 } else {
                     stringBuilder.append(ESCAPE_CHARS[current])

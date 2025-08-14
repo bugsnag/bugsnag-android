@@ -1,0 +1,135 @@
+{
+  "metaData": {
+    "utf8Testing": {
+      "asciiOnly": "Hello, World!",
+      "latin1Range": "¡Hola México!",
+      "twoByteSequences": "こんにちは",
+      "threeByteSequences": "♠♣♥♦",
+      "fourByteSequences": "🌍🌎🌏",
+      "mixedLength": "Hello™●♠€한🌍",
+      "surrogates": "\uD83D\uDE00\uD83D\uDE03\uD83D\uDE04",
+      "allEscapes": "\"\\/\b\f\n\r\t\u0001",
+      "longString": "prefix_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa_suffix"
+    },
+    "numberEdgeCases": {
+      "integers": {
+        "zero": 0,
+        "minusZero": -0,
+        "positiveOne": 1,
+        "negativeOne": -1,
+        "longMax": 9223372036854775807,
+        "longMin": -9223372036854775808
+      },
+      "decimals": {
+        "simpleDecimal": 123.456,
+        "negativeDecimal": -123.456,
+        "leadingZero": 0.123,
+        "trailingZero": 123.0,
+        "manyDecimals": 0.123456789012345
+      },
+      "exponents": {
+        "positiveExp": 1.23E+11,
+        "negativeExp": 1.23E-11,
+        "zeroExp": 0E0,
+        "largeExp": 1.23E+308,
+        "tinyExp": 1.23E-308
+      }
+    },
+    "structuralTests": {
+      "deepNesting": {
+        "level1": {
+          "level2": {
+            "level3": {
+              "level4": {
+                "level5": "deep value"
+              }
+            }
+          }
+        }
+      },
+      "arrayTests": {
+        "empty": [],
+        "nested": [
+          [
+            1,
+            2
+          ],
+          [
+            3,
+            [
+              4,
+              5
+            ]
+          ],
+          [
+            6,
+            [
+              7,
+              [
+                8,
+                9
+              ]
+            ]
+          ]
+        ],
+        "mixed": [
+          null,
+          true,
+          false,
+          123,
+          "string",
+          [
+            "nested"
+          ],
+          {
+            "key": "value"
+          }
+        ]
+      },
+      "specialValues": {
+        "nullValue": null,
+        "boolTrue": true,
+        "boolFalse": false,
+        "emptyString": "",
+        "emptyObject": {},
+        "objectWithEmpty": {
+          "": ""
+        }
+      }
+    }
+  },
+  "severity": "warning",
+  "severityReason": {
+    "type": "handledException",
+    "unhandledOverridden": false
+  },
+  "unhandled": false,
+  "exceptions": [],
+  "projectPackages": [
+    "com.example.foo"
+  ],
+  "user": {},
+  "app": {
+    "type": "android",
+    "versionCode": 0
+  },
+  "device": {
+    "cpuAbi": [],
+    "manufacturer": "samsung",
+    "model": "s7",
+    "osName": "android",
+    "osVersion": "7.1",
+    "runtimeVersions": {
+      "osBuild": "bulldog",
+      "androidApiLevel": "24"
+    },
+    "totalMemory": 109230923452,
+    "freeDisk": 22234423124,
+    "freeMemory": 92340255592,
+    "orientation": "portrait",
+    "time": "1970-01-01T00:00:00.000Z"
+  },
+  "breadcrumbs": [],
+  "threads": [],
+  "featureFlags": []
+}

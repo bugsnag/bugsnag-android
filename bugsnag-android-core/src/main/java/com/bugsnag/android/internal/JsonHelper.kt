@@ -33,7 +33,7 @@ internal object JsonHelper {
     fun serialize(value: Any, stream: OutputStream) {
         stream.bufferedWriter().use { writer ->
             JsonStream(writer).use { jsonWriter ->
-                writeValue(jsonWriter, value)
+                jsonWriter.value(value)
             }
         }
     }
@@ -139,35 +139,6 @@ internal object JsonHelper {
             }
 
             else -> throw IllegalArgumentException("Cannot convert $value to long")
-        }
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun writeValue(writer: JsonStream, value: Any?) {
-        when (value) {
-            null -> writer.nullValue()
-            is Map<*, *> -> {
-                writer.beginObject()
-                (value as Map<String, Any?>).forEach { (key, mapValue) ->
-                    writer.name(key)
-                    writeValue(writer, mapValue)
-                }
-                writer.endObject()
-            }
-
-            is Collection<*> -> {
-                writer.beginArray()
-                value.forEach { item ->
-                    writeValue(writer, item)
-                }
-                writer.endArray()
-            }
-
-            is Boolean -> writer.value(value)
-            is Number -> writer.value(value)
-            is String -> writer.value(value)
-            is Date -> writer.value(DateUtils.toIso8601(value))
-            else -> writer.value(value.toString())
         }
     }
 }
