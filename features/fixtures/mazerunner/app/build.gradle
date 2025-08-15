@@ -8,7 +8,11 @@ android {
     ndkVersion parent.ext.ndkVersion
 
     defaultConfig {
-        minSdkVersion 17
+        if (project.hasProperty("TEST_FIXTURE_MINSDK")){
+            minSdkVersion project.property("TEST_FIXTURE_MINSDK").toInteger()
+        } else {
+            minSdkVersion 17
+        }
         targetSdkVersion 34
         versionCode 1
         versionName System.getenv("BUILDKITE_BUILD_NUMBER") ?: "1.1.14"

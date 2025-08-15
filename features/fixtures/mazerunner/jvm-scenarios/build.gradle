@@ -10,7 +10,11 @@ android {
     compileSdkVersion 35
 
     defaultConfig {
-        minSdkVersion 17
+        if (project.hasProperty("TEST_FIXTURE_MINSDK")){
+            minSdkVersion project.property("TEST_FIXTURE_MINSDK").toInteger()
+        } else {
+            minSdkVersion 17
+        }
         manifestPlaceholders = [
                 bugsnagPerformanceApiKey: System.getenv("BUGSNAG_PERFORMANCE_API_KEY")
                         ?: "abc12312312312312312312312312312",
