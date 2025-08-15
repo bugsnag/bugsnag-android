@@ -106,6 +106,7 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
     var threads: MutableList<Thread>
     var groupingHash: String? = null
     var context: String? = null
+    var groupingDiscriminator: String? = null
 
     var redactedKeys: Collection<Pattern>
         get() = jsonStreamer.redactedKeys
@@ -153,6 +154,7 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
         // Write error basics
         writer.beginObject()
         writer.name("context").value(context)
+        writer.name("groupingDiscriminator").value(groupingDiscriminator)
         writer.name("metaData").value(metadata)
 
         writer.name("severity").value(severity)

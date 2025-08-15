@@ -1,10 +1,10 @@
 package com.bugsnag.android;
 
-import com.bugsnag.android.internal.ImmutableConfig;
-import com.bugsnag.android.internal.InternalMetrics;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.bugsnag.android.internal.InternalMetrics;
+import com.bugsnag.android.internal.ImmutableConfig;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -530,5 +530,17 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware, F
 
     void setInternalMetrics(InternalMetrics metrics) {
         impl.setInternalMetrics(metrics);
+    }
+
+    @Nullable
+    public String setGroupingDiscriminator(@Nullable String groupingDiscriminator) {
+        String previousGroupingDiscriminator = impl.getGroupingDiscriminator();
+        impl.setGroupingDiscriminator(groupingDiscriminator);
+        return previousGroupingDiscriminator;
+    }
+
+    @Nullable
+    public String getGroupingDiscriminator() {
+        return impl.getGroupingDiscriminator();
     }
 }
