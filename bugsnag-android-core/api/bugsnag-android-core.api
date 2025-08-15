@@ -388,6 +388,7 @@ public class com/bugsnag/android/Event : com/bugsnag/android/FeatureFlagAware, c
 	public fun getDevice ()Lcom/bugsnag/android/DeviceWithState;
 	public fun getErrors ()Ljava/util/List;
 	public fun getFeatureFlags ()Ljava/util/List;
+	public fun getGroupingDiscriminator ()Ljava/lang/String;
 	public fun getGroupingHash ()Ljava/lang/String;
 	public fun getMetadata (Ljava/lang/String;)Ljava/util/Map;
 	public fun getMetadata (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
@@ -400,6 +401,7 @@ public class com/bugsnag/android/Event : com/bugsnag/android/FeatureFlagAware, c
 	public fun leaveBreadcrumb (Ljava/lang/String;Lcom/bugsnag/android/BreadcrumbType;Ljava/util/Map;)Lcom/bugsnag/android/Breadcrumb;
 	public fun setApiKey (Ljava/lang/String;)V
 	public fun setContext (Ljava/lang/String;)V
+	public fun setGroupingDiscriminator (Ljava/lang/String;)Ljava/lang/String;
 	public fun setGroupingHash (Ljava/lang/String;)V
 	public fun setSeverity (Lcom/bugsnag/android/Severity;)V
 	public fun setTraceCorrelation (Ljava/util/UUID;J)V
