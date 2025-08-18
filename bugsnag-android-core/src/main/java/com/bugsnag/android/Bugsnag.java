@@ -106,6 +106,21 @@ public final class Bugsnag {
     }
 
     /**
+     * Set the Grouping Discriminator and return its previous value (if any was set).
+     *
+     * @param groupingDiscriminator the new grouping discriminator or null to clear it
+     */
+    @Nullable
+    public static String setGroupingDiscriminator(@Nullable String groupingDiscriminator) {
+        return getClient().setGroupingDiscriminator(groupingDiscriminator);
+    }
+
+    @Nullable
+    public static String getGroupingDiscriminator() {
+        return getClient().getGroupingDiscriminator();
+    }
+
+    /**
      * Sets the user associated with the event.
      */
     public static void setUser(@Nullable final String id,

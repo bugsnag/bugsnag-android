@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
 /**
@@ -98,6 +99,22 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
     final LaunchCrashTracker launchCrashTracker;
     final BackgroundTaskService bgTaskService = new BackgroundTaskService();
     private final ExceptionHandler exceptionHandler;
+
+    private final AtomicReference<String> groupingDiscriminator = new AtomicReference<>(null);
+
+
+    /**
+     * @noinspection UnusedReturnValue
+     */
+    @Nullable
+    public String setGroupingDiscriminator(@Nullable String groupingDiscriminator) {
+        return this.groupingDiscriminator.getAndSet(groupingDiscriminator);
+    }
+
+    @Nullable
+    public String getGroupingDiscriminator() {
+        return groupingDiscriminator.get();
+    }
 
     /**
      * Initialize a Bugsnag client
