@@ -696,13 +696,13 @@ steps:
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
-  - label: ':browserstack: Android 15 NDK r21 smoke tests'
+  - label: ':bitbar: Android 15 NDK r21 smoke tests'
     depends_on: "fixture-r21"
     timeout_in_minutes: 30
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/bs-fixture-r21-url.txt"
+          - "build/fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -714,9 +714,11 @@ steps:
         command:
           - "features/smoke_tests"
           - "--exclude=features/smoke_tests/01_anr.feature"
-          - "--app=@build/bs-fixture-r21-url.txt"
+          - "--app=@build/fixture-r21-url.txt"
           - "--appium-version=1.22.0"
-          - "--farm=bs"
+          - "--no-tunnel"
+          - "--aws-public-ip"
+          - "--farm=bb"
           - "--device=ANDROID_15"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
@@ -724,8 +726,8 @@ steps:
         branch: "^master|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
+    concurrency: 25
+    concurrency_group: 'bitbar'
     concurrency_method: eager
 
   - label: ':browserstack: Android 15 NDK r21 ANR smoke tests'
@@ -1191,13 +1193,13 @@ steps:
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
 
-  - label: ':browserstack: Android 15 NDK r28 smoke tests'
+  - label: ':bitbar: Android 15 NDK r28 smoke tests'
     depends_on: "fixture-r28"
     timeout_in_minutes: 30
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/bs-fixture-r28-url.txt"
+          - "build/fixture-r28-url.txt"
           - "build/fixture-r28/*"
         upload:
           - "maze_output/failed/**/*"
@@ -1209,9 +1211,11 @@ steps:
         command:
           - "features/smoke_tests"
           - "--exclude=features/smoke_tests/01_anr.feature"
-          - "--app=@build/bs-fixture-r28-url.txt"
+          - "--app=@build/fixture-r28-url.txt"
           - "--appium-version=1.22.0"
-          - "--farm=bs"
+          - "--no-tunnel"
+          - "--aws-public-ip"
+          - "--farm=bb"
           - "--device=ANDROID_15"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
@@ -1219,8 +1223,8 @@ steps:
         branch: "^master|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
+    concurrency: 25
+    concurrency_group: 'bitbar'
     concurrency_method: eager
 
   - label: ':browserstack: Android 15 NDK r28 ANR smoke tests'
