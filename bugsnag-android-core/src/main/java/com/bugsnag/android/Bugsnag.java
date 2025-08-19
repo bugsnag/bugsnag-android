@@ -497,7 +497,6 @@ public final class Bugsnag {
                 }
             }
         }
-
         return client;
     }
 }
