@@ -81,7 +81,7 @@ internal class UnhandledExceptionEventDetailChangeScenario(
         )
         Bugsnag.addFeatureFlag("test1")
         Bugsnag.addFeatureFlag("test2")
-
+        Bugsnag.setGroupingDiscriminator("abc123")
         if (eventMetadata == "notify") {
             Bugsnag.notify(RuntimeException("UnhandledExceptionEventDetailChangeScenario"))
         } else {

@@ -71,6 +71,7 @@ public final class com/bugsnag/android/Bugsnag {
 	public static fun getBreadcrumbs ()Ljava/util/List;
 	public static fun getClient ()Lcom/bugsnag/android/Client;
 	public static fun getContext ()Ljava/lang/String;
+	public static fun getGroupingDiscriminator ()Ljava/lang/String;
 	public static fun getLastRunInfo ()Lcom/bugsnag/android/LastRunInfo;
 	public static fun getMetadata (Ljava/lang/String;)Ljava/util/Map;
 	public static fun getMetadata (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
@@ -87,6 +88,7 @@ public final class com/bugsnag/android/Bugsnag {
 	public static fun removeOnSession (Lcom/bugsnag/android/OnSessionCallback;)V
 	public static fun resumeSession ()Z
 	public static fun setContext (Ljava/lang/String;)V
+	public static fun setGroupingDiscriminator (Ljava/lang/String;)Ljava/lang/String;
 	public static fun setUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public static fun start (Landroid/content/Context;)Lcom/bugsnag/android/Client;
 	public static fun start (Landroid/content/Context;Lcom/bugsnag/android/Configuration;)Lcom/bugsnag/android/Client;
@@ -127,6 +129,7 @@ public class com/bugsnag/android/Client : com/bugsnag/android/CallbackAware, com
 	protected fun finalize ()V
 	public fun getBreadcrumbs ()Ljava/util/List;
 	public fun getContext ()Ljava/lang/String;
+	public fun getGroupingDiscriminator ()Ljava/lang/String;
 	public fun getLastRunInfo ()Lcom/bugsnag/android/LastRunInfo;
 	public fun getMetadata (Ljava/lang/String;)Ljava/util/Map;
 	public fun getMetadata (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
@@ -142,6 +145,7 @@ public class com/bugsnag/android/Client : com/bugsnag/android/CallbackAware, com
 	public fun removeOnSession (Lcom/bugsnag/android/OnSessionCallback;)V
 	public fun resumeSession ()Z
 	public fun setContext (Ljava/lang/String;)V
+	public fun setGroupingDiscriminator (Ljava/lang/String;)Ljava/lang/String;
 	public fun setUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public fun startSession ()V
 }
