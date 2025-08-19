@@ -102,7 +102,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
     private final AtomicReference<String> groupingDiscriminator = new AtomicReference<>(null);
 
-
     /**
      * @noinspection UnusedReturnValue
      */
