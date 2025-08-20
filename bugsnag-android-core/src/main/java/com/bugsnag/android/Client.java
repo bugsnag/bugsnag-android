@@ -99,7 +99,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
     final LaunchCrashTracker launchCrashTracker;
     final BackgroundTaskService bgTaskService = new BackgroundTaskService();
     private final ExceptionHandler exceptionHandler;
-
     private final AtomicReference<String> groupingDiscriminator = new AtomicReference<>(null);
 
     /**
@@ -750,6 +749,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
             FeatureFlags featureFlags = featureFlagState.getFeatureFlags();
             Event event = new Event(exc, immutableConfig, severityReason, metadata, featureFlags,
                     logger);
+            event.setGroupingDiscriminator(getGroupingDiscriminator());
             populateAndNotifyAndroidEvent(event, onError);
         } else {
             logNull("notify");
@@ -769,6 +769,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         Metadata data = Metadata.Companion.merge(metadataState.getMetadata(), metadata);
         Event event = new Event(exc, immutableConfig, handledState,
                 data, featureFlagState.getFeatureFlags(), logger);
+        event.setGroupingDiscriminator(getGroupingDiscriminator());
         populateAndNotifyAndroidEvent(event, null);
 
         // persist LastRunInfo so that on relaunch users can check the app crashed
@@ -808,6 +809,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         event.setContext(contextState.getContext());
 
         event.setInternalMetrics(internalMetrics);
+        event.setGroupingDiscriminator(getGroupingDiscriminator());
 
         notifyInternal(event, onError);
     }
@@ -837,6 +839,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
         // leave an error breadcrumb of this event - for the next event
         leaveErrorBreadcrumb(event);
+        setGroupingDiscriminator(getGroupingDiscriminator());
 
         deliveryDelegate.deliver(event);
     }
