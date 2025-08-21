@@ -6,7 +6,7 @@ steps:
     key: "fixture-minimal"
     timeout_in_minutes: 30
     agents:
-      queue: macos-15
+      queue: macos-15-1
     artifact_paths: build/fixture-minimal.apk
     command: make fixture-minimal
     env:
@@ -15,7 +15,7 @@ steps:
   - label: ':android: Build Example App'
     timeout_in_minutes: 10
     agents:
-      queue: macos-15
+      queue: macos-15-1
     command: 'make example-app'
     env:
       JAVA_VERSION: 17
@@ -24,7 +24,7 @@ steps:
     key: "fixture-debug"
     timeout_in_minutes: 30
     agents:
-      queue: macos-15
+      queue: macos-15-1
     artifact_paths:
       - "build/fixture-debug.apk"
       - "build/fixture-debug/*"
@@ -35,7 +35,7 @@ steps:
   - label: ':android: Build Scan'
     timeout_in_minutes: 10
     agents:
-      queue: macos-15
+      queue: macos-15-1
     env:
       JAVA_VERSION: 17
     command: './gradlew clean assembleRelease check --scan'
