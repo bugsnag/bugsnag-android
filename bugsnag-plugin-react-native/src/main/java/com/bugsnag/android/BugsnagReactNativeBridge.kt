@@ -7,6 +7,7 @@ import com.bugsnag.android.StateEvent.ClearFeatureFlags
 import com.bugsnag.android.StateEvent.ClearMetadataSection
 import com.bugsnag.android.StateEvent.ClearMetadataValue
 import com.bugsnag.android.StateEvent.UpdateContext
+import com.bugsnag.android.StateEvent.UpdateGroupingDiscriminator
 import com.bugsnag.android.StateEvent.UpdateUser
 import com.bugsnag.android.internal.StateObserver
 
@@ -24,6 +25,11 @@ internal class BugsnagReactNativeBridge(
             is UpdateContext -> {
                 MessageEvent("ContextUpdate", event.context)
             }
+
+            is UpdateGroupingDiscriminator -> {
+                MessageEvent("GroupingDiscriminatorUpdate", event.groupingDiscriminator)
+            }
+
             is AddMetadata, is ClearMetadataSection, is ClearMetadataValue -> {
                 MessageEvent("MetadataUpdate", client.metadata)
             }
