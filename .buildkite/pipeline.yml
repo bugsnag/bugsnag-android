@@ -22,10 +22,7 @@ steps:
       - "build/bs-fixture-r19-url.txt"
       - "build/fixture-r19/*"
     commands:
-      - bundle install
-      - make fixture-r19
-      - bundle exec upload-app --farm=bb --app=./build/fixture-r19.apk --app-id-file=build/fixture-r19-url.txt
-      - bundle exec upload-app --farm=bs --app=./build/fixture-r19.apk --app-id-file=build/bs-fixture-r19-url.txt
+      - "ruby scripts/build-test-fixture.rb r19"
     env:
       JAVA_VERSION: 17
 
@@ -40,7 +37,7 @@ steps:
       - "build/bs-fixture-r21-url.txt"
       - "build/fixture-r21/*"
     commands:
-      - ruby scripts/build-test-fixture.rb
+      - "ruby scripts/build-test-fixture.rb r21"
     env:
       ANDROID_NDK_ROOT: "/Users/administrator/Library/Android/sdk/ndk/26.1.10909125"
       JAVA_VERSION: 17
@@ -56,7 +53,7 @@ steps:
       - "build/bs-fixture-r28-url.txt"
       - "build/fixture-r28/*"
     commands:
-      - ruby scripts/build-test-fixture.rb
+      - "ruby scripts/build-test-fixture.rb r28"
     env:
       ANDROID_NDK_ROOT: "/Users/administrator/Library/Android/sdk/ndk/26.1.10909125"
       JAVA_VERSION: 17
