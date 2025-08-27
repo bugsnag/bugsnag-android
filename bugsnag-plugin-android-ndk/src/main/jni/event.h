@@ -28,7 +28,7 @@
 /**
  * Version of the bugsnag_event struct. Serialized to report header.
  */
-#define BUGSNAG_EVENT_VERSION 14
+#define BUGSNAG_EVENT_VERSION 15
 
 #ifdef __cplusplus
 extern "C" {
@@ -236,6 +236,7 @@ typedef struct {
   int handled_events;
   int unhandled_events;
   char grouping_hash[64];
+  char grouping_discriminator[64];
   bool unhandled;
   char api_key[64];
 

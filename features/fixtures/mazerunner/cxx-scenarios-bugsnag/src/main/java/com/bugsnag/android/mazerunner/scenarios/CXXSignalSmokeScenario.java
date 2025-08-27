@@ -100,6 +100,8 @@ public class CXXSignalSmokeScenario extends Scenario {
                 BreadcrumbType.MANUAL
         );
 
+        Bugsnag.setGroupingDiscriminator("abc123");
+
         Handler main = new Handler(Looper.getMainLooper());
         main.postDelayed(new Runnable() {
             @Override

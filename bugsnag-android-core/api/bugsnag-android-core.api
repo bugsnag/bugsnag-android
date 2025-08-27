@@ -763,6 +763,11 @@ public final class com/bugsnag/android/StateEvent$UpdateContext : com/bugsnag/an
 	public fun <init> (Ljava/lang/String;)V
 }
 
+public final class com/bugsnag/android/StateEvent$UpdateGroupingDiscriminator : com/bugsnag/android/StateEvent {
+	public final field groupingDiscriminator Ljava/lang/String;
+	public fun <init> (Ljava/lang/String;)V
+}
+
 public final class com/bugsnag/android/StateEvent$UpdateInForeground : com/bugsnag/android/StateEvent {
 	public final field inForeground Z
 	public fun <init> (ZLjava/lang/String;)V

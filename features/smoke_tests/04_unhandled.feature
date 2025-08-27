@@ -105,6 +105,7 @@ Feature: Unhandled smoke tests
     And I configure Bugsnag for "CXXSignalSmokeScenario"
     And I wait to receive an error
     Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And the event "groupingDiscriminator" equals "abc123"
 
     # Exception details
     And the error payload field "events" is an array with 1 elements
