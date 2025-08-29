@@ -1,4 +1,3 @@
-import kotlinx.validation.ApiValidationExtension
 import org.jetbrains.dokka.gradle.DokkaTask
 
 plugins {
@@ -60,13 +59,8 @@ android {
     }
 
     sourceSets {
-        named("main") {
-            java.srcDirs("dsl-json/library/src/main/java")
-        }
-
         named("test") {
             java.srcDirs(
-                "dsl-json/library/src/test/java",
                 "src/sharedTest/java"
             )
         }
@@ -98,10 +92,6 @@ tasks.getByName<DokkaTask>("dokkaHtml") {
             }
         }
     }
-}
-
-plugins.withId("org.jetbrains.kotlinx.binary-compatibility-validator") {
-    project.extensions.getByType(ApiValidationExtension::class.java).ignoredPackages.add("com.bugsnag.android.repackaged.dslplatform.json")
 }
 
 apply(from = rootProject.file("gradle/detekt.gradle"))
