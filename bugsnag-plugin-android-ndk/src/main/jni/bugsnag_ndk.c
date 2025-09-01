@@ -432,13 +432,16 @@ static void JNI_NativeBridge_updateGroupingDiscriminator(JNIEnv *env,
                                                          jobject _this,
                                                          jstring new_value) {
   bsg_environment *bsg_env = request_env_write_lock();
+  if (bsg_env == NULL) {
+    return;
+  }
   if (new_value == NULL) {
     bugsnag_event_set_grouping_discriminator(&bsg_env->next_event, NULL);
     goto end;
   }
 
-  char *value = (char *)bsg_safe_get_string_utf_chars(env, new_value);
-  if (new_value == NULL) {
+  const char *value = bsg_safe_get_string_utf_chars(env, new_value);
+  if (value == NULL) {
     goto end;
   }
   bugsnag_event_set_grouping_discriminator(&bsg_env->next_event, value);

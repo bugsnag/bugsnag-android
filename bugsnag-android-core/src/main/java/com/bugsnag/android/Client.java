@@ -35,7 +35,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
 /**
@@ -99,20 +98,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
     final LaunchCrashTracker launchCrashTracker;
     final BackgroundTaskService bgTaskService = new BackgroundTaskService();
     private final ExceptionHandler exceptionHandler;
-    private final AtomicReference<String> groupingDiscriminator = new AtomicReference<>(null);
-
-    /**
-     * @noinspection UnusedReturnValue
-     */
-    @Nullable
-    public String setGroupingDiscriminator(@Nullable String groupingDiscriminator) {
-        return this.groupingDiscriminator.getAndSet(groupingDiscriminator);
-    }
-
-    @Nullable
-    public String getGroupingDiscriminator() {
-        return groupingDiscriminator.get();
-    }
+    private final GroupingDiscriminatorState groupingDiscriminatorState =
+            new GroupingDiscriminatorState();
 
     /**
      * Initialize a Bugsnag client
@@ -466,6 +453,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         launchCrashTracker.addObserver(observer);
         memoryTrimState.addObserver(observer);
         featureFlagState.addObserver(observer);
+        groupingDiscriminatorState.addObserver(observer);
     }
 
     void removeObserver(StateObserver observer) {
@@ -479,6 +467,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         launchCrashTracker.removeObserver(observer);
         memoryTrimState.removeObserver(observer);
         featureFlagState.removeObserver(observer);
+        groupingDiscriminatorState.removeObserver(observer);
     }
 
     /**
@@ -577,6 +566,33 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
      */
     public void setContext(@Nullable String context) {
         contextState.setManualContext(context);
+    }
+
+    /**
+     * Sets a new error grouping discriminator, and returns the previous value. Similar to
+     * contexts, grouping discriminators are used to group errors in your Bugsnag dashboard.
+     * By default, errors are grouped by their stacktrace. By setting a grouping discriminator
+     * errors that would normally be grouped separately will be grouped together if they
+     * have the same grouping discriminator.
+     *
+     * @param groupingDiscriminator the new grouping discriminator (or null to clear any)
+     * @return the previously set grouping discriminator (or null if none was set)
+     * @see #getGroupingDiscriminator()
+     */
+    @Nullable
+    public String setGroupingDiscriminator(@Nullable String groupingDiscriminator) {
+        return groupingDiscriminatorState.setGroupingDiscriminator(groupingDiscriminator);
+    }
+
+    /**
+     * Returns the current global error grouping discriminator, or null if none is set.
+     *
+     * @return the current grouping discriminator, or null if none is set
+     * @see #setGroupingDiscriminator(String)
+     */
+    @Nullable
+    public String getGroupingDiscriminator() {
+        return groupingDiscriminatorState.getGroupingDiscriminator();
     }
 
     /**

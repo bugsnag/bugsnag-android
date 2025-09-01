@@ -66,7 +66,6 @@ const char *const bsg_called_api_names[] = {
     "event_clear_metadata_section",
     "event_get_api_key",
     "event_get_context",
-    "event_get_grouping_discriminator",
     "event_get_grouping_hash",
     "event_get_metadata_bool",
     "event_get_metadata_double",
@@ -84,6 +83,7 @@ const char *const bsg_called_api_names[] = {
     "event_set_severity",
     "event_set_unhandled",
     "event_set_user",
+    "event_get_grouping_discriminator",
 };
 const int bsg_called_apis_count =
     sizeof(bsg_called_api_names) / sizeof(*bsg_called_api_names);
