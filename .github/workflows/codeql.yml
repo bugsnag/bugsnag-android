@@ -14,10 +14,10 @@ permissions: read-all
 
 on:
   push:
-    branches: [ "next", integration/**/*, main ]
+    branches: [ "next", "main", "integration/**/*" ]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ "next", "main" ]
+    branches: [ "next", "main", "integration/**/*" ]
   schedule:
     - cron: '26 16 * * 1'
 
