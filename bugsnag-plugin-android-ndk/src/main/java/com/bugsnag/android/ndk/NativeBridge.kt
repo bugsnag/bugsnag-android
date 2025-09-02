@@ -83,7 +83,7 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
     external fun removeMetadata(tab: String, key: String)
     external fun pausedSession()
     external fun updateContext(context: String)
-    external fun updateGroupingDiscriminator(groupingDiscriminator: String)
+    external fun updateGroupingDiscriminator(groupingDiscriminator: String?)
     external fun updateInForeground(inForeground: Boolean, activityName: String)
     external fun updateIsLaunching(isLaunching: Boolean)
     external fun updateOrientation(orientation: String)
@@ -135,7 +135,7 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
             )
 
             is UpdateContext -> updateContext(event.context ?: "")
-            is UpdateGroupingDiscriminator -> updateGroupingDiscriminator(event.groupingDiscriminator ?: "")
+            is UpdateGroupingDiscriminator -> updateGroupingDiscriminator(event.groupingDiscriminator)
             is UpdateInForeground -> updateInForeground(
                 event.inForeground,
                 event.contextActivity ?: ""

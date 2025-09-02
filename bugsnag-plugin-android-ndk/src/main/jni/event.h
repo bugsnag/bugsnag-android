@@ -236,7 +236,7 @@ typedef struct {
   int handled_events;
   int unhandled_events;
   char grouping_hash[64];
-  char grouping_discriminator[64];
+  char grouping_discriminator[256];
   bool unhandled;
   char api_key[64];
 
