@@ -91,6 +91,7 @@ internal class BackgroundRunnableProviderServiceTest {
     ) {
         val threadIds = mutableSetOf<Long>()
         repeat(CONFINEMENT_TEST_ATTEMPTS) {
+            @Suppress("DEPRECATION")
             val future = service.submitTask(
                 taskType,
                 Runnable {

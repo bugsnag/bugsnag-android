@@ -166,6 +166,10 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
 
             is StateEvent.ClearFeatureFlag -> clearFeatureFlag(event.name)
             is StateEvent.ClearFeatureFlags -> clearFeatureFlags()
+
+            else -> {
+                // ignore
+            }
         }
     }
 
