@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.bugsnag.android.BreadcrumbType
 import com.bugsnag.android.Bugsnag
@@ -36,6 +37,7 @@ open class BaseCrashyActivity : AppCompatActivity() {
     private external fun notifyFromCXX()
 
     public override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main)
         setupToolbarLogo()
@@ -207,8 +209,6 @@ open class BaseCrashyActivity : AppCompatActivity() {
     }
 
     private fun setupToolbarLogo() {
-        val supportActionBar = supportActionBar
-
         if (supportActionBar != null) {
             supportActionBar.setDisplayShowHomeEnabled(true)
             supportActionBar.setIcon(R.drawable.ic_bugsnag_svg)
