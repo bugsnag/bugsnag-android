@@ -160,6 +160,10 @@ steps:
     concurrency: 25
     concurrency_group: 'bitbar'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: ':bitbar: Android 7 NDK r19 ANR smoke tests'
     depends_on: "fixture-r19"
@@ -195,6 +199,10 @@ steps:
     concurrency: 25
     concurrency_group: 'bitbar'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: ':bitbar: Android 8 NDK r19 smoke tests'
     depends_on: "fixture-r19"
@@ -229,6 +237,10 @@ steps:
     concurrency: 25
     concurrency_group: 'bitbar'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: ':browserstack: Android 8 NDK r19 ANR smoke tests'
     depends_on: "fixture-r19"
@@ -260,6 +272,10 @@ steps:
     concurrency: 5
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: ':bitbar: Android 9 NDK r21 smoke tests'
     depends_on: "fixture-r21"
@@ -294,6 +310,10 @@ steps:
     concurrency: 25
     concurrency_group: 'bitbar'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: ':browserstack: Android 9 NDK r21 ANR smoke tests'
     depends_on: "fixture-r21"
@@ -321,6 +341,10 @@ steps:
     concurrency: 5
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: ':bitbar: Android 10 NDK r21 smoke tests'
     depends_on: "fixture-r21"
@@ -355,6 +379,10 @@ steps:
     concurrency: 25
     concurrency_group: 'bitbar'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: ':browserstack: Android 10 NDK r21 ANR smoke tests'
     skip: All ANR scenarios are skipped on Android 10
@@ -387,6 +415,10 @@ steps:
     concurrency: 5
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: ':bitbar: Android 11 NDK r21 smoke tests'
     key: 'android-11-smoke'
@@ -422,6 +454,10 @@ steps:
     concurrency: 25
     concurrency_group: 'bitbar'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: ':browserstack: Android 11 NDK r21 ANR smoke tests'
     key: 'android-11-anr-smoke'
@@ -454,6 +490,10 @@ steps:
     concurrency: 5
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   # Android 11+ devices have the GWP-ASAN tool enabled which randomly samples native memory
   # to detect misuse (such as use-after-free, buffer overflow). If a failure is detected then
@@ -494,6 +534,10 @@ steps:
     concurrency: 25
     concurrency_group: 'bitbar'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: ':browserstack: Android 12 NDK r21 end-to-end tests - ANRs'
     depends_on:
@@ -526,6 +570,10 @@ steps:
     concurrency: 5
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: ':bitbar: Android 12 NDK r21 end-to-end tests - batch 2'
     depends_on:
@@ -562,6 +610,10 @@ steps:
     concurrency: 25
     concurrency_group: 'bitbar'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: ':bitbar: Android 13 NDK r21 smoke tests'
     depends_on: "fixture-r21"
@@ -596,6 +648,10 @@ steps:
     concurrency: 25
     concurrency_group: 'bitbar'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: ':browserstack: Android 13 NDK r21 ANR smoke tests'
     depends_on: "fixture-r21"
@@ -627,6 +683,10 @@ steps:
     concurrency: 5
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: ':bitbar: Android 14 NDK r21 smoke tests'
     depends_on: "fixture-r21"
@@ -661,6 +721,10 @@ steps:
     concurrency: 25
     concurrency_group: 'bitbar'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: ':browserstack: Android 14 NDK r21 ANR smoke tests'
     depends_on: "fixture-r21"
@@ -692,6 +756,10 @@ steps:
     concurrency: 5
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: ':bitbar: Android 15 NDK r21 smoke tests'
     depends_on: "fixture-r21"
@@ -726,6 +794,10 @@ steps:
     concurrency: 25
     concurrency_group: 'bitbar'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: ':browserstack: Android 15 NDK r21 ANR smoke tests'
     depends_on: "fixture-r21"
@@ -757,6 +829,10 @@ steps:
     concurrency: 5
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: ':bitbar: Android 9 NDK r28 smoke tests'
     depends_on: "fixture-r28"
@@ -791,6 +867,10 @@ steps:
     concurrency: 25
     concurrency_group: 'bitbar'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: ':browserstack: Android 9 NDK r28 ANR smoke tests'
     depends_on: "fixture-r28"
@@ -818,6 +898,10 @@ steps:
     concurrency: 5
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: ':bitbar: Android 10 NDK r28 smoke tests'
     depends_on: "fixture-r28"
@@ -852,6 +936,10 @@ steps:
     concurrency: 25
     concurrency_group: 'bitbar'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: ':browserstack: Android 10 NDK r28 ANR smoke tests'
     skip: All ANR scenarios are skipped on Android 10
@@ -884,6 +972,10 @@ steps:
     concurrency: 5
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: ':bitbar: Android 11 NDK r28 smoke tests'
     key: 'android-11-smoke-2'
@@ -919,6 +1011,10 @@ steps:
     concurrency: 25
     concurrency_group: 'bitbar'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: ':browserstack: Android 11 NDK r28 ANR smoke tests'
     key: 'android-11-anr-smoke-2'
@@ -951,6 +1047,10 @@ steps:
     concurrency: 5
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   # Android 11+ devices have the GWP-ASAN tool enabled which randomly samples native memory
   # to detect misuse (such as use-after-free, buffer overflow). If a failure is detected then
@@ -991,6 +1091,10 @@ steps:
     concurrency: 25
     concurrency_group: 'bitbar'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: ':browserstack: Android 12 NDK r28 end-to-end tests - ANRs'
     depends_on:
@@ -1023,6 +1127,10 @@ steps:
     concurrency: 5
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: ':bitbar: Android 12 NDK r28 end-to-end tests - batch 2'
     depends_on:
@@ -1059,6 +1167,10 @@ steps:
     concurrency: 25
     concurrency_group: 'bitbar'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: ':bitbar: Android 13 NDK r28 smoke tests'
     depends_on: "fixture-r28"
@@ -1093,6 +1205,10 @@ steps:
     concurrency: 25
     concurrency_group: 'bitbar'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: ':browserstack: Android 13 NDK r28 ANR smoke tests'
     depends_on: "fixture-r28"
@@ -1124,6 +1240,10 @@ steps:
     concurrency: 5
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: ':bitbar: Android 14 NDK r28 smoke tests'
     depends_on: "fixture-r28"
@@ -1158,6 +1278,10 @@ steps:
     concurrency: 25
     concurrency_group: 'bitbar'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: ':browserstack: Android 14 NDK r28 ANR smoke tests'
     depends_on: "fixture-r28"
@@ -1189,6 +1313,10 @@ steps:
     concurrency: 5
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: ':bitbar: Android 15 NDK r28 smoke tests'
     depends_on: "fixture-r28"
@@ -1223,6 +1351,10 @@ steps:
     concurrency: 25
     concurrency_group: 'bitbar'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: ':browserstack: Android 15 NDK r28 ANR smoke tests'
     depends_on: "fixture-r28"
@@ -1254,6 +1386,10 @@ steps:
     concurrency: 5
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
 
   - label: 'Conditionally include device farms/full tests'
     agents:
