@@ -638,4 +638,12 @@ public class NativeInterface {
     public static LastRunInfo getLastRunInfo() {
         return getClient().getLastRunInfo();
     }
+
+    /**
+     * Set the Grouping Discriminator and return its previous value (if any).
+     */
+    @Nullable
+    public static String setGroupingDiscriminator(@Nullable String groupingDiscriminator) {
+        return getClient().setGroupingDiscriminator(groupingDiscriminator);
+    }
 }
