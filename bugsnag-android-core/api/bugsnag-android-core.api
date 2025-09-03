@@ -553,6 +553,7 @@ public class com/bugsnag/android/NativeInterface {
 	public static fun setBinaryArch (Ljava/lang/String;)V
 	public static fun setClient (Lcom/bugsnag/android/Client;)V
 	public static fun setContext (Ljava/lang/String;)V
+	public static fun setGroupingDiscriminator (Ljava/lang/String;)Ljava/lang/String;
 	public static fun setUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public static fun setUser ([B[B[B)V
 	public static fun startSession ()V
