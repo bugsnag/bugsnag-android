@@ -93,7 +93,8 @@ internal class EventSerializationTest {
                         UUID(0x24b8b82900d34da3, -0x659434b74a5b9edc),
                         0x3dbe7c7ae84945b9
                     )
-                }
+                    it.groupingDiscriminator = "123456789"
+                },
             )
         }
 
@@ -126,7 +127,7 @@ internal class EventSerializationTest {
     fun testJsonSerialisation() = verifyJsonMatches(testCase.first, testCase.second)
 
     @Test
-    fun testJsonDeserializion() {
+    fun testJsonDeserialization() {
         verifyJsonParser(testCase.first, testCase.second) {
             Event(
                 eventMapper.convertToEventImpl(it, "5d1ec5bd39a74caa1267142706a7fb21"),

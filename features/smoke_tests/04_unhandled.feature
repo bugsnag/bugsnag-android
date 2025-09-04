@@ -9,6 +9,7 @@ Feature: Unhandled smoke tests
     And I configure Bugsnag for "UnhandledJavaLoadedConfigScenario"
     And I wait to receive an error
     Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And the event "groupingDiscriminator" equals "abc123"
 
     # Exception details
     And the error payload field "events" is an array with 1 elements
@@ -27,7 +28,7 @@ Feature: Unhandled smoke tests
     And the event "exceptions.0.stacktrace.0.method" ends with "UnhandledJavaLoadedConfigScenario.startScenario"
     And the exception "stacktrace.0.file" equals "SourceFile"
     # R8 minification alters the lineNumber, see the mapping file/source code for the original value
-    And the event "exceptions.0.stacktrace.0.lineNumber" equals 42
+    And the event "exceptions.0.stacktrace.0.lineNumber" equals 51
     And the event "exceptions.0.stacktrace.0.inProject" is true
 
     And the thread with name "main" contains the error reporting flag
@@ -104,6 +105,7 @@ Feature: Unhandled smoke tests
     And I configure Bugsnag for "CXXSignalSmokeScenario"
     And I wait to receive an error
     Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And the event "groupingDiscriminator" equals "abc123"
 
     # Exception details
     And the error payload field "events" is an array with 1 elements

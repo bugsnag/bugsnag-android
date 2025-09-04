@@ -207,4 +207,17 @@ class BugsnagApiTest {
         Bugsnag.markLaunchCompleted()
         verify(client, times(1)).markLaunchCompleted()
     }
+
+    @Test
+    fun setGroupingDiscriminator() {
+        Bugsnag.setGroupingDiscriminator("test")
+        verify(client, times(1)).groupingDiscriminator = "test"
+    }
+
+    @Test
+    fun getGroupingDiscriminator() {
+        `when`(client.groupingDiscriminator).thenReturn("test")
+        assertEquals("test", Bugsnag.getGroupingDiscriminator())
+        verify(client, times(1)).groupingDiscriminator
+    }
 }

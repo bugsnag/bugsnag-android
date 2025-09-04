@@ -294,6 +294,25 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware, F
     }
 
     /**
+     * Set the Grouping Discriminator for this {@code Event}
+     * and return its previous value (if any was set).
+     *
+     * @param groupingDiscriminator the new grouping discriminator or null to clear it
+     * @return the previously set grouping discriminator if one was set
+     */
+    @Nullable
+    public String setGroupingDiscriminator(@Nullable String groupingDiscriminator) {
+        String previousGroupingDiscriminator = impl.getGroupingDiscriminator();
+        impl.setGroupingDiscriminator(groupingDiscriminator);
+        return previousGroupingDiscriminator;
+    }
+
+    @Nullable
+    public String getGroupingDiscriminator() {
+        return impl.getGroupingDiscriminator();
+    }
+
+    /**
      * Sets the user associated with the event.
      */
     @Override
