@@ -141,6 +141,10 @@ public class Thread implements JsonStream.Streamable {
         return impl.isErrorReportingThread();
     }
 
+    void setErrorReportingThread(boolean isErrorReportingThread) {
+        impl.setErrorReportingThread(isErrorReportingThread);
+    }
+
     /**
      * Sets a representation of the thread's stacktrace
      */
