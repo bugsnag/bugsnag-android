@@ -1,11 +1,20 @@
 # Changelog
 
-## TBD
+## 6.17.0 (2025-08-14)
 
 ### Enhancements
 
 * `memoryTrimLevel` and `lowMemory` will not be reported when they are not set (newer versions of Android do not set these values)
   [#2237](https://github.com/bugsnag/bugsnag-android/pull/2237)
+
+### Bug fixes
+
+* Handle edge-cases to reduce the changes of duplicate ANR reporting from `bugsnag-plugin-android-exitinfo` when `reportUnmatchedANR = true && disableProcessStateSummaryOverride = true`
+  [#2235](https://github.com/bugsnag/bugsnag-android/pull/2235)
+* Correct the reporting of the loadAddress for native system libraries and JIT frames
+  [#2244](https://github.com/bugsnag/bugsnag-android/pull/2244)
+* Added deterministic sorting for `discardOldestFileIfNeeded` method to avoid potential crashes where mutliple files have the same last modified time
+  [#2189](https://github.com/bugsnag/bugsnag-android/pull/2189)
 
 ## 6.16.0 (2025-07-31)
 

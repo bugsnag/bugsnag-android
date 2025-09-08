@@ -2,13 +2,10 @@ package com.bugsnag.android
 
 import android.app.ActivityManager
 import android.app.ApplicationExitInfo
-import android.content.Context
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.Mock
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
@@ -19,9 +16,6 @@ import org.mockito.junit.MockitoJUnitRunner
 internal class ExitInfoCallbackTest {
 
     private lateinit var exitInfoCallback: ExitInfoCallback
-
-    @Mock
-    private lateinit var context: Context
 
     @Mock
     private lateinit var nativeEnhancer: (Event, ApplicationExitInfo) -> Unit
@@ -35,21 +29,23 @@ internal class ExitInfoCallbackTest {
     @Mock
     private lateinit var session: Session
 
-    @Mock
-    private lateinit var am: ActivityManager
-
-    private var exitInfos = listOf<ApplicationExitInfo>()
+    private lateinit var exitInfos: List<ApplicationExitInfo>
 
     @Mock
     private lateinit var anrEventEnhancer: (Event, ApplicationExitInfo) -> Unit
 
     @Before
     fun setUp() {
-        exitInfoCallback = ExitInfoCallback(context, nativeEnhancer, anrEventEnhancer, null, ApplicationExitInfoMatcher(context, 100))
         exitInfos = listOf(exitInfo1)
-        `when`(context.getSystemService(any())).thenReturn(am)
-        `when`(am.getHistoricalProcessExitReasons(any(), anyInt(), anyInt()))
-            .thenReturn(exitInfos)
+
+        exitInfoCallback = ExitInfoCallback(
+            exitInfos,
+            nativeEnhancer,
+            anrEventEnhancer,
+            null,
+            ApplicationExitInfoMatcher(exitInfos, null)
+        )
+
         `when`(event.session).thenReturn(session)
     }
 

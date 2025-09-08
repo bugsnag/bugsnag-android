@@ -116,17 +116,10 @@ end
 When("I relaunch the app after a crash") do
   manager = Maze::Api::Appium::AppManager.new
   state = wait_for_app_state :not_running
-  if Maze.config.legacy_driver?
-    if state != :not_running
-      manager.close
-    end
-    manager.launch
-  else
-    if state != :not_running
-      manager.terminate
-    end
-    manager.activate
+  if state != :not_running
+    manager.terminate
   end
+  manager.activate
 end
 
 When("I tap the screen {int} times") do |count|
@@ -260,6 +253,25 @@ Then("the event stacktrace identifies the program counter") do
     else
       Maze.check.equal(frame["isPC"], nil, "The #{index} frame should not be the program counter")
     end
+  end
+end
+
+Then("the event stacktrace has valid addresses") do
+  trace = Maze::Helper.read_key_path(Maze::Server.errors.current[:body], "events.0.exceptions.0.stacktrace")
+  trace.each_with_index do |frame, index|
+    loadAddress = frame['loadAddress']
+    frameAddress = frame['frameAddress']
+    relPC = frame['lineNumber'].to_i
+
+    Maze.check.match(/^0x[0-9a-fA-F]+$/, loadAddress, "Frame #{index} loadAddress is not a valid hex value")
+    Maze.check.match(/^0x[0-9a-fA-F]+$/, frameAddress, "Frame #{index} frameAddress is not a valid hex value")
+
+    loadAddressInt = loadAddress.slice(2, loadAddress.length).to_i(16)
+    frameAddressInt = frameAddress.slice(2, frameAddress.length).to_i(16)
+
+    Maze.check.equal(relPC, frameAddressInt - loadAddressInt,
+      "lineNumber(#{relPC}) of frame #{index} does not match the frameAddress(#{frameAddress}) - loadAddress(#{loadAddress}) = #{frameAddressInt - loadAddressInt}"
+    )
   end
 end
 

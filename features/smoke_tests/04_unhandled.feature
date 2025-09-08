@@ -123,6 +123,7 @@ Feature: Unhandled smoke tests
     # Stacktrace validation
     And the error payload field "events.0.exceptions.0.stacktrace" is a non-empty array
     And the event stacktrace identifies the program counter
+    And the event stacktrace has valid addresses
     And the event "exceptions.0.stacktrace.0.method" is not null
     And the event "exceptions.0.stacktrace.0.file" is not null
     And the error payload field "events.0.exceptions.0.stacktrace.0.frameAddress" is not null
@@ -250,6 +251,7 @@ Feature: Unhandled smoke tests
       | magicstacks::middle()                                                         | CXXExceptionSmokeScenario.cpp | 16 |
       | magicstacks::start()                                                          | CXXExceptionSmokeScenario.cpp | 18 |
       | Java_com_bugsnag_android_mazerunner_scenarios_CXXExceptionSmokeScenario_crash | CXXExceptionSmokeScenario.cpp | 25 |
+    And the event stacktrace has valid addresses
 
     # App data
     And the event binary arch field is valid

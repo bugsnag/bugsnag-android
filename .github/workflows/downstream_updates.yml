@@ -26,7 +26,8 @@ jobs:
           sudo apt-get install libcurl4-openssl-dev net-tools
 
       - run: >
-          curl -X POST https://api.github.com/repos/${{ matrix.downstream_repo }}/dispatches
+          curl --fail --silent --show-error
+          -X POST https://api.github.com/repos/${{ matrix.downstream_repo }}/dispatches
           -H 'Content-Type: application/json'
-          -H "Authorization: Bearer ${{ secrets.DEP_UPDATER_BEARER_TOKEN }}"
+          -H "Authorization: Token ${{ secrets.DEP_UPDATER_BEARER_TOKEN }}"
           -d '{"event_type":"update-dependency","client_payload": {"target_submodule":"bugsnag-android", "target_version": "${{ env.RELEASE_VERSION }}"}}'

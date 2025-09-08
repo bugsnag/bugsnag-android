@@ -64,12 +64,6 @@ bugsnag {
 }
 
 dependencies {
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-
     debugImplementation(libs.androidx.ui.test.manifest)
     debugImplementation(libs.androidx.ui.tooling)
 
@@ -87,7 +81,4 @@ dependencies {
     implementation(libs.bugsnag.okhttp)
     implementation(libs.squareup.okhttp3)
     implementation(platform(libs.androidx.compose.bom))
-
-    testImplementation(libs.junit)
-    testImplementation(libs.junit)
 }
