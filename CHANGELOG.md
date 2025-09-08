@@ -1,5 +1,12 @@
 # Changelog
 
+## 6.18.0 (2025-09-08)
+
+### Enhancements
+
+* Introduce`Bugsnag.groupingDiscriminator` and `Event.groupingDiscriminator` as an additional way to differentiate (and split) groups of events
+  [#2276](https://github.com/bugsnag/bugsnag-android/pull/2276)
+
 ## 6.17.0 (2025-08-14)
 
 ### Enhancements
