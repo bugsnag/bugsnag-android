@@ -342,6 +342,20 @@ void bugsnag_event_set_context(void *event_ptr, const char *value) {
   bsg_strncpy(event->context, value, sizeof(event->context));
 }
 
+char *bugsnag_event_get_grouping_discriminator(void *event_ptr) {
+  bugsnag_event *event = (bugsnag_event *)event_ptr;
+  bsg_notify_api_called(event, BSG_API_EVENT_GET_GROUPING_DISCRIMINATOR);
+  return event->grouping_discriminator;
+}
+
+void bugsnag_event_set_grouping_discriminator(void *event_ptr,
+                                              const char *value) {
+  bugsnag_event *event = (bugsnag_event *)event_ptr;
+  bsg_notify_api_called(event, BSG_API_EVENT_SET_GROUPING_DISCRIMINATOR);
+  bsg_strncpy(event->grouping_discriminator, value,
+              sizeof(event->grouping_discriminator));
+}
+
 void bugsnag_event_set_user(void *event_ptr, const char *id, const char *email,
                             const char *name) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;

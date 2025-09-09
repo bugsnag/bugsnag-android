@@ -36,6 +36,7 @@ internal class EventDeserializer(
         val event = NativeInterface.createEvent(null, client, handledState)
         event.context = map["context"] as String?
         event.groupingHash = map["groupingHash"] as String?
+        event.groupingDiscriminator = map["groupingDiscriminator"] as String?
 
         // apiKey if it exists in the map and is not empty
         val apiKey = (map["apiKey"] as? String)?.takeIf { it.isNotEmpty() }
