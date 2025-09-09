@@ -70,6 +70,12 @@ internal class BugsnagReactNativePluginTest {
     }
 
     @Test
+    fun updateGroupingDiscriminator() {
+        plugin.updateGroupingDiscriminator("discriminator")
+        verify(client, times(1)).groupingDiscriminator = "discriminator"
+    }
+
+    @Test
     fun addFeatureFlag() {
         plugin.addFeatureFlag("flag name", "variant")
         verify(client, times(1)).addFeatureFlag("flag name", "variant")
