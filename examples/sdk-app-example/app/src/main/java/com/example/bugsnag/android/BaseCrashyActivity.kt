@@ -209,6 +209,8 @@ open class BaseCrashyActivity : AppCompatActivity() {
     }
 
     private fun setupToolbarLogo() {
+        val supportActionBar = supportActionBar
+
         if (supportActionBar != null) {
             supportActionBar.setDisplayShowHomeEnabled(true)
             supportActionBar.setIcon(R.drawable.ic_bugsnag_svg)
