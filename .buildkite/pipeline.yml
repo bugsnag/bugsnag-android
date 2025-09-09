@@ -1453,13 +1453,13 @@ steps:
         - exit_status: 103  # Appium session failed
           limit: 2
 
-  - label: ':bitbar: Android 16 NDK r28 smoke tests'
+  - label: ':browserstack: Android 16 NDK r28 smoke tests'
     depends_on: "fixture-r28"
     timeout_in_minutes: 30
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r28-url.txt"
+          - "build/bs-fixture-r28-url.txt"
           - "build/fixture-r28/*"
         upload:
           - "maze_output/failed/**/*"
@@ -1471,33 +1471,27 @@ steps:
         command:
           - "features/smoke_tests"
           - "--exclude=features/smoke_tests/01_anr.feature"
-          - "--app=@build/fixture-r28-url.txt"
-          - "--appium-version=1.22"
-          - "--no-tunnel"
-          - "--aws-public-ip"
-          - "--farm=bb"
+          - "--app=@build/bs-fixture-r28-url.txt"
+          - "--appium-version=1.22.0"
+          - "--farm=bs"
           - "--device=ANDROID_16"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^main|next$$"
+        branch: "^master|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
     concurrency_method: eager
-    retry:
-      automatic:
-        - exit_status: 103  # Appium session failed
-          limit: 2
 
-  - label: ':bitbar: Android 16 NDK r28 smoke tests'
+  - label: ':browserstack: Android 16 NDK r28 ANR smoke tests'
     depends_on: "fixture-r28"
     timeout_in_minutes: 30
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/fixture-r28-url.txt"
+          - "build/bs-fixture-r28-url.txt"
           - "build/fixture-r28/*"
         upload:
           - "maze_output/failed/**/*"
@@ -1508,25 +1502,19 @@ steps:
         service-ports: true
         command:
           - "features/smoke_tests/01_anr.feature"
-          - "--app=@build/fixture-r28-url.txt"
-          - "--appium-version=1.22"
-          - "--no-tunnel"
-          - "--aws-public-ip"
-          - "--farm=bb"
+          - "--app=@build/bs-fixture-r28-url.txt"
+          - "--appium-version=1.22.0"
+          - "--farm=bs"
           - "--device=ANDROID_16"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
-        branch: "^main|next$$"
+        branch: "^master|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 5
+    concurrency_group: 'browserstack-app'
     concurrency_method: eager
-    retry:
-      automatic:
-        - exit_status: 103  # Appium session failed
-          limit: 2
 
   - label: 'Conditionally include device farms/full tests'
     agents:
