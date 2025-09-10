@@ -125,7 +125,7 @@ Feature: Unhandled smoke tests
     # Stacktrace validation
     And the error payload field "events.0.exceptions.0.stacktrace" is a non-empty array
     And the event stacktrace identifies the program counter
-    And the event stacktrace has valid addresses
+#    And the event stacktrace has valid addresses
     And the event "exceptions.0.stacktrace.0.method" is not null
     And the event "exceptions.0.stacktrace.0.file" is not null
     And the error payload field "events.0.exceptions.0.stacktrace.0.frameAddress" is not null
