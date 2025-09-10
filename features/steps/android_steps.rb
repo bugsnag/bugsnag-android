@@ -133,12 +133,8 @@ When("I tap the screen {int} times") do |count|
   }
 end
 
-When("I tap the back-button {int} times") do |count|
-  manager = Maze::Api::Appium::DeviceManager.new
-  (1..count).each { |i|
-    manager.back
-    sleep(0.5)
-  }
+When('I press the back button') do
+  Maze::Api::Appium::DeviceManager.new.back
 end
 
 When("I configure the app to run in the {string} state") do |scenario_mode|
