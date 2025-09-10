@@ -71,6 +71,7 @@ public final class com/bugsnag/android/Bugsnag {
 	public static fun getBreadcrumbs ()Ljava/util/List;
 	public static fun getClient ()Lcom/bugsnag/android/Client;
 	public static fun getContext ()Ljava/lang/String;
+	public static fun getGroupingDiscriminator ()Ljava/lang/String;
 	public static fun getLastRunInfo ()Lcom/bugsnag/android/LastRunInfo;
 	public static fun getMetadata (Ljava/lang/String;)Ljava/util/Map;
 	public static fun getMetadata (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
@@ -87,6 +88,7 @@ public final class com/bugsnag/android/Bugsnag {
 	public static fun removeOnSession (Lcom/bugsnag/android/OnSessionCallback;)V
 	public static fun resumeSession ()Z
 	public static fun setContext (Ljava/lang/String;)V
+	public static fun setGroupingDiscriminator (Ljava/lang/String;)Ljava/lang/String;
 	public static fun setUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public static fun start (Landroid/content/Context;)Lcom/bugsnag/android/Client;
 	public static fun start (Landroid/content/Context;Lcom/bugsnag/android/Configuration;)Lcom/bugsnag/android/Client;
@@ -127,6 +129,7 @@ public class com/bugsnag/android/Client : com/bugsnag/android/CallbackAware, com
 	protected fun finalize ()V
 	public fun getBreadcrumbs ()Ljava/util/List;
 	public fun getContext ()Ljava/lang/String;
+	public fun getGroupingDiscriminator ()Ljava/lang/String;
 	public fun getLastRunInfo ()Lcom/bugsnag/android/LastRunInfo;
 	public fun getMetadata (Ljava/lang/String;)Ljava/util/Map;
 	public fun getMetadata (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
@@ -142,6 +145,7 @@ public class com/bugsnag/android/Client : com/bugsnag/android/CallbackAware, com
 	public fun removeOnSession (Lcom/bugsnag/android/OnSessionCallback;)V
 	public fun resumeSession ()Z
 	public fun setContext (Ljava/lang/String;)V
+	public fun setGroupingDiscriminator (Ljava/lang/String;)Ljava/lang/String;
 	public fun setUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public fun startSession ()V
 }
@@ -388,6 +392,7 @@ public class com/bugsnag/android/Event : com/bugsnag/android/FeatureFlagAware, c
 	public fun getDevice ()Lcom/bugsnag/android/DeviceWithState;
 	public fun getErrors ()Ljava/util/List;
 	public fun getFeatureFlags ()Ljava/util/List;
+	public fun getGroupingDiscriminator ()Ljava/lang/String;
 	public fun getGroupingHash ()Ljava/lang/String;
 	public fun getMetadata (Ljava/lang/String;)Ljava/util/Map;
 	public fun getMetadata (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
@@ -400,6 +405,7 @@ public class com/bugsnag/android/Event : com/bugsnag/android/FeatureFlagAware, c
 	public fun leaveBreadcrumb (Ljava/lang/String;Lcom/bugsnag/android/BreadcrumbType;Ljava/util/Map;)Lcom/bugsnag/android/Breadcrumb;
 	public fun setApiKey (Ljava/lang/String;)V
 	public fun setContext (Ljava/lang/String;)V
+	public fun setGroupingDiscriminator (Ljava/lang/String;)Ljava/lang/String;
 	public fun setGroupingHash (Ljava/lang/String;)V
 	public fun setSeverity (Lcom/bugsnag/android/Severity;)V
 	public fun setTraceCorrelation (Ljava/util/UUID;J)V
@@ -547,6 +553,7 @@ public class com/bugsnag/android/NativeInterface {
 	public static fun setBinaryArch (Ljava/lang/String;)V
 	public static fun setClient (Lcom/bugsnag/android/Client;)V
 	public static fun setContext (Ljava/lang/String;)V
+	public static fun setGroupingDiscriminator (Ljava/lang/String;)Ljava/lang/String;
 	public static fun setUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public static fun setUser ([B[B[B)V
 	public static fun startSession ()V
@@ -754,6 +761,11 @@ public final class com/bugsnag/android/StateEvent$StartSession : com/bugsnag/and
 
 public final class com/bugsnag/android/StateEvent$UpdateContext : com/bugsnag/android/StateEvent {
 	public final field context Ljava/lang/String;
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class com/bugsnag/android/StateEvent$UpdateGroupingDiscriminator : com/bugsnag/android/StateEvent {
+	public final field groupingDiscriminator Ljava/lang/String;
 	public fun <init> (Ljava/lang/String;)V
 }
 

@@ -111,6 +111,21 @@ char *bugsnag_event_get_context(void *event_ptr);
  */
 void bugsnag_event_set_context(void *event_ptr, const char *value);
 
+/**
+ * Retrieves the grouping discriminator
+ * @param event_ptr a pointer to the event supplied in an on_error callback
+ * @return the event grouping discriminator, or NULL if this has not been set
+ */
+char *bugsnag_event_get_grouping_discriminator(void *event_ptr);
+
+/**
+ * Sets the event grouping discriminator
+ * @param event_ptr a pointer to the event supplied in an on_error callback
+ * @param value the new event grouping discriminator value, which can be NULL
+ */
+void bugsnag_event_set_grouping_discriminator(void *event_ptr,
+                                              const char *value);
+
 /* Accessors for event.app */
 
 /**

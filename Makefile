@@ -46,6 +46,14 @@ fixture-r21: notifier
                assembleRelease -x check
 	@ruby scripts/copy-build-files.rb release r21
 
+fixture-r28: notifier
+	# Build the r28 test fixture
+	@cd ./features/fixtures/mazerunner && ./gradlew -PTEST_FIXTURE_NDK_VERSION=28.2.13676358 \
+	           -PTEST_FIXTURE_MINSDK=21 \
+               -PTEST_FIXTURE_NAME=fixture-r28.apk \
+               assembleRelease -x check
+	@ruby scripts/copy-build-files.rb release r28
+
 fixture-minimal: notifier
 	# Build the minimal test fixture
 	@cd ./features/fixtures/mazerunner && ./gradlew -PMINIMAL_FIXTURE=true \
