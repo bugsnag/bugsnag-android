@@ -45,7 +45,7 @@ target_link_libraries( # Specifies the target library.
 
 # Avoid exporting symbols in release mode to keep internals private
 # More symbols are exported in debug mode for the sake of unit testing
-set(EXTRA_LINK_FLAGS "-Wl,--version-script=${CMAKE_CURRENT_LIST_DIR}/exported_native_symbols-${CMAKE_BUILD_TYPE}.txt")
+set(EXTRA_LINK_FLAGS "-Wl,-z,max-page-size=16384,--version-script=${CMAKE_CURRENT_LIST_DIR}/exported_native_symbols-${CMAKE_BUILD_TYPE}.txt")
 
 set_target_properties(bugsnag-ndk
                       PROPERTIES
