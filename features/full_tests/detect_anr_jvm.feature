@@ -9,7 +9,7 @@ Feature: ANRs triggered in JVM code are captured
     When I clear any error dialogue
     And I run "JvmAnrLoopScenario"
     And I wait for 2 seconds
-    And I tap the screen 3 times
+    And I cause the ANR dialog to appear
     Then I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "errorClass" equals "ANR"
@@ -26,7 +26,7 @@ Feature: ANRs triggered in JVM code are captured
     When I clear any error dialogue
     And I run "JvmAnrSleepScenario"
     And I wait for 2 seconds
-    And I tap the screen 3 times
+    And I cause the ANR dialog to appear
     Then I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "errorClass" equals "ANR"
@@ -39,7 +39,7 @@ Feature: ANRs triggered in JVM code are captured
   Scenario: ANR triggered in JVM code is not captured when detectAnrs = false
     When I run "JvmAnrDisabledScenario"
     And I wait for 2 seconds
-    And I tap the screen 3 times
+    And I cause the ANR dialog to appear
     Then I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the error payload field "events" is an array with 1 elements
@@ -51,5 +51,5 @@ Feature: ANRs triggered in JVM code are captured
   Scenario: ANR triggered in JVM code is not captured when outside of release stage
     When I run "JvmAnrOutsideReleaseStagesScenario"
     And I wait for 2 seconds
-    And I tap the screen 3 times
+    And I cause the ANR dialog to appear
     Then I should receive no errors
