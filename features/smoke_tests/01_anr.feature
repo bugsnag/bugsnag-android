@@ -10,10 +10,8 @@ Feature: ANR smoke test
     When I set the screen orientation to portrait
     And I clear any error dialogue
     And I run "JvmAnrLoopScenario"
-    And I wait for 1 seconds
-    And I tap the screen 3 times
-    And I wait for 5 seconds
-    And I tap the screen 3 times
+    And I wait for 2 seconds
+    And I cause the ANR dialog to appear
     And I wait to receive an error
 
     # Exception details
