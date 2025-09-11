@@ -131,7 +131,7 @@ When("I tap the screen {int} times") do |count|
   }
 end
 
-When("I press the back button") do |count|
+When("I press the back button") do
   Maze.driver.back
 end
 

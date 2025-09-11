@@ -106,7 +106,7 @@ end
 def symbolicate arch, frame
   method = demangle(frame["method"])
   raw_file = frame["file"]
-  binary_file = file&.split('!')&.last
+  binary_file = raw_file&.split('!')&.last
 
   return nil if is_out_of_project?(raw_file, method)
 
