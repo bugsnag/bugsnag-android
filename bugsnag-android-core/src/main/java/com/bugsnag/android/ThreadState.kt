@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import android.os.Build
 import android.os.SystemClock
 import com.bugsnag.android.internal.ImmutableConfig
 import java.io.IOException
@@ -53,6 +54,7 @@ internal class ThreadState @Suppress("LongParameterList") constructor(
                 projectPackages,
                 logger
             )
+
             else -> mutableListOf()
         }
     }
@@ -88,7 +90,7 @@ internal class ThreadState @Suppress("LongParameterList") constructor(
         logger: Logger
     ): MutableList<Thread> {
         fun toBugsnagThread(thread: JavaThread): Thread {
-            val isErrorThread = thread.id == currentThread.id
+            val isErrorThread = thread.threadId == currentThread.threadId
             val stackTrace = Stacktrace(
                 if (isErrorThread) {
                     if (exc != null && isUnhandled) { // unhandled errors use the exception trace for thread traces
@@ -103,7 +105,7 @@ internal class ThreadState @Suppress("LongParameterList") constructor(
             )
 
             return Thread(
-                thread.id.toString(),
+                thread.threadId.toString(),
                 thread.name,
                 ErrorType.ANDROID,
                 isErrorThread,
@@ -116,10 +118,11 @@ internal class ThreadState @Suppress("LongParameterList") constructor(
         // Keep the lowest ID threads (ordered). Anything after maxThreadCount is lost.
         // Note: We must ensure that currentThread is always present in the final list regardless.
 
-        val sortedThreads = allThreads.sortedBy { it.id }
-        val currentThreadIndex = sortedThreads.binarySearch(0, min(maxThreadCount, sortedThreads.size)) {
-            it.id.compareTo(currentThread.id)
-        }
+        val sortedThreads = allThreads.sortedBy { it.threadId }
+        val currentThreadIndex =
+            sortedThreads.binarySearch(0, min(maxThreadCount, sortedThreads.size)) {
+                it.threadId.compareTo(currentThread.threadId)
+            }
 
         // API 24/25 don't record the currentThread, so add it in manually
         // https://issuetracker.google.com/issues/64122757
@@ -167,6 +170,15 @@ internal class ThreadState @Suppress("LongParameterList") constructor(
         }
         return reportThreads
     }
+
+    @Suppress("DEPRECATION")
+    private val JavaThread.threadId: Long
+        get() =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+                threadId()
+            } else {
+                id
+            }
 
     @Throws(IOException::class)
     override fun toStream(writer: JsonStream) {
