@@ -334,8 +334,66 @@ steps:
     concurrency_group: 'bitbar'
     concurrency_method: eager
 
+  - label: ':bitbar: Android 14 NDK r21 smoke tests'
+    depends_on: "fixture-r21"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.9.0:
+        download:
+          - "build/fixture-r21-url.txt"
+          - "build/fixture-r21/*"
+        upload:
+          - "maze_output/failed/**/*"
+          - "maze_output/metrics.csv"
+      docker-compose#v4.7.0:
+        pull: maze-runner
+        run: maze-runner
+        service-ports: true
+        command:
+          - "features/smoke_tests"
+          - "--app=@build/fixture-r21-url.txt"
+          - "--farm=bb"
+          - "--device=ANDROID_14"
+          - "--no-tunnel"
+          - "--aws-public-ip"
+          - "--fail-fast"
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
+    concurrency: 25
+    concurrency_group: 'bitbar'
+    concurrency_method: eager
+
+  - label: ':bitbar: Android 15 NDK r21 smoke tests'
+    depends_on: "fixture-r21"
+    timeout_in_minutes: 60
+    plugins:
+      artifacts#v1.9.0:
+        download:
+          - "build/fixture-r21-url.txt"
+          - "build/fixture-r21/*"
+        upload:
+          - "maze_output/failed/**/*"
+          - "maze_output/metrics.csv"
+      docker-compose#v4.7.0:
+        pull: maze-runner
+        run: maze-runner
+        service-ports: true
+        command:
+          - "features/smoke_tests"
+          - "--app=@build/fixture-r21-url.txt"
+          - "--farm=bb"
+          - "--device=ANDROID_15"
+          - "--no-tunnel"
+          - "--aws-public-ip"
+          - "--fail-fast"
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
+    concurrency: 25
+    concurrency_group: 'bitbar'
+    concurrency_method: eager
+
   - label: 'Conditionally include device farms/full tests'
     agents:
-      queue: macos-12-arm
+      queue: macos
     command: sh -c .buildkite/pipeline_trigger.sh
 
