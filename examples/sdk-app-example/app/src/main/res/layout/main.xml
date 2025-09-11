@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/example_root"
+    android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -11,8 +12,8 @@
         android:orientation="vertical"
         android:paddingLeft="16dp"
         android:paddingTop="32dp"
-        android:paddingRight="16dp"
-        android:paddingBottom="32dp">
+        android:paddingRight="16dp">
+
 
         <TextView
             android:id="@+id/multi_process_title"
