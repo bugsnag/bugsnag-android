@@ -52,7 +52,7 @@ steps:
           - "--device=ANDROID_9"
           - "--no-tunnel"
           - "--aws-public-ip"
-          - "--fail-fast"
+          #- "--fail-fast"
           - "--appium-version=1.22"
     concurrency: 25
     concurrency_group: 'bitbar'
@@ -79,7 +79,7 @@ steps:
           - "--device=ANDROID_9"
           - "--no-tunnel"
           - "--aws-public-ip"
-          - "--fail-fast"
+          #- "--fail-fast"
           - "--appium-version=1.22"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-debug"
@@ -110,7 +110,7 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "--fail-fast"
+          #- "--fail-fast"
           - "--appium-version=1.22"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
@@ -141,7 +141,7 @@ steps:
           - "--device=ANDROID_7"
           - "--no-tunnel"
           - "--aws-public-ip"
-          - "--fail-fast"
+          #- "--fail-fast"
           - "--appium-version=1.22"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
@@ -170,7 +170,7 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "--fail-fast"
+          #- "--fail-fast"
           - "--appium-version=1.22"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
@@ -199,7 +199,7 @@ steps:
           - "--device=ANDROID_8"
           - "--no-tunnel"
           - "--aws-public-ip"
-          - "--fail-fast"
+          #- "--fail-fast"
           - "--appium-version=1.22"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
@@ -230,7 +230,7 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "--fail-fast"
+          #- "--fail-fast"
           - "--appium-version=1.22"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
@@ -261,7 +261,7 @@ steps:
           - "--device=ANDROID_9"
           - "--no-tunnel"
           - "--aws-public-ip"
-          - "--fail-fast"
+          #- "--fail-fast"
           - "--appium-version=1.22"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
@@ -292,7 +292,7 @@ steps:
           - "--device=ANDROID_10"
           - "--no-tunnel"
           - "--aws-public-ip"
-          - "--fail-fast"
+          #- "--fail-fast"
           - "--appium-version=1.22"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
@@ -323,7 +323,7 @@ steps:
           - "--device=ANDROID_10"
           - "--no-tunnel"
           - "--aws-public-ip"
-          - "--fail-fast"
+          #- "--fail-fast"
           - "--appium-version=1.22"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
@@ -358,7 +358,7 @@ steps:
           - "--device=ANDROID_11"
           - "--no-tunnel"
           - "--aws-public-ip"
-          - "--fail-fast"
+          #- "--fail-fast"
           - "--appium-version=1.22"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
@@ -389,7 +389,7 @@ steps:
           - "--device=ANDROID_11"
           - "--no-tunnel"
           - "--aws-public-ip"
-          - "--fail-fast"
+          #- "--fail-fast"
           - "--appium-version=1.22"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
@@ -420,7 +420,7 @@ steps:
           - "--device=ANDROID_13"
           - "--no-tunnel"
           - "--aws-public-ip"
-          - "--fail-fast"
+          #- "--fail-fast"
           - "--appium-version=1.22"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
@@ -451,7 +451,7 @@ steps:
           - "--device=ANDROID_13"
           - "--no-tunnel"
           - "--aws-public-ip"
-          - "--fail-fast"
+          #- "--fail-fast"
           - "--appium-version=1.22"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
@@ -482,7 +482,7 @@ steps:
           - "--device=ANDROID_14"
           - "--no-tunnel"
           - "--aws-public-ip"
-          - "--fail-fast"
+          #- "--fail-fast"
           - "--appium-version=1.22"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
@@ -513,7 +513,7 @@ steps:
           - "--device=ANDROID_14"
           - "--no-tunnel"
           - "--aws-public-ip"
-          - "--fail-fast"
+          #- "--fail-fast"
           - "--appium-version=1.22"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
@@ -544,7 +544,7 @@ steps:
           - "--device=ANDROID_15"
           - "--no-tunnel"
           - "--aws-public-ip"
-          - "--fail-fast"
+          #- "--fail-fast"
           - "--appium-version=1.22"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
@@ -575,7 +575,7 @@ steps:
           - "--device=ANDROID_15"
           - "--no-tunnel"
           - "--aws-public-ip"
-          - "--fail-fast"
+          #- "--fail-fast"
           - "--appium-version=1.22"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
