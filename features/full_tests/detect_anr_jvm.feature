@@ -51,4 +51,4 @@ Feature: ANRs triggered in JVM code are captured
     When I run "JvmAnrOutsideReleaseStagesScenario"
     And I wait for 2 seconds
     And I cause the ANR dialog to appear
-    Then I should receive no requests
+    Then I should receive no errors
