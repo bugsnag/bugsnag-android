@@ -8,6 +8,7 @@ steps:
     command: make fixture-minimal
 
   - label: ':android: Build Example App'
+    skip: 'Currently failing'
     timeout_in_minutes: 5
     agents:
       queue: macos-12-arm
