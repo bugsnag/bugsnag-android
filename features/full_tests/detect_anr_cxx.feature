@@ -8,7 +8,7 @@ Feature: ANRs triggered in CXX code are captured
   Scenario: ANR triggered in CXX code is captured
     When I run "CXXAnrScenario"
     And I wait for 2 seconds
-    And I tap the back-button 3 times
+    And I cause the ANR dialog to appear
     Then I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "errorClass" equals "ANR"
@@ -24,7 +24,7 @@ Feature: ANRs triggered in CXX code are captured
   Scenario: ANR triggered in CXX code is captured even when NDK detection is disabled
     When I run "CXXAnrNdkDisabledScenario"
     And I wait for 2 seconds
-    And I tap the back-button 3 times
+    And I cause the ANR dialog to appear
     Then I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "errorClass" equals "ANR"

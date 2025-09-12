@@ -23,7 +23,7 @@ Feature: Switching automatic error detection on/off for Unity
   Scenario: ANR not captured with autoDetectAnrs=false
     When I run "AutoDetectAnrsFalseScenario"
     And I wait for 2 seconds
-    And I tap the back-button 3 times
+    And I cause the ANR dialog to appear
     And I close and relaunch the app
     And I configure Bugsnag for "AutoDetectAnrsFalseScenario"
     Then Bugsnag confirms it has no errors to send
@@ -61,7 +61,7 @@ Feature: Switching automatic error detection on/off for Unity
     When I clear any error dialogue
     And I run "AutoDetectAnrsTrueScenario"
     And I wait for 2 seconds
-    And I tap the back-button 3 times
+    And I cause the ANR dialog to appear
     And I wait to receive an error
     Then the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the error payload field "events" is an array with 1 elements

@@ -120,22 +120,24 @@ When("I relaunch the app after a crash") do
   end
 end
 
+When('I cause the ANR dialog to appear') do
+  step 'I tap the screen 3 times'
+  step 'I press the back button'
+end
+
 When("I tap the screen {int} times") do |count|
   (1..count).each { |i|
     begin
       tap_at 500, 300
     rescue Selenium::WebDriver::Error::ElementNotInteractableError, Selenium::WebDriver::Error::InvalidElementStateError
-      # Ignore it§
+      # Ignore it
     end
     sleep(1)
   }
 end
 
-When("I tap the back-button {int} times") do |count|
-  (1..count).each { |i|
-    Maze.driver.back
-    sleep(0.5)
-  }
+When("I press the back button") do
+  Maze.driver.back
 end
 
 When("I configure the app to run in the {string} state") do |scenario_mode|

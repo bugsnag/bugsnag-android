@@ -105,9 +105,10 @@ end
 # if the frame is not in project.
 def symbolicate arch, frame
   method = demangle(frame["method"])
-  binary_file = frame["file"]&.split('!')&.last
+  raw_file = frame["file"]
+  binary_file = raw_file&.split('!')&.last
 
-  return nil if is_out_of_project?(binary_file, method)
+  return nil if is_out_of_project?(raw_file, method)
 
   symbol_file = File.join(SYMBOL_DIR, "#{File.basename(binary_file, '.so')}-#{arch}.so")
 
