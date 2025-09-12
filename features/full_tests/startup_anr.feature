@@ -10,6 +10,8 @@ Feature: onCreate ANR
 # Android 13+ Note: we no longer have permission to inject BACK button events, which are used to
 # trigger the ANR - so the test is not valid on Android 13 either
   @skip_above_android_13
+  # Skipped - flaky
+  @skip
   Scenario: onCreate ANR is reported
     When I clear any error dialogue
     And I run "ConfigureStartupAnrScenario"

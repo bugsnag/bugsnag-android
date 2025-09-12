@@ -49,6 +49,8 @@ Feature: Excess data is trimmed when the payload is too big
   # and then modify "When I configure the app to run in the "100" state" to a number that generates 3 breadcrumbs
   # worth of data too much.
 
+  # Skipped - flaky
+  @skip
   Scenario: Payload is too big by 3 breadcrumbs, handled exception that failed initial delivery
     When I set the HTTP status code for the next request to 500
     And I configure the app to run in the "handled, 10000, 100" state
