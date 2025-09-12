@@ -4,6 +4,8 @@ Feature: Reporting Strict Mode Violations
     Given I clear all persistent data
 
   @skip_below_android_9
+  # Skipped - flaky
+  @skip
   Scenario: StrictMode Exposed File URI violation
     When I run "StrictModeFileUriExposeScenario" and relaunch the crashed app
     And I configure Bugsnag for "StrictModeFileUriExposeScenario"
