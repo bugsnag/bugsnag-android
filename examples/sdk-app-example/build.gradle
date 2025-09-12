@@ -1,14 +1,14 @@
 buildscript {
-    ext.kotlin_version = "1.8.20"
+    ext.kotlin_version = "1.9.0"
     repositories {
         google()
         mavenCentral()
         mavenLocal()
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:7.0.4"
+        classpath "com.android.tools.build:gradle:8.12.0"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "com.bugsnag:bugsnag-android-gradle-plugin:7.1.0"
+        classpath "com.bugsnag:bugsnag-android-gradle-plugin:8.2.0"
     }
 }
 

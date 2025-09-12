@@ -9,7 +9,11 @@ add_library( # Specifies the name of the library.
 
 include_directories(jni)
 
+set(EXTRA_LINK_FLAGS "-Wl,-z,max-page-size=16384")
+
 set_target_properties(bugsnag-root-detection
                       PROPERTIES
                       COMPILE_OPTIONS
-                      -Werror -Wall -pedantic)
+                      -Werror -Wall -pedantic
+                      LINK_FLAGS "${EXTRA_LINK_FLAGS}"
+)

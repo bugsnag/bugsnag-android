@@ -2,13 +2,14 @@ apply plugin: "com.android.application"
 apply plugin: "kotlin-android"
 
 android {
-    compileSdk 31
-    ndkVersion "17.2.4988734"
+    compileSdkVersion 35
+    ndkVersion "23.1.7779620"
+    namespace "com.example.bugsnag.android"
 
     defaultConfig {
         applicationId "com.example.bugsnag.android"
-        minSdkVersion 14
-        targetSdkVersion 31
+        minSdkVersion 21
+        targetSdkVersion 35
         versionCode 1
         versionName "1.0"
     }
@@ -31,6 +32,11 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = false
+        }
     }
     kotlinOptions {
         jvmTarget = "1.8"
