@@ -379,6 +379,33 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
         return thread
     }
 
+    fun setErrorReportingThread(thread: Thread) {
+        setErrorReportingThread { it === thread }
+    }
+
+    fun setErrorReportingThread(threadId: Long) {
+        val idString = threadId.toString()
+        setErrorReportingThread { it.id == idString }
+    }
+
+    private inline fun setErrorReportingThread(predicate: (Thread) -> Boolean) {
+        var previousErrorReportingThread: Thread? = null
+        var foundPredicateMatch = false
+        for (thread in threads) {
+            if (thread.errorReportingThread && !predicate(thread)) {
+                previousErrorReportingThread = thread
+                thread.errorReportingThread = false
+            } else if (predicate(thread)) {
+                thread.errorReportingThread = true
+                foundPredicateMatch = true
+            }
+        }
+
+        if (!foundPredicateMatch) {
+            previousErrorReportingThread?.errorReportingThread = true
+        }
+    }
+
     fun leaveBreadcrumb(
         message: String?,
         type: BreadcrumbType?,

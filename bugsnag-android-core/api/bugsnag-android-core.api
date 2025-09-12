@@ -408,6 +408,8 @@ public class com/bugsnag/android/Event : com/bugsnag/android/FeatureFlagAware, c
 	public fun leaveBreadcrumb (Ljava/lang/String;Lcom/bugsnag/android/BreadcrumbType;Ljava/util/Map;)Lcom/bugsnag/android/Breadcrumb;
 	public fun setApiKey (Ljava/lang/String;)V
 	public fun setContext (Ljava/lang/String;)V
+	public fun setErrorReportingThread (J)V
+	public fun setErrorReportingThread (Lcom/bugsnag/android/Thread;)V
 	public fun setGroupingDiscriminator (Ljava/lang/String;)Ljava/lang/String;
 	public fun setGroupingHash (Ljava/lang/String;)V
 	public fun setSeverity (Lcom/bugsnag/android/Severity;)V
@@ -854,6 +856,7 @@ public final class com/bugsnag/android/ThreadInternal : com/bugsnag/android/Json
 	public final fun getState ()Ljava/lang/String;
 	public final fun getType ()Lcom/bugsnag/android/ErrorType;
 	public final fun isErrorReportingThread ()Z
+	public final fun setErrorReportingThread (Z)V
 	public final fun setId (Ljava/lang/String;)V
 	public final fun setName (Ljava/lang/String;)V
 	public final fun setStacktrace (Ljava/util/List;)V

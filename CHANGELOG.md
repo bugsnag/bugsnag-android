@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+* Introduced `Event.setErrorReportingThread` so that the error reporting thread can be changed in callbacks
+  [#2277](https://github.com/bugsnag/bugsnag-android/pull/2277)
+
 ## 6.18.0 (2025-09-10)
 
 ### Enhancements
