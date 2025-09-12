@@ -12,6 +12,8 @@ add_library( # Specifies the name of the library.
 
 include_directories(jni)
 
+set(EXTRA_LINK_FLAGS "-Wl,-z,max-page-size=16384")
+
 target_link_libraries( # Specifies the target library.
                      bugsnag-plugin-android-anr
                      # Links the log library to the target library.
@@ -20,4 +22,6 @@ target_link_libraries( # Specifies the target library.
 set_target_properties(bugsnag-plugin-android-anr
                       PROPERTIES
                       COMPILE_OPTIONS
-                      -Werror -Wall -pedantic)
+                      -Werror -Wall -pedantic
+                      LINK_FLAGS "${EXTRA_LINK_FLAGS}"
+)
