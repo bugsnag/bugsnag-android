@@ -39,9 +39,11 @@
     <ID>MagicNumber:SessionStore.kt$SessionStore$60</ID>
     <ID>MaxLineLength:LastRunInfo.kt$LastRunInfo$return "LastRunInfo(consecutiveLaunchCrashes=$consecutiveLaunchCrashes, crashed=$crashed, crashedDuringLaunch=$crashedDuringLaunch)"</ID>
     <ID>MaxLineLength:ThreadState.kt$ThreadState$"[${allThreads.size - maxThreadCount} threads omitted as the maxReportedThreads limit ($maxThreadCount) was exceeded]"</ID>
+    <ID>MayBeConst:RemoteConfigSerializationTest.kt$RemoteConfigSerializationTest.Companion$val dateString = "2024-01-15T10:30:45.123Z"</ID>
     <ID>NestedBlockDepth:FileStore.kt$FileStore$fun deleteStoredFiles(storedFiles: Collection&lt;File>?)</ID>
     <ID>NestedBlockDepth:FileStore.kt$FileStore$fun findStoredFiles(): MutableList&lt;File></ID>
     <ID>NestedBlockDepth:JsonHelper.kt$JsonHelper$fun jsonToLong(value: Any?): Long?</ID>
+    <ID>NestedBlockDepth:RemoteConfig.kt$RemoteConfig.Companion$private fun parseDiscardRule(reader: JsonReader): DiscardRule?</ID>
     <ID>ProtectedMemberInFinalClass:ConfigInternal.kt$ConfigInternal$protected val plugins = HashSet&lt;Plugin>()</ID>
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun isAnr(event: Event): Boolean</ID>
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun shouldDiscardClass(): Boolean</ID>
