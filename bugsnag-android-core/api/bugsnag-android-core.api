@@ -321,6 +321,20 @@ public final class com/bugsnag/android/DeviceWithState : com/bugsnag/android/Dev
 	public final fun setTime (Ljava/util/Date;)V
 }
 
+public abstract class com/bugsnag/android/DiscardRule {
+	public abstract fun shouldDiscard (Lcom/bugsnag/android/EventPayload;)Z
+}
+
+public final class com/bugsnag/android/DiscardRule$All : com/bugsnag/android/DiscardRule {
+	public fun <init> ()V
+	public fun shouldDiscard (Lcom/bugsnag/android/EventPayload;)Z
+}
+
+public final class com/bugsnag/android/DiscardRule$AllHandled : com/bugsnag/android/DiscardRule {
+	public fun <init> ()V
+	public fun shouldDiscard (Lcom/bugsnag/android/EventPayload;)Z
+}
+
 public final class com/bugsnag/android/EndpointConfiguration {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V

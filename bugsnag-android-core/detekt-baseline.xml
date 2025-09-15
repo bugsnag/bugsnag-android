@@ -43,6 +43,7 @@
     <ID>NestedBlockDepth:FileStore.kt$FileStore$fun deleteStoredFiles(storedFiles: Collection&lt;File>?)</ID>
     <ID>NestedBlockDepth:FileStore.kt$FileStore$fun findStoredFiles(): MutableList&lt;File></ID>
     <ID>NestedBlockDepth:JsonHelper.kt$JsonHelper$fun jsonToLong(value: Any?): Long?</ID>
+    <ID>NestedBlockDepth:RemoteConfig.kt$RemoteConfig.Companion$private fun parseDiscardRule(reader: JsonReader): DiscardRule?</ID>
     <ID>ProtectedMemberInFinalClass:ConfigInternal.kt$ConfigInternal$protected val plugins = HashSet&lt;Plugin>()</ID>
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun isAnr(event: Event): Boolean</ID>
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun shouldDiscardClass(): Boolean</ID>
@@ -69,6 +70,7 @@
     <ID>TooManyFunctions:DeviceDataCollector.kt$DeviceDataCollector</ID>
     <ID>TooManyFunctions:EventInternal.kt$EventInternal : FeatureFlagAwareStreamableMetadataAwareUserAware</ID>
     <ID>UnusedPrivateProperty:ManifestConfigLoader.kt$ManifestConfigLoader.Companion$private const val LAUNCH_CRASH_THRESHOLD_MS = "$BUGSNAG_NS.LAUNCH_CRASH_THRESHOLD_MS"</ID>
+    <ID>UnusedPrivateProperty:RemoteConfig.kt$RemoteConfig.Companion$private const val KEY_DISCARD_RULES = "discardRules"</ID>
     <ID>UnusedPrivateProperty:ThreadStateTest.kt$ThreadStateTest$private val configuration = generateImmutableConfig()</ID>
     <ID>UseCheckOrError:BackgroundRunnableProviderServiceTest.kt$BackgroundRunnableProviderServiceTest$throw IllegalStateException()</ID>
     <ID>UseCheckOrError:BugsnagEventMapper.kt$BugsnagEventMapper$throw IllegalStateException("cannot find json property '$key'")</ID>
