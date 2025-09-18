@@ -8,8 +8,7 @@ Feature: ANRs triggered in a fixture with only bugsnag-android-core are captured
   Scenario: Triggering ANR does not crash the minimal app
     When I run "JvmAnrMinimalFixtureScenario"
     And I wait for 2 seconds
-    And I tap the screen 3 times
-    And I wait for 4 seconds
+    And I cause the ANR dialog to appear
     Then I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "errorClass" equals "java.lang.RuntimeException"

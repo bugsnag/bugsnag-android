@@ -1,5 +1,19 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+* Introduced `Event.setErrorReportingThread` so that the error reporting thread can be changed in callbacks
+  [#2277](https://github.com/bugsnag/bugsnag-android/pull/2277)
+
+## 6.18.0 (2025-09-10)
+
+### Enhancements
+
+* Introduced a new `Bugsnag.groupingDiscriminator` and `Event.groupingDiscriminator` to augment the default grouping behaviour.
+  [#2273](https://github.com/bugsnag/bugsnag-android/pull/2273)
+
 ## 6.17.0 (2025-08-14)
 
 ### Enhancements

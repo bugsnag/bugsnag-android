@@ -88,6 +88,8 @@ typedef enum {
   BSG_API_EVENT_SET_SEVERITY,
   BSG_API_EVENT_SET_UNHANDLED,
   BSG_API_EVENT_SET_USER,
+  BSG_API_EVENT_GET_GROUPING_DISCRIMINATOR,
+  BSG_API_EVENT_SET_GROUPING_DISCRIMINATOR,
 } bsg_called_api;
 
 extern const char *const bsg_called_api_names[];

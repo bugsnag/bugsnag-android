@@ -128,6 +128,13 @@ bool bsg_write_event_file(bsg_environment *env, const char *filename) {
         json, "context", event->context,
         strnlen(event->context, sizeof(event->context))));
 
+    if (event->grouping_discriminator[0] != '\0') {
+      CHECKED(bsg_ksjsonaddStringElement(
+          json, "groupingDiscriminator", event->grouping_discriminator,
+          strnlen(event->grouping_discriminator,
+                  sizeof(event->grouping_discriminator))));
+    }
+
     CHECKED(bsg_ksjsonbeginObject(json, "metaData"));
     {
       if (!bsg_write_metadata(json, &event->metadata)) {

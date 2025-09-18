@@ -66,7 +66,7 @@ Then("the exception {string} demangles to {string}") do |keypath, expected_value
                   "expected '#{actual_value}' to demangle to '#{expected_value}' but was '#{demangled_value}'")
 end
 
-def is_out_of_project? file, method
+def is_out_of_project?(file, method)
   # no binary was found to match the address
   file.nil? ||
     # in native functions from bugsnag-plugin-android-ndk
@@ -87,7 +87,7 @@ def demangle symbol
   `c++filt --types --no-strip-underscore #{symbol}`.chomp
 end
 
-def lookup_address binary, address
+def lookup_address(binary, address)
   info = `addr2line --exe '#{binary}' --inlines --basenames --functions --demangle 0x#{address.to_s(16)}`.chomp
   return nil if info.start_with? '??' # failed to resolve
   # can return multiple if there are inlined frames
@@ -103,15 +103,16 @@ end
 
 # Resolve file and method name for in-project contents, returning nil
 # if the frame is not in project.
-def symbolicate arch, frame
+def symbolicate(arch, frame)
   method = demangle(frame["method"])
-  binary_file = frame["file"]&.split('!')&.last
+  raw_file = frame["file"]
+  binary_file = raw_file&.split('!')&.last
 
-  return nil if is_out_of_project?(binary_file, method)
+  return nil if is_out_of_project?(raw_file, method)
 
   symbol_file = File.join(SYMBOL_DIR, "#{File.basename(binary_file, '.so')}-#{arch}.so")
 
-  if File.exist?(symbol_file) and sym_info = lookup_address(symbol_file, frame["lineNumber"])
+  if File.exist?(symbol_file) and (sym_info = lookup_address(symbol_file, frame["lineNumber"]))
     return sym_info
   end
   [{ :method => method, :file => binary_file }]

@@ -1,43 +1,23 @@
 package com.bugsnag.android.internal
 
 import com.bugsnag.android.JsonStream
-import com.bugsnag.android.repackaged.dslplatform.json.DslJson
-import com.bugsnag.android.repackaged.dslplatform.json.JsonWriter
+import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.FileInputStream
-import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.io.PrintWriter
-import java.util.Date
 
 internal object JsonHelper {
 
-    // ignore deprecation warnings as there is no other API that allows
-    // serializing a placeholder for a type and all its subtypes
-    @Suppress("deprecation")
-    private val settings = DslJson.Settings<MutableMap<String, Any>>().fallbackTo(FallbackWriter())
-
-    // Only one global DslJson is needed, and is thread-safe
-    // Note: dsl-json adds about 150k to the final binary size.
-    private val dslJson = DslJson(settings)
-
-    init {
-        dslJson.registerWriter(Date::class.java) { writer: JsonWriter, value: Date? ->
-            value?.let {
-                val timestamp = DateUtils.toIso8601(it)
-                writer.writeString(timestamp)
-            }
-        }
-    }
-
     fun serialize(streamable: JsonStream.Streamable): ByteArray {
         return ByteArrayOutputStream().use { baos ->
-            JsonStream(PrintWriter(baos)).use(streamable::toStream)
-            baos.toByteArray()
+            PrintWriter(baos).use { pw ->
+                JsonStream(pw).use(streamable::toStream)
+                baos.toByteArray()
+            }
         }
     }
 
@@ -49,7 +29,11 @@ internal object JsonHelper {
     }
 
     fun serialize(value: Any, stream: OutputStream) {
-        dslJson.serialize(value, stream)
+        stream.bufferedWriter().use { writer ->
+            JsonStream(writer).use { jsonWriter ->
+                jsonWriter.value(value)
+            }
+        }
     }
 
     fun serialize(value: Any, file: File) {
@@ -60,37 +44,34 @@ internal object JsonHelper {
             }
         }
         try {
-            FileOutputStream(file).use { stream -> dslJson.serialize(value, stream) }
+            FileOutputStream(file).use { stream ->
+                serialize(value, stream)
+            }
         } catch (ex: IOException) {
             throw IOException("Could not serialize JSON document to $file", ex)
         }
     }
 
-    fun deserialize(bytes: ByteArray): MutableMap<String, Any> {
-        val document = dslJson.deserialize(
-            MutableMap::class.java,
-            bytes,
-            bytes.size
-        )
-        requireNotNull(document) { "JSON document is invalid" }
-        @Suppress("UNCHECKED_CAST")
-        return document as MutableMap<String, Any>
+    /**
+     * Deserialize JSON from byte array to Map/Collection objects
+     */
+    fun deserialize(data: ByteArray): Map<String, Any?> {
+        return deserialize(ByteArrayInputStream(data))
     }
 
-    fun deserialize(stream: InputStream): MutableMap<in String, out Any> {
-        val document = dslJson.deserialize(MutableMap::class.java, stream)
-        requireNotNull(document) { "JSON document is invalid" }
-        @Suppress("UNCHECKED_CAST")
-        return document as MutableMap<String, Any>
-    }
+    /**
+     * Deserialize JSON from InputStream to Map/Collection objects
+     */
+    fun deserialize(inputStream: InputStream): Map<String, Any?> {
+        val parser = JsonCollectionParser(inputStream)
+        val result = parser.parse()
 
-    fun deserialize(file: File): MutableMap<in String, out Any> {
-        try {
-            FileInputStream(file).use { stream -> return deserialize(stream) }
-        } catch (ex: FileNotFoundException) {
-            throw ex
-        } catch (ex: IOException) {
-            throw IOException("Could not deserialize from $file", ex)
+        return when (result) {
+            is Map<*, *> -> {
+                @Suppress("UNCHECKED_CAST")
+                result as Map<String, Any?>
+            }
+            else -> throw IllegalArgumentException("Expected JSON object at root level")
         }
     }
 
@@ -121,7 +102,7 @@ internal object JsonHelper {
             null -> null
             is Number -> value.toLong()
             is String -> {
-                if (value.length == 0) {
+                if (value.isEmpty()) {
                     null
                 } else {
                     try {
@@ -148,13 +129,13 @@ internal object JsonHelper {
                             // This overflows and gives the "correct" signed result.
                             val headLength = value.length - 3
                             java.lang.Long.decode(value.substring(0, headLength)) *
-                                1000 +
-                                java.lang.Long.decode(value.substring(headLength, value.length))
+                                1000 + java.lang.Long.decode(value.substring(headLength, value.length))
                         }
                     }
                 }
             }
-            else -> throw IllegalArgumentException("Cannot convert " + value + " to long")
+
+            else -> throw IllegalArgumentException("Cannot convert $value to long")
         }
     }
 }

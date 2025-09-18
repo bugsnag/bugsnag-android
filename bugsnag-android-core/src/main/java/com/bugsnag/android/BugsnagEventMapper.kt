@@ -62,6 +62,9 @@ internal class BugsnagEventMapper(
         // populate groupingHash
         event.groupingHash = map["groupingHash"] as? String
 
+        // populate groupingDiscriminator
+        event.groupingDiscriminator = map["groupingDiscriminator"] as? String
+
         // populate app
         event.app = convertAppWithState(map.readEntry("app"))
 

@@ -106,6 +106,7 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
     var threads: MutableList<Thread>
     var groupingHash: String? = null
     var context: String? = null
+    var groupingDiscriminator: String? = null
 
     var redactedKeys: Collection<Pattern>
         get() = jsonStreamer.redactedKeys
@@ -153,6 +154,7 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
         // Write error basics
         writer.beginObject()
         writer.name("context").value(context)
+        writer.name("groupingDiscriminator").value(groupingDiscriminator)
         writer.name("metaData").value(metadata)
 
         writer.name("severity").value(severity)
@@ -375,6 +377,33 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
         )
         threads.add(thread)
         return thread
+    }
+
+    fun setErrorReportingThread(thread: Thread) {
+        setErrorReportingThread { it === thread }
+    }
+
+    fun setErrorReportingThread(threadId: Long) {
+        val idString = threadId.toString()
+        setErrorReportingThread { it.id == idString }
+    }
+
+    private inline fun setErrorReportingThread(predicate: (Thread) -> Boolean) {
+        var previousErrorReportingThread: Thread? = null
+        var foundPredicateMatch = false
+        for (thread in threads) {
+            if (thread.errorReportingThread && !predicate(thread)) {
+                previousErrorReportingThread = thread
+                thread.errorReportingThread = false
+            } else if (predicate(thread)) {
+                thread.errorReportingThread = true
+                foundPredicateMatch = true
+            }
+        }
+
+        if (!foundPredicateMatch) {
+            previousErrorReportingThread?.errorReportingThread = true
+        }
     }
 
     fun leaveBreadcrumb(

@@ -154,6 +154,31 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware, F
     }
 
     /**
+     * Sets the thread that caused the event. This should be one of the threads in
+     * {@link #getThreads()}. If the thread is not already in the list this method has no effect.
+     *
+     * @param thread the thread that caused the event
+     * @see #setErrorReportingThread(long)
+     */
+    public void setErrorReportingThread(@NonNull Thread thread) {
+        if (thread != null) {
+            impl.setErrorReportingThread(thread);
+        }
+    }
+
+    /**
+     * Sets the thread that caused the event by its id. This should be one of the threads in
+     * {@link #getThreads()}. If the id does not match any threads in the list this method has
+     * no effect.
+     *
+     * @param threadId the id of the thread that caused the event
+     * @see #setErrorReportingThread(Thread)
+     */
+    public void setErrorReportingThread(long threadId) {
+        impl.setErrorReportingThread(threadId);
+    }
+
+    /**
      * A list of breadcrumbs leading up to the event. These values can be accessed and amended
      * if necessary. See {@link Breadcrumb} for details of the data available.
      */
@@ -291,6 +316,25 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware, F
     @Nullable
     public String getContext() {
         return impl.getContext();
+    }
+
+    /**
+     * Set the Grouping Discriminator for this {@code Event}
+     * and return its previous value (if any was set).
+     *
+     * @param groupingDiscriminator the new grouping discriminator or null to clear it
+     * @return the previously set grouping discriminator if one was set
+     */
+    @Nullable
+    public String setGroupingDiscriminator(@Nullable String groupingDiscriminator) {
+        String previousGroupingDiscriminator = impl.getGroupingDiscriminator();
+        impl.setGroupingDiscriminator(groupingDiscriminator);
+        return previousGroupingDiscriminator;
+    }
+
+    @Nullable
+    public String getGroupingDiscriminator() {
+        return impl.getGroupingDiscriminator();
     }
 
     /**
