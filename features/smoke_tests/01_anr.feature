@@ -6,7 +6,7 @@ Feature: ANR smoke test
 
   @anr
   @skip_android_10
-  Scenario: ANR detection
+  Scenario: ANR triggered in Java code
     When I set the screen orientation to portrait
     And I clear any error dialogue
     And I run "JvmAnrLoopScenario"
@@ -88,3 +88,50 @@ Feature: ANR smoke test
     # Metadata validation
     And the event "metaData.custom.global" equals "present in global metadata"
     And the event "metaData.custom.local" equals "present in local metadata"
+    And I wait for 10 seconds
+    #  Wait extra 10 seconds in the end, so appium will have enough time to terminated the previous anr session
+
+  @anr
+  @skip_android_10
+  Scenario: ANR triggered in CXX code is captured even when NDK detection is disabled
+    When I run "CXXAnrNdkDisabledScenario"
+    And I wait for 2 seconds
+    And I cause the ANR dialog to appear
+    Then I wait to receive an error
+    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And the exception "errorClass" equals "ANR"
+    And the exception "message" starts with " Input dispatching timed out"
+    And the error "Bugsnag-Stacktrace-Types" header equals "android"
+    And the error payload field "events.0.exceptions.0.type" equals "android"
+    And the error payload field "events.0.exceptions.0.stacktrace.0.type" is null
+    And the error payload field "events.0.threads.0.type" equals "android"
+    And the error payload field "events.0.threads.0.stacktrace.0.type" is null
+    And I wait for 10 seconds
+    #  Wait extra 10 seconds in the end, so appium will have enough time to terminated the previous anr session
+
+  @anr
+  @skip_android_10
+  Scenario: ANR not captured with autoDetectAnrs changed to false
+    When I run "AutoDetectAnrsFalseScenario"
+    And I wait for 2 seconds
+    And I cause the ANR dialog to appear
+    And I wait for 10 seconds
+    And I close and relaunch the app after an ANR
+    And I configure Bugsnag for "AutoDetectAnrsFalseScenario"
+    Then Bugsnag confirms it has no errors to send
+    And I wait for 10 seconds
+    #  Wait extra 10 seconds in the end, so appium will have enough time to terminated the previous anr session
+
+
+  @anr
+  @skip_android_10
+  Scenario: ANR not captured with autoDetectAnrs changed to false
+    When I run "CXXAnrDetectAnrsFalseScenario"
+    And I wait for 2 seconds
+    And I cause the ANR dialog to appear
+    And I wait for 10 seconds
+    And I close and relaunch the app after an ANR
+    And I configure Bugsnag for "CXXAnrDetectAnrsFalseScenario"
+    Then Bugsnag confirms it has no errors to send
+    And I wait for 10 seconds
+    #  Wait extra 10 seconds in the end, so appium will have enough time to terminated the previous anr session
