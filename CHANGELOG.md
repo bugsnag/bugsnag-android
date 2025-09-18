@@ -6,6 +6,8 @@
 
 * Introduced `Event.setErrorReportingThread` so that the error reporting thread can be changed in callbacks
   [#2277](https://github.com/bugsnag/bugsnag-android/pull/2277)
+* The `bugsnag-plugin-android-exitinfo` plugin now captures the `abortMessage` when it is present
+  [#2291](https://github.com/bugsnag/bugsnag-android/pull/2291)
 
 ## 6.18.0 (2025-09-10)
 

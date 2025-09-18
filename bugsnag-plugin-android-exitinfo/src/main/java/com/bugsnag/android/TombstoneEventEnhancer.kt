@@ -5,18 +5,19 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.bugsnag.android.Thread as BugsnagThread
 
+@RequiresApi(Build.VERSION_CODES.R)
 internal class TombstoneEventEnhancer(
     private val logger: Logger,
-    private val listOpenFds: Boolean,
-    private val includeLogcat: Boolean
+    listOpenFds: Boolean,
+    includeLogcat: Boolean
 ) : (Event, ApplicationExitInfo) -> Unit {
-    @RequiresApi(Build.VERSION_CODES.R)
+    private val tombstoneParser = TombstoneParser(logger, listOpenFds, includeLogcat)
+
     override fun invoke(event: Event, exitInfo: ApplicationExitInfo) {
         try {
-            TombstoneParser(logger).parse(
-                exitInfo,
-                listOpenFds,
-                includeLogcat,
+            val inputStream = exitInfo.traceInputStream ?: return
+            tombstoneParser.parse(
+                inputStream,
                 threadConsumer = { thread ->
                     mergeThreadIntoEvent(
                         thread,
@@ -32,6 +33,12 @@ internal class TombstoneEventEnhancer(
                 },
                 logcatConsumer = { log ->
                     event.addMetadata("Log Messages", "Log Messages", log)
+                },
+                { abortMessage ->
+                    val error = event.errors.find { it.errorClass == "SIGABRT" }
+                        ?: event.errors.firstOrNull()
+
+                    error?.errorMessage = abortMessage
                 }
             )
         } catch (ex: Exception) {
