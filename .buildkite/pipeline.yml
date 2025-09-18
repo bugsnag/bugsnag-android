@@ -142,7 +142,6 @@ steps:
         service-ports: true
         command:
           - "features/smoke_tests"
-          - "--exclude=features/smoke_tests/01_anr.feature"
           - "--app=@build/fixture-r19-url.txt"
           - "--appium-version=1.22"
           - "--no-tunnel"
@@ -219,7 +218,6 @@ steps:
         service-ports: true
         command:
           - "features/smoke_tests"
-          - "--exclude=features/smoke_tests/01_anr.feature"
           - "--app=@build/fixture-r19-url.txt"
           - "--appium-version=1.22"
           - "--no-tunnel"
@@ -236,41 +234,6 @@ steps:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
     concurrency: 25
     concurrency_group: 'bitbar'
-    concurrency_method: eager
-    retry:
-      automatic:
-        - exit_status: 103  # Appium session failed
-          limit: 2
-
-  - label: ':browserstack: Android 8 NDK r19 ANR smoke tests'
-    depends_on: "fixture-r19"
-    timeout_in_minutes: 30
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/bs-fixture-r19-url.txt"
-          - "build/fixture-r19/*"
-        upload: "maze_output/failed/**/*"
-      docker-compose#v4.7.0:
-        pull: maze-runner
-        run: maze-runner
-        service-ports: true
-        command:
-          - "features/smoke_tests/01_anr.feature"
-          - "--app=@build/bs-fixture-r19-url.txt"
-          - "--appium-version=1.22.0"
-          - "--farm=bs"
-          - "--device=ANDROID_8"
-          - "--repeater-api-key="
-          - "--hub-repeater-api-key="
-      test-collector#v1.10.2:
-        files: "reports/TEST-*.xml"
-        format: "junit"
-        branch: "^main|next$$"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
     concurrency_method: eager
     retry:
       automatic:
@@ -294,7 +257,6 @@ steps:
         service-ports: true
         command:
           - "features/smoke_tests"
-          - "--exclude=features/smoke_tests/01_anr.feature"
           - "--app=@build/fixture-r21-url.txt"
           - "--appium-version=1.22"
           - "--no-tunnel"
@@ -309,37 +271,6 @@ steps:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
     concurrency_group: 'bitbar'
-    concurrency_method: eager
-    retry:
-      automatic:
-        - exit_status: 103  # Appium session failed
-          limit: 2
-
-  - label: ':browserstack: Android 9 NDK r21 ANR smoke tests'
-    depends_on: "fixture-r21"
-    timeout_in_minutes: 30
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/bs-fixture-r21-url.txt"
-          - "build/fixture-r21/*"
-        upload:
-          - "maze_output/failed/**/*"
-          - "maze_output/metrics.csv"
-      docker-compose#v4.7.0:
-        pull: maze-runner
-        run: maze-runner
-        service-ports: true
-        command:
-          - "features/smoke_tests/01_anr.feature"
-          - "--app=@build/bs-fixture-r21-url.txt"
-          - "--appium-version=1.22.0"
-          - "--farm=bs"
-          - "--device=ANDROID_9"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
     concurrency_method: eager
     retry:
       automatic:
@@ -363,7 +294,6 @@ steps:
         service-ports: true
         command:
           - "features/smoke_tests"
-          - "--exclude=features/smoke_tests/01_anr.feature"
           - "--app=@build/fixture-r21-url.txt"
           - "--appium-version=1.22"
           - "--no-tunnel"
@@ -378,42 +308,6 @@ steps:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
     concurrency_group: 'bitbar'
-    concurrency_method: eager
-    retry:
-      automatic:
-        - exit_status: 103  # Appium session failed
-          limit: 2
-
-  - label: ':browserstack: Android 10 NDK r21 ANR smoke tests'
-    skip: All ANR scenarios are skipped on Android 10
-    depends_on: "fixture-r21"
-    timeout_in_minutes: 30
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/bs-fixture-r21-url.txt"
-          - "build/fixture-r21/*"
-        upload:
-          - "maze_output/failed/**/*"
-          - "maze_output/metrics.csv"
-      docker-compose#v4.7.0:
-        pull: maze-runner
-        run: maze-runner
-        service-ports: true
-        command:
-          - "features/smoke_tests/01_anr.feature"
-          - "--app=@build/bs-fixture-r21-url.txt"
-          - "--appium-version=1.22.0"
-          - "--farm=bs"
-          - "--device=ANDROID_10"
-      test-collector#v1.10.2:
-        files: "reports/TEST-*.xml"
-        format: "junit"
-        branch: "^main|next$$"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
     concurrency_method: eager
     retry:
       automatic:
@@ -438,7 +332,6 @@ steps:
         service-ports: true
         command:
           - "features/smoke_tests"
-          - "--exclude=features/smoke_tests/01_anr.feature"
           - "--app=@build/fixture-r21-url.txt"
           - "--appium-version=1.22"
           - "--no-tunnel"
@@ -459,14 +352,14 @@ steps:
         - exit_status: 103  # Appium session failed
           limit: 2
 
-  - label: ':browserstack: Android 11 NDK r21 ANR smoke tests'
-    key: 'android-11-anr-smoke'
-    depends_on: "fixture-r21"
-    timeout_in_minutes: 30
+  - label: ':bitbar: Android 12 NDK r21 end-to-end tests - ANRs'
+    depends_on:
+      - "fixture-r21"
+    timeout_in_minutes: 20
     plugins:
       artifacts#v1.9.0:
         download:
-          - "build/bs-fixture-r21-url.txt"
+          - "build/fixture-r21-url.txt"
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
@@ -477,18 +370,20 @@ steps:
         service-ports: true
         command:
           - "features/smoke_tests/01_anr.feature"
-          - "--app=@build/bs-fixture-r21-url.txt"
-          - "--appium-version=1.22.0"
-          - "--farm=bs"
-          - "--device=ANDROID_11"
+          - "--app=@build/fixture-r21-url.txt"
+          - "--appium-version=1.22"
+          - "--no-tunnel"
+          - "--aws-public-ip"
+          - "--farm=bb"
+          - "--device=ANDROID_12"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
+    concurrency: 25
+    concurrency_group: 'bitbar'
     concurrency_method: eager
     retry:
       automatic:
@@ -518,7 +413,6 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
           - "--appium-version=1.22"
           - "--no-tunnel"
@@ -533,42 +427,6 @@ steps:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
     concurrency_group: 'bitbar'
-    concurrency_method: eager
-    retry:
-      automatic:
-        - exit_status: 103  # Appium session failed
-          limit: 2
-
-  - label: ':browserstack: Android 12 NDK r21 end-to-end tests - ANRs'
-    depends_on:
-      - "fixture-r21"
-    timeout_in_minutes: 60
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/bs-fixture-r21-url.txt"
-          - "build/fixture-r21/*"
-        upload:
-          - "maze_output/failed/**/*"
-          - "maze_output/metrics.csv"
-      docker-compose#v4.7.0:
-        pull: maze-runner
-        run: maze-runner
-        service-ports: true
-        command:
-          - "features/full_tests/anr.feature"
-          - "--app=@build/bs-fixture-r21-url.txt"
-          - "--appium-version=1.22.0"
-          - "--farm=bs"
-          - "--device=ANDROID_12"
-      test-collector#v1.10.2:
-        files: "reports/TEST-*.xml"
-        format: "junit"
-        branch: "^main|next$$"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
     concurrency_method: eager
     retry:
       automatic:
@@ -594,7 +452,6 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r21-url.txt"
           - "--appium-version=1.22"
           - "--no-tunnel"
@@ -632,7 +489,6 @@ steps:
         service-ports: true
         command:
           - "features/smoke_tests"
-          - "--exclude=features/smoke_tests/01_anr.feature"
           - "--app=@build/fixture-r21-url.txt"
           - "--appium-version=1.22"
           - "--no-tunnel"
@@ -647,41 +503,6 @@ steps:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
     concurrency_group: 'bitbar'
-    concurrency_method: eager
-    retry:
-      automatic:
-        - exit_status: 103  # Appium session failed
-          limit: 2
-
-  - label: ':browserstack: Android 13 NDK r21 ANR smoke tests'
-    depends_on: "fixture-r21"
-    timeout_in_minutes: 30
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/bs-fixture-r21-url.txt"
-          - "build/fixture-r21/*"
-        upload:
-          - "maze_output/failed/**/*"
-          - "maze_output/metrics.csv"
-      docker-compose#v4.7.0:
-        pull: maze-runner
-        run: maze-runner
-        service-ports: true
-        command:
-          - "features/smoke_tests/01_anr.feature"
-          - "--app=@build/bs-fixture-r21-url.txt"
-          - "--appium-version=1.22.0"
-          - "--farm=bs"
-          - "--device=ANDROID_13"
-      test-collector#v1.10.2:
-        files: "reports/TEST-*.xml"
-        format: "junit"
-        branch: "^main|next$$"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
     concurrency_method: eager
     retry:
       automatic:
@@ -705,7 +526,6 @@ steps:
         service-ports: true
         command:
           - "features/smoke_tests"
-          - "--exclude=features/smoke_tests/01_anr.feature"
           - "--app=@build/fixture-r21-url.txt"
           - "--appium-version=1.22"
           - "--no-tunnel"
@@ -720,41 +540,6 @@ steps:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
     concurrency: 25
     concurrency_group: 'bitbar'
-    concurrency_method: eager
-    retry:
-      automatic:
-        - exit_status: 103  # Appium session failed
-          limit: 2
-
-  - label: ':browserstack: Android 14 NDK r21 ANR smoke tests'
-    depends_on: "fixture-r21"
-    timeout_in_minutes: 30
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/bs-fixture-r21-url.txt"
-          - "build/fixture-r21/*"
-        upload:
-          - "maze_output/failed/**/*"
-          - "maze_output/metrics.csv"
-      docker-compose#v4.7.0:
-        pull: maze-runner
-        run: maze-runner
-        service-ports: true
-        command:
-          - "features/smoke_tests/01_anr.feature"
-          - "--app=@build/bs-fixture-r21-url.txt"
-          - "--appium-version=1.22.0"
-          - "--farm=bs"
-          - "--device=ANDROID_14"
-      test-collector#v1.10.2:
-        files: "reports/TEST-*.xml"
-        format: "junit"
-        branch: "^main|next$$"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
     concurrency_method: eager
     retry:
       automatic:
@@ -778,7 +563,6 @@ steps:
         service-ports: true
         command:
           - "features/smoke_tests"
-          - "--exclude=features/smoke_tests/01_anr.feature"
           - "--app=@build/fixture-r21-url.txt"
           - "--appium-version=1.22.0"
           - "--no-tunnel"
@@ -799,103 +583,6 @@ steps:
         - exit_status: 103  # Appium session failed
           limit: 2
 
-  - label: ':browserstack: Android 15 NDK r21 ANR smoke tests'
-    depends_on: "fixture-r21"
-    timeout_in_minutes: 30
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/bs-fixture-r21-url.txt"
-          - "build/fixture-r21/*"
-        upload:
-          - "maze_output/failed/**/*"
-          - "maze_output/metrics.csv"
-      docker-compose#v4.7.0:
-        pull: maze-runner
-        run: maze-runner
-        service-ports: true
-        command:
-          - "features/smoke_tests/01_anr.feature"
-          - "--app=@build/bs-fixture-r21-url.txt"
-          - "--appium-version=1.22.0"
-          - "--farm=bs"
-          - "--device=ANDROID_15"
-      test-collector#v1.10.2:
-        files: "reports/TEST-*.xml"
-        format: "junit"
-        branch: "^master|next$$"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
-    concurrency_method: eager
-    retry:
-      automatic:
-        - exit_status: 103  # Appium session failed
-          limit: 2
-
-  - label: ':browserstack: Android 16 NDK r21 smoke tests'
-    depends_on: "fixture-r21"
-    timeout_in_minutes: 30
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/bs-fixture-r21-url.txt"
-          - "build/fixture-r21/*"
-        upload:
-          - "maze_output/failed/**/*"
-          - "maze_output/metrics.csv"
-      docker-compose#v4.7.0:
-        pull: maze-runner
-        run: maze-runner
-        command:
-          - "features/smoke_tests"
-          - "--exclude=features/smoke_tests/01_anr.feature"
-          - "--app=@build/bs-fixture-r21-url.txt"
-          - "--appium-version=1.22.0"
-          - "--farm=bs"
-          - "--device=ANDROID_16"
-      test-collector#v1.10.2:
-        files: "reports/TEST-*.xml"
-        format: "junit"
-        branch: "^master|next$$"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
-    concurrency_method: eager
-
-  - label: ':browserstack: Android 16 NDK r21 ANR smoke tests'
-    depends_on: "fixture-r21"
-    timeout_in_minutes: 30
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/bs-fixture-r21-url.txt"
-          - "build/fixture-r21/*"
-        upload:
-          - "maze_output/failed/**/*"
-          - "maze_output/metrics.csv"
-      docker-compose#v4.7.0:
-        pull: maze-runner
-        run: maze-runner
-        service-ports: true
-        command:
-          - "features/smoke_tests/01_anr.feature"
-          - "--app=@build/bs-fixture-r21-url.txt"
-          - "--appium-version=1.22.0"
-          - "--farm=bs"
-          - "--device=ANDROID_16"
-      test-collector#v1.10.2:
-        files: "reports/TEST-*.xml"
-        format: "junit"
-        branch: "^master|next$$"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
-    concurrency_method: eager
-
   - label: ':bitbar: Android 9 NDK r28 smoke tests'
     depends_on: "fixture-r28"
     timeout_in_minutes: 30
@@ -913,7 +600,6 @@ steps:
         service-ports: true
         command:
           - "features/smoke_tests"
-          - "--exclude=features/smoke_tests/01_anr.feature"
           - "--app=@build/fixture-r28-url.txt"
           - "--appium-version=1.22"
           - "--no-tunnel"
@@ -928,37 +614,6 @@ steps:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
     concurrency: 25
     concurrency_group: 'bitbar'
-    concurrency_method: eager
-    retry:
-      automatic:
-        - exit_status: 103  # Appium session failed
-          limit: 2
-
-  - label: ':browserstack: Android 9 NDK r28 ANR smoke tests'
-    depends_on: "fixture-r28"
-    timeout_in_minutes: 30
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/bs-fixture-r28-url.txt"
-          - "build/fixture-r28/*"
-        upload:
-          - "maze_output/failed/**/*"
-          - "maze_output/metrics.csv"
-      docker-compose#v4.7.0:
-        pull: maze-runner
-        run: maze-runner
-        service-ports: true
-        command:
-          - "features/smoke_tests/01_anr.feature"
-          - "--app=@build/bs-fixture-r28-url.txt"
-          - "--appium-version=1.22.0"
-          - "--farm=bs"
-          - "--device=ANDROID_9"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
     concurrency_method: eager
     retry:
       automatic:
@@ -982,7 +637,6 @@ steps:
         service-ports: true
         command:
           - "features/smoke_tests"
-          - "--exclude=features/smoke_tests/01_anr.feature"
           - "--app=@build/fixture-r28-url.txt"
           - "--appium-version=1.22"
           - "--no-tunnel"
@@ -997,42 +651,6 @@ steps:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
     concurrency: 25
     concurrency_group: 'bitbar'
-    concurrency_method: eager
-    retry:
-      automatic:
-        - exit_status: 103  # Appium session failed
-          limit: 2
-
-  - label: ':browserstack: Android 10 NDK r28 ANR smoke tests'
-    skip: All ANR scenarios are skipped on Android 10
-    depends_on: "fixture-r28"
-    timeout_in_minutes: 30
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/bs-fixture-r28-url.txt"
-          - "build/fixture-r28/*"
-        upload:
-          - "maze_output/failed/**/*"
-          - "maze_output/metrics.csv"
-      docker-compose#v4.7.0:
-        pull: maze-runner
-        run: maze-runner
-        service-ports: true
-        command:
-          - "features/smoke_tests/01_anr.feature"
-          - "--app=@build/bs-fixture-r28-url.txt"
-          - "--appium-version=1.22.0"
-          - "--farm=bs"
-          - "--device=ANDROID_10"
-      test-collector#v1.10.2:
-        files: "reports/TEST-*.xml"
-        format: "junit"
-        branch: "^main|next$$"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
     concurrency_method: eager
     retry:
       automatic:
@@ -1057,7 +675,6 @@ steps:
         service-ports: true
         command:
           - "features/smoke_tests"
-          - "--exclude=features/smoke_tests/01_anr.feature"
           - "--app=@build/fixture-r28-url.txt"
           - "--appium-version=1.22"
           - "--no-tunnel"
@@ -1072,42 +689,6 @@ steps:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
     concurrency: 25
     concurrency_group: 'bitbar'
-    concurrency_method: eager
-    retry:
-      automatic:
-        - exit_status: 103  # Appium session failed
-          limit: 2
-
-  - label: ':browserstack: Android 11 NDK r28 ANR smoke tests'
-    key: 'android-11-anr-smoke-2'
-    depends_on: "fixture-r28"
-    timeout_in_minutes: 30
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/bs-fixture-r28-url.txt"
-          - "build/fixture-r28/*"
-        upload:
-          - "maze_output/failed/**/*"
-          - "maze_output/metrics.csv"
-      docker-compose#v4.7.0:
-        pull: maze-runner
-        run: maze-runner
-        service-ports: true
-        command:
-          - "features/smoke_tests/01_anr.feature"
-          - "--app=@build/bs-fixture-r28-url.txt"
-          - "--appium-version=1.22.0"
-          - "--farm=bs"
-          - "--device=ANDROID_11"
-      test-collector#v1.10.2:
-        files: "reports/TEST-*.xml"
-        format: "junit"
-        branch: "^main|next$$"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
     concurrency_method: eager
     retry:
       automatic:
@@ -1137,7 +718,6 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^a-k].*.feature"
-          - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r28-url.txt"
           - "--appium-version=1.22"
           - "--no-tunnel"
@@ -1152,42 +732,6 @@ steps:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
     concurrency: 25
     concurrency_group: 'bitbar'
-    concurrency_method: eager
-    retry:
-      automatic:
-        - exit_status: 103  # Appium session failed
-          limit: 2
-
-  - label: ':browserstack: Android 12 NDK r28 end-to-end tests - ANRs'
-    depends_on:
-      - "fixture-r28"
-    timeout_in_minutes: 60
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/bs-fixture-r28-url.txt"
-          - "build/fixture-r28/*"
-        upload:
-          - "maze_output/failed/**/*"
-          - "maze_output/metrics.csv"
-      docker-compose#v4.7.0:
-        pull: maze-runner
-        run: maze-runner
-        service-ports: true
-        command:
-          - "features/full_tests/anr.feature"
-          - "--app=@build/bs-fixture-r28-url.txt"
-          - "--appium-version=1.22.0"
-          - "--farm=bs"
-          - "--device=ANDROID_12"
-      test-collector#v1.10.2:
-        files: "reports/TEST-*.xml"
-        format: "junit"
-        branch: "^main|next$$"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
     concurrency_method: eager
     retry:
       automatic:
@@ -1213,7 +757,6 @@ steps:
         command:
           - "features/full_tests"
           - "--exclude=features/full_tests/[^l-z].*.feature"
-          - "--exclude=features/full_tests/anr.feature"
           - "--app=@build/fixture-r28-url.txt"
           - "--appium-version=1.22"
           - "--no-tunnel"
@@ -1251,7 +794,6 @@ steps:
         service-ports: true
         command:
           - "features/smoke_tests"
-          - "--exclude=features/smoke_tests/01_anr.feature"
           - "--app=@build/fixture-r28-url.txt"
           - "--appium-version=1.22"
           - "--no-tunnel"
@@ -1266,41 +808,6 @@ steps:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
     concurrency: 25
     concurrency_group: 'bitbar'
-    concurrency_method: eager
-    retry:
-      automatic:
-        - exit_status: 103  # Appium session failed
-          limit: 2
-
-  - label: ':browserstack: Android 13 NDK r28 ANR smoke tests'
-    depends_on: "fixture-r28"
-    timeout_in_minutes: 30
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/bs-fixture-r28-url.txt"
-          - "build/fixture-r28/*"
-        upload:
-          - "maze_output/failed/**/*"
-          - "maze_output/metrics.csv"
-      docker-compose#v4.7.0:
-        pull: maze-runner
-        run: maze-runner
-        service-ports: true
-        command:
-          - "features/smoke_tests/01_anr.feature"
-          - "--app=@build/bs-fixture-r28-url.txt"
-          - "--appium-version=1.22.0"
-          - "--farm=bs"
-          - "--device=ANDROID_13"
-      test-collector#v1.10.2:
-        files: "reports/TEST-*.xml"
-        format: "junit"
-        branch: "^main|next$$"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
     concurrency_method: eager
     retry:
       automatic:
@@ -1324,7 +831,6 @@ steps:
         service-ports: true
         command:
           - "features/smoke_tests"
-          - "--exclude=features/smoke_tests/01_anr.feature"
           - "--app=@build/fixture-r28-url.txt"
           - "--appium-version=1.22"
           - "--no-tunnel"
@@ -1339,41 +845,6 @@ steps:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
     concurrency: 25
     concurrency_group: 'bitbar'
-    concurrency_method: eager
-    retry:
-      automatic:
-        - exit_status: 103  # Appium session failed
-          limit: 2
-
-  - label: ':browserstack: Android 14 NDK r28 ANR smoke tests'
-    depends_on: "fixture-r28"
-    timeout_in_minutes: 30
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/bs-fixture-r28-url.txt"
-          - "build/fixture-r28/*"
-        upload:
-          - "maze_output/failed/**/*"
-          - "maze_output/metrics.csv"
-      docker-compose#v4.7.0:
-        pull: maze-runner
-        run: maze-runner
-        service-ports: true
-        command:
-          - "features/smoke_tests/01_anr.feature"
-          - "--app=@build/bs-fixture-r28-url.txt"
-          - "--appium-version=1.22.0"
-          - "--farm=bs"
-          - "--device=ANDROID_14"
-      test-collector#v1.10.2:
-        files: "reports/TEST-*.xml"
-        format: "junit"
-        branch: "^main|next$$"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
     concurrency_method: eager
     retry:
       automatic:
@@ -1397,7 +868,6 @@ steps:
         service-ports: true
         command:
           - "features/smoke_tests"
-          - "--exclude=features/smoke_tests/01_anr.feature"
           - "--app=@build/fixture-r28-url.txt"
           - "--appium-version=1.22.0"
           - "--no-tunnel"
@@ -1417,104 +887,6 @@ steps:
       automatic:
         - exit_status: 103  # Appium session failed
           limit: 2
-
-  - label: ':browserstack: Android 15 NDK r28 ANR smoke tests'
-    depends_on: "fixture-r28"
-    timeout_in_minutes: 30
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/bs-fixture-r28-url.txt"
-          - "build/fixture-r28/*"
-        upload:
-          - "maze_output/failed/**/*"
-          - "maze_output/metrics.csv"
-      docker-compose#v4.7.0:
-        pull: maze-runner
-        run: maze-runner
-        service-ports: true
-        command:
-          - "features/smoke_tests/01_anr.feature"
-          - "--app=@build/bs-fixture-r28-url.txt"
-          - "--appium-version=1.22.0"
-          - "--farm=bs"
-          - "--device=ANDROID_15"
-      test-collector#v1.10.2:
-        files: "reports/TEST-*.xml"
-        format: "junit"
-        branch: "^master|next$$"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
-    concurrency_method: eager
-    retry:
-      automatic:
-        - exit_status: 103  # Appium session failed
-          limit: 2
-
-  - label: ':browserstack: Android 16 NDK r28 smoke tests'
-    depends_on: "fixture-r28"
-    timeout_in_minutes: 30
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/bs-fixture-r28-url.txt"
-          - "build/fixture-r28/*"
-        upload:
-          - "maze_output/failed/**/*"
-          - "maze_output/metrics.csv"
-      docker-compose#v4.7.0:
-        pull: maze-runner
-        run: maze-runner
-        service-ports: true
-        command:
-          - "features/smoke_tests"
-          - "--exclude=features/smoke_tests/01_anr.feature"
-          - "--app=@build/bs-fixture-r28-url.txt"
-          - "--appium-version=1.22.0"
-          - "--farm=bs"
-          - "--device=ANDROID_16"
-      test-collector#v1.10.2:
-        files: "reports/TEST-*.xml"
-        format: "junit"
-        branch: "^master|next$$"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
-    concurrency_method: eager
-
-  - label: ':browserstack: Android 16 NDK r28 ANR smoke tests'
-    depends_on: "fixture-r28"
-    timeout_in_minutes: 30
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/bs-fixture-r28-url.txt"
-          - "build/fixture-r28/*"
-        upload:
-          - "maze_output/failed/**/*"
-          - "maze_output/metrics.csv"
-      docker-compose#v4.7.0:
-        pull: maze-runner
-        run: maze-runner
-        service-ports: true
-        command:
-          - "features/smoke_tests/01_anr.feature"
-          - "--app=@build/bs-fixture-r28-url.txt"
-          - "--appium-version=1.22.0"
-          - "--farm=bs"
-          - "--device=ANDROID_16"
-      test-collector#v1.10.2:
-        files: "reports/TEST-*.xml"
-        format: "junit"
-        branch: "^master|next$$"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
-    concurrency_method: eager
 
   - label: 'Conditionally include device farms/full tests'
     agents:
