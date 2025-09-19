@@ -14,7 +14,7 @@ steps:
   #
   # Build test fixtures
   #
-  - label: ':android: Build fixture APK {{matrix}}'
+  - label: ':android: Build fixture APK r19'
     key: "fixture-r19"
     timeout_in_minutes: 30
     agents:
@@ -173,7 +173,7 @@ steps:
         - exit_status: 103  # Appium session failed
           limit: 2
 
-  - label: ':bitbar: {{matric}} NDK r21 smoke tests'
+  - label: ':bitbar: {{matrix}} NDK r21 smoke tests'
     matrix:
       - "ANDROID_9"
       - "ANDROID_10"
