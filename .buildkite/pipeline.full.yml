@@ -248,6 +248,14 @@ steps:
           limit: 2
 
   - label: ':bitbar: {{matrix}} NDK r21 e2e tests - batch 2'
+    matrix:
+      - "ANDROID_9"
+      - "ANDROID_10"
+      - "ANDROID_11"
+      # Android 12 is in the basic pipeline
+      - "ANDROID_13"
+      - "ANDROID_14"
+      - "ANDROID_15"
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
