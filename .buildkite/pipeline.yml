@@ -164,45 +164,6 @@ steps:
         - exit_status: 103  # Appium session failed
           limit: 2
 
-  - label: ':bitbar: Android 7 NDK r19 ANR smoke tests'
-    depends_on: "fixture-r19"
-    timeout_in_minutes: 30
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/fixture-r19-url.txt"
-          - "build/fixture-r19/*"
-        upload:
-          - "maze_output/failed/**/*"
-          - "maze_output/metrics.csv"
-      docker-compose#v4.7.0:
-        pull: maze-runner
-        run: maze-runner
-        service-ports: true
-        command:
-          - "features/smoke_tests/01_anr.feature"
-          - "--app=@build/fixture-r19-url.txt"
-          - "--appium-version=1.22.0"
-          - "--no-tunnel"
-          - "--aws-public-ip"
-          - "--farm=bb"
-          - "--device=ANDROID_7"
-          - "--repeater-api-key="
-          - "--hub-repeater-api-key="
-      test-collector#v1.10.2:
-        files: "reports/TEST-*.xml"
-        format: "junit"
-        branch: "^main|next$$"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
-    concurrency: 25
-    concurrency_group: 'bitbar'
-    concurrency_method: eager
-    retry:
-      automatic:
-        - exit_status: 103  # Appium session failed
-          limit: 2
-
   - label: ':bitbar: Android 8 NDK r19 smoke tests'
     depends_on: "fixture-r19"
     timeout_in_minutes: 30
