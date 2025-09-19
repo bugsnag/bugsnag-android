@@ -122,6 +122,11 @@ When("I relaunch the app after a crash") do
   manager.activate
 end
 
+When('I cause the ANR dialog to appear') do
+  step 'I tap the screen 3 times'
+  step 'I press the back button'
+end
+
 When("I tap the screen {int} times") do |count|
   (1..count).each { |i|
     begin
@@ -133,12 +138,8 @@ When("I tap the screen {int} times") do |count|
   }
 end
 
-When("I tap the back-button {int} times") do |count|
-  manager = Maze::Api::Appium::DeviceManager.new
-  (1..count).each { |i|
-    manager.back
-    sleep(0.5)
-  }
+When('I press the back button') do
+  Maze::Api::Appium::DeviceManager.new.back
 end
 
 When("I configure the app to run in the {string} state") do |scenario_mode|

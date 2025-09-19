@@ -15,6 +15,7 @@ import com.bugsnag.android.StateEvent.NotifyUnhandled
 import com.bugsnag.android.StateEvent.PauseSession
 import com.bugsnag.android.StateEvent.StartSession
 import com.bugsnag.android.StateEvent.UpdateContext
+import com.bugsnag.android.StateEvent.UpdateGroupingDiscriminator
 import com.bugsnag.android.StateEvent.UpdateInForeground
 import com.bugsnag.android.StateEvent.UpdateOrientation
 import com.bugsnag.android.StateEvent.UpdateUser
@@ -82,6 +83,7 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
     external fun removeMetadata(tab: String, key: String)
     external fun pausedSession()
     external fun updateContext(context: String)
+    external fun updateGroupingDiscriminator(groupingDiscriminator: String?)
     external fun updateInForeground(inForeground: Boolean, activityName: String)
     external fun updateIsLaunching(isLaunching: Boolean)
     external fun updateOrientation(orientation: String)
@@ -133,6 +135,7 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
             )
 
             is UpdateContext -> updateContext(event.context ?: "")
+            is UpdateGroupingDiscriminator -> updateGroupingDiscriminator(event.groupingDiscriminator)
             is UpdateInForeground -> updateInForeground(
                 event.inForeground,
                 event.contextActivity ?: ""
@@ -166,6 +169,10 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
 
             is StateEvent.ClearFeatureFlag -> clearFeatureFlag(event.name)
             is StateEvent.ClearFeatureFlags -> clearFeatureFlags()
+
+            else -> {
+                // ignore
+            }
         }
     }
 

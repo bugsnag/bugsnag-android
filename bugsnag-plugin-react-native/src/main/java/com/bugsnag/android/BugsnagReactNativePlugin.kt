@@ -113,6 +113,10 @@ class BugsnagReactNativePlugin : Plugin {
         client.codeBundleId = id
     }
 
+    fun updateGroupingDiscriminator(discriminator: String?) {
+        client.groupingDiscriminator = discriminator
+    }
+
     fun addFeatureFlag(name: String, variant: String?) {
         client.addFeatureFlag(name, variant)
     }

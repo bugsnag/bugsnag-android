@@ -51,6 +51,8 @@ sealed class StateEvent { // JvmField allows direct field access optimizations
 
     class UpdateContext(@JvmField val context: String?) : StateEvent()
 
+    class UpdateGroupingDiscriminator(@JvmField val groupingDiscriminator: String?) : StateEvent()
+
     class UpdateInForeground(
         @JvmField val inForeground: Boolean,
         val contextActivity: String?

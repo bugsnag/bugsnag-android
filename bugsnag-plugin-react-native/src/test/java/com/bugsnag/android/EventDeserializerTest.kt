@@ -31,6 +31,7 @@ class EventDeserializerTest {
         map["unhandled"] = false
         map["context"] = "Foo"
         map["groupingHash"] = "SomeHash"
+        map["groupingDiscriminator"] = "SomeDiscriminator"
         map["severityReason"] = mapOf(Pair("type", SeverityReason.REASON_HANDLED_EXCEPTION))
         map["user"] = mapOf(Pair("id", "123"))
         map["breadcrumbs"] = listOf(breadcrumbMap())
@@ -88,6 +89,7 @@ class EventDeserializerTest {
         assertFalse(TestHooks.getUnhandledOverridden(event))
         assertEquals("Foo", event.context)
         assertEquals("SomeHash", event.groupingHash)
+        assertEquals("SomeDiscriminator", event.groupingDiscriminator)
         assertEquals("123", event.getUser().id)
         assertTrue(event.breadcrumbs.isNotEmpty())
         assertTrue(event.threads.isNotEmpty())

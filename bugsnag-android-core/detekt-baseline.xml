@@ -4,7 +4,11 @@
   <CurrentIssues>
     <ID>CyclomaticComplexMethod:AppDataCollector.kt$AppDataCollector$@SuppressLint("SwitchIntDef") @Suppress("DEPRECATION") private fun getProcessImportance(): String?</ID>
     <ID>CyclomaticComplexMethod:ConfigInternal.kt$ConfigInternal$fun getConfigDifferences(): Map&lt;String, Any></ID>
+    <ID>CyclomaticComplexMethod:JsonCollectionParser.kt$JsonCollectionParser$private fun parseNumber(): Number</ID>
+    <ID>CyclomaticComplexMethod:JsonCollectionParser.kt$JsonCollectionParser$private fun readUtf8Char(): Int</ID>
     <ID>ImplicitDefaultLocale:Deliverable.kt$Deliverable$String.format("%02x", byte)</ID>
+    <ID>LongMethod:EventSerializationTest.kt$EventSerializationTest.Companion$@JvmStatic @Parameters fun testCases(): Collection&lt;Pair&lt;Event, String>></ID>
+    <ID>LongMethod:EventSerializationTest.kt$private fun createMetadataStressTest(event: Event)</ID>
     <ID>LongParameterList:App.kt$App$( /** * The architecture of the running application binary */ var binaryArch: String?, /** * The package name of the application */ var id: String?, /** * The release stage set in [Configuration.releaseStage] */ var releaseStage: String?, /** * The version of the application set in [Configuration.version] */ var version: String?, /** The revision ID from the manifest (React Native apps only) */ var codeBundleId: String?, /** * The unique identifier for the build of the application set in [Configuration.buildUuid] */ buildUuid: Provider&lt;String?>?, /** * The application type set in [Configuration#version] */ var type: String?, /** * The version code of the application set in [Configuration.versionCode] */ var versionCode: Number? )</ID>
     <ID>LongParameterList:AppDataCollector.kt$AppDataCollector$( appContext: Context, private val packageManager: PackageManager?, private val config: ImmutableConfig, private val sessionTracker: Provider&lt;SessionTracker>, private val activityManager: ActivityManager?, private val launchCrashTracker: LaunchCrashTracker, private val memoryTrimState: MemoryTrimState )</ID>
     <ID>LongParameterList:AppWithState.kt$AppWithState$( binaryArch: String?, id: String?, releaseStage: String?, version: String?, codeBundleId: String?, buildUuid: Provider&lt;String?>?, type: String?, versionCode: Number?, /** * The number of milliseconds the application was running before the event occurred */ var duration: Number?, /** * The number of milliseconds the application was running in the foreground before the * event occurred */ var durationInForeground: Number?, /** * Whether the application was in the foreground when the event occurred */ var inForeground: Boolean?, /** * Whether the application was launching when the event occurred */ var isLaunching: Boolean? )</ID>
@@ -21,6 +25,7 @@
     <ID>LongParameterList:NativeStackframe.kt$NativeStackframe$( /** * The name of the method that was being executed */ var method: String?, /** * The location of the source file */ var file: String?, /** * The line number within the source file this stackframe refers to */ var lineNumber: Number?, /** * The address of the instruction where the event occurred. */ var frameAddress: Long?, /** * The address of the function where the event occurred. */ var symbolAddress: Long?, /** * The address of the library where the event occurred. */ var loadAddress: Long?, /** * Whether this frame identifies the program counter */ var isPC: Boolean?, /** * The type of the error */ var type: ErrorType? = null, /** * Identifies the exact build this frame originates from. */ var codeIdentifier: String? = null, )</ID>
     <ID>LongParameterList:StateEvent.kt$StateEvent.Install$( @JvmField val apiKey: String, @JvmField val autoDetectNdkCrashes: Boolean, @JvmField val appVersion: String?, @JvmField val buildUuid: String?, @JvmField val releaseStage: String?, @JvmField val lastRunInfoPath: String, @JvmField val consecutiveLaunchCrashes: Int, @JvmField val sendThreads: ThreadSendPolicy, @JvmField val maxBreadcrumbs: Int )</ID>
     <ID>LongParameterList:ThreadState.kt$ThreadState$( allThreads: List&lt;JavaThread>, currentThread: JavaThread, exc: Throwable?, isUnhandled: Boolean, maxThreadCount: Int, threadCollectionTimeLimitMillis: Long, projectPackages: Collection&lt;String>, logger: Logger )</ID>
+    <ID>LoopWithTooManyJumpStatements:JsonCollectionParser.kt$JsonCollectionParser$while</ID>
     <ID>MagicNumber:BugsnagEventMapper.kt$BugsnagEventMapper$16</ID>
     <ID>MagicNumber:BugsnagEventMapper.kt$BugsnagEventMapper$32</ID>
     <ID>MagicNumber:BugsnagEventMapper.kt$BugsnagEventMapper$56</ID>
@@ -28,6 +33,26 @@
     <ID>MagicNumber:DeliveryStatus.kt$DeliveryStatus.Companion$429</ID>
     <ID>MagicNumber:DeliveryStatus.kt$DeliveryStatus.Companion$499</ID>
     <ID>MagicNumber:EventStore.kt$EventStore$60</ID>
+    <ID>MagicNumber:JsonCollectionParser.kt$JsonCollectionParser$0x07</ID>
+    <ID>MagicNumber:JsonCollectionParser.kt$JsonCollectionParser$0x10000</ID>
+    <ID>MagicNumber:JsonCollectionParser.kt$JsonCollectionParser$0x10FFFF</ID>
+    <ID>MagicNumber:JsonCollectionParser.kt$JsonCollectionParser$0x3F</ID>
+    <ID>MagicNumber:JsonCollectionParser.kt$JsonCollectionParser$0x3FF</ID>
+    <ID>MagicNumber:JsonCollectionParser.kt$JsonCollectionParser$0x80</ID>
+    <ID>MagicNumber:JsonCollectionParser.kt$JsonCollectionParser$0x800</ID>
+    <ID>MagicNumber:JsonCollectionParser.kt$JsonCollectionParser$0xC0</ID>
+    <ID>MagicNumber:JsonCollectionParser.kt$JsonCollectionParser$0xD800</ID>
+    <ID>MagicNumber:JsonCollectionParser.kt$JsonCollectionParser$0xDC00</ID>
+    <ID>MagicNumber:JsonCollectionParser.kt$JsonCollectionParser$0xDFFF</ID>
+    <ID>MagicNumber:JsonCollectionParser.kt$JsonCollectionParser$0xE0</ID>
+    <ID>MagicNumber:JsonCollectionParser.kt$JsonCollectionParser$0xF0</ID>
+    <ID>MagicNumber:JsonCollectionParser.kt$JsonCollectionParser$0xF8</ID>
+    <ID>MagicNumber:JsonCollectionParser.kt$JsonCollectionParser$0xFFFF</ID>
+    <ID>MagicNumber:JsonCollectionParser.kt$JsonCollectionParser$10</ID>
+    <ID>MagicNumber:JsonCollectionParser.kt$JsonCollectionParser$16</ID>
+    <ID>MagicNumber:JsonCollectionParser.kt$JsonCollectionParser$3</ID>
+    <ID>MagicNumber:JsonCollectionParser.kt$JsonCollectionParser$4</ID>
+    <ID>MagicNumber:JsonCollectionParser.kt$JsonCollectionParser$6</ID>
     <ID>MagicNumber:JsonHelper.kt$JsonHelper$0xff</ID>
     <ID>MagicNumber:JsonHelper.kt$JsonHelper$1000</ID>
     <ID>MagicNumber:JsonHelper.kt$JsonHelper$16</ID>
@@ -63,6 +88,8 @@
     <ID>SwallowedException:PluginClient.kt$PluginClient$exc: ClassNotFoundException</ID>
     <ID>SwallowedException:RootDetector.kt$RootDetector$ex: IllegalThreadStateException</ID>
     <ID>SwallowedException:SharedPrefMigrator.kt$SharedPrefMigrator$e: RuntimeException</ID>
+    <ID>ThrowsCount:JsonCollectionParser.kt$JsonCollectionParser$private fun parseNumber(): Number</ID>
+    <ID>ThrowsCount:JsonCollectionParser.kt$JsonCollectionParser$private fun readUtf8Char(): Int</ID>
     <ID>ThrowsCount:JsonHelper.kt$JsonHelper$fun jsonToLong(value: Any?): Long?</ID>
     <ID>TooManyFunctions:ConfigInternal.kt$ConfigInternal : CallbackAwareMetadataAwareUserAwareFeatureFlagAware</ID>
     <ID>TooManyFunctions:DeviceDataCollector.kt$DeviceDataCollector</ID>

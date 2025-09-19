@@ -1,4 +1,5 @@
 {
+  "groupingDiscriminator": "123456789",
   "metaData": {},
   "severity": "warning",
   "severityReason": {
@@ -7,7 +8,7 @@
   },
   "unhandled": false,
   "exceptions": [],
-  "projectPackages":[
+  "projectPackages": [
     "com.example.foo"
   ],
   "user": {},

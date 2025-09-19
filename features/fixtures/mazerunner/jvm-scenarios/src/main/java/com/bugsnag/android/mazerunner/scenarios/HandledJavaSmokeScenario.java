@@ -44,6 +44,7 @@ public class HandledJavaSmokeScenario extends Scenario {
             @Override
             public boolean onError(@NonNull Event event) {
                 event.addMetadata("TestData", "CallbackMetadata", true);
+                event.setGroupingDiscriminator("abc123");
                 return true;
             }
         });

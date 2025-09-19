@@ -93,6 +93,9 @@ Feature: Handled smoke tests
     # Context
     And the event "context" equals "FooContext"
 
+    # GroupingDiscriminator
+    And the event "groupingDiscriminator" equals "abc123"
+
     # MetaData
     And the event "metaData.TestData.ClientMetadata" is true
     And the event "metaData.TestData.CallbackMetadata" is true
