@@ -465,7 +465,7 @@ steps:
         service-ports: true
         command:
           - "features/full_tests"
-          - "--exclude=features/full_tests/[^a-k].*.feature"
+          - "--exclude=features/full_tests/[^a-m].*.feature"
           - "--app=@build/fixture-r28-url.txt"
           - "--appium-version=1.22"
           - "--no-tunnel"
@@ -504,7 +504,7 @@ steps:
         service-ports: true
         command:
           - "features/full_tests"
-          - "--exclude=features/full_tests/[^l-z].*.feature"
+          - "--exclude=features/full_tests/[^n-z].*.feature"
           - "--app=@build/fixture-r28-url.txt"
           - "--appium-version=1.22"
           - "--no-tunnel"
