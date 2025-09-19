@@ -4,16 +4,13 @@ import com.bugsnag.android.internal.DateUtils
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
-import org.junit.runners.Parameterized.Parameter
-import org.junit.runners.Parameterized.Parameters
 
 @RunWith(Parameterized::class)
 internal class RemoteConfigSerializationTest {
 
     companion object {
-
         @JvmStatic
-        @Parameters
+        @Parameterized.Parameters
         fun testCases() = generateSerializationTestCases(
             "remoteconfig",
             RemoteConfig(
@@ -29,7 +26,7 @@ internal class RemoteConfigSerializationTest {
         )
     }
 
-    @Parameter
+    @Parameterized.Parameter
     lateinit var testCase: Pair<RemoteConfig, String>
 
     @Test
