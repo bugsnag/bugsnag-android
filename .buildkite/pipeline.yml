@@ -214,7 +214,7 @@ steps:
         - exit_status: 103  # Appium session failed
           limit: 2
 
-  - label: ':bitbar: Android 12 NDK r21 end-to-end tests - ANRs'
+  - label: ':bitbar: ANDROID_12 NDK r21 e2e tests - ANRs'
     depends_on:
       - "fixture-r21"
     timeout_in_minutes: 20
@@ -252,11 +252,7 @@ steps:
         - exit_status: 103  # Appium session failed
           limit: 2
 
-  # Android 11+ devices have the GWP-ASAN tool enabled which randomly samples native memory
-  # to detect misuse (such as use-after-free, buffer overflow). If a failure is detected then
-  # the device will raise a SIGABRT mentioning GWP-ASAN - this can be investigated further
-  # by inspecting the devices logs.
-  - label: ':bitbar: Android 12 NDK r21 end-to-end tests - batch 1'
+  - label: ':bitbar: ANDROID_12 NDK r21 e2e tests - batch 1'
     depends_on:
       - "fixture-r21"
     timeout_in_minutes: 60
@@ -295,7 +291,7 @@ steps:
         - exit_status: 103  # Appium session failed
           limit: 2
 
-  - label: ':bitbar: Android 12 NDK r21 end-to-end tests - batch 2'
+  - label: ':bitbar: ANDROID_12 NDK r21 e2e tests - batch 2'
     depends_on:
       - "fixture-r21"
     timeout_in_minutes: 60
@@ -420,7 +416,7 @@ steps:
         - exit_status: 103  # Appium session failed
           limit: 2
 
-  - label: ':bitbar: Android 12 NDK r28 end-to-end tests - batch 1'
+  - label: ':bitbar: ANDROID_12 NDK r28 e2e tests - batch 1'
     depends_on:
       - "fixture-r28"
     timeout_in_minutes: 60
@@ -459,7 +455,7 @@ steps:
         - exit_status: 103  # Appium session failed
           limit: 2
 
-  - label: ':bitbar: Android 12 NDK r28 end-to-end tests - batch 2'
+  - label: ':bitbar: ANDROID_12 NDK r28 e2e tests - batch 2'
     depends_on:
       - "fixture-r28"
     timeout_in_minutes: 60
