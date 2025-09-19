@@ -44,7 +44,7 @@ steps:
   # BitBar steps
   #
 
-  - label: ':browserstack: Minimal fixture ANR end-to-end tests'
+  - label: ':bitbar: Minimal fixture ANR end-to-end tests'
     depends_on: "fixture-minimal"
     timeout_in_minutes: 30
     plugins:
@@ -60,15 +60,17 @@ steps:
           - "--app=/app/build/fixture-minimal.apk"
           - "--appium-version=1.22.0"
           - "--farm=bs"
-          - "--device=ANDROID_9"
+          - "--device=ANDROID_11|ANDROID_12|ANDROID_13"
+          - "--no-tunnel"
+          - "--aws-public-ip"
           - "--repeater-api-key="
           - "--hub-repeater-api-key="
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
         branch: "^main|next$$"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
+    concurrency: 25
+    concurrency_group: 'bitbar'
     concurrency_method: eager
     retry:
       automatic:
