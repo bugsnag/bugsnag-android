@@ -69,7 +69,7 @@ internal class RemoteConfigRequest(
         // Add optional parameters
         config.appVersion?.let { version ->
             append("&version=")
-            append(URLEncoder.encode(version, StandardCharsets.UTF_8))
+            append(urlEncoded(version))
         }
 
         config.versionCode?.let { versionCode ->
@@ -79,13 +79,13 @@ internal class RemoteConfigRequest(
 
         config.releaseStage?.let { releaseStage ->
             append("&releaseStage=")
-            append(URLEncoder.encode(releaseStage, StandardCharsets.UTF_8))
+            append(urlEncoded(releaseStage))
         }
 
         // Add app ID (package name)
         config.packageInfo?.packageName?.let { appId ->
             append("&appId=")
-            append(URLEncoder.encode(appId, StandardCharsets.UTF_8))
+            append(urlEncoded(appId))
         }
     }
 
@@ -124,7 +124,15 @@ internal class RemoteConfigRequest(
         val maxAgeSeconds = maxAgeMatcher.groupValues.getOrNull(1)?.toLongOrNull()
             ?: return defaultConfigExpiry()
 
-        return Date(System.currentTimeMillis() + (maxAgeSeconds * 1000L))
+        return Date(System.currentTimeMillis() + (maxAgeSeconds * SECONDS_MS))
+    }
+
+    private fun urlEncoded(value: String): String {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            URLEncoder.encode(value, StandardCharsets.UTF_8)
+        } else {
+            URLEncoder.encode(value, "UTF-8")
+        }
     }
 
     private fun defaultConfigExpiry(): Date =
@@ -137,7 +145,9 @@ internal class RemoteConfigRequest(
         const val HEADER_BUGSNAG_NOTIFIER_NAME = "Bugsnag-Notifier-Name"
         const val HEADER_BUGSNAG_NOTIFIER_VERSION = "Bugsnag-Notifier-Version"
 
-        const val DEFAULT_CONFIG_EXPIRY_TIME = 24 * 60 * 60 * 1000
+        const val SECONDS_MS = 1000L
+
+        const val DEFAULT_CONFIG_EXPIRY_TIME = 24 * 60 * 60 * SECONDS_MS
         val maxAgeRegex = Regex(""".*max-age\s*=\s*(\d+).*""")
     }
 }
