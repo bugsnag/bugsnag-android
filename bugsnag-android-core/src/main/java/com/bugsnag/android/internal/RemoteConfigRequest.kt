@@ -43,18 +43,18 @@ internal class RemoteConfigRequest(
         connection.doOutput = false
 
         // Set required headers
-        connection.setRequestProperty("Bugsnag-Api-Key", config.apiKey)
-        connection.setRequestProperty("Bugsnag-Notifier-Name", notifier.name)
-        connection.setRequestProperty("Bugsnag-Notifier-Version", notifier.version)
+        connection.setRequestProperty(HEADER_BUGSNAG_API_KEY, config.apiKey)
+        connection.setRequestProperty(HEADER_BUGSNAG_NOTIFIER_NAME, notifier.name)
+        connection.setRequestProperty(HEADER_BUGSNAG_NOTIFIER_VERSION, notifier.version)
 
         if (remoteConfig != null) {
-            connection.setRequestProperty("If-None-Match", remoteConfig.configurationTag)
+            connection.setRequestProperty(HEADER_IF_NONE_MATCH, remoteConfig.configurationTag)
         }
 
         val responseCode = connection.responseCode
         return when (responseCode) {
-            200 -> parseRemoteConfig(connection)
-            304 -> renewExistingConfig(configExpiryDate(connection))
+            HttpURLConnection.HTTP_OK -> parseRemoteConfig(connection)
+            HttpURLConnection.HTTP_NOT_MODIFIED -> renewExistingConfig(configExpiryDate(connection))
             else -> null
         }
     }
@@ -82,12 +82,6 @@ internal class RemoteConfigRequest(
             append(URLEncoder.encode(releaseStage, StandardCharsets.UTF_8))
         }
 
-        // Add binary architecture
-        getPrimaryBinaryArch()?.let { binaryArch ->
-            append("&binaryArch=")
-            append(binaryArch)
-        }
-
         // Add app ID (package name)
         config.packageInfo?.packageName?.let { appId ->
             append("&appId=")
@@ -104,12 +98,9 @@ internal class RemoteConfigRequest(
             ?: return null
 
         val expiryDate = configExpiryDate(connection)
-        val tag = connection.getHeaderField("etag")
+        val tag = connection.getHeaderField(HEADER_ETAG)
 
-        json["configurationTag"] = tag
-        json["configurationExpiry"] = DateUtils.toIso8601(expiryDate)
-
-        return RemoteConfig.fromMap(json)
+        return RemoteConfig.fromMap(json, tag, expiryDate)
     }
 
     private fun renewExistingConfig(configExpiryDate: Date): RemoteConfig? {
@@ -125,40 +116,27 @@ internal class RemoteConfigRequest(
     }
 
     private fun configExpiryDate(connection: HttpURLConnection): Date {
-        val cacheControl = connection.getHeaderField("cache-control")
+        val cacheControl = connection.getHeaderField(HEADER_CACHE_CONTROL)
             ?: return defaultConfigExpiry()
 
         val maxAgeMatcher = maxAgeRegex.matchEntire(cacheControl)
             ?: return defaultConfigExpiry()
-        val maxAge = maxAgeMatcher.groupValues.getOrNull(1)?.toLongOrNull()
+        val maxAgeSeconds = maxAgeMatcher.groupValues.getOrNull(1)?.toLongOrNull()
             ?: return defaultConfigExpiry()
 
-        return Date(System.currentTimeMillis() + (maxAge * 1000L))
+        return Date(System.currentTimeMillis() + (maxAgeSeconds * 1000L))
     }
 
     private fun defaultConfigExpiry(): Date =
         Date(System.currentTimeMillis() + DEFAULT_CONFIG_EXPIRY_TIME)
 
-    private fun getPrimaryBinaryArch(): String? {
-        @Suppress("DEPRECATION")
-        val primaryAbi = when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> {
-                Build.SUPPORTED_ABIS.firstOrNull()
-            }
+    internal companion object {
+        const val HEADER_ETAG = "ETag"
+        const val HEADER_CACHE_CONTROL = "Cache-Control"
+        const val HEADER_IF_NONE_MATCH = "If-None-Match"
+        const val HEADER_BUGSNAG_NOTIFIER_NAME = "Bugsnag-Notifier-Name"
+        const val HEADER_BUGSNAG_NOTIFIER_VERSION = "Bugsnag-Notifier-Version"
 
-            else -> Build.CPU_ABI
-        }
-
-        return when (primaryAbi) {
-            "armeabi-v7a", "armeabi" -> "arm32"
-            "arm64-v8a" -> "arm64"
-            "x86" -> "x86"
-            "x86_64" -> "x86_64"
-            else -> primaryAbi // Return original value if not in our mapping
-        }
-    }
-
-    companion object {
         const val DEFAULT_CONFIG_EXPIRY_TIME = 24 * 60 * 60 * 1000
         val maxAgeRegex = Regex(""".*max-age\s*=\s*(\d+).*""")
     }
