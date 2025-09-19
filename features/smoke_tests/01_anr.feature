@@ -5,7 +5,6 @@ Feature: ANR smoke test
     Given I clear all persistent data
 
   @anr
-  @skip_android_10
   Scenario: ANR triggered in Java code
     When I set the screen orientation to portrait
     And I clear any error dialogue
@@ -92,7 +91,6 @@ Feature: ANR smoke test
     #  Wait extra 10 seconds in the end, so appium will have enough time to terminated the previous anr session
 
   @anr
-  @skip_android_10
   Scenario: ANR triggered in CXX code is captured even when NDK detection is disabled
     When I run "CXXAnrNdkDisabledScenario"
     And I wait for 2 seconds
@@ -110,7 +108,6 @@ Feature: ANR smoke test
     #  Wait extra 10 seconds in the end, so appium will have enough time to terminated the previous anr session
 
   @anr
-  @skip_android_10
   Scenario: ANR not captured with autoDetectAnrs changed to false
     When I run "AutoDetectAnrsFalseScenario"
     And I wait for 2 seconds
@@ -124,7 +121,6 @@ Feature: ANR smoke test
 
 
   @anr
-  @skip_android_10
   Scenario: ANR not captured with autoDetectAnrs changed to false
     When I run "CXXAnrDetectAnrsFalseScenario"
     And I wait for 2 seconds
