@@ -59,7 +59,7 @@ steps:
           - "features/minimal/detect_anr_minimal.feature"
           - "--app=/app/build/fixture-minimal.apk"
           - "--appium-version=1.22.0"
-          - "--farm=bs"
+          - "--farm=bb"
           - "--device=ANDROID_11|ANDROID_12|ANDROID_13"
           - "--no-tunnel"
           - "--aws-public-ip"
