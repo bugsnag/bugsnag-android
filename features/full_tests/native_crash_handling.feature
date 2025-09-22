@@ -122,9 +122,6 @@ Feature: Native crash reporting
     And the event "severity" equals "error"
     And the event "unhandled" is true
 
-  # Android 6 dladdr does report .so files that are not extracted from their .apk file
-  # this test cannot pass on these devices with extractNativeLibs=false
-  @skip_android_6
   Scenario: Causing a crash in a separate library
     When I run "CXXExternalStackElementScenario" and relaunch the crashed app
     And I configure Bugsnag for "CXXExternalStackElementScenario"
