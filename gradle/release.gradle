@@ -35,11 +35,7 @@ project.afterEvaluate {
 
         repositories {
             maven {
-                if (VERSION_NAME.contains("SNAPSHOT")) {
-                    url "https://oss.sonatype.org/content/repositories/snapshots/"
-                } else {
-                    url "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-                }
+                url "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
                 credentials {
                     username = project.hasProperty("NEXUS_USERNAME") ? "$NEXUS_USERNAME" : System.getenv("NEXUS_USERNAME")
                     password = project.hasProperty("NEXUS_PASSWORD") ? "$NEXUS_PASSWORD" : System.getenv("NEXUS_PASSWORD")
