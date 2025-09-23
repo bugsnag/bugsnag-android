@@ -1,11 +1,12 @@
-package com.bugsnag.android.internal
+package com.bugsnag.android.internal.remoteconfig
 
 import com.bugsnag.android.RemoteConfig
 import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.Assert
 import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Rule
+import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import java.io.File
 import java.util.Date
@@ -21,11 +22,6 @@ class RemoteConfigStoreTest {
     @Before
     fun setup() {
         store = RemoteConfigStore(tempDir.root, versionCode)
-    }
-
-    @After
-    fun cleanup() {
-        // TemporaryFolder rule handles cleanup automatically
     }
 
     @Test

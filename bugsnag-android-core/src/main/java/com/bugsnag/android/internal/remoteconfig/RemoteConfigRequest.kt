@@ -1,9 +1,12 @@
-package com.bugsnag.android.internal
+package com.bugsnag.android.internal.remoteconfig
 
 import android.os.Build
 import com.bugsnag.android.Logger
 import com.bugsnag.android.Notifier
 import com.bugsnag.android.RemoteConfig
+import com.bugsnag.android.internal.HEADER_BUGSNAG_API_KEY
+import com.bugsnag.android.internal.ImmutableConfig
+import com.bugsnag.android.internal.JsonCollectionParser
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder

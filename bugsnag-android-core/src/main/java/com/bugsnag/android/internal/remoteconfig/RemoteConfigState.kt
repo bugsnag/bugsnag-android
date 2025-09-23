@@ -1,7 +1,10 @@
-package com.bugsnag.android.internal
+package com.bugsnag.android.internal.remoteconfig
 
 import com.bugsnag.android.Notifier
 import com.bugsnag.android.RemoteConfig
+import com.bugsnag.android.internal.BackgroundTaskService
+import com.bugsnag.android.internal.ImmutableConfig
+import com.bugsnag.android.internal.TaskType
 import java.util.concurrent.Callable
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit

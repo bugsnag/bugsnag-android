@@ -1,6 +1,7 @@
-package com.bugsnag.android.internal
+package com.bugsnag.android.internal.remoteconfig
 
 import com.bugsnag.android.RemoteConfig
+import com.bugsnag.android.internal.JsonHelper
 import java.io.File
 import java.io.IOException
 import java.util.Date
