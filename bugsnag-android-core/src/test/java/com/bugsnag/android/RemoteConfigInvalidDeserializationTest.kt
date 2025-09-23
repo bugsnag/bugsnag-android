@@ -1,11 +1,8 @@
 package com.bugsnag.android
 
-import android.util.JsonReader
-import com.bugsnag.android.internal.JsonCollectionParser
 import com.bugsnag.android.internal.JsonHelper
 import org.junit.Assert.assertNull
 import org.junit.Test
-import java.io.StringReader
 
 internal class RemoteConfigInvalidDeserializationTest {
 

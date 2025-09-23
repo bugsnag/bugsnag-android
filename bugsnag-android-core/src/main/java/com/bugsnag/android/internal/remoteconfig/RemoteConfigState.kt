@@ -17,6 +17,60 @@ internal class RemoteConfigState(
 ) {
     private val enabled: Boolean = config.endpoints.configuration != null
 
+    @Volatile
+    private var isRequestInFlight = false
+
+    companion object {
+        private const val REFRESH_BUFFER_MS = 2 * 60 * 60 * 1000L // 2 hours
+    }
+
+    fun scheduleDownloadIfRequired() {
+        if (!enabled) {
+            return
+        }
+
+        // Check if the config is within around 2 hours of expiring
+        val currentConfig = store.currentOrExpired()
+        if (currentConfig == null || !shouldRefresh(currentConfig)) {
+            return
+        }
+
+        // Don't schedule if a request is already in-flight
+        synchronized(this) {
+            if (isRequestInFlight) {
+                return
+            }
+            isRequestInFlight = true
+        }
+
+        // Schedule the download in background
+        backgroundTaskService.submitTask(TaskType.IO) {
+            try {
+                val newRemoteConfig = RemoteConfigRequest(
+                    config,
+                    notifier,
+                    store.currentOrExpired()
+                ).call()
+
+                // Store the new config if downloaded successfully
+                if (newRemoteConfig != null) {
+                    store.store(newRemoteConfig)
+                }
+            } finally {
+                isRequestInFlight = false
+            }
+        }
+    }
+
+    private fun shouldRefresh(remoteConfig: RemoteConfig): Boolean {
+        val now = System.currentTimeMillis()
+        val expiryTime = remoteConfig.configurationExpiry.time
+        val timeUntilExpiry = expiryTime - now
+
+        // Refresh if we're within 2 hours of expiry
+        return timeUntilExpiry <= REFRESH_BUFFER_MS
+    }
+
     fun getRemoteConfig(timeout: Long, timeUnit: TimeUnit): RemoteConfig? {
         if (!enabled) {
             return null
@@ -45,17 +99,20 @@ internal class RemoteConfigState(
             }
         }
 
-        return backgroundTaskService.submitTask(TaskType.IO, Callable<RemoteConfig?> {
-            val remoteConfig = store.load()
-            if (remoteConfig != null) {
-                return@Callable remoteConfig
-            }
+        return backgroundTaskService.submitTask(
+            TaskType.IO,
+            Callable<RemoteConfig?> {
+                val remoteConfig = store.load()
+                if (remoteConfig != null) {
+                    return@Callable remoteConfig
+                }
 
-            return@Callable RemoteConfigRequest(
-                config,
-                notifier,
-                store.currentOrExpired()
-            ).call()
-        })
+                return@Callable RemoteConfigRequest(
+                    config,
+                    notifier,
+                    store.currentOrExpired()
+                ).call()
+            }
+        )
     }
 }
