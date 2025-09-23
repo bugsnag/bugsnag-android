@@ -1,6 +1,7 @@
 package com.bugsnag.android.internal
 
 import android.os.Build
+import com.bugsnag.android.Logger
 import com.bugsnag.android.Notifier
 import com.bugsnag.android.RemoteConfig
 import java.net.HttpURLConnection
@@ -8,29 +9,46 @@ import java.net.URL
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.Date
+import java.util.concurrent.Callable
 
 internal class RemoteConfigRequest(
     private val baseUrl: String,
-    private val remoteConfig: RemoteConfig?,
-    private val config: ImmutableConfig,
+    private val apiKey: String,
     private val notifier: Notifier,
-    private val onRemoteConfigUpdate: (RemoteConfig) -> Unit
-) : Runnable {
-    override fun run() {
-        val newRemoteConfig: RemoteConfig? = try {
+    private val appVersion: String?,
+    private val versionCode: Int?,
+    private val releaseStage: String?,
+    private val packageName: String?,
+    private val remoteConfig: RemoteConfig?,
+    private val logger: Logger
+) : Callable<RemoteConfig?> {
+    constructor(
+        config: ImmutableConfig,
+        notifier: Notifier,
+        currentRemoteConfig: RemoteConfig?
+    ) : this(
+        config.endpoints.configuration!!,
+        config.apiKey,
+        notifier,
+        config.appVersion,
+        config.versionCode,
+        config.releaseStage,
+        config.packageInfo?.packageName,
+        currentRemoteConfig,
+        config.logger
+    )
+
+    override fun call(): RemoteConfig? {
+        return try {
             requestNewConfig()
         } catch (_: Exception) {
             // if we fail to retrieve the RemoteConfig, we retry exactly once
             try {
                 requestNewConfig()
             } catch (ex: Exception) {
-                config.logger.d("Could not retrieve RemoteConfig", ex)
+                logger.d("Could not retrieve RemoteConfig", ex)
             }
             null
-        }
-
-        if (newRemoteConfig != null) {
-            onRemoteConfigUpdate(newRemoteConfig)
         }
     }
 
@@ -43,7 +61,7 @@ internal class RemoteConfigRequest(
         connection.doOutput = false
 
         // Set required headers
-        connection.setRequestProperty(HEADER_BUGSNAG_API_KEY, config.apiKey)
+        connection.setRequestProperty(HEADER_BUGSNAG_API_KEY, apiKey)
         connection.setRequestProperty(HEADER_BUGSNAG_NOTIFIER_NAME, notifier.name)
         connection.setRequestProperty(HEADER_BUGSNAG_NOTIFIER_VERSION, notifier.version)
 
@@ -67,23 +85,22 @@ internal class RemoteConfigRequest(
         append(Build.VERSION.SDK_INT)
 
         // Add optional parameters
-        config.appVersion?.let { version ->
+        appVersion?.let { version ->
             append("&version=")
             append(urlEncoded(version))
         }
 
-        config.versionCode?.let { versionCode ->
+        versionCode?.let { versionCode ->
             append("&versionCode=")
             append(versionCode)
         }
 
-        config.releaseStage?.let { releaseStage ->
+        releaseStage?.let { releaseStage ->
             append("&releaseStage=")
             append(urlEncoded(releaseStage))
         }
 
-        // Add app ID (package name)
-        config.packageInfo?.packageName?.let { appId ->
+        packageName?.let { appId ->
             append("&appId=")
             append(urlEncoded(appId))
         }
