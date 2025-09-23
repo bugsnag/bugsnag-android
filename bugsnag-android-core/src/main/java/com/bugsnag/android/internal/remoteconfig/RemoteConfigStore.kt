@@ -165,5 +165,5 @@ internal class RemoteConfigStore(
         }
     }
 
-    private fun configFileName(): String = "core-${appVersionCode}.json"
+    private fun configFileName(): String = "core-$appVersionCode.json"
 }

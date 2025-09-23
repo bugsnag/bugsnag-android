@@ -246,7 +246,7 @@ class RemoteConfigStoreTest {
         store.store(config)
 
         // Multiple loads should work
-        for (i in 0..9) {
+        repeat(10) {
             assertEquals("concurrent", store.load()?.configurationTag)
         }
     }

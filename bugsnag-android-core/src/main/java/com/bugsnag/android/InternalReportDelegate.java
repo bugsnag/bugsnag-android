@@ -1,7 +1,7 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.internal.DeliveryHeadersKt.HEADER_INTERNAL_ERROR;
 import static com.bugsnag.android.SeverityReason.REASON_UNHANDLED_EXCEPTION;
+import static com.bugsnag.android.internal.DeliveryHeadersKt.HEADER_INTERNAL_ERROR;
 
 import com.bugsnag.android.internal.BackgroundTaskService;
 import com.bugsnag.android.internal.DeliveryHeadersKt;

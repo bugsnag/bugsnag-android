@@ -114,7 +114,7 @@ internal class RemoteConfigRequest(
 
         @Suppress("UNCHECKED_CAST")
         val json = JsonCollectionParser(inputStream).parse()
-                as? LinkedHashMap<String, Any?>
+            as? LinkedHashMap<String, Any?>
             ?: return null
 
         val expiryDate = configExpiryDate(connection)

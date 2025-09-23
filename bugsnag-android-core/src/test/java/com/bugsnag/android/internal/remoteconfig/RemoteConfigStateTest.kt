@@ -1,23 +1,28 @@
 package com.bugsnag.android.internal.remoteconfig
 
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
-import org.junit.Before
-import org.junit.Test
-import org.mockito.Mock
-import org.mockito.MockitoAnnotations
-import org.mockito.Mockito.*
-import java.util.Date
-import java.util.concurrent.Callable
-import java.util.concurrent.Future
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeoutException
-
 import com.bugsnag.android.Notifier
 import com.bugsnag.android.RemoteConfig
 import com.bugsnag.android.internal.BackgroundTaskService
 import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.TaskType
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.Before
+import org.junit.Test
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.anyLong
+import org.mockito.ArgumentMatchers.eq
+import org.mockito.Mock
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.verify
+import org.mockito.Mockito.verifyNoInteractions
+import org.mockito.Mockito.`when`
+import org.mockito.MockitoAnnotations
+import java.util.Date
+import java.util.concurrent.Callable
+import java.util.concurrent.Future
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
 class RemoteConfigStateTest {
 
