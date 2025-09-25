@@ -88,3 +88,15 @@ check:
 	@./gradlew lint detekt ktlintCheck checkstyle
 	@./scripts/run-cpp-check.sh
 	@./scripts/run-clang-format-ci-check.sh
+
+JDK_PATH ?=
+PROJECT_PATH ?=
+
+zacaler:
+ifeq ($(strip $(JDK_PATH)),)
+	$(error JDK_PATH is not defined. Usage: make zacaler JDK_PATH=/path/to/jdk PROJECT_PATH=/path/to/project)
+endif
+ifeq ($(strip $(PROJECT_PATH)),)
+	$(error PROJECT_PATH is not defined. Usage: make zacaler JDK_PATH=/path/to/jdk PROJECT_PATH=/path/to/project)
+endif
+	./scripts/setup_zacaler --jdk $(JDK_PATH) --project $(PROJECT_PATH)
