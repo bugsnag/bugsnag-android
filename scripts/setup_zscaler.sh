@@ -1,35 +1,26 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-# setup_zacaler --jdk <PATH_TO_JDK> --project <PATH_TO_ANDROID_PROJECT>
-# Applies Zscaler-friendly settings to an Android project:
-# 1) gradle.properties systemProp.* entries
-# 2) res/xml/network_security_config.xml
-# 3) AndroidManifest.xml: application@android:networkSecurityConfig and Bugsnag HTTP endpoints
+# setup_zscaler --jdk <PATH_TO_JDK> --project <PATH_TO_ANDROID_PROJECT>
 
 die() { echo "❌ $*" >&2; exit 1; }
 info() { echo "➡️  $*"; }
 ok()   { echo "✅ $*"; }
 
-# ------- Parse args -------
 JDK_INPUT=""
 PROJECT_ROOT=""
 
+# ------- Parse args -------
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --jdk)
-      JDK_INPUT="$2"; shift 2 ;;
-    --project)
-      PROJECT_ROOT="$2"; shift 2 ;;
-    *)
-      die "Unknown argument: $1 (expected --jdk or --project)"
-      ;;
+    --jdk) JDK_INPUT="$2"; shift 2 ;;
+    --project) PROJECT_ROOT="$2"; shift 2 ;;
+    *) die "Unknown argument: $1 (expected --jdk or --project)" ;;
   esac
 done
 
 [[ -n "$JDK_INPUT" ]] || die "--jdk <PATH_TO_JDK> is required"
 [[ -n "$PROJECT_ROOT" ]] || die "--project <PATH_TO_ANDROID_PROJECT> is required"
-
 [[ -d "$JDK_INPUT" ]] || die "JDK path not found: $JDK_INPUT"
 [[ -d "$PROJECT_ROOT" ]] || die "Android project path not found: $PROJECT_ROOT"
 
@@ -40,21 +31,19 @@ CANDIDATES=(
 )
 TRUSTSTORE=""
 for c in "${CANDIDATES[@]}"; do
-  if [[ -f "$c" ]]; then TRUSTSTORE="$c"; break; fi
+  [[ -f "$c" ]] && { TRUSTSTORE="$c"; break; }
 done
 [[ -n "$TRUSTSTORE" ]] || die "Could not find cacerts under '$JDK_INPUT'. Tried: ${CANDIDATES[*]}"
 
 # ------- Locate project files -------
 GRADLE_PROPS="$PROJECT_ROOT/gradle.properties"
-if [[ ! -f "$GRADLE_PROPS" ]]; then
-  info "Creating missing gradle.properties at project root"
-  touch "$GRADLE_PROPS"
-fi
+[[ -f "$GRADLE_PROPS" ]] || { info "Creating missing gradle.properties at project root"; : > "$GRADLE_PROPS"; }
 
 MANIFEST_PATH="$(find "$PROJECT_ROOT" -type f -path "*/src/main/AndroidManifest.xml" | head -n 1 || true)"
 [[ -n "$MANIFEST_PATH" ]] || die "Could not find any */src/main/AndroidManifest.xml in $PROJECT_ROOT"
-MODULE_DIR="$(dirname "$MANIFEST_PATH")/.."
-MODULE_DIR="$(cd "$MODULE_DIR" && pwd)"
+
+# FIX: go up TWO levels from .../src/main/AndroidManifest.xml to module root (.../app)
+MODULE_DIR="$(cd "$(dirname "$MANIFEST_PATH")/../.." && pwd)"
 RES_XML_DIR="$MODULE_DIR/src/main/res/xml"
 NETWORK_XML="$RES_XML_DIR/network_security_config.xml"
 
@@ -68,7 +57,8 @@ cp -p "$GRADLE_PROPS" "$GRADLE_PROPS.bak.$(date +%Y%m%d-%H%M%S)"
 upsert_prop() {
   local key="$1" value="$2"
   if grep -qE "^[[:space:]]*${key}[[:space:]]*=" "$GRADLE_PROPS"; then
-    sed -i'' -E "s|^[[:space:]]*${key}[[:space:]]*=.*|${key}=${value}|g" "$GRADLE_PROPS"
+    # POSIX sed for macOS/Linux
+    sed -i'' -E "s|^[[:space:]]*${key}[[:space:]]*=.*|${key}=${value}|" "$GRADLE_PROPS"
   else
     printf "%s=%s\n" "$key" "$value" >> "$GRADLE_PROPS"
   fi
@@ -85,7 +75,6 @@ ok "gradle.properties updated."
 # ------- 2) Create network_security_config.xml -------
 info "Ensuring res/xml/network_security_config.xml…"
 mkdir -p "$RES_XML_DIR"
-
 cat > "$NETWORK_XML" <<'XML'
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
@@ -115,18 +104,20 @@ cat > "$NETWORK_XML" <<'XML'
     </debug-overrides>
 </network-security-config>
 XML
-
 ok "Created: $NETWORK_XML"
 
 # ------- 3) Patch AndroidManifest.xml -------
 info "Patching AndroidManifest.xml…"
 cp -p "$MANIFEST_PATH" "$MANIFEST_PATH.bak.$(date +%Y%m%d-%H%M%S)"
 
+# Only add attribute if not present; portable via perl (macOS has perl)
 if ! grep -q 'android:networkSecurityConfig=' "$MANIFEST_PATH"; then
-  sed -i'' -E '0,/<application/{s|<application([^>]*)>|<application android:networkSecurityConfig="@xml/network_security_config"\1>|}' "$MANIFEST_PATH"
+  perl -0777 -i -pe 's/<application\b(?![^>]*android:networkSecurityConfig=)/<application android:networkSecurityConfig="@xml\/network_security_config"/s' "$MANIFEST_PATH"
 fi
 
+# Upsert Bugsnag endpoints (HTTP) just before </application>
 TMP_MANIFEST="$(mktemp)"
+# Remove any existing occurrences of these meta-data lines (simple line-based filter)
 sed -E '/<meta-data[[:space:]]+android:name="com\.bugsnag\.android\.ENDPOINT_NOTIFY"/d' "$MANIFEST_PATH" \
   | sed -E '/<meta-data[[:space:]]+android:name="com\.bugsnag\.android\.ENDPOINT_SESSIONS"/d' \
   > "$TMP_MANIFEST"
@@ -138,14 +129,11 @@ awk '
     sessions = "        <meta-data android:name=\"com.bugsnag.android.ENDPOINT_SESSIONS\"\n" \
                "            android:value=\"http://sessions.bugsnag.com\"/>\n"
   }
-  /<\/application>/ && ! inserted {
-    print notify sessions
-    inserted=1
-  }
+  /<\/application>/ && ! inserted { print notify sessions; inserted=1 }
   { print }
 ' "$TMP_MANIFEST" > "$MANIFEST_PATH"
-
 rm -f "$TMP_MANIFEST"
+
 ok "Manifest patched."
 
 echo
