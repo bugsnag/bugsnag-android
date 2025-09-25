@@ -46,8 +46,8 @@ internal class ConfigInternal(
     private var _endpoints: EndpointConfiguration? = null
     var endpoints: EndpointConfiguration
         get() = _endpoints
-            ?: if (isHubApiKey()) EndpointConfiguration(HUB_NOTIFY, HUB_SESSION)
-            else EndpointConfiguration(DEFAULT_NOTIFY, DEFAULT_SESSION)
+            ?: if (isHubApiKey()) EndpointConfiguration(HUB_NOTIFY, HUB_SESSION, HUB_CONFIGURATION)
+            else EndpointConfiguration(DEFAULT_NOTIFY, DEFAULT_SESSION, DEFAULT_CONFIGURATION)
         set(value) { _endpoints = value }
 
     var maxBreadcrumbs: Int = DEFAULT_MAX_BREADCRUMBS
@@ -172,8 +172,10 @@ internal class ConfigInternal(
         private const val DEFAULT_MAX_STRING_VALUE_LENGTH = 10000
         private const val DEFAULT_NOTIFY = "https://notify.bugsnag.com"
         private const val DEFAULT_SESSION = "https://sessions.bugsnag.com"
+        private const val DEFAULT_CONFIGURATION = "https://config.bugsnag.com/"
         private const val HUB_NOTIFY = "https://notify.insighthub.smartbear.com"
         private const val HUB_SESSION = "https://sessions.insighthub.smartbear.com"
+        private const val HUB_CONFIGURATION = "https://config.insighthub.smartbear.com"
         private const val HUB_PREFIX = "00000"
         @JvmStatic
         fun load(context: Context): Configuration = load(context, null)

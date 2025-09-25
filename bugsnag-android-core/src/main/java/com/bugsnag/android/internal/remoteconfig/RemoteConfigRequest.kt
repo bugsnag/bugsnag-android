@@ -82,6 +82,10 @@ internal class RemoteConfigRequest(
 
     private fun buildUrlWithQueryParameters(): String = buildString {
         append(baseUrl)
+        if (last() != '/') {
+            append('/')
+        }
+        append("error-config")
 
         // Add osVersion (required)
         append("?osVersion=")
