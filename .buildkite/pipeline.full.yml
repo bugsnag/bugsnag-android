@@ -542,6 +542,17 @@ steps:
     env:
       BUILDKITE_PLUGIN_S3_SECRETS_BUCKET_PREFIX: bugsnag-android-publish
     plugins:
-      docker-compose#v4.7.0:
-        no-cache: true
-        run: android-publisher
+      - artifacts#v1.9.0:
+          upload:
+            # Release artifacts
+            - bugsnag-android/build/outputs/aar/bugsnag-android-release.aar
+            - bugsnag-android-core/build/outputs/aar/bugsnag-android-core-release.aar
+            - bugsnag-benchmarks/build/outputs/aar/bugsnag-benchmarks-release.aar
+            - bugsnag-plugin-android-anr/build/outputs/aar/bugsnag-plugin-android-anr-release.aar
+            - bugsnag-plugin-android-exitinfo/build/outputs/aar/bugsnag-plugin-android-exitinfo-release.aar
+            - bugsnag-plugin-android-ndk/build/outputs/aar/bugsnag-plugin-android-ndk-release.aar
+            - bugsnag-plugin-android-okhttp/build/outputs/aar/bugsnag-plugin-android-okhttp-release.aar
+            - bugsnag-plugin-react-native/build/outputs/aar/bugsnag-plugin-react-native-release.aar
+      - docker-compose#v4.7.0:
+          no-cache: true
+          run: android-publisher
