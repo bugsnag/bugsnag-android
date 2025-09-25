@@ -92,11 +92,11 @@ check:
 JDK_PATH ?=
 PROJECT_PATH ?=
 
-zacaler:
+zscaler:
 ifeq ($(strip $(JDK_PATH)),)
 	$(error JDK_PATH is not defined. Usage: make zacaler JDK_PATH=/path/to/jdk PROJECT_PATH=/path/to/project)
 endif
 ifeq ($(strip $(PROJECT_PATH)),)
 	$(error PROJECT_PATH is not defined. Usage: make zacaler JDK_PATH=/path/to/jdk PROJECT_PATH=/path/to/project)
 endif
-	./scripts/setup_zacaler --jdk $(JDK_PATH) --project $(PROJECT_PATH)
+	./scripts/setup_zscaler.sh --jdk $(JDK_PATH) --project $(PROJECT_PATH)
