@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import androidx.annotation.VisibleForTesting
+import com.bugsnag.android.EventPayload.Companion.DEFAULT_MAX_PAYLOAD_SIZE
 import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.JsonHelper
 import java.io.File
@@ -13,15 +14,47 @@ import java.io.IOException
  * using your API key.
  */
 class EventPayload @JvmOverloads internal constructor(
-    var apiKey: String?,
+    apiKey: String?,
     event: Event? = null,
     eventFile: File? = null,
     notifier: Notifier,
     private val config: ImmutableConfig
 ) : JsonStream.Streamable, Deliverable {
 
-    var event: Event? = event
-        internal set
+    private val fallbackApiKey = apiKey ?: config.apiKey
+    private var overwrittenApiKey: String? = null
+    private var cachedEvent = event
+
+    var apiKey: String
+        set(value) {
+            overwrittenApiKey = value
+            cachedEvent?.apiKey = value
+        }
+        get() {
+            val localApiKey = overwrittenApiKey ?: cachedEvent?.apiKey
+            if (localApiKey != null) {
+                return localApiKey
+            }
+
+            val localEventFile = eventFile
+            if (localEventFile != null) {
+                return EventFilenameInfo.fromFile(localEventFile, fallbackApiKey).apiKey
+            }
+
+            return fallbackApiKey
+        }
+
+    var event: Event?
+        get() {
+            return try {
+                decodedEvent()
+            } catch (_: Exception) {
+                null
+            }
+        }
+        internal set(newEvent) {
+            cachedEvent = newEvent
+        }
 
     /**
      * Returns `true` if the `Event` in this `EventPayload` is considered unhandled.
@@ -30,6 +63,9 @@ class EventPayload @JvmOverloads internal constructor(
         get() {
             return decodedEvent().isUnhandled
         }
+
+    internal val isLaunchCrash: Boolean
+        get() = eventFile?.let { EventFilenameInfo.isLaunchCrashReport(it.name) } == true
 
     internal var eventFile: File? = eventFile
         private set
@@ -43,25 +79,23 @@ class EventPayload @JvmOverloads internal constructor(
     }
 
     internal fun getErrorTypes(): Set<ErrorType> {
-        val event = this.event
-
-        return event?.impl?.getErrorTypesFromStackframes() ?: (
-            eventFile?.let { EventFilenameInfo.fromFile(it, config).errorTypes }
-                ?: emptySet()
-            )
+        val event = this.cachedEvent
+        return event?.impl?.getErrorTypesFromStackframes()
+            ?: eventFile?.let { EventFilenameInfo.fromFile(it, config).errorTypes }
+            ?: emptySet()
     }
 
     private fun decodedEvent(): Event {
-        val localEvent = event
+        val localEvent = cachedEvent
         if (localEvent != null) {
             return localEvent
         }
 
-        val eventSource = MarshalledEventSource(eventFile!!, apiKey ?: config.apiKey, logger)
+        val eventSource = MarshalledEventSource(eventFile!!, apiKey, logger)
         val decodedEvent = eventSource()
 
         // cache the decoded Event object
-        event = decodedEvent
+        cachedEvent = decodedEvent
 
         return decodedEvent
     }
@@ -136,7 +170,7 @@ class EventPayload @JvmOverloads internal constructor(
         writer.name("events").beginArray()
 
         when {
-            event != null -> writer.value(event)
+            cachedEvent != null -> writer.value(cachedEvent)
             eventFile != null -> writer.value(eventFile)
             else -> Unit
         }

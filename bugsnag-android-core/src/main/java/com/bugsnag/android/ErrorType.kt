@@ -33,6 +33,6 @@ enum class ErrorType(internal val desc: String) {
     internal companion object {
         @JvmStatic
         @JvmName("fromDescriptor")
-        internal fun fromDescriptor(desc: String) = values().find { it.desc == desc }
+        internal fun fromDescriptor(desc: String) = ErrorType.entries.find { it.desc == desc }
     }
 }

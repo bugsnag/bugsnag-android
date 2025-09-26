@@ -8,6 +8,7 @@ import com.bugsnag.android.internal.TaskType
 import java.util.concurrent.Callable
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
 
 internal class RemoteConfigState(
     private val store: RemoteConfigStore,
@@ -17,12 +18,7 @@ internal class RemoteConfigState(
 ) {
     private val enabled: Boolean = config.endpoints.configuration != null
 
-    @Volatile
-    private var isRequestInFlight = false
-
-    companion object {
-        private const val REFRESH_BUFFER_MS = 2 * 60 * 60 * 1000L // 2 hours
-    }
+    private val isRequestInFlight = AtomicBoolean(false)
 
     fun scheduleDownloadIfRequired() {
         if (!enabled) {
@@ -31,34 +27,35 @@ internal class RemoteConfigState(
 
         // Check if the config is within around 2 hours of expiring
         val currentConfig = store.currentOrExpired()
-        if (currentConfig == null || !shouldRefresh(currentConfig)) {
+        if (currentConfig != null && !shouldRefresh(currentConfig)) {
             return
         }
 
         // Don't schedule if a request is already in-flight
-        synchronized(this) {
-            if (isRequestInFlight) {
-                return
-            }
-            isRequestInFlight = true
+        if (!isRequestInFlight.compareAndSet(false, true)) {
+            return
         }
 
         // Schedule the download in background
-        backgroundTaskService.submitTask(TaskType.IO) {
-            try {
-                val newRemoteConfig = RemoteConfigRequest(
-                    config,
-                    notifier,
-                    store.currentOrExpired()
-                ).call()
+        try {
+            backgroundTaskService.submitTask(TaskType.IO) {
+                try {
+                    val newRemoteConfig = RemoteConfigRequest(
+                        config,
+                        notifier,
+                        store.currentOrExpired()
+                    ).call()
 
-                // Store the new config if downloaded successfully
-                if (newRemoteConfig != null) {
-                    store.store(newRemoteConfig)
+                    // Store the new config if downloaded successfully
+                    if (newRemoteConfig != null) {
+                        store.store(newRemoteConfig)
+                    }
+                } finally {
+                    isRequestInFlight.set(false)
                 }
-            } finally {
-                isRequestInFlight = false
             }
+        } catch (_: Exception) {
+            isRequestInFlight.set(false)
         }
     }
 
@@ -90,29 +87,39 @@ internal class RemoteConfigState(
 
     fun getRemoteConfig(): Future<RemoteConfig?> {
         if (!enabled) {
-            return object : Future<RemoteConfig?> {
-                override fun cancel(mayInterruptIfRunning: Boolean): Boolean = false
-                override fun get(): RemoteConfig? = null
-                override fun get(timeout: Long, unit: TimeUnit?): RemoteConfig? = get()
-                override fun isCancelled(): Boolean = false
-                override fun isDone(): Boolean = true
-            }
+            return nullFuture
         }
 
-        return backgroundTaskService.submitTask(
-            TaskType.IO,
-            Callable<RemoteConfig?> {
-                val remoteConfig = store.load()
-                if (remoteConfig != null) {
-                    return@Callable remoteConfig
-                }
+        try {
+            return backgroundTaskService.submitTask(
+                TaskType.IO,
+                Callable<RemoteConfig?> {
+                    val remoteConfig = store.load()
+                    if (remoteConfig != null) {
+                        return@Callable remoteConfig
+                    }
 
-                return@Callable RemoteConfigRequest(
-                    config,
-                    notifier,
-                    store.currentOrExpired()
-                ).call()
-            }
-        )
+                    return@Callable RemoteConfigRequest(
+                        config,
+                        notifier,
+                        store.currentOrExpired()
+                    ).call()
+                }
+            )
+        } catch (_: Exception) {
+            return nullFuture
+        }
+    }
+
+    internal companion object {
+        const val REFRESH_BUFFER_MS = 2 * 60 * 60 * 1000L // 2 hours
+
+        val nullFuture = object : Future<RemoteConfig?> {
+            override fun cancel(mayInterruptIfRunning: Boolean): Boolean = false
+            override fun get(): RemoteConfig? = null
+            override fun get(timeout: Long, unit: TimeUnit?): RemoteConfig? = get()
+            override fun isCancelled(): Boolean = false
+            override fun isDone(): Boolean = true
+        }
     }
 }

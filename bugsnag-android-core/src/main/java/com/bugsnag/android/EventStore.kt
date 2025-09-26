@@ -6,6 +6,7 @@ import com.bugsnag.android.EventFilenameInfo.Companion.fromEvent
 import com.bugsnag.android.EventFilenameInfo.Companion.fromFile
 import com.bugsnag.android.JsonStream.Streamable
 import com.bugsnag.android.internal.BackgroundTaskService
+import com.bugsnag.android.internal.DeliveryPipeline
 import com.bugsnag.android.internal.ForegroundDetector
 import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.TaskType
@@ -25,21 +26,17 @@ import java.util.concurrent.TimeoutException
  */
 internal class EventStore(
     private val config: ImmutableConfig,
-    logger: Logger,
-    notifier: Notifier,
-    bgTaskService: BackgroundTaskService,
+    override val logger: Logger,
+    private val notifier: Notifier,
+    private val bgTaskService: BackgroundTaskService,
     delegate: Provider<out Delegate?>?,
-    callbackState: CallbackState
+    private val deliveryPipeline: DeliveryPipeline
 ) : FileStore(
     File(config.persistenceDirectory.value, "bugsnag/errors"),
     config.maxPersistedEvents,
     logger,
     delegate
 ) {
-    private val notifier: Notifier
-    private val bgTaskService: BackgroundTaskService
-    private val callbackState: CallbackState
-    override val logger: Logger
 
     var onEventStoreEmptyCallback: () -> Unit = {}
     var onDiscardEventCallback: (EventPayload) -> Unit = {}
@@ -110,7 +107,7 @@ internal class EventStore(
     fun findLaunchCrashReport(storedFiles: Collection<File>): File? {
         return storedFiles
             .asSequence()
-            .filter { fromFile(it, config).isLaunchCrashReport() }
+            .filter { EventFilenameInfo.isLaunchCrashReport(it.name) }
             .maxWithOrNull(EVENT_COMPARATOR)
     }
 
@@ -163,26 +160,21 @@ internal class EventStore(
 
     private fun flushEventFile(eventFile: File) {
         try {
-            val (apiKey) = fromFile(eventFile, config)
-            val payload = createEventPayload(eventFile, apiKey)
-            if (payload == null) {
-                deleteStoredFiles(setOf(eventFile))
-            } else {
-                deliverEventPayload(eventFile, payload)
-            }
+            val payload = createEventPayload(eventFile)
+            deliverEventPayload(eventFile, payload)
         } catch (exception: Exception) {
             handleEventFlushFailure(exception, eventFile)
         }
     }
 
     private fun deliverEventPayload(eventFile: File, payload: EventPayload) {
-        val deliveryParams = config.getErrorApiDeliveryParams(payload)
-        val delivery = config.delivery
-        when (delivery.deliver(payload, deliveryParams)) {
+        when (deliveryPipeline.deliverEventPayload(payload)) {
             DeliveryStatus.DELIVERED -> {
                 deleteStoredFiles(setOf(eventFile))
                 logger.i("Deleting sent error file $eventFile.name")
             }
+
+            null -> deleteStoredFiles(setOf(eventFile))
 
             DeliveryStatus.UNDELIVERED -> undeliveredEventPayload(eventFile)
             DeliveryStatus.FAILURE -> {
@@ -213,26 +205,8 @@ internal class EventStore(
         }
     }
 
-    private fun createEventPayload(eventFile: File, apiKey: String): EventPayload? {
-        @Suppress("NAME_SHADOWING")
-        var apiKey: String? = apiKey
-        val eventSource = MarshalledEventSource(eventFile, apiKey!!, logger)
-        try {
-            if (!callbackState.runOnSendTasks(eventSource, logger)) {
-                // do not send the payload at all, we must block sending
-                return null
-            }
-        } catch (ioe: Exception) {
-            logger.w("could not parse event payload", ioe)
-            eventSource.clear()
-        }
-        val processedEvent = eventSource.event
-        return if (processedEvent != null) {
-            apiKey = processedEvent.apiKey
-            EventPayload(apiKey, processedEvent, null, notifier, config)
-        } else {
-            EventPayload(apiKey, null, eventFile, notifier, config)
-        }
+    private fun createEventPayload(eventFile: File): EventPayload {
+        return EventPayload(null, null, eventFile, notifier, config)
     }
 
     private fun handleEventFlushFailure(exc: Exception, eventFile: File) {
@@ -248,15 +222,8 @@ internal class EventStore(
         return obj?.let { fromEvent(obj = it, apiKey = apiKey, config = config) }?.encode() ?: ""
     }
 
-    init {
-        this.logger = logger
-        this.notifier = notifier
-        this.bgTaskService = bgTaskService
-        this.callbackState = callbackState
-    }
-
     private fun isTooBig(file: File): Boolean {
-        return file.length() > oneMegabyte
+        return file.length() > ONE_MEGABYTE
     }
 
     private fun isTooOld(file: File): Boolean {
@@ -291,6 +258,8 @@ internal class EventStore(
 
     companion object {
         private const val LAUNCH_CRASH_TIMEOUT_MS: Long = 2000
+        private const val ONE_MEGABYTE = 0x100000L
+
         val EVENT_COMPARATOR: Comparator<in File?> = Comparator { lhs, rhs ->
             when {
                 lhs == null && rhs == null -> 0
@@ -299,6 +268,5 @@ internal class EventStore(
                 else -> lhs.compareTo(rhs)
             }
         }
-        private const val oneMegabyte = 1024L * 1024L
     }
 }

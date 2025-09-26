@@ -3,6 +3,7 @@ package com.bugsnag.android;
 import static com.bugsnag.android.SeverityReason.REASON_HANDLED_EXCEPTION;
 
 import com.bugsnag.android.internal.BackgroundTaskService;
+import com.bugsnag.android.internal.DeliveryPipeline;
 import com.bugsnag.android.internal.ForegroundDetector;
 import com.bugsnag.android.internal.ImmutableConfig;
 import com.bugsnag.android.internal.InternalMetrics;
@@ -171,7 +172,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
         // setup storage as soon as possible
         final StorageModule storageModule = new StorageModule(appContext,
-                immutableConfig, bgTaskService);
+                immutableConfig, notifier, bgTaskService);
 
         // setup state trackers for bugsnag
         BugsnagStateModule bugsnagStateModule =
@@ -199,14 +200,20 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         // load the device + user information
         userState = storageModule.loadUser(configuration.getUser());
 
+        DeliveryPipeline deliveryPipeline = new DeliveryPipeline(
+                callbackState,
+                storageModule.getRemoteConfigState().get(),
+                immutableConfig
+        );
+
         EventStorageModule eventStorageModule = new EventStorageModule(contextModule, configModule,
                 dataCollectionModule, bgTaskService, trackerModule, systemServiceModule, notifier,
-                callbackState);
+                deliveryPipeline);
 
         eventStore = eventStorageModule.getEventStore();
 
-        deliveryDelegate = new DeliveryDelegate(logger, eventStore, immutableConfig, callbackState,
-                notifier, bgTaskService);
+        deliveryDelegate = new DeliveryDelegate(logger, eventStore, immutableConfig,
+                deliveryPipeline, notifier, bgTaskService);
 
         exceptionHandler = new ExceptionHandler(this, logger);
 

@@ -4,7 +4,10 @@ import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import com.bugsnag.android.BugsnagTestUtils.generateEvent
 import com.bugsnag.android.FileStore.Delegate
 import com.bugsnag.android.internal.BackgroundTaskService
+import com.bugsnag.android.internal.DeliveryPipeline
 import com.bugsnag.android.internal.dag.ValueProvider
+import com.bugsnag.android.internal.remoteconfig.RemoteConfigState
+import com.bugsnag.android.internal.remoteconfig.RemoteConfigStore
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -157,8 +160,22 @@ class LaunchCrashDeliveryTest {
             persistenceDirectory = storageDir
             this.delivery = testDelivery
         }
+        val immutableConfig = BugsnagTestUtils.convert(config)
+        val deliveryPipeline = DeliveryPipeline(
+            CallbackState(),
+            RemoteConfigState(
+                RemoteConfigStore(
+                    File(storageDir, "config"),
+                    1
+                ),
+                immutableConfig,
+                generateConfiguration().notifier,
+                backgroundTaskService
+            ),
+            immutableConfig
+        )
         return EventStore(
-            BugsnagTestUtils.convert(config),
+            immutableConfig,
             NoopLogger,
             Notifier(),
             backgroundTaskService,
@@ -172,7 +189,7 @@ class LaunchCrashDeliveryTest {
                     }
                 }
             ),
-            CallbackState()
+            deliveryPipeline
         )
     }
 }
