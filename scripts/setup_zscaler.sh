@@ -138,12 +138,13 @@ ok "Created: $NETWORK_XML"
 info "Patching AndroidManifest.xml…"
 
 # ---- 3a) Force correct value for networkSecurityConfig ----
+# IMPORTANT: escape '@' as \@ to prevent Perl from interpolating @xml as an array.
 perl -0777 -i -pe '
   my $fixed = 0;
-  s/(<application\b[^>]*\bandroid:networkSecurityConfig=)"[^"]*"/$1"@xml\/network_security_config"/ and $fixed=1;
+  s/(<application\b[^>]*\bandroid:networkSecurityConfig=)"[^"]*"/$1"\@xml\/network_security_config"/ and $fixed=1;
   if (!$fixed) {
       s/<application\b(?![^>]*android:networkSecurityConfig=)/
-        <application android:networkSecurityConfig="@xml\/network_security_config"/s;
+        <application android:networkSecurityConfig="\@xml\/network_security_config"/s;
   }
 ' "$MANIFEST_PATH"
 
