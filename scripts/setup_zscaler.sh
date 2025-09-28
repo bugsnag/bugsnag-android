@@ -7,13 +7,11 @@ set -Eeuo pipefail
 # 1) gradle.properties: appends a bannered Zscaler block of systemProp.* values
 # 2) res/xml/network_security_config.xml: writes a file with a warning header
 # 3) AndroidManifest.xml:
-#    - Ensures application@android:networkSecurityConfig is set (and normalizes it)
+#    - Forces application@android:networkSecurityConfig="@xml/network_security_config"
 #    - Inserts a warning comment as the first child of <application>
 #    - Upserts Bugsnag HTTP endpoints wrapped with warning comments
 #
-# Notes:
-# - No backups are created.
-# - macOS and Linux compatible (uses perl for robust XML-ish edits).
+# No backups are created. macOS/Linux compatible.
 
 die() { echo "❌ $*" >&2; exit 1; }
 info() { echo "➡️  $*"; }
@@ -22,7 +20,7 @@ ok()   { echo "✅ $*"; }
 JDK_INPUT=""
 PROJECT_ROOT=""
 
-# ------- Parse args -------
+# ------------------ Parse args ------------------
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --jdk) JDK_INPUT="${2:-}"; shift 2 ;;
@@ -34,7 +32,7 @@ done
 [[ -n "$PROJECT_ROOT" ]] || die "--project <PATH_TO_ANDROID_PROJECT> is required"
 [[ -d "$PROJECT_ROOT" ]] || die "Android project path not found: $PROJECT_ROOT"
 
-# ------- Resolve JDK / truststore -------
+# ------------------ Resolve JDK -----------------
 if [[ -z "$JDK_INPUT" ]]; then
   [[ -n "${JAVA_HOME:-}" ]] || die "--jdk not provided and JAVA_HOME is unset"
   info "--jdk not provided; using JAVA_HOME=$JAVA_HOME"
@@ -52,7 +50,7 @@ for c in "${CANDIDATES[@]}"; do
 done
 [[ -n "$TRUSTSTORE" ]] || die "Could not find cacerts under '$JDK_INPUT'. Tried: ${CANDIDATES[*]}"
 
-# ------- Locate project files -------
+# ------------------ Locate project files --------
 GRADLE_PROPS="$PROJECT_ROOT/gradle.properties"
 [[ -f "$GRADLE_PROPS" ]] || { info "Creating missing gradle.properties at project root"; : > "$GRADLE_PROPS"; }
 
@@ -67,7 +65,7 @@ NETWORK_XML="$RES_XML_DIR/network_security_config.xml"
 info "Using Android module: $MODULE_DIR"
 info "Manifest: $MANIFEST_PATH"
 
-# ======= 1) gradle.properties (bannered block) =======
+# ================= 1) gradle.properties =========
 info "Updating gradle.properties…"
 
 Z_START="### >>> ZSCALER SETUP - DO NOT COMMIT THIS CODE >>>"
@@ -98,7 +96,7 @@ fi
 printf "\n%s\n" "$Z_BLOCK" >> "$GRADLE_PROPS"
 ok "gradle.properties updated."
 
-# ======= 2) network_security_config.xml (with header warning) =======
+# ================= 2) network_security_config.xml
 info "Ensuring res/xml/network_security_config.xml…"
 mkdir -p "$RES_XML_DIR"
 cat > "$NETWORK_XML" <<'XML'
@@ -136,24 +134,28 @@ cat > "$NETWORK_XML" <<'XML'
 XML
 ok "Created: $NETWORK_XML"
 
-# ======= 3) AndroidManifest.xml (attribute + warnings + endpoints) =======
+# ================= 3) AndroidManifest.xml =======
 info "Patching AndroidManifest.xml…"
 
-# 3a) Ensure & normalize application@android:networkSecurityConfig
-if ! grep -q 'android:networkSecurityConfig=' "$MANIFEST_PATH"; then
-  perl -0777 -i -pe 's/<application\b(?![^>]*android:networkSecurityConfig=)/<application android:networkSecurityConfig="@xml\/network_security_config"/s' "$MANIFEST_PATH"
-fi
-# Normalize any wrong values (e.g., "/network_security_config")
-perl -0777 -i -pe 's/android:networkSecurityConfig="[^"]*"/android:networkSecurityConfig="@xml\/network_security_config"/' "$MANIFEST_PATH"
+# ---- 3a) Force correct value for networkSecurityConfig ----
+perl -0777 -i -pe '
+  my $fixed = 0;
+  s/(<application\b[^>]*\bandroid:networkSecurityConfig=)"[^"]*"/$1"@xml\/network_security_config"/ and $fixed=1;
+  if (!$fixed) {
+      s/<application\b(?![^>]*android:networkSecurityConfig=)/
+        <application android:networkSecurityConfig="@xml\/network_security_config"/s;
+  }
+' "$MANIFEST_PATH"
 
-# 3b) Insert a warning comment as the first child of <application> (once)
+# ---- 3b) Insert warning comment as first child of <application> (once) ----
 if ! grep -q 'ZSCALER SETUP - DO NOT COMMIT THIS CODE' "$MANIFEST_PATH"; then
-  perl -0777 -i -pe 's|(<application\b[^>]*>)|\1\n        <!-- ZSCALER SETUP - DO NOT COMMIT THIS CODE: networkSecurityConfig + Bugsnag endpoints -->|s' "$MANIFEST_PATH"
+  perl -0777 -i -pe \
+    's|(<application\b[^>]*>)|\1\n        <!-- ZSCALER SETUP - DO NOT COMMIT THIS CODE: networkSecurityConfig + Bugsnag endpoints -->|s' \
+    "$MANIFEST_PATH"
 fi
 
-# 3c) Upsert Bugsnag endpoints wrapped with warning comments before </application>
+# ---- 3c) Upsert Bugsnag endpoints with warning comments ----
 TMP_MANIFEST="$(mktemp)"
-# Remove any existing occurrences we manage (simple/conservative)
 sed -E '/<meta-data[[:space:]]+android:name="com\.bugsnag\.android\.ENDPOINT_NOTIFY"/,/\/>/d' "$MANIFEST_PATH" \
   | sed -E '/<meta-data[[:space:]]+android:name="com\.bugsnag\.android\.ENDPOINT_SESSIONS"/,/\/>/d' \
   > "$TMP_MANIFEST"
