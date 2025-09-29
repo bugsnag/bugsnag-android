@@ -89,14 +89,16 @@ check:
 	@./scripts/run-cpp-check.sh
 	@./scripts/run-clang-format-ci-check.sh
 
+# -------------------
+# Zscaler setup task
+# -------------------
+# Default to the Android example app unless overridden
+PROJECT_PATH ?= $(CURDIR)/examples/sdk-app-example
+# Optional: if empty, setup_zscaler.sh will use JAVA_HOME
 JDK_PATH ?=
-PROJECT_PATH ?=
 
+.PHONY: zscaler
 zscaler:
-ifeq ($(strip $(JDK_PATH)),)
-	$(error JDK_PATH is not defined. Usage: make zacaler JDK_PATH=/path/to/jdk PROJECT_PATH=/path/to/project)
-endif
-ifeq ($(strip $(PROJECT_PATH)),)
-	$(error PROJECT_PATH is not defined. Usage: make zacaler JDK_PATH=/path/to/jdk PROJECT_PATH=/path/to/project)
-endif
-	./scripts/setup_zscaler.sh --jdk $(JDK_PATH) --project $(PROJECT_PATH)
+	@echo "➡ Using project: $(PROJECT_PATH)"
+	@echo "➡ Using JDK: $(if $(strip $(JDK_PATH)),$(JDK_PATH),JAVA_HOME)"
+	./scripts/setup_zscaler.sh --project "$(PROJECT_PATH)" $(if $(strip $(JDK_PATH)),--jdk "$(JDK_PATH)",)
