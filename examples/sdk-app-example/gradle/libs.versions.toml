@@ -1,6 +1,6 @@
 [versions]
 activityCompose = "1.8.0"
-agp = "8.7.1"
+agp = "8.10.1"
 appcompat = "1.6.1"
 bugsnag-android = "6.18.0"
 bugsnag-gradle = "0.4.0"
