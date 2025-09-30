@@ -172,8 +172,8 @@ internal class ConfigInternal(
         private const val DEFAULT_MAX_STRING_VALUE_LENGTH = 10000
         private const val DEFAULT_NOTIFY = "https://notify.bugsnag.com"
         private const val DEFAULT_SESSION = "https://sessions.bugsnag.com"
-        private const val HUB_NOTIFY = "https://notify.insighthub.smartbear.com"
-        private const val HUB_SESSION = "https://sessions.insighthub.smartbear.com"
+        private const val HUB_NOTIFY = "https://notify.bugsnag.smartbear.com"
+        private const val HUB_SESSION = "https://sessions.bugsnag.smartbear.com"
         private const val HUB_PREFIX = "00000"
         @JvmStatic
         fun load(context: Context): Configuration = load(context, null)
