@@ -32,8 +32,10 @@ internal class RemoteConfigStore(
         }
     }
 
+    /**
+     * Returns the current in-memory config if it is still valid (or `null` if it has expired).
+     */
     fun current(): RemoteConfig? {
-        // First check in-memory config
         val memoryConfig = current
         if (memoryConfig != null && !isExpired(memoryConfig)) {
             return memoryConfig
@@ -47,7 +49,7 @@ internal class RemoteConfigStore(
      * config if there isn't a valid "current".
      */
     fun currentOrExpired(): RemoteConfig? {
-        val memoryConfig = current
+        val memoryConfig = current()
         if (memoryConfig != null) {
             return memoryConfig
         }
@@ -55,7 +57,7 @@ internal class RemoteConfigStore(
         // Load from disk if in-memory config is null
         lock.withLock {
             // Double-check after acquiring lock
-            val recheck = current
+            val recheck = current()
             if (recheck != null) {
                 return recheck
             }
@@ -83,25 +85,26 @@ internal class RemoteConfigStore(
         // Load from disk if in-memory config is null or expired
         lock.withLock {
             // Double-check after acquiring lock
-            val recheck = current
-            if (recheck != null && !isExpired(recheck)) {
+            val recheck = current()
+            if (recheck != null) {
                 return recheck
             }
 
             val diskConfig = loadFromDisk()
-            if (diskConfig != null && !isExpired(diskConfig)) {
-                current = diskConfig
-                return diskConfig
-            }
+            if (diskConfig != null) {
+                if (!isExpired(diskConfig)) {
+                    current = diskConfig
+                }
 
-            // Clear expired config
-            if (diskConfig != null && isExpired(diskConfig)) {
-                current = null
-                deleteConfigFile()
+                // Clear expired config
+                if (isExpired(diskConfig)) {
+                    current = null
+                    deleteConfigFile()
+                }
             }
         }
 
-        return null
+        return current
     }
 
     /**

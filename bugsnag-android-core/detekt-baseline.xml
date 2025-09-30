@@ -103,6 +103,5 @@
     <ID>UseCheckOrError:SynchronizedStreamableStoreTest.kt$CrashyStreamable$throw IllegalStateException()</ID>
     <ID>UseCheckOrError:SynchronizedStreamableStoreTest.kt$CrashyStreamable.Companion$throw IllegalStateException()</ID>
     <ID>UseRequire:ImmutableConfig.kt$throw IllegalArgumentException("No Bugsnag API Key set")</ID>
-    <ID>WildcardImport:RemoteConfigStateTest.kt$import org.mockito.Mockito.*</ID>
   </CurrentIssues>
 </SmellBaseline>
