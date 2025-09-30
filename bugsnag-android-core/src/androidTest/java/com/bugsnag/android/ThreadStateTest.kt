@@ -13,6 +13,7 @@ import java.lang.Thread
 import java.util.Collections
 
 @SmallTest
+@Suppress("DEPRECATION") // Thread.id
 class ThreadStateTest {
 
     private val configuration = generateImmutableConfig()

@@ -51,6 +51,10 @@ android {
         targetCompatibility = Versions.java
     }
 
+    kotlinOptions {
+        jvmTarget = Versions.java.toString()
+    }
+
     testOptions {
         unitTests {
             isReturnDefaultValues = true

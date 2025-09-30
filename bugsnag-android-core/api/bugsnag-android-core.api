@@ -50,6 +50,7 @@ public final class com/bugsnag/android/BreadcrumbType : java/lang/Enum {
 	public static final field REQUEST Lcom/bugsnag/android/BreadcrumbType;
 	public static final field STATE Lcom/bugsnag/android/BreadcrumbType;
 	public static final field USER Lcom/bugsnag/android/BreadcrumbType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public fun toString ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lcom/bugsnag/android/BreadcrumbType;
 	public static fun values ()[Lcom/bugsnag/android/BreadcrumbType;
@@ -265,6 +266,7 @@ public final class com/bugsnag/android/DeliveryStatus : java/lang/Enum {
 	public static final field FAILURE Lcom/bugsnag/android/DeliveryStatus;
 	public static final field UNDELIVERED Lcom/bugsnag/android/DeliveryStatus;
 	public static final fun forHttpResponseCode (I)Lcom/bugsnag/android/DeliveryStatus;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lcom/bugsnag/android/DeliveryStatus;
 	public static fun values ()[Lcom/bugsnag/android/DeliveryStatus;
 }
@@ -350,6 +352,7 @@ public final class com/bugsnag/android/ErrorType : java/lang/Enum {
 	public static final field REACTNATIVEJS Lcom/bugsnag/android/ErrorType;
 	public static final field UNKNOWN Lcom/bugsnag/android/ErrorType;
 	public static final fun fromDescriptor (Ljava/lang/String;)Lcom/bugsnag/android/ErrorType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lcom/bugsnag/android/ErrorType;
 	public static fun values ()[Lcom/bugsnag/android/ErrorType;
 }
@@ -405,6 +408,8 @@ public class com/bugsnag/android/Event : com/bugsnag/android/FeatureFlagAware, c
 	public fun leaveBreadcrumb (Ljava/lang/String;Lcom/bugsnag/android/BreadcrumbType;Ljava/util/Map;)Lcom/bugsnag/android/Breadcrumb;
 	public fun setApiKey (Ljava/lang/String;)V
 	public fun setContext (Ljava/lang/String;)V
+	public fun setErrorReportingThread (J)V
+	public fun setErrorReportingThread (Lcom/bugsnag/android/Thread;)V
 	public fun setGroupingDiscriminator (Ljava/lang/String;)Ljava/lang/String;
 	public fun setGroupingHash (Ljava/lang/String;)V
 	public fun setSeverity (Lcom/bugsnag/android/Severity;)V
@@ -639,6 +644,7 @@ public final class com/bugsnag/android/Severity : java/lang/Enum, com/bugsnag/an
 	public static final field ERROR Lcom/bugsnag/android/Severity;
 	public static final field INFO Lcom/bugsnag/android/Severity;
 	public static final field WARNING Lcom/bugsnag/android/Severity;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public fun toStream (Lcom/bugsnag/android/JsonStream;)V
 	public static fun valueOf (Ljava/lang/String;)Lcom/bugsnag/android/Severity;
 	public static fun values ()[Lcom/bugsnag/android/Severity;
@@ -806,6 +812,7 @@ public final class com/bugsnag/android/StateEvent$UpdateUser : com/bugsnag/andro
 public final class com/bugsnag/android/Telemetry : java/lang/Enum {
 	public static final field INTERNAL_ERRORS Lcom/bugsnag/android/Telemetry;
 	public static final field USAGE Lcom/bugsnag/android/Telemetry;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lcom/bugsnag/android/Telemetry;
 	public static fun values ()[Lcom/bugsnag/android/Telemetry;
 }
@@ -849,6 +856,7 @@ public final class com/bugsnag/android/ThreadInternal : com/bugsnag/android/Json
 	public final fun getState ()Ljava/lang/String;
 	public final fun getType ()Lcom/bugsnag/android/ErrorType;
 	public final fun isErrorReportingThread ()Z
+	public final fun setErrorReportingThread (Z)V
 	public final fun setId (Ljava/lang/String;)V
 	public final fun setName (Ljava/lang/String;)V
 	public final fun setStacktrace (Ljava/util/List;)V
@@ -861,6 +869,7 @@ public final class com/bugsnag/android/ThreadSendPolicy : java/lang/Enum {
 	public static final field ALWAYS Lcom/bugsnag/android/ThreadSendPolicy;
 	public static final field NEVER Lcom/bugsnag/android/ThreadSendPolicy;
 	public static final field UNHANDLED_ONLY Lcom/bugsnag/android/ThreadSendPolicy;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lcom/bugsnag/android/ThreadSendPolicy;
 	public static fun values ()[Lcom/bugsnag/android/ThreadSendPolicy;
 }
@@ -1050,6 +1059,7 @@ public final class com/bugsnag/android/internal/TaskType : java/lang/Enum {
 	public static final field INTERNAL_REPORT Lcom/bugsnag/android/internal/TaskType;
 	public static final field IO Lcom/bugsnag/android/internal/TaskType;
 	public static final field SESSION_REQUEST Lcom/bugsnag/android/internal/TaskType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lcom/bugsnag/android/internal/TaskType;
 	public static fun values ()[Lcom/bugsnag/android/internal/TaskType;
 }
