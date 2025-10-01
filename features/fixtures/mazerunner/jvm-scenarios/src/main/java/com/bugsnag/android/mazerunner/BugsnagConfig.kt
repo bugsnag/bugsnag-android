@@ -10,7 +10,6 @@ import com.bugsnag.android.DeliveryStatus
 import com.bugsnag.android.EndpointConfiguration
 import com.bugsnag.android.EventPayload
 import com.bugsnag.android.Logger
-import com.bugsnag.android.OnErrorCallback
 import com.bugsnag.android.Session
 import com.bugsnag.android.createDefaultDelivery
 
@@ -50,9 +49,12 @@ fun prepareConfig(
     // Do not allow system generated ANRs to be sent to Maze Runner
     config.addOnError { event ->
         val error = event.errors.first()
+        val method1 = "android.os.BinderProxy.transact"
+        val method2 = "android.app.IActivityManager\$Stub\$Proxy.handleApplicationCrash"
         if (error.errorClass.equals("ANR") &&
-            error.stacktrace.any { frame -> frame.method.equals("android.os.BinderProxy.transact")} &&
-            error.stacktrace.any { frame -> frame.method.equals("android.app.IActivityManager\$Stub\$Proxy.handleApplicationCrash")}) {
+            error.stacktrace.any { frame -> frame.method.equals(method1) } &&
+            error.stacktrace.any { frame -> frame.method.equals(method2) }
+            ) {
             CiLog.info("Filtering system generated ANR")
             false
         } else {
