@@ -4,7 +4,7 @@ import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.OnErrorCallback
-import com.bugsnag.android.mazerunner.CiLog
+import com.bugsnag.android.mazerunner.filterSystemAnrs
 import java.lang.RuntimeException
 
 internal class LoadConfigurationFromManifestScenario(
@@ -31,21 +31,8 @@ internal class LoadConfigurationFromManifestScenario(
                 true
             }
         )
-        // Do not allow system generated ANRs to be sent to Maze Runner
-        testConfig.addOnError { event ->
-            val error = event.errors.first()
-            val method1 = "android.os.BinderProxy.transact"
-            val method2 = "android.app.IActivityManager\$Stub\$Proxy.handleApplicationCrash"
-            if (error.errorClass.equals("ANR") &&
-                error.stacktrace.any { frame -> frame.method.equals(method1) } &&
-                error.stacktrace.any { frame -> frame.method.equals(method2) }
-            ) {
-                CiLog.info("Filtering system generated ANR")
-                false
-            } else {
-                true
-            }
-        }
+        testConfig.addOnError(filterSystemAnrs)
+
         measureBugsnagStartupDuration(this.context, testConfig)
     }
 

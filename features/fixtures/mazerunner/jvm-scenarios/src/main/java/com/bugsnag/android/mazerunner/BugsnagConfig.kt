@@ -46,21 +46,7 @@ fun prepareConfig(
         }
     }
 
-    // Do not allow system generated ANRs to be sent to Maze Runner
-    config.addOnError { event ->
-        val error = event.errors.first()
-        val method1 = "android.os.BinderProxy.transact"
-        val method2 = "android.app.IActivityManager\$Stub\$Proxy.handleApplicationCrash"
-        if (error.errorClass.equals("ANR") &&
-            error.stacktrace.any { frame -> frame.method.equals(method1) } &&
-            error.stacktrace.any { frame -> frame.method.equals(method2) }
-            ) {
-            CiLog.info("Filtering system generated ANR")
-            false
-        } else {
-            true
-        }
-    }
+    config.addOnError(filterSystemAnrs)
 
     return config
 }
