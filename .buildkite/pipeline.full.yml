@@ -324,6 +324,10 @@ steps:
     concurrency: 5
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium client failure
+          limit: 2
 
   - label: ':browserstack: ANDROID_16 NDK r21 e2e tests - batch 2'
     depends_on: "fixture-r21"
@@ -356,6 +360,10 @@ steps:
     concurrency: 5
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium client failure
+          limit: 2
 
   - label: ':bitbar: {{matrix}} NDK r28 e2e tests - batch 1'
     matrix:
@@ -480,6 +488,10 @@ steps:
     concurrency: 5
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium client failure
+          limit: 2
 
   - label: ':browserstack: ANDROID_16 NDK r28 e2e tests - batch 2'
     depends_on: "fixture-r28"
@@ -512,6 +524,10 @@ steps:
     concurrency: 5
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium client failure
+          limit: 2
 
   # If there is a tag present activate a manual publishing step
 
