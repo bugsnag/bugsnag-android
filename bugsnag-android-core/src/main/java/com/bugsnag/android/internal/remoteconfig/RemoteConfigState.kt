@@ -1,0 +1,118 @@
+package com.bugsnag.android.internal.remoteconfig
+
+import com.bugsnag.android.Notifier
+import com.bugsnag.android.RemoteConfig
+import com.bugsnag.android.internal.BackgroundTaskService
+import com.bugsnag.android.internal.ImmutableConfig
+import com.bugsnag.android.internal.TaskType
+import java.util.concurrent.Callable
+import java.util.concurrent.Future
+import java.util.concurrent.TimeUnit
+
+internal class RemoteConfigState(
+    private val store: RemoteConfigStore,
+    private val config: ImmutableConfig,
+    private val notifier: Notifier,
+    private val backgroundTaskService: BackgroundTaskService,
+) {
+    private val enabled: Boolean = config.endpoints.configuration != null
+
+    @Volatile
+    private var isRequestInFlight = false
+
+    companion object {
+        private const val REFRESH_BUFFER_MS = 2 * 60 * 60 * 1000L // 2 hours
+    }
+
+    fun scheduleDownloadIfRequired() {
+        if (!enabled) {
+            return
+        }
+
+        // Check if the config is within around 2 hours of expiring
+        val currentConfig = store.currentOrExpired()
+        if (currentConfig == null || !shouldRefresh(currentConfig)) {
+            return
+        }
+
+        // Don't schedule if a request is already in-flight
+        synchronized(this) {
+            if (isRequestInFlight) {
+                return
+            }
+            isRequestInFlight = true
+        }
+
+        // Schedule the download in background
+        backgroundTaskService.submitTask(TaskType.IO) {
+            try {
+                val newRemoteConfig = RemoteConfigRequest(
+                    config,
+                    notifier,
+                    store.currentOrExpired()
+                ).call()
+
+                // Store the new config if downloaded successfully
+                if (newRemoteConfig != null) {
+                    store.store(newRemoteConfig)
+                }
+            } finally {
+                isRequestInFlight = false
+            }
+        }
+    }
+
+    private fun shouldRefresh(remoteConfig: RemoteConfig): Boolean {
+        val now = System.currentTimeMillis()
+        val expiryTime = remoteConfig.configurationExpiry.time
+        val timeUntilExpiry = expiryTime - now
+
+        // Refresh if we're within 2 hours of expiry
+        return timeUntilExpiry <= REFRESH_BUFFER_MS
+    }
+
+    fun getRemoteConfig(timeout: Long, timeUnit: TimeUnit): RemoteConfig? {
+        if (!enabled) {
+            return null
+        }
+
+        val memoryConfig = store.current()
+        if (memoryConfig != null) {
+            return memoryConfig
+        }
+
+        return try {
+            getRemoteConfig().get(timeout, timeUnit)
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    fun getRemoteConfig(): Future<RemoteConfig?> {
+        if (!enabled) {
+            return object : Future<RemoteConfig?> {
+                override fun cancel(mayInterruptIfRunning: Boolean): Boolean = false
+                override fun get(): RemoteConfig? = null
+                override fun get(timeout: Long, unit: TimeUnit?): RemoteConfig? = get()
+                override fun isCancelled(): Boolean = false
+                override fun isDone(): Boolean = true
+            }
+        }
+
+        return backgroundTaskService.submitTask(
+            TaskType.IO,
+            Callable<RemoteConfig?> {
+                val remoteConfig = store.load()
+                if (remoteConfig != null) {
+                    return@Callable remoteConfig
+                }
+
+                return@Callable RemoteConfigRequest(
+                    config,
+                    notifier,
+                    store.currentOrExpired()
+                ).call()
+            }
+        )
+    }
+}

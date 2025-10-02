@@ -1,9 +1,8 @@
 package com.bugsnag.android
 
-import android.util.JsonReader
+import com.bugsnag.android.internal.JsonHelper
 import org.junit.Assert.assertNull
 import org.junit.Test
-import java.io.StringReader
 
 internal class RemoteConfigInvalidDeserializationTest {
 
@@ -16,9 +15,7 @@ internal class RemoteConfigInvalidDeserializationTest {
         }
         """.trimIndent()
 
-        val reader = JsonReader(StringReader(jsonString))
-        val result = RemoteConfig.fromReader(reader)
-
+        val result = RemoteConfig.fromMap(JsonHelper.deserialize(jsonString.toByteArray()))
         assertNull(result)
     }
 
@@ -31,9 +28,7 @@ internal class RemoteConfigInvalidDeserializationTest {
         }
         """.trimIndent()
 
-        val reader = JsonReader(StringReader(jsonString))
-        val result = RemoteConfig.fromReader(reader)
-
+        val result = RemoteConfig.fromMap(JsonHelper.deserialize(jsonString.toByteArray()))
         assertNull(result)
     }
 
@@ -45,9 +40,7 @@ internal class RemoteConfigInvalidDeserializationTest {
         }
         """.trimIndent()
 
-        val reader = JsonReader(StringReader(jsonString))
-        val result = RemoteConfig.fromReader(reader)
-
+        val result = RemoteConfig.fromMap(JsonHelper.deserialize(jsonString.toByteArray()))
         assertNull(result)
     }
 }

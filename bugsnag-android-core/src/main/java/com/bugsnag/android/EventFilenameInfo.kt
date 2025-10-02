@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import com.bugsnag.android.internal.ImmutableConfig
+import com.bugsnag.android.internal.serializeErrorTypeHeader
 import java.io.File
 import java.util.UUID
 
