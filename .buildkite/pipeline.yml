@@ -401,6 +401,10 @@ steps:
     concurrency: 5
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium client failure
+          limit: 2
 
   - label: ':bitbar: {{matrix}} NDK r28 smoke tests'
     matrix:
@@ -555,6 +559,10 @@ steps:
     concurrency: 5
     concurrency_group: 'browserstack-app'
     concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium client failure
+          limit: 2
 
   - label: 'Conditionally include device farms/full tests'
     agents:
