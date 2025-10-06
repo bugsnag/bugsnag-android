@@ -433,6 +433,7 @@ public final class com/bugsnag/android/EventPayload : com/bugsnag/android/Delive
 	public final fun getApiKey ()Ljava/lang/String;
 	public final fun getEvent ()Lcom/bugsnag/android/Event;
 	public fun getIntegrityToken ()Ljava/lang/String;
+	public final fun isUnhandled ()Z
 	public final fun setApiKey (Ljava/lang/String;)V
 	public fun toByteArray ()[B
 	public fun toStream (Lcom/bugsnag/android/JsonStream;)V

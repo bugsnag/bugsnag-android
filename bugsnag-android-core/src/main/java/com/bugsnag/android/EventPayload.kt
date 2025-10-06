@@ -23,6 +23,14 @@ class EventPayload @JvmOverloads internal constructor(
     var event: Event? = event
         internal set
 
+    /**
+     * Returns `true` if the `Event` in this `EventPayload` is considered unhandled.
+     */
+    val isUnhandled: Boolean
+        get() {
+            return decodedEvent().isUnhandled
+        }
+
     internal var eventFile: File? = eventFile
         private set
 

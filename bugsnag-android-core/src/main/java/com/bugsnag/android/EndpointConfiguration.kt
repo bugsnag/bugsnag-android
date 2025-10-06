@@ -2,7 +2,7 @@ package com.bugsnag.android
 
 private const val NOTIFY_ENDPOINT = "https://notify.bugsnag.com"
 private const val SESSIONS_ENDPOINT = "https://sessions.bugsnag.com"
-private const val CONFIGURATION_ENDPOINT = "https://config.bugsnag.com/error-config"
+private const val CONFIGURATION_ENDPOINT = "https://config.bugsnag.com/"
 
 /**
  * Set the endpoints to send data to. By default we'll send error reports to

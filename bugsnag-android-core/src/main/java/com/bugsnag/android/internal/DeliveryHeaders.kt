@@ -1,15 +1,16 @@
-package com.bugsnag.android
+package com.bugsnag.android.internal
 
-import com.bugsnag.android.internal.DateUtils
+import com.bugsnag.android.ErrorType
+import com.bugsnag.android.EventPayload
 import java.io.OutputStream
 import java.util.Date
 
-private const val HEADER_API_PAYLOAD_VERSION = "Bugsnag-Payload-Version"
-private const val HEADER_BUGSNAG_SENT_AT = "Bugsnag-Sent-At"
-private const val HEADER_BUGSNAG_STACKTRACE_TYPES = "Bugsnag-Stacktrace-Types"
-private const val HEADER_CONTENT_TYPE = "Content-Type"
+internal const val HEADER_API_PAYLOAD_VERSION = "Bugsnag-Payload-Version"
+internal const val HEADER_BUGSNAG_SENT_AT = "Bugsnag-Sent-At"
+internal const val HEADER_BUGSNAG_STACKTRACE_TYPES = "Bugsnag-Stacktrace-Types"
+internal const val HEADER_CONTENT_TYPE = "Content-Type"
 internal const val HEADER_BUGSNAG_INTEGRITY = "Bugsnag-Integrity"
-internal const val HEADER_API_KEY = "Bugsnag-Api-Key"
+internal const val HEADER_BUGSNAG_API_KEY = "Bugsnag-Api-Key"
 internal const val HEADER_INTERNAL_ERROR = "Bugsnag-Internal-Error"
 
 /**
@@ -20,7 +21,7 @@ internal const val HEADER_INTERNAL_ERROR = "Bugsnag-Internal-Error"
 internal fun errorApiHeaders(payload: EventPayload): Map<String, String?> {
     val mutableHeaders = mutableMapOf(
         HEADER_API_PAYLOAD_VERSION to "4.0",
-        HEADER_API_KEY to (payload.apiKey ?: ""),
+        HEADER_BUGSNAG_API_KEY to (payload.apiKey ?: ""),
         HEADER_BUGSNAG_SENT_AT to DateUtils.toIso8601(Date()),
         HEADER_CONTENT_TYPE to "application/json"
     )
@@ -53,7 +54,7 @@ internal fun serializeErrorTypeHeader(errorTypes: Set<ErrorType>): String {
  */
 internal fun sessionApiHeaders(apiKey: String): Map<String, String?> = mapOf(
     HEADER_API_PAYLOAD_VERSION to "1.0",
-    HEADER_API_KEY to apiKey,
+    HEADER_BUGSNAG_API_KEY to apiKey,
     HEADER_CONTENT_TYPE to "application/json",
     HEADER_BUGSNAG_SENT_AT to DateUtils.toIso8601(Date())
 )
