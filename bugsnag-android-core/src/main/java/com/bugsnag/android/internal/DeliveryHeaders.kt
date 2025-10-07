@@ -21,7 +21,7 @@ internal const val HEADER_INTERNAL_ERROR = "Bugsnag-Internal-Error"
 internal fun errorApiHeaders(payload: EventPayload): Map<String, String?> {
     val mutableHeaders = mutableMapOf(
         HEADER_API_PAYLOAD_VERSION to "4.0",
-        HEADER_BUGSNAG_API_KEY to (payload.apiKey ?: ""),
+        HEADER_BUGSNAG_API_KEY to payload.apiKey,
         HEADER_BUGSNAG_SENT_AT to DateUtils.toIso8601(Date()),
         HEADER_CONTENT_TYPE to "application/json"
     )
@@ -38,12 +38,7 @@ internal fun errorApiHeaders(payload: EventPayload): Map<String, String?> {
 internal fun serializeErrorTypeHeader(errorTypes: Set<ErrorType>): String {
     return when {
         errorTypes.isEmpty() -> ""
-        else ->
-            errorTypes
-                .map(ErrorType::desc)
-                .reduce { accumulator, str ->
-                    "$accumulator,$str"
-                }
+        else -> errorTypes.joinToString(",", transform = ErrorType::desc)
     }
 }
 

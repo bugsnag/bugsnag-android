@@ -3,6 +3,7 @@ package com.bugsnag.android
 import com.bugsnag.android.EventStore.Companion.EVENT_COMPARATOR
 import com.bugsnag.android.FileStore.Delegate
 import com.bugsnag.android.internal.BackgroundTaskService
+import com.bugsnag.android.internal.DeliveryPipeline
 import com.bugsnag.android.internal.dag.ValueProvider
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -10,11 +11,13 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.mockito.Mockito.mock
 import java.io.File
 
 internal class EventFilenameTest {
 
     lateinit var event: Event
+    lateinit var deliveryPipeline: DeliveryPipeline
 
     private val config = BugsnagTestUtils.generateImmutableConfig()
 
@@ -27,6 +30,7 @@ internal class EventFilenameTest {
     fun setUp() {
         event = BugsnagTestUtils.generateEvent()
         event.apiKey = "0000111122223333aaaabbbbcccc9999"
+        deliveryPipeline = mock(DeliveryPipeline::class.java)
     }
 
     @Test
@@ -69,7 +73,7 @@ internal class EventFilenameTest {
                     }
                 }
             ),
-            CallbackState()
+            deliveryPipeline
         )
 
         // no files
@@ -100,7 +104,7 @@ internal class EventFilenameTest {
                     }
                 }
             ),
-            CallbackState()
+            deliveryPipeline
         )
 
         // startup crashes
@@ -125,7 +129,7 @@ internal class EventFilenameTest {
                     }
                 }
             ),
-            CallbackState()
+            deliveryPipeline
         )
 
         // if multiple crashes exist, pick the most recent one

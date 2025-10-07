@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import com.bugsnag.android.internal.BackgroundTaskService
+import com.bugsnag.android.internal.DeliveryPipeline
 import com.bugsnag.android.internal.dag.BackgroundDependencyModule
 import com.bugsnag.android.internal.dag.ConfigModule
 import com.bugsnag.android.internal.dag.ContextModule
@@ -17,7 +18,7 @@ internal class EventStorageModule(
     trackerModule: TrackerModule,
     systemServiceModule: SystemServiceModule,
     notifier: Notifier,
-    callbackState: CallbackState
+    deliveryPipeline: DeliveryPipeline
 ) : BackgroundDependencyModule(bgTaskService) {
 
     private val cfg = configModule.config
@@ -44,7 +45,7 @@ internal class EventStorageModule(
             notifier,
             bgTaskService,
             delegate,
-            callbackState
+            deliveryPipeline
         )
     }
 }

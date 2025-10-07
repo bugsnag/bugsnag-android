@@ -1,6 +1,5 @@
 package com.bugsnag.android
 
-import android.util.JsonReader
 import com.bugsnag.android.RemoteConfig.Companion.DISCARD_RULE_ALL
 import com.bugsnag.android.RemoteConfig.Companion.DISCARD_RULE_ALL_HANDLED
 import com.bugsnag.android.RemoteConfig.Companion.KEY_MATCH_TYPE
@@ -61,6 +60,8 @@ internal sealed class DiscardRule : JsonStream.Streamable {
             stream.name(KEY_MATCH_TYPE).value(DISCARD_RULE_ALL)
             stream.endObject()
         }
+
+        override fun toString(): String = DISCARD_RULE_ALL
     }
 
     class AllHandled : DiscardRule() {
@@ -71,35 +72,17 @@ internal sealed class DiscardRule : JsonStream.Streamable {
             stream.name(KEY_MATCH_TYPE).value(DISCARD_RULE_ALL_HANDLED)
             stream.endObject()
         }
+
+        override fun toString(): String = DISCARD_RULE_ALL_HANDLED
     }
 
-    companion object : JsonReadable<DiscardRule?> {
+    companion object {
         fun fromMap(map: Map<String, Any?>): DiscardRule? {
             return when (map[KEY_MATCH_TYPE]) {
                 DISCARD_RULE_ALL -> All()
                 DISCARD_RULE_ALL_HANDLED -> AllHandled()
                 else -> null
             }
-        }
-
-        override fun fromReader(reader: JsonReader): DiscardRule? {
-            var rule: DiscardRule? = null
-
-            reader.beginObject()
-            while (reader.hasNext()) {
-                val key = reader.nextName()
-                when (key) {
-                    KEY_MATCH_TYPE -> {
-                        when (reader.nextString()) {
-                            DISCARD_RULE_ALL -> rule = All()
-                            DISCARD_RULE_ALL_HANDLED -> rule = AllHandled()
-                        }
-                    }
-                }
-            }
-            reader.endObject()
-
-            return rule
         }
     }
 }

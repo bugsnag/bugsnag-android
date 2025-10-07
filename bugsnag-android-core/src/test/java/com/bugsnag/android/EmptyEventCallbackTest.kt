@@ -4,23 +4,30 @@ import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import com.bugsnag.android.BugsnagTestUtils.generateEvent
 import com.bugsnag.android.FileStore.Delegate
 import com.bugsnag.android.internal.BackgroundTaskService
+import com.bugsnag.android.internal.DeliveryPipeline
 import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.convertToImmutableConfig
 import com.bugsnag.android.internal.dag.ValueProvider
+import com.bugsnag.android.internal.remoteconfig.RemoteConfigState
+import com.bugsnag.android.internal.remoteconfig.RemoteConfigStore
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import java.io.File
-import java.nio.file.Files
 import java.util.concurrent.CountDownLatch
 
 class EmptyEventCallbackTest {
+
+    @get:Rule
+    val tempDir = TemporaryFolder()
 
     private lateinit var storageDir: File
     private lateinit var errorDir: File
@@ -28,8 +35,7 @@ class EmptyEventCallbackTest {
 
     @Before
     fun setUp() {
-        storageDir = Files.createTempDirectory("tmp").toFile()
-        storageDir.deleteRecursively()
+        storageDir = tempDir.newFolder()
         errorDir = File(storageDir, "bugsnag/errors")
         backgroundTaskService = BackgroundTaskService()
     }
@@ -71,6 +77,7 @@ class EmptyEventCallbackTest {
             persistenceDirectory = storageDir
             delivery = mockDelivery
         }
+
         val eventStore = createEventStore(convertToImmutableConfig(config))
         repeat(3) {
             eventStore.write(generateEvent())
@@ -79,20 +86,15 @@ class EmptyEventCallbackTest {
         // the EventStore should not be considered empty with 3 events in it
         assertFalse(eventStore.isEmpty())
 
-        var eventStoreEmptyCount = 0
-        eventStore.onEventStoreEmptyCallback = { eventStoreEmptyCount++ }
+        val eventStoreEmpty = CountDownLatch(1)
+        eventStore.onEventStoreEmptyCallback = { eventStoreEmpty.countDown() }
         eventStore.flushAsync()
+        eventStoreEmpty.await()
         backgroundTaskService.shutdown()
 
         assertTrue(
             "there should be no undelivered payloads in the EventStore",
             eventStore.isEmpty()
-        )
-
-        assertEquals(
-            "onEventStoreEmptyCallback have been called even with a failed (deleted) payload",
-            1,
-            eventStoreEmptyCount
         )
     }
 
@@ -138,6 +140,20 @@ class EmptyEventCallbackTest {
     }
 
     private fun createEventStore(config: ImmutableConfig): EventStore {
+        val deliveryPipeline = DeliveryPipeline(
+            CallbackState(),
+            RemoteConfigState(
+                RemoteConfigStore(
+                    tempDir.newFolder(),
+                    1
+                ),
+                config,
+                generateConfiguration().notifier,
+                backgroundTaskService
+            ),
+            config
+        )
+
         return EventStore(
             config,
             NoopLogger,
@@ -153,7 +169,7 @@ class EmptyEventCallbackTest {
                     }
                 }
             ),
-            CallbackState()
+            deliveryPipeline
         )
     }
 }

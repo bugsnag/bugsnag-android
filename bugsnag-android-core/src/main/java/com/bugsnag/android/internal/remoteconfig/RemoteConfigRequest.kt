@@ -69,7 +69,10 @@ internal class RemoteConfigRequest(
         connection.setRequestProperty(HEADER_BUGSNAG_NOTIFIER_VERSION, notifier.version)
 
         if (remoteConfig != null) {
-            connection.setRequestProperty(HEADER_IF_NONE_MATCH, remoteConfig.configurationTag)
+            connection.setRequestProperty(
+                HEADER_IF_NONE_MATCH,
+                "\"${remoteConfig.configurationTag}\""
+            )
         }
 
         val responseCode = connection.responseCode
