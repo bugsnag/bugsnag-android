@@ -7,6 +7,9 @@ import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.TaskType
 import com.bugsnag.android.internal.dag.BackgroundDependencyModule
 import com.bugsnag.android.internal.dag.Provider
+import com.bugsnag.android.internal.remoteconfig.RemoteConfigState
+import com.bugsnag.android.internal.remoteconfig.RemoteConfigStore
+import java.io.File
 
 /**
  * A dependency module which constructs the objects that store information to disk in Bugsnag.
@@ -14,6 +17,7 @@ import com.bugsnag.android.internal.dag.Provider
 internal class StorageModule(
     appContext: Context,
     private val immutableConfig: ImmutableConfig,
+    private val notifier: Notifier,
     bgTaskService: BackgroundTaskService
 ) : BackgroundDependencyModule(bgTaskService, TaskType.IO) {
 
@@ -56,6 +60,21 @@ internal class StorageModule(
             immutableConfig.logger,
             null
         )
+    }
+
+    val remoteConfigState = provider {
+        val remoteConfig = RemoteConfigState(
+            RemoteConfigStore(
+                File(bugsnagDir.get(), "config"),
+                immutableConfig.versionCode ?: 0
+            ),
+            immutableConfig,
+            notifier,
+            bgTaskService
+        )
+
+        remoteConfig.scheduleDownloadIfRequired()
+        return@provider remoteConfig
     }
 
     val lastRunInfo = lastRunInfoStore.map { lastRunInfoStore ->

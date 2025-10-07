@@ -3,6 +3,7 @@ package com.bugsnag.android;
 import static com.bugsnag.android.SeverityReason.REASON_PROMISE_REJECTION;
 
 import com.bugsnag.android.internal.BackgroundTaskService;
+import com.bugsnag.android.internal.DeliveryPipeline;
 import com.bugsnag.android.internal.ImmutableConfig;
 import com.bugsnag.android.internal.TaskType;
 import com.bugsnag.android.internal.dag.Provider;
@@ -23,19 +24,19 @@ class DeliveryDelegate extends BaseObservable {
     private final Provider<EventStore> eventStore;
     private final ImmutableConfig immutableConfig;
     private final Notifier notifier;
-    private final CallbackState callbackState;
+    private final DeliveryPipeline deliveryPipeline;
     final BackgroundTaskService backgroundTaskService;
 
     DeliveryDelegate(Logger logger,
                      Provider<EventStore> eventStore,
                      ImmutableConfig immutableConfig,
-                     CallbackState callbackState,
+                     DeliveryPipeline deliveryPipeline,
                      Notifier notifier,
                      BackgroundTaskService backgroundTaskService) {
         this.logger = logger;
         this.eventStore = eventStore;
         this.immutableConfig = immutableConfig;
-        this.callbackState = callbackState;
+        this.deliveryPipeline = deliveryPipeline;
         this.notifier = notifier;
         this.backgroundTaskService = backgroundTaskService;
     }
@@ -66,38 +67,36 @@ class DeliveryDelegate extends BaseObservable {
             } else {
                 cacheEvent(event, false);
             }
-        } else if (callbackState.runOnSendTasks(event, logger)) {
+        } else {
             // Build the eventPayload
             String apiKey = event.getApiKey();
             EventPayload eventPayload = new EventPayload(apiKey, event, notifier, immutableConfig);
-            deliverPayloadAsync(event, eventPayload);
+            deliverPayloadAsync(eventPayload);
         }
     }
 
-    private void deliverPayloadAsync(@NonNull Event event, EventPayload eventPayload) {
-        final EventPayload finalEventPayload = eventPayload;
-        final Event finalEvent = event;
-
+    private void deliverPayloadAsync(final EventPayload eventPayload) {
         // Attempt to send the eventPayload in the background
         try {
             backgroundTaskService.submitTask(TaskType.ERROR_REQUEST, new Runnable() {
                 @Override
                 public void run() {
-                    deliverPayloadInternal(finalEventPayload, finalEvent);
+                    deliverPayloadInternal(eventPayload);
                 }
             });
         } catch (RejectedExecutionException exception) {
-            cacheEvent(event, false);
+            cacheEvent(eventPayload.getEvent(), false);
             logger.w("Exceeded max queue count, saving to disk to send later");
         }
     }
 
     @VisibleForTesting
-    DeliveryStatus deliverPayloadInternal(@NonNull EventPayload payload, @NonNull Event event) {
+    DeliveryStatus deliverPayloadInternal(@NonNull EventPayload payload) {
         logger.d("DeliveryDelegate#deliverPayloadInternal() - attempting event delivery");
-        DeliveryParams deliveryParams = immutableConfig.getErrorApiDeliveryParams(payload);
-        Delivery delivery = immutableConfig.getDelivery();
-        DeliveryStatus deliveryStatus = delivery.deliver(payload, deliveryParams);
+        DeliveryStatus deliveryStatus = deliveryPipeline.deliverEventPayload(payload);
+        if (deliveryStatus == null) {
+            return null;
+        }
 
         switch (deliveryStatus) {
             case DELIVERED:
@@ -106,7 +105,7 @@ class DeliveryDelegate extends BaseObservable {
             case UNDELIVERED:
                 logger.w("Could not send event(s) to Bugsnag,"
                         + " saving to disk to send later");
-                cacheEvent(event, false);
+                cacheEvent(payload.getEvent(), false);
                 break;
             case FAILURE:
                 logger.w("Problem sending event to Bugsnag");

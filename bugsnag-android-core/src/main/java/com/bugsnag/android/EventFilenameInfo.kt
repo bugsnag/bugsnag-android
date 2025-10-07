@@ -31,6 +31,7 @@ internal data class EventFilenameInfo(
 
     internal companion object {
         private const val STARTUP_CRASH = "startupcrash"
+        private const val STARTUP_CRASH_SUFFIX = "$STARTUP_CRASH.json"
         private const val NON_JVM_CRASH = "not-jvm"
 
         /**
@@ -71,13 +72,10 @@ internal data class EventFilenameInfo(
             )
         }
 
-        /**
-         * Reads event information from a filename.
-         */
         @JvmStatic
-        fun fromFile(file: File, config: ImmutableConfig): EventFilenameInfo {
+        fun fromFile(file: File, fallbackApiKey: String): EventFilenameInfo {
             return EventFilenameInfo(
-                findApiKeyInFilename(file, config),
+                findApiKeyInFilename(file, fallbackApiKey),
                 "", // ignore UUID field when reading from file as unused
                 findTimestampInFilename(file),
                 findSuffixInFilename(file),
@@ -86,10 +84,21 @@ internal data class EventFilenameInfo(
         }
 
         /**
+         * Reads event information from a filename.
+         */
+        @JvmStatic
+        fun fromFile(file: File, config: ImmutableConfig): EventFilenameInfo {
+            return fromFile(file, config.apiKey)
+        }
+
+        @JvmStatic
+        fun isLaunchCrashReport(filename: String): Boolean = filename.endsWith(STARTUP_CRASH_SUFFIX)
+
+        /**
          * Retrieves the api key encoded in the filename, or an empty string if this information
          * is not encoded for the given event
          */
-        internal fun findApiKeyInFilename(file: File, config: ImmutableConfig): String {
+        internal fun findApiKeyInFilename(file: File, fallbackApiKey: String): String {
             val name = file.name.removeSuffix("_$STARTUP_CRASH.json")
             val start = name.indexOf("_") + 1
             val end = name.indexOf("_", start)
@@ -98,7 +107,7 @@ internal data class EventFilenameInfo(
             } else {
                 name.substring(start, end)
             }
-            return apiKey ?: config.apiKey
+            return apiKey ?: fallbackApiKey
         }
 
         /**

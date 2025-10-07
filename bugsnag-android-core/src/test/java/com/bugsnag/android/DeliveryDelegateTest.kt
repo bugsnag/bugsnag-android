@@ -2,13 +2,18 @@ package com.bugsnag.android
 
 import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
 import com.bugsnag.android.internal.BackgroundTaskService
+import com.bugsnag.android.internal.DeliveryPipeline
 import com.bugsnag.android.internal.StateObserver
 import com.bugsnag.android.internal.dag.ValueProvider
+import com.bugsnag.android.internal.remoteconfig.RemoteConfigState
+import com.bugsnag.android.internal.remoteconfig.RemoteConfigStore
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
@@ -19,6 +24,9 @@ internal class DeliveryDelegateTest {
 
     @Mock
     lateinit var eventStore: EventStore
+
+    @get:Rule
+    val tempDir = TemporaryFolder()
 
     private val apiKey = "BUGSNAG_API_KEY"
     private val notifier = Notifier()
@@ -33,16 +41,30 @@ internal class DeliveryDelegateTest {
 
     @Before
     fun setUp() {
+        val backgroundTaskService = BackgroundTaskService()
         deliveryDelegate =
             DeliveryDelegate(
                 logger,
                 ValueProvider(eventStore),
                 config,
-                callbackState,
+                DeliveryPipeline(
+                    callbackState,
+                    RemoteConfigState(
+                        RemoteConfigStore(
+                            tempDir.newFolder(),
+                            1
+                        ),
+                        config,
+                        notifier,
+                        backgroundTaskService
+                    ),
+                    config
+                ),
                 notifier,
-                BackgroundTaskService()
+                backgroundTaskService
             )
-        event.session = Session("123", Date(), User(null, null, null), false, notifier, NoopLogger, apiKey)
+        event.session =
+            Session("123", Date(), User(null, null, null), false, notifier, NoopLogger, apiKey)
     }
 
     @Test
@@ -71,7 +93,8 @@ internal class DeliveryDelegateTest {
             SeverityReason.REASON_HANDLED_EXCEPTION
         )
         val event = Event(RuntimeException("Whoops!"), config, state, NoopLogger)
-        event.session = Session("123", Date(), User(null, null, null), false, notifier, NoopLogger, apiKey)
+        event.session =
+            Session("123", Date(), User(null, null, null), false, notifier, NoopLogger, apiKey)
 
         var msg: StateEvent.NotifyHandled? = null
         deliveryDelegate.addObserver(
@@ -112,7 +135,7 @@ internal class DeliveryDelegateTest {
     @Test
     fun deliverReport() {
         val eventPayload = EventPayload("api-key", event, null, notifier, config)
-        val status = deliveryDelegate.deliverPayloadInternal(eventPayload, event)
+        val status = deliveryDelegate.deliverPayloadInternal(eventPayload)
         assertEquals(DeliveryStatus.DELIVERED, status)
         assertEquals("Sent 1 new event to Bugsnag", logger.msg)
     }
