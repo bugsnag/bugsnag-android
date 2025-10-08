@@ -1,5 +1,7 @@
 package com.bugsnag.android;
 
+import static com.bugsnag.android.SeverityReason.REASON_PROMISE_REJECTION;
+
 import com.bugsnag.android.internal.ImmutableConfig;
 import com.bugsnag.android.internal.InternalMetrics;
 
@@ -574,5 +576,48 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware, F
 
     void setInternalMetrics(InternalMetrics metrics) {
         impl.setInternalMetrics(metrics);
+    }
+
+    /**
+     * Returns the delivery strategy for this event, which determines how the event
+     * should be delivered to the Bugsnag API.
+     *
+     * @return the delivery strategy, or null if no specific strategy is set
+     */
+    @NonNull
+    public DeliveryStrategy getDeliveryStrategy() {
+        if (impl.getDeliveryStrategy() != null) {
+            return impl.getDeliveryStrategy();
+        }
+
+        if (impl.getOriginalUnhandled()) {
+            String severityReasonType = impl.getSeverityReasonType();
+            boolean promiseRejection = REASON_PROMISE_REJECTION.equals(severityReasonType);
+            boolean anr = impl.isAnr(this);
+            if (anr || promiseRejection) {
+                return DeliveryStrategy.STORE_AND_FLUSH;
+            } else if (impl.isAttemptDeliveryOnCrash()) {
+                return DeliveryStrategy.STORE_AND_SEND;
+            } else {
+                return DeliveryStrategy.STORE_ONLY;
+            }
+        } else {
+            return DeliveryStrategy.SEND_IMMEDIATELY;
+        }
+    }
+
+    /**
+     * Sets the delivery strategy for this event, which determines how the event
+     * should be delivered to the Bugsnag API. This allows customization of delivery
+     * behavior on a per-event basis.
+     *
+     * @param deliveryStrategy the delivery strategy to use for this event
+     */
+    public void setDeliveryStrategy(@NonNull DeliveryStrategy deliveryStrategy) {
+        if (deliveryStrategy != null) {
+            impl.setDeliveryStrategy(deliveryStrategy);
+        } else {
+            logNull("deliveryStrategy");
+        }
     }
 }
