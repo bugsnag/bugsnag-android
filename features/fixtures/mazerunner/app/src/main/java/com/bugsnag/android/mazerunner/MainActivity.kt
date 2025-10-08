@@ -148,11 +148,13 @@ class MainActivity : Activity() {
                     val scenarioMode = getStringSafely(command, "scenario_mode")
                     val sessionsUrl = getStringSafely(command, "sessions_endpoint")
                     val notifyUrl = getStringSafely(command, "notify_endpoint")
+                    val remoteConfigUrl = getStringSafely(command, "error_config_endpoint")
                     log("command.action: $action")
                     log("command.scenarioName: $scenarioName")
                     log("command.scenarioMode: $scenarioMode")
                     log("command.sessionsUrl: $sessionsUrl")
                     log("command.notifyUrl: $notifyUrl")
+                    log("command.remoteConfigUrl: $remoteConfigUrl")
 
                     // Stop polling once we have a scenario action
                     if ("start_bugsnag".equals(action) || "run_scenario".equals(action)) {
@@ -172,10 +174,10 @@ class MainActivity : Activity() {
                                 CiLog.info("No Maze Runner command queuing, continuing to poll")
                             }
                             "start_bugsnag" -> {
-                                startBugsnag(scenarioName, scenarioMode, sessionsUrl, notifyUrl)
+                                startBugsnag(scenarioName, scenarioMode, sessionsUrl, notifyUrl, remoteConfigUrl)
                             }
                             "run_scenario" -> {
-                                runScenario(scenarioName, scenarioMode, sessionsUrl, notifyUrl)
+                                runScenario(scenarioName, scenarioMode, sessionsUrl, notifyUrl, remoteConfigUrl)
                             }
                             "clear_persistent_data" -> clearPersistentData()
                             "flush" -> BugsnagInternals.flush()
@@ -218,9 +220,10 @@ class MainActivity : Activity() {
         eventType: String,
         mode: String,
         sessionsUrl: String,
-        notifyUrl: String
+        notifyUrl: String,
+        remoteConfigUrl: String
     ) {
-        scenario = loadScenario(eventType, mode, sessionsUrl, notifyUrl)
+        scenario = loadScenario(eventType, mode, sessionsUrl, notifyUrl, remoteConfigUrl)
         scenario?.startBugsnag(true)
     }
 
@@ -229,10 +232,11 @@ class MainActivity : Activity() {
         eventType: String,
         mode: String,
         sessionsUrl: String,
-        notifyUrl: String
+        notifyUrl: String,
+        remoteConfigUrl: String
     ) {
         if (scenario == null) {
-            scenario = loadScenario(eventType, mode, sessionsUrl, notifyUrl)
+            scenario = loadScenario(eventType, mode, sessionsUrl, notifyUrl, remoteConfigUrl)
             scenario?.startBugsnag(false)
         }
 
@@ -296,7 +300,8 @@ class MainActivity : Activity() {
         eventType: String,
         mode: String,
         sessionsUrl: String,
-        notifyUrl: String
+        notifyUrl: String,
+        remoteConfigUrl: String
     ): Scenario {
         val apiKeyField = findViewById<EditText>(R.id.manualApiKey)
 
@@ -315,7 +320,7 @@ class MainActivity : Activity() {
         // reuse notify endpoint as we don't care about logs when running mazerunner in manual mode
         val mazerunnerHttpClient = MazerunnerHttpClient.fromEndpoint(notifyUrl)
 
-        val config = prepareConfig(apiKey, notifyUrl, sessionsUrl, mazerunnerHttpClient) {
+        val config = prepareConfig(apiKey, notifyUrl, sessionsUrl, remoteConfigUrl, mazerunnerHttpClient) {
             val logMessage = it
             val interceptedLogMessages = scenario?.getInterceptedLogMessages()
             interceptedLogMessages?.any {

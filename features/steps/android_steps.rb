@@ -8,7 +8,8 @@ def execute_command(action, scenario_name = '')
     scenario_name: scenario_name,
     scenario_mode: $scenario_mode,
     sessions_endpoint: $sessions_endpoint,
-    notify_endpoint: $notify_endpoint
+    notify_endpoint: $notify_endpoint,
+    error_config_endpoint: $error_config_endpoint,
   }
   Maze::Server.commands.add command
 
@@ -18,13 +19,16 @@ def execute_command(action, scenario_name = '')
     if Maze.config.aws_public_ip
       $sessions_endpoint = "http://#{Maze.public_address}/sessions"
       $notify_endpoint = "http://#{Maze.public_address}/notify"
+      $error_config_endpoint = "http://#{Maze.public_address}"
     else
       $sessions_endpoint = "http://local:9339/sessions"
       $notify_endpoint = "http://local:9339/notify"
+      $error_config_endpoint = "http://local:9339"
     end
   else
     $sessions_endpoint = 'http://bs-local.com:9339/sessions'
     $notify_endpoint = 'http://bs-local.com:9339/notify'
+    $error_config_endpoint = 'http://bs-local.com:9339'
   end
 
   # Ensure fixture has read the command

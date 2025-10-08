@@ -76,6 +76,7 @@ class MultiProcessService : Service() {
             params.apiKey,
             params.notify,
             params.sessions,
+            null,
             mazerunnerHttpClient
         ) {
             scenario?.getInterceptedLogMessages()?.contains(it) ?: false

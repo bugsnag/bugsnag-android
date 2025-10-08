@@ -2,6 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues></ManuallySuppressedIssues>
   <CurrentIssues>
+    <ID>LongParameterList:BugsnagConfig.kt$( apiKey: String, notify: String, sessions: String, remoteConfig: String?, mazerunnerHttpClient: MazerunnerHttpClient, logFilter: (msg: String) -&gt; Boolean )</ID>
     <ID>MagicNumber:AnrHelper.kt$1000</ID>
     <ID>MagicNumber:AnrHelper.kt$&lt;no name provided&gt;$60000</ID>
     <ID>MagicNumber:AutoDetectAnrsFalseScenario.kt$AutoDetectAnrsFalseScenario$100000</ID>
@@ -19,6 +20,7 @@
     <ID>MagicNumber:LoadConfigurationKotlinScenario.kt$LoadConfigurationKotlinScenario$10000</ID>
     <ID>MagicNumber:LoadConfigurationKotlinScenario.kt$LoadConfigurationKotlinScenario$98</ID>
     <ID>MagicNumber:ManualSessionSmokeScenario.kt$ManualSessionSmokeScenario$3</ID>
+    <ID>MagicNumber:RemoteConfigBasicScenario.kt$RemoteConfigBasicScenario$3000</ID>
     <ID>MagicNumber:Scenario.kt$Scenario$100</ID>
     <ID>MagicNumber:Scenario.kt$Scenario$1000</ID>
     <ID>MagicNumber:StartupCrashFlushScenario.kt$StartupCrashFlushScenario$6000</ID>
@@ -39,6 +41,7 @@
     <ID>TooGenericExceptionThrown:FeatureFlagScenario.kt$FeatureFlagScenario$throw RuntimeException("FeatureFlagScenario unhandled")</ID>
     <ID>TooGenericExceptionThrown:OkHttpDeliveryScenario.kt$OkHttpDeliveryScenario$throw RuntimeException("Unhandled Error")</ID>
     <ID>TooGenericExceptionThrown:OnSendCallbackScenario.kt$OnSendCallbackScenario$throw RuntimeException("Unhandled Error")</ID>
+    <ID>TooGenericExceptionThrown:RemoteConfigBasicScenario.kt$RemoteConfigBasicScenario$throw RuntimeException("Unhandled exception")</ID>
     <ID>TooGenericExceptionThrown:ReportCacheScenario.kt$ReportCacheScenario$throw RuntimeException("ReportCacheScenario")</ID>
     <ID>TooGenericExceptionThrown:StartupCrashFlushScenario.kt$StartupCrashFlushScenario$throw RuntimeException("Regular crash")</ID>
     <ID>TooGenericExceptionThrown:StartupCrashFlushScenario.kt$StartupCrashFlushScenario$throw RuntimeException("Startup crash")</ID>
