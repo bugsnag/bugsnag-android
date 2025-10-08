@@ -1,41 +1,41 @@
 package com.bugsnag.android
 
-import android.app.ApplicationExitInfo
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.bugsnag.android.Thread.State
 import com.bugsnag.android.repackaged.server.os.TombstoneProtos
 import com.bugsnag.android.repackaged.server.os.TombstoneProtos.Tombstone
+import java.io.InputStream
 import com.bugsnag.android.Thread as BugsnagThread
 
+@RequiresApi(Build.VERSION_CODES.R)
 internal class TombstoneParser(
-    private val logger: Logger
+    private val logger: Logger,
+    private val listOpenFds: Boolean,
+    private val includeLogcat: Boolean
 ) {
 
-    @RequiresApi(Build.VERSION_CODES.R)
     fun parse(
-        exitInfo: ApplicationExitInfo,
-        listOpenFds: Boolean,
-        includeLogcat: Boolean,
+        tombstoneInputStream: InputStream,
         threadConsumer: (BugsnagThread) -> Unit,
         fileDescriptorConsumer: (Int, String, String) -> Unit,
-        logcatConsumer: (String) -> Unit
+        logcatConsumer: (String) -> Unit,
+        abortMessageConsumer: (String) -> Unit
     ) {
-        try {
-            val trace: Tombstone = exitInfo.traceInputStream?.use {
-                Tombstone.newBuilder().mergeFrom(it).build()
-            } ?: return
-            extractTombstoneThreads(trace.threadsMap.values, threadConsumer)
+        val trace: Tombstone = tombstoneInputStream.use { Tombstone.parseFrom(it) } ?: return
 
-            if (listOpenFds) {
-                extractTombstoneFd(trace.openFdsList, fileDescriptorConsumer)
-            }
+        if (!trace.abortMessage.isNullOrEmpty()) {
+            abortMessageConsumer(trace.abortMessage)
+        }
 
-            if (includeLogcat) {
-                extractTombstoneLogBuffers(trace.logBuffersList, logcatConsumer)
-            }
-        } catch (ex: Throwable) {
-            logger.w("Tombstone input stream threw an Exception", ex)
+        extractTombstoneThreads(trace.threadsMap.values, threadConsumer)
+
+        if (listOpenFds) {
+            extractTombstoneFd(trace.openFdsList, fileDescriptorConsumer)
+        }
+
+        if (includeLogcat) {
+            extractTombstoneLogBuffers(trace.logBuffersList, logcatConsumer)
         }
     }
 

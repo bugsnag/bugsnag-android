@@ -48,6 +48,9 @@ fun prepareConfig(
             mazerunnerHttpClient.postLog(logLevel, msg)
         }
     }
+
+    config.addOnError(filterSystemAnrs)
+
     return config
 }
 
