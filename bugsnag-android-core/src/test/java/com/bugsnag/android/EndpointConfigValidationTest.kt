@@ -7,8 +7,8 @@ class EndpointConfigValidationTest {
 
     private val _defaultNotify = "https://notify.bugsnag.com"
     private val _defaultSession = "https://sessions.bugsnag.com"
-    private val _hubNotify = "https://notify.insighthub.smartbear.com"
-    private val _hubSession = "https://sessions.insighthub.smartbear.com"
+    private val _hubNotify = "https://notify.bugsnag.smartbear.com"
+    private val _hubSession = "https://sessions.bugsnag.smartbear.com"
 
     /** No custom endpoints*/
     @Test
