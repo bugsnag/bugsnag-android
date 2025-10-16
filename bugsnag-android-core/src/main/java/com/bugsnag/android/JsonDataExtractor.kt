@@ -1,7 +1,6 @@
 package com.bugsnag.android
 
 import com.bugsnag.android.internal.json.JsonCollectionPath
-
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -10,12 +9,14 @@ import java.util.regex.Pattern
  * by [com.bugsnag.android.internal.JsonCollectionParser]). These are used when matching locally
  * stored events against remotely configured [DiscardRule]s.
  */
-internal sealed class JsonDataExtractor(val path: String) : JsonStream.Streamable {
+internal sealed class JsonDataExtractor(
+    val path: String
+) : JsonStream.Streamable {
     private lateinit var _jsonPath: JsonCollectionPath
     protected val jsonPath: JsonCollectionPath
         get() {
             if (!this::_jsonPath.isInitialized) {
-                _jsonPath = JsonCollectionPath.Companion.fromString(path)
+                _jsonPath = JsonCollectionPath.fromString(path)
             }
 
             return _jsonPath
@@ -26,7 +27,10 @@ internal sealed class JsonDataExtractor(val path: String) : JsonStream.Streamabl
      * [output] may be called any number of times depending on the content of [root] and the
      * rules defined in the specific extractor implementation.
      */
-    abstract fun extract(root: Map<String, *>, output: (String) -> Unit)
+    abstract fun extract(
+        root: Map<String, *>,
+        output: (String) -> Unit
+    )
 
     fun extract(root: Map<String, *>): List<String> {
         val out = ArrayList<String>()
@@ -34,24 +38,22 @@ internal sealed class JsonDataExtractor(val path: String) : JsonStream.Streamabl
         return out
     }
 
-    protected fun stringify(item: Any): String? {
-        return when (item) {
+    protected fun stringify(item: Any): String? =
+        when (item) {
             is String -> item
             is Short, is Int, is Long, is Float, is Double, is Boolean -> item.toString()
             else -> null
         }
-    }
 
     companion object {
         fun fromJsonMap(json: Map<String, *>): JsonDataExtractor? {
-            val path = json["path"] as? String ?: return null
             val pathMode = json["pathMode"] as? String
 
             return when (pathMode) {
-                "REGEX" -> regexExtractorFromMap(path, json)
-                "FILTER" -> filterExtractorForMap(path, json)
-                "RELATIVE_ADDRESS" -> RelativeAddressExtractor(path)
-                null -> SimplePathExtractor(path)
+                "REGEX" -> RegexExtractor.fromJsonMap(json)
+                "FILTER" -> FilterExtractor.fromJsonMap(json)
+                "RELATIVE_ADDRESS" -> RelativeAddressExtractor.fromJsonMap(json)
+                "LITERAL", null -> LiteralPathExtractor.fromJsonMap(json)
                 else -> null
             }
         }
@@ -59,36 +61,18 @@ internal sealed class JsonDataExtractor(val path: String) : JsonStream.Streamabl
         /**
          * Shorthand for `json.mapNotNull(this::fromJsonMap)`.
          */
-        fun fromJsonList(json: List<Map<String, *>>): List<JsonDataExtractor> {
-            return json.mapNotNull(this::fromJsonMap)
-        }
-
-        private fun filterExtractorForMap(path: String, json: Map<String, *>): JsonDataExtractor? {
-            val filterPath = json["filterPath"] as? String ?: return null
-            val matchTypeString = json["matchType"] as? String ?: return null
-            val matchType = try {
-                FilterExtractor.MatchType.valueOf(matchTypeString)
-            } catch (_: IllegalArgumentException) {
-                return null
-            }
-            val expectedValue = json["value"] as? String
-
-            @Suppress("UNCHECKED_CAST")
-            val subPathJson = json["subPath"] as? Map<String, *>
-            val subExtractor = fromJsonMap(subPathJson as Map<String, *>) ?: return null
-
-            return FilterExtractor(path, filterPath, matchType, expectedValue, subExtractor)
-        }
-
-        private fun regexExtractorFromMap(path: String, json: Map<String, *>): JsonDataExtractor? {
-            val regex = json["regex"] as? String ?: return null
-            return RegexExtractor(path, regex)
-        }
+        fun fromJsonList(json: List<Map<String, *>>): List<JsonDataExtractor> =
+            json.mapNotNull(this::fromJsonMap)
     }
 }
 
-internal class SimplePathExtractor(path: String) : JsonDataExtractor(path) {
-    override fun extract(root: Map<String, *>, output: (String) -> Unit) {
+internal class LiteralPathExtractor(
+    path: String
+) : JsonDataExtractor(path) {
+    override fun extract(
+        root: Map<String, *>,
+        output: (String) -> Unit,
+    ) {
         jsonPath.extractFrom(root).forEach { item ->
             stringify(item)?.let { output(it) }
         }
@@ -100,12 +84,21 @@ internal class SimplePathExtractor(path: String) : JsonDataExtractor(path) {
         stream.endObject()
     }
 
-    override fun toString(): String {
-        return path
+    override fun toString(): String = path
+
+    companion object {
+        fun fromJsonMap(json: Map<String, *>): LiteralPathExtractor? {
+            val path = json["path"] as? String
+                ?: return null
+            return LiteralPathExtractor(path)
+        }
     }
 }
 
-internal class RegexExtractor(path: String, regex: String) : JsonDataExtractor(path) {
+internal class RegexExtractor(
+    path: String,
+    regex: String
+) : JsonDataExtractor(path) {
     private val regex: Pattern = regex.toPattern()
 
     override fun extract(
@@ -113,8 +106,9 @@ internal class RegexExtractor(path: String, regex: String) : JsonDataExtractor(p
         output: (String) -> Unit
     ) {
         for (item in jsonPath.extractFrom(root)) {
-            val stringValue = stringify(item)
-                ?: continue
+            val stringValue =
+                stringify(item)
+                    ?: continue
             val matcher = regex.matcher(stringValue)
 
             // we *find* any match within the source string rather than require a full match
@@ -124,16 +118,20 @@ internal class RegexExtractor(path: String, regex: String) : JsonDataExtractor(p
         }
     }
 
-    private fun extractGroups(source: String, matcher: Matcher): String {
+    private fun extractGroups(
+        source: String,
+        matcher: Matcher
+    ): String {
         if (matcher.groupCount() > 0) {
             // the regex groups are joined together with a ',' separator
-            val groups = buildString(source.length) {
-                matcher.group(1)?.let { append(it) }
-                for (groupIndex in 2..matcher.groupCount()) {
-                    append(',')
-                    matcher.group(groupIndex)?.let { append(it) }
+            val groups =
+                buildString(source.length) {
+                    matcher.group(1)?.let { append(it) }
+                    for (groupIndex in 2..matcher.groupCount()) {
+                        append(',')
+                        matcher.group(groupIndex)?.let { append(it) }
+                    }
                 }
-            }
             return groups
         }
 
@@ -148,34 +146,33 @@ internal class RegexExtractor(path: String, regex: String) : JsonDataExtractor(p
         stream.endObject()
     }
 
-    override fun toString(): String {
-        return "$path[$regex]"
+    companion object {
+        fun fromJsonMap(json: Map<String, *>): JsonDataExtractor? {
+            val path = json["path"] as? String ?: return null
+            val regex = json["regex"] as? String ?: return null
+
+            return RegexExtractor(path, regex)
+        }
     }
 }
 
 internal class FilterExtractor(
     path: String,
-    filterPath: String,
-    val matchType: MatchType,
-    val expectedValue: String?,
-    val subExtractor: JsonDataExtractor
+    val conditions: List<Condition>,
+    val subExtractors: List<JsonDataExtractor>
 ) : JsonDataExtractor(path) {
-    private val jsonFilterPath: JsonCollectionPath =
-        JsonCollectionPath.Companion.fromString(filterPath)
-
-    override fun extract(root: Map<String, *>, output: (String) -> Unit) {
-        jsonPath.extractFrom(root)
+    override fun extract(
+        root: Map<String, *>,
+        output: (String) -> Unit
+    ) {
+        jsonPath
+            .extractFrom(root)
             .filterIsInstance<Map<String, *>>()
-            .filter { subRoot ->
-                // the filterPath must point to exactly one value
-                // does the stringified value match the expected value?
-                val value = jsonFilterPath.extractFrom(subRoot).singleOrNull()
-                    ?.let { stringify(it) }
-
-                matchType(value, expectedValue)
-            }
+            .filter { subRoot -> conditions.all { it(subRoot) } }
             .forEach { subRoot ->
-                subExtractor.extract(subRoot, output)
+                subExtractors.forEach { extractor ->
+                    extractor.extract(subRoot, output)
+                }
             }
     }
 
@@ -183,38 +180,110 @@ internal class FilterExtractor(
         stream.beginObject()
         stream.name("path").value(path)
         stream.name("pathMode").value("FILTER")
-        stream.name("matchType").value(matchType.name)
-        if (expectedValue != null) {
-            stream.name("value").value(expectedValue)
-        }
-        stream.name("subPath").value(subExtractor)
+
+        stream.name("filter").beginObject()
+        stream.name("conditions").value(conditions)
+        stream.name("subPaths").value(subExtractors)
+        stream.endObject()
+
         stream.endObject()
     }
 
-    override fun toString(): String {
-        return "$path[$jsonFilterPath $matchType $expectedValue]$subExtractor"
+    companion object {
+        @Suppress("UNCHECKED_CAST")
+        fun fromJsonMap(json: Map<String, *>): JsonDataExtractor? {
+            val path = json["path"] as? String ?: return null
+            val filter = json["filter"] as? Map<String, *> ?: return null
+
+            val conditions = (filter["conditions"] as? List<*>)
+                ?.filterIsInstance<Map<String, *>>()
+                ?.mapNotNull { Condition.fromJsonMap(it) }
+                // we require at least 1 valid condition
+                .takeUnless { it.isNullOrEmpty() }
+                ?: return null
+
+            val subExtractors = (filter["subPaths"] as? List<*>)
+                ?.filterIsInstance<Map<String, *>>()
+                ?.mapNotNull { JsonDataExtractor.fromJsonMap(it) }
+                // and we require at least one valid subPath
+                .takeUnless { it.isNullOrEmpty() }
+                ?: return null
+
+            return FilterExtractor(
+                path,
+                conditions,
+                subExtractors,
+            )
+        }
     }
 
-    internal enum class MatchType : (String?, String?) -> Boolean {
-        EQUALS {
-            override fun invoke(value: String?, expected: String?): Boolean {
-                return value == expected
+    internal class Condition(
+        val filterPath: JsonDataExtractor,
+        val matchType: MatchType,
+        val expectedValue: String
+    ) : (Map<String, *>) -> Boolean, JsonStream.Streamable {
+        override fun invoke(jsonObject: Map<String, *>): Boolean {
+            val values = filterPath.extract(jsonObject)
+            val extractedValue = values.firstOrNull()
+
+            return matchType(extractedValue, expectedValue)
+        }
+
+        override fun toStream(stream: JsonStream) {
+            stream.beginObject()
+            stream.name("filterPath").value(filterPath)
+            stream.name("matchType").value(matchType.name)
+            stream.name("value").value(expectedValue)
+            stream.endObject()
+        }
+
+        companion object {
+            fun fromJsonMap(json: Map<String, *>): Condition? {
+                @Suppress("UNCHECKED_CAST")
+                val filterPath =
+                    (json["filterPath"] as? Map<String, *>)
+                        ?.let { JsonDataExtractor.fromJsonMap(it) }
+                        ?: return null
+
+                val matchType =
+                    try {
+                        (json["matchType"] as? String)?.let { MatchType.valueOf(it) }
+                    } catch (_: Exception) {
+                        null
+                    } ?: return null
+
+                val expectedValue =
+                    json["value"] as? String
+                        ?: return null
+
+                return Condition(filterPath, matchType, expectedValue)
             }
-        },
-        NOT_EQUALS {
-            override fun invoke(value: String?, expected: String?): Boolean {
-                return value != expected
-            }
-        },
-        IS_NULL {
-            override fun invoke(value: String?, expected: String?): Boolean {
-                return value == null
-            }
-        },
-        NOT_NULL {
-            override fun invoke(value: String?, expected: String?): Boolean {
-                return value != null
-            }
+        }
+
+        internal enum class MatchType : (String?, String) -> Boolean {
+            EQUALS {
+                override fun invoke(
+                    value: String?,
+                    expected: String
+                ): Boolean = value == expected
+            },
+            NOT_EQUALS {
+                override fun invoke(
+                    value: String?,
+                    expected: String
+                ): Boolean = value != expected
+            },
+            IS_NULL {
+                override fun invoke(
+                    value: String?,
+                    expected: String
+                ): Boolean =
+                    if (expected == "true") {
+                        value == null
+                    } else {
+                        value != null
+                    }
+            },
         }
     }
 }
@@ -222,27 +291,33 @@ internal class FilterExtractor(
 private const val HEX_RADIX = 16
 
 internal class RelativeAddressExtractor(
-    path: String,
+    path: String
 ) : JsonDataExtractor(path) {
     override fun extract(
         root: Map<String, *>,
         output: (String) -> Unit
     ) {
         @Suppress("UNCHECKED_CAST")
-        val stackFrames = jsonPath.extractFrom(root)
-            .filterIsInstance<Map<*, *>>()
+        val stackFrames =
+            jsonPath
+                .extractFrom(root)
+                .filterIsInstance<Map<*, *>>()
 
         stackFrames.forEach { stackFrame ->
-            val frameAddressString = stackFrame["frameAddress"] as? String
-                ?: return
-            val loadAddressString = stackFrame["loadAddress"] as? String
-                ?: stackFrame["machoLoadAddress"] as? String
-                ?: return
+            val frameAddressString =
+                stackFrame["frameAddress"] as? String
+                    ?: return
+            val loadAddressString =
+                stackFrame["loadAddress"] as? String
+                    ?: stackFrame["machoLoadAddress"] as? String
+                    ?: return
 
-            val frameAddress = frameAddressString.parseAsAddress()
-                ?: return
-            val loadAddress = loadAddressString.parseAsAddress()
-                ?: return
+            val frameAddress =
+                frameAddressString.parseAsAddress()
+                    ?: return
+            val loadAddress =
+                loadAddressString.parseAsAddress()
+                    ?: return
 
             val relativeAddress = frameAddress - loadAddress
 
@@ -253,8 +328,9 @@ internal class RelativeAddressExtractor(
     }
 
     private fun String.parseAsAddress(): ULong? {
-        if (startsWith("0x"))
+        if (startsWith("0x")) {
             return removePrefix("0x").toULongOrNull(HEX_RADIX)
+        }
         return toULongOrNull() ?: toULongOrNull(HEX_RADIX)
     }
 
@@ -263,5 +339,13 @@ internal class RelativeAddressExtractor(
         stream.name("path").value(path)
         stream.name("pathMode").value("RELATIVE_ADDRESS")
         stream.endObject()
+    }
+
+    companion object {
+        fun fromJsonMap(json: Map<String, *>): RelativeAddressExtractor? {
+            val path = json["path"] as? String
+                ?: return null
+            return RelativeAddressExtractor(path)
+        }
     }
 }

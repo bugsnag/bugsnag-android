@@ -50,18 +50,35 @@ internal class JsonDataExtractorTest {
             """{
                 "path": "breadcrumbs.*",
                 "pathMode": "FILTER",
-                "filterPath": "type",
-                "matchType": "EQUAL",
-                "value": "navigation",
-                "subPath": {"path": "name"}
+                "filter": {
+                    "conditions": [
+                        {
+                            "filterPath": { "path": "type" },
+                            "matchType": "EQUALS",
+                            "value": "navigation"
+                        }
+                    ],
+                    "subPaths": [
+                        { "path": "name" }
+                    ]
+                }
             }""",
-            // FilterExtractor with NOT_NULL match
+            // FilterExtractor with "not null" match
             """{
                 "path": "stacktrace.*",
                 "pathMode": "FILTER",
-                "filterPath": "file",
-                "matchType": "NOT_NULL",
-                "subPath": {"path": "method"}
+                "filter": {
+                    "conditions": [
+                        {
+                            "filterPath": { "path": "file" },
+                            "matchType": "IS_NULL",
+                            "value": "false"
+                        }
+                    ],
+                    "subPaths": [
+                        { "path": "method" }
+                    ]
+                }
             }""",
             // RelativeAddressExtractor
             """{"path": "stackframes.*", "pathMode": "RELATIVE_ADDRESS"}"""

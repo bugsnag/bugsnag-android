@@ -2,6 +2,7 @@ package com.bugsnag.android
 
 import com.bugsnag.android.internal.JsonCollectionParser
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Test
 
 internal class FilterExtractorTest {
@@ -27,16 +28,25 @@ internal class FilterExtractorTest {
         val equalJsonString = """{
             "path": "items.*",
             "pathMode": "FILTER",
-            "filterPath": "status",
-            "matchType": "EQUALS",
-            "value": "active",
-            "subPath": {"path": "value"}
+            "filter": {
+              "conditions": [
+                {
+                  "filterPath": { "path": "status" },
+                  "matchType": "EQUALS",
+                  "value": "active"
+                }
+              ],
+              "subPaths": [
+                { "path": "value" }                
+              ]
+            }
         }"""
         val equalParser = JsonCollectionParser(equalJsonString.byteInputStream())
 
         @Suppress("UNCHECKED_CAST")
-        val equalExtractor = JsonDataExtractor.fromJsonMap(equalParser.parse() as Map<String, *>)!!
-        assertEquals(listOf("item1"), equalExtractor.extract(data))
+        val equalsExtractor = JsonDataExtractor.fromJsonMap(equalParser.parse() as Map<String, *>)
+        assertNotNull("FilterExtractor did not parse", equalsExtractor)
+        assertEquals(listOf("item1"), equalsExtractor!!.extract(data))
     }
 
     @Test
@@ -45,17 +55,26 @@ internal class FilterExtractorTest {
         val notEqualJsonString = """{
             "path": "items.*",
             "pathMode": "FILTER",
-            "filterPath": "status",
-            "matchType": "NOT_EQUALS",
-            "value": "active",
-            "subPath": {"path": "value"}
+            "filter": {
+              "conditions": [
+                {
+                  "filterPath": { "path": "status" },
+                  "matchType": "NOT_EQUALS",
+                  "value": "active"
+                }              
+              ],                
+              "subPaths": [
+                { "path": "value" }              
+              ]
+            }
         }"""
         val notEqualParser = JsonCollectionParser(notEqualJsonString.byteInputStream())
 
         @Suppress("UNCHECKED_CAST")
         val notEqualExtractor =
-            JsonDataExtractor.fromJsonMap(notEqualParser.parse() as Map<String, *>)!!
-        assertEquals(listOf("item2", "item3", "item4"), notEqualExtractor.extract(data))
+            JsonDataExtractor.fromJsonMap(notEqualParser.parse() as Map<String, *>)
+        assertNotNull("FilterExtractor did not parse", notEqualExtractor)
+        assertEquals(listOf("item2", "item3", "item4"), notEqualExtractor!!.extract(data))
     }
 
     @Test
@@ -64,16 +83,26 @@ internal class FilterExtractorTest {
         val isNullJsonString = """{
             "path": "items.*",
             "pathMode": "FILTER",
-            "filterPath": "status",
-            "matchType": "IS_NULL",
-            "subPath": {"path": "value"}
+            "filter": {
+              "conditions": [
+                {
+                  "filterPath": { "path": "status" },
+                  "matchType": "IS_NULL",
+                  "value": "true"
+                }
+              ],
+              "subPaths": [
+                { "path": "value" }              
+              ]
+            }
         }"""
         val isNullParser = JsonCollectionParser(isNullJsonString.byteInputStream())
 
         @Suppress("UNCHECKED_CAST")
         val isNullExtractor =
-            JsonDataExtractor.fromJsonMap(isNullParser.parse() as Map<String, *>)!!
-        assertEquals(listOf("item3", "item4"), isNullExtractor.extract(data))
+            JsonDataExtractor.fromJsonMap(isNullParser.parse() as Map<String, *>)
+        assertNotNull("FilterExtractor did not parse", isNullExtractor)
+        assertEquals(listOf("item3", "item4"), isNullExtractor!!.extract(data))
     }
 
     @Test
@@ -82,15 +111,23 @@ internal class FilterExtractorTest {
         val notNullJsonString = """{
             "path": "items.*",
             "pathMode": "FILTER",
-            "filterPath": "status",
-            "matchType": "NOT_NULL",
-            "subPath": {"path": "value"}
+            "filter": {
+              "conditions": [
+                {
+                    "filterPath": { "path": "status" },
+                    "matchType": "IS_NULL",
+                    "value": "false"
+                }
+              ],
+              "subPaths": [ { "path": "value" } ]
+            }
         }"""
         val notNullParser = JsonCollectionParser(notNullJsonString.byteInputStream())
 
         @Suppress("UNCHECKED_CAST")
         val notNullExtractor =
-            JsonDataExtractor.fromJsonMap(notNullParser.parse() as Map<String, *>)!!
-        assertEquals(listOf("item1", "item2"), notNullExtractor.extract(data))
+            JsonDataExtractor.fromJsonMap(notNullParser.parse() as Map<String, *>)
+        assertNotNull("FilterExtractor did not parse", notNullExtractor)
+        assertEquals(listOf("item1", "item2"), notNullExtractor!!.extract(data))
     }
 }
