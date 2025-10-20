@@ -54,9 +54,6 @@ class JsonStream private constructor(
     private var separator = ":"
 
     /**
-     * Returns true if this writer has relaxed syntax rules.
-     */
-    /**
      * Configure this writer to relax its syntax rules. By default, this writer
      * only emits well-formed JSON as specified by [RFC 7159](http://www.ietf.org/rfc/rfc7159.txt).
      * Setting the writer to lenient permits the following:
@@ -67,10 +64,6 @@ class JsonStream private constructor(
      */
     var isLenient: Boolean = false
 
-    /**
-     * Returns true if this writer writes JSON that's safe for inclusion in HTML
-     * and XML documents.
-     */
     /**
      * Configure this writer to emit JSON that's safe for direct inclusion in HTML
      * and XML documents. This escapes the HTML characters `<`, `>`,
@@ -567,13 +560,12 @@ class JsonStream private constructor(
          * error. http://code.google.com/p/google-gson/issues/detail?id=341
          */
         @JvmStatic
-        internal val REPLACEMENT_CHARS: Array<String?>
+        internal val REPLACEMENT_CHARS: Array<String?> = arrayOfNulls<String>(128)
 
         @JvmStatic
         internal val HTML_SAFE_REPLACEMENT_CHARS: Array<String?>
 
         init {
-            REPLACEMENT_CHARS = arrayOfNulls<String>(128)
             for (i in 0..0x1f) {
                 REPLACEMENT_CHARS[i] = "\\u%04x".format(i)
             }
