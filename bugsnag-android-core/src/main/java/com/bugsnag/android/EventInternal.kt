@@ -149,72 +149,72 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
     }
 
     @Throws(IOException::class)
-    override fun toStream(parentWriter: JsonStream) {
-        val writer = JsonStream(parentWriter, jsonStreamer)
+    override fun toStream(writer: JsonStream) {
+        val childWriter = JsonStream(writer, jsonStreamer)
         // Write error basics
-        writer.beginObject()
-        writer.name("context").value(context)
-        writer.name("groupingDiscriminator").value(groupingDiscriminator)
-        writer.name("metaData").value(metadata)
+        childWriter.beginObject()
+        childWriter.name("context").value(context)
+        childWriter.name("groupingDiscriminator").value(groupingDiscriminator)
+        childWriter.name("metaData").value(metadata)
 
-        writer.name("severity").value(severity)
-        writer.name("severityReason").value(severityReason)
-        writer.name("unhandled").value(severityReason.unhandled)
+        childWriter.name("severity").value(severity)
+        childWriter.name("severityReason").value(severityReason)
+        childWriter.name("unhandled").value(severityReason.unhandled)
 
         // Write exception info
-        writer.name("exceptions")
-        writer.beginArray()
-        errors.forEach { writer.value(it) }
-        writer.endArray()
+        childWriter.name("exceptions")
+        childWriter.beginArray()
+        errors.forEach { childWriter.value(it) }
+        childWriter.endArray()
 
         // Write project packages
-        writer.name("projectPackages")
-        writer.beginArray()
-        projectPackages.forEach { writer.value(it) }
-        writer.endArray()
+        childWriter.name("projectPackages")
+        childWriter.beginArray()
+        projectPackages.forEach { childWriter.value(it) }
+        childWriter.endArray()
 
         // Write user info
-        writer.name("user").value(userImpl)
+        childWriter.name("user").value(userImpl)
 
         // Write diagnostics
-        writer.name("app").value(app)
-        writer.name("device").value(device)
-        writer.name("breadcrumbs").value(breadcrumbs)
-        writer.name("groupingHash").value(groupingHash)
+        childWriter.name("app").value(app)
+        childWriter.name("device").value(device)
+        childWriter.name("breadcrumbs").value(breadcrumbs)
+        childWriter.name("groupingHash").value(groupingHash)
         val usage = internalMetrics.toJsonableMap()
         if (usage.isNotEmpty()) {
-            writer.name("usage")
-            writer.beginObject()
+            childWriter.name("usage")
+            childWriter.beginObject()
             usage.forEach { entry ->
-                writer.name(entry.key).value(entry.value)
+                childWriter.name(entry.key).value(entry.value)
             }
-            writer.endObject()
+            childWriter.endObject()
         }
 
-        writer.name("threads")
-        writer.beginArray()
-        threads.forEach { writer.value(it) }
-        writer.endArray()
+        childWriter.name("threads")
+        childWriter.beginArray()
+        threads.forEach { childWriter.value(it) }
+        childWriter.endArray()
 
-        writer.name("featureFlags").value(featureFlags)
+        childWriter.name("featureFlags").value(featureFlags)
 
         traceCorrelation?.let { correlation ->
-            writer.name("correlation").value(correlation)
+            childWriter.name("correlation").value(correlation)
         }
 
         if (session != null) {
             val copy = Session.copySession(session)
-            writer.name("session").beginObject()
-            writer.name("id").value(copy.id)
-            writer.name("startedAt").value(copy.startedAt)
-            writer.name("events").beginObject()
-            writer.name("handled").value(copy.handledCount.toLong())
-            writer.name("unhandled").value(copy.unhandledCount.toLong())
-            writer.endObject()
-            writer.endObject()
+            childWriter.name("session").beginObject()
+            childWriter.name("id").value(copy.id)
+            childWriter.name("startedAt").value(copy.startedAt)
+            childWriter.name("events").beginObject()
+            childWriter.name("handled").value(copy.handledCount.toLong())
+            childWriter.name("unhandled").value(copy.unhandledCount.toLong())
+            childWriter.endObject()
+            childWriter.endObject()
         }
 
-        writer.endObject()
+        childWriter.endObject()
     }
 
     internal fun getErrorTypesFromStackframes(): Set<ErrorType> {

@@ -2,6 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
+    <ID>ComplexCondition:JsonStream.kt$JsonStream$!this.isLenient &amp;&amp; (string == "-Infinity" || string == "Infinity" || string == "NaN")</ID>
     <ID>CyclomaticComplexMethod:AppDataCollector.kt$AppDataCollector$@SuppressLint("SwitchIntDef") @Suppress("DEPRECATION") private fun getProcessImportance(): String?</ID>
     <ID>CyclomaticComplexMethod:ConfigInternal.kt$ConfigInternal$fun getConfigDifferences(): Map&lt;String, Any></ID>
     <ID>CyclomaticComplexMethod:JsonCollectionParser.kt$JsonCollectionParser$private fun parseNumber(): Number</ID>
@@ -26,6 +27,7 @@
     <ID>LongParameterList:StateEvent.kt$StateEvent.Install$( @JvmField val apiKey: String, @JvmField val autoDetectNdkCrashes: Boolean, @JvmField val appVersion: String?, @JvmField val buildUuid: String?, @JvmField val releaseStage: String?, @JvmField val lastRunInfoPath: String, @JvmField val consecutiveLaunchCrashes: Int, @JvmField val sendThreads: ThreadSendPolicy, @JvmField val maxBreadcrumbs: Int )</ID>
     <ID>LongParameterList:ThreadState.kt$ThreadState$( allThreads: List&lt;JavaThread>, currentThread: JavaThread, exc: Throwable?, isUnhandled: Boolean, maxThreadCount: Int, threadCollectionTimeLimitMillis: Long, projectPackages: Collection&lt;String>, logger: Logger )</ID>
     <ID>LoopWithTooManyJumpStatements:JsonCollectionParser.kt$JsonCollectionParser$while</ID>
+    <ID>LoopWithTooManyJumpStatements:JsonStream.kt$JsonStream$for</ID>
     <ID>MagicNumber:BugsnagEventMapper.kt$BugsnagEventMapper$16</ID>
     <ID>MagicNumber:BugsnagEventMapper.kt$BugsnagEventMapper$32</ID>
     <ID>MagicNumber:BugsnagEventMapper.kt$BugsnagEventMapper$56</ID>
@@ -60,6 +62,9 @@
     <ID>MagicNumber:JsonHelper.kt$JsonHelper$19</ID>
     <ID>MagicNumber:JsonHelper.kt$JsonHelper$3</ID>
     <ID>MagicNumber:JsonHelper.kt$JsonHelper$8</ID>
+    <ID>MagicNumber:JsonStream.kt$JsonStream$128</ID>
+    <ID>MagicNumber:JsonStream.kt$JsonStream$32</ID>
+    <ID>MagicNumber:JsonStream.kt$JsonStream.Companion$128</ID>
     <ID>MagicNumber:LastRunInfoStore.kt$LastRunInfoStore$3</ID>
     <ID>MagicNumber:SessionStore.kt$SessionStore$60</ID>
     <ID>MaxLineLength:LastRunInfo.kt$LastRunInfo$return "LastRunInfo(consecutiveLaunchCrashes=$consecutiveLaunchCrashes, crashed=$crashed, crashedDuringLaunch=$crashedDuringLaunch)"</ID>
@@ -94,10 +99,12 @@
     <ID>TooManyFunctions:ConfigInternal.kt$ConfigInternal : CallbackAwareMetadataAwareUserAwareFeatureFlagAware</ID>
     <ID>TooManyFunctions:DeviceDataCollector.kt$DeviceDataCollector</ID>
     <ID>TooManyFunctions:EventInternal.kt$EventInternal : FeatureFlagAwareStreamableMetadataAwareUserAware</ID>
+    <ID>TooManyFunctions:JsonStream.kt$JsonStream : CloseableFlushable</ID>
     <ID>UnusedPrivateProperty:ManifestConfigLoader.kt$ManifestConfigLoader.Companion$private const val LAUNCH_CRASH_THRESHOLD_MS = "$BUGSNAG_NS.LAUNCH_CRASH_THRESHOLD_MS"</ID>
     <ID>UnusedPrivateProperty:ThreadStateTest.kt$ThreadStateTest$private val configuration = generateImmutableConfig()</ID>
     <ID>UseCheckOrError:BackgroundRunnableProviderServiceTest.kt$BackgroundRunnableProviderServiceTest$throw IllegalStateException()</ID>
     <ID>UseCheckOrError:BugsnagEventMapper.kt$BugsnagEventMapper$throw IllegalStateException("cannot find json property '$key'")</ID>
+    <ID>UseCheckOrError:JsonStream.kt$JsonStream$throw IllegalStateException("Nesting problem.")</ID>
     <ID>UseCheckOrError:StacktraceSerializationTest.kt$StacktraceSerializationTest.Companion$throw IllegalStateException()</ID>
     <ID>UseCheckOrError:SynchronizedStreamableStoreTest.kt$CrashyStreamable$throw IllegalStateException()</ID>
     <ID>UseCheckOrError:SynchronizedStreamableStoreTest.kt$CrashyStreamable.Companion$throw IllegalStateException()</ID>

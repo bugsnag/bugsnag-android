@@ -458,28 +458,33 @@ public final class com/bugsnag/android/FeatureFlag : java/util/Map$Entry {
 	public fun toString ()Ljava/lang/String;
 }
 
-public class com/bugsnag/android/JsonStream {
+public final class com/bugsnag/android/JsonStream : java/io/Closeable, java/io/Flushable {
 	public fun <init> (Ljava/io/Writer;)V
-	public synthetic fun beginArray ()Lcom/bugsnag/android/JsonWriter;
-	public synthetic fun beginObject ()Lcom/bugsnag/android/JsonWriter;
-	public synthetic fun close ()V
-	public synthetic fun endArray ()Lcom/bugsnag/android/JsonWriter;
-	public synthetic fun endObject ()Lcom/bugsnag/android/JsonWriter;
-	public synthetic fun flush ()V
-	public synthetic fun isLenient ()Z
-	public synthetic fun jsonValue (Ljava/lang/String;)Lcom/bugsnag/android/JsonWriter;
-	public fun name (Ljava/lang/String;)Lcom/bugsnag/android/JsonStream;
-	public synthetic fun name (Ljava/lang/String;)Lcom/bugsnag/android/JsonWriter;
-	public synthetic fun nullValue ()Lcom/bugsnag/android/JsonWriter;
-	public synthetic fun value (D)Lcom/bugsnag/android/JsonWriter;
-	public synthetic fun value (J)Lcom/bugsnag/android/JsonWriter;
-	public fun value (Ljava/io/File;)V
-	public synthetic fun value (Ljava/lang/Boolean;)Lcom/bugsnag/android/JsonWriter;
-	public synthetic fun value (Ljava/lang/Number;)Lcom/bugsnag/android/JsonWriter;
-	public fun value (Ljava/lang/Object;)V
-	public fun value (Ljava/lang/Object;Z)V
-	public synthetic fun value (Ljava/lang/String;)Lcom/bugsnag/android/JsonWriter;
-	public synthetic fun value (Z)Lcom/bugsnag/android/JsonWriter;
+	public final fun beginArray ()Lcom/bugsnag/android/JsonStream;
+	public final fun beginObject ()Lcom/bugsnag/android/JsonStream;
+	public fun close ()V
+	public final fun endArray ()Lcom/bugsnag/android/JsonStream;
+	public final fun endObject ()Lcom/bugsnag/android/JsonStream;
+	public fun flush ()V
+	public static final fun getHTML_SAFE_REPLACEMENT_CHARS$bugsnag_android_core_release ()[Ljava/lang/String;
+	public static final fun getREPLACEMENT_CHARS$bugsnag_android_core_release ()[Ljava/lang/String;
+	public final fun isHtmlSafe ()Z
+	public final fun isLenient ()Z
+	public final fun jsonValue (Ljava/lang/String;)Lcom/bugsnag/android/JsonStream;
+	public final fun name (Ljava/lang/String;)Lcom/bugsnag/android/JsonStream;
+	public final fun nullValue ()Lcom/bugsnag/android/JsonStream;
+	public final fun setHtmlSafe (Z)V
+	public final fun setIndent (Ljava/lang/String;)V
+	public final fun setLenient (Z)V
+	public final fun value (D)Lcom/bugsnag/android/JsonStream;
+	public final fun value (J)Lcom/bugsnag/android/JsonStream;
+	public final fun value (Ljava/io/File;)Lcom/bugsnag/android/JsonStream;
+	public final fun value (Ljava/lang/Boolean;)Lcom/bugsnag/android/JsonStream;
+	public final fun value (Ljava/lang/Number;)Lcom/bugsnag/android/JsonStream;
+	public final fun value (Ljava/lang/Object;)Lcom/bugsnag/android/JsonStream;
+	public final fun value (Ljava/lang/Object;Z)Lcom/bugsnag/android/JsonStream;
+	public final fun value (Ljava/lang/String;)Lcom/bugsnag/android/JsonStream;
+	public final fun value (Z)Lcom/bugsnag/android/JsonStream;
 }
 
 public abstract interface class com/bugsnag/android/JsonStream$Streamable {
