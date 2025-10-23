@@ -19,7 +19,7 @@ internal class RemoteConfigSerializationTest {
             RemoteConfig(
                 "tag123",
                 DateUtils.fromIso8601("2024-01-15T10:30:45.123Z"),
-                listOf(DiscardRule.All(), DiscardRule.AllHandled())
+                listOf(DiscardRule.All, DiscardRule.AllHandled)
             ),
             RemoteConfig(
                 "tag456",

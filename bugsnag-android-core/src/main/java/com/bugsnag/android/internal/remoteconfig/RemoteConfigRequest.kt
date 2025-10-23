@@ -127,7 +127,7 @@ internal class RemoteConfigRequest(
         val expiryDate = configExpiryDate(connection)
         val tag = connection.getHeaderField(HEADER_ETAG)
 
-        return RemoteConfig.fromMap(json, tag, expiryDate)
+        return RemoteConfig.fromJsonMap(tag, expiryDate, json)
     }
 
     private fun renewExistingConfig(configExpiryDate: Date): RemoteConfig? {

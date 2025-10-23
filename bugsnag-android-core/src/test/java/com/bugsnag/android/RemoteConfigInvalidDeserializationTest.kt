@@ -15,7 +15,7 @@ internal class RemoteConfigInvalidDeserializationTest {
         }
         """.trimIndent()
 
-        val result = RemoteConfig.fromMap(JsonHelper.deserialize(jsonString.toByteArray()))
+        val result = RemoteConfig.fromJsonMap(JsonHelper.deserialize(jsonString.toByteArray()))
         assertNull(result)
     }
 
@@ -28,7 +28,7 @@ internal class RemoteConfigInvalidDeserializationTest {
         }
         """.trimIndent()
 
-        val result = RemoteConfig.fromMap(JsonHelper.deserialize(jsonString.toByteArray()))
+        val result = RemoteConfig.fromJsonMap(JsonHelper.deserialize(jsonString.toByteArray()))
         assertNull(result)
     }
 
@@ -40,7 +40,7 @@ internal class RemoteConfigInvalidDeserializationTest {
         }
         """.trimIndent()
 
-        val result = RemoteConfig.fromMap(JsonHelper.deserialize(jsonString.toByteArray()))
+        val result = RemoteConfig.fromJsonMap(JsonHelper.deserialize(jsonString.toByteArray()))
         assertNull(result)
     }
 }

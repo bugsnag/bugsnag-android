@@ -30,7 +30,7 @@ internal class RemoteConfig(
         internal const val KEY_CONFIG_TAG = "configurationTag"
         internal const val KEY_CONFIG_EXPIRY = "configurationExpiry"
         internal const val KEY_DISCARD_RULES = "discardRules"
-        internal const val KEY_MATCH_TYPE = "match_type"
+        internal const val KEY_MATCH_TYPE = "matchType"
         internal const val KEY_HASH = "hash"
 
         internal const val DISCARD_RULE_ALL = "ALL"
