@@ -140,9 +140,9 @@ internal sealed class DiscardRule : JsonStream.Streamable {
             stream.beginObject()
             stream.name(KEY_MATCH_TYPE).value(DISCARD_RULE_HASH)
 
-            stream.name("hash").beginObject()
-            stream.name("paths").value(unparsedPaths)
-            stream.name("matches").value(hashes)
+            stream.name(KEY_HASH).beginObject()
+            stream.name(KEY_PATHS).value(unparsedPaths)
+            stream.name(KEY_MATCHES).value(hashes)
             stream.endObject() // "hash"
 
             stream.endObject()
@@ -169,13 +169,16 @@ internal sealed class DiscardRule : JsonStream.Streamable {
         }
 
         companion object {
+            const val KEY_PATHS = "paths"
+            const val KEY_MATCHES = "matches"
+
             fun fromJsonMap(json: Map<String, *>): Hash? {
                 @Suppress("UNCHECKED_CAST")
-                val paths = json["paths"] as? List<Map<String, *>>
+                val paths = json[KEY_PATHS] as? List<Map<String, *>>
                     ?: return null
 
                 @Suppress("UNCHECKED_CAST")
-                val matches = json["matches"] as? List<String>
+                val matches = json[KEY_MATCHES] as? List<String>
                     ?: return null
 
                 return Hash(
