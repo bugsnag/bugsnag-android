@@ -11,7 +11,6 @@ import android.os.Looper
 import android.view.Window
 import android.widget.Button
 import android.widget.EditText
-import com.bugsnag.android.BugsnagInternals
 import com.bugsnag.android.mazerunner.scenarios.Scenario
 import org.json.JSONObject
 import java.io.File
@@ -126,8 +125,6 @@ class MainActivity : Activity() {
         return jsonObject?.optString(key) ?: ""
     }
 
-    private fun commandUUIDStored() = prefs.contains(commandUUIDKey)
-
     private fun setStoredCommandUUID(commandUUID: String) {
         with(prefs.edit()) {
             putString(commandUUIDKey, commandUUID)
@@ -174,15 +171,11 @@ class MainActivity : Activity() {
                     val sessionsUrl = getStringSafely(command, "sessions_endpoint")
                     val notifyUrl = getStringSafely(command, "notify_endpoint")
                     val commandUUID = getStringSafely(command, "uuid")
-                    log("command.action: $action")
-                    log("command.scenarioName: $scenarioName")
-                    log("command.scenarioMode: $scenarioMode")
-                    log("command.sessionsUrl: $sessionsUrl")
-                    log("command.notifyUrl: $notifyUrl")
-                    log("command.uuid: $commandUUID")
 
                     // Stop polling once we have a scenario action
-                    polling = !("start_bugsnag".equals(action) || "run_scenario".equals(action))
+                    if ("start_bugsnag".equals(action) || "run_scenario".equals(action)) {
+                        polling = false
+                    }
 
                     mainHandler.post {
                         // Display some feedback of the action being run on he UI
@@ -206,11 +199,7 @@ class MainActivity : Activity() {
                             }
                             "clear_persistent_data" -> {
                                 setStoredCommandUUID(commandUUID)
-                                clearPersistentData()
-                            }
-                            "flush" -> {
-                                setStoredCommandUUID(commandUUID)
-                                BugsnagInternals.flush()
+                                PersistentData(applicationContext).clear()
                             }
                             "reset_uuid" -> clearStoredCommandUUID()
                             else -> throw IllegalArgumentException("Unknown action: $action")
@@ -224,7 +213,6 @@ class MainActivity : Activity() {
     }
 
     private fun readCommand(): String {
-
         val commandUrl = "http://$mazeAddress/idem-command?after=${getStoredCommandUUID()}"
         CiLog.info("Requesting Maze Runner command from: $commandUrl")
         val urlConnection = URL(commandUrl).openConnection() as HttpURLConnection
@@ -279,52 +267,6 @@ class MainActivity : Activity() {
         mainHandler.post {
             CiLog.info("Executing scenario")
             scenario?.startScenario()
-        }
-    }
-
-    // Clear persistent data (used to stop scenarios bleeding into each other)
-    private fun clearPersistentData() {
-        CiLog.info("Clearing persistent data")
-        clearCacheFolder("bugsnag")
-        clearCacheFolder("StrictModeDiscScenarioFile")
-        clearFilesFolder("background-service-dir")
-
-        removeFile("device-id")
-        removeFile("internal-device-id")
-
-        listFolders()
-    }
-
-    // Recursively deletes the contents of a folder beneath /cache
-    private fun clearCacheFolder(name: String) {
-        val folder = File(applicationContext.cacheDir, name)
-        log("Clearing folder: ${folder.path}")
-        folder.deleteRecursively()
-    }
-
-    private fun clearFilesFolder(name: String) {
-        val folder = File(applicationContext.filesDir, name)
-        log("Clearing folder: ${folder.path}")
-        folder.deleteRecursively()
-    }
-
-    // Deletes a file beneath /files
-    private fun removeFile(name: String) {
-        val file = File(applicationContext.filesDir, name)
-        log("Removing file: ${file.path}")
-        file.delete()
-    }
-
-    // Logs out the contents of the /cache and /files folders
-    private fun listFolders() {
-        log("Contents of: ${applicationContext.cacheDir}")
-        applicationContext.cacheDir.walkTopDown().forEach {
-            log(it.absolutePath)
-        }
-
-        log("Contents of: ${applicationContext.filesDir}")
-        applicationContext.filesDir.walkTopDown().forEach {
-            log(it.absolutePath)
         }
     }
 
