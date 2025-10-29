@@ -32,13 +32,13 @@ class MainActivity : Activity() {
     lateinit var prefs: SharedPreferences
 
     var scenario: Scenario? = null
-    var polling = false
+    var isActivityRecreate = false
     var mazeAddress: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val state = if (savedInstanceState == null) "null" else "not null"
-        log("MainActivity.onCreate called, savedInstanceState is $state")
+        this.isActivityRecreate = savedInstanceState != null
+        log("MainActivity.onCreate called")
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_main)
         prefs = getPreferences(Context.MODE_PRIVATE)
@@ -73,7 +73,9 @@ class MainActivity : Activity() {
         super.onResume()
         log("MainActivity.onResume called")
 
-        if (!polling) {
+        // Don't start the command runner again if the activity is being recreated,
+        // as it results in two threads executing commands concurrently and causing flakes.
+        if (!this.isActivityRecreate) {
             startCommandRunner()
         }
         log("MainActivity.onResume complete")
@@ -148,12 +150,11 @@ class MainActivity : Activity() {
 
     // Starts a thread to poll for Maze Runner actions to perform
     private fun startCommandRunner() {
-        // Get the next maze runner command
-        polling = true
         thread(start = true) {
             if (mazeAddress == null) setMazeRunnerAddress()
             checkNetwork()
 
+            var polling = true
             while (polling) {
                 Thread.sleep(1000)
                 try {
@@ -181,9 +182,7 @@ class MainActivity : Activity() {
                     log("command.uuid: $commandUUID")
 
                     // Stop polling once we have a scenario action
-                    if ("start_bugsnag".equals(action) || "run_scenario".equals(action)) {
-                        polling = false
-                    }
+                    polling = !("start_bugsnag".equals(action) || "run_scenario".equals(action))
 
                     mainHandler.post {
                         // Display some feedback of the action being run on he UI
