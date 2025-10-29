@@ -37,7 +37,8 @@ class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        log("MainActivity.onCreate called")
+        val state = if (savedInstanceState == null) "null" else "not null"
+        log("MainActivity.onCreate called, savedInstanceState is $state")
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_main)
         prefs = getPreferences(Context.MODE_PRIVATE)
