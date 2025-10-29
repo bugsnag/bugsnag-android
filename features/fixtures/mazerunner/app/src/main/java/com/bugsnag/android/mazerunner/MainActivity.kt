@@ -226,6 +226,7 @@ class MainActivity : Activity() {
     private fun readCommand(): String {
 
         val commandUrl = "http://$mazeAddress/idem-command?after=${getStoredCommandUUID()}"
+        CiLog.info("Requesting Maze Runner command from: $commandUrl")
         val urlConnection = URL(commandUrl).openConnection() as HttpURLConnection
         try {
             return urlConnection.inputStream.use { it.reader().readText() }
