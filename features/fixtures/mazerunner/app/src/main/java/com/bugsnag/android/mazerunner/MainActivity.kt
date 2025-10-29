@@ -28,6 +28,7 @@ class MainActivity : Activity() {
     private val mainHandler = Handler(Looper.getMainLooper())
 
     private val apiKeyKey = "BUGSNAG_API_KEY"
+    private val commandUUIDKey = "MAZE_COMMAND_UUID"
     lateinit var prefs: SharedPreferences
 
     var scenario: Scenario? = null
@@ -122,6 +123,28 @@ class MainActivity : Activity() {
         return jsonObject?.optString(key) ?: ""
     }
 
+    private fun commandUUIDStored() = prefs.contains(commandUUIDKey)
+
+    private fun setStoredCommandUUID(commandUUID: String) {
+        with(prefs.edit()) {
+            putString(commandUUIDKey, commandUUID)
+            commit()
+        }
+        CiLog.info("lastCommandUUID set to: $commandUUID")
+    }
+
+    private fun clearStoredCommandUUID() {
+        with(prefs.edit()) {
+            remove(commandUUIDKey)
+            commit()
+        }
+        CiLog.info("lastCommandUUID set to empty")
+    }
+
+    private fun getStoredCommandUUID(): String? {
+        return prefs.getString(commandUUIDKey, "").orEmpty()
+    }
+
     // Starts a thread to poll for Maze Runner actions to perform
     private fun startCommandRunner() {
         // Get the next maze runner command
@@ -142,17 +165,19 @@ class MainActivity : Activity() {
 
                     // Log the received command
                     CiLog.info("Received command: $commandStr")
-                    var command = JSONObject(commandStr)
+                    val command = JSONObject(commandStr)
                     val action = getStringSafely(command, "action")
                     val scenarioName = getStringSafely(command, "scenario_name")
                     val scenarioMode = getStringSafely(command, "scenario_mode")
                     val sessionsUrl = getStringSafely(command, "sessions_endpoint")
                     val notifyUrl = getStringSafely(command, "notify_endpoint")
+                    val commandUUID = getStringSafely(command, "uuid")
                     log("command.action: $action")
                     log("command.scenarioName: $scenarioName")
                     log("command.scenarioMode: $scenarioMode")
                     log("command.sessionsUrl: $sessionsUrl")
                     log("command.notifyUrl: $notifyUrl")
+                    log("command.uuid: $commandUUID")
 
                     // Stop polling once we have a scenario action
                     if ("start_bugsnag".equals(action) || "run_scenario".equals(action)) {
@@ -172,13 +197,22 @@ class MainActivity : Activity() {
                                 CiLog.info("No Maze Runner command queuing, continuing to poll")
                             }
                             "start_bugsnag" -> {
+                                setStoredCommandUUID(commandUUID)
                                 startBugsnag(scenarioName, scenarioMode, sessionsUrl, notifyUrl)
                             }
                             "run_scenario" -> {
+                                setStoredCommandUUID(commandUUID)
                                 runScenario(scenarioName, scenarioMode, sessionsUrl, notifyUrl)
                             }
-                            "clear_persistent_data" -> clearPersistentData()
-                            "flush" -> BugsnagInternals.flush()
+                            "clear_persistent_data" -> {
+                                setStoredCommandUUID(commandUUID)
+                                clearPersistentData()
+                            }
+                            "flush" -> {
+                                setStoredCommandUUID(commandUUID)
+                                BugsnagInternals.flush()
+                            }
+                            "reset_uuid" -> clearStoredCommandUUID()
                             else -> throw IllegalArgumentException("Unknown action: $action")
                         }
                     }
@@ -190,7 +224,8 @@ class MainActivity : Activity() {
     }
 
     private fun readCommand(): String {
-        val commandUrl = "http://$mazeAddress/command"
+
+        val commandUrl = "http://$mazeAddress/idem-command?after=${getStoredCommandUUID()}"
         val urlConnection = URL(commandUrl).openConnection() as HttpURLConnection
         try {
             return urlConnection.inputStream.use { it.reader().readText() }
