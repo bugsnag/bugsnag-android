@@ -15,6 +15,9 @@ internal class CXXCrashLoopScenario(
 
     init {
         System.loadLibrary("cxx-scenarios-bugsnag")
+        // Keep the launch window open to prevent the last run info file
+        // from being corrupted by the app crashing while it's being written.
+        config.launchDurationMillis = 0
     }
 
     external fun crash()
