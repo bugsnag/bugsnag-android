@@ -20,7 +20,7 @@ import java.net.URL
 import kotlin.concurrent.thread
 import kotlin.math.max
 
-const val CONFIG_FILE_TIMEOUT = 5000
+const val CONFIG_FILE_TIMEOUT = 15000
 
 class MainActivity : Activity() {
 
