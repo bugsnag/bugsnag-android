@@ -8,7 +8,6 @@ import com.bugsnag.android.RemoteConfig.Companion.KEY_MATCH_TYPE
 import com.bugsnag.android.internal.DateUtils
 import com.bugsnag.android.internal.JsonCollectionParser
 import com.bugsnag.android.internal.toHexString
-
 import java.security.MessageDigest
 import java.util.Date
 
@@ -60,7 +59,8 @@ internal class RemoteConfig(
             json: Map<String, *>
         ): RemoteConfig? {
             @Suppress("UNCHECKED_CAST")
-            val discardRules = (json[KEY_DISCARD_RULES] as? List<Map<String, *>>).orEmpty()
+            val discardRules = (json[KEY_DISCARD_RULES] as? List<Map<String, *>>)
+                .orEmpty()
                 .mapNotNull { DiscardRule.fromJsonMap(it) }
 
             return RemoteConfig(configurationTag, configurationExpiry, discardRules)
@@ -112,11 +112,13 @@ internal sealed class DiscardRule : JsonStream.Streamable {
     }
 
     class Hash(
-        private val unparsedPaths: List<Map<String, *>>,
-        private val hashes: Set<String>
+        private val unparsedPaths: List<*>,
+        private val matches: Set<String>
     ) : DiscardRule() {
-        private val paths: List<JsonDataExtractor> by lazy {
+        internal val paths: List<JsonDataExtractor>? by lazy {
             JsonDataExtractor.fromJsonList(unparsedPaths)
+                // avoid possible false-positives when some of the paths cannot be parsed
+                .takeIf { it.size == unparsedPaths.size }
         }
 
         override fun shouldDiscard(payload: EventPayload): Boolean {
@@ -127,13 +129,16 @@ internal sealed class DiscardRule : JsonStream.Streamable {
                 val json = jsonParser.parse() as? Map<String, Any>
                     ?: return false
 
-                val output = HashPathOutput()
-                paths.forEach { path -> path.extract(json, output) }
-
-                return hashes.contains(output.toString())
+                return shouldDiscardJson(json)
             } catch (_: Exception) {
                 return false
             }
+        }
+
+        internal fun shouldDiscardJson(json: Map<String, Any>): Boolean {
+            val lPaths = paths ?: return false
+            val hashString = calculatePayloadHash(lPaths, json)
+            return matches.contains(hashString)
         }
 
         override fun toStream(stream: JsonStream) {
@@ -142,35 +147,25 @@ internal sealed class DiscardRule : JsonStream.Streamable {
 
             stream.name(KEY_HASH).beginObject()
             stream.name(KEY_PATHS).value(unparsedPaths)
-            stream.name(KEY_MATCHES).value(hashes)
+            stream.name(KEY_MATCHES).value(matches)
             stream.endObject() // "hash"
 
             stream.endObject()
         }
 
-        private class HashPathOutput : (String) -> Unit {
-            private val separator = ';'.code.toByte()
-            private val digest = MessageDigest.getInstance("SHA-1")
-
-            private var firstItem = true
-
-            override fun toString(): String {
-                return digest.digest().toHexString()
-            }
-
-            override fun invoke(item: String) {
-                if (!firstItem) {
-                    digest.update(separator)
-                }
-
-                digest.update(item.toByteArray())
-                firstItem = false
-            }
-        }
-
         companion object {
             const val KEY_PATHS = "paths"
             const val KEY_MATCHES = "matches"
+
+            internal fun calculatePayloadHash(
+                paths: List<JsonDataExtractor>,
+                json: Map<String, Any>
+            ): String {
+                val output = PathOutputHasher()
+                paths.forEach { path -> path.extract(json, output) }
+                val hashString = output.hashString()
+                return hashString
+            }
 
             fun fromJsonMap(json: Map<String, *>): Hash? {
                 @Suppress("UNCHECKED_CAST")
@@ -187,5 +182,37 @@ internal sealed class DiscardRule : JsonStream.Streamable {
                 )
             }
         }
+    }
+}
+
+internal class PathOutputHasher : (String) -> Unit {
+    private val separator = ';'.code.toByte()
+    private val digest = MessageDigest.getInstance("SHA-1")
+
+    private var firstItem = true
+
+    private var completeHashString: String? = null
+
+    fun hashString(): String {
+        var hash = completeHashString
+        if (hash == null) {
+            hash = digest.digest().toHexString()
+            completeHashString = hash
+        }
+
+        return hash
+    }
+
+    override fun invoke(item: String) {
+        if (!firstItem) {
+            digest.update(separator)
+        }
+
+        digest.update(item.toByteArray())
+        firstItem = false
+    }
+
+    override fun toString(): String {
+        return hashString()
     }
 }
