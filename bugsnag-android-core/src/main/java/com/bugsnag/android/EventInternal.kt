@@ -34,7 +34,8 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
         severityReason,
         ThreadState(originalError, severityReason.unhandled, config).threads,
         User(),
-        config.redactedKeys.toSet()
+        config.redactedKeys.toSet(),
+        config.attemptDeliveryOnCrash
     )
 
     internal constructor(
@@ -50,7 +51,8 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
         severityReason: SeverityReason = SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION),
         threads: MutableList<Thread> = mutableListOf(),
         user: User = User(),
-        redactionKeys: Set<Pattern>? = null
+        redactionKeys: Set<Pattern>? = null,
+        isAttemptDeliveryOnCrash: Boolean = false
     ) {
         this.logger = logger
         this.apiKey = apiKey
@@ -64,7 +66,7 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
         this.severityReason = severityReason
         this.threads = threads
         this.userImpl = user
-
+        this.isAttemptDeliveryOnCrash = isAttemptDeliveryOnCrash
         redactionKeys?.let {
             this.redactedKeys = it
         }
@@ -76,6 +78,8 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
     val logger: Logger
     val metadata: Metadata
     val featureFlags: FeatureFlags
+    val isAttemptDeliveryOnCrash: Boolean
+
     private val discardClasses: Set<Pattern>
     internal var projectPackages: Collection<String>
 
@@ -122,6 +126,8 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
     internal var userImpl: User
 
     var traceCorrelation: TraceCorrelation? = null
+
+    var deliveryStrategy: DeliveryStrategy? = null
 
     fun getUnhandledOverridden(): Boolean = severityReason.unhandledOverridden
 

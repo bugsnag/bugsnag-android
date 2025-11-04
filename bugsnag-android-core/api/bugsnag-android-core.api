@@ -275,6 +275,16 @@ public final class com/bugsnag/android/DeliveryStatus$Companion {
 	public final fun forHttpResponseCode (I)Lcom/bugsnag/android/DeliveryStatus;
 }
 
+public final class com/bugsnag/android/DeliveryStrategy : java/lang/Enum {
+	public static final field SEND_IMMEDIATELY Lcom/bugsnag/android/DeliveryStrategy;
+	public static final field STORE_AND_FLUSH Lcom/bugsnag/android/DeliveryStrategy;
+	public static final field STORE_AND_SEND Lcom/bugsnag/android/DeliveryStrategy;
+	public static final field STORE_ONLY Lcom/bugsnag/android/DeliveryStrategy;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/bugsnag/android/DeliveryStrategy;
+	public static fun values ()[Lcom/bugsnag/android/DeliveryStrategy;
+}
+
 public class com/bugsnag/android/Device : com/bugsnag/android/JsonStream$Streamable {
 	public final fun getCpuAbi ()[Ljava/lang/String;
 	public final fun getId ()Ljava/lang/String;
@@ -392,6 +402,7 @@ public class com/bugsnag/android/Event : com/bugsnag/android/FeatureFlagAware, c
 	public fun getApp ()Lcom/bugsnag/android/AppWithState;
 	public fun getBreadcrumbs ()Ljava/util/List;
 	public fun getContext ()Ljava/lang/String;
+	public fun getDeliveryStrategy ()Lcom/bugsnag/android/DeliveryStrategy;
 	public fun getDevice ()Lcom/bugsnag/android/DeviceWithState;
 	public fun getErrors ()Ljava/util/List;
 	public fun getFeatureFlags ()Ljava/util/List;
@@ -408,6 +419,7 @@ public class com/bugsnag/android/Event : com/bugsnag/android/FeatureFlagAware, c
 	public fun leaveBreadcrumb (Ljava/lang/String;Lcom/bugsnag/android/BreadcrumbType;Ljava/util/Map;)Lcom/bugsnag/android/Breadcrumb;
 	public fun setApiKey (Ljava/lang/String;)V
 	public fun setContext (Ljava/lang/String;)V
+	public fun setDeliveryStrategy (Lcom/bugsnag/android/DeliveryStrategy;)V
 	public fun setErrorReportingThread (J)V
 	public fun setErrorReportingThread (Lcom/bugsnag/android/Thread;)V
 	public fun setGroupingDiscriminator (Ljava/lang/String;)Ljava/lang/String;
