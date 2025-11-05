@@ -33,7 +33,7 @@ internal class RemoteConfigRequest(
         config.endpoints.configuration!!,
         config.apiKey,
         notifier,
-        config.appVersion,
+        config.appVersion ?: config.packageInfo?.versionName,
         config.versionCode,
         config.releaseStage,
         config.packageInfo?.packageName,
@@ -68,7 +68,7 @@ internal class RemoteConfigRequest(
         connection.setRequestProperty(HEADER_BUGSNAG_NOTIFIER_NAME, notifier.name)
         connection.setRequestProperty(HEADER_BUGSNAG_NOTIFIER_VERSION, notifier.version)
 
-        if (remoteConfig != null) {
+        if (remoteConfig?.configurationTag != null) {
             connection.setRequestProperty(
                 HEADER_IF_NONE_MATCH,
                 "\"${remoteConfig.configurationTag}\""
@@ -117,15 +117,20 @@ internal class RemoteConfigRequest(
     }
 
     private fun parseRemoteConfig(connection: HttpURLConnection): RemoteConfig? {
+        val expiryDate = configExpiryDate(connection)
+        val tag = connection.getHeaderField(HEADER_ETAG)
+
+        // we may receive an empty response as a valid "no specific config" value
+        if (connection.getHeaderField("Content-Length").toLongOrNull() == 0L) {
+            return RemoteConfig(tag, expiryDate, emptyList())
+        }
+
         val inputStream = connection.inputStream
 
         @Suppress("UNCHECKED_CAST")
         val json = JsonCollectionParser(inputStream).parse()
             as? LinkedHashMap<String, Any?>
             ?: return null
-
-        val expiryDate = configExpiryDate(connection)
-        val tag = connection.getHeaderField(HEADER_ETAG)
 
         return RemoteConfig.fromJsonMap(tag, expiryDate, json)
     }

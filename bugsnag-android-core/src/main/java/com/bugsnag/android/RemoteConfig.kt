@@ -12,14 +12,17 @@ import java.security.MessageDigest
 import java.util.Date
 
 internal class RemoteConfig(
-    val configurationTag: String,
+    val configurationTag: String?,
     val configurationExpiry: Date,
     val discardRules: List<DiscardRule>
 ) : JsonStream.Streamable {
 
     override fun toStream(stream: JsonStream) {
         stream.beginObject()
-        stream.name(KEY_CONFIG_TAG).value(configurationTag)
+        if (configurationTag != null) {
+            stream.name(KEY_CONFIG_TAG).value(configurationTag)
+        }
+
         stream.name(KEY_CONFIG_EXPIRY).value(DateUtils.toIso8601(configurationExpiry))
         stream.name(KEY_DISCARD_RULES).value(discardRules)
         stream.endObject()
@@ -38,7 +41,6 @@ internal class RemoteConfig(
 
         fun fromJsonMap(json: Map<String, *>): RemoteConfig? {
             val configurationTag = json[KEY_CONFIG_TAG] as? String
-                ?: return null
             val configurationExpiry = json[KEY_CONFIG_EXPIRY] as? String
                 ?: return null
 
@@ -54,10 +56,10 @@ internal class RemoteConfig(
         }
 
         fun fromJsonMap(
-            configurationTag: String,
+            configurationTag: String?,
             configurationExpiry: Date,
             json: Map<String, *>
-        ): RemoteConfig? {
+        ): RemoteConfig {
             @Suppress("UNCHECKED_CAST")
             val discardRules = (json[KEY_DISCARD_RULES] as? List<Map<String, *>>)
                 .orEmpty()
