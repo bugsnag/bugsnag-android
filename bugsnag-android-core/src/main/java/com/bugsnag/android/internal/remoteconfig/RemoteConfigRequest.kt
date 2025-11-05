@@ -7,6 +7,8 @@ import com.bugsnag.android.RemoteConfig
 import com.bugsnag.android.internal.HEADER_BUGSNAG_API_KEY
 import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.JsonCollectionParser
+import com.bugsnag.android.internal.JsonCollectionParser.JsonParseException
+import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
@@ -127,8 +129,15 @@ internal class RemoteConfigRequest(
 
         val inputStream = connection.inputStream
 
+        val parser = try {
+            JsonCollectionParser(inputStream)
+        } catch (_: JsonParseException) {
+            // these can happen when the response is empty, but the Content-Length was not set
+            return RemoteConfig(tag, expiryDate, emptyList())
+        }
+
         @Suppress("UNCHECKED_CAST")
-        val json = JsonCollectionParser(inputStream).parse()
+        val json = parser.parse()
             as? LinkedHashMap<String, Any?>
             ?: return null
 

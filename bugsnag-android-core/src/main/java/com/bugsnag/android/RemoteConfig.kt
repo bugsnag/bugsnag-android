@@ -99,6 +99,8 @@ internal sealed class DiscardRule : JsonStream.Streamable {
             stream.name(KEY_MATCH_TYPE).value(DISCARD_RULE_ALL)
             stream.endObject()
         }
+
+        override fun toString(): String = DISCARD_RULE_ALL
     }
 
     object AllHandled : DiscardRule() {
@@ -111,6 +113,8 @@ internal sealed class DiscardRule : JsonStream.Streamable {
             stream.name(KEY_MATCH_TYPE).value(DISCARD_RULE_ALL_HANDLED)
             stream.endObject()
         }
+
+        override fun toString(): String = DISCARD_RULE_ALL_HANDLED
     }
 
     class Hash(
@@ -153,6 +157,10 @@ internal sealed class DiscardRule : JsonStream.Streamable {
             stream.endObject() // "hash"
 
             stream.endObject()
+        }
+
+        override fun toString(): String {
+            return "Hash$matches"
         }
 
         companion object {
