@@ -6,7 +6,6 @@ import com.bugsnag.android.internal.DeliveryPipeline
 import com.bugsnag.android.internal.StateObserver
 import com.bugsnag.android.internal.dag.ValueProvider
 import com.bugsnag.android.internal.remoteconfig.RemoteConfigState
-import com.bugsnag.android.internal.remoteconfig.RemoteConfigStore
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -24,6 +23,9 @@ internal class DeliveryDelegateTest {
 
     @Mock
     lateinit var eventStore: EventStore
+
+    @Mock
+    lateinit var remoteConfigState: RemoteConfigState
 
     @get:Rule
     val tempDir = TemporaryFolder()
@@ -49,15 +51,7 @@ internal class DeliveryDelegateTest {
                 config,
                 DeliveryPipeline(
                     callbackState,
-                    RemoteConfigState(
-                        RemoteConfigStore(
-                            tempDir.newFolder(),
-                            1
-                        ),
-                        config,
-                        notifier,
-                        backgroundTaskService
-                    ),
+                    remoteConfigState,
                     config
                 ),
                 notifier,
