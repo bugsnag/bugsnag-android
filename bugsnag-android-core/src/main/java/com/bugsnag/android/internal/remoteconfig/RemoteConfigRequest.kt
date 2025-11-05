@@ -1,6 +1,7 @@
 package com.bugsnag.android.internal.remoteconfig
 
 import android.os.Build
+import androidx.annotation.VisibleForTesting
 import com.bugsnag.android.Logger
 import com.bugsnag.android.Notifier
 import com.bugsnag.android.RemoteConfig
@@ -8,13 +9,11 @@ import com.bugsnag.android.internal.HEADER_BUGSNAG_API_KEY
 import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.JsonCollectionParser
 import com.bugsnag.android.internal.JsonCollectionParser.JsonParseException
-import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.Date
-import java.util.concurrent.Callable
 
 internal class RemoteConfigRequest(
     private val baseUrl: String,
@@ -26,7 +25,7 @@ internal class RemoteConfigRequest(
     private val packageName: String?,
     private val remoteConfig: RemoteConfig?,
     private val logger: Logger
-) : Callable<RemoteConfig?> {
+) {
     constructor(
         config: ImmutableConfig,
         notifier: Notifier,
@@ -43,7 +42,7 @@ internal class RemoteConfigRequest(
         config.logger
     )
 
-    override fun call(): RemoteConfig? {
+    fun requestConfig(): RemoteConfig? {
         return try {
             requestNewConfig()
         } catch (_: Exception) {
@@ -81,6 +80,7 @@ internal class RemoteConfigRequest(
         return when (responseCode) {
             HttpURLConnection.HTTP_OK -> parseRemoteConfig(connection)
             HttpURLConnection.HTTP_NOT_MODIFIED -> renewExistingConfig(configExpiryDate(connection))
+            HttpURLConnection.HTTP_BAD_REQUEST -> createEmptyConfig(configExpiryDate(connection))
             else -> null
         }
     }
@@ -118,12 +118,13 @@ internal class RemoteConfigRequest(
         }
     }
 
-    private fun parseRemoteConfig(connection: HttpURLConnection): RemoteConfig? {
+    @VisibleForTesting
+    internal fun parseRemoteConfig(connection: HttpURLConnection): RemoteConfig? {
         val expiryDate = configExpiryDate(connection)
         val tag = connection.getHeaderField(HEADER_ETAG)
 
         // we may receive an empty response as a valid "no specific config" value
-        if (connection.getHeaderField("Content-Length").toLongOrNull() == 0L) {
+        if (connection.contentLength == 0) {
             return RemoteConfig(tag, expiryDate, emptyList())
         }
 
@@ -144,18 +145,6 @@ internal class RemoteConfigRequest(
         return RemoteConfig.fromJsonMap(tag, expiryDate, json)
     }
 
-    private fun renewExistingConfig(configExpiryDate: Date): RemoteConfig? {
-        if (remoteConfig == null) {
-            return null
-        }
-
-        return RemoteConfig(
-            remoteConfig.configurationTag,
-            configExpiryDate,
-            remoteConfig.discardRules
-        )
-    }
-
     private fun configExpiryDate(connection: HttpURLConnection): Date {
         val cacheControl = connection.getHeaderField(HEADER_CACHE_CONTROL)
             ?: return defaultConfigExpiry()
@@ -174,6 +163,22 @@ internal class RemoteConfigRequest(
         } else {
             URLEncoder.encode(value, "UTF-8")
         }
+    }
+
+    private fun renewExistingConfig(configExpiryDate: Date): RemoteConfig? {
+        if (remoteConfig == null) {
+            return null
+        }
+
+        return RemoteConfig(
+            remoteConfig.configurationTag,
+            configExpiryDate,
+            remoteConfig.discardRules
+        )
+    }
+
+    private fun createEmptyConfig(configExpiryDate: Date): RemoteConfig {
+        return RemoteConfig(null, configExpiryDate, emptyList())
     }
 
     private fun defaultConfigExpiry(): Date =

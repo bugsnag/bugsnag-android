@@ -44,7 +44,7 @@ internal class RemoteConfigState(
                         config,
                         notifier,
                         store.currentOrExpired()
-                    ).call()
+                    ).requestConfig()
 
                     // Store the new config if downloaded successfully
                     if (newRemoteConfig != null) {
@@ -103,7 +103,7 @@ internal class RemoteConfigState(
                         config,
                         notifier,
                         store.currentOrExpired()
-                    ).call()
+                    ).requestConfig()
                 }
             )
         } catch (_: Exception) {
