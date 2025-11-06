@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Bug fixes
+
+* Fixed the consumer proguard rules for `ErrorType` (affects Kotlin Multiplatform apps), and added a `dontwarn` for apps with compileSdk < 36
+  [#2326](https://github.com/bugsnag/bugsnag-android/pull/2326)
+
 ## 6.19.0 (2025-09-30)
 
 ### Enhancements
