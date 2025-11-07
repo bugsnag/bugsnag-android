@@ -112,7 +112,7 @@ internal class RemoteConfigState(
     }
 
     internal companion object {
-        const val REFRESH_BUFFER_MS = 2 * 60 * 60 * 1000L // 2 hours
+        const val REFRESH_BUFFER_MS = 0L
 
         val nullFuture = object : Future<RemoteConfig?> {
             override fun cancel(mayInterruptIfRunning: Boolean): Boolean = false
