@@ -135,7 +135,14 @@ internal sealed class DiscardRule : JsonStream.Streamable {
                 val json = jsonParser.parse() as? Map<String, Any>
                     ?: return false
 
-                return shouldDiscardJson(json)
+                val eventsJson = json[KEY_EVENTS] as? List<*>
+                    ?: return false
+
+                @Suppress("UNCHECKED_CAST")
+                val eventJson = eventsJson.singleOrNull() as? Map<String, Any>
+                    ?: return false
+
+                return shouldDiscardJson(eventJson)
             } catch (_: Exception) {
                 return false
             }
@@ -166,6 +173,7 @@ internal sealed class DiscardRule : JsonStream.Streamable {
         companion object {
             const val KEY_PATHS = "paths"
             const val KEY_MATCHES = "matches"
+            const val KEY_EVENTS = "events"
 
             internal fun calculatePayloadHash(
                 paths: List<JsonDataExtractor>,

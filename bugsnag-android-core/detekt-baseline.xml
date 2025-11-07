@@ -75,6 +75,7 @@
     <ID>ProtectedMemberInFinalClass:EventInternal.kt$EventInternal$protected fun updateSeverityReason(@SeverityReason.SeverityReasonType reason: String)</ID>
     <ID>ReturnCount:DefaultDelivery.kt$DefaultDelivery$fun deliver( urlString: String, json: ByteArray, integrity: String?, headers: Map&lt;String, String?> ): DeliveryStatus</ID>
     <ID>ReturnCount:JsonDataExtractor.kt$FilterExtractor.Companion$@Suppress("UNCHECKED_CAST") fun fromJsonMap(json: Map&lt;String, *>): JsonDataExtractor?</ID>
+    <ID>ReturnCount:RemoteConfig.kt$DiscardRule.Hash$override fun shouldDiscard(payload: EventPayload): Boolean</ID>
     <ID>SwallowedException:ActivityBreadcrumbCollector.kt$ActivityBreadcrumbCollector$re: Exception</ID>
     <ID>SwallowedException:AppDataCollector.kt$AppDataCollector$e: Exception</ID>
     <ID>SwallowedException:BugsnagEventMapper.kt$BugsnagEventMapper$pe: IllegalArgumentException</ID>
