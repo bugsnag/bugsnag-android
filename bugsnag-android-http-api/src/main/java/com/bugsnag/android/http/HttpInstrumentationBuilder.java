@@ -20,7 +20,8 @@ public interface HttpInstrumentationBuilder<R, S> {
      * @return this
      */
     @NonNull
-    HttpInstrumentationBuilder<R, S> addHttpErrorCode(@IntRange(from = 0) int statusCode);
+    HttpInstrumentationBuilder<R, S> addHttpErrorCode(
+            @IntRange(from = 0) int statusCode);
 
     /**
      * Mark the given HTTP response status code range as an error. Error responses are automatically
@@ -32,8 +33,9 @@ public interface HttpInstrumentationBuilder<R, S> {
      * @return this
      */
     @NonNull
-    HttpInstrumentationBuilder<R, S> addHttpErrorCodes(@IntRange(from = 0) int minStatusCode,
-                                                       @IntRange(from = 0) int maxStatusCode);
+    HttpInstrumentationBuilder<R, S> addHttpErrorCodes(
+            @IntRange(from = 0) int minStatusCode,
+            @IntRange(from = 0) int maxStatusCode);
 
     /**
      * Un-mark the given HTTP response status code as an error.
@@ -42,7 +44,8 @@ public interface HttpInstrumentationBuilder<R, S> {
      * @return this
      */
     @NonNull
-    HttpInstrumentationBuilder<R, S> removeHttpErrorCode(@IntRange(from = 0) int statusCode);
+    HttpInstrumentationBuilder<R, S> removeHttpErrorCode(
+            @IntRange(from = 0) int statusCode);
 
     /**
      * Un-mark the given HTTP response status code range as an error.
@@ -52,8 +55,9 @@ public interface HttpInstrumentationBuilder<R, S> {
      * @return this
      */
     @NonNull
-    HttpInstrumentationBuilder<R, S> removeHttpErrorCodes(@IntRange(from = 0) int minStatusCode,
-                                                          @IntRange(from = 0) int maxStatusCode);
+    HttpInstrumentationBuilder<R, S> removeHttpErrorCodes(
+            @IntRange(from = 0) int minStatusCode,
+            @IntRange(from = 0) int maxStatusCode);
 
     /**
      * Define the maximum number of bytes that can be captured from the request body (when one
@@ -63,7 +67,8 @@ public interface HttpInstrumentationBuilder<R, S> {
      * @return this
      */
     @NonNull
-    HttpInstrumentationBuilder<R, S> maxRequestBodyCapture(@IntRange(from = 0) long maxBytes);
+    HttpInstrumentationBuilder<R, S> maxRequestBodyCapture(
+            @IntRange(from = 0) long maxBytes);
 
     /**
      * Define the maximum number of bytes that can be captured from the response body (when one
@@ -73,7 +78,8 @@ public interface HttpInstrumentationBuilder<R, S> {
      * @return this
      */
     @NonNull
-    HttpInstrumentationBuilder<R, S> maxResponseBodyCapture(@IntRange(from = 0) long maxBytes);
+    HttpInstrumentationBuilder<R, S> maxResponseBodyCapture(
+            @IntRange(from = 0) long maxBytes);
 
     /**
      * Shorthand for {@link #logBreadcrumbs(boolean) logBreadcrumbs(true)}.
@@ -96,7 +102,8 @@ public interface HttpInstrumentationBuilder<R, S> {
      * @return this
      */
     @NonNull
-    HttpInstrumentationBuilder<R, S> logBreadcrumbs(boolean logBreadcrumbs);
+    HttpInstrumentationBuilder<R, S> logBreadcrumbs(
+            boolean logBreadcrumbs);
 
     /**
      * Add a callback to be invoked before an HTTP request is sent. This can be used to modify
@@ -107,7 +114,8 @@ public interface HttpInstrumentationBuilder<R, S> {
      * @return this
      */
     @NonNull
-    HttpInstrumentationBuilder<R, S> addRequestCallback(@NonNull HttpRequestCallback<R> callback);
+    HttpInstrumentationBuilder<R, S> addRequestCallback(
+            @NonNull HttpRequestCallback<R> callback);
 
     /**
      * Add a callback to be invoked after an HTTP response is received. This can be used to modify
@@ -119,6 +127,7 @@ public interface HttpInstrumentationBuilder<R, S> {
      * @return this
      */
     @NonNull
-    HttpInstrumentationBuilder<R, S> addResponseCallback(@NonNull HttpResponseCallback<R, S> callback);
+    HttpInstrumentationBuilder<R, S> addResponseCallback(
+            @NonNull HttpResponseCallback<R, S> callback);
 
 }
