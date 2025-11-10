@@ -16,7 +16,7 @@ class RecursiveThrowableCauseTest {
 
     @Test(timeout = 100L)
     fun testCreateEvent() {
-        Error.createError(createRecursiveThrowableChain(), emptyList(), NoopLogger)
+        Error.createError(createRecursiveThrowableChain(), emptyList(), NoopLogger, false)
     }
 
     private fun createRecursiveThrowableChain(): Throwable {

@@ -36,6 +36,7 @@ class ExampleApplication : Application() {
         config.setUser("123456", "joebloggs@example.com", "Joe Bloggs")
         config.addMetadata("user", "age", 31)
         config.addPlugin(bugsnagOkHttpPlugin)
+        config.isAttemptDeliveryOnCrash = true
 
         // Configure the persistence directory when running MultiProcessActivity in a separate
         // process to ensure the two Bugsnag clients are independent

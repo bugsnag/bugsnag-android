@@ -17,22 +17,33 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
         config: ImmutableConfig,
         severityReason: SeverityReason,
         data: Metadata = Metadata(),
-        featureFlags: FeatureFlags = FeatureFlags()
+        featureFlags: FeatureFlags = FeatureFlags(),
+        captureStacktrace: Boolean = true,
+        captureThreads: Boolean = true,
+        excludeStacktrace: Boolean? = null
     ) : this(
         config.apiKey,
         config.logger,
         mutableListOf(),
         config.discardClasses.toSet(),
-        when (originalError) {
-            null -> mutableListOf()
-            else -> Error.createError(originalError, config.projectPackages, config.logger)
+        when {
+            originalError == null -> mutableListOf()
+            !captureStacktrace -> {
+                val error = Error.createError(originalError, config.projectPackages, config.logger, excludeStacktrace)[0]
+                mutableListOf(error)
+            }
+            else -> Error.createError(originalError, config.projectPackages, config.logger, false)
         },
         data.copy(),
         featureFlags.copy(),
         originalError,
         config.projectPackages,
         severityReason,
-        ThreadState(originalError, severityReason.unhandled, config).threads,
+        if (captureThreads) {
+            ThreadState(originalError, severityReason.unhandled, config).threads
+        } else {
+            mutableListOf()
+        },
         User(),
         config.redactedKeys.toSet(),
         config.attemptDeliveryOnCrash
@@ -343,7 +354,7 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
             errors.add(newError)
             return newError
         } else {
-            val newErrors = Error.createError(thrownError, projectPackages, logger)
+            val newErrors = Error.createError(thrownError, projectPackages, logger, false)
             errors.addAll(newErrors)
             return newErrors.first()
         }

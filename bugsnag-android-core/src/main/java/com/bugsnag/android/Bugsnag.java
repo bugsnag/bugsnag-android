@@ -256,6 +256,20 @@ public final class Bugsnag {
     }
 
     /**
+     * Notify Bugsnag of a handled exception
+     *
+     * @param exception the exception to send to Bugsnag
+     * @param onError   callback invoked on the generated error report for
+     *                  additional modification
+     * @param options the error options
+     */
+    public static void notify(@NonNull final Throwable exception,
+                              @Nullable final ErrorOptions options,
+                              @Nullable final OnErrorCallback onError) {
+        getClient().notify(exception, options, onError);
+    }
+
+    /**
      * Adds a map of multiple metadata key-value pairs to the specified section.
      */
     public static void addMetadata(@NonNull String section, @NonNull Map<String, ?> value) {
