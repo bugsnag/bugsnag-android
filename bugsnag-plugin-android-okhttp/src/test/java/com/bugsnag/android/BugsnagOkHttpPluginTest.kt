@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.bugsnag.android
 
 import com.bugsnag.android.okhttp.BugsnagOkHttpPlugin
