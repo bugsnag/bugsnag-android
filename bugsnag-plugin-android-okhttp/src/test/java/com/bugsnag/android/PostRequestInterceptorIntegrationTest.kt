@@ -1,10 +1,10 @@
-@file:Suppress("DEPRECATION")
-
 package com.bugsnag.android
 
-import com.bugsnag.android.okhttp.BugsnagOkHttpPlugin
+import com.bugsnag.android.okhttp.BugsnagOkHttp
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.Assert.assertEquals
@@ -23,7 +23,7 @@ import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
-class RedirectedRequestIntegrationTest {
+class PostRequestInterceptorIntegrationTest {
 
     @Mock
     lateinit var client: Client
@@ -37,25 +37,21 @@ class RedirectedRequestIntegrationTest {
     }
 
     /**
-     * Performs a GET request that follows a redirect. A breadcrumb is collected for the last call
-     * in the OkHttp chain.
+     * Performs a POST request using BugsnagOkHttp interceptor.
+     * A breadcrumb is collected for successful requests.
      */
     @Test
-    fun getRequestRedirectSuccess() {
-        // create a redirect and then the actual response
+    fun postRequestSuccess() {
         val server = MockWebServer().apply {
-            enqueue(
-                MockResponse()
-                    .setResponseCode(301)
-                    .addHeader("Location", url("/foo"))
-            )
             enqueue(MockResponse().setBody("hello, world!"))
         }
         val baseUrl = server.url("/test")
-        val plugin = BugsnagOkHttpPlugin().apply { load(client) }
-        val okHttpClient = OkHttpClient.Builder().eventListener(plugin).build()
+        val bugsnagOkHttp = BugsnagOkHttp().logBreadcrumbs()
+        val interceptor = bugsnagOkHttp.createInterceptor(client)
+        val okHttpClient = OkHttpClient.Builder().addInterceptor(interceptor).build()
 
-        val req = Request.Builder().url(baseUrl).build()
+        val requestBody = "test-data".toRequestBody("application/json".toMediaType())
+        val req = Request.Builder().url(baseUrl).post(requestBody).build()
         val execute = okHttpClient.newCall(req).execute()
         execute.close()
         server.shutdown()
@@ -66,10 +62,10 @@ class RedirectedRequestIntegrationTest {
             eq(BreadcrumbType.REQUEST)
         )
         with(mapCaptor.value) {
-            assertEquals("GET", get("method"))
+            assertEquals("POST", get("method"))
             assertEquals(200, get("status"))
-            assertEquals(0L, get("requestContentLength"))
-            assertEquals(0L, get("responseContentLength"))
+            assertEquals(9L, get("requestContentLength"))
+            assertEquals(13L, get("responseContentLength"))
             assertTrue(get("duration") is Long)
             assertNull(get("urlParams"))
             assertEquals(server.url("/test").toString(), get("url"))

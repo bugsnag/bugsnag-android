@@ -1,8 +1,6 @@
-@file:Suppress("DEPRECATION")
-
 package com.bugsnag.android
 
-import com.bugsnag.android.okhttp.BugsnagOkHttpPlugin
+import com.bugsnag.android.okhttp.BugsnagOkHttp
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.mockwebserver.MockResponse
@@ -23,7 +21,7 @@ import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
-class RedirectedRequestIntegrationTest {
+class RedirectedRequestInterceptorIntegrationTest {
 
     @Mock
     lateinit var client: Client
@@ -37,23 +35,25 @@ class RedirectedRequestIntegrationTest {
     }
 
     /**
-     * Performs a GET request that follows a redirect. A breadcrumb is collected for the last call
-     * in the OkHttp chain.
+     * Performs a GET request that follows a redirect using BugsnagOkHttp interceptor.
+     * A breadcrumb is collected for the last call in the OkHttp chain.
      */
     @Test
     fun getRequestRedirectSuccess() {
         // create a redirect and then the actual response
+        val expectedResponseBodyContent = "hello, world!"
         val server = MockWebServer().apply {
             enqueue(
                 MockResponse()
                     .setResponseCode(301)
                     .addHeader("Location", url("/foo"))
             )
-            enqueue(MockResponse().setBody("hello, world!"))
+            enqueue(MockResponse().setBody(expectedResponseBodyContent))
         }
         val baseUrl = server.url("/test")
-        val plugin = BugsnagOkHttpPlugin().apply { load(client) }
-        val okHttpClient = OkHttpClient.Builder().eventListener(plugin).build()
+        val bugsnagOkHttp = BugsnagOkHttp().logBreadcrumbs()
+        val interceptor = bugsnagOkHttp.createInterceptor(client)
+        val okHttpClient = OkHttpClient.Builder().addInterceptor(interceptor).build()
 
         val req = Request.Builder().url(baseUrl).build()
         val execute = okHttpClient.newCall(req).execute()
@@ -69,7 +69,7 @@ class RedirectedRequestIntegrationTest {
             assertEquals("GET", get("method"))
             assertEquals(200, get("status"))
             assertEquals(0L, get("requestContentLength"))
-            assertEquals(0L, get("responseContentLength"))
+            assertEquals(expectedResponseBodyContent.length.toLong(), get("responseContentLength"))
             assertTrue(get("duration") is Long)
             assertNull(get("urlParams"))
             assertEquals(server.url("/test").toString(), get("url"))

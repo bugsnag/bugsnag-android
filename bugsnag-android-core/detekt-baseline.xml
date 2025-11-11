@@ -64,7 +64,6 @@
     <ID>MagicNumber:JsonHelper.kt$JsonHelper$8</ID>
     <ID>MagicNumber:JsonStream.kt$JsonStream$128</ID>
     <ID>MagicNumber:JsonStream.kt$JsonStream$32</ID>
-    <ID>MagicNumber:JsonStream.kt$JsonStream.Companion$128</ID>
     <ID>MagicNumber:LastRunInfoStore.kt$LastRunInfoStore$3</ID>
     <ID>MagicNumber:SessionStore.kt$SessionStore$60</ID>
     <ID>MaxLineLength:LastRunInfo.kt$LastRunInfo$return "LastRunInfo(consecutiveLaunchCrashes=$consecutiveLaunchCrashes, crashed=$crashed, crashedDuringLaunch=$crashedDuringLaunch)"</ID>
