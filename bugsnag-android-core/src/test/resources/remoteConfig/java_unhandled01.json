@@ -1,0 +1,1368 @@
+{
+  "context": "ExampleActivity",
+  "metaData": {
+    "app": {
+      "memoryUsage": 7942320,
+      "totalMemory": 8862494,
+      "processName": "com.example.bugsnag.android",
+      "activeScreen": "ExampleActivity",
+      "name": "Bugsnag",
+      "memoryLimit": 201326592,
+      "freeMemory": 920174,
+      "processImportance": "foreground"
+    },
+    "Custom Data": {
+      "members": [
+        {
+          "Group Members 1": "Adam"
+        },
+        {
+          "Group Members 2": "Alice"
+        }
+      ]
+    },
+    "Last Resume Time": {
+      "Member Last Resume Time": {
+        "Last Resume Time": "2025-09-30T13:31:39.254Z"
+      }
+    },
+    "user": {
+      "age": 31
+    },
+    "device": {
+      "locationStatus": "allowed",
+      "emulator": false,
+      "networkAccess": "cellular",
+      "charging": false,
+      "screenDensity": 2.625,
+      "dpi": 420,
+      "screenResolution": "2424x1080",
+      "brand": "google",
+      "batteryLevel": 1.0
+    }
+  },
+  "severity": "error",
+  "severityReason": {
+    "type": "unhandledException",
+    "unhandledOverridden": false
+  },
+  "unhandled": true,
+  "exceptions": [
+    {
+      "errorClass": "java.lang.RuntimeException",
+      "message": "Fatal Crash",
+      "type": "android",
+      "stacktrace": [
+        {
+          "method": "com.example.foo.CrashyClass.sendMessage",
+          "file": "CrashyClass.java",
+          "lineNumber": 10
+        },
+        {
+          "method": "com.example.foo.CrashyClass.crash",
+          "file": "CrashyClass.java",
+          "lineNumber": 6
+        },
+        {
+          "method": "com.example.bugsnag.android.BaseCrashyActivity.crashUnhandled",
+          "file": "BaseCrashyActivity.kt",
+          "lineNumber": 84,
+          "inProject": true
+        },
+        {
+          "method": "com.example.bugsnag.android.BaseCrashyActivity$$ExternalSyntheticLambda8.onClick",
+          "file": "D8$$SyntheticClass",
+          "lineNumber": 0,
+          "inProject": true
+        },
+        {
+          "method": "android.view.View.performClick",
+          "file": "View.java",
+          "lineNumber": 8083
+        },
+        {
+          "method": "android.view.View.performClickInternal",
+          "file": "View.java",
+          "lineNumber": 8060
+        },
+        {
+          "method": "android.view.View.-$$Nest$mperformClickInternal",
+          "file": "Unknown",
+          "lineNumber": 0
+        },
+        {
+          "method": "android.view.View$PerformClick.run",
+          "file": "View.java",
+          "lineNumber": 31549
+        },
+        {
+          "method": "android.os.Handler.handleCallback",
+          "file": "Handler.java",
+          "lineNumber": 995
+        },
+        {
+          "method": "android.os.Handler.dispatchMessage",
+          "file": "Handler.java",
+          "lineNumber": 103
+        },
+        {
+          "method": "android.os.Looper.loopOnce",
+          "file": "Looper.java",
+          "lineNumber": 248
+        },
+        {
+          "method": "android.os.Looper.loop",
+          "file": "Looper.java",
+          "lineNumber": 338
+        },
+        {
+          "method": "android.app.ActivityThread.main",
+          "file": "ActivityThread.java",
+          "lineNumber": 9067
+        },
+        {
+          "method": "java.lang.reflect.Method.invoke",
+          "file": "Method.java",
+          "lineNumber": -2
+        },
+        {
+          "method": "com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run",
+          "file": "RuntimeInit.java",
+          "lineNumber": 593
+        },
+        {
+          "method": "com.android.internal.os.ZygoteInit.main",
+          "file": "ZygoteInit.java",
+          "lineNumber": 932
+        }
+      ]
+    }
+  ],
+  "projectPackages": [
+    "com.example.bugsnag.android"
+  ],
+  "user": {
+    "id": "123456",
+    "email": "joebloggs@example.com",
+    "name": "Joe Bloggs"
+  },
+  "app": {
+    "binaryArch": "arm64",
+    "buildUUID": "6fe37cf5bf085f398d05aebb4f3930e12e3802f0",
+    "id": "com.example.bugsnag.android",
+    "releaseStage": "development",
+    "type": "android",
+    "version": "1.0",
+    "versionCode": 1,
+    "duration": 26469017,
+    "durationInForeground": 26468476,
+    "inForeground": true,
+    "isLaunching": false
+  },
+  "device": {
+    "cpuAbi": [
+      "arm64-v8a"
+    ],
+    "jailbroken": false,
+    "id": "da515088-7506-42e5-a054-bd7946514025",
+    "locale": "en_US",
+    "manufacturer": "Google",
+    "model": "sdk_gphone16k_arm64",
+    "osName": "android",
+    "osVersion": "16",
+    "runtimeVersions": {
+      "androidApiLevel": "36",
+      "osBuild": "BE2A.250530.026.F3 dev-keys"
+    },
+    "totalMemory": 2096365568,
+    "freeDisk": 4626407424,
+    "freeMemory": 262553600,
+    "orientation": "portrait",
+    "time": "2025-10-01T11:23:45.662Z"
+  },
+  "breadcrumbs": [
+    {
+      "timestamp": "2025-09-30T13:31:39.083Z",
+      "name": "Bugsnag loaded",
+      "type": "state",
+      "metaData": {}
+    },
+    {
+      "timestamp": "2025-09-30T13:31:39.166Z",
+      "name": "ExampleActivity#onCreate()",
+      "type": "state",
+      "metaData": {
+        "hasBundle": false,
+        "action": "android.intent.action.MAIN",
+        "categories": "android.intent.category.LAUNCHER",
+        "flags": "0x10200000",
+        "hasData": false,
+        "hasExtras": false
+      }
+    },
+    {
+      "timestamp": "2025-09-30T13:31:39.250Z",
+      "name": "ExampleActivity#onStart()",
+      "type": "state",
+      "metaData": {
+        "previous": "onCreate()"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T13:31:39.255Z",
+      "name": "ExampleActivity#onResume()",
+      "type": "state",
+      "metaData": {
+        "previous": "onStart()"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T16:39:18.036Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T16:55:27.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T17:10:48.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T17:26:45.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T17:42:13.007Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T18:00:01.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T18:17:45.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T18:24:05.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T18:41:26.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T18:58:28.005Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T19:13:40.007Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T19:29:00.008Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T19:44:53.008Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T20:01:55.008Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T20:19:20.008Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T20:34:55.005Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T20:50:27.007Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T21:06:30.010Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T21:23:52.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T21:40:29.007Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T21:56:34.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T22:14:16.009Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T22:32:04.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T22:48:04.009Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T23:04:03.008Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T23:20:07.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T23:36:37.005Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T23:52:51.007Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T00:08:03.009Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T00:25:24.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T00:42:15.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T00:58:22.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T01:14:04.008Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T01:31:41.010Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T01:48:03.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T02:03:50.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T02:11:41.005Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T02:27:53.008Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T02:43:00.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T02:54:27.004Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T03:10:41.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T03:26:43.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T03:43:52.007Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T04:00:51.007Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T04:12:42.005Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T04:28:19.007Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T04:43:36.005Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T04:59:14.007Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T05:13:43.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T05:30:28.003Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T05:46:26.005Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T06:03:07.007Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T06:14:44.005Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T06:32:26.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T06:32:27.352Z",
+      "name": "Connectivity changed",
+      "type": "state",
+      "metaData": {
+        "hasConnection": true,
+        "networkState": "unknown"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T06:48:51.008Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T06:59:28.007Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T07:02:18.623Z",
+      "name": "Connectivity changed",
+      "type": "state",
+      "metaData": {
+        "hasConnection": true,
+        "networkState": "unknown"
+      }
+    }
+  ],
+  "usage": {
+    "config": {
+      "pluginCount": 1,
+      "launchDurationMillis": 5000,
+      "logger": true
+    },
+    "callbacks": {
+      "event_set_context": true,
+      "app_set_is_launching": true,
+      "ndkOnError": 1,
+      "event_set_grouping_discriminator": true
+    }
+  },
+  "threads": [
+    {
+      "id": "2",
+      "name": "main",
+      "type": "android",
+      "state": "RUNNABLE",
+      "stacktrace": [
+        {
+          "method": "com.example.foo.CrashyClass.sendMessage",
+          "file": "CrashyClass.java",
+          "lineNumber": 10
+        },
+        {
+          "method": "com.example.foo.CrashyClass.crash",
+          "file": "CrashyClass.java",
+          "lineNumber": 6
+        },
+        {
+          "method": "com.example.bugsnag.android.BaseCrashyActivity.crashUnhandled",
+          "file": "BaseCrashyActivity.kt",
+          "lineNumber": 84,
+          "inProject": true
+        },
+        {
+          "method": "com.example.bugsnag.android.BaseCrashyActivity$$ExternalSyntheticLambda8.onClick",
+          "file": "D8$$SyntheticClass",
+          "lineNumber": 0,
+          "inProject": true
+        },
+        {
+          "method": "android.view.View.performClick",
+          "file": "View.java",
+          "lineNumber": 8083
+        },
+        {
+          "method": "android.view.View.performClickInternal",
+          "file": "View.java",
+          "lineNumber": 8060
+        },
+        {
+          "method": "android.view.View.-$$Nest$mperformClickInternal",
+          "file": "Unknown",
+          "lineNumber": 0
+        },
+        {
+          "method": "android.view.View$PerformClick.run",
+          "file": "View.java",
+          "lineNumber": 31549
+        },
+        {
+          "method": "android.os.Handler.handleCallback",
+          "file": "Handler.java",
+          "lineNumber": 995
+        },
+        {
+          "method": "android.os.Handler.dispatchMessage",
+          "file": "Handler.java",
+          "lineNumber": 103
+        },
+        {
+          "method": "android.os.Looper.loopOnce",
+          "file": "Looper.java",
+          "lineNumber": 248
+        },
+        {
+          "method": "android.os.Looper.loop",
+          "file": "Looper.java",
+          "lineNumber": 338
+        },
+        {
+          "method": "android.app.ActivityThread.main",
+          "file": "ActivityThread.java",
+          "lineNumber": 9067
+        },
+        {
+          "method": "java.lang.reflect.Method.invoke",
+          "file": "Method.java",
+          "lineNumber": -2
+        },
+        {
+          "method": "com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run",
+          "file": "RuntimeInit.java",
+          "lineNumber": 593
+        },
+        {
+          "method": "com.android.internal.os.ZygoteInit.main",
+          "file": "ZygoteInit.java",
+          "lineNumber": 932
+        }
+      ],
+      "errorReportingThread": true
+    },
+    {
+      "id": "55",
+      "name": "Signal Catcher",
+      "type": "android",
+      "state": "WAITING",
+      "stacktrace": []
+    },
+    {
+      "id": "57",
+      "name": "Jit thread pool worker thread 0",
+      "type": "android",
+      "state": "RUNNABLE",
+      "stacktrace": []
+    },
+    {
+      "id": "58",
+      "name": "HeapTaskDaemon",
+      "type": "android",
+      "state": "WAITING",
+      "stacktrace": []
+    },
+    {
+      "id": "59",
+      "name": "ReferenceQueueDaemon",
+      "type": "android",
+      "state": "WAITING",
+      "stacktrace": [
+        {
+          "method": "java.lang.Object.wait",
+          "file": "Object.java",
+          "lineNumber": -2
+        },
+        {
+          "method": "java.lang.Object.wait",
+          "file": "Object.java",
+          "lineNumber": 405
+        },
+        {
+          "method": "java.lang.Object.wait",
+          "file": "Object.java",
+          "lineNumber": 543
+        },
+        {
+          "method": "java.lang.Daemons$ReferenceQueueDaemon.runInternal",
+          "file": "Daemons.java",
+          "lineNumber": 260
+        },
+        {
+          "method": "java.lang.Daemons$Daemon.run",
+          "file": "Daemons.java",
+          "lineNumber": 132
+        },
+        {
+          "method": "java.lang.Thread.run",
+          "file": "Thread.java",
+          "lineNumber": 1119
+        }
+      ]
+    },
+    {
+      "id": "60",
+      "name": "FinalizerDaemon",
+      "type": "android",
+      "state": "WAITING",
+      "stacktrace": [
+        {
+          "method": "java.lang.Object.wait",
+          "file": "Object.java",
+          "lineNumber": -2
+        },
+        {
+          "method": "java.lang.Object.wait",
+          "file": "Object.java",
+          "lineNumber": 405
+        },
+        {
+          "method": "java.lang.ref.ReferenceQueue.remove",
+          "file": "ReferenceQueue.java",
+          "lineNumber": 207
+        },
+        {
+          "method": "java.lang.ref.ReferenceQueue.remove",
+          "file": "ReferenceQueue.java",
+          "lineNumber": 228
+        },
+        {
+          "method": "java.lang.Daemons$FinalizerDaemon.runInternal",
+          "file": "Daemons.java",
+          "lineNumber": 348
+        },
+        {
+          "method": "java.lang.Daemons$Daemon.run",
+          "file": "Daemons.java",
+          "lineNumber": 132
+        },
+        {
+          "method": "java.lang.Thread.run",
+          "file": "Thread.java",
+          "lineNumber": 1119
+        }
+      ]
+    },
+    {
+      "id": "61",
+      "name": "FinalizerWatchdogDaemon",
+      "type": "android",
+      "state": "WAITING",
+      "stacktrace": [
+        {
+          "method": "java.lang.Object.wait",
+          "file": "Object.java",
+          "lineNumber": -2
+        },
+        {
+          "method": "java.lang.Object.wait",
+          "file": "Object.java",
+          "lineNumber": 405
+        },
+        {
+          "method": "java.lang.Object.wait",
+          "file": "Object.java",
+          "lineNumber": 543
+        },
+        {
+          "method": "java.lang.Daemons$FinalizerWatchdogDaemon.sleepUntilNeeded",
+          "file": "Daemons.java",
+          "lineNumber": 481
+        },
+        {
+          "method": "java.lang.Daemons$FinalizerWatchdogDaemon.runInternal",
+          "file": "Daemons.java",
+          "lineNumber": 461
+        },
+        {
+          "method": "java.lang.Daemons$Daemon.run",
+          "file": "Daemons.java",
+          "lineNumber": 132
+        },
+        {
+          "method": "java.lang.Thread.run",
+          "file": "Thread.java",
+          "lineNumber": 1119
+        }
+      ]
+    },
+    {
+      "id": "62",
+      "name": "binder:32157_1",
+      "type": "android",
+      "state": "RUNNABLE",
+      "stacktrace": []
+    },
+    {
+      "id": "63",
+      "name": "binder:32157_2",
+      "type": "android",
+      "state": "RUNNABLE",
+      "stacktrace": []
+    },
+    {
+      "id": "64",
+      "name": "binder:32157_3",
+      "type": "android",
+      "state": "RUNNABLE",
+      "stacktrace": []
+    },
+    {
+      "id": "65",
+      "name": "binder:32157_4",
+      "type": "android",
+      "state": "RUNNABLE",
+      "stacktrace": []
+    },
+    {
+      "id": "66",
+      "name": "Profile Saver",
+      "type": "android",
+      "state": "RUNNABLE",
+      "stacktrace": []
+    },
+    {
+      "id": "67",
+      "name": "Bugsnag IO thread",
+      "type": "android",
+      "state": "WAITING",
+      "stacktrace": [
+        {
+          "method": "jdk.internal.misc.Unsafe.park",
+          "file": "Unsafe.java",
+          "lineNumber": -2
+        },
+        {
+          "method": "java.util.concurrent.locks.LockSupport.park",
+          "file": "LockSupport.java",
+          "lineNumber": 371
+        },
+        {
+          "method": "java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block",
+          "file": "AbstractQueuedSynchronizer.java",
+          "lineNumber": 519
+        },
+        {
+          "method": "java.util.concurrent.ForkJoinPool.unmanagedBlock",
+          "file": "ForkJoinPool.java",
+          "lineNumber": 3805
+        },
+        {
+          "method": "java.util.concurrent.ForkJoinPool.managedBlock",
+          "file": "ForkJoinPool.java",
+          "lineNumber": 3746
+        },
+        {
+          "method": "java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await",
+          "file": "AbstractQueuedSynchronizer.java",
+          "lineNumber": 1707
+        },
+        {
+          "method": "java.util.concurrent.LinkedBlockingQueue.take",
+          "file": "LinkedBlockingQueue.java",
+          "lineNumber": 435
+        },
+        {
+          "method": "java.util.concurrent.ThreadPoolExecutor.getTask",
+          "file": "ThreadPoolExecutor.java",
+          "lineNumber": 1082
+        },
+        {
+          "method": "java.util.concurrent.ThreadPoolExecutor.runWorker",
+          "file": "ThreadPoolExecutor.java",
+          "lineNumber": 1142
+        },
+        {
+          "method": "java.util.concurrent.ThreadPoolExecutor$Worker.run",
+          "file": "ThreadPoolExecutor.java",
+          "lineNumber": 651
+        },
+        {
+          "method": "java.lang.Thread.run",
+          "file": "Thread.java",
+          "lineNumber": 1119
+        }
+      ]
+    },
+    {
+      "id": "73",
+      "name": "bugsnag-anr-collector",
+      "type": "android",
+      "state": "RUNNABLE",
+      "stacktrace": [
+        {
+          "method": "android.os.MessageQueue.nativePollOnce",
+          "file": "MessageQueue.java",
+          "lineNumber": -2
+        },
+        {
+          "method": "android.os.MessageQueue.nextLegacy",
+          "file": "MessageQueue.java",
+          "lineNumber": 913
+        },
+        {
+          "method": "android.os.MessageQueue.next",
+          "file": "MessageQueue.java",
+          "lineNumber": 1025
+        },
+        {
+          "method": "android.os.Looper.loopOnce",
+          "file": "Looper.java",
+          "lineNumber": 196
+        },
+        {
+          "method": "android.os.Looper.loop",
+          "file": "Looper.java",
+          "lineNumber": 338
+        },
+        {
+          "method": "android.os.HandlerThread.run",
+          "file": "HandlerThread.java",
+          "lineNumber": 85
+        }
+      ]
+    },
+    {
+      "id": "74",
+      "name": "Bugsnag Error thread",
+      "type": "android",
+      "state": "WAITING",
+      "stacktrace": [
+        {
+          "method": "jdk.internal.misc.Unsafe.park",
+          "file": "Unsafe.java",
+          "lineNumber": -2
+        },
+        {
+          "method": "java.util.concurrent.locks.LockSupport.park",
+          "file": "LockSupport.java",
+          "lineNumber": 371
+        },
+        {
+          "method": "java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block",
+          "file": "AbstractQueuedSynchronizer.java",
+          "lineNumber": 519
+        },
+        {
+          "method": "java.util.concurrent.ForkJoinPool.unmanagedBlock",
+          "file": "ForkJoinPool.java",
+          "lineNumber": 3805
+        },
+        {
+          "method": "java.util.concurrent.ForkJoinPool.managedBlock",
+          "file": "ForkJoinPool.java",
+          "lineNumber": 3746
+        },
+        {
+          "method": "java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await",
+          "file": "AbstractQueuedSynchronizer.java",
+          "lineNumber": 1707
+        },
+        {
+          "method": "java.util.concurrent.LinkedBlockingQueue.take",
+          "file": "LinkedBlockingQueue.java",
+          "lineNumber": 435
+        },
+        {
+          "method": "java.util.concurrent.ThreadPoolExecutor.getTask",
+          "file": "ThreadPoolExecutor.java",
+          "lineNumber": 1082
+        },
+        {
+          "method": "java.util.concurrent.ThreadPoolExecutor.runWorker",
+          "file": "ThreadPoolExecutor.java",
+          "lineNumber": 1142
+        },
+        {
+          "method": "java.util.concurrent.ThreadPoolExecutor$Worker.run",
+          "file": "ThreadPoolExecutor.java",
+          "lineNumber": 651
+        },
+        {
+          "method": "java.lang.Thread.run",
+          "file": "Thread.java",
+          "lineNumber": 1119
+        }
+      ]
+    },
+    {
+      "id": "75",
+      "name": "ConscryptStatsLog",
+      "type": "android",
+      "state": "WAITING",
+      "stacktrace": [
+        {
+          "method": "jdk.internal.misc.Unsafe.park",
+          "file": "Unsafe.java",
+          "lineNumber": -2
+        },
+        {
+          "method": "java.util.concurrent.locks.LockSupport.park",
+          "file": "LockSupport.java",
+          "lineNumber": 371
+        },
+        {
+          "method": "java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block",
+          "file": "AbstractQueuedSynchronizer.java",
+          "lineNumber": 519
+        },
+        {
+          "method": "java.util.concurrent.ForkJoinPool.unmanagedBlock",
+          "file": "ForkJoinPool.java",
+          "lineNumber": 3805
+        },
+        {
+          "method": "java.util.concurrent.ForkJoinPool.managedBlock",
+          "file": "ForkJoinPool.java",
+          "lineNumber": 3746
+        },
+        {
+          "method": "java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await",
+          "file": "AbstractQueuedSynchronizer.java",
+          "lineNumber": 1707
+        },
+        {
+          "method": "java.util.concurrent.LinkedBlockingQueue.take",
+          "file": "LinkedBlockingQueue.java",
+          "lineNumber": 435
+        },
+        {
+          "method": "java.util.concurrent.ThreadPoolExecutor.getTask",
+          "file": "ThreadPoolExecutor.java",
+          "lineNumber": 1082
+        },
+        {
+          "method": "java.util.concurrent.ThreadPoolExecutor.runWorker",
+          "file": "ThreadPoolExecutor.java",
+          "lineNumber": 1142
+        },
+        {
+          "method": "java.util.concurrent.ThreadPoolExecutor$Worker.run",
+          "file": "ThreadPoolExecutor.java",
+          "lineNumber": 651
+        },
+        {
+          "method": "java.lang.Thread.run",
+          "file": "Thread.java",
+          "lineNumber": 1119
+        }
+      ]
+    },
+    {
+      "id": "76",
+      "name": "Bugsnag Session thread",
+      "type": "android",
+      "state": "WAITING",
+      "stacktrace": [
+        {
+          "method": "jdk.internal.misc.Unsafe.park",
+          "file": "Unsafe.java",
+          "lineNumber": -2
+        },
+        {
+          "method": "java.util.concurrent.locks.LockSupport.park",
+          "file": "LockSupport.java",
+          "lineNumber": 371
+        },
+        {
+          "method": "java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block",
+          "file": "AbstractQueuedSynchronizer.java",
+          "lineNumber": 519
+        },
+        {
+          "method": "java.util.concurrent.ForkJoinPool.unmanagedBlock",
+          "file": "ForkJoinPool.java",
+          "lineNumber": 3805
+        },
+        {
+          "method": "java.util.concurrent.ForkJoinPool.managedBlock",
+          "file": "ForkJoinPool.java",
+          "lineNumber": 3746
+        },
+        {
+          "method": "java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await",
+          "file": "AbstractQueuedSynchronizer.java",
+          "lineNumber": 1707
+        },
+        {
+          "method": "java.util.concurrent.LinkedBlockingQueue.take",
+          "file": "LinkedBlockingQueue.java",
+          "lineNumber": 435
+        },
+        {
+          "method": "java.util.concurrent.ThreadPoolExecutor.getTask",
+          "file": "ThreadPoolExecutor.java",
+          "lineNumber": 1082
+        },
+        {
+          "method": "java.util.concurrent.ThreadPoolExecutor.runWorker",
+          "file": "ThreadPoolExecutor.java",
+          "lineNumber": 1142
+        },
+        {
+          "method": "java.util.concurrent.ThreadPoolExecutor$Worker.run",
+          "file": "ThreadPoolExecutor.java",
+          "lineNumber": 651
+        },
+        {
+          "method": "java.lang.Thread.run",
+          "file": "Thread.java",
+          "lineNumber": 1119
+        }
+      ]
+    },
+    {
+      "id": "77",
+      "name": "ConnectivityThread",
+      "type": "android",
+      "state": "RUNNABLE",
+      "stacktrace": [
+        {
+          "method": "android.os.MessageQueue.nativePollOnce",
+          "file": "MessageQueue.java",
+          "lineNumber": -2
+        },
+        {
+          "method": "android.os.MessageQueue.nextLegacy",
+          "file": "MessageQueue.java",
+          "lineNumber": 913
+        },
+        {
+          "method": "android.os.MessageQueue.next",
+          "file": "MessageQueue.java",
+          "lineNumber": 1025
+        },
+        {
+          "method": "android.os.Looper.loopOnce",
+          "file": "Looper.java",
+          "lineNumber": 196
+        },
+        {
+          "method": "android.os.Looper.loop",
+          "file": "Looper.java",
+          "lineNumber": 338
+        },
+        {
+          "method": "android.os.HandlerThread.run",
+          "file": "HandlerThread.java",
+          "lineNumber": 85
+        }
+      ]
+    },
+    {
+      "id": "78",
+      "name": "RenderThread",
+      "type": "android",
+      "state": "RUNNABLE",
+      "stacktrace": []
+    },
+    {
+      "id": "79",
+      "name": "hwuiTask0",
+      "type": "android",
+      "state": "RUNNABLE",
+      "stacktrace": []
+    },
+    {
+      "id": "80",
+      "name": "hwuiTask1",
+      "type": "android",
+      "state": "RUNNABLE",
+      "stacktrace": []
+    },
+    {
+      "id": "81",
+      "name": "SurfaceSyncGroupTimer",
+      "type": "android",
+      "state": "RUNNABLE",
+      "stacktrace": [
+        {
+          "method": "android.os.MessageQueue.nativePollOnce",
+          "file": "MessageQueue.java",
+          "lineNumber": -2
+        },
+        {
+          "method": "android.os.MessageQueue.nextLegacy",
+          "file": "MessageQueue.java",
+          "lineNumber": 913
+        },
+        {
+          "method": "android.os.MessageQueue.next",
+          "file": "MessageQueue.java",
+          "lineNumber": 1025
+        },
+        {
+          "method": "android.os.Looper.loopOnce",
+          "file": "Looper.java",
+          "lineNumber": 196
+        },
+        {
+          "method": "android.os.Looper.loop",
+          "file": "Looper.java",
+          "lineNumber": 338
+        },
+        {
+          "method": "android.os.HandlerThread.run",
+          "file": "HandlerThread.java",
+          "lineNumber": 85
+        }
+      ]
+    }
+  ],
+  "featureFlags": [],
+  "session": {
+    "id": "e3858a57-6a8b-40f7-9f02-02f8b040bd3f",
+    "startedAt": "2025-09-30T13:31:39.249Z",
+    "events": {
+      "handled": 0,
+      "unhandled": 1
+    }
+  }
+}

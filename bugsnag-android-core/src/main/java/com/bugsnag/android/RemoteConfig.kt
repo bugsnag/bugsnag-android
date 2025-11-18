@@ -117,7 +117,7 @@ internal sealed class DiscardRule : JsonStream.Streamable {
         override fun toString(): String = DISCARD_RULE_ALL_HANDLED
     }
 
-    class Hash(
+    data class Hash(
         private val unparsedPaths: List<*>,
         private val matches: Set<String>
     ) : DiscardRule() {
