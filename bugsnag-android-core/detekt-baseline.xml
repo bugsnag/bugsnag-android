@@ -27,6 +27,7 @@
     <ID>LongParameterList:StateEvent.kt$StateEvent.Install$( @JvmField val apiKey: String, @JvmField val autoDetectNdkCrashes: Boolean, @JvmField val appVersion: String?, @JvmField val buildUuid: String?, @JvmField val releaseStage: String?, @JvmField val lastRunInfoPath: String, @JvmField val consecutiveLaunchCrashes: Int, @JvmField val sendThreads: ThreadSendPolicy, @JvmField val maxBreadcrumbs: Int )</ID>
     <ID>LongParameterList:ThreadState.kt$ThreadState$( allThreads: List&lt;JavaThread>, currentThread: JavaThread, exc: Throwable?, isUnhandled: Boolean, maxThreadCount: Int, threadCollectionTimeLimitMillis: Long, projectPackages: Collection&lt;String>, logger: Logger )</ID>
     <ID>LoopWithTooManyJumpStatements:JsonCollectionParser.kt$JsonCollectionParser$while</ID>
+    <ID>LoopWithTooManyJumpStatements:JsonDataExtractor.kt$RelativeAddressExtractor$for</ID>
     <ID>MagicNumber:BugsnagEventMapper.kt$BugsnagEventMapper$16</ID>
     <ID>MagicNumber:BugsnagEventMapper.kt$BugsnagEventMapper$32</ID>
     <ID>MagicNumber:BugsnagEventMapper.kt$BugsnagEventMapper$56</ID>
@@ -63,6 +64,7 @@
     <ID>MagicNumber:JsonHelper.kt$JsonHelper$8</ID>
     <ID>MagicNumber:LastRunInfoStore.kt$LastRunInfoStore$3</ID>
     <ID>MagicNumber:SessionStore.kt$SessionStore$60</ID>
+    <ID>MatchingDeclarationName:Main.kt$RealErrorTest</ID>
     <ID>MaxLineLength:LastRunInfo.kt$LastRunInfo$return "LastRunInfo(consecutiveLaunchCrashes=$consecutiveLaunchCrashes, crashed=$crashed, crashedDuringLaunch=$crashedDuringLaunch)"</ID>
     <ID>MaxLineLength:ThreadState.kt$ThreadState$"[${allThreads.size - maxThreadCount} threads omitted as the maxReportedThreads limit ($maxThreadCount) was exceeded]"</ID>
     <ID>NestedBlockDepth:FileStore.kt$FileStore$fun deleteStoredFiles(storedFiles: Collection&lt;File>?)</ID>

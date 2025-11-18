@@ -332,21 +332,21 @@ internal class RelativeAddressExtractor(
                 .extractFrom(root)
                 .filterIsInstance<Map<*, *>>()
 
-        stackFrames.forEach { stackFrame ->
+        for (stackFrame in stackFrames) {
             val frameAddressString =
                 stackFrame[KEY_FRAME_ADDRESS] as? String
-                    ?: return
+                    ?: continue
             val loadAddressString =
                 stackFrame[KEY_LOAD_ADDRESS] as? String
                     ?: stackFrame[KEY_MACHO_LOAD_ADDRESS] as? String
-                    ?: return
+                    ?: continue
 
             val frameAddress =
                 frameAddressString.parseAsAddress()
-                    ?: return
+                    ?: continue
             val loadAddress =
                 loadAddressString.parseAsAddress()
-                    ?: return
+                    ?: continue
 
             val relativeAddress = frameAddress - loadAddress
 
