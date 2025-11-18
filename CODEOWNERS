@@ -1,5 +1,6 @@
 bugsnag-android/                   @lemnik @YYChen01988
 bugsnag-android-core/              @lemnik @YYChen01988
+bugsnag-android-http-api/          @lemnik @YYChen01988
 bugsnag-plugin-android-anr/        @lemnik @YYChen01988
 bugsnag-plugin-android-exitinfo/   @lemnik @YYChen01988
 bugsnag-plugin-android-ndk/        @lemnik @YYChen01988
