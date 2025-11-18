@@ -1,18 +1,19 @@
 package com.bugsnag.android.internal.remoteconfig
 
 import android.os.Build
+import androidx.annotation.VisibleForTesting
 import com.bugsnag.android.Logger
 import com.bugsnag.android.Notifier
 import com.bugsnag.android.RemoteConfig
 import com.bugsnag.android.internal.HEADER_BUGSNAG_API_KEY
 import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.JsonCollectionParser
+import com.bugsnag.android.internal.JsonCollectionParser.JsonParseException
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.Date
-import java.util.concurrent.Callable
 
 internal class RemoteConfigRequest(
     private val baseUrl: String,
@@ -24,7 +25,7 @@ internal class RemoteConfigRequest(
     private val packageName: String?,
     private val remoteConfig: RemoteConfig?,
     private val logger: Logger
-) : Callable<RemoteConfig?> {
+) {
     constructor(
         config: ImmutableConfig,
         notifier: Notifier,
@@ -33,7 +34,7 @@ internal class RemoteConfigRequest(
         config.endpoints.configuration!!,
         config.apiKey,
         notifier,
-        config.appVersion,
+        config.appVersion ?: config.packageInfo?.versionName,
         config.versionCode,
         config.releaseStage,
         config.packageInfo?.packageName,
@@ -41,7 +42,7 @@ internal class RemoteConfigRequest(
         config.logger
     )
 
-    override fun call(): RemoteConfig? {
+    fun requestConfig(): RemoteConfig? {
         return try {
             requestNewConfig()
         } catch (_: Exception) {
@@ -68,17 +69,15 @@ internal class RemoteConfigRequest(
         connection.setRequestProperty(HEADER_BUGSNAG_NOTIFIER_NAME, notifier.name)
         connection.setRequestProperty(HEADER_BUGSNAG_NOTIFIER_VERSION, notifier.version)
 
-        if (remoteConfig != null) {
-            connection.setRequestProperty(
-                HEADER_IF_NONE_MATCH,
-                "\"${remoteConfig.configurationTag}\""
-            )
+        if (remoteConfig?.configurationTag != null) {
+            connection.setRequestProperty(HEADER_IF_NONE_MATCH, remoteConfig.configurationTag)
         }
 
         val responseCode = connection.responseCode
         return when (responseCode) {
             HttpURLConnection.HTTP_OK -> parseRemoteConfig(connection)
             HttpURLConnection.HTTP_NOT_MODIFIED -> renewExistingConfig(configExpiryDate(connection))
+            HttpURLConnection.HTTP_BAD_REQUEST -> createEmptyConfig(configExpiryDate(connection))
             else -> null
         }
     }
@@ -116,30 +115,31 @@ internal class RemoteConfigRequest(
         }
     }
 
-    private fun parseRemoteConfig(connection: HttpURLConnection): RemoteConfig? {
-        val inputStream = connection.inputStream
-
-        @Suppress("UNCHECKED_CAST")
-        val json = JsonCollectionParser(inputStream).parse()
-            as? LinkedHashMap<String, Any?>
-            ?: return null
-
+    @VisibleForTesting
+    internal fun parseRemoteConfig(connection: HttpURLConnection): RemoteConfig? {
         val expiryDate = configExpiryDate(connection)
         val tag = connection.getHeaderField(HEADER_ETAG)
 
-        return RemoteConfig.fromMap(json, tag, expiryDate)
-    }
-
-    private fun renewExistingConfig(configExpiryDate: Date): RemoteConfig? {
-        if (remoteConfig == null) {
-            return null
+        // we may receive an empty response as a valid "no specific config" value
+        if (connection.contentLength == 0) {
+            return RemoteConfig(tag, expiryDate, emptyList())
         }
 
-        return RemoteConfig(
-            remoteConfig.configurationTag,
-            configExpiryDate,
-            remoteConfig.discardRules
-        )
+        val inputStream = connection.inputStream
+
+        val parser = try {
+            JsonCollectionParser(inputStream)
+        } catch (_: JsonParseException) {
+            // these can happen when the response is empty, but the Content-Length was not set
+            return RemoteConfig(tag, expiryDate, emptyList())
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        val json = parser.parse()
+            as? LinkedHashMap<String, Any?>
+            ?: return null
+
+        return RemoteConfig.fromJsonMap(tag, expiryDate, json)
     }
 
     private fun configExpiryDate(connection: HttpURLConnection): Date {
@@ -160,6 +160,22 @@ internal class RemoteConfigRequest(
         } else {
             URLEncoder.encode(value, "UTF-8")
         }
+    }
+
+    private fun renewExistingConfig(configExpiryDate: Date): RemoteConfig? {
+        if (remoteConfig == null) {
+            return null
+        }
+
+        return RemoteConfig(
+            remoteConfig.configurationTag,
+            configExpiryDate,
+            remoteConfig.discardRules
+        )
+    }
+
+    private fun createEmptyConfig(configExpiryDate: Date): RemoteConfig {
+        return RemoteConfig(null, configExpiryDate, emptyList())
     }
 
     private fun defaultConfigExpiry(): Date =

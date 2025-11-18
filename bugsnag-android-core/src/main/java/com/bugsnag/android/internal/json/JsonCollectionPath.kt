@@ -27,10 +27,10 @@ internal class JsonCollectionPath private constructor(
     }
 
     companion object {
-        val IDENTITY_PATH = JsonCollectionPath(PathNode.TerminalNode, "")
+        val IDENTITY_PATH = JsonCollectionPath(PathNode.TerminalNode, "$")
 
         fun fromString(path: String): JsonCollectionPath {
-            if (path.isEmpty()) {
+            if (path == IDENTITY_PATH.path) {
                 return IDENTITY_PATH
             }
 

@@ -7,19 +7,6 @@ import org.junit.Test
 internal class RemoteConfigInvalidDeserializationTest {
 
     @Test
-    fun testFromReaderMissingConfigurationTag() {
-        val jsonString = """
-        {
-            "configurationExpiry": "2024-01-15T10:30:45.123Z",
-            "discardRules": []
-        }
-        """.trimIndent()
-
-        val result = RemoteConfig.fromMap(JsonHelper.deserialize(jsonString.toByteArray()))
-        assertNull(result)
-    }
-
-    @Test
     fun testFromReaderMissingConfigurationExpiry() {
         val jsonString = """
         {
@@ -28,7 +15,7 @@ internal class RemoteConfigInvalidDeserializationTest {
         }
         """.trimIndent()
 
-        val result = RemoteConfig.fromMap(JsonHelper.deserialize(jsonString.toByteArray()))
+        val result = RemoteConfig.fromJsonMap(JsonHelper.deserialize(jsonString.toByteArray()))
         assertNull(result)
     }
 
@@ -40,7 +27,7 @@ internal class RemoteConfigInvalidDeserializationTest {
         }
         """.trimIndent()
 
-        val result = RemoteConfig.fromMap(JsonHelper.deserialize(jsonString.toByteArray()))
+        val result = RemoteConfig.fromJsonMap(JsonHelper.deserialize(jsonString.toByteArray()))
         assertNull(result)
     }
 }

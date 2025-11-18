@@ -148,7 +148,7 @@ internal class RemoteConfigStore(
         return try {
             configFile.inputStream().use { inputStream ->
                 val map = JsonHelper.deserialize(inputStream)
-                RemoteConfig.fromMap(map)
+                RemoteConfig.fromJsonMap(map)
             }
         } catch (_: Exception) {
             // If parsing fails, delete the corrupted file

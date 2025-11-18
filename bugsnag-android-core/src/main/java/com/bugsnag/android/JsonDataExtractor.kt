@@ -81,10 +81,12 @@ internal sealed class JsonDataExtractor(
         }
 
         /**
-         * Shorthand for `json.mapNotNull(this::fromJsonMap)`.
+         * Shorthand for `json.mapNotNull(this::fromJsonMap)`. This function may return fewer paths
+         * than it is given (when paths fail to parse).
          */
-        fun fromJsonList(json: List<Map<String, *>>): List<JsonDataExtractor> =
-            json.mapNotNull(this::fromJsonMap)
+        fun fromJsonList(json: List<*>): List<JsonDataExtractor> =
+            json.filterIsInstance<Map<String, *>>()
+                .mapNotNull(this::fromJsonMap)
     }
 }
 
@@ -187,8 +189,13 @@ internal class FilterExtractor(
         root: Map<String, *>,
         output: (String) -> Unit
     ) {
-        jsonPath
-            .extractFrom(root)
+        jsonPath.extractFrom(root)
+            .flatMap {
+                when (it) {
+                    is List<*> -> it
+                    else -> listOf(it)
+                }
+            }
             .filterIsInstance<Map<String, *>>()
             .filter { subRoot -> conditions.all { it(subRoot) } }
             .forEach { subRoot ->
@@ -325,21 +332,21 @@ internal class RelativeAddressExtractor(
                 .extractFrom(root)
                 .filterIsInstance<Map<*, *>>()
 
-        stackFrames.forEach { stackFrame ->
+        for (stackFrame in stackFrames) {
             val frameAddressString =
                 stackFrame[KEY_FRAME_ADDRESS] as? String
-                    ?: return
+                    ?: continue
             val loadAddressString =
                 stackFrame[KEY_LOAD_ADDRESS] as? String
                     ?: stackFrame[KEY_MACHO_LOAD_ADDRESS] as? String
-                    ?: return
+                    ?: continue
 
             val frameAddress =
                 frameAddressString.parseAsAddress()
-                    ?: return
+                    ?: continue
             val loadAddress =
                 loadAddressString.parseAsAddress()
-                    ?: return
+                    ?: continue
 
             val relativeAddress = frameAddress - loadAddress
 

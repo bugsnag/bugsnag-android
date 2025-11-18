@@ -8,8 +8,6 @@ import com.bugsnag.android.internal.DeliveryPipeline
 import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.convertToImmutableConfig
 import com.bugsnag.android.internal.dag.ValueProvider
-import com.bugsnag.android.internal.remoteconfig.RemoteConfigState
-import com.bugsnag.android.internal.remoteconfig.RemoteConfigStore
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -142,15 +140,7 @@ class EmptyEventCallbackTest {
     private fun createEventStore(config: ImmutableConfig): EventStore {
         val deliveryPipeline = DeliveryPipeline(
             CallbackState(),
-            RemoteConfigState(
-                RemoteConfigStore(
-                    tempDir.newFolder(),
-                    1
-                ),
-                config,
-                generateConfiguration().notifier,
-                backgroundTaskService
-            ),
+            mock(),
             config
         )
 
