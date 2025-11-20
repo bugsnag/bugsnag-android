@@ -2,6 +2,11 @@
 
 ## TBD
 
+### Enhancements
+
+* Introduced [bugsnag-plugin-android-apphang](bugsnag-plugin-android-apphang) as a configurable alternative to ANR reporting based on heartbeat monitoring
+  [#2332](https://github.com/bugsnag/bugsnag-android/pull/2332)
+
 ### Bug fixes
 
 * Fixed the consumer proguard rules for `ErrorType` (affects Kotlin Multiplatform apps), and added a `dontwarn` for apps with compileSdk < 36
