@@ -1,0 +1,29 @@
+{
+  "discardRules": [
+    {
+      "matchType": "HASH",
+      "hash": {
+        "paths": [
+          {
+            "path": "groupingDiscriminator"
+          },
+          {
+            "path": "exceptions.-1.errorClass"
+          },
+          {
+            "path": "exceptions.-1.stacktrace.*.file"
+          },
+          {
+            "path": "exceptions.-1.stacktrace.*.lineNumber"
+          },
+          {
+            "path": "exceptions.-1.stacktrace.*.method"
+          }
+        ],
+        "matches": [
+          "5e0c627bac494a834b6b3a2c3f5d2d1c3f7a9a80"
+        ]
+      }
+    }
+  ]
+}

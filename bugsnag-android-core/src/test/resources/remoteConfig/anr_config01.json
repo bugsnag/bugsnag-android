@@ -1,0 +1,83 @@
+{
+  "discardRules": [
+    {
+      "matchType": "HASH",
+      "hash": {
+        "paths": [
+          {
+            "path": "groupingDiscriminator"
+          },
+          {
+            "path": "exceptions.-1.errorClass"
+          },
+          {
+            "path": "exceptions.-1.stacktrace",
+            "pathMode": "FILTER",
+            "filter": {
+              "conditions": [
+                {
+                  "filterPath": {
+                    "path": "type"
+                  },
+                  "matchType": "IS_NULL",
+                  "value": "true"
+                }
+              ],
+              "subPaths": [
+                {
+                  "path": "file"
+                },
+                {
+                  "path": "lineNumber"
+                },
+                {
+                  "path": "method"
+                }
+              ]
+            }
+          },
+          {
+            "path": "exceptions.-1.stacktrace",
+            "pathMode": "FILTER",
+            "filter": {
+              "conditions": [
+                {
+                  "filterPath": {
+                    "path": "type"
+                  },
+                  "matchType": "EQUALS",
+                  "value": "c"
+                },
+                {
+                  "filterPath": {
+                    "path": "method"
+                  },
+                  "matchType": "NOT_EQUALS",
+                  "value": "art_jni_trampoline"
+                }
+              ],
+              "subPaths": [
+                {
+                  "path": "codeIdentifier"
+                },
+                {
+                  "path": "file",
+                  "pathMode": "REGEX",
+                  "regex": "([^/\\\\]+)$"
+                },
+                {
+                  "path": "$",
+                  "pathMode": "RELATIVE_ADDRESS"
+                }
+              ]
+            }
+          }
+        ],
+        "matches": [
+          "7c56591a8b31a7406e9a2623f37c6717b1247b8f",
+          "8fc0643febf25e0ecd734dd485d9bb3ed10e4290"
+        ]
+      }
+    }
+  ]
+}

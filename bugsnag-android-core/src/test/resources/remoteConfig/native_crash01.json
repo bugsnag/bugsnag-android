@@ -1,0 +1,982 @@
+{
+  "context": "ExampleActivity",
+  "metaData": {
+    "app": {
+      "name": "Bugsnag",
+      "processName": "com.example.bugsnag.android",
+      "memoryLimit": 201326592,
+      "lowMemory": false,
+      "memoryTrimLevel": "None"
+    },
+    "device": {
+      "brand": "google",
+      "dpi": 420,
+      "emulator": false,
+      "locationStatus": "allowed",
+      "networkAccess": "cellular",
+      "screenDensity": 2.625,
+      "screenResolution": "2424x1080"
+    },
+    "user": {
+      "age": 31
+    },
+    "Custom Data": {
+      "members": [
+        {
+          "Group Members 1": "Adam"
+        },
+        {
+          "Group Members 2": "Alice"
+        }
+      ]
+    },
+    "Last Resume Time": {
+      "Member Last Resume Time": {
+        "Last Resume Time": "2025-09-29T14:20:48.156Z"
+      }
+    },
+    "Native": {
+      "field": "value",
+      "field": true
+    }
+  },
+  "severity": "error",
+  "unhandled": true,
+  "severityReason": {
+    "unhandledOverridden": false,
+    "type": "signal",
+    "attributes": {
+      "signalType": "SIGSEGV"
+    }
+  },
+  "exceptions": [
+    {
+      "errorClass": "SIGSEGV",
+      "message": "Segmentation violation (invalid memory reference)",
+      "type": "c",
+      "stacktrace": [
+        {
+          "frameAddress": "0x78c88a180cb0",
+          "symbolAddress": "0x78c88a180c9c",
+          "loadAddress": "0x78c88a180000",
+          "lineNumber": 3248,
+          "isPC": true,
+          "file": "/data/app/~~7zddDSBFN9PPk6EBEwzt6g==/com.example.bugsnag.android-QJUs-bOLyJzCWVpT4IUjzA==/lib/arm64/libentrypoint.so",
+          "method": "crash_write_read_only",
+          "codeIdentifier": "3d33ca9c27cb3a0b28fcab56252e46bc080cea06"
+        },
+        {
+          "frameAddress": "0x78c88a180db8",
+          "symbolAddress": "0x78c88a180da4",
+          "loadAddress": "0x78c88a180000",
+          "lineNumber": 3512,
+          "file": "/data/app/~~7zddDSBFN9PPk6EBEwzt6g==/com.example.bugsnag.android-QJUs-bOLyJzCWVpT4IUjzA==/lib/arm64/libentrypoint.so",
+          "method": "Java_com_example_bugsnag_android_BaseCrashyActivity_crashFromCXX",
+          "codeIdentifier": "3d33ca9c27cb3a0b28fcab56252e46bc080cea06"
+        },
+        {
+          "frameAddress": "0x78c88df07500",
+          "symbolAddress": "0x78c88df07470",
+          "loadAddress": "0x78c88dbc8000",
+          "lineNumber": 3405056,
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "method": "art_quick_generic_jni_trampoline",
+          "codeIdentifier": "b229f9d1b6196afaae086f29f029f907"
+        },
+        {
+          "frameAddress": "0x78c88def0194",
+          "symbolAddress": "0x78c88deeff30",
+          "loadAddress": "0x78c88dbc8000",
+          "lineNumber": 3309972,
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "method": "art_quick_invoke_stub",
+          "codeIdentifier": "b229f9d1b6196afaae086f29f029f907"
+        },
+        {
+          "frameAddress": "0x78c88e2413d4",
+          "symbolAddress": "0x78c88e240da8",
+          "loadAddress": "0x78c88dbc8000",
+          "lineNumber": 6788052,
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "method": "_ZN3art11interpreter6DoCallILb0EEEbPNS_9ArtMethodEPNS_6ThreadERNS_11ShadowFrameEPKNS_11InstructionEtbPNS_6JValueE",
+          "codeIdentifier": "b229f9d1b6196afaae086f29f029f907"
+        },
+        {
+          "frameAddress": "0x78c88e1904f4",
+          "symbolAddress": "0x78c88e190190",
+          "loadAddress": "0x78c88dbc8000",
+          "lineNumber": 6063348,
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "method": "_ZN3art11interpreter20ExecuteSwitchImplCppILb0EEEvPNS0_17SwitchImplContextE",
+          "codeIdentifier": "b229f9d1b6196afaae086f29f029f907"
+        },
+        {
+          "frameAddress": "0x78c88dedfa88",
+          "symbolAddress": "0x78c88dedfa80",
+          "loadAddress": "0x78c88dbc8000",
+          "lineNumber": 3242632,
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "method": "ExecuteSwitchImplAsm",
+          "codeIdentifier": "b229f9d1b6196afaae086f29f029f907"
+        },
+        {
+          "frameAddress": "0x78cb581d9d74",
+          "symbolAddress": "0x78cb581d9d74",
+          "loadAddress": "0x78cb581d8000",
+          "lineNumber": 7540,
+          "method": "0x78cb581d9d74"
+        },
+        {
+          "frameAddress": "0x78c88dedf488",
+          "symbolAddress": "0x78c88dedf2ec",
+          "loadAddress": "0x78c88dbc8000",
+          "lineNumber": 3241096,
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "method": "_ZN3art11interpreter33ArtInterpreterToInterpreterBridgeEPNS_6ThreadERKNS_20CodeItemDataAccessorEPNS_11ShadowFrameEPNS_6JValueE",
+          "codeIdentifier": "b229f9d1b6196afaae086f29f029f907"
+        },
+        {
+          "frameAddress": "0x78c88e2415bc",
+          "symbolAddress": "0x78c88e240da8",
+          "loadAddress": "0x78c88dbc8000",
+          "lineNumber": 6788540,
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "method": "_ZN3art11interpreter6DoCallILb0EEEbPNS_9ArtMethodEPNS_6ThreadERNS_11ShadowFrameEPKNS_11InstructionEtbPNS_6JValueE",
+          "codeIdentifier": "b229f9d1b6196afaae086f29f029f907"
+        },
+        {
+          "frameAddress": "0x78c88e190690",
+          "symbolAddress": "0x78c88e190190",
+          "loadAddress": "0x78c88dbc8000",
+          "lineNumber": 6063760,
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "method": "_ZN3art11interpreter20ExecuteSwitchImplCppILb0EEEvPNS0_17SwitchImplContextE",
+          "codeIdentifier": "b229f9d1b6196afaae086f29f029f907"
+        },
+        {
+          "frameAddress": "0x78c88dedfa88",
+          "symbolAddress": "0x78c88dedfa80",
+          "loadAddress": "0x78c88dbc8000",
+          "lineNumber": 3242632,
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "method": "ExecuteSwitchImplAsm",
+          "codeIdentifier": "b229f9d1b6196afaae086f29f029f907"
+        },
+        {
+          "frameAddress": "0x78cb581d99d0",
+          "symbolAddress": "0x78cb581d99d0",
+          "loadAddress": "0x78cb581d8000",
+          "lineNumber": 6608,
+          "method": "0x78cb581d99d0"
+        },
+        {
+          "frameAddress": "0x78c88dedf488",
+          "symbolAddress": "0x78c88dedf2ec",
+          "loadAddress": "0x78c88dbc8000",
+          "lineNumber": 3241096,
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "method": "_ZN3art11interpreter33ArtInterpreterToInterpreterBridgeEPNS_6ThreadERKNS_20CodeItemDataAccessorEPNS_11ShadowFrameEPNS_6JValueE",
+          "codeIdentifier": "b229f9d1b6196afaae086f29f029f907"
+        },
+        {
+          "frameAddress": "0x78c88e2415bc",
+          "symbolAddress": "0x78c88e240da8",
+          "loadAddress": "0x78c88dbc8000",
+          "lineNumber": 6788540,
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "method": "_ZN3art11interpreter6DoCallILb0EEEbPNS_9ArtMethodEPNS_6ThreadERNS_11ShadowFrameEPKNS_11InstructionEtbPNS_6JValueE",
+          "codeIdentifier": "b229f9d1b6196afaae086f29f029f907"
+        },
+        {
+          "frameAddress": "0x78c88e190690",
+          "symbolAddress": "0x78c88e190190",
+          "loadAddress": "0x78c88dbc8000",
+          "lineNumber": 6063760,
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "method": "_ZN3art11interpreter20ExecuteSwitchImplCppILb0EEEvPNS0_17SwitchImplContextE",
+          "codeIdentifier": "b229f9d1b6196afaae086f29f029f907"
+        },
+        {
+          "frameAddress": "0x78c88dedfa88",
+          "symbolAddress": "0x78c88dedfa80",
+          "loadAddress": "0x78c88dbc8000",
+          "lineNumber": 3242632,
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "method": "ExecuteSwitchImplAsm",
+          "codeIdentifier": "b229f9d1b6196afaae086f29f029f907"
+        },
+        {
+          "frameAddress": "0x78cb581d9640",
+          "symbolAddress": "0x78cb581d9640",
+          "loadAddress": "0x78cb581d8000",
+          "lineNumber": 5696,
+          "method": "0x78cb581d9640"
+        },
+        {
+          "frameAddress": "0x78c88de9f63c",
+          "symbolAddress": "0x78c88de9f4f0",
+          "loadAddress": "0x78c88dbc8000",
+          "lineNumber": 2979388,
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "method": "_ZN3art11interpreterL7ExecuteEPNS_6ThreadERKNS_20CodeItemDataAccessorERNS_11ShadowFrameENS_6JValueEbb.__uniq.112435418011751916792819755956732575238.llvm.11186287395527938019",
+          "codeIdentifier": "b229f9d1b6196afaae086f29f029f907"
+        },
+        {
+          "frameAddress": "0x78c88de9ee70",
+          "symbolAddress": "0x78c88de9eaf8",
+          "loadAddress": "0x78c88dbc8000",
+          "lineNumber": 2977392,
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "method": "artQuickToInterpreterBridge",
+          "codeIdentifier": "b229f9d1b6196afaae086f29f029f907"
+        },
+        {
+          "frameAddress": "0x78c88df07638",
+          "symbolAddress": "0x78c88df075e0",
+          "loadAddress": "0x78c88dbc8000",
+          "lineNumber": 3405368,
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "method": "art_quick_to_interpreter_bridge",
+          "codeIdentifier": "b229f9d1b6196afaae086f29f029f907"
+        },
+        {
+          "frameAddress": "0x485df07c",
+          "symbolAddress": "0x485df07c",
+          "loadAddress": "0x48000000",
+          "lineNumber": 6156412,
+          "method": "0x485df07c"
+        }
+      ]
+    }
+  ],
+  "user": {
+    "id": "999999",
+    "name": "j@ex.co",
+    "email": "ndk override"
+  },
+  "app": {
+    "version": "1.0",
+    "id": "com.example.bugsnag.android",
+    "type": "android",
+    "releaseStage": "development",
+    "versionCode": 1,
+    "buildUUID": "6fe37cf5bf085f398d05aebb4f3930e12e3802f0",
+    "binaryArch": "arm64",
+    "duration": 83447119,
+    "durationInForeground": 83446000,
+    "inForeground": true,
+    "isLaunching": false
+  },
+  "device": {
+    "osName": "android",
+    "id": "da515088-7506-42e5-a054-bd7946514025",
+    "locale": "en_US",
+    "osVersion": "16",
+    "manufacturer": "Google",
+    "model": "sdk_gphone16k_arm64",
+    "orientation": "portrait",
+    "runtimeVersions": {
+      "androidApiLevel": 36,
+      "osBuild": "BE2A.250530.026.F3 dev-keys"
+    },
+    "cpuAbi": [
+      "arm64-v8a"
+    ],
+    "totalMemory": 2096365568,
+    "jailbroken": false,
+    "time": "2025-09-30T13:31:34Z"
+  },
+  "breadcrumbs": [
+    {
+      "timestamp": "2025-09-29T14:20:47.974Z",
+      "name": "Bugsnag loaded",
+      "type": "state"
+    },
+    {
+      "timestamp": "2025-09-29T14:20:48.068Z",
+      "name": "ExampleActivity#onCreate()",
+      "type": "state",
+      "metaData": {
+        "hasBundle": false,
+        "action": "android.intent.action.MAIN",
+        "categories": "android.intent.category.LAUNCHER",
+        "flags": "0x10000000",
+        "hasData": false,
+        "hasExtras": false
+      }
+    },
+    {
+      "timestamp": "2025-09-29T14:20:48.153Z",
+      "name": "ExampleActivity#onStart()",
+      "type": "state",
+      "metaData": {
+        "previous": "onCreate()"
+      }
+    },
+    {
+      "timestamp": "2025-09-29T14:20:48.157Z",
+      "name": "ExampleActivity#onResume()",
+      "type": "state",
+      "metaData": {
+        "previous": "onStart()"
+      }
+    },
+    {
+      "timestamp": "2025-09-29T14:21:25.651Z",
+      "name": "java.lang.RuntimeException",
+      "type": "error",
+      "metaData": {
+        "unhandled": "false",
+        "severity": "WARNING",
+        "errorClass": "java.lang.RuntimeException",
+        "message": "Non-Fatal Crash"
+      }
+    },
+    {
+      "timestamp": "2025-09-29T16:58:35.051Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-29T17:14:49.008Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-29T17:31:42.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-29T17:48:45.004Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-29T18:02:22.005Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-29T18:20:11.005Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-29T18:36:57.010Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-29T18:42:12.005Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-29T18:58:37.004Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-29T19:16:28.008Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-29T19:31:54.007Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-29T19:47:03.010Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-29T20:03:09.008Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-29T20:19:29.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-29T20:36:43.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-29T20:54:03.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-29T21:11:56.004Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-29T21:27:03.008Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-29T21:42:36.008Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-29T21:59:51.008Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-29T22:15:18.005Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-29T22:30:31.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-29T22:48:23.007Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-29T23:04:20.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-29T23:21:29.015Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-29T23:39:17.007Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-29T23:54:50.007Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T00:11:58.005Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T00:28:22.004Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T00:43:27.007Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T00:59:58.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T01:17:56.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T01:34:43.010Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T01:49:47.007Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T02:07:32.007Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T02:15:23.005Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T02:29:12.005Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T02:44:32.004Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T03:02:28.008Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T03:18:27.005Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T03:34:34.012Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T03:51:03.005Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T03:51:05.607Z",
+      "name": "Connectivity changed",
+      "type": "state",
+      "metaData": {
+        "hasConnection": true,
+        "networkState": "unknown"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T04:06:13.005Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T04:23:48.007Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T04:30:13.005Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T04:46:29.007Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T05:02:28.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T05:18:49.004Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T05:31:14.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T05:48:36.007Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T06:06:26.007Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T06:23:20.007Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T06:32:15.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T06:50:18.006Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T07:05:28.005Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    },
+    {
+      "timestamp": "2025-09-30T07:08:55.005Z",
+      "name": "TIME_SET",
+      "type": "state",
+      "metaData": {
+        "Intent Action": "android.intent.action.TIME_SET"
+      }
+    }
+  ],
+  "usage": {
+    "callbacks": {
+      "ndkOnError": 1,
+      "app_set_is_launching": true,
+      "event_add_metadata_bool": true,
+      "event_add_metadata_string": true,
+      "event_set_context": true,
+      "event_set_user": true,
+      "event_set_grouping_discriminator": true
+    },
+    "config": {
+      "pluginCount": 1,
+      "launchDurationMillis": 5000,
+      "logger": true
+    }
+  },
+  "threads": [
+    {
+      "id": "29630",
+      "errorReportingThread": true,
+      "name": "bugsnag.android",
+      "state": "running",
+      "type": "c"
+    },
+    {
+      "id": "29632",
+      "name": "Signal Catcher",
+      "state": "sleeping",
+      "type": "c"
+    },
+    {
+      "id": "29633",
+      "name": "perfetto_hprof_",
+      "state": "sleeping",
+      "type": "c"
+    },
+    {
+      "id": "29634",
+      "name": "ADB-JDWP Connec",
+      "state": "sleeping",
+      "type": "c"
+    },
+    {
+      "id": "29635",
+      "name": "Jit thread pool",
+      "state": "sleeping",
+      "type": "c"
+    },
+    {
+      "id": "29636",
+      "name": "HeapTaskDaemon",
+      "state": "sleeping",
+      "type": "c"
+    },
+    {
+      "id": "29637",
+      "name": "ReferenceQueueD",
+      "state": "sleeping",
+      "type": "c"
+    },
+    {
+      "id": "29638",
+      "name": "FinalizerDaemon",
+      "state": "sleeping",
+      "type": "c"
+    },
+    {
+      "id": "29639",
+      "name": "FinalizerWatchd",
+      "state": "sleeping",
+      "type": "c"
+    },
+    {
+      "id": "29640",
+      "name": "binder:29630_1",
+      "state": "sleeping",
+      "type": "c"
+    },
+    {
+      "id": "29641",
+      "name": "binder:29630_2",
+      "state": "sleeping",
+      "type": "c"
+    },
+    {
+      "id": "29642",
+      "name": "binder:29630_3",
+      "state": "sleeping",
+      "type": "c"
+    },
+    {
+      "id": "29644",
+      "name": "Profile Saver",
+      "state": "sleeping",
+      "type": "c"
+    },
+    {
+      "id": "29645",
+      "name": "Bugsnag IO thre",
+      "state": "sleeping",
+      "type": "c"
+    },
+    {
+      "id": "29651",
+      "name": "bugsnag-anr-col",
+      "state": "sleeping",
+      "type": "c"
+    },
+    {
+      "id": "29652",
+      "name": "bugsnag.android",
+      "state": "sleeping",
+      "type": "c"
+    },
+    {
+      "id": "29653",
+      "name": "Bugsnag Error t",
+      "state": "sleeping",
+      "type": "c"
+    },
+    {
+      "id": "29654",
+      "name": "Bugsnag Session",
+      "state": "sleeping",
+      "type": "c"
+    },
+    {
+      "id": "29655",
+      "name": "ConnectivityThr",
+      "state": "sleeping",
+      "type": "c"
+    },
+    {
+      "id": "29656",
+      "name": "RenderThread",
+      "state": "sleeping",
+      "type": "c"
+    },
+    {
+      "id": "29661",
+      "name": "TracingMuxer",
+      "state": "sleeping",
+      "type": "c"
+    },
+    {
+      "id": "29662",
+      "name": "hwuiTask0",
+      "state": "sleeping",
+      "type": "c"
+    },
+    {
+      "id": "29663",
+      "name": "hwuiTask1",
+      "state": "sleeping",
+      "type": "c"
+    },
+    {
+      "id": "29666",
+      "name": "SurfaceSyncGrou",
+      "state": "sleeping",
+      "type": "c"
+    },
+    {
+      "id": "29667",
+      "name": "ConscryptStatsL",
+      "state": "sleeping",
+      "type": "c"
+    },
+    {
+      "id": "29668",
+      "name": "binder:29630_4",
+      "state": "sleeping",
+      "type": "c"
+    },
+    {
+      "id": "29669",
+      "name": "binder:29630_4",
+      "state": "sleeping",
+      "type": "c"
+    }
+  ],
+  "session": {
+    "id": "0fb86691-8499-4549-a25d-c4b9178e6d5a",
+    "startedAt": "2025-09-29T14:20:48.149Z",
+    "events": {
+      "handled": 1,
+      "unhandled": 1
+    }
+  }
+}

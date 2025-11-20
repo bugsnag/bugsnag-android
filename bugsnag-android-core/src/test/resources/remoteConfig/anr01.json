@@ -1,0 +1,1309 @@
+{
+  "context": "ExampleActivity",
+  "metaData": {
+    "app": {
+      "memoryUsage": 4937568,
+      "totalMemory": 9151742,
+      "processName": "com.example.bugsnag.android",
+      "activeScreen": "ExampleActivity",
+      "name": "Bugsnag",
+      "memoryLimit": 201326592,
+      "freeMemory": 4214174,
+      "processImportance": "foreground"
+    },
+    "Custom Data": {
+      "members": [
+        {
+          "Group Members 1": "Adam"
+        },
+        {
+          "Group Members 2": "Alice"
+        }
+      ]
+    },
+    "Last Resume Time": {
+      "Member Last Resume Time": {
+        "Last Resume Time": "2025-10-01T16:07:49.137Z"
+      }
+    },
+    "user": {
+      "age": 31
+    },
+    "device": {
+      "locationStatus": "allowed",
+      "emulator": false,
+      "networkAccess": "cellular",
+      "charging": false,
+      "screenDensity": 2.625,
+      "dpi": 420,
+      "screenResolution": "2424x1080",
+      "brand": "google",
+      "batteryLevel": 1.0
+    }
+  },
+  "severity": "error",
+  "severityReason": {
+    "type": "anrError",
+    "unhandledOverridden": false
+  },
+  "unhandled": true,
+  "exceptions": [
+    {
+      "errorClass": "ANR",
+      "message": " Input dispatching timed out (a411f9d com.example.bugsnag.android/com.example.bugsnag.android.ExampleActivity is not responding. Waited 5000ms for MotionEvent).",
+      "type": "android",
+      "stacktrace": [
+        {
+          "method": "Java_com_example_bugsnag_android_BaseCrashyActivity_anrFromCXX",
+          "file": "/data/app/~~FqNp5rRUP9jrTIEHzpmUSg==/com.example.bugsnag.android-4FDM8-k0-PbIOI4Hpslbyw==/lib/arm64/libentrypoint.so",
+          "lineNumber": 3344,
+          "frameAddress": "0x78c88a040d10",
+          "symbolAddress": "0x78c88a040d04",
+          "loadAddress": "0x78c88a040000",
+          "type": "c"
+        },
+        {
+          "method": "art_quick_generic_jni_trampoline",
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "lineNumber": 3405056,
+          "frameAddress": "0x78c88df07500",
+          "symbolAddress": "0x78c88df07470",
+          "loadAddress": "0x78c88dbc8000",
+          "type": "c"
+        },
+        {
+          "method": "art_quick_invoke_stub",
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "lineNumber": 3309972,
+          "frameAddress": "0x78c88def0194",
+          "symbolAddress": "0x78c88deeff30",
+          "loadAddress": "0x78c88dbc8000",
+          "type": "c"
+        },
+        {
+          "method": "_ZN3art11interpreter6DoCallILb0EEEbPNS_9ArtMethodEPNS_6ThreadERNS_11ShadowFrameEPKNS_11InstructionEtbPNS_6JValueE",
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "lineNumber": 6788052,
+          "frameAddress": "0x78c88e2413d4",
+          "symbolAddress": "0x78c88e240da8",
+          "loadAddress": "0x78c88dbc8000",
+          "type": "c"
+        },
+        {
+          "method": "_ZN3art11interpreter20ExecuteSwitchImplCppILb0EEEvPNS0_17SwitchImplContextE",
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "lineNumber": 6063348,
+          "frameAddress": "0x78c88e1904f4",
+          "symbolAddress": "0x78c88e190190",
+          "loadAddress": "0x78c88dbc8000",
+          "type": "c"
+        },
+        {
+          "method": "ExecuteSwitchImplAsm",
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "lineNumber": 3242632,
+          "frameAddress": "0x78c88dedfa88",
+          "symbolAddress": "0x78c88dedfa80",
+          "loadAddress": "0x78c88dbc8000",
+          "type": "c"
+        },
+        {
+          "method": "",
+          "file": "",
+          "lineNumber": 753760,
+          "frameAddress": "0x78c851eac060",
+          "symbolAddress": "0x78c851eac060",
+          "loadAddress": "0x78c851df4000",
+          "type": "c"
+        },
+        {
+          "method": "_ZN3art11interpreter33ArtInterpreterToInterpreterBridgeEPNS_6ThreadERKNS_20CodeItemDataAccessorEPNS_11ShadowFrameEPNS_6JValueE",
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "lineNumber": 3241096,
+          "frameAddress": "0x78c88dedf488",
+          "symbolAddress": "0x78c88dedf2ec",
+          "loadAddress": "0x78c88dbc8000",
+          "type": "c"
+        },
+        {
+          "method": "_ZN3art11interpreter6DoCallILb0EEEbPNS_9ArtMethodEPNS_6ThreadERNS_11ShadowFrameEPKNS_11InstructionEtbPNS_6JValueE",
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "lineNumber": 6788540,
+          "frameAddress": "0x78c88e2415bc",
+          "symbolAddress": "0x78c88e240da8",
+          "loadAddress": "0x78c88dbc8000",
+          "type": "c"
+        },
+        {
+          "method": "_ZN3art11interpreter20ExecuteSwitchImplCppILb0EEEvPNS0_17SwitchImplContextE",
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "lineNumber": 6063760,
+          "frameAddress": "0x78c88e190690",
+          "symbolAddress": "0x78c88e190190",
+          "loadAddress": "0x78c88dbc8000",
+          "type": "c"
+        },
+        {
+          "method": "ExecuteSwitchImplAsm",
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "lineNumber": 3242632,
+          "frameAddress": "0x78c88dedfa88",
+          "symbolAddress": "0x78c88dedfa80",
+          "loadAddress": "0x78c88dbc8000",
+          "type": "c"
+        },
+        {
+          "method": "",
+          "file": "",
+          "lineNumber": 1107180,
+          "frameAddress": "0x78c851f024ec",
+          "symbolAddress": "0x78c851f024ec",
+          "loadAddress": "0x78c851df4000",
+          "type": "c"
+        },
+        {
+          "method": "_ZN3art11interpreterL7ExecuteEPNS_6ThreadERKNS_20CodeItemDataAccessorERNS_11ShadowFrameENS_6JValueEbb.__uniq.112435418011751916792819755956732575238.llvm.11186287395527938019",
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "lineNumber": 2979388,
+          "frameAddress": "0x78c88de9f63c",
+          "symbolAddress": "0x78c88de9f4f0",
+          "loadAddress": "0x78c88dbc8000",
+          "type": "c"
+        },
+        {
+          "method": "artQuickToInterpreterBridge",
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "lineNumber": 2977392,
+          "frameAddress": "0x78c88de9ee70",
+          "symbolAddress": "0x78c88de9eaf8",
+          "loadAddress": "0x78c88dbc8000",
+          "type": "c"
+        },
+        {
+          "method": "art_quick_to_interpreter_bridge",
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "lineNumber": 3405368,
+          "frameAddress": "0x78c88df07638",
+          "symbolAddress": "0x78c88df075e0",
+          "loadAddress": "0x78c88dbc8000",
+          "type": "c"
+        },
+        {
+          "method": "",
+          "file": "",
+          "lineNumber": 5726140,
+          "frameAddress": "0x48575fbc",
+          "symbolAddress": "0x48575fbc",
+          "loadAddress": "0x48000000",
+          "type": "c"
+        },
+        {
+          "method": "com.example.bugsnag.android.BaseCrashyActivity.anrFromCXX",
+          "file": "SourceFile",
+          "lineNumber": -2,
+          "inProject": true
+        },
+        {
+          "method": "com.example.bugsnag.android.BaseCrashyActivity.u",
+          "file": "SourceFile",
+          "lineNumber": 1,
+          "inProject": true
+        },
+        {
+          "method": "o0.b.onClick",
+          "file": "SourceFile",
+          "lineNumber": 8
+        },
+        {
+          "method": "android.view.View.performClick",
+          "file": "View.java",
+          "lineNumber": 8083
+        },
+        {
+          "method": "android.view.View.performClickInternal",
+          "file": "View.java",
+          "lineNumber": 8060
+        },
+        {
+          "method": "android.view.View.-$$Nest$mperformClickInternal",
+          "file": "Unknown",
+          "lineNumber": 0
+        },
+        {
+          "method": "android.view.View$PerformClick.run",
+          "file": "View.java",
+          "lineNumber": 31549
+        },
+        {
+          "method": "android.os.Handler.handleCallback",
+          "file": "Handler.java",
+          "lineNumber": 995
+        },
+        {
+          "method": "android.os.Handler.dispatchMessage",
+          "file": "Handler.java",
+          "lineNumber": 103
+        },
+        {
+          "method": "android.os.Looper.loopOnce",
+          "file": "Looper.java",
+          "lineNumber": 248
+        },
+        {
+          "method": "android.os.Looper.loop",
+          "file": "Looper.java",
+          "lineNumber": 338
+        },
+        {
+          "method": "android.app.ActivityThread.main",
+          "file": "ActivityThread.java",
+          "lineNumber": 9067
+        },
+        {
+          "method": "java.lang.reflect.Method.invoke",
+          "file": "Method.java",
+          "lineNumber": -2
+        },
+        {
+          "method": "com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run",
+          "file": "RuntimeInit.java",
+          "lineNumber": 593
+        },
+        {
+          "method": "com.android.internal.os.ZygoteInit.main",
+          "file": "ZygoteInit.java",
+          "lineNumber": 932
+        }
+      ]
+    }
+  ],
+  "projectPackages": [
+    "com.example.bugsnag.android"
+  ],
+  "user": {
+    "id": "123456",
+    "email": "joebloggs@example.com",
+    "name": "Joe Bloggs"
+  },
+  "app": {
+    "binaryArch": "arm64",
+    "buildUUID": "93348f5f102f35a5367ddb5d21a96c6332c638fc",
+    "id": "com.example.bugsnag.android",
+    "releaseStage": "development",
+    "type": "android",
+    "version": "1.0",
+    "versionCode": 1,
+    "duration": 129219,
+    "durationInForeground": 128770,
+    "inForeground": true,
+    "isLaunching": false
+  },
+  "device": {
+    "cpuAbi": [
+      "arm64-v8a"
+    ],
+    "jailbroken": false,
+    "id": "8d2f5aaa-a207-4a00-ae3d-faf5d38768dd",
+    "locale": "en_US",
+    "manufacturer": "Google",
+    "model": "sdk_gphone16k_arm64",
+    "osName": "android",
+    "osVersion": "16",
+    "runtimeVersions": {
+      "androidApiLevel": "36",
+      "osBuild": "BE2A.250530.026.F3 dev-keys"
+    },
+    "totalMemory": 2096365568,
+    "freeDisk": 4640706560,
+    "freeMemory": 291848192,
+    "orientation": "portrait",
+    "time": "2025-10-01T16:09:57.902Z"
+  },
+  "breadcrumbs": [
+    {
+      "timestamp": "2025-10-01T16:07:48.984Z",
+      "name": "Bugsnag loaded",
+      "type": "state",
+      "metaData": {}
+    },
+    {
+      "timestamp": "2025-10-01T16:07:49.056Z",
+      "name": "ExampleActivity#onCreate()",
+      "type": "state",
+      "metaData": {
+        "hasBundle": false,
+        "action": "android.intent.action.MAIN",
+        "categories": "android.intent.category.LAUNCHER",
+        "flags": "0x10200000",
+        "hasData": false,
+        "hasExtras": false
+      }
+    },
+    {
+      "timestamp": "2025-10-01T16:07:49.135Z",
+      "name": "ExampleActivity#onStart()",
+      "type": "state",
+      "metaData": {
+        "previous": "onCreate()"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T16:07:49.140Z",
+      "name": "ExampleActivity#onResume()",
+      "type": "state",
+      "metaData": {
+        "previous": "onStart()"
+      }
+    },
+    {
+      "timestamp": "2025-10-01T16:07:54.701Z",
+      "name": "java.lang.RuntimeException",
+      "type": "error",
+      "metaData": {
+        "unhandled": "false",
+        "severity": "WARNING",
+        "errorClass": "java.lang.RuntimeException",
+        "message": "Non-Fatal Crash"
+      }
+    }
+  ],
+  "usage": {
+    "config": {
+      "pluginCount": 1,
+      "launchDurationMillis": 5000,
+      "logger": true
+    },
+    "callbacks": {
+      "event_set_context": true,
+      "app_set_is_launching": true,
+      "ndkOnError": 1,
+      "event_set_grouping_discriminator": true
+    }
+  },
+  "threads": [
+    {
+      "id": "2",
+      "name": "main",
+      "type": "android",
+      "state": "RUNNABLE",
+      "stacktrace": [
+        {
+          "method": "com.example.bugsnag.android.BaseCrashyActivity.anrFromCXX",
+          "file": "SourceFile",
+          "lineNumber": -2,
+          "inProject": true
+        },
+        {
+          "method": "com.example.bugsnag.android.BaseCrashyActivity.u",
+          "file": "SourceFile",
+          "lineNumber": 1,
+          "inProject": true
+        },
+        {
+          "method": "o0.b.onClick",
+          "file": "SourceFile",
+          "lineNumber": 8
+        },
+        {
+          "method": "android.view.View.performClick",
+          "file": "View.java",
+          "lineNumber": 8083
+        },
+        {
+          "method": "android.view.View.performClickInternal",
+          "file": "View.java",
+          "lineNumber": 8060
+        },
+        {
+          "method": "android.view.View.-$$Nest$mperformClickInternal",
+          "file": "Unknown",
+          "lineNumber": 0
+        },
+        {
+          "method": "android.view.View$PerformClick.run",
+          "file": "View.java",
+          "lineNumber": 31549
+        },
+        {
+          "method": "android.os.Handler.handleCallback",
+          "file": "Handler.java",
+          "lineNumber": 995
+        },
+        {
+          "method": "android.os.Handler.dispatchMessage",
+          "file": "Handler.java",
+          "lineNumber": 103
+        },
+        {
+          "method": "android.os.Looper.loopOnce",
+          "file": "Looper.java",
+          "lineNumber": 248
+        },
+        {
+          "method": "android.os.Looper.loop",
+          "file": "Looper.java",
+          "lineNumber": 338
+        },
+        {
+          "method": "android.app.ActivityThread.main",
+          "file": "ActivityThread.java",
+          "lineNumber": 9067
+        },
+        {
+          "method": "java.lang.reflect.Method.invoke",
+          "file": "Method.java",
+          "lineNumber": -2
+        },
+        {
+          "method": "com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run",
+          "file": "RuntimeInit.java",
+          "lineNumber": 593
+        },
+        {
+          "method": "com.android.internal.os.ZygoteInit.main",
+          "file": "ZygoteInit.java",
+          "lineNumber": 932
+        }
+      ]
+    },
+    {
+      "id": "55",
+      "name": "Signal Catcher",
+      "type": "android",
+      "state": "WAITING",
+      "stacktrace": []
+    },
+    {
+      "id": "57",
+      "name": "HeapTaskDaemon",
+      "type": "android",
+      "state": "WAITING",
+      "stacktrace": []
+    },
+    {
+      "id": "58",
+      "name": "ReferenceQueueDaemon",
+      "type": "android",
+      "state": "WAITING",
+      "stacktrace": [
+        {
+          "method": "java.lang.Object.wait",
+          "file": "Object.java",
+          "lineNumber": -2
+        },
+        {
+          "method": "java.lang.Object.wait",
+          "file": "Object.java",
+          "lineNumber": 405
+        },
+        {
+          "method": "java.lang.Object.wait",
+          "file": "Object.java",
+          "lineNumber": 543
+        },
+        {
+          "method": "java.lang.Daemons$ReferenceQueueDaemon.runInternal",
+          "file": "Daemons.java",
+          "lineNumber": 260
+        },
+        {
+          "method": "java.lang.Daemons$Daemon.run",
+          "file": "Daemons.java",
+          "lineNumber": 132
+        },
+        {
+          "method": "java.lang.Thread.run",
+          "file": "Thread.java",
+          "lineNumber": 1119
+        }
+      ]
+    },
+    {
+      "id": "59",
+      "name": "FinalizerDaemon",
+      "type": "android",
+      "state": "WAITING",
+      "stacktrace": [
+        {
+          "method": "java.lang.Object.wait",
+          "file": "Object.java",
+          "lineNumber": -2
+        },
+        {
+          "method": "java.lang.Object.wait",
+          "file": "Object.java",
+          "lineNumber": 405
+        },
+        {
+          "method": "java.lang.ref.ReferenceQueue.remove",
+          "file": "ReferenceQueue.java",
+          "lineNumber": 207
+        },
+        {
+          "method": "java.lang.ref.ReferenceQueue.remove",
+          "file": "ReferenceQueue.java",
+          "lineNumber": 228
+        },
+        {
+          "method": "java.lang.Daemons$FinalizerDaemon.runInternal",
+          "file": "Daemons.java",
+          "lineNumber": 348
+        },
+        {
+          "method": "java.lang.Daemons$Daemon.run",
+          "file": "Daemons.java",
+          "lineNumber": 132
+        },
+        {
+          "method": "java.lang.Thread.run",
+          "file": "Thread.java",
+          "lineNumber": 1119
+        }
+      ]
+    },
+    {
+      "id": "60",
+      "name": "FinalizerWatchdogDaemon",
+      "type": "android",
+      "state": "WAITING",
+      "stacktrace": [
+        {
+          "method": "java.lang.Object.wait",
+          "file": "Object.java",
+          "lineNumber": -2
+        },
+        {
+          "method": "java.lang.Object.wait",
+          "file": "Object.java",
+          "lineNumber": 405
+        },
+        {
+          "method": "java.lang.Object.wait",
+          "file": "Object.java",
+          "lineNumber": 543
+        },
+        {
+          "method": "java.lang.Daemons$FinalizerWatchdogDaemon.sleepUntilNeeded",
+          "file": "Daemons.java",
+          "lineNumber": 481
+        },
+        {
+          "method": "java.lang.Daemons$FinalizerWatchdogDaemon.runInternal",
+          "file": "Daemons.java",
+          "lineNumber": 461
+        },
+        {
+          "method": "java.lang.Daemons$Daemon.run",
+          "file": "Daemons.java",
+          "lineNumber": 132
+        },
+        {
+          "method": "java.lang.Thread.run",
+          "file": "Thread.java",
+          "lineNumber": 1119
+        }
+      ]
+    },
+    {
+      "id": "61",
+      "name": "Jit thread pool worker thread 0",
+      "type": "android",
+      "state": "RUNNABLE",
+      "stacktrace": []
+    },
+    {
+      "id": "62",
+      "name": "binder:4753_1",
+      "type": "android",
+      "state": "RUNNABLE",
+      "stacktrace": []
+    },
+    {
+      "id": "63",
+      "name": "binder:4753_2",
+      "type": "android",
+      "state": "RUNNABLE",
+      "stacktrace": []
+    },
+    {
+      "id": "64",
+      "name": "binder:4753_3",
+      "type": "android",
+      "state": "RUNNABLE",
+      "stacktrace": []
+    },
+    {
+      "id": "65",
+      "name": "binder:4753_4",
+      "type": "android",
+      "state": "RUNNABLE",
+      "stacktrace": []
+    },
+    {
+      "id": "66",
+      "name": "Profile Saver",
+      "type": "android",
+      "state": "RUNNABLE",
+      "stacktrace": []
+    },
+    {
+      "id": "67",
+      "name": "Bugsnag IO thread",
+      "type": "android",
+      "state": "WAITING",
+      "stacktrace": [
+        {
+          "method": "jdk.internal.misc.Unsafe.park",
+          "file": "Unsafe.java",
+          "lineNumber": -2
+        },
+        {
+          "method": "java.util.concurrent.locks.LockSupport.park",
+          "file": "LockSupport.java",
+          "lineNumber": 371
+        },
+        {
+          "method": "java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block",
+          "file": "AbstractQueuedSynchronizer.java",
+          "lineNumber": 519
+        },
+        {
+          "method": "java.util.concurrent.ForkJoinPool.unmanagedBlock",
+          "file": "ForkJoinPool.java",
+          "lineNumber": 3805
+        },
+        {
+          "method": "java.util.concurrent.ForkJoinPool.managedBlock",
+          "file": "ForkJoinPool.java",
+          "lineNumber": 3746
+        },
+        {
+          "method": "java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await",
+          "file": "AbstractQueuedSynchronizer.java",
+          "lineNumber": 1707
+        },
+        {
+          "method": "java.util.concurrent.LinkedBlockingQueue.take",
+          "file": "LinkedBlockingQueue.java",
+          "lineNumber": 435
+        },
+        {
+          "method": "java.util.concurrent.ThreadPoolExecutor.getTask",
+          "file": "ThreadPoolExecutor.java",
+          "lineNumber": 1082
+        },
+        {
+          "method": "java.util.concurrent.ThreadPoolExecutor.runWorker",
+          "file": "ThreadPoolExecutor.java",
+          "lineNumber": 1142
+        },
+        {
+          "method": "java.util.concurrent.ThreadPoolExecutor$Worker.run",
+          "file": "ThreadPoolExecutor.java",
+          "lineNumber": 651
+        },
+        {
+          "method": "java.lang.Thread.run",
+          "file": "Thread.java",
+          "lineNumber": 1119
+        }
+      ]
+    },
+    {
+      "id": "72",
+      "name": "bugsnag-anr-collector",
+      "type": "android",
+      "state": "RUNNABLE",
+      "stacktrace": [
+        {
+          "method": "android.os.MessageQueue.nativePollOnce",
+          "file": "MessageQueue.java",
+          "lineNumber": -2
+        },
+        {
+          "method": "android.os.MessageQueue.nextLegacy",
+          "file": "MessageQueue.java",
+          "lineNumber": 913
+        },
+        {
+          "method": "android.os.MessageQueue.next",
+          "file": "MessageQueue.java",
+          "lineNumber": 1025
+        },
+        {
+          "method": "android.os.Looper.loopOnce",
+          "file": "Looper.java",
+          "lineNumber": 196
+        },
+        {
+          "method": "android.os.Looper.loop",
+          "file": "Looper.java",
+          "lineNumber": 338
+        },
+        {
+          "method": "android.os.HandlerThread.run",
+          "file": "HandlerThread.java",
+          "lineNumber": 85
+        }
+      ]
+    },
+    {
+      "id": "73",
+      "name": "Bugsnag Error thread",
+      "type": "android",
+      "state": "WAITING",
+      "stacktrace": [
+        {
+          "method": "jdk.internal.misc.Unsafe.park",
+          "file": "Unsafe.java",
+          "lineNumber": -2
+        },
+        {
+          "method": "java.util.concurrent.locks.LockSupport.park",
+          "file": "LockSupport.java",
+          "lineNumber": 371
+        },
+        {
+          "method": "java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block",
+          "file": "AbstractQueuedSynchronizer.java",
+          "lineNumber": 519
+        },
+        {
+          "method": "java.util.concurrent.ForkJoinPool.unmanagedBlock",
+          "file": "ForkJoinPool.java",
+          "lineNumber": 3805
+        },
+        {
+          "method": "java.util.concurrent.ForkJoinPool.managedBlock",
+          "file": "ForkJoinPool.java",
+          "lineNumber": 3746
+        },
+        {
+          "method": "java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await",
+          "file": "AbstractQueuedSynchronizer.java",
+          "lineNumber": 1707
+        },
+        {
+          "method": "java.util.concurrent.LinkedBlockingQueue.take",
+          "file": "LinkedBlockingQueue.java",
+          "lineNumber": 435
+        },
+        {
+          "method": "java.util.concurrent.ThreadPoolExecutor.getTask",
+          "file": "ThreadPoolExecutor.java",
+          "lineNumber": 1082
+        },
+        {
+          "method": "java.util.concurrent.ThreadPoolExecutor.runWorker",
+          "file": "ThreadPoolExecutor.java",
+          "lineNumber": 1142
+        },
+        {
+          "method": "java.util.concurrent.ThreadPoolExecutor$Worker.run",
+          "file": "ThreadPoolExecutor.java",
+          "lineNumber": 651
+        },
+        {
+          "method": "java.lang.Thread.run",
+          "file": "Thread.java",
+          "lineNumber": 1119
+        }
+      ]
+    },
+    {
+      "id": "74",
+      "name": "OkHttp ConnectionPool",
+      "type": "android",
+      "state": "TIMED_WAITING",
+      "stacktrace": [
+        {
+          "method": "java.lang.Object.wait",
+          "file": "Object.java",
+          "lineNumber": -2
+        },
+        {
+          "method": "com.android.okhttp.ConnectionPool$1.run",
+          "file": "ConnectionPool.java",
+          "lineNumber": 106
+        },
+        {
+          "method": "java.util.concurrent.ThreadPoolExecutor.runWorker",
+          "file": "ThreadPoolExecutor.java",
+          "lineNumber": 1156
+        },
+        {
+          "method": "java.util.concurrent.ThreadPoolExecutor$Worker.run",
+          "file": "ThreadPoolExecutor.java",
+          "lineNumber": 651
+        },
+        {
+          "method": "java.lang.Thread.run",
+          "file": "Thread.java",
+          "lineNumber": 1119
+        }
+      ]
+    },
+    {
+      "id": "75",
+      "name": "ConscryptStatsLog",
+      "type": "android",
+      "state": "WAITING",
+      "stacktrace": [
+        {
+          "method": "jdk.internal.misc.Unsafe.park",
+          "file": "Unsafe.java",
+          "lineNumber": -2
+        },
+        {
+          "method": "java.util.concurrent.locks.LockSupport.park",
+          "file": "LockSupport.java",
+          "lineNumber": 371
+        },
+        {
+          "method": "java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block",
+          "file": "AbstractQueuedSynchronizer.java",
+          "lineNumber": 519
+        },
+        {
+          "method": "java.util.concurrent.ForkJoinPool.unmanagedBlock",
+          "file": "ForkJoinPool.java",
+          "lineNumber": 3805
+        },
+        {
+          "method": "java.util.concurrent.ForkJoinPool.managedBlock",
+          "file": "ForkJoinPool.java",
+          "lineNumber": 3746
+        },
+        {
+          "method": "java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await",
+          "file": "AbstractQueuedSynchronizer.java",
+          "lineNumber": 1707
+        },
+        {
+          "method": "java.util.concurrent.LinkedBlockingQueue.take",
+          "file": "LinkedBlockingQueue.java",
+          "lineNumber": 435
+        },
+        {
+          "method": "java.util.concurrent.ThreadPoolExecutor.getTask",
+          "file": "ThreadPoolExecutor.java",
+          "lineNumber": 1082
+        },
+        {
+          "method": "java.util.concurrent.ThreadPoolExecutor.runWorker",
+          "file": "ThreadPoolExecutor.java",
+          "lineNumber": 1142
+        },
+        {
+          "method": "java.util.concurrent.ThreadPoolExecutor$Worker.run",
+          "file": "ThreadPoolExecutor.java",
+          "lineNumber": 651
+        },
+        {
+          "method": "java.lang.Thread.run",
+          "file": "Thread.java",
+          "lineNumber": 1119
+        }
+      ]
+    },
+    {
+      "id": "76",
+      "name": "Bugsnag Session thread",
+      "type": "android",
+      "state": "WAITING",
+      "stacktrace": [
+        {
+          "method": "jdk.internal.misc.Unsafe.park",
+          "file": "Unsafe.java",
+          "lineNumber": -2
+        },
+        {
+          "method": "java.util.concurrent.locks.LockSupport.park",
+          "file": "LockSupport.java",
+          "lineNumber": 371
+        },
+        {
+          "method": "java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block",
+          "file": "AbstractQueuedSynchronizer.java",
+          "lineNumber": 519
+        },
+        {
+          "method": "java.util.concurrent.ForkJoinPool.unmanagedBlock",
+          "file": "ForkJoinPool.java",
+          "lineNumber": 3805
+        },
+        {
+          "method": "java.util.concurrent.ForkJoinPool.managedBlock",
+          "file": "ForkJoinPool.java",
+          "lineNumber": 3746
+        },
+        {
+          "method": "java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await",
+          "file": "AbstractQueuedSynchronizer.java",
+          "lineNumber": 1707
+        },
+        {
+          "method": "java.util.concurrent.LinkedBlockingQueue.take",
+          "file": "LinkedBlockingQueue.java",
+          "lineNumber": 435
+        },
+        {
+          "method": "java.util.concurrent.ThreadPoolExecutor.getTask",
+          "file": "ThreadPoolExecutor.java",
+          "lineNumber": 1082
+        },
+        {
+          "method": "java.util.concurrent.ThreadPoolExecutor.runWorker",
+          "file": "ThreadPoolExecutor.java",
+          "lineNumber": 1142
+        },
+        {
+          "method": "java.util.concurrent.ThreadPoolExecutor$Worker.run",
+          "file": "ThreadPoolExecutor.java",
+          "lineNumber": 651
+        },
+        {
+          "method": "java.lang.Thread.run",
+          "file": "Thread.java",
+          "lineNumber": 1119
+        }
+      ]
+    },
+    {
+      "id": "77",
+      "name": "ConnectivityThread",
+      "type": "android",
+      "state": "RUNNABLE",
+      "stacktrace": [
+        {
+          "method": "android.os.MessageQueue.nativePollOnce",
+          "file": "MessageQueue.java",
+          "lineNumber": -2
+        },
+        {
+          "method": "android.os.MessageQueue.nextLegacy",
+          "file": "MessageQueue.java",
+          "lineNumber": 913
+        },
+        {
+          "method": "android.os.MessageQueue.next",
+          "file": "MessageQueue.java",
+          "lineNumber": 1025
+        },
+        {
+          "method": "android.os.Looper.loopOnce",
+          "file": "Looper.java",
+          "lineNumber": 196
+        },
+        {
+          "method": "android.os.Looper.loop",
+          "file": "Looper.java",
+          "lineNumber": 338
+        },
+        {
+          "method": "android.os.HandlerThread.run",
+          "file": "HandlerThread.java",
+          "lineNumber": 85
+        }
+      ]
+    },
+    {
+      "id": "78",
+      "name": "RenderThread",
+      "type": "android",
+      "state": "RUNNABLE",
+      "stacktrace": []
+    },
+    {
+      "id": "79",
+      "name": "hwuiTask1",
+      "type": "android",
+      "state": "RUNNABLE",
+      "stacktrace": []
+    },
+    {
+      "id": "80",
+      "name": "hwuiTask0",
+      "type": "android",
+      "state": "RUNNABLE",
+      "stacktrace": []
+    },
+    {
+      "id": "81",
+      "name": "SurfaceSyncGroupTimer",
+      "type": "android",
+      "state": "RUNNABLE",
+      "stacktrace": [
+        {
+          "method": "android.os.MessageQueue.nativePollOnce",
+          "file": "MessageQueue.java",
+          "lineNumber": -2
+        },
+        {
+          "method": "android.os.MessageQueue.nextLegacy",
+          "file": "MessageQueue.java",
+          "lineNumber": 913
+        },
+        {
+          "method": "android.os.MessageQueue.next",
+          "file": "MessageQueue.java",
+          "lineNumber": 1025
+        },
+        {
+          "method": "android.os.Looper.loopOnce",
+          "file": "Looper.java",
+          "lineNumber": 196
+        },
+        {
+          "method": "android.os.Looper.loop",
+          "file": "Looper.java",
+          "lineNumber": 338
+        },
+        {
+          "method": "android.os.HandlerThread.run",
+          "file": "HandlerThread.java",
+          "lineNumber": 85
+        }
+      ]
+    },
+    {
+      "id": "84",
+      "name": "Thread-2",
+      "type": "android",
+      "state": "RUNNABLE",
+      "stacktrace": [
+        {
+          "method": "Java_com_example_bugsnag_android_BaseCrashyActivity_anrFromCXX",
+          "file": "/data/app/~~FqNp5rRUP9jrTIEHzpmUSg==/com.example.bugsnag.android-4FDM8-k0-PbIOI4Hpslbyw==/lib/arm64/libentrypoint.so",
+          "lineNumber": 3344,
+          "frameAddress": "0x78c88a040d10",
+          "symbolAddress": "0x78c88a040d04",
+          "loadAddress": "0x78c88a040000",
+          "type": "c"
+        },
+        {
+          "method": "art_quick_generic_jni_trampoline",
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "lineNumber": 3405056,
+          "frameAddress": "0x78c88df07500",
+          "symbolAddress": "0x78c88df07470",
+          "loadAddress": "0x78c88dbc8000",
+          "type": "c"
+        },
+        {
+          "method": "art_quick_invoke_stub",
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "lineNumber": 3309972,
+          "frameAddress": "0x78c88def0194",
+          "symbolAddress": "0x78c88deeff30",
+          "loadAddress": "0x78c88dbc8000",
+          "type": "c"
+        },
+        {
+          "method": "_ZN3art11interpreter6DoCallILb0EEEbPNS_9ArtMethodEPNS_6ThreadERNS_11ShadowFrameEPKNS_11InstructionEtbPNS_6JValueE",
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "lineNumber": 6788052,
+          "frameAddress": "0x78c88e2413d4",
+          "symbolAddress": "0x78c88e240da8",
+          "loadAddress": "0x78c88dbc8000",
+          "type": "c"
+        },
+        {
+          "method": "_ZN3art11interpreter20ExecuteSwitchImplCppILb0EEEvPNS0_17SwitchImplContextE",
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "lineNumber": 6063348,
+          "frameAddress": "0x78c88e1904f4",
+          "symbolAddress": "0x78c88e190190",
+          "loadAddress": "0x78c88dbc8000",
+          "type": "c"
+        },
+        {
+          "method": "ExecuteSwitchImplAsm",
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "lineNumber": 3242632,
+          "frameAddress": "0x78c88dedfa88",
+          "symbolAddress": "0x78c88dedfa80",
+          "loadAddress": "0x78c88dbc8000",
+          "type": "c"
+        },
+        {
+          "method": "",
+          "file": "",
+          "lineNumber": 753760,
+          "frameAddress": "0x78c851eac060",
+          "symbolAddress": "0x78c851eac060",
+          "loadAddress": "0x78c851df4000",
+          "type": "c"
+        },
+        {
+          "method": "_ZN3art11interpreter33ArtInterpreterToInterpreterBridgeEPNS_6ThreadERKNS_20CodeItemDataAccessorEPNS_11ShadowFrameEPNS_6JValueE",
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "lineNumber": 3241096,
+          "frameAddress": "0x78c88dedf488",
+          "symbolAddress": "0x78c88dedf2ec",
+          "loadAddress": "0x78c88dbc8000",
+          "type": "c"
+        },
+        {
+          "method": "_ZN3art11interpreter6DoCallILb0EEEbPNS_9ArtMethodEPNS_6ThreadERNS_11ShadowFrameEPKNS_11InstructionEtbPNS_6JValueE",
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "lineNumber": 6788540,
+          "frameAddress": "0x78c88e2415bc",
+          "symbolAddress": "0x78c88e240da8",
+          "loadAddress": "0x78c88dbc8000",
+          "type": "c"
+        },
+        {
+          "method": "_ZN3art11interpreter20ExecuteSwitchImplCppILb0EEEvPNS0_17SwitchImplContextE",
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "lineNumber": 6063760,
+          "frameAddress": "0x78c88e190690",
+          "symbolAddress": "0x78c88e190190",
+          "loadAddress": "0x78c88dbc8000",
+          "type": "c"
+        },
+        {
+          "method": "ExecuteSwitchImplAsm",
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "lineNumber": 3242632,
+          "frameAddress": "0x78c88dedfa88",
+          "symbolAddress": "0x78c88dedfa80",
+          "loadAddress": "0x78c88dbc8000",
+          "type": "c"
+        },
+        {
+          "method": "",
+          "file": "",
+          "lineNumber": 1107180,
+          "frameAddress": "0x78c851f024ec",
+          "symbolAddress": "0x78c851f024ec",
+          "loadAddress": "0x78c851df4000",
+          "type": "c"
+        },
+        {
+          "method": "_ZN3art11interpreterL7ExecuteEPNS_6ThreadERKNS_20CodeItemDataAccessorERNS_11ShadowFrameENS_6JValueEbb.__uniq.112435418011751916792819755956732575238.llvm.11186287395527938019",
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "lineNumber": 2979388,
+          "frameAddress": "0x78c88de9f63c",
+          "symbolAddress": "0x78c88de9f4f0",
+          "loadAddress": "0x78c88dbc8000",
+          "type": "c"
+        },
+        {
+          "method": "artQuickToInterpreterBridge",
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "lineNumber": 2977392,
+          "frameAddress": "0x78c88de9ee70",
+          "symbolAddress": "0x78c88de9eaf8",
+          "loadAddress": "0x78c88dbc8000",
+          "type": "c"
+        },
+        {
+          "method": "art_quick_to_interpreter_bridge",
+          "file": "/apex/com.android.art/lib64/libart.so",
+          "lineNumber": 3405368,
+          "frameAddress": "0x78c88df07638",
+          "symbolAddress": "0x78c88df075e0",
+          "loadAddress": "0x78c88dbc8000",
+          "type": "c"
+        },
+        {
+          "method": "",
+          "file": "",
+          "lineNumber": 5726140,
+          "frameAddress": "0x48575fbc",
+          "symbolAddress": "0x48575fbc",
+          "loadAddress": "0x48000000",
+          "type": "c"
+        },
+        {
+          "method": "com.example.bugsnag.android.BaseCrashyActivity.anrFromCXX",
+          "file": "SourceFile",
+          "lineNumber": -2,
+          "inProject": true
+        },
+        {
+          "method": "com.example.bugsnag.android.BaseCrashyActivity.u",
+          "file": "SourceFile",
+          "lineNumber": 1,
+          "inProject": true
+        },
+        {
+          "method": "o0.b.onClick",
+          "file": "SourceFile",
+          "lineNumber": 8
+        },
+        {
+          "method": "android.view.View.performClick",
+          "file": "View.java",
+          "lineNumber": 8083
+        },
+        {
+          "method": "android.view.View.performClickInternal",
+          "file": "View.java",
+          "lineNumber": 8060
+        },
+        {
+          "method": "android.view.View.-$$Nest$mperformClickInternal",
+          "file": "Unknown",
+          "lineNumber": 0
+        },
+        {
+          "method": "android.view.View$PerformClick.run",
+          "file": "View.java",
+          "lineNumber": 31549
+        },
+        {
+          "method": "android.os.Handler.handleCallback",
+          "file": "Handler.java",
+          "lineNumber": 995
+        },
+        {
+          "method": "android.os.Handler.dispatchMessage",
+          "file": "Handler.java",
+          "lineNumber": 103
+        },
+        {
+          "method": "android.os.Looper.loopOnce",
+          "file": "Looper.java",
+          "lineNumber": 248
+        },
+        {
+          "method": "android.os.Looper.loop",
+          "file": "Looper.java",
+          "lineNumber": 338
+        },
+        {
+          "method": "android.app.ActivityThread.main",
+          "file": "ActivityThread.java",
+          "lineNumber": 9067
+        },
+        {
+          "method": "java.lang.reflect.Method.invoke",
+          "file": "Method.java",
+          "lineNumber": -2
+        },
+        {
+          "method": "com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run",
+          "file": "RuntimeInit.java",
+          "lineNumber": 593
+        },
+        {
+          "method": "com.android.internal.os.ZygoteInit.main",
+          "file": "ZygoteInit.java",
+          "lineNumber": 932
+        }
+      ],
+      "errorReportingThread": true
+    }
+  ],
+  "featureFlags": [],
+  "session": {
+    "id": "09a10d4c-ec4a-4276-ba70-aa9fa949a7c9",
+    "startedAt": "2025-10-01T16:07:49.134Z",
+    "events": {
+      "handled": 1,
+      "unhandled": 1
+    }
+  }
+}
