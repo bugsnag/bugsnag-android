@@ -12,6 +12,7 @@ COPY buildSrc/ buildSrc/
 COPY bugsnag-android/ bugsnag-android/
 COPY bugsnag-android-core/ bugsnag-android-core/
 COPY bugsnag-plugin-android-anr/ bugsnag-plugin-android-anr/
+COPY bugsnag-plugin-android-apphang/ bugsnag-plugin-android-apphang/
 COPY bugsnag-plugin-android-exitinfo/ bugsnag-plugin-android-exitinfo/
 COPY bugsnag-plugin-android-ndk/ bugsnag-plugin-android-ndk/
 COPY bugsnag-plugin-android-okhttp/ bugsnag-plugin-android-okhttp/
