@@ -77,7 +77,7 @@ class BugsnagAppHangPluginTest {
 
         // we should have reported exactly 1 AppHang
         verify(client, times(1))
-            .notify(any(AppHangException::class.java))
+            .notify(any(AppHangException::class.java), any())
     }
 
     @Test
@@ -99,6 +99,6 @@ class BugsnagAppHangPluginTest {
 
         // we should have reported exactly 1 AppHangs
         verify(client, times(2))
-            .notify(any(AppHangException::class.java))
+            .notify(any(AppHangException::class.java), any())
     }
 }
