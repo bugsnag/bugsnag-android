@@ -48,6 +48,8 @@ class BugsnagAppHangPlugin @JvmOverloads constructor(
                 stackTrace
             )
         ) { event ->
+            event.errors.firstOrNull()?.errorClass = "AppHang"
+
             @Suppress("DEPRECATION")
             event.setErrorReportingThread(watchedThread.id)
             true

@@ -1,6 +1,5 @@
 -keep class com.bugsnag.android.mazerunner.scenarios.** {*;}
 -keep class com.bugsnag.android.mazerunner.SomeException {*;}
 -keep class com.bugsnag.android.DeliveryDelegate {*;}
--keep class com.bugsnag.android.AppHangException {*;}
 -keepattributes LineNumberTable,SourceFile
 -renamesourcefileattribute SourceFile

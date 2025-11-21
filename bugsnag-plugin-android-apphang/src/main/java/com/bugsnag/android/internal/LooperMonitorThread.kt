@@ -65,20 +65,18 @@ internal class LooperMonitorThread(
         while (isRunning.get()) {
             heartbeatLock.lock()
             try {
-                val now = SystemClock.elapsedRealtime()
-
                 val waitThreshold =
                     if (lastHeartbeatTimestamp <= 0L) appHangThresholdMillis
-                    else calculateTimeToAppHang(now)
+                    else calculateTimeToAppHang(SystemClock.elapsedRealtime())
                 heartbeatCondition.await(waitThreshold, TimeUnit.MILLISECONDS)
 
-                val timeSinceLastHeartbeat = now - lastHeartbeatTimestamp
+                val timeSinceLastHeartbeat = SystemClock.elapsedRealtime() - lastHeartbeatTimestamp
 
                 if (timeSinceLastHeartbeat >= appHangThresholdMillis) {
                     reportAppHang(timeSinceLastHeartbeat)
                 }
             } catch (_: InterruptedException) {
-                // Woken early by heartbeat - just continue loop
+                // continue loop and check isRunning
             } finally {
                 heartbeatLock.unlock()
             }
