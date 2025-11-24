@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
+import java.io.IOException
 
 class RemoteConfigBasicScenario(
     config: Configuration,
@@ -16,8 +17,10 @@ class RemoteConfigBasicScenario(
     override fun startScenario() {
         super.startScenario()
         Bugsnag.notify(RuntimeException("Handled exception"))
-        handler.postDelayed({
-            throw RuntimeException("Unhandled exception")
-        }, 3000)
+
+        Thread {
+            Thread.sleep(3000)
+            throw IOException("Unhandled exception")
+        }.start()
     }
 }

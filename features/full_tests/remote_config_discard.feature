@@ -16,7 +16,7 @@ Feature: Remote config discard rules are applied
     And the received errors match:
       | exceptions.0.errorClass    | exceptions.0.message |
       | java.lang.RuntimeException | Handled exception    |
-      | java.lang.RuntimeException | Unhandled exception  |
+      | java.io.IOException        | Unhandled exception  |
     Then the report contains the required fields
     And the event "severity" equals "warning"
     And the event "unhandled" is false
@@ -38,7 +38,7 @@ Feature: Remote config discard rules are applied
     And the received errors match:
       | exceptions.0.errorClass    | exceptions.0.message |
       | java.lang.RuntimeException | Handled exception    |
-      | java.lang.RuntimeException | Unhandled exception  |
+      | java.io.IOException        | Unhandled exception  |
     Then the report contains the required fields
     And the event "severity" equals "warning"
     And the event "unhandled" is false
@@ -58,8 +58,8 @@ Feature: Remote config discard rules are applied
     And I configure Bugsnag for "RemoteConfigBasicScenario"
     And I wait to receive an error
     And the received errors match:
-      | exceptions.0.errorClass    | exceptions.0.message |
-      | java.lang.RuntimeException | Unhandled exception  |
+      | exceptions.0.errorClass | exceptions.0.message |
+      | java.io.IOException     | Unhandled exception  |
     Then the report contains the required fields
     And the event "severity" equals "error"
     And the event "unhandled" is true
@@ -108,8 +108,22 @@ Feature: Remote config discard rules are applied
     And I configure Bugsnag for "RemoteConfigBasicScenario"
     And I wait to receive an error
     And the received errors match:
-      | exceptions.0.errorClass    | exceptions.0.message |
-      | java.lang.RuntimeException | Unhandled exception    |
+      | exceptions.0.errorClass | exceptions.0.message |
+      | java.io.IOException     | Unhandled exception  |
     Then the report contains the required fields
     And the event "severity" equals "error"
     And the event "unhandled" is true
+
+  Scenario: Remote config with errorClass HASH discard
+    When I prepare an error config with:
+      | type     | name          | value                                                |
+      | property | body          | @features/support/config/rules_hash_ioexception.json |
+      | property | status        | 200                                                  |
+      | header   | Cache-Control | max-age=604800                                       |
+    And I run "RemoteConfigBasicScenario"
+    And I relaunch the app after a crash
+    And I configure Bugsnag for "RemoteConfigBasicScenario"
+    And I wait to receive 1 errors
+    And the received errors match:
+      | exceptions.0.errorClass    | exceptions.0.message |
+      | java.lang.RuntimeException | Handled exception    |
