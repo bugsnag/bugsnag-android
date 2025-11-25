@@ -767,7 +767,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
             SeverityReason severityReason = SeverityReason.newInstance(REASON_HANDLED_EXCEPTION);
             Event event = createEventWithOptions(exc, severityReason, options);
             event.setGroupingDiscriminator(getGroupingDiscriminator());
-            populateAndNotifyAndroidEvent(event, onError);
+            populateAndNotifyAndroidEvent(event,options, onError);
         } else {
             logNull("notify");
         }
@@ -789,20 +789,15 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
             );
         }
 
-
         final CaptureOptions capture = options != null ? options.getCapture() : null;
         final Metadata metadata = capture == null || capture.getMetadata() == null
                 ? metadataState.getMetadata()
                 : captureSelectedMetadata(capture.getMetadata());
-        final FeatureFlags featureFlags = capture == null || capture.getMetadata() == null
+        final FeatureFlags featureFlags = capture == null || capture.getFeatureFlags()
                 ? featureFlagState.getFeatureFlags()
                 : new FeatureFlags();
-        final Boolean Stacktrace = capture == null || capture.getMetadata() == null
-                ? null
-                : capture.getStacktrace();
-        final Boolean Threads = capture == null || capture.getMetadata() == null
-                ? null
-                : capture.getThreads();
+        final boolean stacktrace = capture == null || capture.getStacktrace();
+        final boolean threads = capture == null || capture.getThreads();
 
         Event event;
         if (options != null || capture != null) {
@@ -812,7 +807,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
                     severityReason,
                     metadata,
                     featureFlags,
-                    true,
+                    stacktrace,
+                    threads,
                     logger
             );
         } else {
@@ -822,8 +818,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
                     severityReason,
                     metadataState.getMetadata(),
                     featureFlagState.getFeatureFlags(),
-                    Stacktrace,
-                    Threads,
+                    stacktrace,
+                    threads,
                     logger);
         }
         return event;
@@ -831,7 +827,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
     private Metadata captureSelectedMetadata(@Nullable Set<String> metadata) {
         Map<String, Map<String, Object>> all = snapshotAllMetadataTabsExcludingAppDevice();
-        Metadata selectedMetadataTabs = null;
+        Metadata selectedMetadataTabs = new Metadata();
         if (metadata != null || !metadata.isEmpty()) {
             for (Map.Entry<String, Map<String, Object>> e : all.entrySet()) {
                 if (metadata.contains(e.getKey())) {

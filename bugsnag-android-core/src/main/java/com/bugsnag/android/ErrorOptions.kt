@@ -21,7 +21,7 @@ class CaptureOptions(
     /**
      * Controls which custom metadata tabs are included.
      * - null: all metadata tabs captured
-     * - empty set: only app and device tabs captured
+     * - empty set: no custom metadata captured
      * - set of names: app, device, and specified tabs captured
      *
      * Note: app and device tabs are always captured.
@@ -61,14 +61,14 @@ class CaptureOptions(
         @JvmStatic
         @JvmOverloads
         fun captureOnly(fields: Int, metadata: Set<String>? = null): CaptureOptions {
-            return captureNothing().apply {
-                stacktrace = (fields and CAPTURE_STACKTRACE) != 0
-                breadcrumbs = (fields and CAPTURE_BREADCRUMBS) != 0
-                featureFlags = (fields and CAPTURE_FEATURE_FLAGS) != 0
-                threads = (fields and CAPTURE_THREADS) != 0
-                user = (fields and CAPTURE_USER) != 0
-                this.metadata = metadata
-            }
+            return CaptureOptions(
+                stacktrace = (fields and CAPTURE_STACKTRACE) != 0,
+                breadcrumbs = (fields and CAPTURE_BREADCRUMBS) != 0,
+                featureFlags = (fields and CAPTURE_FEATURE_FLAGS) != 0,
+                threads = (fields and CAPTURE_THREADS) != 0,
+                user = (fields and CAPTURE_USER) != 0,
+                metadata = metadata
+            )
         }
 
         /**
@@ -76,7 +76,7 @@ class CaptureOptions(
          */
         @JvmStatic
         fun captureNothing(): CaptureOptions {
-            return captureOnly(0)
+            return captureOnly(0, emptySet())
         }
     }
 }

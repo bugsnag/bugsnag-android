@@ -48,18 +48,6 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware, F
           @NonNull SeverityReason severityReason,
           @NonNull Metadata metadata,
           @NonNull FeatureFlags featureFlags,
-          @Nullable Boolean excludeStacktrace,
-          @NonNull Logger logger) {
-        this(new EventInternal(originalError, config, severityReason, metadata, featureFlags,
-                        excludeStacktrace),
-                logger);
-    }
-
-    Event(@Nullable Throwable originalError,
-          @NonNull ImmutableConfig config,
-          @NonNull SeverityReason severityReason,
-          @NonNull Metadata metadata,
-          @NonNull FeatureFlags featureFlags,
           boolean captureStacktrace,
           boolean captureThreads,
           @NonNull Logger logger) {

@@ -259,9 +259,9 @@ public final class Bugsnag {
      * Notify Bugsnag of a handled exception
      *
      * @param exception the exception to send to Bugsnag
+     * @param options   additional options to adjust the reporting of the exception
      * @param onError   callback invoked on the generated error report for
      *                  additional modification
-     * @param options the error options
      */
     public static void notify(@NonNull final Throwable exception,
                               @Nullable final ErrorOptions options,

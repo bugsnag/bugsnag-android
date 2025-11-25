@@ -20,7 +20,6 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
         featureFlags: FeatureFlags = FeatureFlags(),
         captureStacktrace: Boolean = true,
         captureThreads: Boolean = true,
-        excludeStacktrace: Boolean? = null
     ) : this(
         config.apiKey,
         config.logger,
@@ -29,7 +28,7 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
         when {
             originalError == null -> mutableListOf()
             !captureStacktrace -> {
-                val error = Error.createError(originalError, config.projectPackages, config.logger, excludeStacktrace)[0]
+                val error = Error.createError(originalError, config.projectPackages, config.logger, !captureStacktrace)[0]
                 mutableListOf(error)
             }
             else -> Error.createError(originalError, config.projectPackages, config.logger, false)
