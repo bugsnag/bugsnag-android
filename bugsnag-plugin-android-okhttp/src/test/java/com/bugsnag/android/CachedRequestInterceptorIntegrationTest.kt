@@ -1,8 +1,7 @@
-@file:Suppress("DEPRECATION")
-
 package com.bugsnag.android
 
-import com.bugsnag.android.okhttp.BugsnagOkHttpPlugin
+import com.bugsnag.android.okhttp.BugsnagOkHttp
+import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.mockwebserver.MockResponse
@@ -21,9 +20,10 @@ import org.mockito.Mockito
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
+import kotlin.io.path.createTempDirectory
 
 @RunWith(MockitoJUnitRunner::class)
-class RedirectedRequestIntegrationTest {
+class CachedRequestInterceptorIntegrationTest {
 
     @Mock
     lateinit var client: Client
@@ -37,41 +37,63 @@ class RedirectedRequestIntegrationTest {
     }
 
     /**
-     * Performs a GET request that follows a redirect. A breadcrumb is collected for the last call
-     * in the OkHttp chain.
+     * Performs a GET request with caching enabled using BugsnagOkHttp interceptor.
+     * A breadcrumb is collected for successful cached requests.
      */
     @Test
-    fun getRequestRedirectSuccess() {
-        // create a redirect and then the actual response
+    fun getRequestCachedSuccess() {
         val server = MockWebServer().apply {
             enqueue(
                 MockResponse()
-                    .setResponseCode(301)
-                    .addHeader("Location", url("/foo"))
+                    .setResponseCode(200)
+                    .addHeader("Cache-Control", "max-age=300")
+                    .setBody("hello, world!")
             )
-            enqueue(MockResponse().setBody("hello, world!"))
         }
         val baseUrl = server.url("/test")
-        val plugin = BugsnagOkHttpPlugin().apply { load(client) }
-        val okHttpClient = OkHttpClient.Builder().eventListener(plugin).build()
+        val cacheDir = createTempDirectory().toFile()
+        val cache = Cache(cacheDir, 1024 * 1024)
+
+        val bugsnagOkHttp = BugsnagOkHttp().logBreadcrumbs()
+        val interceptor = bugsnagOkHttp.createInterceptor(client)
+        val okHttpClient = OkHttpClient.Builder()
+            .addInterceptor(interceptor)
+            .cache(cache)
+            .build()
 
         val req = Request.Builder().url(baseUrl).build()
-        val execute = okHttpClient.newCall(req).execute()
-        execute.close()
-        server.shutdown()
 
-        verify(client, times(1)).leaveBreadcrumb(
+        // First request - should hit server and cache response
+        val execute1 = okHttpClient.newCall(req).execute()
+        execute1.close()
+
+        // Second request - should be served from cache
+        val execute2 = okHttpClient.newCall(req).execute()
+        execute2.close()
+
+        server.shutdown()
+        cacheDir.deleteRecursively()
+
+        verify(client, times(2)).leaveBreadcrumb(
             eq("OkHttp call succeeded"),
             mapCaptor.capture(),
             eq(BreadcrumbType.REQUEST)
         )
-        with(mapCaptor.value) {
+
+        val capturedValues = mapCaptor.allValues
+        with(capturedValues[0]) {
             assertEquals("GET", get("method"))
             assertEquals(200, get("status"))
             assertEquals(0L, get("requestContentLength"))
-            assertEquals(0L, get("responseContentLength"))
+            assertTrue(get("responseContentLength") is Long)
             assertTrue(get("duration") is Long)
             assertNull(get("urlParams"))
+            assertEquals(server.url("/test").toString(), get("url"))
+        }
+
+        with(capturedValues[1]) {
+            assertEquals("GET", get("method"))
+            assertEquals(200, get("status"))
             assertEquals(server.url("/test").toString(), get("url"))
         }
     }
