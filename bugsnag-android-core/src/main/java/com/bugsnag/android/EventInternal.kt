@@ -140,6 +140,9 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
 
     var deliveryStrategy: DeliveryStrategy? = null
 
+    var request: Request? = null
+    var response: Response? = null
+
     fun getUnhandledOverridden(): Boolean = severityReason.unhandledOverridden
 
     fun getOriginalUnhandled(): Boolean = severityReason.originalUnhandled
@@ -183,6 +186,10 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
         childWriter.beginArray()
         errors.forEach { childWriter.value(it) }
         childWriter.endArray()
+
+        // Write request/response info if it exists
+        childWriter.name("request").value(request)
+        childWriter.name("response").value(response)
 
         // Write project packages
         childWriter.name("projectPackages")
