@@ -1,10 +1,14 @@
 public final class com/bugsnag/android/AppHangConfiguration {
 	public fun <init> ()V
+	public fun <init> (J)V
 	public fun <init> (JLandroid/os/Looper;)V
-	public synthetic fun <init> (JLandroid/os/Looper;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (JLandroid/os/Looper;J)V
+	public synthetic fun <init> (JLandroid/os/Looper;JILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getAppHangThresholdMillis ()J
+	public final fun getRecoveryTimeMillis ()J
 	public final fun getWatchedLooper ()Landroid/os/Looper;
 	public final fun setAppHangThresholdMillis (J)V
+	public final fun setRecoveryTimeMillis (J)V
 	public final fun setWatchedLooper (Landroid/os/Looper;)V
 }
 

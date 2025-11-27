@@ -10,6 +10,9 @@ class BugsnagAppHangPlugin @JvmOverloads constructor(
     configuration: AppHangConfiguration = AppHangConfiguration()
 ) : Plugin {
     private val appHangThresholdMillis = configuration.appHangThresholdMillis
+    private val recoveryTimeMillis =
+        if (configuration.recoveryTimeMillis <= appHangThresholdMillis) 0
+        else configuration.recoveryTimeMillis
     private val watchedLooper = configuration.watchedLooper
 
     private var client: Client? = null
@@ -37,7 +40,7 @@ class BugsnagAppHangPlugin @JvmOverloads constructor(
         client = null
     }
 
-    private fun reportAppHang(timeSinceLastHeartbeat: Long) {
+    internal fun reportAppHang(timeSinceLastHeartbeat: Long) {
         val watchedThread = watchedLooper.thread
         val stackTrace = watchedThread.stackTrace
         val threadName = watchedThread.name
@@ -65,6 +68,7 @@ class BugsnagAppHangPlugin @JvmOverloads constructor(
         monitorThread = LooperMonitorThread(
             watchedLooper,
             appHangThresholdMillis,
+            recoveryTimeMillis,
             this::reportAppHang
         )
 
