@@ -19,17 +19,18 @@ internal class ErrorInternal @JvmOverloads internal constructor(
         fun createError(
             exc: Throwable,
             projectPackages: Collection<String>,
-            logger: Logger,
-            excludeStacktrace: Boolean
+            captureStacktrace: Boolean,
+            logger: Logger
         ): MutableList<Error> {
             return exc.safeUnrollCauses()
                 .mapTo(mutableListOf()) { currentEx ->
                     // Somehow it's possible for stackTrace to be null in rare cases
-                    val stacktrace: Array<StackTraceElement> = if (excludeStacktrace) {
-                        emptyArray<StackTraceElement>()
-                    } else {
-                        currentEx.stackTrace ?: arrayOf()
-                    }
+                    val stacktrace: Array<StackTraceElement> =
+                        if (captureStacktrace) {
+                            currentEx.stackTrace ?: emptyArray<StackTraceElement>()
+                        } else {
+                            emptyArray<StackTraceElement>()
+                        }
                     val trace = Stacktrace(stacktrace, projectPackages, logger)
                     val errorInternal = ErrorInternal(
                         currentEx.javaClass.name,

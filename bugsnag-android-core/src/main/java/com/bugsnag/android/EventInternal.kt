@@ -25,13 +25,14 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
         config.logger,
         mutableListOf(),
         config.discardClasses.toSet(),
-        when {
-            originalError == null -> mutableListOf()
-            !captureStacktrace -> {
-                val error = Error.createError(originalError, config.projectPackages, config.logger, !captureStacktrace)[0]
-                mutableListOf(error)
-            }
-            else -> Error.createError(originalError, config.projectPackages, config.logger, false)
+        when (originalError) {
+            null -> mutableListOf()
+            else -> Error.createError(
+                originalError,
+                captureStacktrace,
+                config.projectPackages,
+                config.logger
+            )
         },
         data.copy(),
         featureFlags.copy(),
@@ -353,7 +354,7 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
             errors.add(newError)
             return newError
         } else {
-            val newErrors = Error.createError(thrownError, projectPackages, logger, false)
+            val newErrors = Error.createError(thrownError, true, projectPackages, logger)
             errors.addAll(newErrors)
             return newErrors.first()
         }

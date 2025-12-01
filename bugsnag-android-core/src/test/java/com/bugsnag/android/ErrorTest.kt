@@ -8,7 +8,7 @@ class ErrorTest {
 
     @Test
     fun createError() {
-        val err = Error.createError(RuntimeException("Whoops"), setOf(), NoopLogger, false)
+        val err = Error.createError(RuntimeException("Whoops"), true, setOf(), NoopLogger)
         assertEquals(1, err.size)
         assertEquals("Whoops", err[0].errorMessage)
         assertFalse(err[0].stacktrace.isEmpty())
@@ -16,7 +16,12 @@ class ErrorTest {
 
     @Test
     fun createNestedError() {
-        val err = Error.createError(IllegalStateException("Some err", RuntimeException("Whoops")), setOf(), NoopLogger, false)
+        val err = Error.createError(
+            IllegalStateException("Some err", RuntimeException("Whoops")),
+            true,
+            setOf(),
+            NoopLogger
+        )
         assertEquals(2, err.size)
         assertEquals("Some err", err[0].errorMessage)
         assertFalse(err[0].stacktrace.isEmpty())
