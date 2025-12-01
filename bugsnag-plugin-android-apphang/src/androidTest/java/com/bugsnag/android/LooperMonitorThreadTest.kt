@@ -10,7 +10,7 @@ import org.junit.Test
 import java.util.concurrent.CountDownLatch
 import java.lang.Thread as JThread
 
-private const val APP_HANG_THRESHOLD = 100L
+private const val APP_HANG_THRESHOLD = 200L
 private const val RECOVERY_TIME = 800L
 
 class LooperMonitorThreadTest {
