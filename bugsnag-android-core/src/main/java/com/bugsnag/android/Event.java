@@ -49,7 +49,7 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware, F
     }
 
     private void logNull(String property) {
-        logger.e("Invalid null value supplied to config." + property + ", ignoring");
+        logger.e("Invalid null value supplied to event." + property + ", ignoring");
     }
 
     /**
@@ -533,6 +533,115 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware, F
         }
     }
 
+    /**
+     * Returns the delivery strategy for this event, which determines how the event
+     * should be delivered to the Bugsnag API.
+     *
+     * @return the delivery strategy, or null if no specific strategy is set
+     */
+    @NonNull
+    public DeliveryStrategy getDeliveryStrategy() {
+        if (impl.getDeliveryStrategy() != null) {
+            return impl.getDeliveryStrategy();
+        }
+
+        if (impl.getOriginalUnhandled()) {
+            String severityReasonType = impl.getSeverityReasonType();
+            boolean promiseRejection = REASON_PROMISE_REJECTION.equals(severityReasonType);
+            boolean anr = impl.isAnr(this);
+            if (anr || promiseRejection) {
+                return DeliveryStrategy.STORE_AND_FLUSH;
+            } else if (impl.isAttemptDeliveryOnCrash()) {
+                return DeliveryStrategy.STORE_AND_SEND;
+            } else {
+                return DeliveryStrategy.STORE_ONLY;
+            }
+        } else {
+            return DeliveryStrategy.SEND_IMMEDIATELY;
+        }
+    }
+
+    /**
+     * Sets the delivery strategy for this event, which determines how the event
+     * should be delivered to the Bugsnag API. This allows customization of delivery
+     * behavior on a per-event basis.
+     *
+     * @param deliveryStrategy the delivery strategy to use for this event
+     */
+    public void setDeliveryStrategy(@NonNull DeliveryStrategy deliveryStrategy) {
+        if (deliveryStrategy != null) {
+            impl.setDeliveryStrategy(deliveryStrategy);
+        } else {
+            logNull("deliveryStrategy");
+        }
+    }
+
+    /**
+     * Returns the HTTP request associated with this event, if any. This represents
+     * the HTTP request that was being processed when the event occurred.
+     *
+     * The request object contains information such as the HTTP method, URL, headers,
+     * and query parameters. This can be useful for understanding the context of errors
+     * that occur during HTTP request handling.
+     *
+     * @return the HTTP request, or null if no request is associated with this event
+     * @see Request
+     * @see #setRequest(Request)
+     */
+    @Nullable
+    public Request getRequest() {
+        return impl.getRequest();
+    }
+
+    /**
+     * Associates an HTTP request with this event. This should represent the HTTP request
+     * that was being processed when the event occurred.
+     *
+     * Setting request information can help with debugging by providing context about
+     * the HTTP request that led to the error. Set this to null to clear any previously
+     * associated request.
+     *
+     * @param request the HTTP request to associate with this event, or null to clear it
+     * @see Request
+     * @see #getRequest()
+     */
+    public void setRequest(@Nullable Request request) {
+        impl.setRequest(request);
+    }
+
+    /**
+     * Returns the HTTP response associated with this event, if any. This represents
+     * the HTTP response that was being generated when the event occurred.
+     *
+     * The response object contains information such as the HTTP status code, headers,
+     * and body length. This can be useful for understanding the context of errors
+     * that occur during HTTP response generation.
+     *
+     * @return the HTTP response, or null if no response is associated with this event
+     * @see Response
+     * @see #setResponse(Response)
+     */
+    @Nullable
+    public Response getResponse() {
+        return impl.getResponse();
+    }
+
+    /**
+     * Associates an HTTP response with this event. This should represent the HTTP response
+     * that was being generated when the event occurred.
+     *
+     * Setting response information can help with debugging by providing context about
+     * the HTTP response generation that led to the error. Set this to null to clear any
+     * previously associated response.
+     *
+     * @param response the HTTP response to associate with this event, or null to clear it
+     * @see Response
+     * @see #setResponse(Response)
+     */
+    public void setResponse(@Nullable Response response) {
+        impl.setResponse(response);
+    }
+
     protected boolean shouldDiscardClass() {
         return impl.shouldDiscardClass();
     }
@@ -576,48 +685,5 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware, F
 
     void setInternalMetrics(InternalMetrics metrics) {
         impl.setInternalMetrics(metrics);
-    }
-
-    /**
-     * Returns the delivery strategy for this event, which determines how the event
-     * should be delivered to the Bugsnag API.
-     *
-     * @return the delivery strategy, or null if no specific strategy is set
-     */
-    @NonNull
-    public DeliveryStrategy getDeliveryStrategy() {
-        if (impl.getDeliveryStrategy() != null) {
-            return impl.getDeliveryStrategy();
-        }
-
-        if (impl.getOriginalUnhandled()) {
-            String severityReasonType = impl.getSeverityReasonType();
-            boolean promiseRejection = REASON_PROMISE_REJECTION.equals(severityReasonType);
-            boolean anr = impl.isAnr(this);
-            if (anr || promiseRejection) {
-                return DeliveryStrategy.STORE_AND_FLUSH;
-            } else if (impl.isAttemptDeliveryOnCrash()) {
-                return DeliveryStrategy.STORE_AND_SEND;
-            } else {
-                return DeliveryStrategy.STORE_ONLY;
-            }
-        } else {
-            return DeliveryStrategy.SEND_IMMEDIATELY;
-        }
-    }
-
-    /**
-     * Sets the delivery strategy for this event, which determines how the event
-     * should be delivered to the Bugsnag API. This allows customization of delivery
-     * behavior on a per-event basis.
-     *
-     * @param deliveryStrategy the delivery strategy to use for this event
-     */
-    public void setDeliveryStrategy(@NonNull DeliveryStrategy deliveryStrategy) {
-        if (deliveryStrategy != null) {
-            impl.setDeliveryStrategy(deliveryStrategy);
-        } else {
-            logNull("deliveryStrategy");
-        }
     }
 }
