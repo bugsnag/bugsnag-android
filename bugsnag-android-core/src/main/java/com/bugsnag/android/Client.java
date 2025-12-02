@@ -2,13 +2,6 @@ package com.bugsnag.android;
 
 import static com.bugsnag.android.SeverityReason.REASON_HANDLED_EXCEPTION;
 
-import android.app.Application;
-import android.content.Context;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
-
 import com.bugsnag.android.internal.BackgroundTaskService;
 import com.bugsnag.android.internal.ForegroundDetector;
 import com.bugsnag.android.internal.ImmutableConfig;
@@ -22,6 +15,16 @@ import com.bugsnag.android.internal.dag.ContextModule;
 import com.bugsnag.android.internal.dag.Provider;
 import com.bugsnag.android.internal.dag.SystemServiceModule;
 
+import android.app.Application;
+import android.content.Context;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
+
+import kotlin.Unit;
+import kotlin.jvm.functions.Function2;
+
 import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
@@ -33,9 +36,6 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.regex.Pattern;
-
-import kotlin.Unit;
-import kotlin.jvm.functions.Function2;
 
 /**
  * A Bugsnag Client instance allows you to use Bugsnag in your Android app.
@@ -383,23 +383,23 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
                         return null;
                     }
                 }, new Function2<Boolean, Integer, Unit>() {
-            @Override
-            public Unit invoke(Boolean isLowMemory, Integer memoryTrimLevel) {
-                memoryTrimState.setLowMemory(Boolean.TRUE.equals(isLowMemory));
-                if (memoryTrimState.updateMemoryTrimLevel(memoryTrimLevel)) {
-                    leaveAutoBreadcrumb(
-                            "Trim Memory",
-                            BreadcrumbType.STATE,
-                            Collections.<String, Object>singletonMap(
-                                    "trimLevel", memoryTrimState.getTrimLevelDescription()
-                            )
-                    );
-                }
+                    @Override
+                    public Unit invoke(Boolean isLowMemory, Integer memoryTrimLevel) {
+                        memoryTrimState.setLowMemory(Boolean.TRUE.equals(isLowMemory));
+                        if (memoryTrimState.updateMemoryTrimLevel(memoryTrimLevel)) {
+                            leaveAutoBreadcrumb(
+                                    "Trim Memory",
+                                    BreadcrumbType.STATE,
+                                    Collections.<String, Object>singletonMap(
+                                            "trimLevel", memoryTrimState.getTrimLevelDescription()
+                                    )
+                            );
+                        }
 
-                memoryTrimState.emitObservableEvent();
-                return null;
-            }
-        }
+                        memoryTrimState.emitObservableEvent();
+                        return null;
+                    }
+                }
         ));
     }
 
