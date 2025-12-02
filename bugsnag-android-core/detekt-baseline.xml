@@ -67,7 +67,6 @@
     <ID>MagicNumber:JsonStream.kt$JsonStream$32</ID>
     <ID>MagicNumber:LastRunInfoStore.kt$LastRunInfoStore$3</ID>
     <ID>MagicNumber:SessionStore.kt$SessionStore$60</ID>
-    <ID>MaxLineLength:ErrorTest.kt$ErrorTest$val err = Error.createError(IllegalStateException("Some err", RuntimeException("Whoops")), setOf(), NoopLogger, false)</ID>
     <ID>MaxLineLength:LastRunInfo.kt$LastRunInfo$return "LastRunInfo(consecutiveLaunchCrashes=$consecutiveLaunchCrashes, crashed=$crashed, crashedDuringLaunch=$crashedDuringLaunch)"</ID>
     <ID>MaxLineLength:ThreadState.kt$ThreadState$"[${allThreads.size - maxThreadCount} threads omitted as the maxReportedThreads limit ($maxThreadCount) was exceeded]"</ID>
     <ID>NestedBlockDepth:FileStore.kt$FileStore$fun deleteStoredFiles(storedFiles: Collection&lt;File>?)</ID>
