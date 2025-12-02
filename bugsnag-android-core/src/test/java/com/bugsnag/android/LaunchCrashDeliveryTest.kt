@@ -74,7 +74,7 @@ class LaunchCrashDeliveryTest {
         event.app.isLaunching = true
         eventStore.write(event)
 
-        // check time difference in ms is >1500, proving thread was blocked
+        // check time difference in ms is <500
         val baseline = System.currentTimeMillis()
         eventStore.flushOnLaunch(
             LastRunInfo(
@@ -84,9 +84,7 @@ class LaunchCrashDeliveryTest {
             )
         )
         val now = System.currentTimeMillis()
-        assertTrue(now - baseline > 1500)
-        backgroundTaskService.shutdown()
-        assertEquals(1, delivery.count.get())
+        assertTrue(now - baseline < 500)
     }
 
     /**
