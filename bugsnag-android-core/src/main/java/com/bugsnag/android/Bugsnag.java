@@ -260,6 +260,17 @@ public final class Bugsnag {
      *
      * @param exception the exception to send to Bugsnag
      * @param options   additional options to adjust the reporting of the exception
+     */
+    public static void notify(@NonNull final Throwable exception,
+                              @Nullable final ErrorOptions options) {
+        getClient().notify(exception, options);
+    }
+
+    /**
+     * Notify Bugsnag of a handled exception
+     *
+     * @param exception the exception to send to Bugsnag
+     * @param options   additional options to adjust the reporting of the exception
      * @param onError   callback invoked on the generated error report for
      *                  additional modification
      */
