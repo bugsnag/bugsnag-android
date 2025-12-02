@@ -789,7 +789,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
             );
         }
 
-        final CaptureOptions capture = options != null ? options.getCapture() : null;
+        final ErrorCaptureOptions capture = options != null ? options.getCapture() : null;
         final Metadata metadata = capture == null || capture.getMetadata() == null
                 ? metadataState.getMetadata()
                 : captureSelectedMetadata(capture.getMetadata());
@@ -912,7 +912,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
     }
 
     private void populateConditionalEventData(@NonNull Event event, @NonNull ErrorOptions options) {
-        final CaptureOptions capture =
+        final ErrorCaptureOptions capture =
                 options.getCapture() != null ? options.getCapture() : null;
 
         if (capture != null) {

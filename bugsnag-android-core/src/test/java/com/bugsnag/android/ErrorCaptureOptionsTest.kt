@@ -6,11 +6,11 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-class CaptureOptionsTest {
+class ErrorCaptureOptionsTest {
 
     @Test
     fun testDefaultValues() {
-        val options = CaptureOptions()
+        val options = ErrorCaptureOptions()
         assertTrue(options.breadcrumbs)
         assertTrue(options.featureFlags)
         assertNull(options.metadata)
@@ -21,8 +21,8 @@ class CaptureOptionsTest {
 
     @Test
     fun testCaptureOnlyStacktraceAndUser() {
-        val fields = CaptureOptions.CAPTURE_STACKTRACE or CaptureOptions.CAPTURE_USER
-        val options = CaptureOptions.captureOnly(fields)
+        val fields = ErrorCaptureOptions.CAPTURE_STACKTRACE or ErrorCaptureOptions.CAPTURE_USER
+        val options = ErrorCaptureOptions.captureOnly(fields)
         assertTrue(options.stacktrace)
         assertFalse(options.breadcrumbs)
         assertFalse(options.featureFlags)
@@ -33,9 +33,9 @@ class CaptureOptionsTest {
 
     @Test
     fun testCaptureOnlyWithMetadata() {
-        val fields = CaptureOptions.CAPTURE_BREADCRUMBS or CaptureOptions.CAPTURE_FEATURE_FLAGS
+        val fields = ErrorCaptureOptions.CAPTURE_BREADCRUMBS or ErrorCaptureOptions.CAPTURE_FEATURE_FLAGS
         val metadataTabs = setOf("customTab")
-        val options = CaptureOptions.captureOnly(fields, metadataTabs)
+        val options = ErrorCaptureOptions.captureOnly(fields, metadataTabs)
         assertFalse(options.stacktrace)
         assertTrue(options.breadcrumbs)
         assertTrue(options.featureFlags)
@@ -46,7 +46,7 @@ class CaptureOptionsTest {
 
     @Test
     fun testCaptureNothing() {
-        val options = CaptureOptions.captureNothing()
+        val options = ErrorCaptureOptions.captureNothing()
         assertFalse(options.stacktrace)
         assertFalse(options.breadcrumbs)
         assertFalse(options.featureFlags)

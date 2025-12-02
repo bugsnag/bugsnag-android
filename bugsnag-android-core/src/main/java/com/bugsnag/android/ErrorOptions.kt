@@ -5,13 +5,13 @@ package com.bugsnag.android
  */
 class ErrorOptions @JvmOverloads constructor(
     /** Controls which data fields are captured during Event creation. */
-    var capture: CaptureOptions = CaptureOptions()
+    var capture: ErrorCaptureOptions = ErrorCaptureOptions()
 )
 
 /**
  * Granular flags for controlling data capture at notify time.
  */
-class CaptureOptions(
+class ErrorCaptureOptions(
     /** Whether to capture breadcrumbs. Defaults to true. */
     var breadcrumbs: Boolean = true,
 
@@ -60,8 +60,8 @@ class CaptureOptions(
          */
         @JvmStatic
         @JvmOverloads
-        fun captureOnly(fields: Int, metadata: Set<String>? = null): CaptureOptions {
-            return CaptureOptions(
+        fun captureOnly(fields: Int, metadata: Set<String>? = null): ErrorCaptureOptions {
+            return ErrorCaptureOptions(
                 stacktrace = (fields and CAPTURE_STACKTRACE) != 0,
                 breadcrumbs = (fields and CAPTURE_BREADCRUMBS) != 0,
                 featureFlags = (fields and CAPTURE_FEATURE_FLAGS) != 0,
@@ -75,7 +75,7 @@ class CaptureOptions(
          * Return CaptureOptions that will not capture any optional fields.
          */
         @JvmStatic
-        fun captureNothing(): CaptureOptions {
+        fun captureNothing(): ErrorCaptureOptions {
             return captureOnly(0, emptySet())
         }
     }

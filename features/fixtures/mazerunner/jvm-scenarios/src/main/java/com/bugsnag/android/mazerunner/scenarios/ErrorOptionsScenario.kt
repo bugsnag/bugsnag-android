@@ -2,7 +2,7 @@ package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
 import com.bugsnag.android.Bugsnag
-import com.bugsnag.android.CaptureOptions
+import com.bugsnag.android.ErrorCaptureOptions
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.ErrorOptions
 
@@ -11,7 +11,7 @@ class ErrorOptionsScenario(
     context: Context,
     eventMetadata: String?
 ) : Scenario(config, context, eventMetadata) {
-    private val errorOptions = ErrorOptions(CaptureOptions.captureNothing())
+    private val errorOptions = ErrorOptions(ErrorCaptureOptions.captureNothing())
 
     override fun startScenario() {
         super.startScenario()
