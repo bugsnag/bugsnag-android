@@ -250,13 +250,13 @@ Feature: Handled smoke tests
     And the event "threads.0.stacktrace.0.file" is not null
     And the event "threads.0.stacktrace.0.lineNumber" is not null
 
-  Scenario: Handled exceptions with negative options
+  Scenario: Handled exceptions with captureNone options
     When I run "ErrorOptionsScenario"
     Then I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the event "stacktrace" is null
-    And the event "breadcrumbs.0" is null
-    And the event "featureFlags.0" is null
-    And the event "threads.0" is null
     And the event "user.id" is null
     And the event "user.name" is null
+    And the error payload field "events.0.breadcrumbs" is an array with 0 elements
+    And the error payload field "events.0.featureFlags" is an array with 0 elements
+    And the error payload field "events.0.threads" is an array with 0 elements
