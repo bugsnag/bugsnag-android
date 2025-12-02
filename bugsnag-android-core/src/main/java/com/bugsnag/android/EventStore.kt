@@ -49,7 +49,7 @@ internal class EventStore(
      * Flush startup crashes synchronously on the main thread. Startup crashes block the main thread
      * when being sent (subject to [Configuration.setSendLaunchCrashesSynchronously])
      */
-    fun flushOnLaunch() {
+    fun flushOnLaunch(lastRunInfo: LastRunInfo?) {
         if (!config.sendLaunchCrashesSynchronously) {
             return
         }
@@ -63,6 +63,10 @@ internal class EventStore(
             )
         } catch (exc: RejectedExecutionException) {
             logger.d("Failed to flush launch crash reports, continuing.", exc)
+            return
+        }
+
+        if (lastRunInfo?.crashedDuringLaunch != true) {
             return
         }
 

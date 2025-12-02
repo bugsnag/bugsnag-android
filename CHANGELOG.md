@@ -7,7 +7,7 @@
 * Introduced [bugsnag-plugin-android-apphang](bugsnag-plugin-android-apphang) as a configurable alternative to ANR reporting based on heartbeat monitoring
   [#2332](https://github.com/bugsnag/bugsnag-android/pull/2332)
 * `Configuration.sendLaunchCrashesSynchronously` should result in fewer ANRs as it now calculates its timeout based on `Process.getStartElapsedRealtime` when available
-  []()
+  [#2340](https://github.com/bugsnag/bugsnag-android/pull/2340)
 
 ### Bug fixes
 
