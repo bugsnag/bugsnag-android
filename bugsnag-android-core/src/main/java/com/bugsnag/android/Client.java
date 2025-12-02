@@ -536,7 +536,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
     /**
      * Bugsnag uses the concept of "contexts" to help display and group your errors. Contexts
      * represent what was happening in your application at the time an error occurs.
-     * <p>
+     *
      * In an android app the "context" is automatically set as the foreground Activity.
      * If you would like to set this value manually, you should alter this property.
      */
@@ -548,7 +548,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
     /**
      * Bugsnag uses the concept of "contexts" to help display and group your errors. Contexts
      * represent what was happening in your application at the time an error occurs.
-     * <p>
+     *
      * In an android app the "context" is automatically set as the foreground Activity.
      * If you would like to set this value manually, you should alter this property.
      */
@@ -603,15 +603,15 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
     /**
      * Add a "on error" callback, to execute code at the point where an error report is
      * captured in Bugsnag.
-     * <p>
+     *
      * You can use this to add or modify information attached to an Event
      * before it is sent to your dashboard. You can also return
      * <code>false</code> from any callback to prevent delivery. "on error"
      * callbacks do not run before reports generated in the event
      * of immediate app termination from crashes in C/C++ code.
-     * <p>
+     *
      * For example:
-     * <p>
+     *
      * Bugsnag.addOnError(new OnErrorCallback() {
      * public boolean run(Event event) {
      * event.setSeverity(Severity.INFO);
@@ -648,12 +648,12 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
     /**
      * Add an "on breadcrumb" callback, to execute code before every
      * breadcrumb captured by Bugsnag.
-     * <p>
+     *
      * You can use this to modify breadcrumbs before they are stored by Bugsnag.
      * You can also return <code>false</code> from any callback to ignore a breadcrumb.
-     * <p>
+     *
      * For example:
-     * <p>
+     *
      * Bugsnag.onBreadcrumb(new OnBreadcrumbCallback() {
      * public boolean run(Breadcrumb breadcrumb) {
      * return false; // ignore the breadcrumb
@@ -689,12 +689,12 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
     /**
      * Add an "on session" callback, to execute code before every
      * session captured by Bugsnag.
-     * <p>
+     *
      * You can use this to modify sessions before they are stored by Bugsnag.
      * You can also return <code>false</code> from any callback to ignore a session.
-     * <p>
+     *
      * For example:
-     * <p>
+     *
      * Bugsnag.onSession(new OnSessionCallback() {
      * public boolean run(Session session) {
      * return false; // ignore the session
@@ -776,23 +776,12 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
     private Event createEventWithOptions(
             @NonNull Throwable exc,
             @NonNull SeverityReason severityReason,
-            @NonNull ErrorOptions options
+            @Nullable ErrorOptions options
     ) {
-        if (options == null) {
-            return new Event(
-                    exc,
-                    immutableConfig,
-                    severityReason,
-                    metadataState.getMetadata(),
-                    featureFlagState.getFeatureFlags(),
-                    logger
-            );
-        }
-
         final ErrorCaptureOptions capture = options != null ? options.getCapture() : null;
         final Metadata metadata = capture == null || capture.getMetadata() == null
                 ? metadataState.getMetadata()
-                : captureSelectedMetadata(capture.getMetadata());
+                : metadataState.selectMetadata(capture.getMetadata());
         final FeatureFlags featureFlags = capture == null || capture.getFeatureFlags()
                 ? featureFlagState.getFeatureFlags()
                 : new FeatureFlags();
@@ -811,29 +800,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         );
     }
 
-    private Metadata captureSelectedMetadata(@Nullable Set<String> metadata) {
-        Map<String, Map<String, Object>> all = snapshotAllMetadataTabsExcludingAppDevice();
-        Metadata selectedMetadataTabs = new Metadata();
-        if (metadata != null || !metadata.isEmpty()) {
-            for (Map.Entry<String, Map<String, Object>> e : all.entrySet()) {
-                if (metadata.contains(e.getKey())) {
-                    selectedMetadataTabs.addMetadata(e.getKey(), e.getValue());
-                }
-            }
-        }
-
-        for (String tab : metadata) {
-            Object value = all.get(tab);
-            if (value != null) {
-                selectedMetadataTabs.addMetadata("", tab, value);
-            }
-        }
-        return selectedMetadataTabs;
-    }
-
     /**
      * Caches an error then attempts to notify.
-     * <p>
+     *
      * Should only ever be called from the {@link ExceptionHandler}.
      */
     void notifyUnhandledException(@NonNull Throwable exc, Metadata metadata,
@@ -869,12 +838,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
                                        @Nullable OnErrorCallback onError
     ) {
         populateDeviceAndAppData(event);
-
-        if (options == null) {
-            populateAllEventData(event);
-        } else {
-            populateConditionalEventData(event, options);
-        }
+        populateEventData(event, options);
 
         event.setContext(contextState.getContext());
         event.setInternalMetrics(internalMetrics);
@@ -890,67 +854,19 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         event.addMetadata("app", appDataCollector.getAppDataMetadata());
     }
 
-    private void populateAllEventData(@NonNull Event event) {
-        event.setBreadcrumbs(breadcrumbState.copy());
+    private void populateEventData(@NonNull Event event, @Nullable ErrorOptions options) {
+        final ErrorCaptureOptions capture = options != null && options.getCapture() != null
+                ? options.getCapture()
+                : null;
 
-        User user = userState.get().getUser();
-        event.setUser(user.getId(), user.getEmail(), user.getName());
-    }
-
-    private void populateConditionalEventData(@NonNull Event event, @NonNull ErrorOptions options) {
-        final ErrorCaptureOptions capture =
-                options.getCapture() != null ? options.getCapture() : null;
-
-        if (capture != null) {
-            if (capture.getBreadcrumbs()) {
-                event.setBreadcrumbs(breadcrumbState.copy());
-            }
-
-            if (capture.getUser()) {
-                User user = userState.get().getUser();
-                event.setUser(user.getId(), user.getEmail(), user.getName());
-            }
-
-            copySelectedMetadataTabs(event, capture.getMetadata());
-        } else {
-            populateAllEventData(event);
+        if (capture == null || capture.getBreadcrumbs()) {
+            event.setBreadcrumbs(breadcrumbState.copy());
         }
-    }
 
-
-    /**
-     * Copies only the selected metadata tabs from state into the event.
-     */
-    private void copySelectedMetadataTabs(@NonNull Event event, @Nullable Set<String> allow) {
-        Map<String, Map<String, Object>> all = snapshotAllMetadataTabsExcludingAppDevice();
-        if (allow != null) {
-            for (Map.Entry<String, Map<String, Object>> e : all.entrySet()) {
-                if (allow.contains(e.getKey())) {
-                    event.addMetadata(e.getKey(), e.getValue());
-                }
-            }
-            return;
+        if (capture == null || capture.getUser()) {
+            User user = userState.get().getUser();
+            event.setUser(user.getId(), user.getEmail(), user.getName());
         }
-        if (allow.isEmpty()) {
-            return;
-        }
-        for (String tab : allow) {
-            Object value = all.get(tab);
-            if (value != null) {
-                event.addMetadata("", tab, value);
-            }
-        }
-    }
-
-    /**
-     * Returns a shallow snapshot of all metadata tabs except "app" and "device".
-     * Implement using existing MetadataState APIs; if none exist, add a safe accessor there.
-     */
-    private Map<String, Map<String, Object>> snapshotAllMetadataTabsExcludingAppDevice() {
-        Map<String, Map<String, Object>> snapshot = metadataState.getMetadata().toMap();
-        snapshot.remove("app");
-        snapshot.remove("device");
-        return snapshot;
     }
 
     void notifyInternal(@NonNull Event event,
@@ -982,7 +898,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
      * Returns the current buffer of breadcrumbs that will be sent with captured events. This
      * ordered list represents the most recent breadcrumbs to be captured up to the limit
      * set in {@link Configuration#getMaxBreadcrumbs()}.
-     * <p>
+     *
      * The returned collection is readonly and mutating the list will cause no effect on the
      * Client's state. If you wish to alter the breadcrumbs collected by the Client then you should
      * use {@link Configuration#setEnabledBreadcrumbTypes(Set)} and
@@ -1212,7 +1128,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
     /**
      * Retrieves information about the last launch of the application, if it has been run before.
-     * <p>
+     *
      * For example, this allows checking whether the app crashed on its last launch, which could
      * be used to perform conditional behaviour to recover from crashes, such as clearing the
      * app data cache.
@@ -1226,7 +1142,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
      * Informs Bugsnag that the application has finished launching. Once this has been called
      * {@link AppWithState#isLaunching()} will always be false in any new error reports,
      * and synchronous delivery will not be attempted on the next launch for any fatal crashes.
-     * <p>
+     *
      * By default this method will be called after Bugsnag is initialized when
      * {@link Configuration#getLaunchDurationMillis()} has elapsed. Invoking this method manually
      * has precedence over the value supplied via the launchDurationMillis configuration option.
