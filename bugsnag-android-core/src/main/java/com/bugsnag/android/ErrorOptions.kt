@@ -18,6 +18,15 @@ class ErrorCaptureOptions(
     /** Whether to capture feature flags. Defaults to true. */
     var featureFlags: Boolean = true,
 
+    /** Whether to capture stacktrace. Defaults to true. */
+    var stacktrace: Boolean = true,
+
+    /** Whether to capture thread state. Defaults to true. */
+    var threads: Boolean = true,
+
+    /** Whether to capture user information. Defaults to true. */
+    var user: Boolean = true,
+
     /**
      * Controls which custom metadata tabs are included.
      * - null: all metadata tabs captured
@@ -27,15 +36,6 @@ class ErrorCaptureOptions(
      * Note: app and device tabs are always captured.
      */
     var metadata: Set<String>? = null,
-
-    /** Whether to capture stacktrace. Defaults to true. */
-    var stacktrace: Boolean = true,
-
-    /** Whether to capture thread state. Defaults to true. */
-    var threads: Boolean = true,
-
-    /** Whether to capture user information. Defaults to true. */
-    var user: Boolean = true,
 ) {
     /**
      * Create a CaptureOptions with all of the default capturing behaviour (capture everything).
