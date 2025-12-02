@@ -82,7 +82,6 @@ public final class com/bugsnag/android/Bugsnag {
 	public static fun leaveBreadcrumb (Ljava/lang/String;Ljava/util/Map;Lcom/bugsnag/android/BreadcrumbType;)V
 	public static fun markLaunchCompleted ()V
 	public static fun notify (Ljava/lang/Throwable;)V
-	public static fun notify (Ljava/lang/Throwable;Lcom/bugsnag/android/ErrorOptions;)V
 	public static fun notify (Ljava/lang/Throwable;Lcom/bugsnag/android/ErrorOptions;Lcom/bugsnag/android/OnErrorCallback;)V
 	public static fun notify (Ljava/lang/Throwable;Lcom/bugsnag/android/OnErrorCallback;)V
 	public static fun pauseSession ()V
@@ -141,7 +140,6 @@ public class com/bugsnag/android/Client : com/bugsnag/android/CallbackAware, com
 	public fun leaveBreadcrumb (Ljava/lang/String;Ljava/util/Map;Lcom/bugsnag/android/BreadcrumbType;)V
 	public fun markLaunchCompleted ()V
 	public fun notify (Ljava/lang/Throwable;)V
-	public fun notify (Ljava/lang/Throwable;Lcom/bugsnag/android/ErrorOptions;)V
 	public fun notify (Ljava/lang/Throwable;Lcom/bugsnag/android/ErrorOptions;Lcom/bugsnag/android/OnErrorCallback;)V
 	public fun notify (Ljava/lang/Throwable;Lcom/bugsnag/android/OnErrorCallback;)V
 	public fun pauseSession ()V

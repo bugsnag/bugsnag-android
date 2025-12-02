@@ -752,16 +752,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
      *
      * @param exc     the exception to send to Bugsnag
      * @param options the error options
-     */
-    public void notify(@NonNull Throwable exc, @Nullable ErrorOptions options) {
-        notify(exc, options, null);
-    }
-
-    /**
-     * Notify Bugsnag of a handled exception
-     *
-     * @param exc     the exception to send to Bugsnag
-     * @param options the error options
      * @param onError callback invoked on the generated error report for
      *                additional modification
      */

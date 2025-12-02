@@ -38,6 +38,6 @@ class ErrorOptionsScenario(
         Bugsnag.addFeatureFlag("testFeatureFlag", "variantA")
         Bugsnag.addFeatureFlag("featureFlag2")
         Bugsnag.setUser("123", "jane@doe.com", "Jane Doe")
-        Bugsnag.notify(generateException(), errorOptions)
+        Bugsnag.notify(generateException(), errorOptions, null)
     }
 }
