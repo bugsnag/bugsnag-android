@@ -9,9 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.bugsnag.android.BreadcrumbType
 import com.bugsnag.android.Bugsnag
-import com.bugsnag.android.CaptureOptions
 import com.bugsnag.android.Configuration
-import com.bugsnag.android.ErrorOptions
 import com.bugsnag.android.Severity
 import com.example.foo.CrashyClass
 import com.google.android.material.snackbar.Snackbar
@@ -22,7 +20,6 @@ import okhttp3.Response
 import okhttp3.internal.notify
 import java.io.IOException
 import java.util.Date
-
 
 open class BaseCrashyActivity : AppCompatActivity() {
 
@@ -95,14 +92,7 @@ open class BaseCrashyActivity : AppCompatActivity() {
         try {
             throw RuntimeException("Non-Fatal Crash")
         } catch (e: RuntimeException) {
-
-
-            val errorOptions: ErrorOptions = ErrorOptions(CaptureOptions.captureNothing())
-            Bugsnag.addMetadata("custom", "key", "value")
-            Bugsnag.leaveBreadcrumb("Test breadcrumb")
-            Bugsnag.addFeatureFlag("testFeatureFlag", "variantA")
-            Bugsnag.setUser("123", "jane@doe.com", "Jane Doe")
-            Bugsnag.notify(e, errorOptions){
+            Bugsnag.notify(e) {
                 showSnackbar()
                 true
             }
