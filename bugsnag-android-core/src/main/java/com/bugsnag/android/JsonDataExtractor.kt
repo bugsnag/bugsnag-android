@@ -137,12 +137,12 @@ internal class RegexExtractor(
 
             // we *find* any match within the source string rather than require a full match
             if (matcher.find()) {
-                output(extractGroups(stringValue, matcher))
+                output(extractMatcherOutput(stringValue, matcher))
             }
         }
     }
 
-    private fun extractGroups(
+    private fun extractMatcherOutput(
         source: String,
         matcher: Matcher
     ): String {
