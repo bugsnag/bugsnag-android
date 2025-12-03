@@ -4,6 +4,7 @@ import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.OnErrorCallback
+import com.bugsnag.android.mazerunner.filterSystemAnrs
 import java.lang.RuntimeException
 
 internal class LoadConfigurationFromManifestScenario(
@@ -30,6 +31,8 @@ internal class LoadConfigurationFromManifestScenario(
                 true
             }
         )
+        testConfig.addOnError(filterSystemAnrs)
+
         measureBugsnagStartupDuration(this.context, testConfig)
     }
 

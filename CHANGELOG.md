@@ -1,5 +1,21 @@
 # Changelog
 
+## 6.20.0 (2025-12-03)
+
+### Enhancements
+
+* Introduced [bugsnag-plugin-android-apphang](bugsnag-plugin-android-apphang) as a configurable alternative to ANR reporting based on heartbeat monitoring
+  [#2332](https://github.com/bugsnag/bugsnag-android/pull/2332)
+* `Configuration.sendLaunchCrashesSynchronously` should result in fewer ANRs as it now calculates its timeout based on `Process.getStartElapsedRealtime` when available
+  [#2340](https://github.com/bugsnag/bugsnag-android/pull/2340)
+* Added `ErrorOptions` and `ErrorCaptureOptions` to allow customisation of the the fields captured by `notify`
+  [#2328](https://github.com/bugsnag/bugsnag-android/pull/2328)
+
+### Bug fixes
+
+* Fixed the consumer proguard rules for `ErrorType` (affects Kotlin Multiplatform apps), and added a `dontwarn` for apps with compileSdk < 36
+  [#2326](https://github.com/bugsnag/bugsnag-android/pull/2326)
+
 ## 6.19.0 (2025-09-30)
 
 ### Enhancements

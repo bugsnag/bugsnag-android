@@ -50,7 +50,9 @@ steps:
     plugins:
       artifacts#v1.9.0:
         download: "build/fixture-minimal.apk"
-        upload: "maze_output/failed/**/*"
+        upload:
+          - "maze_output/failed/**/*"
+          - "maze_output/maze_output.zip"
       docker-compose#v4.7.0:
         pull: maze-runner
         run: maze-runner
@@ -74,6 +76,8 @@ steps:
     concurrency_method: eager
     retry:
       automatic:
+        - exit_status: -1  # Agent was lost
+          limit: 2
         - exit_status: 103  # Appium session failed
           limit: 2
 
@@ -85,7 +89,9 @@ steps:
         download:
           - "build/fixture-debug.apk"
           - "build/fixture-debug/*"
-        upload: "maze_output/failed/**/*"
+        upload:
+          - "maze_output/failed/**/*"
+          - "maze_output/maze_output.zip"
       docker-compose#v4.7.0:
         pull: maze-runner
         run: maze-runner
@@ -112,6 +118,8 @@ steps:
     concurrency_method: eager
     retry:
       automatic:
+        - exit_status: -1  # Agent was lost
+          limit: 2
         - exit_status: 103  # Appium session failed
           limit: 2
 
@@ -128,6 +136,7 @@ steps:
           - "build/fixture-r19/*"
         upload:
           - "maze_output/failed/**/*"
+          - "maze_output/maze_output.zip"
           - "maze_output/metrics.csv"
       docker-compose#v4.7.0:
         pull: maze-runner
@@ -155,6 +164,8 @@ steps:
     concurrency_method: eager
     retry:
       automatic:
+        - exit_status: -1  # Agent was lost
+          limit: 2
         - exit_status: 103  # Appium session failed
           limit: 2
 
@@ -171,6 +182,7 @@ steps:
           - "build/fixture-r19/*"
         upload:
           - "maze_output/failed/**/*"
+          - "maze_output/maze_output.zip"
           - "maze_output/metrics.csv"
       docker-compose#v4.7.0:
         pull: maze-runner
@@ -198,6 +210,8 @@ steps:
     concurrency_method: eager
     retry:
       automatic:
+        - exit_status: -1  # Agent was lost
+          limit: 2
         - exit_status: 103  # Appium session failed
           limit: 2
 
@@ -210,6 +224,7 @@ steps:
       - "ANDROID_13"
       - "ANDROID_14"
       - "ANDROID_15"
+      - "ANDROID_16"
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
@@ -219,6 +234,7 @@ steps:
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
+          - "maze_output/maze_output.zip"
           - "maze_output/metrics.csv"
       docker-compose#v4.7.0:
         pull: maze-runner
@@ -244,6 +260,8 @@ steps:
     concurrency_method: eager
     retry:
       automatic:
+        - exit_status: -1  # Agent was lost
+          limit: 2
         - exit_status: 103  # Appium session failed
           limit: 2
 
@@ -256,6 +274,7 @@ steps:
       - "ANDROID_13"
       - "ANDROID_14"
       - "ANDROID_15"
+      - "ANDROID_16"
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
@@ -265,6 +284,7 @@ steps:
           - "build/fixture-r21/*"
         upload:
           - "maze_output/failed/**/*"
+          - "maze_output/maze_output.zip"
           - "maze_output/metrics.csv"
       docker-compose#v4.7.0:
         pull: maze-runner
@@ -290,72 +310,10 @@ steps:
     concurrency_method: eager
     retry:
       automatic:
+        - exit_status: -1  # Agent was lost
+          limit: 2
         - exit_status: 103  # Appium session failed
           limit: 2
-
-  - label: ':browserstack: ANDROID_16 NDK r21 e2e tests - batch 1'
-    depends_on: "fixture-r21"
-    timeout_in_minutes: 60
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/bs-fixture-r21-url.txt"
-          - "build/fixture-r21/*"
-        upload:
-          - "maze_output/failed/**/*"
-          - "maze_output/metrics.csv"
-      docker-compose#v4.7.0:
-        pull: maze-runner
-        run: maze-runner
-        service-ports: true
-        command:
-          - "features/full_tests"
-          - "--exclude=features/full_tests/[^a-m].*.feature"
-          - "--app=@build/bs-fixture-r21-url.txt"
-          - "--appium-version=1.22.0"
-          - "--farm=bs"
-          - "--device=ANDROID_16"
-      test-collector#v1.10.2:
-        files: "reports/TEST-*.xml"
-        format: "junit"
-        branch: "^main|next$$"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
-    concurrency_method: eager
-
-  - label: ':browserstack: ANDROID_16 NDK r21 e2e tests - batch 2'
-    depends_on: "fixture-r21"
-    timeout_in_minutes: 60
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/bs-fixture-r21-url.txt"
-          - "build/fixture-r21/*"
-        upload:
-          - "maze_output/failed/**/*"
-          - "maze_output/metrics.csv"
-      docker-compose#v4.7.0:
-        pull: maze-runner
-        run: maze-runner
-        service-ports: true
-        command:
-          - "features/full_tests"
-          - "--exclude=features/full_tests/[^n-z].*.feature"
-          - "--app=@build/bs-fixture-r21-url.txt"
-          - "--appium-version=1.22.0"
-          - "--farm=bs"
-          - "--device=ANDROID_16"
-      test-collector#v1.10.2:
-        files: "reports/TEST-*.xml"
-        format: "junit"
-        branch: "^main|next$$"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
-    concurrency_method: eager
 
   - label: ':bitbar: {{matrix}} NDK r28 e2e tests - batch 1'
     matrix:
@@ -366,6 +324,7 @@ steps:
       - "ANDROID_13"
       - "ANDROID_14"
       - "ANDROID_15"
+      - "ANDROID_16"
     depends_on: "fixture-r28"
     timeout_in_minutes: 60
     plugins:
@@ -375,6 +334,7 @@ steps:
           - "build/fixture-r28/*"
         upload:
           - "maze_output/failed/**/*"
+          - "maze_output/maze_output.zip"
           - "maze_output/metrics.csv"
       docker-compose#v4.7.0:
         pull: maze-runner
@@ -400,6 +360,8 @@ steps:
     concurrency_method: eager
     retry:
       automatic:
+        - exit_status: -1  # Agent was lost
+          limit: 2
         - exit_status: 103  # Appium session failed
           limit: 2
 
@@ -412,6 +374,7 @@ steps:
       - "ANDROID_13"
       - "ANDROID_14"
       - "ANDROID_15"
+      - "ANDROID_16"
     depends_on: "fixture-r28"
     timeout_in_minutes: 60
     plugins:
@@ -421,6 +384,7 @@ steps:
           - "build/fixture-r28/*"
         upload:
           - "maze_output/failed/**/*"
+          - "maze_output/maze_output.zip"
           - "maze_output/metrics.csv"
       docker-compose#v4.7.0:
         pull: maze-runner
@@ -446,72 +410,10 @@ steps:
     concurrency_method: eager
     retry:
       automatic:
+        - exit_status: -1  # Agent was lost
+          limit: 2
         - exit_status: 103  # Appium session failed
           limit: 2
-
-  - label: ':browserstack: ANDROID_16 NDK r28 e2e tests - batch 1'
-    depends_on: "fixture-r28"
-    timeout_in_minutes: 60
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/bs-fixture-r28-url.txt"
-          - "build/fixture-r28/*"
-        upload:
-          - "maze_output/failed/**/*"
-          - "maze_output/metrics.csv"
-      docker-compose#v4.7.0:
-        pull: maze-runner
-        run: maze-runner
-        service-ports: true
-        command:
-          - "features/full_tests"
-          - "--exclude=features/full_tests/[^a-m].*.feature"
-          - "--app=@build/bs-fixture-r28-url.txt"
-          - "--appium-version=1.22.0"
-          - "--farm=bs"
-          - "--device=ANDROID_16"
-      test-collector#v1.10.2:
-        files: "reports/TEST-*.xml"
-        format: "junit"
-        branch: "^main|next$$"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
-    concurrency_method: eager
-
-  - label: ':browserstack: ANDROID_16 NDK r28 e2e tests - batch 2'
-    depends_on: "fixture-r28"
-    timeout_in_minutes: 60
-    plugins:
-      artifacts#v1.9.0:
-        download:
-          - "build/bs-fixture-r28-url.txt"
-          - "build/fixture-r28/*"
-        upload:
-          - "maze_output/failed/**/*"
-          - "maze_output/metrics.csv"
-      docker-compose#v4.7.0:
-        pull: maze-runner
-        run: maze-runner
-        service-ports: true
-        command:
-          - "features/full_tests"
-          - "--exclude=features/full_tests/[^n-z].*.feature"
-          - "--app=@build/bs-fixture-r28-url.txt"
-          - "--appium-version=1.22.0"
-          - "--farm=bs"
-          - "--device=ANDROID_16"
-      test-collector#v1.10.2:
-        files: "reports/TEST-*.xml"
-        format: "junit"
-        branch: "^main|next$$"
-    env:
-      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
-    concurrency: 5
-    concurrency_group: 'browserstack-app'
-    concurrency_method: eager
 
   # If there is a tag present activate a manual publishing step
 
@@ -549,6 +451,7 @@ steps:
             - bugsnag-android-core/build/outputs/aar/bugsnag-android-core-release.aar
             - bugsnag-benchmarks/build/outputs/aar/bugsnag-benchmarks-release.aar
             - bugsnag-plugin-android-anr/build/outputs/aar/bugsnag-plugin-android-anr-release.aar
+            - bugsnag-plugin-android-apphang/build/outputs/aar/bugsnag-plugin-android-apphang-release.aar
             - bugsnag-plugin-android-exitinfo/build/outputs/aar/bugsnag-plugin-android-exitinfo-release.aar
             - bugsnag-plugin-android-ndk/build/outputs/aar/bugsnag-plugin-android-ndk-release.aar
             - bugsnag-plugin-android-okhttp/build/outputs/aar/bugsnag-plugin-android-okhttp-release.aar

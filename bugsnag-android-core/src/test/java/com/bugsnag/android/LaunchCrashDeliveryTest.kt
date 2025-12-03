@@ -48,11 +48,43 @@ class LaunchCrashDeliveryTest {
 
         // check time difference in ms is >1500, proving thread was blocked
         val baseline = System.currentTimeMillis()
-        eventStore.flushOnLaunch()
+        eventStore.flushOnLaunch(
+            LastRunInfo(
+                1,
+                crashed = true,
+                crashedDuringLaunch = true
+            )
+        )
         val now = System.currentTimeMillis()
         assertTrue(now - baseline > 1500)
         backgroundTaskService.shutdown()
         assertEquals(1, delivery.count.get())
+    }
+
+    /**
+     * Verifies that flushOnLaunch() doesn't block the main thread if the last run didn't result
+     * in a startup crash.
+     */
+    @Test
+    fun flushOnLaunchAvoidsBlockingWithoutLastRunCrash() {
+        val delivery = SlowDelivery()
+        val backgroundTaskService = BackgroundTaskService()
+        val eventStore = createEventStore(delivery, backgroundTaskService)
+        val event = generateEvent()
+        event.app.isLaunching = true
+        eventStore.write(event)
+
+        // check time difference in ms is <500
+        val baseline = System.currentTimeMillis()
+        eventStore.flushOnLaunch(
+            LastRunInfo(
+                0,
+                crashed = true,
+                crashedDuringLaunch = false
+            )
+        )
+        val now = System.currentTimeMillis()
+        assertTrue(now - baseline < 500)
     }
 
     /**
@@ -68,14 +100,26 @@ class LaunchCrashDeliveryTest {
         val event = generateEvent()
         event.app.isLaunching = true
         eventStore.write(event)
-        eventStore.flushOnLaunch()
+        eventStore.flushOnLaunch(
+            LastRunInfo(
+                1,
+                crashed = true,
+                crashedDuringLaunch = true
+            )
+        )
         assertEquals(1, delivery.count.get())
         assertEquals("Bugsnag Error thread", delivery.threadName)
 
         // non-launch crashes are not delivered in flushOnLaunch()
         event.app.isLaunching = false
         eventStore.write(event)
-        eventStore.flushOnLaunch()
+        eventStore.flushOnLaunch(
+            LastRunInfo(
+                1,
+                crashed = true,
+                crashedDuringLaunch = true
+            )
+        )
         assertEquals(1, delivery.count.get())
 
         // non-launch crashes are delivered in flushAsync() instead
@@ -103,7 +147,13 @@ class LaunchCrashDeliveryTest {
         eventStore.write(event)
 
         // only the first event should be sent
-        eventStore.flushOnLaunch()
+        eventStore.flushOnLaunch(
+            LastRunInfo(
+                1,
+                crashed = true,
+                crashedDuringLaunch = true
+            )
+        )
         assertEquals(1, delivery.count.get())
         val payload = requireNotNull(delivery.payload)
         val filenameInfo = EventFilenameInfo.fromFile(
