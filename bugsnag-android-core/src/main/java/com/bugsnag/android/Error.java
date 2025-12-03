@@ -104,8 +104,8 @@ public class Error implements JsonStream.Streamable {
     }
 
     static List<Error> createError(@NonNull Throwable exc,
-                                   boolean captureStacktrace,
                                    @NonNull Collection<String> projectPackages,
+                                   boolean captureStacktrace,
                                    @NonNull Logger logger
     ) {
         return ErrorInternal.Companion.createError(exc, projectPackages, captureStacktrace, logger);

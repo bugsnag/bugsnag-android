@@ -29,8 +29,8 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
             null -> mutableListOf()
             else -> Error.createError(
                 originalError,
-                captureStacktrace,
                 config.projectPackages,
+                captureStacktrace,
                 config.logger
             )
         },
@@ -354,7 +354,7 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
             errors.add(newError)
             return newError
         } else {
-            val newErrors = Error.createError(thrownError, true, projectPackages, logger)
+            val newErrors = Error.createError(thrownError, projectPackages, true, logger)
             errors.addAll(newErrors)
             return newErrors.first()
         }
