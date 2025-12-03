@@ -147,6 +147,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
             }
         });
 
+        // set sensible defaults for delivery/project packages etc if not set
         ConfigModule configModule = new ConfigModule(
                 contextModule,
                 configuration,
@@ -168,9 +169,11 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
                     + "https://docs.bugsnag.com/platforms/android/#basic-configuration");
         }
 
+        // setup storage as soon as possible
         final StorageModule storageModule = new StorageModule(appContext,
                 immutableConfig, bgTaskService);
 
+        // setup state trackers for bugsnag
         BugsnagStateModule bugsnagStateModule =
                 new BugsnagStateModule(immutableConfig, configuration);
         clientObservable = bugsnagStateModule.getClientObservable();
@@ -180,9 +183,11 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         metadataState = bugsnagStateModule.getMetadataState();
         featureFlagState = bugsnagStateModule.getFeatureFlagState();
 
+        // lookup system services
         final SystemServiceModule systemServiceModule =
                 new SystemServiceModule(contextModule, bgTaskService);
 
+        // setup further state trackers and data collection
         TrackerModule trackerModule = new TrackerModule(configModule,
                 storageModule, this, bgTaskService, callbackState);
 
@@ -191,6 +196,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
                 bgTaskService, connectivity, storageModule.getDeviceIdStore(),
                 memoryTrimState);
 
+        // load the device + user information
         userState = storageModule.loadUser(configuration.getUser());
 
         EventStorageModule eventStorageModule = new EventStorageModule(contextModule, configModule,
@@ -204,6 +210,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
         exceptionHandler = new ExceptionHandler(this, logger);
 
+        // load last run info
         lastRunInfoStore = storageModule.getLastRunInfoStore().getOrNull();
         lastRunInfo = storageModule.getLastRunInfo().getOrNull();
 
@@ -282,6 +289,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
             exceptionHandler.install();
         }
 
+        // Initialise plugins before attempting anything else
         NativeInterface.setClient(Client.this);
         pluginClient.loadPlugins(Client.this);
         NdkPluginCaller.INSTANCE.setNdkPlugin(pluginClient.getNdkPlugin());
@@ -289,17 +297,21 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
             NdkPluginCaller.INSTANCE.setInternalMetricsEnabled(true);
         }
 
-        eventStore.get().flushOnLaunch();
+        // Flush any on-disk errors and sessions
+        eventStore.get().flushOnLaunch(lastRunInfo);
         eventStore.get().flushAsync();
         sessionTracker.flushAsync();
 
+        // These call into NdkPluginCaller to sync with the native side, so they must happen later
         internalMetrics.setConfigDifferences(configDifferences);
         callbackState.setInternalMetrics(internalMetrics);
 
+        // Register listeners for system events in the background
         registerLifecycleCallbacks();
         registerComponentCallbacks();
         registerListenersInBackground();
 
+        // Leave auto breadcrumb
         Map<String, Object> data = new HashMap<>();
         leaveAutoBreadcrumb("Bugsnag loaded", BreadcrumbType.STATE, data);
 
@@ -816,6 +828,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         event.setGroupingDiscriminator(getGroupingDiscriminator());
         populateAndNotifyAndroidEvent(event, null, null);
 
+        // persist LastRunInfo so that on relaunch users can check the app crashed
         int consecutiveLaunchCrashes = lastRunInfo == null ? 0
                 : lastRunInfo.getConsecutiveLaunchCrashes();
         boolean launching = launchCrashTracker.isLaunching();
@@ -825,6 +838,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         LastRunInfo runInfo = new LastRunInfo(consecutiveLaunchCrashes, true, launching);
         persistRunInfo(runInfo);
 
+        // suspend execution of any further background tasks, waiting for previously
+        // submitted ones to complete.
         bgTaskService.shutdown();
     }
 
@@ -840,7 +855,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         populateDeviceAndAppData(event);
         populateEventData(event, options);
 
+        // Attach context to the event
         event.setContext(contextState.getContext());
+
         event.setInternalMetrics(internalMetrics);
         event.setGroupingDiscriminator(getGroupingDiscriminator());
 
@@ -848,8 +865,12 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
     }
 
     private void populateDeviceAndAppData(@NonNull Event event) {
+        // Capture the state of the app and device and attach diagnostics to the event
         event.setDevice(deviceDataCollector.generateDeviceWithState(new Date().getTime()));
         event.addMetadata("device", deviceDataCollector.getDeviceMetadata());
+
+        // add additional info that belongs in metadata
+        // generate new object each time, as this can be mutated by end-users
         event.setApp(appDataCollector.generateAppWithState());
         event.addMetadata("app", appDataCollector.getAppDataMetadata());
     }
@@ -860,10 +881,12 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
                 : null;
 
         if (capture == null || capture.getBreadcrumbs()) {
+            // Attach breadcrumbState to the event
             event.setBreadcrumbs(breadcrumbState.copy());
         }
 
         if (capture == null || capture.getUser()) {
+            // Attach user info to the event
             User user = userState.get().getUser();
             event.setUser(user.getId(), user.getEmail(), user.getName());
         }
@@ -871,9 +894,12 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
     void notifyInternal(@NonNull Event event,
                         @Nullable OnErrorCallback onError) {
+        // set the redacted keys on the event as this
+        // will not have been set for RN/Unity events
         Collection<Pattern> redactedKeys = metadataState.getMetadata().getRedactedKeys();
         event.setRedactedKeys(redactedKeys);
 
+        // get session for event
         Session currentSession = sessionTracker.getCurrentSession();
 
         if (currentSession != null
@@ -881,6 +907,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
             event.setSession(currentSession);
         }
 
+        // Run on error tasks, don't notify if any return false
         if (!callbackState.runOnErrorTasks(event, logger)
                 || (onError != null
                 && !onError.onError(event))) {
@@ -888,6 +915,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
             return;
         }
 
+        // leave an error breadcrumb of this event - for the next event
         leaveErrorBreadcrumb(event);
         setGroupingDiscriminator(getGroupingDiscriminator());
 
@@ -999,6 +1027,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         }
     }
 
+    // cast map to retain original signature until next major version bump, as this
+    // method signature is used by Unity/React native
     @NonNull
     @SuppressWarnings({"unchecked", "rawtypes"})
     Map<String, Object> getMetadata() {
@@ -1054,6 +1084,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
     }
 
     private void leaveErrorBreadcrumb(@NonNull Event event) {
+        // Add a breadcrumb for this event occurring
         List<Error> errors = event.getErrors();
 
         if (errors.size() > 0) {

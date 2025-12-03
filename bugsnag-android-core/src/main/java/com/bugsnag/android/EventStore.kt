@@ -49,7 +49,7 @@ internal class EventStore(
      * Flush startup crashes synchronously on the main thread. Startup crashes block the main thread
      * when being sent (subject to [Configuration.setSendLaunchCrashesSynchronously])
      */
-    fun flushOnLaunch() {
+    fun flushOnLaunch(lastRunInfo: LastRunInfo?) {
         if (!config.sendLaunchCrashesSynchronously) {
             return
         }
@@ -65,20 +65,23 @@ internal class EventStore(
             logger.d("Failed to flush launch crash reports, continuing.", exc)
             return
         }
+
+        if (lastRunInfo?.crashedDuringLaunch != true) {
+            return
+        }
+
         try {
             // Calculate the maximum amount of time we are prepared to block while sending
             // startup crashes, based on how long we think startup has taken so-far.
             // This attempts to mitigate possible startup ANRs that can occur when other SDKs
             // have blocked the main thread before this code is reached.
-            val currentStartupDuration =
-                SystemClock.elapsedRealtime() - ForegroundDetector.startupTime
-            var timeout = LAUNCH_CRASH_TIMEOUT_MS - currentStartupDuration
+            val startupDuration = SystemClock.elapsedRealtime() - ForegroundDetector.startupTime
+            val timeout = LAUNCH_CRASH_TIMEOUT_MS - startupDuration
 
-            if (timeout <= 0) {
+            if (timeout !in 0..LAUNCH_CRASH_TIMEOUT_MS) {
                 // if Bugsnag.start is called too long after Application.onCreate is expected to
-                // have returned, we use a full LAUNCH_CRASH_TIMEOUT_MS instead of a calculated one
-                // assuming that the app is already fully started
-                timeout = LAUNCH_CRASH_TIMEOUT_MS
+                // have returned, we assume that the app is already fully started and don't block
+                return
             }
 
             future.get(timeout, TimeUnit.MILLISECONDS)
