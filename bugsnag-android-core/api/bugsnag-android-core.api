@@ -94,6 +94,7 @@ public final class com/bugsnag/android/Bugsnag {
 	public static fun leaveBreadcrumb (Ljava/lang/String;Ljava/util/Map;Lcom/bugsnag/android/BreadcrumbType;)V
 	public static fun markLaunchCompleted ()V
 	public static fun notify (Ljava/lang/Throwable;)V
+	public static fun notify (Ljava/lang/Throwable;Lcom/bugsnag/android/ErrorOptions;Lcom/bugsnag/android/OnErrorCallback;)V
 	public static fun notify (Ljava/lang/Throwable;Lcom/bugsnag/android/OnErrorCallback;)V
 	public static fun pauseSession ()V
 	public static fun removeOnBreadcrumb (Lcom/bugsnag/android/OnBreadcrumbCallback;)V
@@ -151,6 +152,7 @@ public class com/bugsnag/android/Client : com/bugsnag/android/CallbackAware, com
 	public fun leaveBreadcrumb (Ljava/lang/String;Ljava/util/Map;Lcom/bugsnag/android/BreadcrumbType;)V
 	public fun markLaunchCompleted ()V
 	public fun notify (Ljava/lang/Throwable;)V
+	public fun notify (Ljava/lang/Throwable;Lcom/bugsnag/android/ErrorOptions;Lcom/bugsnag/android/OnErrorCallback;)V
 	public fun notify (Ljava/lang/Throwable;Lcom/bugsnag/android/OnErrorCallback;)V
 	public fun pauseSession ()V
 	public fun removeOnBreadcrumb (Lcom/bugsnag/android/OnBreadcrumbCallback;)V
@@ -365,6 +367,48 @@ public class com/bugsnag/android/Error : com/bugsnag/android/JsonStream$Streamab
 	public fun setErrorMessage (Ljava/lang/String;)V
 	public fun setType (Lcom/bugsnag/android/ErrorType;)V
 	public fun toStream (Lcom/bugsnag/android/JsonStream;)V
+}
+
+public final class com/bugsnag/android/ErrorCaptureOptions {
+	public static final field CAPTURE_BREADCRUMBS I
+	public static final field CAPTURE_FEATURE_FLAGS I
+	public static final field CAPTURE_STACKTRACE I
+	public static final field CAPTURE_THREADS I
+	public static final field CAPTURE_USER I
+	public static final field Companion Lcom/bugsnag/android/ErrorCaptureOptions$Companion;
+	public fun <init> ()V
+	public fun <init> (ZZZZZLjava/util/Set;)V
+	public synthetic fun <init> (ZZZZZLjava/util/Set;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public static final fun captureNothing ()Lcom/bugsnag/android/ErrorCaptureOptions;
+	public static final fun captureOnly (I)Lcom/bugsnag/android/ErrorCaptureOptions;
+	public static final fun captureOnly (ILjava/util/Set;)Lcom/bugsnag/android/ErrorCaptureOptions;
+	public final fun getBreadcrumbs ()Z
+	public final fun getFeatureFlags ()Z
+	public final fun getMetadata ()Ljava/util/Set;
+	public final fun getStacktrace ()Z
+	public final fun getThreads ()Z
+	public final fun getUser ()Z
+	public final fun setBreadcrumbs (Z)V
+	public final fun setFeatureFlags (Z)V
+	public final fun setMetadata (Ljava/util/Set;)V
+	public final fun setStacktrace (Z)V
+	public final fun setThreads (Z)V
+	public final fun setUser (Z)V
+}
+
+public final class com/bugsnag/android/ErrorCaptureOptions$Companion {
+	public final fun captureNothing ()Lcom/bugsnag/android/ErrorCaptureOptions;
+	public final fun captureOnly (I)Lcom/bugsnag/android/ErrorCaptureOptions;
+	public final fun captureOnly (ILjava/util/Set;)Lcom/bugsnag/android/ErrorCaptureOptions;
+	public static synthetic fun captureOnly$default (Lcom/bugsnag/android/ErrorCaptureOptions$Companion;ILjava/util/Set;ILjava/lang/Object;)Lcom/bugsnag/android/ErrorCaptureOptions;
+}
+
+public final class com/bugsnag/android/ErrorOptions {
+	public fun <init> ()V
+	public fun <init> (Lcom/bugsnag/android/ErrorCaptureOptions;)V
+	public synthetic fun <init> (Lcom/bugsnag/android/ErrorCaptureOptions;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getCapture ()Lcom/bugsnag/android/ErrorCaptureOptions;
+	public final fun setCapture (Lcom/bugsnag/android/ErrorCaptureOptions;)V
 }
 
 public final class com/bugsnag/android/ErrorType : java/lang/Enum {

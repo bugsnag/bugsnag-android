@@ -298,7 +298,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         }
 
         // Flush any on-disk errors and sessions
-        eventStore.get().flushOnLaunch();
+        eventStore.get().flushOnLaunch(lastRunInfo);
         eventStore.get().flushAsync();
         sessionTracker.flushAsync();
 
@@ -745,7 +745,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
      * @param exception the exception to send to Bugsnag
      */
     public void notify(@NonNull Throwable exception) {
-        notify(exception, null);
+        notify(exception, null, null);
     }
 
     /**
@@ -756,20 +756,60 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
      *                additional modification
      */
     public void notify(@NonNull Throwable exc, @Nullable OnErrorCallback onError) {
+        notify(exc, null, onError);
+    }
+
+    /**
+     * Notify Bugsnag of a handled exception
+     *
+     * @param exc     the exception to send to Bugsnag
+     * @param options the error options
+     * @param onError callback invoked on the generated error report for
+     *                additional modification
+     */
+    public void notify(
+            @NonNull Throwable exc,
+            @Nullable ErrorOptions options,
+            @Nullable OnErrorCallback onError
+    ) {
         if (exc != null) {
             if (immutableConfig.shouldDiscardError(exc)) {
                 return;
             }
             SeverityReason severityReason = SeverityReason.newInstance(REASON_HANDLED_EXCEPTION);
-            Metadata metadata = metadataState.getMetadata();
-            FeatureFlags featureFlags = featureFlagState.getFeatureFlags();
-            Event event = new Event(exc, immutableConfig, severityReason, metadata, featureFlags,
-                    logger);
+            Event event = createEventWithOptions(exc, severityReason, options);
             event.setGroupingDiscriminator(getGroupingDiscriminator());
-            populateAndNotifyAndroidEvent(event, onError);
+            populateAndNotifyAndroidEvent(event, options, onError);
         } else {
             logNull("notify");
         }
+    }
+
+    private Event createEventWithOptions(
+            @NonNull Throwable exc,
+            @NonNull SeverityReason severityReason,
+            @Nullable ErrorOptions options
+    ) {
+        final ErrorCaptureOptions capture = options != null ? options.getCapture() : null;
+        final Metadata metadata = capture == null || capture.getMetadata() == null
+                ? metadataState.getMetadata()
+                : metadataState.selectMetadata(capture.getMetadata());
+        final FeatureFlags featureFlags = capture == null || capture.getFeatureFlags()
+                ? featureFlagState.getFeatureFlags()
+                : new FeatureFlags();
+        final boolean captureStacktrace = capture == null || capture.getStacktrace();
+        final boolean captureThreads = capture == null || capture.getThreads();
+
+        return new Event(
+                exc,
+                immutableConfig,
+                severityReason,
+                metadata,
+                featureFlags,
+                captureStacktrace,
+                captureThreads,
+                logger
+        );
     }
 
     /**
@@ -786,7 +826,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         Event event = new Event(exc, immutableConfig, handledState,
                 data, featureFlagState.getFeatureFlags(), logger);
         event.setGroupingDiscriminator(getGroupingDiscriminator());
-        populateAndNotifyAndroidEvent(event, null);
+        populateAndNotifyAndroidEvent(event, null, null);
 
         // persist LastRunInfo so that on relaunch users can check the app crashed
         int consecutiveLaunchCrashes = lastRunInfo == null ? 0
@@ -805,21 +845,15 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
     void populateAndNotifyAndroidEvent(@NonNull Event event,
                                        @Nullable OnErrorCallback onError) {
-        // Capture the state of the app and device and attach diagnostics to the event
-        event.setDevice(deviceDataCollector.generateDeviceWithState(new Date().getTime()));
-        event.addMetadata("device", deviceDataCollector.getDeviceMetadata());
+        populateAndNotifyAndroidEvent(event, null, onError);
+    }
 
-        // add additional info that belongs in metadata
-        // generate new object each time, as this can be mutated by end-users
-        event.setApp(appDataCollector.generateAppWithState());
-        event.addMetadata("app", appDataCollector.getAppDataMetadata());
-
-        // Attach breadcrumbState to the event
-        event.setBreadcrumbs(breadcrumbState.copy());
-
-        // Attach user info to the event
-        User user = userState.get().getUser();
-        event.setUser(user.getId(), user.getEmail(), user.getName());
+    void populateAndNotifyAndroidEvent(@NonNull Event event,
+                                       @Nullable ErrorOptions options,
+                                       @Nullable OnErrorCallback onError
+    ) {
+        populateDeviceAndAppData(event);
+        populateEventData(event, options);
 
         // Attach context to the event
         event.setContext(contextState.getContext());
@@ -828,6 +862,34 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         event.setGroupingDiscriminator(getGroupingDiscriminator());
 
         notifyInternal(event, onError);
+    }
+
+    private void populateDeviceAndAppData(@NonNull Event event) {
+        // Capture the state of the app and device and attach diagnostics to the event
+        event.setDevice(deviceDataCollector.generateDeviceWithState(new Date().getTime()));
+        event.addMetadata("device", deviceDataCollector.getDeviceMetadata());
+
+        // add additional info that belongs in metadata
+        // generate new object each time, as this can be mutated by end-users
+        event.setApp(appDataCollector.generateAppWithState());
+        event.addMetadata("app", appDataCollector.getAppDataMetadata());
+    }
+
+    private void populateEventData(@NonNull Event event, @Nullable ErrorOptions options) {
+        final ErrorCaptureOptions capture = options != null && options.getCapture() != null
+                ? options.getCapture()
+                : null;
+
+        if (capture == null || capture.getBreadcrumbs()) {
+            // Attach breadcrumbState to the event
+            event.setBreadcrumbs(breadcrumbState.copy());
+        }
+
+        if (capture == null || capture.getUser()) {
+            // Attach user info to the event
+            User user = userState.get().getUser();
+            event.setUser(user.getId(), user.getEmail(), user.getName());
+        }
     }
 
     void notifyInternal(@NonNull Event event,
