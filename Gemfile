@@ -10,3 +10,5 @@ gem 'bugsnag-maze-runner', '~>10.0'
 #gem 'bugsnag-maze-runner', git: 'https://github.com/bugsnag/maze-runner'
 
 gem "license_finder", "~> 7.0"
+
+gem "openssl", "~> 3.3"

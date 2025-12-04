@@ -17,7 +17,9 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
         config: ImmutableConfig,
         severityReason: SeverityReason,
         data: Metadata = Metadata(),
-        featureFlags: FeatureFlags = FeatureFlags()
+        featureFlags: FeatureFlags = FeatureFlags(),
+        captureStacktrace: Boolean = true,
+        captureThreads: Boolean = true,
     ) : this(
         config.apiKey,
         config.logger,
@@ -25,14 +27,23 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
         config.discardClasses.toSet(),
         when (originalError) {
             null -> mutableListOf()
-            else -> Error.createError(originalError, config.projectPackages, config.logger)
+            else -> Error.createError(
+                originalError,
+                config.projectPackages,
+                captureStacktrace,
+                config.logger
+            )
         },
         data.copy(),
         featureFlags.copy(),
         originalError,
         config.projectPackages,
         severityReason,
-        ThreadState(originalError, severityReason.unhandled, config).threads,
+        if (captureThreads) {
+            ThreadState(originalError, severityReason.unhandled, config).threads
+        } else {
+            mutableListOf()
+        },
         User(),
         config.redactedKeys.toSet(),
         config.attemptDeliveryOnCrash
@@ -350,7 +361,7 @@ internal class EventInternal : FeatureFlagAware, JsonStream.Streamable, Metadata
             errors.add(newError)
             return newError
         } else {
-            val newErrors = Error.createError(thrownError, projectPackages, logger)
+            val newErrors = Error.createError(thrownError, projectPackages, true, logger)
             errors.addAll(newErrors)
             return newErrors.first()
         }

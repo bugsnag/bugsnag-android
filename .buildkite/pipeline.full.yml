@@ -451,6 +451,7 @@ steps:
             - bugsnag-android-core/build/outputs/aar/bugsnag-android-core-release.aar
             - bugsnag-benchmarks/build/outputs/aar/bugsnag-benchmarks-release.aar
             - bugsnag-plugin-android-anr/build/outputs/aar/bugsnag-plugin-android-anr-release.aar
+            - bugsnag-plugin-android-apphang/build/outputs/aar/bugsnag-plugin-android-apphang-release.aar
             - bugsnag-plugin-android-exitinfo/build/outputs/aar/bugsnag-plugin-android-exitinfo-release.aar
             - bugsnag-plugin-android-ndk/build/outputs/aar/bugsnag-plugin-android-ndk-release.aar
             - bugsnag-plugin-android-okhttp/build/outputs/aar/bugsnag-plugin-android-okhttp-release.aar
