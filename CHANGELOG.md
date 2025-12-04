@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 6.20.0 (2025-12-03)
 
 ### Enhancements
 
@@ -8,6 +8,8 @@
   [#2332](https://github.com/bugsnag/bugsnag-android/pull/2332)
 * `Configuration.sendLaunchCrashesSynchronously` should result in fewer ANRs as it now calculates its timeout based on `Process.getStartElapsedRealtime` when available
   [#2340](https://github.com/bugsnag/bugsnag-android/pull/2340)
+* Added `ErrorOptions` and `ErrorCaptureOptions` to allow customisation of the the fields captured by `notify`
+  [#2328](https://github.com/bugsnag/bugsnag-android/pull/2328)
 
 ### Bug fixes
 
