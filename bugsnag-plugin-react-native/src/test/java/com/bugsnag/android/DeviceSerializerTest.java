@@ -39,7 +39,8 @@ public class DeviceSerializerTest {
                         "bulldog-3.6-android",
                         "test-tag",
                         "google pixel",
-                        new String[]{"x86"}
+                        new String[]{"x86"},
+                        "2024-05-05"
                 ),
                 true,
                 "fa02",
@@ -71,6 +72,7 @@ public class DeviceSerializerTest {
         assertEquals(23409662345L, map.get("freeMemory"));
         assertEquals("portrait", map.get("orientation"));
         assertEquals("1970-01-01T00:00:00.000Z", map.get("time"));
+        assertEquals("2024-05-05", map.get("securityPatch"));
 
         Map<String, Object> runtimeVersions = new HashMap<>();
         runtimeVersions.put("androidApiLevel", "27");

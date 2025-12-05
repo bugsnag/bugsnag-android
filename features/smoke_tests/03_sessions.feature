@@ -38,6 +38,7 @@ Feature: Session functionality smoke tests
     And the session payload field "device.osVersion" is not null
     And the session payload field "device.runtimeVersions" is not null
     And the session payload field "device.totalMemory" is greater than 0
+    And the session payload field "device.securityPatch" is not null
 
     # Error payload
     Then I wait to receive an error

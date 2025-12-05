@@ -191,7 +191,7 @@ public class ClientTest {
         client = generateClient();
         Map<String, Object> metadata = client.getDeviceDataCollector().getDeviceMetadata();
 
-        assertEquals(9, metadata.size());
+        assertEquals(10, metadata.size());
         assertNotNull(metadata.get("batteryLevel"));
         assertNotNull(metadata.get("charging"));
         assertNotNull(metadata.get("locationStatus"));

@@ -18,7 +18,8 @@ class DeviceDeserializer implements MapDeserializer<DeviceWithState> {
                 MapUtils.<String>getOrNull(map, "fingerprint"),
                 MapUtils.<String>getOrNull(map, "tags"),
                 MapUtils.<String>getOrNull(map, "brand"),
-                MapUtils.<String[]>getOrNull(map, "cpuAbis")
+                MapUtils.<String[]>getOrNull(map, "cpuAbis"),
+                MapUtils.<String>getOrNull(map, "securityPatch")
         );
 
         String time = MapUtils.getOrNull(map, "time");

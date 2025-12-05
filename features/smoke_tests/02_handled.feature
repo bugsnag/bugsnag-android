@@ -79,6 +79,7 @@ Feature: Handled smoke tests
     And the event "metaData.device.screenResolution" is not null
     And the event "metaData.device.brand" is not null
     And the event "metaData.device.batteryLevel" is not null
+    And the event "device.securityPatch" is not null
 
     # User
     And the event "user.id" is not null

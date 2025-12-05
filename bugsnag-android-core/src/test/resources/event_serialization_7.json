@@ -26,6 +26,7 @@
       "androidApiLevel": "24"
     },
     "totalMemory": 109230923452,
+    "securityPatch": "2025-11-11",
     "freeDisk": 22234423124,
     "freeMemory": 92340255592,
     "orientation": "portrait",
