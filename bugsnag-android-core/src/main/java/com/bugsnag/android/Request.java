@@ -24,7 +24,7 @@ public final class Request extends AbstractHttpEntity implements JsonStream.Stre
     @NonNull
     private String httpMethod;
 
-    @NonNull
+    @Nullable
     private String httpVersion;
 
     @NonNull
@@ -74,7 +74,7 @@ public final class Request extends AbstractHttpEntity implements JsonStream.Stre
      *
      * @return the HTTP version
      */
-    @NonNull
+    @Nullable
     public String getHttpVersion() {
         return httpVersion;
     }
@@ -84,12 +84,8 @@ public final class Request extends AbstractHttpEntity implements JsonStream.Stre
      *
      * @param httpVersion the HTTP version
      */
-    public void setHttpVersion(@NonNull String httpVersion) {
-        if (httpVersion != null) {
-            this.httpVersion = httpVersion;
-        } else {
-            logNull("httpVersion");
-        }
+    public void setHttpVersion(@Nullable String httpVersion) {
+        this.httpVersion = httpVersion;
     }
 
     /**

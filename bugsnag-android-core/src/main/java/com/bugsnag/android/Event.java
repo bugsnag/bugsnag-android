@@ -623,6 +623,36 @@ public class Event implements JsonStream.Streamable, MetadataAware, UserAware, F
     }
 
     /**
+     * Associates an HTTP request with this event. This should represent the HTTP request
+     * that was being processed when the event occurred.
+     *
+     * Setting request information can help with debugging by providing context about
+     * the HTTP request that led to the error. Set this to null to clear any previously
+     * associated request.
+     *
+     * @param httpMethod the HTTP method (GET, POST, etc.) to associate with this event
+     * @param httpVersion the HTTP version (1.1) to associate with this event
+     * @param url the URL to associate with this event
+     * @see #getRequest()
+     */
+    public void setRequest(
+            @NonNull String httpMethod,
+            @Nullable String httpVersion,
+            @NonNull String url
+    ) {
+        if (httpMethod == null) {
+            logNull("httpMethod");
+            return;
+        }
+        if (url == null) {
+            logNull("url");
+            return;
+        }
+
+        setRequest(new Request(logger, httpMethod, httpVersion, url));
+    }
+
+    /**
      * Returns the HTTP response associated with this event, if any. This represents
      * the HTTP response that was being generated when the event occurred.
      *

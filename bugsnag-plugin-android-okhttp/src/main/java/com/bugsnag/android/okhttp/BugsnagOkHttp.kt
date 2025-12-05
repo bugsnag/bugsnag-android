@@ -19,6 +19,7 @@ import kotlin.math.max
  * [addInterceptor](okhttp3.OkHttpClient.Builder.addInterceptor) to configure it with your
  * `OkHttpClient`.
  */
+@Suppress("SENSELESS_COMPARISON")
 class BugsnagOkHttp : HttpInstrumentationBuilder<Request, Response> {
     private val errorCodes = BitSet()
     private var maxRequestBodyCapture = DEFAULT_BODY_CAPTURE_SIZE
@@ -85,7 +86,6 @@ class BugsnagOkHttp : HttpInstrumentationBuilder<Request, Response> {
     }
 
     override fun addRequestCallback(callback: HttpRequestCallback<Request>): BugsnagOkHttp {
-        @Suppress("SENSELESS_COMPARISON")
         if (callback != null) {
             requestCallbacks.add(callback)
         }
@@ -94,7 +94,6 @@ class BugsnagOkHttp : HttpInstrumentationBuilder<Request, Response> {
     }
 
     override fun addResponseCallback(callback: HttpResponseCallback<Request, Response>): BugsnagOkHttp {
-        @Suppress("SENSELESS_COMPARISON")
         if (callback != null) {
             responseCallbacks.add(callback)
         }
@@ -148,6 +147,6 @@ class BugsnagOkHttp : HttpInstrumentationBuilder<Request, Response> {
     }
 
     internal companion object {
-        private const val DEFAULT_BODY_CAPTURE_SIZE = 4096L
+        private const val DEFAULT_BODY_CAPTURE_SIZE: Long = 0L
     }
 }
