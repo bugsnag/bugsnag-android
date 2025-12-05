@@ -1,7 +1,5 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.SeverityReason.REASON_PROMISE_REJECTION;
-
 import com.bugsnag.android.internal.BackgroundTaskService;
 import com.bugsnag.android.internal.DeliveryPipeline;
 import com.bugsnag.android.internal.ImmutableConfig;
@@ -55,23 +53,25 @@ class DeliveryDelegate extends BaseObservable {
             }
         }
 
-        if (event.getImpl().getOriginalUnhandled()) {
-            // should only send unhandled errors if they don't terminate the process (i.e. ANRs)
-            String severityReasonType = event.getImpl().getSeverityReasonType();
-            boolean promiseRejection = REASON_PROMISE_REJECTION.equals(severityReasonType);
-            boolean anr = event.getImpl().isAnr(event);
-            if (anr || promiseRejection) {
-                cacheEvent(event, true);
-            } else if (immutableConfig.getAttemptDeliveryOnCrash()) {
+        switch (event.getDeliveryStrategy()) {
+            case STORE_AND_SEND:
                 cacheAndSendSynchronously(event);
-            } else {
+                break;
+            case STORE_ONLY:
                 cacheEvent(event, false);
-            }
-        } else {
-            // Build the eventPayload
-            String apiKey = event.getApiKey();
-            EventPayload eventPayload = new EventPayload(apiKey, event, notifier, immutableConfig);
-            deliverPayloadAsync(eventPayload);
+                break;
+            case SEND_IMMEDIATELY:
+                if (callbackState.runOnSendTasks(event, logger)) {
+                    String apiKey = event.getApiKey();
+                    EventPayload eventPayload = new EventPayload(
+                            apiKey, event, notifier, immutableConfig);
+                    deliverPayloadAsync(eventPayload);
+                }
+                break;
+            case STORE_AND_FLUSH:
+            default:
+                cacheEvent(event, true);
+                break;
         }
     }
 

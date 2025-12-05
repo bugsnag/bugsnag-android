@@ -10,8 +10,11 @@
         android:name=".MazerunnerApp"
         android:extractNativeLibs="false"
         >
+        <!-- configChanges is set to prevent activity recreation on orientation change,
+             as it leads to an extra thread polling for commands. -->
         <activity
             android:name=".MainActivity"
+            android:configChanges="orientation"
             android:exported="true"
             >
             <intent-filter>

@@ -30,12 +30,6 @@ def execute_command(action, scenario_name = '')
     $notify_endpoint = 'http://bs-local.com:9339/notify'
     $error_config_endpoint = 'http://bs-local.com:9339'
   end
-
-  # Ensure fixture has read the command
-  count = 600
-  sleep 0.1 until Maze::Server.commands.size_remaining == 0 || (count -= 1) < 1
-
-  raise 'Test fixture did not GET /command' unless Maze::Server.commands.size_remaining == 0
 end
 
 def press_at(x, y)

@@ -24,6 +24,7 @@ include(
     ":bugsnag-plugin-android-exitinfo",
     ":bugsnag-plugin-android-ndk",
     ":bugsnag-plugin-react-native",
+    ":bugsnag-plugin-android-apphang",
     ":bugsnag-plugin-android-okhttp",
     ":bugsnag-benchmarks"
 )

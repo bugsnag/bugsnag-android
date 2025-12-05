@@ -11,7 +11,6 @@ import android.os.Looper
 import android.view.Window
 import android.widget.Button
 import android.widget.EditText
-import com.bugsnag.android.BugsnagInternals
 import com.bugsnag.android.mazerunner.scenarios.Scenario
 import org.json.JSONObject
 import java.io.File
@@ -21,21 +20,23 @@ import java.net.URL
 import kotlin.concurrent.thread
 import kotlin.math.max
 
-const val CONFIG_FILE_TIMEOUT = 5000
+const val CONFIG_FILE_TIMEOUT = 15000
 
 class MainActivity : Activity() {
 
     private val mainHandler = Handler(Looper.getMainLooper())
 
     private val apiKeyKey = "BUGSNAG_API_KEY"
+    private val commandUUIDKey = "MAZE_COMMAND_UUID"
     lateinit var prefs: SharedPreferences
 
     var scenario: Scenario? = null
-    var polling = false
+    var isActivityRecreate = false
     var mazeAddress: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.isActivityRecreate = savedInstanceState != null
         log("MainActivity.onCreate called")
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_main)
@@ -71,7 +72,9 @@ class MainActivity : Activity() {
         super.onResume()
         log("MainActivity.onResume called")
 
-        if (!polling) {
+        // Don't start the command runner again if the activity is being recreated,
+        // as it results in two threads executing commands concurrently and causing flakes.
+        if (!this.isActivityRecreate) {
             startCommandRunner()
         }
         log("MainActivity.onResume complete")
@@ -122,14 +125,33 @@ class MainActivity : Activity() {
         return jsonObject?.optString(key) ?: ""
     }
 
+    private fun setStoredCommandUUID(commandUUID: String) {
+        with(prefs.edit()) {
+            putString(commandUUIDKey, commandUUID)
+            commit()
+        }
+        CiLog.info("lastCommandUUID set to: $commandUUID")
+    }
+
+    private fun clearStoredCommandUUID() {
+        with(prefs.edit()) {
+            remove(commandUUIDKey)
+            commit()
+        }
+        CiLog.info("lastCommandUUID set to empty")
+    }
+
+    private fun getStoredCommandUUID(): String? {
+        return prefs.getString(commandUUIDKey, "").orEmpty()
+    }
+
     // Starts a thread to poll for Maze Runner actions to perform
     private fun startCommandRunner() {
-        // Get the next maze runner command
-        polling = true
         thread(start = true) {
             if (mazeAddress == null) setMazeRunnerAddress()
             checkNetwork()
 
+            var polling = true
             while (polling) {
                 Thread.sleep(1000)
                 try {
@@ -142,13 +164,14 @@ class MainActivity : Activity() {
 
                     // Log the received command
                     CiLog.info("Received command: $commandStr")
-                    var command = JSONObject(commandStr)
+                    val command = JSONObject(commandStr)
                     val action = getStringSafely(command, "action")
                     val scenarioName = getStringSafely(command, "scenario_name")
                     val scenarioMode = getStringSafely(command, "scenario_mode")
                     val sessionsUrl = getStringSafely(command, "sessions_endpoint")
                     val notifyUrl = getStringSafely(command, "notify_endpoint")
                     val remoteConfigUrl = getStringSafely(command, "error_config_endpoint")
+                    val commandUUID = getStringSafely(command, "uuid")
                     log("command.action: $action")
                     log("command.scenarioName: $scenarioName")
                     log("command.scenarioMode: $scenarioMode")
@@ -174,13 +197,18 @@ class MainActivity : Activity() {
                                 CiLog.info("No Maze Runner command queuing, continuing to poll")
                             }
                             "start_bugsnag" -> {
+                                setStoredCommandUUID(commandUUID)
                                 startBugsnag(scenarioName, scenarioMode, sessionsUrl, notifyUrl, remoteConfigUrl)
                             }
                             "run_scenario" -> {
+                                setStoredCommandUUID(commandUUID)
                                 runScenario(scenarioName, scenarioMode, sessionsUrl, notifyUrl, remoteConfigUrl)
                             }
-                            "clear_persistent_data" -> clearPersistentData()
-                            "flush" -> BugsnagInternals.flush()
+                            "clear_persistent_data" -> {
+                                setStoredCommandUUID(commandUUID)
+                                PersistentData(applicationContext).clear()
+                            }
+                            "reset_uuid" -> clearStoredCommandUUID()
                             else -> throw IllegalArgumentException("Unknown action: $action")
                         }
                     }
@@ -192,7 +220,8 @@ class MainActivity : Activity() {
     }
 
     private fun readCommand(): String {
-        val commandUrl = "http://$mazeAddress/command"
+        val commandUrl = "http://$mazeAddress/idem-command?after=${getStoredCommandUUID()}"
+        CiLog.info("Requesting Maze Runner command from: $commandUrl")
         val urlConnection = URL(commandUrl).openConnection() as HttpURLConnection
         try {
             return urlConnection.inputStream.use { it.reader().readText() }
@@ -247,52 +276,6 @@ class MainActivity : Activity() {
         mainHandler.post {
             CiLog.info("Executing scenario")
             scenario?.startScenario()
-        }
-    }
-
-    // Clear persistent data (used to stop scenarios bleeding into each other)
-    private fun clearPersistentData() {
-        CiLog.info("Clearing persistent data")
-        clearCacheFolder("bugsnag")
-        clearCacheFolder("StrictModeDiscScenarioFile")
-        clearFilesFolder("background-service-dir")
-
-        removeFile("device-id")
-        removeFile("internal-device-id")
-
-        listFolders()
-    }
-
-    // Recursively deletes the contents of a folder beneath /cache
-    private fun clearCacheFolder(name: String) {
-        val folder = File(applicationContext.cacheDir, name)
-        log("Clearing folder: ${folder.path}")
-        folder.deleteRecursively()
-    }
-
-    private fun clearFilesFolder(name: String) {
-        val folder = File(applicationContext.filesDir, name)
-        log("Clearing folder: ${folder.path}")
-        folder.deleteRecursively()
-    }
-
-    // Deletes a file beneath /files
-    private fun removeFile(name: String) {
-        val file = File(applicationContext.filesDir, name)
-        log("Removing file: ${file.path}")
-        file.delete()
-    }
-
-    // Logs out the contents of the /cache and /files folders
-    private fun listFolders() {
-        log("Contents of: ${applicationContext.cacheDir}")
-        applicationContext.cacheDir.walkTopDown().forEach {
-            log(it.absolutePath)
-        }
-
-        log("Contents of: ${applicationContext.filesDir}")
-        applicationContext.filesDir.walkTopDown().forEach {
-            log(it.absolutePath)
         }
     }
 

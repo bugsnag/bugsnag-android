@@ -2,6 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
+    <ID>ComplexCondition:JsonStream.kt$JsonStream$!this.isLenient &amp;&amp; (string == "-Infinity" || string == "Infinity" || string == "NaN")</ID>
     <ID>CyclomaticComplexMethod:AppDataCollector.kt$AppDataCollector$@SuppressLint("SwitchIntDef") @Suppress("DEPRECATION") private fun getProcessImportance(): String?</ID>
     <ID>CyclomaticComplexMethod:ConfigInternal.kt$ConfigInternal$fun getConfigDifferences(): Map&lt;String, Any></ID>
     <ID>CyclomaticComplexMethod:JsonCollectionParser.kt$JsonCollectionParser$private fun parseNumber(): Number</ID>
@@ -20,13 +21,15 @@
     <ID>LongParameterList:DeviceDataCollector.kt$DeviceDataCollector$( private val connectivity: Connectivity, private val appContext: Context, resources: Resources, private val deviceIdStore: Provider&lt;DeviceIdStore.DeviceIds?>, private val buildInfo: DeviceBuildInfo, private val dataDirectory: File, private val rootedFuture: Provider&lt;Boolean>?, private val bgTaskService: BackgroundTaskService, private val logger: Logger )</ID>
     <ID>LongParameterList:DeviceWithState.kt$DeviceWithState$( buildInfo: DeviceBuildInfo, jailbroken: Boolean?, id: String?, locale: String?, totalMemory: Long?, runtimeVersions: MutableMap&lt;String, Any>, /** * The number of free bytes of storage available on the device */ var freeDisk: Long?, /** * The number of free bytes of memory available on the device */ var freeMemory: Long?, /** * The orientation of the device when the event occurred: either portrait or landscape */ var orientation: String?, /** * The timestamp on the device when the event occurred */ var time: Date? )</ID>
     <ID>LongParameterList:EventFilenameInfo.kt$EventFilenameInfo.Companion$( obj: Any, uuid: String = UUID.randomUUID().toString(), apiKey: String?, timestamp: Long = System.currentTimeMillis(), config: ImmutableConfig, isLaunching: Boolean? = null )</ID>
-    <ID>LongParameterList:EventInternal.kt$EventInternal$( apiKey: String, logger: Logger, breadcrumbs: MutableList&lt;Breadcrumb> = mutableListOf(), discardClasses: Set&lt;Pattern> = setOf(), errors: MutableList&lt;Error> = mutableListOf(), metadata: Metadata = Metadata(), featureFlags: FeatureFlags = FeatureFlags(), originalError: Throwable? = null, projectPackages: Collection&lt;String> = setOf(), severityReason: SeverityReason = SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION), threads: MutableList&lt;Thread> = mutableListOf(), user: User = User(), redactionKeys: Set&lt;Pattern>? = null )</ID>
+    <ID>LongParameterList:EventInternal.kt$EventInternal$( apiKey: String, logger: Logger, breadcrumbs: MutableList&lt;Breadcrumb> = mutableListOf(), discardClasses: Set&lt;Pattern> = setOf(), errors: MutableList&lt;Error> = mutableListOf(), metadata: Metadata = Metadata(), featureFlags: FeatureFlags = FeatureFlags(), originalError: Throwable? = null, projectPackages: Collection&lt;String> = setOf(), severityReason: SeverityReason = SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION), threads: MutableList&lt;Thread> = mutableListOf(), user: User = User(), redactionKeys: Set&lt;Pattern>? = null, isAttemptDeliveryOnCrash: Boolean = false )</ID>
+    <ID>LongParameterList:EventInternal.kt$EventInternal$( originalError: Throwable? = null, config: ImmutableConfig, severityReason: SeverityReason, data: Metadata = Metadata(), featureFlags: FeatureFlags = FeatureFlags(), captureStacktrace: Boolean = true, captureThreads: Boolean = true, )</ID>
     <ID>LongParameterList:EventStorageModule.kt$EventStorageModule$( contextModule: ContextModule, configModule: ConfigModule, dataCollectionModule: DataCollectionModule, bgTaskService: BackgroundTaskService, trackerModule: TrackerModule, systemServiceModule: SystemServiceModule, notifier: Notifier, deliveryPipeline: DeliveryPipeline )</ID>
     <ID>LongParameterList:NativeStackframe.kt$NativeStackframe$( /** * The name of the method that was being executed */ var method: String?, /** * The location of the source file */ var file: String?, /** * The line number within the source file this stackframe refers to */ var lineNumber: Number?, /** * The address of the instruction where the event occurred. */ var frameAddress: Long?, /** * The address of the function where the event occurred. */ var symbolAddress: Long?, /** * The address of the library where the event occurred. */ var loadAddress: Long?, /** * Whether this frame identifies the program counter */ var isPC: Boolean?, /** * The type of the error */ var type: ErrorType? = null, /** * Identifies the exact build this frame originates from. */ var codeIdentifier: String? = null, )</ID>
     <ID>LongParameterList:RemoteConfigRequest.kt$RemoteConfigRequest$( private val baseUrl: String, private val apiKey: String, private val notifier: Notifier, private val appVersion: String?, private val versionCode: Int?, private val releaseStage: String?, private val packageName: String?, private val remoteConfig: RemoteConfig?, private val logger: Logger )</ID>
     <ID>LongParameterList:StateEvent.kt$StateEvent.Install$( @JvmField val apiKey: String, @JvmField val autoDetectNdkCrashes: Boolean, @JvmField val appVersion: String?, @JvmField val buildUuid: String?, @JvmField val releaseStage: String?, @JvmField val lastRunInfoPath: String, @JvmField val consecutiveLaunchCrashes: Int, @JvmField val sendThreads: ThreadSendPolicy, @JvmField val maxBreadcrumbs: Int )</ID>
     <ID>LongParameterList:ThreadState.kt$ThreadState$( allThreads: List&lt;JavaThread>, currentThread: JavaThread, exc: Throwable?, isUnhandled: Boolean, maxThreadCount: Int, threadCollectionTimeLimitMillis: Long, projectPackages: Collection&lt;String>, logger: Logger )</ID>
     <ID>LoopWithTooManyJumpStatements:JsonCollectionParser.kt$JsonCollectionParser$while</ID>
+    <ID>LoopWithTooManyJumpStatements:JsonStream.kt$JsonStream$for</ID>
     <ID>LoopWithTooManyJumpStatements:JsonDataExtractor.kt$RelativeAddressExtractor$for</ID>
     <ID>MagicNumber:BugsnagEventMapper.kt$BugsnagEventMapper$16</ID>
     <ID>MagicNumber:BugsnagEventMapper.kt$BugsnagEventMapper$32</ID>
@@ -62,6 +65,8 @@
     <ID>MagicNumber:JsonHelper.kt$JsonHelper$19</ID>
     <ID>MagicNumber:JsonHelper.kt$JsonHelper$3</ID>
     <ID>MagicNumber:JsonHelper.kt$JsonHelper$8</ID>
+    <ID>MagicNumber:JsonStream.kt$JsonStream$128</ID>
+    <ID>MagicNumber:JsonStream.kt$JsonStream$32</ID>
     <ID>MagicNumber:LastRunInfoStore.kt$LastRunInfoStore$3</ID>
     <ID>MagicNumber:SessionStore.kt$SessionStore$60</ID>
     <ID>MatchingDeclarationName:Main.kt$RealErrorTest</ID>
@@ -99,10 +104,12 @@
     <ID>TooManyFunctions:ConfigInternal.kt$ConfigInternal : CallbackAwareMetadataAwareUserAwareFeatureFlagAware</ID>
     <ID>TooManyFunctions:DeviceDataCollector.kt$DeviceDataCollector</ID>
     <ID>TooManyFunctions:EventInternal.kt$EventInternal : FeatureFlagAwareStreamableMetadataAwareUserAware</ID>
+    <ID>TooManyFunctions:JsonStream.kt$JsonStream : CloseableFlushable</ID>
     <ID>UnusedPrivateProperty:ManifestConfigLoader.kt$ManifestConfigLoader.Companion$private const val LAUNCH_CRASH_THRESHOLD_MS = "$BUGSNAG_NS.LAUNCH_CRASH_THRESHOLD_MS"</ID>
     <ID>UnusedPrivateProperty:ThreadStateTest.kt$ThreadStateTest$private val configuration = generateImmutableConfig()</ID>
     <ID>UseCheckOrError:BackgroundRunnableProviderServiceTest.kt$BackgroundRunnableProviderServiceTest$throw IllegalStateException()</ID>
     <ID>UseCheckOrError:BugsnagEventMapper.kt$BugsnagEventMapper$throw IllegalStateException("cannot find json property '$key'")</ID>
+    <ID>UseCheckOrError:JsonStream.kt$JsonStream$throw IllegalStateException("Nesting problem.")</ID>
     <ID>UseCheckOrError:StacktraceSerializationTest.kt$StacktraceSerializationTest.Companion$throw IllegalStateException()</ID>
     <ID>UseCheckOrError:SynchronizedStreamableStoreTest.kt$CrashyStreamable$throw IllegalStateException()</ID>
     <ID>UseCheckOrError:SynchronizedStreamableStoreTest.kt$CrashyStreamable.Companion$throw IllegalStateException()</ID>

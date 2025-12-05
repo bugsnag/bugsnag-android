@@ -26,6 +26,14 @@ internal data class MetadataState(val metadata: Metadata = Metadata()) :
         notifyClear(section, key)
     }
 
+    fun selectMetadata(sections: Set<String>): Metadata {
+        return Metadata(
+            metadata.store.filterTo(HashMap()) { (key, _) ->
+                key in sections || key == "device" || key == "app"
+            }
+        )
+    }
+
     private fun notifyClear(section: String, key: String?) {
         when (key) {
             null -> updateState { StateEvent.ClearMetadataSection(section) }
