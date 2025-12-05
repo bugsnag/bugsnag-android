@@ -115,6 +115,7 @@ internal class DeviceDataCollector(
         map["dpi"] = dpi
         map["emulator"] = emulator
         map["screenResolution"] = screenResolution
+        map["securityPatch"] = buildInfo.securityPatch
         return map
     }
 

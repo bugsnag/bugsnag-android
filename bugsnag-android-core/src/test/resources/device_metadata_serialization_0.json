@@ -2,6 +2,7 @@
   "locationStatus": "disallowed",
   "emulator": false,
   "networkAccess": "unknown",
+  "securityPatch": "2025-11-11",
   "screenDensity": 200.0,
   "dpi": 120,
   "screenResolution": "0x0",
