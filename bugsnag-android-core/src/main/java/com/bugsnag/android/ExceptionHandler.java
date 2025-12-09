@@ -19,6 +19,7 @@ class ExceptionHandler implements UncaughtExceptionHandler {
     private final StrictModeHandler strictModeHandler = new StrictModeHandler();
     private final Client client;
     private final Logger logger;
+    private boolean enabled = true;
 
     ExceptionHandler(Client client, Logger logger) {
         this.client = client;
@@ -31,13 +32,14 @@ class ExceptionHandler implements UncaughtExceptionHandler {
     }
 
     void uninstall() {
+        enabled = false;
         Thread.setDefaultUncaughtExceptionHandler(originalHandler);
     }
 
     @Override
     public void uncaughtException(@NonNull Thread thread, @NonNull Throwable throwable) {
         try {
-            if (client.getConfig().shouldDiscardError(throwable)) {
+            if (!enabled || client.getConfig().shouldDiscardError(throwable)) {
                 return;
             }
 

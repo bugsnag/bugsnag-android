@@ -777,6 +777,11 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
                 return;
             }
             SeverityReason severityReason = SeverityReason.newInstance(REASON_HANDLED_EXCEPTION);
+            if (options != null && options.isFatal()) {
+                severityReason =
+                        SeverityReason.newInstance(SeverityReason.REASON_UNHANDLED_EXCEPTION);
+                setAutoNotify(!options.isFatal());
+            }
             Event event = createEventWithOptions(exc, severityReason, options);
             event.setGroupingDiscriminator(getGroupingDiscriminator());
             populateAndNotifyAndroidEvent(event, options, onError);
@@ -861,7 +866,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         event.setInternalMetrics(internalMetrics);
         event.setGroupingDiscriminator(getGroupingDiscriminator());
 
-        notifyInternal(event, onError);
+        notifyInternal(event, onError, options);
     }
 
     private void populateDeviceAndAppData(@NonNull Event event) {
@@ -893,7 +898,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
     }
 
     void notifyInternal(@NonNull Event event,
-                        @Nullable OnErrorCallback onError) {
+                        @Nullable OnErrorCallback onError,
+                        @Nullable ErrorOptions options
+    ) {
         // set the redacted keys on the event as this
         // will not have been set for RN/Unity events
         Collection<Pattern> redactedKeys = metadataState.getMetadata().getRedactedKeys();
@@ -911,6 +918,10 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         if (!callbackState.runOnErrorTasks(event, logger)
                 || (onError != null
                 && !onError.onError(event))) {
+            if (options != null && options.isFatal()) {
+                event.updateSeverityReason(SeverityReason.REASON_UNHANDLED_EXCEPTION);
+                setAutoNotify(false);
+            }
             logger.d("Skipping notification - onError task returned false");
             return;
         }

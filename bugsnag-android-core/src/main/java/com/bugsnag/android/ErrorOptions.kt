@@ -5,7 +5,8 @@ package com.bugsnag.android
  */
 class ErrorOptions @JvmOverloads constructor(
     /** Controls which data fields are captured during Event creation. */
-    var capture: ErrorCaptureOptions = ErrorCaptureOptions()
+    var capture: ErrorCaptureOptions = ErrorCaptureOptions(),
+    var isFatal: Boolean = false
 )
 
 /**
