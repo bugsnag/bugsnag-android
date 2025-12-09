@@ -5,6 +5,7 @@ import com.bugsnag.android.http.HttpInstrumentedResponse
 import okhttp3.Protocol
 import okhttp3.Request
 import okhttp3.Response
+import com.bugsnag.android.Request as BugsnagRequest
 import com.bugsnag.android.Response as BugsnagResponse
 
 internal fun Event.setHttpInfo(
@@ -12,9 +13,9 @@ internal fun Event.setHttpInfo(
     instrumentedResponse: HttpInstrumentedResponse<Request, Response>?
 ) {
     val url = instrumentedRequest.reportedUrl ?: return
-    setRequest(
-        instrumentedRequest.request.method,
+    request = BugsnagRequest(
         instrumentedResponse?.response?.protocol.toVersionString(),
+        instrumentedRequest.request.method,
         url
     )
 

@@ -12,7 +12,12 @@ import java.io.IOException;
 public final class Response extends AbstractHttpEntity implements JsonStream.Streamable {
     private int statusCode;
 
-    Response(@IntRange(from = 0) int statusCode) {
+    /**
+     * Constructs a new Response with the specified HTTP status code.
+     *
+     * @param statusCode the HTTP status code
+     */
+    public Response(@IntRange(from = 0) int statusCode) {
         this.statusCode = statusCode;
     }
 

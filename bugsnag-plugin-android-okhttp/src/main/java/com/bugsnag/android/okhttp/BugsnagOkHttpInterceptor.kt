@@ -126,7 +126,14 @@ internal class BugsnagOkHttpInterceptor(
 
         if (resp.isErrorReported) {
             client.notify(templateException, httpErrorOptions) { event ->
+                val okHttpRequest = resp.request
+                val okHttpResponse = resp.response
+
+                val domain = okHttpRequest.url.host
+
                 event.errors.clear()
+                event.addError("HTTPError", "${okHttpResponse?.code}: ${okHttpRequest.url}")
+                event.context = "${okHttpRequest.method} $domain"
                 event.setHttpInfo(req, resp)
                 true
             }

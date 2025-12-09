@@ -702,6 +702,8 @@ public abstract interface class com/bugsnag/android/Plugin {
 }
 
 public final class com/bugsnag/android/Request : com/bugsnag/android/AbstractHttpEntity, com/bugsnag/android/JsonStream$Streamable {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public fun addQueryParameter (Ljava/lang/String;Ljava/lang/String;)V
 	public fun getHttpMethod ()Ljava/lang/String;
 	public fun getHttpVersion ()Ljava/lang/String;
@@ -716,6 +718,7 @@ public final class com/bugsnag/android/Request : com/bugsnag/android/AbstractHtt
 }
 
 public final class com/bugsnag/android/Response : com/bugsnag/android/AbstractHttpEntity, com/bugsnag/android/JsonStream$Streamable {
+	public fun <init> (I)V
 	public fun getStatusCode ()I
 	public fun setStatusCode (I)V
 	public fun toStream (Lcom/bugsnag/android/JsonStream;)V
