@@ -7,7 +7,6 @@ import okhttp3.Protocol
 import okhttp3.Request
 import okhttp3.Response
 import kotlin.math.max
-import kotlin.math.min
 import com.bugsnag.android.Request as BugsnagRequest
 import com.bugsnag.android.Response as BugsnagResponse
 

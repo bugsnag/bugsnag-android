@@ -8,14 +8,11 @@ class RequestTest {
     private val testBodyString = "this is a body string with some content"
     private val customBodyLength = 5000L
 
-    private val logger = NoopLogger
-
     @Test
     fun urlQueryIsExtracted() {
         val request = Request(
-            logger,
-            "GET",
             "1.1",
+            "GET",
             "http://localhost/test?t1=arg1&test2=argument+2"
         )
 
@@ -27,14 +24,14 @@ class RequestTest {
 
     @Test
     fun setBody() {
-        val request = Request(logger, "GET", "1.1", "http://localhost/")
+        val request = Request("1.1", "GET", "http://localhost/")
         request.body = testBodyString
         assertEquals(testBodyString, request.body)
     }
 
     @Test
     fun setBodyWithUserLength() {
-        val request = Request(logger, "GET", "1.1", "http://localhost/")
+        val request = Request("1.1", "GET", "http://localhost/")
         request.bodyLength = customBodyLength
         request.body = testBodyString
 
@@ -44,7 +41,7 @@ class RequestTest {
 
     @Test
     fun setNullBody() {
-        val request = Request(logger, "GET", "1.1", "http://localhost/")
+        val request = Request("1.1", "GET", "http://localhost/")
         request.body = testBodyString
         request.body = null
         assertNull(request.body)
@@ -52,7 +49,7 @@ class RequestTest {
 
     @Test
     fun setHttpMethod() {
-        val request = Request(logger, "GET", "1.1", "http://localhost/")
+        val request = Request("1.1", "GET", "http://localhost/")
         assertEquals("GET", request.httpMethod)
 
         request.httpMethod = "POST"
@@ -61,7 +58,7 @@ class RequestTest {
 
     @Test
     fun setHttpVersion() {
-        val request = Request(logger, "1.1", "1.1", "http://localhost/")
+        val request = Request("1.1", "1.1", "http://localhost/")
         assertEquals("1.1", request.httpVersion)
 
         request.httpVersion = "1.0"
@@ -70,7 +67,7 @@ class RequestTest {
 
     @Test
     fun setUrl() {
-        val request = Request(logger, "GET", "1.1", "http://localhost/")
+        val request = Request("1.1", "GET", "http://localhost/")
         assertEquals("http://localhost/", request.url)
 
         request.url = "https://google.com"
@@ -79,7 +76,7 @@ class RequestTest {
 
     @Test
     fun setUrlWithQuery() {
-        val request = Request(logger, "GET", "1.1", "http://localhost/")
+        val request = Request("1.1", "GET", "http://localhost/")
         request.url = "http://foo.com?a=1&b=2"
         assertEquals("http://foo.com", request.url)
         assertEquals("1", request.getQueryParameter("a"))
@@ -89,7 +86,7 @@ class RequestTest {
 
     @Test
     fun queryParameters() {
-        val request = Request(logger, "GET", "1.1", "http://localhost/")
+        val request = Request("1.1", "GET", "http://localhost/")
         request.addQueryParameter("foo", "bar")
         request.addQueryParameter("another", "param")
 
@@ -104,7 +101,7 @@ class RequestTest {
 
     @Test
     fun headers() {
-        val request = Request(logger, "GET", "1.1", "http://localhost/")
+        val request = Request("1.1", "GET", "http://localhost/")
         request.addHeader("X-Test", "value")
         request.addHeader("Another-Header", "another-value")
 
@@ -119,7 +116,7 @@ class RequestTest {
 
     @Test
     fun setBodyLength() {
-        val request = Request(logger, "GET", "1.1", "http://localhost/")
+        val request = Request("1.1", "GET", "http://localhost/")
         request.bodyLength = 1234
         assertEquals(1234, request.bodyLength)
 
