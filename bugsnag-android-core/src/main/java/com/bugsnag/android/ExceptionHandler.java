@@ -28,6 +28,7 @@ class ExceptionHandler implements UncaughtExceptionHandler {
     }
 
     void install() {
+        enabled = true;
         Thread.setDefaultUncaughtExceptionHandler(this);
     }
 

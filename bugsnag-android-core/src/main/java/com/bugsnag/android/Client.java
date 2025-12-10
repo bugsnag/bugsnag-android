@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import static com.bugsnag.android.SeverityReason.REASON_HANDLED_EXCEPTION;
+import static com.bugsnag.android.SeverityReason.REASON_UNHANDLED_EXCEPTION;
 
 import com.bugsnag.android.internal.BackgroundTaskService;
 import com.bugsnag.android.internal.ForegroundDetector;
@@ -776,12 +777,11 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
             if (immutableConfig.shouldDiscardError(exc)) {
                 return;
             }
-            SeverityReason severityReason = SeverityReason.newInstance(REASON_HANDLED_EXCEPTION);
-            if (options != null && options.isFatal()) {
-                severityReason =
-                        SeverityReason.newInstance(SeverityReason.REASON_UNHANDLED_EXCEPTION);
-                setAutoNotify(!options.isFatal());
-            }
+            SeverityReason severityReason =
+                    options == null || !options.isFatal()
+                            ? SeverityReason.newInstance(REASON_HANDLED_EXCEPTION)
+                            : SeverityReason.newInstance(REASON_UNHANDLED_EXCEPTION);
+
             Event event = createEventWithOptions(exc, severityReason, options);
             event.setGroupingDiscriminator(getGroupingDiscriminator());
             populateAndNotifyAndroidEvent(event, options, onError);
@@ -866,7 +866,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         event.setInternalMetrics(internalMetrics);
         event.setGroupingDiscriminator(getGroupingDiscriminator());
 
-        notifyInternal(event, onError, options);
+        notifyInternalWithErrorOptions(event, onError, options);
     }
 
     private void populateDeviceAndAppData(@NonNull Event event) {
@@ -898,6 +898,12 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
     }
 
     void notifyInternal(@NonNull Event event,
+                        @Nullable OnErrorCallback onError
+    ) {
+        notifyInternalWithErrorOptions(event, onError, null);
+    }
+
+    void notifyInternalWithErrorOptions(@NonNull Event event,
                         @Nullable OnErrorCallback onError,
                         @Nullable ErrorOptions options
     ) {
@@ -918,10 +924,6 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         if (!callbackState.runOnErrorTasks(event, logger)
                 || (onError != null
                 && !onError.onError(event))) {
-            if (options != null && options.isFatal()) {
-                event.updateSeverityReason(SeverityReason.REASON_UNHANDLED_EXCEPTION);
-                setAutoNotify(false);
-            }
             logger.d("Skipping notification - onError task returned false");
             return;
         }
@@ -931,6 +933,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         setGroupingDiscriminator(getGroupingDiscriminator());
 
         deliveryDelegate.deliver(event);
+        if (options != null && options.isFatal()) {
+            setAutoNotify(false);
+        }
     }
 
     /**

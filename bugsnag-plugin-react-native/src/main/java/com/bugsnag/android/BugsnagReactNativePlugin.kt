@@ -160,7 +160,7 @@ class BugsnagReactNativePlugin : Plugin {
         if (client.immutableConfig.shouldDiscardError(errorClass)) {
             return
         }
-        client.notifyInternal(event, null, null)
+        client.notifyInternal(event, null)
     }
 
     @Suppress("unused")
