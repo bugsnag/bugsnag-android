@@ -13,6 +13,7 @@ import org.json.JSONObject
 import kotlin.concurrent.thread
 
 private const val MAX_CAPTURE_BYTES = 32L
+private val JSON = "application/json".toMediaType()
 
 class OkHttpInstrumentationScenario(
     config: Configuration,
@@ -56,7 +57,7 @@ class OkHttpInstrumentationScenario(
             payload.put("padding", "this is a string, and it goes on and on until it stops...here")
             payload.put("url", reflectionUrl)
 
-            val body = payload.toString().toRequestBody("application/json".toMediaType())
+            val body = payload.toString().toRequestBody(JSON)
 
             val requestBuilder = Request.Builder()
                 .url(reflectionUrl)

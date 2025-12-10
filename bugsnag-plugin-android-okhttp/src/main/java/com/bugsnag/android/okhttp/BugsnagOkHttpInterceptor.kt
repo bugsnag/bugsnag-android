@@ -12,7 +12,6 @@ import com.bugsnag.android.http.HttpInstrumentedResponse
 import com.bugsnag.android.http.HttpRequestCallback
 import com.bugsnag.android.http.HttpResponseCallback
 import com.bugsnag.android.log
-import com.bugsnag.android.setHttpInfo
 import com.bugsnag.android.shouldDiscardNetworkBreadcrumb
 import okhttp3.HttpUrl
 import okhttp3.Interceptor

@@ -228,10 +228,10 @@ class MainActivity : Activity() {
                 val errorMessage = urlConnection.errorStream.use { it.reader().readText() }
                 CiLog.error(
                     "Failed to GET $commandUrl (HTTP ${urlConnection.responseCode} " +
-                            "${urlConnection.responseMessage}):\n" +
-                            "${"-".repeat(errorMessage.width)}\n" +
-                            "$errorMessage\n" +
-                            "-".repeat(errorMessage.width)
+                        "${urlConnection.responseMessage}):\n" +
+                        "${"-".repeat(errorMessage.width)}\n" +
+                        "$errorMessage\n" +
+                        "-".repeat(errorMessage.width)
                 )
             } catch (e: Exception) {
                 log("Failed to retrieve error message from connection", e)
