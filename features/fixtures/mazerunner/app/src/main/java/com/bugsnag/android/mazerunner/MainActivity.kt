@@ -173,7 +173,7 @@ class MainActivity : Activity() {
                     val commandUUID = getStringSafely(command, "uuid")
 
                     // Stop polling once we have a scenario action
-                    if ("start_bugsnag".equals(action) || "run_scenario".equals(action)) {
+                    if ("start_bugsnag" == action || "run_scenario" == action) {
                         polling = false
                     }
 
@@ -189,18 +189,22 @@ class MainActivity : Activity() {
                             "noop" -> {
                                 CiLog.info("No Maze Runner command queuing, continuing to poll")
                             }
+
                             "start_bugsnag" -> {
                                 setStoredCommandUUID(commandUUID)
                                 startBugsnag(scenarioName, scenarioMode, sessionsUrl, notifyUrl)
                             }
+
                             "run_scenario" -> {
                                 setStoredCommandUUID(commandUUID)
                                 runScenario(scenarioName, scenarioMode, sessionsUrl, notifyUrl)
                             }
+
                             "clear_persistent_data" -> {
                                 setStoredCommandUUID(commandUUID)
                                 PersistentData(applicationContext).clear()
                             }
+
                             "reset_uuid" -> clearStoredCommandUUID()
                             else -> throw IllegalArgumentException("Unknown action: $action")
                         }
@@ -224,10 +228,10 @@ class MainActivity : Activity() {
                 val errorMessage = urlConnection.errorStream.use { it.reader().readText() }
                 CiLog.error(
                     "Failed to GET $commandUrl (HTTP ${urlConnection.responseCode} " +
-                        "${urlConnection.responseMessage}):\n" +
-                        "${"-".repeat(errorMessage.width)}\n" +
-                        "$errorMessage\n" +
-                        "-".repeat(errorMessage.width)
+                            "${urlConnection.responseMessage}):\n" +
+                            "${"-".repeat(errorMessage.width)}\n" +
+                            "$errorMessage\n" +
+                            "-".repeat(errorMessage.width)
                 )
             } catch (e: Exception) {
                 log("Failed to retrieve error message from connection", e)
