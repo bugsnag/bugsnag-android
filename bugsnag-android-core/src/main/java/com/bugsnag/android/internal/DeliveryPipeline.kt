@@ -1,6 +1,7 @@
 package com.bugsnag.android.internal
 
 import com.bugsnag.android.CallbackState
+import com.bugsnag.android.DeliveryParams
 import com.bugsnag.android.DeliveryStatus
 import com.bugsnag.android.EventPayload
 import com.bugsnag.android.Logger
@@ -29,29 +30,46 @@ internal class DeliveryPipeline(
             // most likely the payload could not be decoded, so we continue
         }
 
+        val remoteConfig = getRemoteConfig(payload.isLaunchCrash)
+        if (shouldDiscardPayload(remoteConfig, payload)) {
+            // discarded events are treated as delivered, the server would have discarded them
+            return DeliveryStatus.DELIVERED
+        }
+
+        val payloadEncoding = remoteConfig?.deliveryConfig?.payloadEncoding
+            ?: DeliveryParams.PayloadEncoding.NONE
+
+        val deliveryParams = config.getErrorApiDeliveryParams(payload, payloadEncoding)
+        val delivery = config.delivery
+        return delivery.deliver(payload, deliveryParams)
+    }
+
+    private fun shouldDiscardPayload(
+        remoteConfig: RemoteConfig?,
+        payload: EventPayload
+    ): Boolean {
         try {
-            val remoteConfig = getRemoteConfig(payload.isLaunchCrash)
             if (remoteConfig != null) {
                 val discardRules = remoteConfig.discardRules
                 val applicableDiscardRule = discardRules.firstOrNull { it.shouldDiscard(payload) }
                 if (applicableDiscardRule != null) {
                     logger.d("Discarding event due to remote discardRule: $applicableDiscardRule")
-                    // discarded events are treated as being delivered, as the server would have discarded them
-                    return DeliveryStatus.DELIVERED
+                    return true
                 }
             }
         } catch (_: Exception) {
             // swallow any RemoteConfig related errors, and favour delivering the payload
         }
-
-        val deliveryParams = config.getErrorApiDeliveryParams(payload)
-        val delivery = config.delivery
-        return delivery.deliver(payload, deliveryParams)
+        return false
     }
 
     private fun getRemoteConfig(isLaunchCrash: Boolean): RemoteConfig? {
-        val timeout = if (isLaunchCrash) LAUNCH_CRASH_LOAD_TIMEOUT_MS else Long.MAX_VALUE
-        return remoteConfigState.getRemoteConfig(timeout, TimeUnit.MILLISECONDS)
+        try {
+            val timeout = if (isLaunchCrash) LAUNCH_CRASH_LOAD_TIMEOUT_MS else Long.MAX_VALUE
+            return remoteConfigState.getRemoteConfig(timeout, TimeUnit.MILLISECONDS)
+        } catch (_: Exception) {
+            return null
+        }
     }
 
     internal companion object {

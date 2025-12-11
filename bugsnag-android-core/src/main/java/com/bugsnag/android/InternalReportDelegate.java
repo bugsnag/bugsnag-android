@@ -117,7 +117,8 @@ class InternalReportDelegate implements EventStore.Delegate {
                     try {
                         logger.d("InternalReportDelegate - sending internal event");
                         Delivery delivery = config.getDelivery();
-                        DeliveryParams params = config.getErrorApiDeliveryParams(payload);
+                        DeliveryParams params = config.getErrorApiDeliveryParams(
+                                payload, DeliveryParams.PayloadEncoding.NONE);
 
                         // can only modify headers if DefaultDelivery is in use
                         if (delivery instanceof DefaultDelivery) {
@@ -129,7 +130,8 @@ class InternalReportDelegate implements EventStore.Delegate {
                                     params.getEndpoint(),
                                     payload.toByteArray(),
                                     payload.getIntegrityToken(),
-                                    headers
+                                    headers,
+                                    params.getPayloadEncoding()
                             );
                         }
 

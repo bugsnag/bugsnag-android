@@ -6,6 +6,7 @@ import com.bugsnag.android.internal.JsonHelper
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.zip.GZIPOutputStream
 
 internal class DefaultDelivery(
     private val connectivity: Connectivity?,
@@ -17,15 +18,24 @@ internal class DefaultDelivery(
             deliveryParams.endpoint,
             JsonHelper.serialize(payload),
             payload.integrityToken,
-            deliveryParams.headers
+            deliveryParams.headers,
+            deliveryParams.payloadEncoding
         )
+
         logger.i("Session API request finished with status $status")
         return status
     }
 
     override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
         val json = payload.trimToSize().toByteArray()
-        val status = deliver(deliveryParams.endpoint, json, payload.integrityToken, deliveryParams.headers)
+        val status = deliver(
+            deliveryParams.endpoint,
+            json,
+            payload.integrityToken,
+            deliveryParams.headers,
+            deliveryParams.payloadEncoding
+        )
+
         logger.i("Error API request finished with status $status")
         return status
     }
@@ -34,7 +44,8 @@ internal class DefaultDelivery(
         urlString: String,
         json: ByteArray,
         integrity: String?,
-        headers: Map<String, String?>
+        headers: Map<String, String?>,
+        encoding: DeliveryParams.PayloadEncoding = DeliveryParams.PayloadEncoding.NONE
     ): DeliveryStatus {
 
         TrafficStats.setThreadStatsTag(1)
@@ -43,43 +54,42 @@ internal class DefaultDelivery(
         }
         var conn: HttpURLConnection? = null
 
-        try {
-            conn = makeRequest(URL(urlString), json, integrity, headers)
+        val status = try {
+            conn = makeRequest(URL(urlString), json, integrity, headers, encoding)
 
             // End the request, get the response code
             val responseCode = conn.responseCode
             val status = DeliveryStatus.forHttpResponseCode(responseCode)
             logRequestInfo(responseCode, conn, status)
-            return status
+            status
         } catch (oom: OutOfMemoryError) {
             // attempt to persist the payload on disk. This approach uses streams to write to a
             // file, which takes less memory than serializing the payload into a ByteArray, and
             // therefore has a reasonable chance of retaining the payload for future delivery.
             logger.w("Encountered OOM delivering payload, falling back to persist on disk", oom)
-            return DeliveryStatus.UNDELIVERED
+            DeliveryStatus.UNDELIVERED
         } catch (exception: IOException) {
             logger.w("IOException encountered in request", exception)
-            return DeliveryStatus.UNDELIVERED
+            DeliveryStatus.UNDELIVERED
         } catch (exception: Exception) {
             logger.w("Unexpected error delivering payload", exception)
-            return DeliveryStatus.FAILURE
+            DeliveryStatus.FAILURE
         } finally {
             conn?.disconnect()
         }
+
+        return status
     }
 
     private fun makeRequest(
         url: URL,
         json: ByteArray,
         integrity: String?,
-        headers: Map<String, String?>
+        headers: Map<String, String?>,
+        encoding: DeliveryParams.PayloadEncoding
     ): HttpURLConnection {
         val conn = url.openConnection() as HttpURLConnection
         conn.doOutput = true
-
-        // avoids creating a buffer within HttpUrlConnection, see
-        // https://developer.android.com/reference/java/net/HttpURLConnection
-        conn.setFixedLengthStreamingMode(json.size)
 
         integrity?.let { digest ->
             conn.addRequestProperty(HEADER_BUGSNAG_INTEGRITY, digest)
@@ -90,9 +100,22 @@ internal class DefaultDelivery(
             }
         }
 
-        // write the JSON payload
-        conn.outputStream.use {
-            it.write(json)
+        if (encoding == DeliveryParams.PayloadEncoding.GZIP) {
+            // we don't use fixedLengthStreamingMode to avoid making yet-another gzipped copy
+
+            conn.addRequestProperty("Content-Encoding", "gzip")
+            GZIPOutputStream(conn.outputStream).use {
+                it.write(json)
+            }
+        } else {
+            // avoids creating a buffer within HttpUrlConnection, see
+            // https://developer.android.com/reference/java/net/HttpURLConnection
+            conn.setFixedLengthStreamingMode(json.size)
+
+            // write the JSON payload
+            conn.outputStream.use {
+                it.write(json)
+            }
         }
         return conn
     }

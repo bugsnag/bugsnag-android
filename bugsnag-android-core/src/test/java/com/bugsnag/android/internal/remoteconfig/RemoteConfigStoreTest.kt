@@ -330,11 +330,7 @@ class RemoteConfigStoreTest {
     }
 
     private fun createValidRemoteConfig(tag: String, expiry: Date): RemoteConfig {
-        return RemoteConfig(
-            configurationTag = tag,
-            configurationExpiry = expiry,
-            discardRules = emptyList()
-        )
+        return RemoteConfig.createEmpty(configurationTag = tag, configurationExpiry = expiry)
     }
 
     private fun futureDate(offsetMs: Long): Date {

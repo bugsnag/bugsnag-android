@@ -46,7 +46,9 @@ class DeliveryHeadersTest {
     fun verifyErrorApiHeaders() {
         val config = convertToImmutableConfig(generateConfiguration())
         val payload = generateEventPayload(config)
-        val headers = config.getErrorApiDeliveryParams(payload).headers
+        val headers = config.getErrorApiDeliveryParams(
+            payload, DeliveryParams.PayloadEncoding.NONE
+        ).headers
         assertEquals(config.apiKey, headers["Bugsnag-Api-Key"])
         assertEquals("application/json", headers["Content-Type"])
         assertNotNull(headers["Bugsnag-Sent-At"])
@@ -69,7 +71,9 @@ class DeliveryHeadersTest {
     fun verifyErrorApiHeadersDefaultStacktrace() {
         val config = convertToImmutableConfig(generateConfiguration())
         val payload = generateEventPayload(config)
-        val headers = config.getErrorApiDeliveryParams(payload).headers
+        val headers = config.getErrorApiDeliveryParams(
+            payload, DeliveryParams.PayloadEncoding.NONE
+        ).headers
         assertEquals(config.apiKey, headers["Bugsnag-Api-Key"])
         assertNotNull(headers["Bugsnag-Sent-At"])
         assertEquals("4.0", headers["Bugsnag-Payload-Version"])
@@ -81,7 +85,9 @@ class DeliveryHeadersTest {
         val config = convertToImmutableConfig(generateConfiguration())
         val file = File("1504255147933_0000111122223333aaaabbbbcccc9999_my-uuid-123.json")
         val payload = EventPayload(config.apiKey, null, file, Notifier(), config)
-        val headers = config.getErrorApiDeliveryParams(payload).headers
+        val headers = config.getErrorApiDeliveryParams(
+            payload, DeliveryParams.PayloadEncoding.NONE
+        ).headers
         assertNull(headers["Bugsnag-Stacktrace-Types"])
     }
 
@@ -95,7 +101,9 @@ class DeliveryHeadersTest {
         error.stacktrace[0].type = ErrorType.C
         error.stacktrace[1].type = ErrorType.REACTNATIVEJS
 
-        val headers = config.getErrorApiDeliveryParams(payload).headers
+        val headers = config.getErrorApiDeliveryParams(
+            payload, DeliveryParams.PayloadEncoding.NONE
+        ).headers
         assertEquals("android,c,reactnativejs", headers["Bugsnag-Stacktrace-Types"])
     }
 }

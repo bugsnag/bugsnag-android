@@ -7,6 +7,10 @@ import com.bugsnag.android.RemoteConfig.Companion.KEY_HASH
 import com.bugsnag.android.RemoteConfig.Companion.KEY_MATCH_TYPE
 import com.bugsnag.android.internal.DateUtils
 import com.bugsnag.android.internal.JsonCollectionParser
+import com.bugsnag.android.internal.remoteconfig.DeliveryConfiguration
+import com.bugsnag.android.internal.remoteconfig.DeliveryConfiguration.Companion.ENCODING_GZIP
+import com.bugsnag.android.internal.remoteconfig.DeliveryConfiguration.Companion.ENCODING_NONE
+import com.bugsnag.android.internal.remoteconfig.DeliveryConfiguration.Companion.KEY_PAYLOAD_ENCODING
 import com.bugsnag.android.internal.toHexString
 import java.security.MessageDigest
 import java.util.Date
@@ -14,6 +18,7 @@ import java.util.Date
 internal class RemoteConfig(
     val configurationTag: String?,
     val configurationExpiry: Date,
+    val deliveryConfig: DeliveryConfiguration?,
     val discardRules: List<DiscardRule>
 ) : JsonStream.Streamable {
 
@@ -21,6 +26,20 @@ internal class RemoteConfig(
         stream.beginObject()
         if (configurationTag != null) {
             stream.name(KEY_CONFIG_TAG).value(configurationTag)
+        }
+
+        val delivery = deliveryConfig
+        if (delivery != null) {
+            stream.name(KEY_DELIVERY).beginObject()
+
+            stream.name(KEY_PAYLOAD_ENCODING).value(
+                when (delivery.payloadEncoding) {
+                    DeliveryParams.PayloadEncoding.GZIP -> ENCODING_GZIP
+                    else -> ENCODING_NONE
+                }
+            )
+
+            stream.endObject()
         }
 
         stream.name(KEY_CONFIG_EXPIRY).value(DateUtils.toIso8601(configurationExpiry))
@@ -32,6 +51,7 @@ internal class RemoteConfig(
         internal const val KEY_CONFIG_TAG = "configurationTag"
         internal const val KEY_CONFIG_EXPIRY = "configurationExpiry"
         internal const val KEY_DISCARD_RULES = "discardRules"
+        internal const val KEY_DELIVERY = "delivery"
         internal const val KEY_MATCH_TYPE = "matchType"
         internal const val KEY_HASH = "hash"
 
@@ -65,7 +85,18 @@ internal class RemoteConfig(
                 .orEmpty()
                 .mapNotNull { DiscardRule.fromJsonMap(it) }
 
-            return RemoteConfig(configurationTag, configurationExpiry, discardRules)
+            @Suppress("UNCHECKED_CAST")
+            val deliveryConfig = (json[KEY_DELIVERY] as? Map<String, *>)
+                ?.let { DeliveryConfiguration.fromJsonMap(it) }
+
+            return RemoteConfig(configurationTag, configurationExpiry, deliveryConfig, discardRules)
+        }
+
+        fun createEmpty(
+            configurationTag: String?,
+            configurationExpiry: Date,
+        ): RemoteConfig {
+            return RemoteConfig(configurationTag, configurationExpiry, null, emptyList())
         }
     }
 }

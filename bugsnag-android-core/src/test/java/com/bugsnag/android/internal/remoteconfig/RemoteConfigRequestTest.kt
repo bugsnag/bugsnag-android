@@ -1,8 +1,10 @@
 package com.bugsnag.android.internal.remoteconfig
 
+import com.bugsnag.android.DiscardRule
 import com.bugsnag.android.Logger
 import com.bugsnag.android.NoopLogger
 import com.bugsnag.android.Notifier
+import com.bugsnag.android.RemoteConfig
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -281,7 +283,7 @@ class RemoteConfigRequestTest {
         // Given: An existing config with discard rules
         val existingEtag = "existing-etag-789"
         val existingDiscardRules = listOf(
-            com.bugsnag.android.DiscardRule.All
+            DiscardRule.All
         )
         val existingConfig = createRemoteConfig(existingEtag, 3600000, existingDiscardRules)
 
@@ -302,8 +304,8 @@ class RemoteConfigRequestTest {
         // Given: An existing config with multiple discard rules
         val existingEtag = "multi-rule-etag"
         val existingDiscardRules = listOf(
-            com.bugsnag.android.DiscardRule.All,
-            com.bugsnag.android.DiscardRule.AllHandled
+            DiscardRule.All,
+            DiscardRule.AllHandled
         )
         val existingConfig = createRemoteConfig(existingEtag, 1800000, existingDiscardRules)
 
@@ -313,8 +315,8 @@ class RemoteConfigRequestTest {
         assertEquals(2, existingConfig.discardRules.size)
 
         // Verify the discard rules are intact
-        assertEquals(com.bugsnag.android.DiscardRule.All, existingConfig.discardRules[0])
-        assertEquals(com.bugsnag.android.DiscardRule.AllHandled, existingConfig.discardRules[1])
+        assertEquals(DiscardRule.All, existingConfig.discardRules[0])
+        assertEquals(DiscardRule.AllHandled, existingConfig.discardRules[1])
     }
 
     @Test
@@ -395,7 +397,7 @@ class RemoteConfigRequestTest {
         assertExpiryWithinTolerance(result!!.configurationExpiry.time, maxAge * 1000)
     }
 
-    private fun createRequest(existingConfig: com.bugsnag.android.RemoteConfig? = null): RemoteConfigRequest {
+    private fun createRequest(existingConfig: RemoteConfig? = null): RemoteConfigRequest {
         return RemoteConfigRequest(
             baseUrl,
             apiKey,
@@ -409,7 +411,7 @@ class RemoteConfigRequestTest {
         )
     }
 
-    private fun createRequestWithExistingConfig(existingConfig: com.bugsnag.android.RemoteConfig): RemoteConfigRequest {
+    private fun createRequestWithExistingConfig(existingConfig: RemoteConfig): RemoteConfigRequest {
         return createRequest(existingConfig)
     }
 
@@ -434,11 +436,12 @@ class RemoteConfigRequestTest {
     private fun createRemoteConfig(
         etag: String,
         expiryOffsetMillis: Long,
-        discardRules: List<com.bugsnag.android.DiscardRule>
-    ): com.bugsnag.android.RemoteConfig {
-        return com.bugsnag.android.RemoteConfig(
+        discardRules: List<DiscardRule>
+    ): RemoteConfig {
+        return RemoteConfig(
             etag,
             Date(System.currentTimeMillis() + expiryOffsetMillis),
+            null,
             discardRules
         )
     }

@@ -77,7 +77,9 @@ internal class RemoteConfigRequest(
         return when (responseCode) {
             HttpURLConnection.HTTP_OK -> parseRemoteConfig(connection)
             HttpURLConnection.HTTP_NOT_MODIFIED -> renewExistingConfig(configExpiryDate(connection))
-            HttpURLConnection.HTTP_BAD_REQUEST -> createEmptyConfig(configExpiryDate(connection))
+            HttpURLConnection.HTTP_BAD_REQUEST ->
+                RemoteConfig.createEmpty(null, configExpiryDate(connection))
+
             else -> null
         }
     }
@@ -122,7 +124,7 @@ internal class RemoteConfigRequest(
 
         // we may receive an empty response as a valid "no specific config" value
         if (connection.contentLength == 0) {
-            return RemoteConfig(tag, expiryDate, emptyList())
+            return RemoteConfig.createEmpty(tag, expiryDate)
         }
 
         val inputStream = connection.inputStream
@@ -131,7 +133,7 @@ internal class RemoteConfigRequest(
             JsonCollectionParser(inputStream)
         } catch (_: JsonParseException) {
             // these can happen when the response is empty, but the Content-Length was not set
-            return RemoteConfig(tag, expiryDate, emptyList())
+            return RemoteConfig.createEmpty(tag, expiryDate)
         }
 
         @Suppress("UNCHECKED_CAST")
@@ -170,12 +172,9 @@ internal class RemoteConfigRequest(
         return RemoteConfig(
             remoteConfig.configurationTag,
             configExpiryDate,
+            remoteConfig.deliveryConfig,
             remoteConfig.discardRules
         )
-    }
-
-    private fun createEmptyConfig(configExpiryDate: Date): RemoteConfig {
-        return RemoteConfig(null, configExpiryDate, emptyList())
     }
 
     private fun defaultConfigExpiry(): Date =
