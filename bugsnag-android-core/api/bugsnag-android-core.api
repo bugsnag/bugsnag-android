@@ -1020,36 +1020,40 @@ public final class com/bugsnag/android/internal/ImmutableConfigKt {
 }
 
 public abstract interface class com/bugsnag/android/internal/InternalMetrics {
+	public abstract fun getRemoteConfigEnabled ()Z
 	public abstract fun notifyAddCallback (Ljava/lang/String;)V
 	public abstract fun notifyRemoveCallback (Ljava/lang/String;)V
 	public abstract fun setBreadcrumbTrimMetrics (II)V
 	public abstract fun setCallbackCounts (Ljava/util/Map;)V
 	public abstract fun setConfigDifferences (Ljava/util/Map;)V
 	public abstract fun setMetadataTrimMetrics (II)V
+	public abstract fun setRemoteConfigEnabled (Z)V
 	public abstract fun toJsonableMap ()Ljava/util/Map;
 }
 
 public final class com/bugsnag/android/internal/InternalMetricsImpl : com/bugsnag/android/internal/InternalMetrics {
 	public fun <init> ()V
-	public fun <init> (Ljava/util/Map;)V
-	public synthetic fun <init> (Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun getRemoteConfigEnabled ()Z
 	public fun notifyAddCallback (Ljava/lang/String;)V
 	public fun notifyRemoveCallback (Ljava/lang/String;)V
 	public fun setBreadcrumbTrimMetrics (II)V
 	public fun setCallbackCounts (Ljava/util/Map;)V
 	public fun setConfigDifferences (Ljava/util/Map;)V
 	public fun setMetadataTrimMetrics (II)V
+	public fun setRemoteConfigEnabled (Z)V
 	public fun toJsonableMap ()Ljava/util/Map;
 }
 
 public final class com/bugsnag/android/internal/InternalMetricsNoop : com/bugsnag/android/internal/InternalMetrics {
 	public fun <init> ()V
+	public fun getRemoteConfigEnabled ()Z
 	public fun notifyAddCallback (Ljava/lang/String;)V
 	public fun notifyRemoveCallback (Ljava/lang/String;)V
 	public fun setBreadcrumbTrimMetrics (II)V
 	public fun setCallbackCounts (Ljava/util/Map;)V
 	public fun setConfigDifferences (Ljava/util/Map;)V
 	public fun setMetadataTrimMetrics (II)V
+	public fun setRemoteConfigEnabled (Z)V
 	public fun toJsonableMap ()Ljava/util/Map;
 }
 

@@ -20,6 +20,8 @@ interface InternalMetrics {
     fun setMetadataTrimMetrics(stringsTrimmed: Int, charsRemoved: Int)
 
     fun setBreadcrumbTrimMetrics(breadcrumbsRemoved: Int, bytesRemoved: Int)
+
+    var remoteConfigEnabled: Boolean
 }
 
 internal data class TrimMetrics(

@@ -2,7 +2,9 @@ package com.bugsnag.android.internal
 
 import com.bugsnag.android.NdkPluginCaller
 
-class InternalMetricsImpl(source: Map<String, Any>? = null) : InternalMetrics {
+class InternalMetricsImpl internal constructor(
+    source: Map<String, Any>? = null
+) : InternalMetrics {
     private val configDifferences: MutableMap<String, Any>
     private val callbackCounts: MutableMap<String, Int>
     private var metadataStringsTrimmedCount = 0
@@ -10,19 +12,21 @@ class InternalMetricsImpl(source: Map<String, Any>? = null) : InternalMetrics {
     private var breadcrumbsRemovedCount = 0
     private var breadcrumbBytesRemovedCount = 0
 
+    override var remoteConfigEnabled: Boolean = false
+
     init {
+        @Suppress("UNCHECKED_CAST")
         if (source != null) {
-            @Suppress("UNCHECKED_CAST")
-            configDifferences = (source["config"] as MutableMap<String, Any>?) ?: hashMapOf()
-            @Suppress("UNCHECKED_CAST")
-            callbackCounts = (source["callbacks"] as MutableMap<String, Int>?) ?: hashMapOf()
-            @Suppress("UNCHECKED_CAST")
-            val system = source["system"] as MutableMap<String, Any>?
+            configDifferences = (source["config"] as? MutableMap<String, Any>) ?: hashMapOf()
+            callbackCounts = (source["callbacks"] as? MutableMap<String, Int>) ?: hashMapOf()
+            remoteConfigEnabled = (source["remoteConfig"] as? Boolean) == true
+
+            val system = source["system"] as? MutableMap<String, Any>
             if (system != null) {
-                metadataStringsTrimmedCount = (system["stringsTruncated"] as Number?)?.toInt() ?: 0
-                metadataCharsTruncatedCount = (system["stringCharsTruncated"] as Number?)?.toInt() ?: 0
-                breadcrumbsRemovedCount = (system["breadcrumbsRemovedCount"] as Number?)?.toInt() ?: 0
-                breadcrumbBytesRemovedCount = (system["breadcrumbBytesRemoved"] as Number?)?.toInt() ?: 0
+                metadataStringsTrimmedCount = system.getInt("stringsTruncated")
+                metadataCharsTruncatedCount = system.getInt("stringCharsTruncated")
+                breadcrumbsRemovedCount = system.getInt("breadcrumbsRemovedCount")
+                breadcrumbBytesRemovedCount = system.getInt("breadcrumbBytesRemoved")
             }
         } else {
             configDifferences = hashMapOf()
@@ -33,18 +37,28 @@ class InternalMetricsImpl(source: Map<String, Any>? = null) : InternalMetrics {
     override fun toJsonableMap(): Map<String, Any> {
         val callbacks = allCallbacks()
 
-        val system = listOfNotNull(
-            if (metadataStringsTrimmedCount > 0) "stringsTruncated" to metadataStringsTrimmedCount else null,
-            if (metadataCharsTruncatedCount > 0) "stringCharsTruncated" to metadataCharsTruncatedCount else null,
-            if (breadcrumbsRemovedCount > 0) "breadcrumbsRemoved" to breadcrumbsRemovedCount else null,
-            if (breadcrumbBytesRemovedCount > 0) "breadcrumbBytesRemoved" to breadcrumbBytesRemovedCount else null,
-        ).toMap()
+        val system = HashMap<String, Any>().apply {
+            putCount("stringsTruncated", metadataStringsTrimmedCount)
+            putCount("stringCharsTruncated", metadataCharsTruncatedCount)
+            putCount("breadcrumbsRemoved", breadcrumbsRemovedCount)
+            putCount("breadcrumbBytesRemoved", breadcrumbBytesRemovedCount)
+        }
 
-        return listOfNotNull(
-            if (configDifferences.isNotEmpty()) "config" to configDifferences else null,
-            if (callbacks.isNotEmpty()) "callbacks" to callbacks else null,
-            if (system.isNotEmpty()) "system" to system else null,
-        ).toMap()
+        return HashMap<String, Any>().apply {
+            put("remoteConfig", remoteConfigEnabled)
+
+            if (configDifferences.isNotEmpty()) {
+                put("config", configDifferences)
+            }
+
+            if (callbacks.isNotEmpty()) {
+                put("callbacks", callbacks)
+            }
+
+            if (system.isNotEmpty()) {
+                put("system", system)
+            }
+        }
     }
 
     override fun setConfigDifferences(differences: Map<String, Any>) {
@@ -107,5 +121,16 @@ class InternalMetricsImpl(source: Map<String, Any>? = null) : InternalMetrics {
     override fun setBreadcrumbTrimMetrics(breadcrumbsRemoved: Int, bytesRemoved: Int) {
         breadcrumbsRemovedCount = breadcrumbsRemoved
         breadcrumbBytesRemovedCount = bytesRemoved
+    }
+
+    private fun MutableMap<String, Any>.putCount(name: String, value: Int) {
+        if (value > 0) {
+            put(name, value)
+        }
+    }
+
+    private fun Map<String, Any>.getInt(name: String): Int {
+        val value = get(name) as? Number
+        return value?.toInt() ?: 0
     }
 }

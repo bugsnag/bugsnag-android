@@ -20,10 +20,13 @@ Feature: Remote config discard rules are applied
     Then the report contains the required fields
     And the event "severity" equals "warning"
     And the event "unhandled" is false
+    And the event "usage.remoteConfig" is true
+
     And I discard the oldest error
     Then the report contains the required fields
     And the event "severity" equals "error"
     And the event "unhandled" is true
+    And the event "usage.remoteConfig" is true
 
   Scenario: Invalid remote config
     When I prepare an error config with:
@@ -42,10 +45,13 @@ Feature: Remote config discard rules are applied
     Then the report contains the required fields
     And the event "severity" equals "warning"
     And the event "unhandled" is false
+    And the event "usage.remoteConfig" is true
+
     And I discard the oldest error
     Then the report contains the required fields
     And the event "severity" equals "error"
     And the event "unhandled" is true
+    And the event "usage.remoteConfig" is true
 
   Scenario: Remote config with ALL_HANDLED rule
     When I prepare an error config with:
@@ -63,6 +69,7 @@ Feature: Remote config discard rules are applied
     Then the report contains the required fields
     And the event "severity" equals "error"
     And the event "unhandled" is true
+    And the event "usage.remoteConfig" is true
 
   Scenario: Remote config with ALL rule
     When I prepare an error config with:
@@ -113,6 +120,7 @@ Feature: Remote config discard rules are applied
     Then the report contains the required fields
     And the event "severity" equals "error"
     And the event "unhandled" is true
+    And the event "usage.remoteConfig" is true
 
   Scenario: Remote config with errorClass HASH discard
     When I prepare an error config with:
@@ -127,3 +135,4 @@ Feature: Remote config discard rules are applied
     And the received errors match:
       | exceptions.0.errorClass    | exceptions.0.message |
       | java.lang.RuntimeException | Handled exception    |
+    And the event "usage.remoteConfig" is true

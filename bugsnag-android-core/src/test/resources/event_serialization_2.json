@@ -33,6 +33,9 @@
   },
   "breadcrumbs": [],
   "groupingHash": "herpderp",
+  "usage": {
+    "remoteConfig": false
+  },
   "threads": [],
   "featureFlags": []
 }
