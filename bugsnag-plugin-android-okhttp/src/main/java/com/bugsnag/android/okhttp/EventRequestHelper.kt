@@ -22,10 +22,16 @@ internal fun Event.setHttpInfo(
     )
 
     request?.apply {
-        bodyLength = bodyLengthOf(instrumentedRequest.request)
+        val okReq = instrumentedRequest.request
+        bodyLength = bodyLengthOf(okReq)
         body = instrumentedRequest.reportedRequestBody
-        instrumentedRequest.request.headers.forEach { (name, value) ->
+        okReq.headers.forEach { (name, value) ->
             addHeader(name, value)
+        }
+
+        val queryParams = okReq.url.queryParameterNames
+        queryParams.forEach { queryKey ->
+            addQueryParameter(queryKey, okReq.url.queryParameter(queryKey))
         }
     }
 

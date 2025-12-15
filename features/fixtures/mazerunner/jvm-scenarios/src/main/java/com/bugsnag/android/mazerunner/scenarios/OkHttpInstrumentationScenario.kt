@@ -10,6 +10,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
+import java.util.regex.Pattern
 import kotlin.concurrent.thread
 
 private const val MAX_CAPTURE_BYTES = 32L
@@ -30,13 +31,21 @@ class OkHttpInstrumentationScenario(
         .addInterceptor(instrumentation.createInterceptor())
         .build()
 
-    private fun reflectionUrl(status: Int): String {
+    private fun reflectionUrl(status: Int): Uri {
         return Uri.parse(config.endpoints.notify)
             .buildUpon()
             .path("/reflect")
             .appendQueryParameter("status", status.toString())
+            .appendQueryParameter("password", "secret")
             .build()
-            .toString()
+    }
+
+    init {
+        config.redactedKeys = setOf(
+            "Cookie".toPattern(Pattern.LITERAL or Pattern.CASE_INSENSITIVE),
+            "Authorization".toPattern(Pattern.LITERAL or Pattern.CASE_INSENSITIVE),
+            ".*password.*".toPattern(Pattern.CASE_INSENSITIVE)
+        )
     }
 
     private fun requestType(): Pair<String, Int> {
@@ -55,12 +64,16 @@ class OkHttpInstrumentationScenario(
 
             val payload = JSONObject()
             payload.put("padding", "this is a string, and it goes on and on until it stops...here")
-            payload.put("url", reflectionUrl)
+            // we expect the output URL to not have a query string, so we help the scenario feature
+            // out by removing it in the reflection payload (allowing an "equals" match)
+            payload.put("url", reflectionUrl.buildUpon().clearQuery().build())
+            payload.put("status", status)
 
             val body = payload.toString().toRequestBody(JSON)
 
             val requestBuilder = Request.Builder()
-                .url(reflectionUrl)
+                .url(reflectionUrl.toString())
+                .header("Authorization", "Bearer OpenSesame")
                 .method(method, body.takeIf { method != "GET" })
 
             log("Sending request to $reflectionUrl")

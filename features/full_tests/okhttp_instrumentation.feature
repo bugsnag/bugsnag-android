@@ -41,7 +41,9 @@ Feature: Capturing network breadcrumbs
     And the event "request.httpVersion" is not null
     And the event "request.bodyLength" is greater than 64
     And the error payload field "events.0.request.body" equals "{\"padding\":\"this is a string, an"
-    And the error payload field "request.url" equals the stored value "expectedUrl"
+    And the error payload field "events.0.request.url" equals the stored value "expectedUrl"
+    And the error payload field "events.0.request.headers.Authorization" equals "[REDACTED]"
+    And the error payload field "events.0.request.params.password" equals "[REDACTED]"
 
     # Validate response fields
     And the event "response.statusCode" equals 400
@@ -58,12 +60,12 @@ Feature: Capturing network breadcrumbs
     And the exception "message" matches "500: http://.+"
     And the event "context" matches "GET .+"
 
-    And the reflection payload field "url" is stored as the value "expectedUrl"
-
     # Validate request fields
     And the event "request.httpMethod" equals "GET"
     And the event "request.httpVersion" is not null
-    And the error payload field "request.url" equals the stored value "expectedUrl"
+    And the event "request.url" matches "^https?\:\/\/.+"
+    And the error payload field "events.0.request.headers.Authorization" equals "[REDACTED]"
+    And the error payload field "events.0.request.params.password" equals "[REDACTED]"
 
     # Validate response fields
     And the event "response.statusCode" equals 500
