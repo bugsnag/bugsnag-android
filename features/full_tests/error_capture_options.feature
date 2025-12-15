@@ -33,7 +33,7 @@ Feature: ErrorCaptureOptions
     And the event "user.name" equals "Jane Doe"
 
     # Everything else is null/empty
-    And the event "stacktrace" is null
+    And the error payload field "events.0.threads.0.stacktrace" is null
     And the error payload field "events.0.breadcrumbs" is an array with 0 elements
     And the error payload field "events.0.featureFlags" is an array with 0 elements
     And the error payload field "events.0.threads" is an array with 0 elements
@@ -49,7 +49,7 @@ Feature: ErrorCaptureOptions
     And the event "breadcrumbs.1.name" equals "Test breadcrumb"
 
     # Everything else is null/empty
-    And the event "stacktrace" is null
+    And the error payload field "events.0.threads.0.stacktrace" is null
     And the event "user.id" is null
     And the event "user.name" is null
     And the error payload field "events.0.featureFlags" is an array with 0 elements
@@ -67,7 +67,7 @@ Feature: ErrorCaptureOptions
     And event 0 contains the feature flag "featureFlag2" with no variant
 
     # Everything else is null/empty
-    And the event "stacktrace" is null
+    And the error payload field "events.0.threads.0.stacktrace" is null
     And the event "user.id" is null
     And the event "user.name" is null
     And the error payload field "events.0.breadcrumbs" is an array with 0 elements
@@ -95,3 +95,20 @@ Feature: ErrorCaptureOptions
     And the event "user.name" is null
     And the error payload field "events.0.breadcrumbs" is an array with 0 elements
     And the error payload field "events.0.featureFlags" is an array with 0 elements
+
+  Scenario: Unhandled exceptions with captureNone options
+    When I run "NotifyFatalScenario" and relaunch the crashed app
+    And I configure Bugsnag for "NotifyFatalScenario"
+    Then I wait to receive an error
+    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And the event "unhandled" is true
+    And the error payload field "events.0.threads.0.stacktrace" is not null
+    And the event "user.id" equals "123"
+    And the event "user.email" equals "jane@doe.com"
+    And the event "user.name" equals "Jane Doe"
+    And the event has 2 breadcrumbs
+    And the event "breadcrumbs.1.name" equals "Test breadcrumb"
+    And the error payload field "events.0.featureFlags" is an array with 2 elements
+    And event 0 contains the feature flag "testFeatureFlag" with variant "variantA"
+    And event 0 contains the feature flag "featureFlag2" with no variant
+    And the event "threads" is not null
