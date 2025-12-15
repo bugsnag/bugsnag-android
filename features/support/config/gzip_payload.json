@@ -1,0 +1,6 @@
+{
+  "delivery": {
+    "payloadEncoding": "gzip"
+  },
+  "discardRules": []
+}

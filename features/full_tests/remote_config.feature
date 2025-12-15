@@ -127,3 +127,27 @@ Feature: Remote config discard rules are applied
     And the received errors match:
       | exceptions.0.errorClass    | exceptions.0.message |
       | java.lang.RuntimeException | Handled exception    |
+
+  Scenario: Enable GZip Payload Encoding
+    When I prepare an error config with:
+      | type     | name          | value                                      |
+      | property | body          | @features/support/config/gzip_payload.json |
+      | property | status        | 200                                        |
+      | header   | Cache-Control | max-age=604800                             |
+    And I run "RemoteConfigBasicScenario"
+    And I relaunch the app after a crash
+    And I configure Bugsnag for "RemoteConfigBasicScenario"
+    And I wait to receive 2 errors
+    And the error "Content-Encoding" header equals "gzip"
+
+    And the received errors match:
+      | exceptions.0.errorClass    | exceptions.0.message |
+      | java.lang.RuntimeException | Handled exception    |
+      | java.io.IOException        | Unhandled exception  |
+    Then the report contains the required fields
+    And the event "severity" equals "warning"
+    And the event "unhandled" is false
+    And I discard the oldest error
+    Then the report contains the required fields
+    And the event "severity" equals "error"
+    And the event "unhandled" is true

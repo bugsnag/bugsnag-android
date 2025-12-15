@@ -256,8 +256,19 @@ public abstract interface class com/bugsnag/android/Delivery {
 
 public final class com/bugsnag/android/DeliveryParams {
 	public fun <init> (Ljava/lang/String;Ljava/util/Map;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/Map;Lcom/bugsnag/android/DeliveryParams$PayloadEncoding;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Map;Lcom/bugsnag/android/DeliveryParams$PayloadEncoding;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getEndpoint ()Ljava/lang/String;
 	public final fun getHeaders ()Ljava/util/Map;
+	public final fun getPayloadEncoding ()Lcom/bugsnag/android/DeliveryParams$PayloadEncoding;
+}
+
+public final class com/bugsnag/android/DeliveryParams$PayloadEncoding : java/lang/Enum {
+	public static final field GZIP Lcom/bugsnag/android/DeliveryParams$PayloadEncoding;
+	public static final field NONE Lcom/bugsnag/android/DeliveryParams$PayloadEncoding;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/bugsnag/android/DeliveryParams$PayloadEncoding;
+	public static fun values ()[Lcom/bugsnag/android/DeliveryParams$PayloadEncoding;
 }
 
 public final class com/bugsnag/android/DeliveryStatus : java/lang/Enum {
