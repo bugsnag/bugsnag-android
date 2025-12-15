@@ -42,9 +42,11 @@ class InternalHooks {
             }
 
             Event event = NativeInterface.createEmptyEvent();
+            User user = client.getUser();
             event.setDevice(deviceDataCollector.generateHistoricDeviceWithState(exitInfoTimeStamp));
             event.setApp(appDataCollector.generateHistoricAppWithState());
             event.updateSeverityReason(SeverityReason.REASON_ANR);
+            event.setUser(user.getId(), user.getEmail(), user.getName());
             return event;
         } catch (Exception ex) {
             return null;
@@ -66,9 +68,11 @@ class InternalHooks {
             }
 
             Event event = NativeInterface.createEmptyEvent();
+            User user = client.getUser();
             event.setDevice(deviceDataCollector.generateHistoricDeviceWithState(exitInfoTimeStamp));
             event.setApp(appDataCollector.generateHistoricAppWithState());
             event.updateSeverityReason(SeverityReason.REASON_SIGNAL);
+            event.setUser(user.getId(), user.getEmail(), user.getName());
             return event;
         } catch (Exception ex) {
             return null;
