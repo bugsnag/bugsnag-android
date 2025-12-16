@@ -18,8 +18,7 @@
       "osBuild": "bulldog",
       "androidApiLevel": "24"
     },
-    "totalMemory": 10923250000,
-    "securityPatch": "2025-11-11"
+    "totalMemory": 10923250000
   },
   "sessions": [
     {

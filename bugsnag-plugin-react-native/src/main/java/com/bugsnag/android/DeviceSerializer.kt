@@ -16,7 +16,6 @@ internal class DeviceSerializer : MapSerializer<DeviceWithState> {
         map["freeDisk"] = device.freeDisk
         map["freeMemory"] = device.freeMemory
         map["orientation"] = device.orientation
-        map["securityPatch"] = device.securityPatch
 
         if (device.time != null) {
             map["time"] = DateUtils.toIso8601(device.time!!)

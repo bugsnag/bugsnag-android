@@ -201,6 +201,7 @@ public class ClientTest {
         assertNotNull(metadata.get("dpi"));
         assertNotNull(metadata.get("emulator"));
         assertNotNull(metadata.get("screenResolution"));
+        assertNotNull(metadata.get("securityPatch"));
     }
 
     @Test

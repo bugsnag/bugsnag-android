@@ -177,8 +177,7 @@ internal class BugsnagEventMapper(
                 null,
                 null,
                 null,
-                (device["cpuAbi"] as? List<String>)?.toTypedArray(),
-                device["securityPatch"] as? String
+                (device["cpuAbi"] as? List<String>)?.toTypedArray()
             ),
             device["jailbroken"] as? Boolean,
             device["id"] as? String,

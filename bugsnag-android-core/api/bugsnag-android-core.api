@@ -297,7 +297,6 @@ public class com/bugsnag/android/Device : com/bugsnag/android/JsonStream$Streama
 	public final fun getOsName ()Ljava/lang/String;
 	public final fun getOsVersion ()Ljava/lang/String;
 	public final fun getRuntimeVersions ()Ljava/util/Map;
-	public final fun getSecurityPatch ()Ljava/lang/String;
 	public final fun getTotalMemory ()Ljava/lang/Long;
 	public final fun setCpuAbi ([Ljava/lang/String;)V
 	public final fun setId (Ljava/lang/String;)V
@@ -308,7 +307,6 @@ public class com/bugsnag/android/Device : com/bugsnag/android/JsonStream$Streama
 	public final fun setOsName (Ljava/lang/String;)V
 	public final fun setOsVersion (Ljava/lang/String;)V
 	public final fun setRuntimeVersions (Ljava/util/Map;)V
-	public final fun setSecurityPatch (Ljava/lang/String;)V
 	public final fun setTotalMemory (Ljava/lang/Long;)V
 	public fun toStream (Lcom/bugsnag/android/JsonStream;)V
 }

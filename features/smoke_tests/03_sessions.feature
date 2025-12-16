@@ -38,7 +38,6 @@ Feature: Session functionality smoke tests
     And the session payload field "device.osVersion" is not null
     And the session payload field "device.runtimeVersions" is not null
     And the session payload field "device.totalMemory" is greater than 0
-    And the session payload field "device.securityPatch" is not null
 
     # Error payload
     Then I wait to receive an error
@@ -57,6 +56,7 @@ Feature: Session functionality smoke tests
     And the event "session.events.handled" equals 1
     And the event "session.events.unhandled" equals 0
     And the event "severityReason.unhandledOverridden" is false
+    And the event "metaData.device.securityPatch" is not null
 
     And the event has a "state" breadcrumb named "SecondActivity#onCreate()"
     And the breadcrumb named "SecondActivity#onCreate()" has "metaData.action" equal to "com.bugsnag.android.mazerunner.UPDATE_CONTEXT"

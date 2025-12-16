@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+* Added the OS security patch version to the reported device metadata
+  [#2345](https://github.com/bugsnag/bugsnag-android/pull/2345)
+
 ## 6.20.0 (2025-12-03)
 
 ### Enhancements

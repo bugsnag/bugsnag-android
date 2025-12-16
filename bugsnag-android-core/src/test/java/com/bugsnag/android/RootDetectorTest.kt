@@ -79,7 +79,7 @@ class RootDetectorTest {
      */
     @Test
     fun checkBuildTagsRooted() {
-        val info = DeviceBuildInfo(null, null, null, null, null, null, "test-keys", null, null, "2025-11-11")
+        val info = DeviceBuildInfo(null, null, null, null, null, null, "test-keys", null, null)
         assertTrue(RootDetector(info, logger = NoopLogger).checkBuildTags())
     }
 
@@ -88,7 +88,7 @@ class RootDetectorTest {
      */
     @Test
     fun checkBuildTagsNotRooted() {
-        val info = DeviceBuildInfo(null, null, null, null, null, null, "release-keys", null, null, "2025-11-11")
+        val info = DeviceBuildInfo(null, null, null, null, null, null, "release-keys", null, null)
         assertFalse(RootDetector(info, logger = NoopLogger).checkBuildTags())
     }
 

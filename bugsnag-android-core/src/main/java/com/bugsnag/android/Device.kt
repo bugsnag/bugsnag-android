@@ -59,8 +59,6 @@ open class Device internal constructor(
      */
     var osVersion: String? = buildInfo.osVersion
 
-    var securityPatch: String? = buildInfo.securityPatch
-
     var runtimeVersions: MutableMap<String, Any>? = sanitizeRuntimeVersions(runtimeVersions)
         set(value) {
             field = sanitizeRuntimeVersions(value)
@@ -77,7 +75,6 @@ open class Device internal constructor(
         writer.name("osVersion").value(osVersion)
         writer.name("runtimeVersions").value(runtimeVersions)
         writer.name("totalMemory").value(totalMemory)
-        writer.name("securityPatch").value(securityPatch)
     }
 
     override fun toStream(writer: JsonStream) {

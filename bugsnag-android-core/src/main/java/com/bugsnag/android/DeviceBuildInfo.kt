@@ -11,8 +11,7 @@ internal class DeviceBuildInfo(
     val fingerprint: String?,
     val tags: String?,
     val brand: String?,
-    val cpuAbis: Array<String>?,
-    val securityPatch: String?
+    val cpuAbis: Array<String>?
 ) {
     companion object {
         fun defaultInfo(): DeviceBuildInfo {
@@ -21,33 +20,17 @@ internal class DeviceBuildInfo(
                 else -> arrayOf(Build.CPU_ABI, Build.CPU_ABI2)
             }
 
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                DeviceBuildInfo(
-                    Build.MANUFACTURER,
-                    Build.MODEL,
-                    Build.VERSION.RELEASE,
-                    Build.VERSION.SDK_INT,
-                    Build.DISPLAY,
-                    Build.FINGERPRINT,
-                    Build.TAGS,
-                    Build.BRAND,
-                    cpuABis,
-                    Build.VERSION.SECURITY_PATCH
-                )
-            } else {
-                DeviceBuildInfo(
-                    Build.MANUFACTURER,
-                    Build.MODEL,
-                    Build.VERSION.RELEASE,
-                    Build.VERSION.SDK_INT,
-                    Build.DISPLAY,
-                    Build.FINGERPRINT,
-                    Build.TAGS,
-                    Build.BRAND,
-                    cpuABis,
-                    null
-                )
-            }
+            return DeviceBuildInfo(
+                Build.MANUFACTURER,
+                Build.MODEL,
+                Build.VERSION.RELEASE,
+                Build.VERSION.SDK_INT,
+                Build.DISPLAY,
+                Build.FINGERPRINT,
+                Build.TAGS,
+                Build.BRAND,
+                cpuABis
+            )
         }
     }
 }

@@ -91,8 +91,7 @@ final class BugsnagTestUtils {
     static DeviceBuildInfo generateDeviceBuildInfo() {
         return new DeviceBuildInfo(
                 "samsung", "s7", "7.1", 24, "bulldog",
-                "foo-google", "prod,build", "google", new String[]{"armeabi-v7a"},
-                "2025-11-11"
+                "foo-google", "prod,build", "google", new String[]{"armeabi-v7a"}
         );
     }
 

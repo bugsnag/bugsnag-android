@@ -115,7 +115,9 @@ internal class DeviceDataCollector(
         map["dpi"] = dpi
         map["emulator"] = emulator
         map["screenResolution"] = screenResolution
-        map["securityPatch"] = buildInfo.securityPatch
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            map["securityPatch"] = Build.VERSION.SECURITY_PATCH
+        }
         return map
     }
 
