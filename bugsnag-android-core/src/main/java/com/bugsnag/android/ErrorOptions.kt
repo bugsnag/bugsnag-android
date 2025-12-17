@@ -56,6 +56,13 @@ class ErrorCaptureOptions(
         const val CAPTURE_THREADS = 8
         const val CAPTURE_USER = 16
 
+        const val CAPTURE_ALL =
+            CAPTURE_STACKTRACE or
+                CAPTURE_BREADCRUMBS or
+                CAPTURE_FEATURE_FLAGS or
+                CAPTURE_THREADS or
+                CAPTURE_USER
+
         /**
          * A convenience method to capture only selected event fields using a bit-mask of field
          * names (a mask of [CAPTURE_STACKTRACE], [CAPTURE_BREADCRUMBS], etc.).
