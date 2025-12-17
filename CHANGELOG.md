@@ -2,6 +2,11 @@
 
 ## TBD
 
+### Enhancements
+
+* Added `ErrorCaptureOptions.CAPTURE_ALL` field to more easily change only the captured metadata when specifying `ErrorOptions`
+  [#2358](https://github.com/bugsnag/bugsnag-android/pull/2358)
+
 ### Bug fixes
 
 * Synthesized ANRs from the exitinfo plugin will now include the user details (captured when they are synthesized)

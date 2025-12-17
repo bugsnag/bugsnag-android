@@ -358,6 +358,7 @@ public class com/bugsnag/android/Error : com/bugsnag/android/JsonStream$Streamab
 }
 
 public final class com/bugsnag/android/ErrorCaptureOptions {
+	public static final field CAPTURE_ALL I
 	public static final field CAPTURE_BREADCRUMBS I
 	public static final field CAPTURE_FEATURE_FLAGS I
 	public static final field CAPTURE_STACKTRACE I
