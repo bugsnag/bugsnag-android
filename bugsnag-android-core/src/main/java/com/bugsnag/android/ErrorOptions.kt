@@ -5,7 +5,12 @@ package com.bugsnag.android
  */
 class ErrorOptions @JvmOverloads constructor(
     /** Controls which data fields are captured during Event creation. */
-    var capture: ErrorCaptureOptions = ErrorCaptureOptions()
+    var capture: ErrorCaptureOptions = ErrorCaptureOptions(),
+    /**
+     * Use with caution. Marks the error as fatal / non-fatal. A fatal error is marked as `unhandled`, and causes
+     * all automatic error reporting to be turned off (discarding all subsequent unhandled crashes).
+     */
+    var isFatal: Boolean = false
 )
 
 /**

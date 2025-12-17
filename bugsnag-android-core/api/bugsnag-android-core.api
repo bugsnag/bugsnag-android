@@ -394,9 +394,12 @@ public final class com/bugsnag/android/ErrorCaptureOptions$Companion {
 public final class com/bugsnag/android/ErrorOptions {
 	public fun <init> ()V
 	public fun <init> (Lcom/bugsnag/android/ErrorCaptureOptions;)V
-	public synthetic fun <init> (Lcom/bugsnag/android/ErrorCaptureOptions;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lcom/bugsnag/android/ErrorCaptureOptions;Z)V
+	public synthetic fun <init> (Lcom/bugsnag/android/ErrorCaptureOptions;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getCapture ()Lcom/bugsnag/android/ErrorCaptureOptions;
+	public final fun isFatal ()Z
 	public final fun setCapture (Lcom/bugsnag/android/ErrorCaptureOptions;)V
+	public final fun setFatal (Z)V
 }
 
 public final class com/bugsnag/android/ErrorType : java/lang/Enum {
