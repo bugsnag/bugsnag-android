@@ -1,8 +1,11 @@
 package com.bugsnag.android.okhttp
 
 import android.os.SystemClock
+import android.util.Base64
 import com.bugsnag.android.BreadcrumbType
 import com.bugsnag.android.Client
+import com.bugsnag.android.ErrorCaptureOptions
+import com.bugsnag.android.ErrorOptions
 import com.bugsnag.android.Logger
 import com.bugsnag.android.http.HttpInstrumentedRequest
 import com.bugsnag.android.http.HttpInstrumentedResponse
@@ -27,6 +30,14 @@ internal class BugsnagOkHttpInterceptor(
     private val clientSource: () -> Client?,
     private val timeProvider: () -> Long = { SystemClock.elapsedRealtime() }
 ) : Interceptor {
+    private val templateException by lazy {
+        RuntimeException("HTTP Error Placeholder")
+    }
+
+    private val httpErrorOptions = ErrorOptions(
+        ErrorCaptureOptions(stacktrace = false)
+    )
+
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
         val client = clientSource() ?: return chain.proceed(request)
@@ -110,6 +121,21 @@ internal class BugsnagOkHttpInterceptor(
                 collateMetadata(req, resp, durationMs),
                 BreadcrumbType.REQUEST
             )
+        }
+
+        if (resp.isErrorReported) {
+            client.notify(templateException, httpErrorOptions) { event ->
+                val okHttpRequest = resp.request
+                val okHttpResponse = resp.response
+
+                val domain = okHttpRequest.url.host
+
+                event.errors.clear()
+                event.addError("HTTPError", "${okHttpResponse?.code}: ${okHttpRequest.url}")
+                event.context = "${okHttpRequest.method} $domain"
+                event.setHttpInfo(req, resp)
+                true
+            }
         }
     }
 
@@ -274,13 +300,13 @@ private class OkHttpInstrumentedResponse(
     }
 
     private fun extractResponseBody(): String? {
-        val body = response?.body ?: return null
-
         if (maxResponseBodyCapture <= 0) {
             return null
         }
 
-        return try {
+        val body = response?.peekBody(maxResponseBodyCapture) ?: return null
+
+        try {
             // Use peekBody to read without consuming the actual response body
             // This creates a copy of the body bytes that can be read safely
             val peekedBody = body.source().peek()
@@ -290,10 +316,30 @@ private class OkHttpInstrumentedResponse(
 
             // Read up to maxResponseBodyCapture bytes
             val bytesToRead = minOf(peekedBody.buffer.size, maxResponseBodyCapture)
-            peekedBody.buffer.clone().readUtf8(bytesToRead)
+            if (bytesToRead <= 0) {
+                return null
+            }
+
+            val contentType = body.contentType()
+            if (contentType != null) {
+                if (contentType.subtype == "json" ||
+                    contentType.type == "text" ||
+                    contentType.charset(null) != null
+                ) {
+                    val charset = contentType.charset(null)
+                    return if (charset != null) {
+                        peekedBody.readString(bytesToRead, charset)
+                    } else {
+                        peekedBody.readUtf8(bytesToRead)
+                    }
+                }
+            }
+
+            return Base64.encodeToString(peekedBody.readByteArray(bytesToRead), Base64.NO_WRAP)
         } catch (_: Exception) {
             // If we can't read the body (e.g., it's not text or an error occurred), return null
-            null
         }
+
+        return null
     }
 }

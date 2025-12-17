@@ -18,32 +18,48 @@ import java.util.Set;
  */
 @SuppressWarnings("ConstantValue")
 public final class Request extends AbstractHttpEntity implements JsonStream.Streamable {
-    private final Logger logger;
     private final Map<String, String> params = new LinkedHashMap<>();
 
-    @NonNull
+    @Nullable
     private String httpMethod;
 
-    @NonNull
+    @Nullable
     private String httpVersion;
 
-    @NonNull
-    @SuppressWarnings("NotNullFieldNotInitialized")
+    @Nullable
     private String url;
 
-    Request(Logger logger,
-            @NonNull String httpMethod,
-            @NonNull String httpVersion,
-            @NonNull String url) {
+    /**
+     * Constructs a new Request with the specified HTTP version, method, and URL.
+     * If the URL contains query parameters, they will be extracted and stored separately.
+     *
+     * @param httpVersion the HTTP version (e.g. "HTTP/1.1"), or null
+     * @param httpMethod  the HTTP method (e.g. "GET", "POST"), or null
+     * @param url         the request URL, optionally including query parameters, or null
+     */
+    public Request(
+            @Nullable String httpVersion,
+            @Nullable String httpMethod,
+            @Nullable String url) {
 
-        this.logger = logger;
         this.httpMethod = httpMethod;
         this.httpVersion = httpVersion;
         setUrl(url);
     }
 
-    private void logNull(String property) {
-        logger.e("Invalid null value supplied to request." + property + ", ignoring");
+    /**
+     * Constructs a new Request with the specified HTTP method and URL.
+     * The HTTP version will be set to null.
+     * If the URL contains query parameters, they will be extracted and stored separately.
+     *
+     * @param httpMethod the HTTP method (e.g. "GET", "POST"), or null
+     * @param url        the request URL, optionally including query parameters, or null
+     */
+    public Request(
+            @Nullable String httpMethod,
+            @Nullable String url) {
+
+        this(null, httpMethod, url);
     }
 
     /**
@@ -51,7 +67,7 @@ public final class Request extends AbstractHttpEntity implements JsonStream.Stre
      *
      * @return the HTTP method
      */
-    @NonNull
+    @Nullable
     public String getHttpMethod() {
         return httpMethod;
     }
@@ -61,12 +77,8 @@ public final class Request extends AbstractHttpEntity implements JsonStream.Stre
      *
      * @param httpMethod the HTTP method name
      */
-    public void setHttpMethod(@NonNull String httpMethod) {
-        if (httpMethod != null) {
-            this.httpMethod = httpMethod;
-        } else {
-            logNull("httpMethod");
-        }
+    public void setHttpMethod(@Nullable String httpMethod) {
+        this.httpMethod = httpMethod;
     }
 
     /**
@@ -74,7 +86,7 @@ public final class Request extends AbstractHttpEntity implements JsonStream.Stre
      *
      * @return the HTTP version
      */
-    @NonNull
+    @Nullable
     public String getHttpVersion() {
         return httpVersion;
     }
@@ -84,12 +96,8 @@ public final class Request extends AbstractHttpEntity implements JsonStream.Stre
      *
      * @param httpVersion the HTTP version
      */
-    public void setHttpVersion(@NonNull String httpVersion) {
-        if (httpVersion != null) {
-            this.httpVersion = httpVersion;
-        } else {
-            logNull("httpVersion");
-        }
+    public void setHttpVersion(@Nullable String httpVersion) {
+        this.httpVersion = httpVersion;
     }
 
     /**
@@ -97,7 +105,7 @@ public final class Request extends AbstractHttpEntity implements JsonStream.Stre
      *
      * @return the request URL
      */
-    @NonNull
+    @Nullable
     public String getUrl() {
         return url;
     }
@@ -108,7 +116,7 @@ public final class Request extends AbstractHttpEntity implements JsonStream.Stre
      *
      * @param url the request URL, optionally including query parameters
      */
-    public void setUrl(@NonNull String url) {
+    public void setUrl(@Nullable String url) {
         if (url != null) {
             int querySeparatorIndex = url.indexOf('?');
 

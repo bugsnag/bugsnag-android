@@ -12,6 +12,8 @@
     <ID>MagicNumber:BugsnagOkHttpPlugin.kt$399</ID>
     <ID>MagicNumber:BugsnagOkHttpPlugin.kt$400</ID>
     <ID>MagicNumber:BugsnagOkHttpPlugin.kt$599</ID>
+    <ID>NestedBlockDepth:BugsnagOkHttpInterceptor.kt$OkHttpInstrumentedResponse$private fun extractResponseBody(): String?</ID>
+    <ID>ReturnCount:BugsnagOkHttpInterceptor.kt$OkHttpInstrumentedResponse$private fun extractResponseBody(): String?</ID>
     <ID>TooManyFunctions:DelegateEventListener.kt$DelegateEventListener : EventListener</ID>
   </CurrentIssues>
 </SmellBaseline>
