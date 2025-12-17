@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.ErrorCaptureOptions.Companion.CAPTURE_ALL
 import com.bugsnag.android.ErrorCaptureOptions.Companion.CAPTURE_BREADCRUMBS
 import com.bugsnag.android.ErrorCaptureOptions.Companion.CAPTURE_FEATURE_FLAGS
 import com.bugsnag.android.ErrorCaptureOptions.Companion.CAPTURE_STACKTRACE
@@ -98,5 +99,16 @@ class ErrorCaptureOptionsTest {
                 )
             }
         }
+    }
+
+    @Test
+    fun testCaptureAll() {
+        val options = ErrorCaptureOptions.captureOnly(CAPTURE_ALL)
+        assertTrue("breadcrumbs", options.breadcrumbs)
+        assertTrue("featureFlags", options.featureFlags)
+        assertTrue("stacktrace", options.stacktrace)
+        assertTrue("threads", options.threads)
+        assertTrue("user", options.user)
+        assertNull(options.metadata)
     }
 }

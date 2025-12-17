@@ -6,6 +6,8 @@
 
 * Added the OS security patch version to the reported device metadata
   [#2345](https://github.com/bugsnag/bugsnag-android/pull/2345)
+* Added `ErrorCaptureOptions.CAPTURE_ALL` field to more easily change only the captured metadata when specifying `ErrorOptions`
+  [#2358](https://github.com/bugsnag/bugsnag-android/pull/2358)
 
 ### Bug fixes
 
