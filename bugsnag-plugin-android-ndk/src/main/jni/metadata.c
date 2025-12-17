@@ -239,6 +239,14 @@ static void populate_device_metadata(JNIEnv *env, bugsnag_event *event,
                         sizeof(screen_resolution));
   bugsnag_event_add_metadata_string(event, "device", "screenResolution",
                                     screen_resolution);
+
+  char security_patch[64] = {0};
+  copy_map_value_string(env, data, "securityPatch", security_patch,
+                        sizeof(security_patch));
+  if (security_patch[0] != 0) {
+    bugsnag_event_add_metadata_string(event, "device", "securityPatch",
+                                      security_patch);
+  }
 }
 
 static void populate_device_data(JNIEnv *env, bugsnag_event *event) {
