@@ -4,6 +4,8 @@ import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 
+private const val STARTUP_SETTLING_TIME = 500L
+
 /**
  * Triggers a crash loop which Bugsnag allows recovery from.
  */
@@ -35,6 +37,8 @@ internal class CXXCrashLoopScenario(
                 it.consecutiveLaunchCrashes
             )
         }
+
+        Thread.sleep(STARTUP_SETTLING_TIME)
 
         // the last run info allows the scenario to escape from what would otherwise be
         // a crash loop, by conditionally entering a 'safe mode'.
