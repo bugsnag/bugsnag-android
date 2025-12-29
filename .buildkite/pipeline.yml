@@ -29,6 +29,7 @@ steps:
       - "ruby scripts/build-test-fixture.rb r19"
     env:
       JAVA_VERSION: 17
+      ANDROID_USER_HOME: "/Users/administrator/.android-agent-1"
 
   - label: ':android: Build fixture APK r21'
     key: "fixture-r21"
