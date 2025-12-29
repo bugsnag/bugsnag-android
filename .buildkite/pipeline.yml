@@ -25,7 +25,7 @@ steps:
       - "build/bs-fixture-r19-url.txt"
       - "build/fixture-r19/*"
     commands:
-      - env
+      - echo $ANDROID_USER_HOME
       - "ruby scripts/build-test-fixture.rb r19"
     env:
       JAVA_VERSION: 17
