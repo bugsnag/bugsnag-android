@@ -37,6 +37,9 @@ if ARGV.length != 1
 end
 ndk_version = ARGV[0]
 
+# echo out the system environment variable ANDROID_USER_HOME
+puts "ANDROID_USER_HOME: #{ENV['ANDROID_USER_HOME']}"
+
 # Build the test fixture using the specified NDK version
 puts 'Building test fixture'
 run_cmd("bundle install", "Failed to install bundle")
