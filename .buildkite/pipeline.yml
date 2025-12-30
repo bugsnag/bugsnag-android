@@ -16,6 +16,7 @@ steps:
   #
   - label: ':android: Build fixture APK r19'
     key: "fixture-r19"
+    shell: /bin/bash
     timeout_in_minutes: 30
     agents:
       queue: macos-15-1
@@ -25,11 +26,9 @@ steps:
       - "build/bs-fixture-r19-url.txt"
       - "build/fixture-r19/*"
     commands:
-      - echo $ANDROID_USER_HOME
       - "ruby scripts/build-test-fixture.rb r19"
     env:
       JAVA_VERSION: 17
-      ANDROID_USER_HOME: "/Users/administrator/.android-agent-1"
 
   - label: ':android: Build fixture APK r21'
     key: "fixture-r21"
