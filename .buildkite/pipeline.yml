@@ -16,7 +16,6 @@ steps:
   #
   - label: ':android: Build fixture APK r19'
     key: "fixture-r19"
-    shell: /bin/bash
     timeout_in_minutes: 30
     agents:
       queue: macos-15-1
