@@ -79,6 +79,7 @@ Feature: Handled smoke tests
     And the event "metaData.device.screenResolution" is not null
     And the event "metaData.device.brand" is not null
     And the event "metaData.device.batteryLevel" is not null
+    And the event "metaData.device.securityPatch" is not null
 
     # User
     And the event "user.id" is not null
@@ -254,7 +255,7 @@ Feature: Handled smoke tests
     When I run "ErrorOptionsScenario"
     Then I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
-    And the event "stacktrace" is null
+    And the error payload field "events.0.threads.0.stacktrace" is null
     And the event "user.id" is null
     And the event "user.name" is null
     And the error payload field "events.0.breadcrumbs" is an array with 0 elements

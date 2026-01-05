@@ -1,5 +1,19 @@
 # Changelog
 
+## 6.21.0 (2026-01-05)
+
+### Enhancements
+
+* Added the OS security patch version to the reported device metadata
+  [#2345](https://github.com/bugsnag/bugsnag-android/pull/2345)
+* Added `ErrorCaptureOptions.CAPTURE_ALL` field to more easily change only the captured metadata when specifying `ErrorOptions`
+  [#2358](https://github.com/bugsnag/bugsnag-android/pull/2358)
+
+### Bug fixes
+
+* Synthesized ANRs from the exitinfo plugin will now include the user details (captured when they are synthesized)
+  [#2352](https://github.com/bugsnag/bugsnag-android/pull/2352)
+
 ## 6.20.0 (2025-12-03)
 
 ### Enhancements
