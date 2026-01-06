@@ -14,6 +14,7 @@ internal class LooperMonitorThread(
 ) : Thread("Bugsnag AppHang Monitor: ${watchedLooper.thread.name}") {
     private val handler: Handler = Handler(watchedLooper)
 
+    @Volatile
     private var lastHeartbeatTimestamp = 0L
 
     private val isRunning = AtomicBoolean(false)
@@ -33,6 +34,7 @@ internal class LooperMonitorThread(
 
     fun stopMonitoring() {
         if (isRunning.compareAndSet(true, false)) {
+            handler.removeCallbacks(heartbeat)
             LockSupport.unpark(this)
         }
     }
@@ -68,7 +70,10 @@ internal class LooperMonitorThread(
             if (timeSinceLastHeartbeat >= appHangThresholdMillis) {
                 reportAppHang(timeSinceLastHeartbeat)
             } else {
-                handler.post(heartbeat)
+                if (!handler.post(heartbeat)) {
+                    // handler.post returning false means the Looper has likely quit
+                    isRunning.set(false)
+                }
             }
         }
     }

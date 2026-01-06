@@ -10,7 +10,7 @@
 ### Bug fixes
 
 * Replaced the heartbeat lock with park/unpark in the [bugsnag-plugin-android-apphang](bugsnag-plugin-android-apphang) so that the main/monitor threads are not interdependant
-  []()
+  [#2363](https://github.com/bugsnag/bugsnag-android/pull/2363)
 
 ## 6.21.0 (2026-01-05)
 
