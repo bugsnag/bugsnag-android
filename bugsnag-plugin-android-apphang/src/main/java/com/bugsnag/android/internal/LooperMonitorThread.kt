@@ -56,30 +56,29 @@ internal class LooperMonitorThread(
         while (isRunning.get()) {
             val waitThreshold =
                 if (lastHeartbeatTimestamp <= 0L) appHangThresholdMillis
-                else calculateTimeToAppHang(SystemClock.elapsedRealtime())
+                else calculateTimeToAppHang(SystemClock.uptimeMillis())
 
             val waitThresholdNanos = TimeUnit.MILLISECONDS.toNanos(waitThreshold)
             LockSupport.parkNanos(waitThresholdNanos)
 
             if (!isRunning.get()) break
 
-            val timeSinceLastHeartbeat = SystemClock.elapsedRealtime() - lastHeartbeatTimestamp
+            val timeSinceLastHeartbeat = SystemClock.uptimeMillis() - lastHeartbeatTimestamp
 
             if (timeSinceLastHeartbeat >= appHangThresholdMillis) {
                 reportAppHang(timeSinceLastHeartbeat)
+            } else {
+                handler.post(heartbeat)
             }
         }
     }
 
     private inner class Heartbeat : Runnable {
         override fun run() {
-            lastHeartbeatTimestamp = SystemClock.elapsedRealtime()
+            lastHeartbeatTimestamp = SystemClock.uptimeMillis()
             isAppHangDetected = false
 
-            if (isRunning.get()) {
-                resetHeartbeatTimer()
-                handler.post(this)
-            }
+            resetHeartbeatTimer()
         }
 
         override fun toString(): String {
