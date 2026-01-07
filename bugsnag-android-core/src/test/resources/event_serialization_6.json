@@ -58,6 +58,9 @@
       "metaData": {}
     }
   ],
+  "usage": {
+    "remoteConfig": false
+  },
   "threads": [],
   "featureFlags": []
 }

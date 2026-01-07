@@ -235,6 +235,10 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
             internalMetrics = new InternalMetricsNoop();
         }
 
+        internalMetrics.setRemoteConfigEnabled(
+                immutableConfig.getEndpoints().getConfiguration() != null
+        );
+
         configDifferences = configuration.impl.getConfigDifferences();
         systemBroadcastReceiver = new SystemBroadcastReceiver(this, logger);
 
