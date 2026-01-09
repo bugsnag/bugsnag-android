@@ -3,6 +3,7 @@ package com.bugsnag.android.mazerunner.scenarios
 import android.content.Context
 import android.net.Uri
 import com.bugsnag.android.Configuration
+import com.bugsnag.android.OnErrorCallback
 import com.bugsnag.android.mazerunner.log
 import com.bugsnag.android.okhttp.BugsnagOkHttp
 import okhttp3.MediaType.Companion.toMediaType
@@ -26,6 +27,12 @@ class OkHttpInstrumentationScenario(
         .maxResponseBodyCapture(MAX_CAPTURE_BYTES)
         .logBreadcrumbs()
         .addHttpErrorCodes(400, 599)
+        .addResponseCallback { response ->
+            response.errorCallback = OnErrorCallback { event ->
+                event.addMetadata("OkHttpInstrumentationScenario", "onErrorCallback", true)
+                true
+            }
+        }
 
     private val httpClient = OkHttpClient.Builder()
         .addInterceptor(instrumentation.createInterceptor())

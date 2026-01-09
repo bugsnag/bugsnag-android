@@ -20,12 +20,14 @@ public abstract interface class com/bugsnag/android/http/HttpInstrumentedRequest
 }
 
 public abstract interface class com/bugsnag/android/http/HttpInstrumentedResponse {
+	public abstract fun getErrorCallback ()Lcom/bugsnag/android/OnErrorCallback;
 	public abstract fun getReportedResponseBody ()Ljava/lang/String;
 	public abstract fun getRequest ()Ljava/lang/Object;
 	public abstract fun getResponse ()Ljava/lang/Object;
 	public abstract fun isBreadcrumbReported ()Z
 	public abstract fun isErrorReported ()Z
 	public abstract fun setBreadcrumbReported (Z)V
+	public abstract fun setErrorCallback (Lcom/bugsnag/android/OnErrorCallback;)V
 	public abstract fun setErrorReported (Z)V
 	public abstract fun setReportedResponseBody (Ljava/lang/String;)V
 }

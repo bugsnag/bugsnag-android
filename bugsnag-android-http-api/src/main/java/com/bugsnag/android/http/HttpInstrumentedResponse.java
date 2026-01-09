@@ -2,7 +2,6 @@ package com.bugsnag.android.http;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.bugsnag.android.OnErrorCallback;
 
 /**

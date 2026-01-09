@@ -50,6 +50,9 @@ Feature: Capturing network breadcrumbs
     And the event "response.bodyLength" is greater than 1
     And the event "response.body" is not null
 
+    # Validate the event metadata
+    And the event "metaData.OkHttpInstrumentationScenario.onErrorCallback" is true
+
   Scenario: Failed GET requests send error reports when configured
     When I configure the app to run in the "GET 500" state
     And I run "OkHttpInstrumentationScenario"
@@ -71,6 +74,9 @@ Feature: Capturing network breadcrumbs
     And the event "response.statusCode" equals 500
     And the event "response.bodyLength" is greater than 1
     And the event "response.body" is not null
+
+    # Validate the event metadata
+    And the event "metaData.OkHttpInstrumentationScenario.onErrorCallback" is true
 
   Scenario: Successful requests do not emit errors
     When I configure the app to run in the "POST 200" state
