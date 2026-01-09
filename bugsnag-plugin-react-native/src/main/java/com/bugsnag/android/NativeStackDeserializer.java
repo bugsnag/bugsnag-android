@@ -45,7 +45,7 @@ class NativeStackDeserializer implements MapDeserializer<List<Stackframe>> {
             methodName = "";
         }
 
-        String clz = MapUtils.getOrNull(map, "class");
+        String clz = MapUtils.getOrNull(map, "className", "class");
         String method = clz + "." + methodName;
 
         // RN <0.63.2 doesn't add class, gracefully fallback by only reporting
@@ -54,9 +54,11 @@ class NativeStackDeserializer implements MapDeserializer<List<Stackframe>> {
             clz = "";
             method = methodName;
         }
+
+        String file = MapUtils.getOrNull(map, "fileName", "file");
         Stackframe stackframe = new Stackframe(
                 method,
-                MapUtils.<String>getOrNull(map, "file"),
+                file,
                 MapUtils.<Integer>getOrNull(map, "lineNumber"),
                 Stacktrace.Companion.inProject(clz, projectPackages)
         );
