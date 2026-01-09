@@ -3,6 +3,8 @@ package com.bugsnag.android.http;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.bugsnag.android.OnErrorCallback;
+
 /**
  * Represents an HTTP response that has been instrumented by BugSnag. This interface provides
  * access to the original request and response objects, as well as methods to modify the
@@ -78,4 +80,21 @@ public interface HttpInstrumentedResponse<R, S> {
      * @param responseBody the response body to report
      */
     void setReportedResponseBody(@Nullable String responseBody);
+
+    /**
+     * Set an {@code OnErrorCallback} that can customise {@link com.bugsnag.android.Event Events}
+     * created as a consequence to this response (when {@link #isErrorReported()} is true). Setting
+     * this to {@code null} will remove any existing error callback.
+     *
+     * @param onErrorCallback the error callback to customise HTTP events
+     */
+    void setErrorCallback(@Nullable OnErrorCallback onErrorCallback);
+
+    /**
+     * Return the error callback if one has been set.
+     *
+     * @return the error callback for this response
+     */
+    @Nullable
+    OnErrorCallback getErrorCallback();
 }

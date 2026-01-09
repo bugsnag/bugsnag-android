@@ -7,6 +7,7 @@ import com.bugsnag.android.Client
 import com.bugsnag.android.ErrorCaptureOptions
 import com.bugsnag.android.ErrorOptions
 import com.bugsnag.android.Logger
+import com.bugsnag.android.OnErrorCallback
 import com.bugsnag.android.http.HttpInstrumentedRequest
 import com.bugsnag.android.http.HttpInstrumentedResponse
 import com.bugsnag.android.http.HttpRequestCallback
@@ -134,7 +135,8 @@ internal class BugsnagOkHttpInterceptor(
                 event.addError("HTTPError", "${okHttpResponse?.code}: ${okHttpRequest.url}")
                 event.context = "${okHttpRequest.method} $domain"
                 event.setHttpInfo(req, resp)
-                true
+
+                return@notify resp.errorCallback?.onError(event) != false
             }
         }
     }
@@ -265,6 +267,8 @@ private class OkHttpInstrumentedResponse(
 
     private var isErrorReported = response != null && errorCodes[response.code]
 
+    private var errorCallback: OnErrorCallback? = null
+
     override fun getRequest(): Request = request
     override fun getResponse(): Response? = response
 
@@ -297,6 +301,14 @@ private class OkHttpInstrumentedResponse(
     override fun setReportedResponseBody(responseBody: String?) {
         reportedResponseBody = responseBody
         isResponseBodySet = true
+    }
+
+    override fun setErrorCallback(onErrorCallback: OnErrorCallback?) {
+        this.errorCallback = onErrorCallback
+    }
+
+    override fun getErrorCallback(): OnErrorCallback? {
+        return errorCallback
     }
 
     private fun extractResponseBody(): String? {
