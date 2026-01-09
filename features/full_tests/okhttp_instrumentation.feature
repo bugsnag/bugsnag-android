@@ -68,7 +68,7 @@ Feature: Capturing network breadcrumbs
     And the event "request.httpVersion" is not null
     And the event "request.bodyLength" is greater than 64
     And the error payload field "events.0.request.body" equals "testing request body"
-    And the error payload field "events.0.request.url" equals the stored value "expectedUrl"
+    And the error payload field "events.0.request.url" equals "http://testingUrl.bugsnag.com"
     And the error payload field "events.0.request.headers.Authorization" equals "[REDACTED]"
     And the error payload field "events.0.request.params.password" equals "[REDACTED]"
 

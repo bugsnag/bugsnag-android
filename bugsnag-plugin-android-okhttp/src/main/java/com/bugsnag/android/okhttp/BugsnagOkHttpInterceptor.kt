@@ -1,5 +1,6 @@
 package com.bugsnag.android.okhttp
 
+import android.net.Uri
 import android.os.SystemClock
 import android.util.Base64
 import com.bugsnag.android.BreadcrumbType
@@ -129,16 +130,29 @@ internal class BugsnagOkHttpInterceptor(
                 val okHttpRequest = resp.request
                 val okHttpResponse = resp.response
 
-                val domain = okHttpRequest.url.host
-
                 event.errors.clear()
-                event.addError("HTTPError", "${okHttpResponse?.code}: ${okHttpRequest.url}")
-                event.context = "${okHttpRequest.method} $domain"
+                event.addError("HTTPError", "${okHttpResponse?.code}: ${req.reportedUrl}")
+                event.context = "${okHttpRequest.method} ${extractDomain(req)}"
                 event.setHttpInfo(req, resp)
 
                 return@notify resp.errorCallback?.onError(event) != false
             }
         }
+    }
+
+    private fun extractDomain(req: OkHttpInstrumentedRequest): String {
+        val reportedUrl = req.reportedUrl
+        if (reportedUrl != null) {
+            try {
+                val host = Uri.parse(reportedUrl).host
+                if (host != null) {
+                    return host
+                }
+            } catch (_: Exception) {
+            }
+        }
+
+        return req.request.url.host
     }
 
     private fun collateMetadata(
