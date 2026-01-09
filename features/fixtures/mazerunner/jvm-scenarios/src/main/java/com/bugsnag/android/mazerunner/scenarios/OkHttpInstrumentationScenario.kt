@@ -17,22 +17,24 @@ import kotlin.concurrent.thread
 private const val MAX_CAPTURE_BYTES = 32L
 private val JSON = "application/json".toMediaType()
 
-class OkHttpInstrumentationScenario(
+open class OkHttpInstrumentationScenario(
     config: Configuration,
     context: Context,
     eventMetadata: String?
 ) : Scenario(config, context, eventMetadata) {
-    private val instrumentation = BugsnagOkHttp()
-        .maxRequestBodyCapture(MAX_CAPTURE_BYTES)
-        .maxResponseBodyCapture(MAX_CAPTURE_BYTES)
-        .logBreadcrumbs()
-        .addHttpErrorCodes(400, 599)
-        .addResponseCallback { response ->
-            response.errorCallback = OnErrorCallback { event ->
-                event.addMetadata("OkHttpInstrumentationScenario", "onErrorCallback", true)
-                true
+
+    protected open val instrumentation
+        get() = BugsnagOkHttp()
+            .maxRequestBodyCapture(MAX_CAPTURE_BYTES)
+            .maxResponseBodyCapture(MAX_CAPTURE_BYTES)
+            .logBreadcrumbs()
+            .addHttpErrorCodes(400, 599)
+            .addResponseCallback { response ->
+                response.errorCallback = OnErrorCallback { event ->
+                    event.addMetadata("OkHttpInstrumentationScenario", "onErrorCallback", true)
+                    true
+                }
             }
-        }
 
     private val httpClient = OkHttpClient.Builder()
         .addInterceptor(instrumentation.createInterceptor())

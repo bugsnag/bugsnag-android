@@ -53,6 +53,33 @@ Feature: Capturing network breadcrumbs
     # Validate the event metadata
     And the event "metaData.OkHttpInstrumentationScenario.onErrorCallback" is true
 
+  Scenario: HTTP Error reporting can be modified by callbacks
+    When I configure the app to run in the "POST 400" state
+    And I run "OkHttpInstrumentationCallbackScenario"
+    And I wait to receive a reflection
+    Then I wait to receive an error
+    And the error payload field "events" is an array with 1 elements
+    And the exception "errorClass" equals "HTTPError"
+    And the exception "message" equals "400: http://testingUrl.bugsnag.com"
+    And the event "context" equals "POST testingUrl.bugsnag.com"
+
+    # Validate request fields
+    And the event "request.httpMethod" equals "POST"
+    And the event "request.httpVersion" is not null
+    And the event "request.bodyLength" is greater than 64
+    And the error payload field "events.0.request.body" equals "testing request body"
+    And the error payload field "events.0.request.url" equals the stored value "expectedUrl"
+    And the error payload field "events.0.request.headers.Authorization" equals "[REDACTED]"
+    And the error payload field "events.0.request.params.password" equals "[REDACTED]"
+
+    # Validate response fields
+    And the event "response.statusCode" equals 400
+    And the event "response.bodyLength" is greater than 1
+    And the event "response.body" equals "testing response body"
+
+    # Validate the event metadata
+    And the event "metaData.OkHttpInstrumentationScenario.onErrorCallback" is true
+
   Scenario: Failed GET requests send error reports when configured
     When I configure the app to run in the "GET 500" state
     And I run "OkHttpInstrumentationScenario"

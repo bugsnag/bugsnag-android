@@ -1,8 +1,9 @@
 package com.bugsnag.android.http;
 
+import com.bugsnag.android.OnErrorCallback;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.bugsnag.android.OnErrorCallback;
 
 /**
  * Represents an HTTP response that has been instrumented by BugSnag. This interface provides
