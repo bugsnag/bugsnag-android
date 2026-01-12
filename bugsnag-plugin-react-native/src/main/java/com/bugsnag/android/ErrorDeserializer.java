@@ -8,10 +8,14 @@ import java.util.Map;
 class ErrorDeserializer implements MapDeserializer<Error> {
 
     private final StackframeDeserializer stackframeDeserializer;
+    private final NativeStackDeserializer nativeStackDeserializer;
     private final Logger logger;
 
-    ErrorDeserializer(StackframeDeserializer stackframeDeserializer, Logger logger) {
+    ErrorDeserializer(StackframeDeserializer stackframeDeserializer,
+        NativeStackDeserializer nativeStackDeserializer,
+        Logger logger) {
         this.stackframeDeserializer = stackframeDeserializer;
+        this.nativeStackDeserializer = nativeStackDeserializer;
         this.logger = logger;
     }
 
@@ -31,6 +35,14 @@ class ErrorDeserializer implements MapDeserializer<Error> {
                 new Stacktrace(frames),
                 ErrorType.valueOf(type.toUpperCase(Locale.US))
         );
-        return new Error(impl, logger);
+
+        Error error = new Error(impl, logger);
+
+        if (map.containsKey("nativeStack")) {
+            List<Stackframe> nativeStack = nativeStackDeserializer.deserialize(map);
+            error.getStacktrace().addAll(0, nativeStack);
+        }
+
+        return error;
     }
 }

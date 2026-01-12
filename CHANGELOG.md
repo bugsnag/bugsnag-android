@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+* Added support for Turbo Module native stacktraces in ``bugsnag-plugin-react-native`
+  [#2367](https://github.com/bugsnag/bugsnag-android/pull/2367)
+
 ## 6.21.0 (2026-01-05)
 
 ### Enhancements
