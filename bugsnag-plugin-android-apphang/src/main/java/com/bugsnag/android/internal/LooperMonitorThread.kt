@@ -69,11 +69,11 @@ internal class LooperMonitorThread(
 
             if (timeSinceLastHeartbeat >= appHangThresholdMillis) {
                 reportAppHang(timeSinceLastHeartbeat)
-            } else {
-                if (!handler.post(heartbeat)) {
-                    // handler.post returning false means the Looper has likely quit
-                    isRunning.set(false)
-                }
+            }
+
+            if (!handler.post(heartbeat)) {
+                // handler.post returning false means the Looper has likely quit
+                isRunning.set(false)
             }
         }
     }
