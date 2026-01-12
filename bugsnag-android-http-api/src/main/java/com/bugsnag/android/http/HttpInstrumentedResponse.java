@@ -1,5 +1,7 @@
 package com.bugsnag.android.http;
 
+import com.bugsnag.android.OnErrorCallback;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -78,4 +80,21 @@ public interface HttpInstrumentedResponse<R, S> {
      * @param responseBody the response body to report
      */
     void setReportedResponseBody(@Nullable String responseBody);
+
+    /**
+     * Set an {@code OnErrorCallback} that can customise {@link com.bugsnag.android.Event Events}
+     * created as a consequence to this response (when {@link #isErrorReported()} is true). Setting
+     * this to {@code null} will remove any existing error callback.
+     *
+     * @param onErrorCallback the error callback to customise HTTP events
+     */
+    void setErrorCallback(@Nullable OnErrorCallback onErrorCallback);
+
+    /**
+     * Return the error callback if one has been set.
+     *
+     * @return the error callback for this response
+     */
+    @Nullable
+    OnErrorCallback getErrorCallback();
 }
