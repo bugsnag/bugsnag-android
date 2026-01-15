@@ -5,7 +5,7 @@ import android.os.Looper
 import android.os.SystemClock
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.locks.ReentrantLock
+import java.util.concurrent.locks.LockSupport
 
 internal class LooperMonitorThread(
     watchedLooper: Looper,
@@ -14,14 +14,12 @@ internal class LooperMonitorThread(
 ) : Thread("Bugsnag AppHang Monitor: ${watchedLooper.thread.name}") {
     private val handler: Handler = Handler(watchedLooper)
 
+    @Volatile
     private var lastHeartbeatTimestamp = 0L
 
     private val isRunning = AtomicBoolean(false)
 
     private var isAppHangDetected = false
-
-    private val heartbeatLock = ReentrantLock(false)
-    private val heartbeatCondition = heartbeatLock.newCondition()
 
     private val heartbeat: Runnable = Heartbeat()
 
@@ -36,22 +34,17 @@ internal class LooperMonitorThread(
 
     fun stopMonitoring() {
         if (isRunning.compareAndSet(true, false)) {
-            interrupt()
+            handler.removeCallbacks(heartbeat)
+            LockSupport.unpark(this)
         }
     }
 
     internal fun resetHeartbeatTimer() {
-        heartbeatLock.lock()
-        try {
-            heartbeatCondition.signalAll()
-        } finally {
-            heartbeatLock.unlock()
-        }
+        LockSupport.unpark(this)
     }
 
     private fun reportAppHang(timeSinceLastHeartbeat: Long) {
         if (isAppHangDetected) {
-            // avoid reporting duplicate AppHangs
             return
         }
 
@@ -63,37 +56,34 @@ internal class LooperMonitorThread(
         handler.post(heartbeat)
 
         while (isRunning.get()) {
-            heartbeatLock.lock()
-            try {
-                val waitThreshold =
-                    if (lastHeartbeatTimestamp <= 0L) appHangThresholdMillis
-                    else calculateTimeToAppHang(SystemClock.elapsedRealtime())
-                heartbeatCondition.await(waitThreshold, TimeUnit.MILLISECONDS)
+            val waitThreshold =
+                if (lastHeartbeatTimestamp <= 0L) appHangThresholdMillis
+                else calculateTimeToAppHang(SystemClock.uptimeMillis())
 
-                val timeSinceLastHeartbeat = SystemClock.elapsedRealtime() - lastHeartbeatTimestamp
+            val waitThresholdNanos = TimeUnit.MILLISECONDS.toNanos(waitThreshold)
+            LockSupport.parkNanos(waitThresholdNanos)
 
-                if (timeSinceLastHeartbeat >= appHangThresholdMillis) {
-                    reportAppHang(timeSinceLastHeartbeat)
-                }
-            } catch (_: InterruptedException) {
-                // continue loop and check isRunning
-            } finally {
-                heartbeatLock.unlock()
+            if (!isRunning.get()) break
+
+            val timeSinceLastHeartbeat = SystemClock.uptimeMillis() - lastHeartbeatTimestamp
+
+            if (timeSinceLastHeartbeat >= appHangThresholdMillis) {
+                reportAppHang(timeSinceLastHeartbeat)
+            }
+
+            if (!handler.post(heartbeat)) {
+                // handler.post returning false means the Looper has likely quit
+                isRunning.set(false)
             }
         }
     }
 
     private inner class Heartbeat : Runnable {
         override fun run() {
-            lastHeartbeatTimestamp = SystemClock.elapsedRealtime()
-            // mark the hang as "recovered" and start the detection again
+            lastHeartbeatTimestamp = SystemClock.uptimeMillis()
             isAppHangDetected = false
-            resetHeartbeatTimer()
 
-            // only post the Heartbeat messages if the monitor is still running
-            if (isRunning.get()) {
-                handler.post(this)
-            }
+            resetHeartbeatTimer()
         }
 
         override fun toString(): String {
