@@ -20,32 +20,8 @@ class EventDeserializerTest {
     @Mock
     lateinit var client: Client
 
-    private val map = mutableMapOf<String, Any?>()
-
-    /**
-     * Generates a map for verifying the serializer
-     */
     @Before
     fun setup() {
-        map["severity"] = "info"
-        map["unhandled"] = false
-        map["context"] = "Foo"
-        map["groupingHash"] = "SomeHash"
-        map["groupingDiscriminator"] = "SomeDiscriminator"
-        map["severityReason"] = mapOf(Pair("type", SeverityReason.REASON_HANDLED_EXCEPTION))
-        map["user"] = mapOf(Pair("id", "123"))
-        map["breadcrumbs"] = listOf(breadcrumbMap())
-        map["threads"] = listOf(threadMap())
-        map["errors"] = listOf(errorMap())
-        map["metadata"] = metadataMap()
-        map["app"] = mapOf(Pair("id", "app-id"))
-        map["device"] =
-            mapOf(Pair("id", "device-id"), Pair("runtimeVersions", mutableMapOf<String, Any>()))
-        map["correlation"] = mapOf(
-            "traceId" to "b39e53513eec3c68b5e5c34dc43611e0",
-            "spanId" to "51d886b3a693a406"
-        )
-
         `when`(client.config).thenReturn(TestData.generateConfig())
         `when`(client.getLogger()).thenReturn(object : Logger {})
         `when`(client.getMetadataState()).thenReturn(TestHooks.generateMetadataState())
@@ -80,8 +56,108 @@ class EventDeserializerTest {
         )
     )
 
+    private fun baseEventMap() = mutableMapOf<String, Any?>(
+        "severity" to "info",
+        "unhandled" to false,
+        "context" to "Foo",
+        "groupingHash" to "SomeHash",
+        "groupingDiscriminator" to "SomeDiscriminator",
+        "severityReason" to mapOf("type" to SeverityReason.REASON_HANDLED_EXCEPTION),
+        "user" to mapOf("id" to "123"),
+        "breadcrumbs" to listOf(breadcrumbMap()),
+        "threads" to listOf(threadMap()),
+        "errors" to listOf(errorMap()),
+        "metadata" to metadataMap(),
+        "app" to mapOf("id" to "app-id"),
+        "device" to mapOf("id" to "device-id", "runtimeVersions" to mutableMapOf<String, Any>()),
+        "correlation" to mapOf(
+            "traceId" to "b39e53513eec3c68b5e5c34dc43611e0",
+            "spanId" to "51d886b3a693a406"
+        )
+    )
+
+    private fun oldNativeStackEventMap() = baseEventMap().apply {
+        this["errors"] = listOf(
+            hashMapOf(
+                "stacktrace" to listOf(
+                    hashMapOf(
+                        "method" to "jsFunction",
+                        "file" to "App.js",
+                        "lineNumber" to 50,
+                        "inProject" to true
+                    )
+                ),
+                "errorClass" to "Error",
+                "errorMessage" to "Something went wrong",
+                "type" to "reactnativejs"
+            )
+        )
+        this["nativeStack"] = listOf(
+            mapOf(
+                "methodName" to "nativeMethod",
+                "lineNumber" to 42,
+                "fileName" to "Native.java",
+                "className" to "com.reactnativetest.Native"
+            ),
+            mapOf(
+                "methodName" to "helperMethod",
+                "lineNumber" to 99,
+                "fileName" to "Helper.kt",
+                "className" to "com.example.Helper"
+            )
+        )
+    }
+
+    private fun newNativeStackEventMap() = baseEventMap().apply {
+        this["errors"] = listOf(
+            // First error without nativeStack
+            hashMapOf(
+                "stacktrace" to listOf(
+                    hashMapOf(
+                        "method" to "firstError",
+                        "file" to "First.js",
+                        "lineNumber" to 10,
+                        "inProject" to true
+                    )
+                ),
+                "errorClass" to "FirstError",
+                "errorMessage" to "First error",
+                "type" to "reactnativejs"
+            ),
+            // Second error with nativeStack
+            hashMapOf(
+                "stacktrace" to listOf(
+                    hashMapOf(
+                        "method" to "secondError",
+                        "file" to "Second.js",
+                        "lineNumber" to 20,
+                        "inProject" to true
+                    )
+                ),
+                "errorClass" to "SecondError",
+                "errorMessage" to "Second error",
+                "type" to "reactnativejs",
+                "nativeStack" to listOf(
+                    mapOf(
+                        "methodName" to "nativeMethod",
+                        "lineNumber" to 42,
+                        "fileName" to "Native.java",
+                        "className" to "com.reactnativetest.Native"
+                    ),
+                    mapOf(
+                        "methodName" to "helperMethod",
+                        "lineNumber" to 99,
+                        "fileName" to "Helper.kt",
+                        "className" to "com.example.Helper"
+                    )
+                )
+            )
+        )
+    }
+
     @Test
     fun deserialize() {
+        val map = baseEventMap()
         val event = EventDeserializer(client, emptyList()).deserialize(map)
         assertNotNull(event)
         assertEquals(Severity.INFO, event.severity)
@@ -109,22 +185,12 @@ class EventDeserializerTest {
 
     @Test
     fun deserializeUnhandledOverridden() {
-        val map: MutableMap<String, Any?> = hashMapOf(
-            "unhandled" to false,
-            "severityReason" to hashMapOf(
-                "type" to "unhandledException",
-                "unhandledOverridden" to true
-            )
+        val map = baseEventMap()
+        map["unhandled"] = false
+        map["severityReason"] = hashMapOf(
+            "type" to "unhandledException",
+            "unhandledOverridden" to true
         )
-        map["severity"] = "info"
-        map["user"] = mapOf(Pair("id", "123"))
-        map["breadcrumbs"] = listOf(breadcrumbMap())
-        map["threads"] = listOf(threadMap())
-        map["errors"] = listOf(errorMap())
-        map["metadata"] = metadataMap()
-        map["app"] = mapOf(Pair("id", "app-id"))
-        map["device"] =
-            mapOf(Pair("id", "device-id"), Pair("runtimeVersions", mutableMapOf<String, Any>()))
 
         val event = EventDeserializer(client, emptyList()).deserialize(map)
         assertFalse(event.isUnhandled)
@@ -133,27 +199,80 @@ class EventDeserializerTest {
 
     @Test
     fun deserializeApiKeyOverridden() {
-        val map: MutableMap<String, Any?> = hashMapOf(
-            "apiKey" to "abc123",
-            "severity" to "info",
-            "user" to mapOf("id" to "123"),
-            "unhandled" to false,
-            "severityReason" to hashMapOf(
-                "type" to "unhandledException",
-                "unhandledOverridden" to true
-            ),
-            "breadcrumbs" to listOf(breadcrumbMap()),
-            "threads" to listOf(threadMap()),
-            "errors" to listOf(errorMap()),
-            "metadata" to metadataMap(),
-            "app" to mapOf("id" to "app-id"),
-            "device" to mapOf(
-                "id" to "device-id",
-                "runtimeVersions" to hashMapOf<String, Any>()
-            )
-        )
+        val map = baseEventMap()
+        map["apiKey"] = "abc123"
 
         val event = EventDeserializer(client, emptyList()).deserialize(map)
         assertEquals("abc123", event.apiKey)
+    }
+
+    @Test
+    fun deserializeOldStyleNativeStack() {
+        // Old style: nativeStack at top level of event, single error
+        val eventMap = oldNativeStackEventMap()
+        val event = EventDeserializer(client, listOf("com.reactnativetest")).deserialize(eventMap)
+        assertEquals(1, event.errors.size)
+
+        val error = event.errors[0]
+        // Should have 3 frames: 2 native + 1 JS
+        assertEquals(3, error.stacktrace.size)
+
+        // Native frames should be at the start
+        val firstNativeFrame = error.stacktrace[0]
+        assertEquals("com.reactnativetest.Native.nativeMethod", firstNativeFrame.method)
+        assertEquals("Native.java", firstNativeFrame.file)
+        assertEquals(42, firstNativeFrame.lineNumber)
+        assertEquals(ErrorType.ANDROID, firstNativeFrame.type)
+        assertTrue(firstNativeFrame.inProject!!)
+
+        val secondNativeFrame = error.stacktrace[1]
+        assertEquals("com.example.Helper.helperMethod", secondNativeFrame.method)
+        assertEquals("Helper.kt", secondNativeFrame.file)
+        assertEquals(99, secondNativeFrame.lineNumber)
+        assertEquals(ErrorType.ANDROID, secondNativeFrame.type)
+
+        // Original JS frame should be at index 2
+        val jsFrame = error.stacktrace[2]
+        assertEquals("jsFunction", jsFrame.method)
+        assertEquals("App.js", jsFrame.file)
+        assertEquals(50, jsFrame.lineNumber)
+    }
+
+    @Test
+    fun deserializeNewStyleNativeStack() {
+        // New style: nativeStack per error, multiple errors
+        val eventMap = newNativeStackEventMap()
+        val event = EventDeserializer(client, listOf("com.reactnativetest")).deserialize(eventMap)
+        assertEquals(2, event.errors.size)
+
+        // First error should have only its original frame
+        val firstError = event.errors[0]
+        assertEquals(1, firstError.stacktrace.size)
+        assertEquals("firstError", firstError.stacktrace[0].method)
+        assertEquals("First.js", firstError.stacktrace[0].file)
+
+        // Second error should have native frames prepended
+        val secondError = event.errors[1]
+        assertEquals(3, secondError.stacktrace.size)
+
+        // Native frames should be at the start
+        val firstNativeFrame = secondError.stacktrace[0]
+        assertEquals("com.reactnativetest.Native.nativeMethod", firstNativeFrame.method)
+        assertEquals("Native.java", firstNativeFrame.file)
+        assertEquals(42, firstNativeFrame.lineNumber)
+        assertEquals(ErrorType.ANDROID, firstNativeFrame.type)
+        assertTrue(firstNativeFrame.inProject!!)
+
+        val secondNativeFrame = secondError.stacktrace[1]
+        assertEquals("com.example.Helper.helperMethod", secondNativeFrame.method)
+        assertEquals("Helper.kt", secondNativeFrame.file)
+        assertEquals(99, secondNativeFrame.lineNumber)
+        assertEquals(ErrorType.ANDROID, secondNativeFrame.type)
+
+        // Original JS frame should be at index 2
+        val jsFrame = secondError.stacktrace[2]
+        assertEquals("secondError", jsFrame.method)
+        assertEquals("Second.js", jsFrame.file)
+        assertEquals(20, jsFrame.lineNumber)
     }
 }

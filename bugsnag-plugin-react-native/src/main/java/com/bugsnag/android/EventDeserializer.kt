@@ -10,7 +10,12 @@ internal class EventDeserializer(
     private val appDeserializer = AppDeserializer()
     private val deviceDeserializer = DeviceDeserializer()
     private val stackframeDeserializer = StackframeDeserializer()
-    private val errorDeserializer = ErrorDeserializer(stackframeDeserializer, client.getLogger())
+    private val nativeStackDeserializer = NativeStackDeserializer(projectPackages, client.config)
+    private val errorDeserializer = ErrorDeserializer(
+        stackframeDeserializer,
+        nativeStackDeserializer,
+        client.getLogger()
+    )
     private val threadDeserializer = ThreadDeserializer(stackframeDeserializer, client.getLogger())
     private val breadcrumbDeserializer = BreadcrumbDeserializer(client.getLogger())
 
@@ -67,8 +72,6 @@ internal class EventDeserializer(
         if (map.containsKey("nativeStack") && event.errors.isNotEmpty()) {
             runCatching {
                 val jsError = event.errors.first()
-                val nativeStackDeserializer =
-                    NativeStackDeserializer(projectPackages, client.config)
                 val nativeStack = nativeStackDeserializer.deserialize(map)
                 jsError.stacktrace.addAll(0, nativeStack)
             }
