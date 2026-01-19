@@ -2,7 +2,7 @@
 activityCompose = "1.8.0"
 agp = "8.10.0"
 appcompat = "1.6.1"
-bugsnag-android = "6.21.0"
+bugsnag-android = "6.22.0"
 bugsnag-gradle = "0.4.0"
 composeBom = "2024.09.00"
 coreKtx = "1.16.0"
