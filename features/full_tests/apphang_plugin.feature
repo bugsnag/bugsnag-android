@@ -9,7 +9,6 @@ Feature: AppHang Plugin
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "errorClass" equals "AppHang"
 
-
   Scenario: StackSampling reports cause of AppHang
     When I run "SampledAppHangScenario"
     Then I wait to receive an error

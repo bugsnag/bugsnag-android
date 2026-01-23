@@ -9,6 +9,11 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class StackTreeNodeTest {
 
     private static final String CLASS_NAME = "com.example.MyClass";
@@ -335,6 +340,61 @@ public class StackTreeNodeTest {
         assertSame(level1aNode, rootNode.mostSampledChildNode());
         assertSame(level2aNode, level1aNode.mostSampledChildNode());
         assertNull(level1bNode.mostSampledChildNode());
+    }
+
+    @Test
+    public void deepTreeTest() {
+        final int treeDepth = 500;
+        final int childNodesPerLevel = 500;
+
+        StackTreeNode root = new StackTreeNode();
+        StackTreeNode current = root;
+        Map<StackTreeNode, List<StackTreeNode>> mirrorTree = new HashMap<>();
+
+        for (int depth = 0; depth < treeDepth; depth++) {
+            List<StackTreeNode> childNodes = new ArrayList<>();
+            mirrorTree.put(current, childNodes);
+            for (int childNodeCount = 0; childNodeCount < childNodesPerLevel; childNodeCount++) {
+                StackTraceElement element = createElement(
+                        CLASS_NAME,
+                        "method" + depth,
+                        "file",
+                        childNodeCount
+                );
+
+                StackTreeNode newNode = current.childNodeFor(element);
+                childNodes.add(newNode);
+            }
+
+            // Move down to the most sampled child for next depth level
+            current = current.mostSampledChildNode();
+            assertNotNull("Should have a child node at depth " + depth, current);
+        }
+
+        // Verify all nodes are retrievable
+        current = root;
+        for (int depth = 0; depth < treeDepth; depth++) {
+            List<StackTreeNode> expectedChildren = mirrorTree.get(current);
+            assertNotNull("Should have children at depth " + depth, expectedChildren);
+            assertEquals("Should have 500 children at depth " + depth,
+                    500, expectedChildren.size());
+
+            // Verify each child is retrievable
+            for (int childNodeCount = 0; childNodeCount < childNodesPerLevel; childNodeCount++) {
+                StackTraceElement element = createElement(
+                        CLASS_NAME,
+                        "method" + depth,
+                        "file",
+                        childNodeCount
+                );
+                StackTreeNode retrievedNode = current.childNodeFor(element);
+                assertSame("Should retrieve same node at depth " + depth
+                                + ", child " + childNodeCount,
+                        expectedChildren.get(childNodeCount), retrievedNode);
+            }
+            current = current.mostSampledChildNode();
+            assertNotNull("node should have a child at depth " + depth, current);
+        }
     }
 
     private StackTraceElement createElement(
