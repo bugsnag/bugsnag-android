@@ -32,9 +32,7 @@ class SampledAppHangScenario(
             BugsnagAppHangPlugin(
                 AppHangConfiguration(
                     appHangThresholdMillis = APP_HANG_THRESHOLD,
-                    stackSampling = AppHangConfiguration.SamplingConfiguration(
-                        thresholdMillis = SAMPLING_THRESHOLD
-                    )
+                    stackSamplingThresholdMillis = SAMPLING_THRESHOLD
                 )
             )
         )

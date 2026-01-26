@@ -1,23 +1,15 @@
 public final class com/bugsnag/android/AppHangConfiguration {
 	public fun <init> ()V
-	public fun <init> (JLandroid/os/Looper;Lcom/bugsnag/android/AppHangConfiguration$SamplingConfiguration;)V
-	public synthetic fun <init> (JLandroid/os/Looper;Lcom/bugsnag/android/AppHangConfiguration$SamplingConfiguration;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (JLandroid/os/Looper;Ljava/lang/Long;J)V
+	public synthetic fun <init> (JLandroid/os/Looper;Ljava/lang/Long;JILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getAppHangThresholdMillis ()J
-	public final fun getStackSampling ()Lcom/bugsnag/android/AppHangConfiguration$SamplingConfiguration;
+	public final fun getStackSamplingIntervalMillis ()J
+	public final fun getStackSamplingThresholdMillis ()Ljava/lang/Long;
 	public final fun getWatchedLooper ()Landroid/os/Looper;
 	public final fun setAppHangThresholdMillis (J)V
-	public final fun setStackSampling (Lcom/bugsnag/android/AppHangConfiguration$SamplingConfiguration;)V
+	public final fun setStackSamplingIntervalMillis (J)V
+	public final fun setStackSamplingThresholdMillis (Ljava/lang/Long;)V
 	public final fun setWatchedLooper (Landroid/os/Looper;)V
-}
-
-public final class com/bugsnag/android/AppHangConfiguration$SamplingConfiguration {
-	public fun <init> ()V
-	public fun <init> (JJ)V
-	public synthetic fun <init> (JJILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getIntervalMillis ()J
-	public final fun getThresholdMillis ()J
-	public final fun setIntervalMillis (J)V
-	public final fun setThresholdMillis (J)V
 }
 
 public final class com/bugsnag/android/AppHangException : java/lang/RuntimeException {

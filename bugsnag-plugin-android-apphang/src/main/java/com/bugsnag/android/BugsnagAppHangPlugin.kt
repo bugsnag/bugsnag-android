@@ -11,8 +11,8 @@ class BugsnagAppHangPlugin @JvmOverloads constructor(
     configuration: AppHangConfiguration = AppHangConfiguration()
 ) : Plugin {
     private val appHangThresholdMillis = configuration.appHangThresholdMillis
-    private val samplingThresholdMillis = configuration.stackSampling?.thresholdMillis ?: 0
-    private val samplingRateMillis = configuration.stackSampling?.intervalMillis ?: Long.MAX_VALUE
+    private val samplingThresholdMillis = configuration.stackSamplingThresholdMillis ?: 0
+    private val samplingRateMillis = configuration.stackSamplingIntervalMillis
     private val watchedLooper = configuration.watchedLooper
 
     private var client: Client? = null
