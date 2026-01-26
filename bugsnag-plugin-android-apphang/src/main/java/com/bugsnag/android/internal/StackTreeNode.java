@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /**
- * StackTreeNodes allow quite and compact lookup of stack trace elements as in a tree structure,
+ * StackTreeNodes allow quick and compact lookup of stack trace elements as in a tree structure,
  * along with a count of the number of times they have been seen. This is used as the core
  * structure for stack sampling.
  * <p>
@@ -48,7 +48,7 @@ final class StackTreeNode {
      * and {@link #rehash(StackTreeNode[])}.
      * <p>
      * Given that these objects are single-threaded, the cache-locality offered by linear probing
-     * is better than the reduced clustering offering be quadratic probing while also being less
+     * is better than the reduced clustering offering by quadratic probing while also being less
      * complex to maintain than linked-lists (which make load-factor more complex).
      */
     private Object childNodes = null;
