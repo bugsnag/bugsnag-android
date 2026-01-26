@@ -11,7 +11,7 @@ plugins {
 
 android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
-    namespace = "com.bugsnag.android.okhttp"
+    namespace = "com.bugsnag.android.http"
 
     configureRelease()
 
@@ -19,7 +19,6 @@ android {
         minSdk = libs.versions.android.minSdk.get().toInt()
         ndkVersion = libs.versions.android.ndk.get()
 
-        consumerProguardFiles("proguard-rules.pro")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -53,26 +52,11 @@ android {
             isReturnDefaultValues = true
         }
     }
-
-    sourceSets {
-        named("test") {
-            java.srcDir(SHARED_TEST_SRC_DIR)
-        }
-    }
 }
 
 dependencies {
     api(libs.bundles.common.api)
     add("api", project(":bugsnag-android-core"))
-    add("api", project(":bugsnag-android-http-api"))
-
-    add("compileOnly", "com.squareup.okhttp3:okhttp:4.9.1") {
-        exclude(group = "org.jetbrains.kotlin")
-    }
-
-    add("testImplementation", "com.squareup.okhttp3:mockwebserver:4.9.1") {
-        exclude(group = "org.jetbrains.kotlin")
-    }
 
     testImplementation(libs.bundles.test.jvm)
     androidTestImplementation(libs.bundles.test.android)
