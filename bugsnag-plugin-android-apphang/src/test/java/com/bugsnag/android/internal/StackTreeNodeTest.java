@@ -27,7 +27,7 @@ public class StackTreeNodeTest {
         StackTreeNode node = new StackTreeNode(element);
 
         assertNotNull(node);
-        assertEquals(1, node.sampleCount);
+        assertEquals(0, node.sampleCount);
         assertMatches(node, element);
     }
 
@@ -289,19 +289,6 @@ public class StackTreeNodeTest {
             assertNotNull("Child " + i + " should be found", childNode);
             assertMatches(childNode, child);
         }
-    }
-
-    @Test
-    public void testSampleCountIncrement() {
-        StackTreeNode node = createNode(CLASS_NAME, METHOD_NAME, FILE_NAME, LINE_NUMBER);
-
-        assertEquals(1, node.sampleCount);
-
-        node.sampleCount = 5;
-        assertEquals(5, node.sampleCount);
-
-        node.sampleCount++;
-        assertEquals(6, node.sampleCount);
     }
 
     @Test

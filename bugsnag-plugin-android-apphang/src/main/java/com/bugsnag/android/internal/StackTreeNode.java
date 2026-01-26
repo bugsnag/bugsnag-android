@@ -33,7 +33,7 @@ final class StackTreeNode {
     /**
      * The number of times this node has seen during sampling
      */
-    int sampleCount = 1;
+    int sampleCount = 0;
 
     /**
      * The child nodes that this StackTreeNode has. This is one of 3 data types:
