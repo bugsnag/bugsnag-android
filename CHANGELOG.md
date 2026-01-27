@@ -1,5 +1,12 @@
 # Changelog
 
+## 6.23.0 (2026-01-27)
+
+### Enhancements
+
+* New `BugsnagOkHttp` instrumentation to optionally report HTTP failures as errors
+  [#2371](https://github.com/bugsnag/bugsnag-android/pull/2371)
+
 ## 6.22.0 (2026-01-19)
 
 ### Enhancements
