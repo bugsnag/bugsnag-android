@@ -2,6 +2,7 @@ package com.bugsnag.android.mazerunner.scenarios
 
 import android.content.Context
 import android.net.Uri
+import android.os.StrictMode
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.OnErrorCallback
 import com.bugsnag.android.mazerunner.log
@@ -23,8 +24,16 @@ open class OkHttpInstrumentationScenario(
     eventMetadata: String?
 ) : Scenario(config, context, eventMetadata) {
 
-    protected open val instrumentation
-        get() = BugsnagOkHttp()
+    init {
+        // revert StrictMode to its defaults, the version of okhttp we test with trips up
+        // StrictMode: android.os.strictmode.NonSdkApiUsedViolation:
+        //      Lcom/android/org/conscrypt/OpenSSLSocketImpl;->setUseSessionTickets(Z)V
+        // on some devices, and we can't reasonably fix this in the scenario
+        StrictMode.enableDefaults()
+    }
+
+    protected open val instrumentation by lazy {
+        BugsnagOkHttp()
             .maxRequestBodyCapture(MAX_CAPTURE_BYTES)
             .maxResponseBodyCapture(MAX_CAPTURE_BYTES)
             .logBreadcrumbs()
@@ -35,10 +44,13 @@ open class OkHttpInstrumentationScenario(
                     true
                 }
             }
+    }
 
-    private val httpClient = OkHttpClient.Builder()
-        .addInterceptor(instrumentation.createInterceptor())
-        .build()
+    private val httpClient by lazy {
+        OkHttpClient.Builder()
+            .addInterceptor(instrumentation.createInterceptor())
+            .build()
+    }
 
     private fun reflectionUrl(status: Int): Uri {
         return Uri.parse(config.endpoints.notify)
