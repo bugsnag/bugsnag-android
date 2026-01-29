@@ -938,6 +938,12 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         }
     }
 
+    void setOutOfMemoryHandler(@Nullable OutOfMemoryHandler handler) {
+        if (exceptionHandler != null) {
+            exceptionHandler.setOutOfMemoryHandler(handler);
+        }
+    }
+
     /**
      * Returns the current buffer of breadcrumbs that will be sent with captured events. This
      * ordered list represents the most recent breadcrumbs to be captured up to the limit
