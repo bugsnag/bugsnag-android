@@ -960,11 +960,17 @@ static void JNI_NativeBridge_setInternalMetricsEnabled(JNIEnv *env,
 
 static void JNI_NativeBridge_reportOutOfMemory(JNIEnv *env, jobject thiz,
                                                jobject oom) {
-  if (bsg_global_env == NULL || !bsg_begin_handling_crash()) {
+
+  bsg_environment *bsg_env = request_env_write_lock();
+
+  // we treat an OOM as a native "crash" to prevent the signal/cpp errors from
+  // conflicting with the OOM use of the bsg_global_env->next_event (giving us
+  // exclusive access)
+  if (!bsg_begin_handling_crash()) {
+    release_env_write_lock();
     return;
   }
 
-  bsg_environment *bsg_env = bsg_global_env;
   bugsnag_event *event = &bsg_env->next_event;
 
   // Mark as unhandled error (OOM is always unhandled)
@@ -1013,6 +1019,7 @@ static void JNI_NativeBridge_reportOutOfMemory(JNIEnv *env, jobject thiz,
 
 cleanup:
   bsg_finish_handling_crash();
+  release_env_write_lock();
 }
 
 // These headers are included here to ensure that the JNI methods are
