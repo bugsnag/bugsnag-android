@@ -43,6 +43,10 @@ class ExceptionHandler implements UncaughtExceptionHandler {
         this.outOfMemoryHandler = outOfMemoryHandler;
     }
 
+    public OutOfMemoryHandler getOutOfMemoryHandler() {
+        return outOfMemoryHandler;
+    }
+
     @Override
     public void uncaughtException(@NonNull Thread thread, @NonNull Throwable throwable) {
         try {

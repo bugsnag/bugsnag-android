@@ -326,6 +326,22 @@ error:
   return false;
 }
 
+static bool bsg_write_java_stackframe(BSG_KSJSONEncodeContext *json,
+                                      bugsnag_stackframe *frame) {
+  CHECKED(bsg_ksjsonbeginObject(json, NULL));
+  {
+    CHECKED(JSON_LIMITED_STRING_ELEMENT("method", frame->method));
+    CHECKED(JSON_LIMITED_STRING_ELEMENT("file", frame->filename));
+    CHECKED(
+        bsg_ksjsonaddIntegerElement(json, "lineNumber", frame->line_number));
+  }
+  CHECKED(bsg_ksjsonendContainer(json));
+
+  return true;
+error:
+  return false;
+}
+
 static bool bsg_write_stackframe(BSG_KSJSONEncodeContext *json,
                                  bugsnag_stackframe *frame, bool isPC) {
 
@@ -377,11 +393,17 @@ error:
 
 static bool bsg_write_stacktrace(BSG_KSJSONEncodeContext *json,
                                  bugsnag_stackframe *stacktrace,
-                                 size_t frame_count) {
+                                 size_t frame_count, bool is_native_error) {
 
   for (int findex = 0; findex < frame_count; findex++) {
-    if (!bsg_write_stackframe(json, &stacktrace[findex], findex == 0)) {
-      goto error;
+    if (is_native_error) {
+      if (!bsg_write_stackframe(json, &stacktrace[findex], findex == 0)) {
+        goto error;
+      }
+    } else {
+      if (!bsg_write_java_stackframe(json, &stacktrace[findex])) {
+        goto error;
+      }
     }
   }
 
@@ -391,13 +413,16 @@ error:
 }
 
 static bool bsg_write_error(BSG_KSJSONEncodeContext *json, bsg_error *error) {
+  bool is_native_error =
+      strncmp(error->type, "android", sizeof(error->type)) != 0;
+
   CHECKED(bsg_ksjsonbeginArray(json, "exceptions"));
   {
     CHECKED(bsg_ksjsonbeginObject(json, NULL));
     {
       CHECKED(JSON_LIMITED_STRING_ELEMENT("errorClass", error->errorClass));
       CHECKED(JSON_LIMITED_STRING_ELEMENT("message", error->errorMessage));
-      CHECKED(JSON_CONSTANT_ELEMENT("type", "c"));
+      CHECKED(JSON_LIMITED_STRING_ELEMENT("type", error->type));
 
       const ssize_t frame_count = error->frame_count;
       // assuming that the initial frame is the program counter. This logic will
@@ -407,7 +432,7 @@ static bool bsg_write_error(BSG_KSJSONEncodeContext *json, bsg_error *error) {
       if (frame_count > 0) {
         CHECKED(bsg_ksjsonbeginArray(json, "stacktrace"));
         {
-          if (!bsg_write_stacktrace(json, error->stacktrace, frame_count)) {
+          if (!bsg_write_stacktrace(json, error->stacktrace, frame_count, is_native_error)) {
             goto error;
           }
         }

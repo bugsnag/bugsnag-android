@@ -15,6 +15,7 @@
 #include "jni_cache.h"
 #include "metadata.h"
 #include "safejni.h"
+#include "utils/java_stacktrace.h"
 #include "utils/serializer.h"
 #include "utils/string.h"
 
@@ -955,6 +956,63 @@ static void JNI_NativeBridge_setInternalMetricsEnabled(JNIEnv *env,
                                                        jobject thiz,
                                                        jboolean enabled) {
   bsg_set_internal_metrics_enabled(enabled);
+}
+
+static void JNI_NativeBridge_reportOutOfMemory(JNIEnv *env, jobject thiz,
+                                               jobject oom) {
+  if (bsg_global_env == NULL || !bsg_begin_handling_crash()) {
+    return;
+  }
+
+  bsg_environment *bsg_env = bsg_global_env;
+  bugsnag_event *event = &bsg_env->next_event;
+
+  // Mark as unhandled error (OOM is always unhandled)
+  event->unhandled = true;
+  event->unhandled_events++;
+
+  // Set error class and message
+  bsg_error *error = &event->error;
+  bsg_strncpy(error->errorClass, "java.lang.OutOfMemoryError",
+              sizeof(error->errorClass));
+
+  bsg_strncpy(error->type, "android", sizeof(error->type));
+
+  // Extract message from the exception if available
+  if (bsg_jni_cache != NULL && bsg_jni_cache->initialized) {
+    jstring message = (jstring)bsg_safe_call_object_method(
+        env, oom, bsg_jni_cache->Throwable_getMessage);
+    if (message != NULL) {
+      const char *msg = bsg_safe_get_string_utf_chars(env, message);
+      if (msg != NULL) {
+        bsg_strncpy(error->errorMessage, msg, sizeof(error->errorMessage));
+        bsg_safe_release_string_utf_chars(env, message, msg);
+      }
+      bsg_safe_delete_local_ref(env, message);
+    }
+
+    // Extract Java stack trace
+    jobjectArray stack_trace = (jobjectArray)bsg_safe_call_object_method(
+        env, oom, bsg_jni_cache->Throwable_getStackTrace);
+    bsg_copy_java_stacktrace(env, stack_trace, error);
+  }
+
+  // If we couldn't get Java stack trace, fall back to native unwinding
+  if (error->frame_count == 0) {
+    error->frame_count =
+        bsg_unwind_concurrent_stack(error->stacktrace, NULL, NULL);
+  }
+
+  // Run OnError callbacks
+  if (!bsg_run_on_error()) {
+    goto cleanup;
+  }
+
+  bsg_serialize_event_to_file(bsg_env);
+  bsg_serialize_last_run_info_to_file(bsg_env);
+
+cleanup:
+  bsg_finish_handling_crash();
 }
 
 // These headers are included here to ensure that the JNI methods are

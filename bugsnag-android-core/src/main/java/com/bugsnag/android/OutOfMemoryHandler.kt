@@ -1,6 +1,6 @@
 package com.bugsnag.android
 
-internal fun interface OutOfMemoryHandler {
+fun interface OutOfMemoryHandler {
     /**
      * Called when an `OutOfMemoryError` is reported but before it is handled by Bugsnag. This
      * can be used to either fully-process the `OutOfMemoryError` on a safe path, or can

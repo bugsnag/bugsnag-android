@@ -3,6 +3,7 @@ package com.bugsnag.android.ndk
 import android.os.Build
 import com.bugsnag.android.BreadcrumbType
 import com.bugsnag.android.NativeInterface
+import com.bugsnag.android.OutOfMemoryHandler
 import com.bugsnag.android.StateEvent
 import com.bugsnag.android.StateEvent.AddBreadcrumb
 import com.bugsnag.android.StateEvent.AddMetadata
@@ -31,7 +32,7 @@ import kotlin.concurrent.withLock
 /**
  * Observes changes in the Bugsnag environment, propagating them to the native layer
  */
-class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObserver {
+class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObserver, OutOfMemoryHandler {
 
     private val lock = ReentrantLock()
     private val installed = AtomicBoolean(false)
@@ -73,6 +74,7 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
     }
 
     private external fun addBreadcrumb(name: String, type: Int, timestamp: String, metadata: Any)
+    external fun reportOutOfMemory(oom: OutOfMemoryError)
     external fun addMetadataString(tab: String, key: String, value: String)
     external fun addMetadataDouble(tab: String, key: String, value: Double)
     external fun addMetadataBoolean(tab: String, key: String, value: Boolean)
@@ -103,6 +105,12 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
     external fun getCurrentNativeApiCallUsage(): Map<String, Boolean>?
     external fun setStaticJsonData(data: String)
     external fun setInternalMetricsEnabled(enabled: Boolean)
+
+    override fun onOutOfMemory(oom: OutOfMemoryError): Boolean {
+        reportOutOfMemory(oom)
+        // consume the OutOfMemoryError
+        return true
+    }
 
     override fun onStateChange(event: StateEvent) {
         if (isInvalidMessage(event)) return

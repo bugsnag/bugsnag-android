@@ -938,10 +938,28 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         }
     }
 
+    /**
+     * Override or intercept the default error handling for {@link OutOfMemoryError}s.
+     *
+     * @param handler the new handler to use (or null to revert to normal error handling for OOMs)
+     */
     void setOutOfMemoryHandler(@Nullable OutOfMemoryHandler handler) {
         if (exceptionHandler != null) {
             exceptionHandler.setOutOfMemoryHandler(handler);
         }
+    }
+
+    /**
+     * Return the currently defined {@link OutOfMemoryHandler} if one is being used.
+     *
+     * @return the current {@code OutOfMemoryHandler} or null
+     */
+    @Nullable
+    OutOfMemoryHandler getOutOfMemoryHandler() {
+        if(exceptionHandler == null) {
+            return null;
+        }
+        return exceptionHandler.getOutOfMemoryHandler();
     }
 
     /**
