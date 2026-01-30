@@ -121,7 +121,11 @@ public final class Request extends AbstractHttpEntity implements JsonStream.Stre
             int querySeparatorIndex = url.indexOf('?');
 
             if (querySeparatorIndex > 0) {
-                setUrlWithQueryString(url);
+                try {
+                    tryUrlWithQueryString(url);
+                } catch (RuntimeException re) {
+                    this.url = url.substring(0, querySeparatorIndex);
+                }
             } else {
                 this.url = url;
             }
@@ -131,22 +135,18 @@ public final class Request extends AbstractHttpEntity implements JsonStream.Stre
         }
     }
 
-    private void setUrlWithQueryString(@NonNull String url) {
-        try {
-            Uri uri = Uri.parse(url);
+    private void tryUrlWithQueryString(@NonNull String url) {
+        Uri uri = Uri.parse(url);
 
-            params.clear();
-            for (String queryName : uri.getQueryParameterNames()) {
-                params.put(queryName, uri.getQueryParameter(queryName));
-            }
-
-            this.url = uri.buildUpon()
-                    .clearQuery()
-                    .build()
-                    .toString();
-        } catch (RuntimeException ignored) {
-            this.url = url;
+        params.clear();
+        for (String queryName : uri.getQueryParameterNames()) {
+            params.put(queryName, uri.getQueryParameter(queryName));
         }
+
+        this.url = uri.buildUpon()
+                .clearQuery()
+                .build()
+                .toString();
     }
 
     /**
