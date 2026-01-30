@@ -67,7 +67,7 @@ public abstract class AbstractHttpEntity {
         }
 
         String headerValue = headers.get(headerName);
-        return headerValue != null ? headerName : "";
+        return headerValue != null ? headerValue : "";
     }
 
     /**

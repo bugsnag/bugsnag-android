@@ -105,8 +105,8 @@ class RequestTest {
         request.addHeader("X-Test", "value")
         request.addHeader("Another-Header", "another-value")
 
-        assertEquals("X-Test", request.getHeader("X-Test"))
-        assertEquals("Another-Header", request.getHeader("Another-Header"))
+        assertEquals("value", request.getHeader("X-Test"))
+        assertEquals("another-value", request.getHeader("Another-Header"))
         assertEquals(setOf("X-Test", "Another-Header"), request.headerNames)
 
         request.removeHeader("X-Test")

@@ -67,6 +67,18 @@ open class OkHttpInstrumentationScenario(
             "Authorization".toPattern(Pattern.LITERAL or Pattern.CASE_INSENSITIVE),
             ".*password.*".toPattern(Pattern.CASE_INSENSITIVE)
         )
+
+        config.addOnSend { event ->
+            if (event.request == null) {
+                event.errors.first().errorClass = "No request in OnSendCallback"
+            }
+
+            if (event.response == null) {
+                event.errors.first().errorClass = "No response in OnErrorCallback"
+            }
+
+            true
+        }
     }
 
     private fun requestType(): Pair<String, Int> {
