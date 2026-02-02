@@ -1,5 +1,12 @@
 # Changelog
 
+## 6.23.0 (2026-02-02)
+
+### Enhancements
+
+* Introduced new OkHttp Interceptor based instrumentation for HTTP errors and breadcrumbs
+  [#2371](https://github.com/bugsnag/bugsnag-android/pull/2371)
+
 ## 6.22.0 (2026-01-19)
 
 ### Enhancements
