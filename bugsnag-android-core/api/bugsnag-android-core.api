@@ -1,3 +1,15 @@
+public abstract class com/bugsnag/android/AbstractHttpEntity {
+	protected final field headers Ljava/util/Map;
+	public fun addHeader (Ljava/lang/String;Ljava/lang/String;)V
+	public fun getBody ()Ljava/lang/String;
+	public fun getBodyLength ()J
+	public fun getHeader (Ljava/lang/String;)Ljava/lang/String;
+	public fun getHeaderNames ()Ljava/util/Set;
+	public fun removeHeader (Ljava/lang/String;)V
+	public fun setBody (Ljava/lang/String;)V
+	public fun setBodyLength (J)V
+}
+
 public class com/bugsnag/android/App : com/bugsnag/android/JsonStream$Streamable {
 	public final fun getBinaryArch ()Ljava/lang/String;
 	public final fun getBuildUuid ()Ljava/lang/String;
@@ -459,6 +471,8 @@ public class com/bugsnag/android/Event : com/bugsnag/android/FeatureFlagAware, c
 	public fun getMetadata (Ljava/lang/String;)Ljava/util/Map;
 	public fun getMetadata (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
 	public fun getOriginalError ()Ljava/lang/Throwable;
+	public fun getRequest ()Lcom/bugsnag/android/Request;
+	public fun getResponse ()Lcom/bugsnag/android/Response;
 	public fun getSeverity ()Lcom/bugsnag/android/Severity;
 	public fun getThreads ()Ljava/util/List;
 	public fun getUser ()Lcom/bugsnag/android/User;
@@ -472,6 +486,8 @@ public class com/bugsnag/android/Event : com/bugsnag/android/FeatureFlagAware, c
 	public fun setErrorReportingThread (Lcom/bugsnag/android/Thread;)V
 	public fun setGroupingDiscriminator (Ljava/lang/String;)Ljava/lang/String;
 	public fun setGroupingHash (Ljava/lang/String;)V
+	public fun setRequest (Lcom/bugsnag/android/Request;)V
+	public fun setResponse (Lcom/bugsnag/android/Response;)V
 	public fun setSeverity (Lcom/bugsnag/android/Severity;)V
 	public fun setTraceCorrelation (Ljava/util/UUID;J)V
 	public fun setUnhandled (Z)V
@@ -687,6 +703,29 @@ public abstract interface class com/bugsnag/android/OnSessionCallback {
 public abstract interface class com/bugsnag/android/Plugin {
 	public abstract fun load (Lcom/bugsnag/android/Client;)V
 	public abstract fun unload ()V
+}
+
+public final class com/bugsnag/android/Request : com/bugsnag/android/AbstractHttpEntity, com/bugsnag/android/JsonStream$Streamable {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public fun addQueryParameter (Ljava/lang/String;Ljava/lang/String;)V
+	public fun getHttpMethod ()Ljava/lang/String;
+	public fun getHttpVersion ()Ljava/lang/String;
+	public fun getQueryParameter (Ljava/lang/String;)Ljava/lang/String;
+	public fun getQueryParameterNames ()Ljava/util/Set;
+	public fun getUrl ()Ljava/lang/String;
+	public fun removeQueryParameter (Ljava/lang/String;)V
+	public fun setHttpMethod (Ljava/lang/String;)V
+	public fun setHttpVersion (Ljava/lang/String;)V
+	public fun setUrl (Ljava/lang/String;)V
+	public fun toStream (Lcom/bugsnag/android/JsonStream;)V
+}
+
+public final class com/bugsnag/android/Response : com/bugsnag/android/AbstractHttpEntity, com/bugsnag/android/JsonStream$Streamable {
+	public fun <init> (I)V
+	public fun getStatusCode ()I
+	public fun setStatusCode (I)V
+	public fun toStream (Lcom/bugsnag/android/JsonStream;)V
 }
 
 public final class com/bugsnag/android/Session : com/bugsnag/android/Deliverable, com/bugsnag/android/JsonStream$Streamable, com/bugsnag/android/UserAware {

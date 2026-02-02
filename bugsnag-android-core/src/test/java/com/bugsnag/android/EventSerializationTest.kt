@@ -98,6 +98,27 @@ internal class EventSerializationTest {
 
                 createEvent {
                     createMetadataStressTest(it)
+                },
+
+                createEvent {
+                    it.updateSeverityReason(SeverityReason.REASON_HTTP_ERROR)
+
+                    it.request = Request("1.1", "POST", "http://example.com/").apply {
+                        body = "some body"
+                        bodyLength = 9
+
+                        addHeader("content-type", "text/plain")
+                        addHeader("content-length", "9")
+                        addQueryParameter("message", "hello world")
+                    }
+
+                    it.response = Response(200).apply {
+                        body = "some body"
+                        bodyLength = 9
+
+                        addHeader("content-type", "text/plain")
+                        addHeader("content-length", "9")
+                    }
                 }
             )
         }

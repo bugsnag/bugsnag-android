@@ -18,6 +18,8 @@ internal class EventDeserializer(
     )
     private val threadDeserializer = ThreadDeserializer(stackframeDeserializer, client.getLogger())
     private val breadcrumbDeserializer = BreadcrumbDeserializer(client.getLogger())
+    private val requestDeserializer = RequestDeserializer()
+    private val responseDeserializer = ResponseDeserializer()
 
     @Suppress("UNCHECKED_CAST")
     override fun deserialize(map: MutableMap<String, Any?>): Event {
@@ -75,6 +77,16 @@ internal class EventDeserializer(
                 val nativeStack = nativeStackDeserializer.deserialize(map)
                 jsError.stacktrace.addAll(0, nativeStack)
             }
+        }
+
+        val request = map["request"] as? Map<String, Any?>
+        if (request != null) {
+            event.request = requestDeserializer.deserialize(request)
+        }
+
+        val response = map["response"] as? Map<String, Any?>
+        if (response != null) {
+            event.response = responseDeserializer.deserialize(response)
         }
 
         // threads
