@@ -700,6 +700,10 @@ public abstract interface class com/bugsnag/android/OnSessionCallback {
 	public abstract fun onSession (Lcom/bugsnag/android/Session;)Z
 }
 
+public abstract interface class com/bugsnag/android/OutOfMemoryHandler {
+	public abstract fun onOutOfMemory (Ljava/lang/OutOfMemoryError;)Z
+}
+
 public abstract interface class com/bugsnag/android/Plugin {
 	public abstract fun load (Lcom/bugsnag/android/Client;)V
 	public abstract fun unload ()V
