@@ -54,8 +54,8 @@ class ExceptionHandler implements UncaughtExceptionHandler {
                 return;
             }
 
-            if (throwable instanceof OutOfMemoryError &&
-                    tryHandleOutOfMemory((OutOfMemoryError) throwable)) {
+            if (throwable instanceof OutOfMemoryError
+                    && tryHandleOutOfMemory((OutOfMemoryError) throwable)) {
                 return;
             }
 

@@ -5,7 +5,7 @@
     <ID>CyclomaticComplexMethod:NativeBridge.kt$NativeBridge$override fun onStateChange(event: StateEvent)</ID>
     <ID>LongParameterList:NativeBridge.kt$NativeBridge$( apiKey: String, reportingDirectory: String, lastRunInfoPath: String, eventUUID: String, consecutiveLaunchCrashes: Int, autoDetectNdkCrashes: Boolean, apiLevel: Int, is32bit: Boolean, threadSendPolicy: Int, maxBreadcrumbs: Int, )</ID>
     <ID>SwallowedException:ReportDiscardScanner.kt$ReportDiscardScanner$ex: Exception</ID>
-    <ID>TooManyFunctions:NativeBridge.kt$NativeBridge : StateObserver</ID>
+    <ID>TooManyFunctions:NativeBridge.kt$NativeBridge : StateObserverOutOfMemoryHandler</ID>
     <ID>UseCheckOrError:ResourceUtils.kt$throw IllegalStateException("Failed to read JSON from $resourceName")</ID>
   </CurrentIssues>
 </SmellBaseline>

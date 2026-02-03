@@ -956,7 +956,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
      */
     @Nullable
     OutOfMemoryHandler getOutOfMemoryHandler() {
-        if(exceptionHandler == null) {
+        if (exceptionHandler == null) {
             return null;
         }
         return exceptionHandler.getOutOfMemoryHandler();
