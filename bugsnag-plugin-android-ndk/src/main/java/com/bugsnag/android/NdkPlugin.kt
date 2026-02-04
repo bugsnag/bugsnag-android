@@ -28,7 +28,6 @@ internal class NdkPlugin : Plugin {
         val nativeBridge = NativeBridge(client.bgTaskService)
         client.addObserver(nativeBridge)
         client.setupNdkPlugin()
-        client.setOutOfMemoryHandler(nativeBridge)
         return nativeBridge
     }
 

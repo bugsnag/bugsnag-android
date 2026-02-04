@@ -499,6 +499,26 @@ public final class Bugsnag {
     }
 
     /**
+     * Override or intercept the default error handling for {@link OutOfMemoryError}s.
+     *
+     * @param handler the new handler to use (or null to revert to normal error handling for OOMs)
+     * @see #getOutOfMemoryHandler()
+     */
+    public static void setOutOfMemoryHandler(@Nullable OutOfMemoryHandler handler) {
+        getClient().setOutOfMemoryHandler(handler);
+    }
+
+    /**
+     * Return the currently defined {@link OutOfMemoryHandler} if one is being used.
+     *
+     * @return the current {@code OutOfMemoryHandler} or null if none is set
+     */
+    @Nullable
+    public static OutOfMemoryHandler getOutOfMemoryHandler() {
+        return getClient().getOutOfMemoryHandler();
+    }
+
+    /**
      * Get the current Bugsnag Client instance.
      */
     @NonNull
