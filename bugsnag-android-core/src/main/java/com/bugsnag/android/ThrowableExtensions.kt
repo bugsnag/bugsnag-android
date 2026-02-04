@@ -36,7 +36,7 @@ internal inline fun Throwable.anyCauseMatches(action: (Throwable) -> Boolean): B
 
         current = current.cause
 
-        // Floyd's cycle detection: move slow pointer every other iteration
+        // Floyd's cycle detection (no allocation required)
         if (advanceSlow) {
             slow = slow?.cause
             if (current === slow) {
