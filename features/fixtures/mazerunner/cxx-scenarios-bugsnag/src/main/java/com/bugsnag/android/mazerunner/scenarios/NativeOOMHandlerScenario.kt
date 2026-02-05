@@ -15,19 +15,31 @@ class NativeOOMHandlerScenario(
     context: Context,
     eventMetadata: String?
 ) : Scenario(config, context, eventMetadata) {
+
+    companion object {
+        init {
+            System.loadLibrary("cxx-scenarios-bugsnag")
+        }
+    }
+
     init {
         config.addPlugin(NativeOutOfMemoryPlugin())
     }
 
+    external fun configure()
+
     override fun startScenario() {
         super.startScenario()
 
+        configure()
+
         val buffers = mutableListOf<ByteBuffer>()
         while (true) {
-            log("Allocating 10mb of memory")
             val newBuffer = ByteBuffer.allocate(MB10)
             Random.nextBytes(newBuffer.array())
             buffers.add(newBuffer)
+
+            log("Allocated 10mb of memory. Now retaining ${buffers.size * 10}mb of memory")
         }
     }
 }

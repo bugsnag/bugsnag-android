@@ -411,12 +411,21 @@ int __attribute__((optnone)) get_the_null_value() {
   return *the_value;
 }
 
-extern "C"
 JNIEXPORT jint JNICALL
 Java_com_bugsnag_android_mazerunner_scenarios_CXXRefreshSymbolTableDuringCrashScenario_activate(
     JNIEnv *env, jobject thiz) {
 
   return get_the_null_value();
+}
+
+static bool mark_event_as_native_oom(void *event) {
+    bugsnag_event_add_metadata_bool(event, "OutOfMemory", "NativeOOM", true);
+    return true;
+}
+
+JNIEXPORT void JNICALL
+Java_com_bugsnag_android_mazerunner_scenarios_NativeOOMHandlerScenario_configure(JNIEnv *env, jobject thiz) {
+    bugsnag_add_on_error(&mark_event_as_native_oom);
 }
 
 }
