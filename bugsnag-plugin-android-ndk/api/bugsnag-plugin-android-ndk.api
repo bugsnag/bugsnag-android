@@ -1,9 +1,16 @@
+public final class com/bugsnag/android/NativeOutOfMemoryPlugin : com/bugsnag/android/OutOfMemoryHandler, com/bugsnag/android/Plugin {
+	public fun <init> ()V
+	public fun load (Lcom/bugsnag/android/Client;)V
+	public fun onOutOfMemory (Ljava/lang/OutOfMemoryError;)Z
+	public fun unload ()V
+}
+
 public final class com/bugsnag/android/ndk/BugsnagNDK {
 	public static final field INSTANCE Lcom/bugsnag/android/ndk/BugsnagNDK;
 	public static final fun refreshSymbolTable ()V
 }
 
-public final class com/bugsnag/android/ndk/NativeBridge : com/bugsnag/android/OutOfMemoryHandler, com/bugsnag/android/internal/StateObserver {
+public final class com/bugsnag/android/ndk/NativeBridge : com/bugsnag/android/internal/StateObserver {
 	public fun <init> (Lcom/bugsnag/android/internal/BackgroundTaskService;)V
 	public final fun addBreadcrumb (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;)V
 	public final fun addFeatureFlag (Ljava/lang/String;Ljava/lang/String;)V
@@ -23,7 +30,6 @@ public final class com/bugsnag/android/ndk/NativeBridge : com/bugsnag/android/Ou
 	public final fun install (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IZIZII)V
 	public final fun notifyAddCallback (Ljava/lang/String;)V
 	public final fun notifyRemoveCallback (Ljava/lang/String;)V
-	public fun onOutOfMemory (Ljava/lang/OutOfMemoryError;)Z
 	public fun onStateChange (Lcom/bugsnag/android/StateEvent;)V
 	public final fun pausedSession ()V
 	public final fun refreshSymbolTable ()V

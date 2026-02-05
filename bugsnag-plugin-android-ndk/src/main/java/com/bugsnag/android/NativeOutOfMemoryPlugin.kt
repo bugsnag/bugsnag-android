@@ -19,22 +19,28 @@ package com.bugsnag.android
  * error report itself. This plugin side-steps the problem by using pre-allocated native
  * memory to capture and store the `OutOfMemoryError` for delivery on restart.
  */
-class NativeOutOfMemoryPlugin : Plugin {
+class NativeOutOfMemoryPlugin : Plugin, OutOfMemoryHandler {
     private var previousOomHandler: OutOfMemoryHandler? = null
     private var client: Client? = null
+    private var ndkPlugin: NdkPlugin? = null
 
     override fun load(client: Client) {
-        val ndkPlugin = client.getPlugin(NdkPlugin::class.java) as? NdkPlugin ?: return
-        val bridge = ndkPlugin.nativeBridge ?: return
-
         this.client = client
+        ndkPlugin = client.getPlugin(NdkPlugin::class.java) as? NdkPlugin
+
         this.previousOomHandler = client.outOfMemoryHandler
-        client.outOfMemoryHandler = bridge
+        client.outOfMemoryHandler = this
     }
 
     override fun unload() {
         client?.outOfMemoryHandler = previousOomHandler
         previousOomHandler = null
         client = null
+    }
+
+    override fun onOutOfMemory(oom: OutOfMemoryError): Boolean {
+        ndkPlugin?.nativeBridge?.reportOutOfMemory(oom)
+        // consume the OutOfMemoryError
+        return true
     }
 }
