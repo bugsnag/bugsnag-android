@@ -3,18 +3,15 @@ package com.bugsnag.android.mazerunner.scenarios
 import android.content.Context
 import com.bugsnag.android.Configuration
 import com.bugsnag.android.NativeOutOfMemoryPlugin
-import com.bugsnag.android.mazerunner.log
-import java.nio.ByteBuffer
-import kotlin.random.Random
-
-private const val MB = 1024 * 1024
-private const val MB10 = 10 * MB
+import java.util.LinkedList
 
 class NativeOOMHandlerScenario(
     config: Configuration,
     context: Context,
     eventMetadata: String?
 ) : Scenario(config, context, eventMetadata) {
+
+    private val queue = LinkedList<Array<String>>()
 
     companion object {
         init {
@@ -33,13 +30,15 @@ class NativeOOMHandlerScenario(
 
         configure()
 
-        val buffers = mutableListOf<ByteBuffer>()
         while (true) {
-            val newBuffer = ByteBuffer.allocate(MB10)
-            Random.nextBytes(newBuffer.array())
-            buffers.add(newBuffer)
+            val array = Array(Int.MAX_VALUE) {
+                val input = "It's Supercalifragilisticexpialidocious! \n" +
+                    "Even though the memory allocation\n" +
+                    "Is really quite atrocious "
+                String(input.toByteArray()) // ensures new object created
+            }
 
-            log("Allocated 10mb of memory. Now retaining ${buffers.size * 10}mb of memory")
+            queue.add(array)
         }
     }
 }
