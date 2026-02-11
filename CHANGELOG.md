@@ -1,5 +1,12 @@
 # Changelog
 
+## 6.24.0 (2026-02-11)
+
+### Enhancements
+
+* When configured, the AppHangPlugin can now start taking stack snapshots over time when the monitored thread becomes unresponsive.
+  [#2372](https://github.com/bugsnag/bugsnag-android/pull/2372)
+
 ## 6.23.0 (2026-02-02)
 
 ### Enhancements

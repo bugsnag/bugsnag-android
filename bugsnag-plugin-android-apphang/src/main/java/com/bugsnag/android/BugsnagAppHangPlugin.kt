@@ -2,6 +2,7 @@ package com.bugsnag.android
 
 import androidx.annotation.VisibleForTesting
 import com.bugsnag.android.internal.LooperMonitorThread
+import com.bugsnag.android.internal.ThreadSampler
 
 /**
  * An alternative to Application Not Responding (ANR) reporting with configurable timeouts.
@@ -10,6 +11,8 @@ class BugsnagAppHangPlugin @JvmOverloads constructor(
     configuration: AppHangConfiguration = AppHangConfiguration()
 ) : Plugin {
     private val appHangThresholdMillis = configuration.appHangThresholdMillis
+    private val samplingThresholdMillis = configuration.stackSamplingThresholdMillis ?: 0
+    private val samplingRateMillis = configuration.stackSamplingIntervalMillis
     private val watchedLooper = configuration.watchedLooper
 
     private var client: Client? = null
@@ -37,7 +40,7 @@ class BugsnagAppHangPlugin @JvmOverloads constructor(
         client = null
     }
 
-    private fun reportAppHang(timeSinceLastHeartbeat: Long) {
+    private fun reportAppHang(timeSinceLastHeartbeat: Long, sampler: ThreadSampler?) {
         val watchedThread = watchedLooper.thread
         val stackTrace = watchedThread.stackTrace
         val threadName = watchedThread.name
@@ -49,6 +52,7 @@ class BugsnagAppHangPlugin @JvmOverloads constructor(
             )
         ) { event ->
             event.errors.firstOrNull()?.errorClass = "AppHang"
+            sampler?.createError(event)
 
             @Suppress("DEPRECATION")
             event.setErrorReportingThread(watchedThread.id)
@@ -65,6 +69,8 @@ class BugsnagAppHangPlugin @JvmOverloads constructor(
         monitorThread = LooperMonitorThread(
             watchedLooper,
             appHangThresholdMillis,
+            if (samplingThresholdMillis in 1..appHangThresholdMillis) samplingThresholdMillis else 0,
+            if (samplingRateMillis in 1..appHangThresholdMillis) samplingRateMillis else 0,
             this::reportAppHang
         )
 
