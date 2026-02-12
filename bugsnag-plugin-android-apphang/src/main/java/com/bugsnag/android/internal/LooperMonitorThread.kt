@@ -6,14 +6,11 @@ import android.os.SystemClock
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.locks.LockSupport
-import kotlin.compareTo
-import kotlin.text.compareTo
-import kotlin.text.get
-import kotlin.text.set
 
 internal class LooperMonitorThread(
     watchedLooper: Looper,
     private val appHangThresholdMillis: Long,
+    private val appHangCooldownMillis: Long,
     private val samplingThresholdMillis: Long,
     private val samplingRateMillis: Long,
     private val onAppHangDetected: (timeSinceLastHeartbeat: Long, ThreadSampler?) -> Unit
@@ -30,6 +27,9 @@ internal class LooperMonitorThread(
     @Volatile
     private var lastHeartbeatTimestamp = 0L
 
+    @Volatile
+    private var lastReportedHangTimestamp = 0L
+
     private val isRunning = AtomicBoolean(false)
 
     private var isAppHangDetected = false
@@ -45,6 +45,7 @@ internal class LooperMonitorThread(
     fun stopMonitoring() {
         if (isRunning.compareAndSet(true, false)) {
             handler.removeCallbacks(heartbeat)
+            lastReportedHangTimestamp = 0L
             LockSupport.unpark(this)
         }
     }
@@ -53,13 +54,22 @@ internal class LooperMonitorThread(
         LockSupport.unpark(this)
     }
 
-    private fun reportAppHang(timeSinceLastHeartbeat: Long) {
+    private fun reportAppHang(currentTime: Long, timeSinceLastHeartbeat: Long): Boolean {
         if (isAppHangDetected) {
-            return
+            return false
+        }
+
+        if (appHangCooldownMillis > 0L && lastReportedHangTimestamp > 0L) {
+            val timeSinceLastReport = currentTime - lastReportedHangTimestamp
+            if (timeSinceLastReport < appHangCooldownMillis) {
+                return false
+            }
         }
 
         isAppHangDetected = true
+        lastReportedHangTimestamp = currentTime
         onAppHangDetected(timeSinceLastHeartbeat, threadSampler)
+        return true
     }
 
     override fun run() {
@@ -84,7 +94,18 @@ internal class LooperMonitorThread(
             }
 
             if (currentTimeSinceHeartbeat >= appHangThresholdMillis) {
-                reportAppHang(currentTimeSinceHeartbeat)
+                val hangReported = reportAppHang(currentTime, currentTimeSinceHeartbeat)
+
+                // If we reported a hang and cooldown is configured, sleep for the cooldown period
+                // to give the app breathing room to recover
+                if (hangReported && appHangCooldownMillis > 0L) {
+                    LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(appHangCooldownMillis))
+
+                    // After cooldown, force a heartbeat to reset state
+                    if (isRunning.get() && handler.post(heartbeat)) {
+                        continue
+                    }
+                }
             }
 
             if (!handler.post(heartbeat)) {

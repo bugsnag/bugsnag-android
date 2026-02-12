@@ -11,9 +11,12 @@ import java.util.concurrent.CountDownLatch
 import java.lang.Thread as JThread
 
 private const val APP_HANG_THRESHOLD = 200L
-private const val COOLDOWN_TIME = 800L
 
-class LooperMonitorThreadTest {
+/**
+ * Tests for LooperMonitorThread without cooldown period configured.
+ * All detected AppHangs should be reported.
+ */
+class SequentialAppHangsTest {
     private lateinit var handlerThread: HandlerThread
     private lateinit var monitorThread: LooperMonitorThread
     private lateinit var handler: Handler
@@ -31,7 +34,7 @@ class LooperMonitorThreadTest {
         monitorThread = LooperMonitorThread(
             watchedLooper = handlerThread.looper,
             appHangThresholdMillis = APP_HANG_THRESHOLD,
-            appHangCooldownMillis = COOLDOWN_TIME,
+            appHangCooldownMillis = 0L, // No cooldown
             samplingThresholdMillis = 0,
             samplingRateMillis = 0,
             onAppHangDetected = { _, _ -> appHangCount++ }
@@ -87,6 +90,27 @@ class LooperMonitorThreadTest {
 
     @Test
     fun appHangRecoverHang() {
+        val countDownLatch = CountDownLatch(2)
+
+        handler.postDelayed({
+            JThread.sleep(APP_HANG_THRESHOLD * 2)
+            countDownLatch.countDown()
+
+            handler.postDelayed({
+                // Without cooldown, this AppHang should also be reported
+                JThread.sleep(APP_HANG_THRESHOLD * 2)
+                countDownLatch.countDown()
+            }, 100L) // Small delay to ensure recovery between hangs
+        }, 1)
+
+        countDownLatch.await()
+
+        // Without cooldown, both AppHangs should be reported
+        assertEquals("exactly 2 AppHangs expected", 2, appHangCount)
+    }
+
+    @Test
+    fun multipleSequentialHangs() {
         val countDownLatch = CountDownLatch(3)
 
         handler.postDelayed({
@@ -94,23 +118,19 @@ class LooperMonitorThreadTest {
             countDownLatch.countDown()
 
             handler.postDelayed({
-                // This AppHang is within the cooldown period, so should be suppressed
-                // Starts 100ms after first ends, detected at 300ms total (well within 800ms cooldown)
                 JThread.sleep(APP_HANG_THRESHOLD * 2)
                 countDownLatch.countDown()
 
                 handler.postDelayed({
-                    // This AppHang is after the cooldown period, so should be reported
-                    // Starts 800ms after second ends, giving enough time for cooldown to expire
                     JThread.sleep(APP_HANG_THRESHOLD * 2)
                     countDownLatch.countDown()
-                }, COOLDOWN_TIME + 200L)
+                }, 100L)
             }, 100L)
         }, 1)
 
         countDownLatch.await()
 
-        // First and third AppHangs should be reported, second suppressed by cooldown
-        assertEquals("exactly 2 AppHangs expected", 2, appHangCount)
+        // Without cooldown, all 3 AppHangs should be reported
+        assertEquals("exactly 3 AppHangs expected", 3, appHangCount)
     }
 }
