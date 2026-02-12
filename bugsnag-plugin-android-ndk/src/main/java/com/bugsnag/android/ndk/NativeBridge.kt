@@ -73,6 +73,7 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
     }
 
     private external fun addBreadcrumb(name: String, type: Int, timestamp: String, metadata: Any)
+    external fun reportOutOfMemory(oom: OutOfMemoryError)
     external fun addMetadataString(tab: String, key: String, value: String)
     external fun addMetadataDouble(tab: String, key: String, value: Double)
     external fun addMetadataBoolean(tab: String, key: String, value: Boolean)

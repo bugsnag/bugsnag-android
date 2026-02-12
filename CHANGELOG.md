@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+* Added `NativeOutOfMemoryPlugin` as a new way to report `OutOfMemoryError`s that uses pre-allocated memory in the NDK module instead of allocating an `Event` object. When used `OutOfMemoryError`s will be more reliably reported, but will not be passed to `OnErrorCallback`s (`OnSendCallback` works as expected).
+  [#2384](https://github.com/bugsnag/bugsnag-android/pull/2384)
+
 ## 6.24.0 (2026-02-11)
 
 ### Enhancements

@@ -42,7 +42,7 @@ bugsnag_event *init_event() {
 
     bsg_strncpy(event->error.errorClass, "SIGSEGV", sizeof(event->error.errorClass));
     bsg_strncpy(event->error.errorMessage, "Whoops!", sizeof(event->error.errorMessage));
-    bsg_strncpy(event->error.type, "C", sizeof(event->error.type));
+    bsg_strncpy(event->error.type, "c", sizeof(event->error.type));
 
     event->error.frame_count = 1;
     bsg_strncpy(event->error.stacktrace->method, "foo()", sizeof(event->error.stacktrace->method));
@@ -307,7 +307,7 @@ TEST test_error_message(void) {
 
 TEST test_error_type(void) {
     bugsnag_event *event = init_event();
-    ASSERT_STR_EQ("C", event->error.type);
+    ASSERT_STR_EQ("c", event->error.type);
     bugsnag_error_set_error_type(event, "C++");
     ASSERT_STR_EQ("C++", bugsnag_error_get_error_type(event));
     free(event);

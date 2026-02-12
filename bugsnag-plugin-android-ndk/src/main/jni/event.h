@@ -28,7 +28,7 @@
 /**
  * Version of the bugsnag_event struct. Serialized to report header.
  */
-#define BUGSNAG_EVENT_VERSION 15
+#define BUGSNAG_EVENT_VERSION 16
 
 #ifdef __cplusplus
 extern "C" {

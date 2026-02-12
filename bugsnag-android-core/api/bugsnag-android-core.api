@@ -88,6 +88,7 @@ public final class com/bugsnag/android/Bugsnag {
 	public static fun getLastRunInfo ()Lcom/bugsnag/android/LastRunInfo;
 	public static fun getMetadata (Ljava/lang/String;)Ljava/util/Map;
 	public static fun getMetadata (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
+	public static fun getOutOfMemoryHandler ()Lcom/bugsnag/android/OutOfMemoryHandler;
 	public static fun getUser ()Lcom/bugsnag/android/User;
 	public static fun isStarted ()Z
 	public static fun leaveBreadcrumb (Ljava/lang/String;)V
@@ -103,6 +104,7 @@ public final class com/bugsnag/android/Bugsnag {
 	public static fun resumeSession ()Z
 	public static fun setContext (Ljava/lang/String;)V
 	public static fun setGroupingDiscriminator (Ljava/lang/String;)Ljava/lang/String;
+	public static fun setOutOfMemoryHandler (Lcom/bugsnag/android/OutOfMemoryHandler;)V
 	public static fun setUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public static fun start (Landroid/content/Context;)Lcom/bugsnag/android/Client;
 	public static fun start (Landroid/content/Context;Lcom/bugsnag/android/Configuration;)Lcom/bugsnag/android/Client;
@@ -147,6 +149,7 @@ public class com/bugsnag/android/Client : com/bugsnag/android/CallbackAware, com
 	public fun getLastRunInfo ()Lcom/bugsnag/android/LastRunInfo;
 	public fun getMetadata (Ljava/lang/String;)Ljava/util/Map;
 	public fun getMetadata (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
+	public fun getOutOfMemoryHandler ()Lcom/bugsnag/android/OutOfMemoryHandler;
 	public fun getUser ()Lcom/bugsnag/android/User;
 	public fun leaveBreadcrumb (Ljava/lang/String;)V
 	public fun leaveBreadcrumb (Ljava/lang/String;Ljava/util/Map;Lcom/bugsnag/android/BreadcrumbType;)V
@@ -161,6 +164,7 @@ public class com/bugsnag/android/Client : com/bugsnag/android/CallbackAware, com
 	public fun resumeSession ()Z
 	public fun setContext (Ljava/lang/String;)V
 	public fun setGroupingDiscriminator (Ljava/lang/String;)Ljava/lang/String;
+	public fun setOutOfMemoryHandler (Lcom/bugsnag/android/OutOfMemoryHandler;)V
 	public fun setUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public fun startSession ()V
 }
@@ -698,6 +702,10 @@ public abstract interface class com/bugsnag/android/OnSendCallback {
 
 public abstract interface class com/bugsnag/android/OnSessionCallback {
 	public abstract fun onSession (Lcom/bugsnag/android/Session;)Z
+}
+
+public abstract interface class com/bugsnag/android/OutOfMemoryHandler {
+	public abstract fun onOutOfMemory (Ljava/lang/OutOfMemoryError;)Z
 }
 
 public abstract interface class com/bugsnag/android/Plugin {
