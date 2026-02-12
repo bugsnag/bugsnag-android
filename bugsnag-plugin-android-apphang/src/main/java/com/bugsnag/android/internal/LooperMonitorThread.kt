@@ -81,7 +81,7 @@ internal class LooperMonitorThread(
 
             // Wait until next sample time or hang detection time, whichever comes first
             val waitMillis = calculateNextWaitTime(now, timeSinceHeartbeat)
-            LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(waitMillis))
+            parkWithTimeoutMs(waitMillis)
 
             if (!isRunning.get()) break
 
@@ -99,19 +99,18 @@ internal class LooperMonitorThread(
                 // If we reported a hang and cooldown is configured, sleep for the cooldown period
                 // to give the app breathing room to recover
                 if (hangReported && appHangCooldownMillis > 0L) {
-                    LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(appHangCooldownMillis))
-
-                    // After cooldown, force a heartbeat to reset state
-                    if (isRunning.get() && handler.post(heartbeat)) {
-                        continue
-                    }
+                    parkWithTimeoutMs(appHangCooldownMillis)
                 }
             }
 
-            if (!handler.post(heartbeat)) {
+            if (isRunning.get() && !handler.post(heartbeat)) {
                 isRunning.set(false)
             }
         }
+    }
+
+    private fun parkWithTimeoutMs(timeout: Long) {
+        LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(timeout))
     }
 
     private fun calculateNextWaitTime(now: Long, timeSinceHeartbeat: Long): Long {
