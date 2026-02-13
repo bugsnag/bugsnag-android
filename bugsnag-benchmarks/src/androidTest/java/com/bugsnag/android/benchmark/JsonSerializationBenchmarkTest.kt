@@ -26,10 +26,10 @@ class JsonSerializationBenchmarkTest {
      */
     @Test
     fun serializeEventPayload() {
-        val payload = EventHooks.generateEvent()
+        val payload = EventHooks.generateEventPayload()
 
         benchmarkRule.measureRepeated {
-            val stream = benchmarkRule.scope.runWithTimingDisabled {
+            val stream = runWithMeasurementDisabled {
                 JsonStream(PrintWriter(ByteArrayOutputStream()).buffered())
             }
             stream.use {
@@ -46,7 +46,7 @@ class JsonSerializationBenchmarkTest {
         val payload = generateSession()
 
         benchmarkRule.measureRepeated {
-            val stream = benchmarkRule.scope.runWithTimingDisabled {
+            val stream = runWithMeasurementDisabled {
                 JsonStream(PrintWriter(ByteArrayOutputStream()).buffered())
             }
             stream.use {

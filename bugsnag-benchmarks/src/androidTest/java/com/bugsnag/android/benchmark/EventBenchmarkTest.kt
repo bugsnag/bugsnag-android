@@ -7,6 +7,7 @@ import androidx.benchmark.junit4.measureRepeated
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.bugsnag.android.Client
+import com.bugsnag.android.EventHooks
 import com.bugsnag.android.NativeInterface
 import com.bugsnag.android.generateClient
 import com.bugsnag.android.generateSeverityReason
@@ -39,11 +40,7 @@ class EventBenchmarkTest {
     @Test
     fun createEvent() {
         benchmarkRule.measureRepeated {
-            NativeInterface.createEvent(
-                RuntimeException("Whoops"),
-                client,
-                generateSeverityReason()
-            )
+            EventHooks.generateEvent(client)
         }
     }
 }

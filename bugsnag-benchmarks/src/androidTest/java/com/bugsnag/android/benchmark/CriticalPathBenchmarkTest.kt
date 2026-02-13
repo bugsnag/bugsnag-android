@@ -63,9 +63,7 @@ class CriticalPathBenchmarkTest {
      */
     @Test
     fun clientNotify() {
-        val exc = benchmarkRule.scope.runWithTimingDisabled {
-            RuntimeException("Whoops")
-        }
+        val exc = RuntimeException("Whoops")
         benchmarkRule.measureRepeated {
             client.notify(exc)
         }
@@ -86,9 +84,7 @@ class CriticalPathBenchmarkTest {
      */
     @Test
     fun leaveComplexBreadcrumb() {
-        val data = benchmarkRule.scope.runWithTimingDisabled {
-            mapOf(Pair("isLaunching", true))
-        }
+        val data = mapOf(Pair("isLaunching", true))
         benchmarkRule.measureRepeated {
             client.leaveBreadcrumb("Hello world", data, BreadcrumbType.NAVIGATION)
         }
@@ -122,9 +118,7 @@ class CriticalPathBenchmarkTest {
      */
     @Test
     fun addMetadataSection() {
-        val data = benchmarkRule.scope.runWithTimingDisabled {
-            mapOf(Pair("mykey", "myvalue"))
-        }
+        val data = mapOf(Pair("mykey", "myvalue"))
         benchmarkRule.measureRepeated {
             client.addMetadata("custom", data)
         }
@@ -135,9 +129,7 @@ class CriticalPathBenchmarkTest {
      */
     @Test
     fun getSingleMetadataValue() {
-        benchmarkRule.scope.runWithTimingDisabled {
-            client.addMetadata("custom", "mykey", "myvalue")
-        }
+        client.addMetadata("custom", "mykey", "myvalue")
         benchmarkRule.measureRepeated {
             client.getMetadata("custom", "mykey")
         }
@@ -148,9 +140,7 @@ class CriticalPathBenchmarkTest {
      */
     @Test
     fun getMetadataSection() {
-        benchmarkRule.scope.runWithTimingDisabled {
-            client.addMetadata("custom", "mykey", "myvalue")
-        }
+        client.addMetadata("custom", "mykey", "myvalue")
         benchmarkRule.measureRepeated {
             client.getMetadata("custom")
         }
@@ -161,9 +151,7 @@ class CriticalPathBenchmarkTest {
      */
     @Test
     fun clearSingleMetadataValue() {
-        benchmarkRule.scope.runWithTimingDisabled {
-            client.addMetadata("custom", "mykey", "myvalue")
-        }
+        client.addMetadata("custom", "mykey", "myvalue")
         benchmarkRule.measureRepeated {
             client.clearMetadata("custom", "mykey")
         }
@@ -174,9 +162,7 @@ class CriticalPathBenchmarkTest {
      */
     @Test
     fun clearMetadataSection() {
-        benchmarkRule.scope.runWithTimingDisabled {
-            client.addMetadata("custom", "mykey", "myvalue")
-        }
+        client.addMetadata("custom", "mykey", "myvalue")
         benchmarkRule.measureRepeated {
             client.clearMetadata("custom")
         }

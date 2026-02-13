@@ -30,7 +30,6 @@ fun generateConfig(): Configuration {
 internal fun generateSeverityReason() =
     SeverityReason.newInstance(SeverityReason.REASON_UNHANDLED_EXCEPTION)
 
-
 internal fun generateSession(): Session {
     return Session(
         "test",

@@ -19,7 +19,7 @@ public class EventHooks {
         runtimeVersions.put("androidApiLevel", "24");
     }
 
-    public static EventPayload generateEvent() {
+    public static EventPayload generateEventPayload() {
         Throwable exc = new RuntimeException();
         ImmutableConfig cfg = convert(generateConfig());
         Event event = new Event(
@@ -31,6 +31,14 @@ public class EventHooks {
         event.setApp(generateAppWithState(cfg));
         event.setDevice(generateDeviceWithState());
         return new EventPayload("api-key", event, null, new Notifier(), cfg);
+    }
+
+    public static Event generateEvent(Client client) {
+        return NativeInterface.createEvent(
+                new RuntimeException("Whoops"),
+                client,
+                SeverityReason.newInstance(SeverityReason.REASON_UNHANDLED_EXCEPTION)
+        );
     }
 
     static ImmutableConfig convert(Configuration config) {

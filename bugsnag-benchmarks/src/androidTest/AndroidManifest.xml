@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.bugsnag.android.benchmark">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!--
       Important: disable debugging for accurate performance results
@@ -11,8 +10,7 @@
     -->
     <application
         android:debuggable="false"
-        tools:ignore="HardcodedDebugMode"
-        tools:replace="android:debuggable">
+        tools:ignore="HardcodedDebugMode">
         <meta-data
             android:name="com.bugsnag.android.API_KEY"
             android:value="your-api-key" />

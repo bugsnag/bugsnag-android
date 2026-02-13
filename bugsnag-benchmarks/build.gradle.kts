@@ -1,41 +1,46 @@
 plugins {
-    id "com.android.library"
-    id "androidx.benchmark" version "1.1.1"
-    id "kotlin-android"
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    id("androidx.benchmark") version "1.4.1"
 }
 
 android {
-    compileSdk 31
-    namespace "com.bugsnag.android.benchmark"
+    compileSdk = 36
+    namespace = "com.bugsnag.android.benchmark"
+
+    testOptions.targetSdk = 36
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
 
     defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 33
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "androidx.benchmark.junit4.AndroidBenchmarkRunner"
+        minSdk = 21
+
+        testInstrumentationRunner = "androidx.benchmark.junit4.AndroidBenchmarkRunner"
 
         // suppress warnings that the CPU clock is not locked, and allow running on an emulator.
         // it's not possible to lock the CPU clock without rooting a device, which isn't possible
         // on our CI setup currently.
-        testInstrumentationRunnerArgument "androidx.benchmark.suppressErrors", "EMULATOR,LOW_BATTERY,UNLOCKED"
+        testInstrumentationRunnerArguments["androidx.benchmark.suppressErrors"] =
+            "EMULATOR,LOW_BATTERY,UNLOCKED"
     }
 
     testBuildType = "release"
     buildTypes {
         debug {
-            // Since debuggable can"t be modified by gradle for library modules,
+            // Since debuggable can't be modified by gradle for library modules,
             // it must be done in a manifest - see src/androidTest/AndroidManifest.xml
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "benchmark-proguard-rules.pro"
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "benchmark-proguard-rules.pro"
+            )
         }
         release {
             isDefault = true
@@ -44,11 +49,11 @@ android {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.3.72"
-    androidTestImplementation "androidx.test:runner:1.3.0"
-    androidTestImplementation "androidx.test.ext:junit:1.1.2"
-    androidTestImplementation "junit:junit:4.13.2"
-    androidTestImplementation "androidx.benchmark:benchmark-junit4:1.0.0"
+    implementation(libs.kotlin.stdlib)
+    androidTestImplementation("androidx.test:runner:1.7.0")
+    androidTestImplementation("androidx.test.ext:junit:1.3.0")
+    androidTestImplementation(libs.junit)
+    androidTestImplementation("androidx.benchmark:benchmark-junit4:1.4.1")
 
     // Add your dependencies here. Note that you cannot benchmark code
     // in an app module this way - you will need to move any code you

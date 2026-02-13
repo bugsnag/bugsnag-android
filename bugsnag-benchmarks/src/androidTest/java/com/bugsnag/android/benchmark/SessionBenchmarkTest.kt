@@ -46,9 +46,7 @@ class SessionBenchmarkTest {
      */
     @Test
     fun pauseSession() {
-        benchmarkRule.scope.runWithTimingDisabled {
-            client.startSession()
-        }
+        client.startSession()
         benchmarkRule.measureRepeated {
             client.pauseSession()
         }
@@ -59,10 +57,8 @@ class SessionBenchmarkTest {
      */
     @Test
     fun resumeSession() {
-        benchmarkRule.scope.runWithTimingDisabled {
-            client.startSession()
-            client.pauseSession()
-        }
+        client.startSession()
+        client.pauseSession()
         benchmarkRule.measureRepeated {
             client.resumeSession()
         }
