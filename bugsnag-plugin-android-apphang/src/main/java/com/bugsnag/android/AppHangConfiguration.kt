@@ -49,6 +49,18 @@ class AppHangConfiguration(
      * Defaults to 50
      */
     var stackSamplingIntervalMillis: Long = DEFAULT_SAMPLING_INTERVAL,
+    /**
+     * The cooldown period in milliseconds after an AppHang has been reported. During this period,
+     * subsequent AppHangs will be suppressed to prevent over-reporting when the application is
+     * running on very slow devices or under extreme conditions.
+     *
+     * For example, if set to 5000ms (5 seconds), after an AppHang is reported, any additional
+     * AppHangs detected within the next 5 seconds will be ignored. This helps avoid flooding
+     * error reports when a device is experiencing sustained performance issues.
+     *
+     * Set to 0 (default) to disable the cooldown period and report all detected AppHangs.
+     */
+    var appHangCooldownMillis: Long = 0L,
 ) {
     constructor() : this(DEFAULT_APP_HANG_THRESHOLD)
 
