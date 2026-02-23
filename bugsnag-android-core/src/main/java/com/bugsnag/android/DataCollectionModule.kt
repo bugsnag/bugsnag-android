@@ -20,7 +20,7 @@ internal class DataCollectionModule(
     trackerModule: TrackerModule,
     bgTaskService: BackgroundTaskService,
     connectivity: Connectivity,
-    deviceIdStore: Provider<DeviceIdStore>,
+    deviceId: Provider<DeviceIdStore.DeviceIds?>,
     memoryTrimState: MemoryTrimState,
     clientObservable: ClientObservable
 ) : BackgroundDependencyModule(bgTaskService) {
@@ -51,7 +51,7 @@ internal class DataCollectionModule(
             connectivity,
             ctx,
             ctx.resources,
-            deviceIdStore.map { it.load() },
+            deviceId,
             deviceBuildInfo,
             dataDir,
             rootDetection,
