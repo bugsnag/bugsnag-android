@@ -128,7 +128,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
      * @param configuration  a configuration for the Client
      */
     public Client(@NonNull Context androidContext, @NonNull final Configuration configuration) {
-        ContextModule contextModule = new ContextModule(androidContext, bgTaskService);
+        ContextModule contextModule = new ContextModule(androidContext);
         appContext = contextModule.getCtx();
 
         notifier = configuration.getNotifier();
@@ -186,7 +186,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
         // lookup system services
         final SystemServiceModule systemServiceModule =
-                new SystemServiceModule(contextModule, bgTaskService);
+                new SystemServiceModule(contextModule);
 
         // setup further state trackers and data collection
         TrackerModule trackerModule = new TrackerModule(configModule,
@@ -195,7 +195,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         DataCollectionModule dataCollectionModule = new DataCollectionModule(contextModule,
                 configModule, systemServiceModule, trackerModule,
                 bgTaskService, connectivity, storageModule.getDeviceIdStore(),
-                memoryTrimState);
+                memoryTrimState, clientObservable);
 
         // load the device + user information
         userState = storageModule.loadUser(configuration.getUser());

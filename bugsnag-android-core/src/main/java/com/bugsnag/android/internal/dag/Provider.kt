@@ -21,6 +21,8 @@ interface Provider<E> {
      * to calculate the value.
      */
     fun get(): E
+
+    val isComplete: Boolean
 }
 
 /**
@@ -39,6 +41,12 @@ abstract class RunnableProvider<E> : Provider<E>, Runnable {
 
     @Volatile
     private var value: Any? = null
+
+    override val isComplete
+        get() = when (state.get()) {
+            TASK_STATE_PENDING, TASK_STATE_RUNNING -> false
+            else -> true
+        }
 
     /**
      * Calculate the value of this [Provider]. This function will be called at-most once by [run].
@@ -91,16 +99,11 @@ abstract class RunnableProvider<E> : Provider<E>, Runnable {
      */
     private fun awaitResult() {
         synchronized(this) {
-            while (!isComplete()) {
+            while (!isComplete) {
                 @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
                 (this as Object).wait()
             }
         }
-    }
-
-    private fun isComplete() = when (state.get()) {
-        TASK_STATE_PENDING, TASK_STATE_RUNNING -> false
-        else -> true
     }
 
     /**
@@ -178,4 +181,5 @@ abstract class RunnableProvider<E> : Provider<E>, Runnable {
 data class ValueProvider<T>(private val value: T) : Provider<T> {
     override fun getOrNull(): T? = get()
     override fun get(): T = value
+    override val isComplete: Boolean get() = true
 }

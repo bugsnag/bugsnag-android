@@ -958,6 +958,19 @@ static void JNI_NativeBridge_setInternalMetricsEnabled(JNIEnv *env,
   bsg_set_internal_metrics_enabled(enabled);
 }
 
+static void JNI_NativeBridge_synchronizeState(JNIEnv *env, jobject thiz) {
+  bsg_environment *bsg_env = request_env_write_lock();
+
+  if (bsg_env == NULL) {
+    goto end;
+  }
+
+  bsg_populate_event(env, &bsg_env->next_event);
+
+end:
+  release_env_write_lock();
+}
+
 static void JNI_NativeBridge_reportOutOfMemory(JNIEnv *env, jobject thiz,
                                                jobject oom) {
 
