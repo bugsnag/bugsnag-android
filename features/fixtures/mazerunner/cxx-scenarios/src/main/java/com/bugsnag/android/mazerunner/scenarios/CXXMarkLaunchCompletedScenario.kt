@@ -5,6 +5,8 @@ import android.os.Handler
 import android.os.Looper
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
+import com.bugsnag.android.createDefaultDelivery
+import com.bugsnag.android.mazerunner.InterceptingDelivery
 
 /**
  * Sends an NDK error to Bugsnag after markLaunchCompleted() is invoked.
@@ -18,15 +20,14 @@ internal class CXXMarkLaunchCompletedScenario(
     external fun crash()
 
     init {
-        config.launchDurationMillis = 0
         System.loadLibrary("cxx-scenarios")
 
-        config.addOnSend { _ ->
+        config.launchDurationMillis = 0
+
+        config.delivery = InterceptingDelivery(createDefaultDelivery()) { result ->
             Handler(Looper.getMainLooper()).post {
                 crash()
             }
-
-            true
         }
     }
 
