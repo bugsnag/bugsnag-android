@@ -877,6 +877,10 @@ public final class com/bugsnag/android/StateEvent$StartSession : com/bugsnag/and
 	public final fun getUnhandledCount ()I
 }
 
+public final class com/bugsnag/android/StateEvent$SynchronizeState : com/bugsnag/android/StateEvent {
+	public static final field INSTANCE Lcom/bugsnag/android/StateEvent$SynchronizeState;
+}
+
 public final class com/bugsnag/android/StateEvent$UpdateContext : com/bugsnag/android/StateEvent {
 	public final field context Ljava/lang/String;
 	public fun <init> (Ljava/lang/String;)V
@@ -1179,6 +1183,7 @@ public final class com/bugsnag/android/internal/TaskType : java/lang/Enum {
 public abstract interface class com/bugsnag/android/internal/dag/Provider {
 	public abstract fun get ()Ljava/lang/Object;
 	public abstract fun getOrNull ()Ljava/lang/Object;
+	public abstract fun isComplete ()Z
 }
 
 public abstract class com/bugsnag/android/internal/dag/RunnableProvider : com/bugsnag/android/internal/dag/Provider, java/lang/Runnable {
@@ -1186,6 +1191,7 @@ public abstract class com/bugsnag/android/internal/dag/RunnableProvider : com/bu
 	public fun get ()Ljava/lang/Object;
 	public fun getOrNull ()Ljava/lang/Object;
 	public abstract fun invoke ()Ljava/lang/Object;
+	public fun isComplete ()Z
 	public final fun run ()V
 }
 
@@ -1197,6 +1203,7 @@ public final class com/bugsnag/android/internal/dag/ValueProvider : com/bugsnag/
 	public fun get ()Ljava/lang/Object;
 	public fun getOrNull ()Ljava/lang/Object;
 	public fun hashCode ()I
+	public fun isComplete ()Z
 	public fun toString ()Ljava/lang/String;
 }
 

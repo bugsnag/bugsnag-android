@@ -62,6 +62,7 @@ internal class DeviceIdStore @JvmOverloads @Suppress("LongParameterList") constr
         return internalPersistence.loadDeviceId(true)
     }
 
+    @Synchronized
     fun load(): DeviceIds? {
         if (deviceIds != null) {
             return deviceIds

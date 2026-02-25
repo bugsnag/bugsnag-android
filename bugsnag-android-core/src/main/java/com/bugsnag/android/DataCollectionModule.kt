@@ -2,6 +2,7 @@ package com.bugsnag.android
 
 import android.os.Environment
 import com.bugsnag.android.internal.BackgroundTaskService
+import com.bugsnag.android.internal.RootDetectionProvider
 import com.bugsnag.android.internal.dag.BackgroundDependencyModule
 import com.bugsnag.android.internal.dag.ConfigModule
 import com.bugsnag.android.internal.dag.ContextModule
@@ -19,8 +20,9 @@ internal class DataCollectionModule(
     trackerModule: TrackerModule,
     bgTaskService: BackgroundTaskService,
     connectivity: Connectivity,
-    deviceIdStore: Provider<DeviceIdStore>,
-    memoryTrimState: MemoryTrimState
+    deviceId: Provider<DeviceIdStore.DeviceIds?>,
+    memoryTrimState: MemoryTrimState,
+    clientObservable: ClientObservable
 ) : BackgroundDependencyModule(bgTaskService) {
 
     private val ctx = contextModule.ctx
@@ -41,17 +43,15 @@ internal class DataCollectionModule(
         )
     }
 
-    private val rootDetection = provider {
-        val rootDetector = RootDetector(logger = logger, deviceBuildInfo = deviceBuildInfo)
-        rootDetector.isRooted()
-    }
+    private val rootDetection = RootDetectionProvider(deviceBuildInfo, clientObservable, logger)
+        .apply { start() }
 
     val deviceDataCollector = provider {
         DeviceDataCollector(
             connectivity,
             ctx,
             ctx.resources,
-            deviceIdStore.map { it.load() },
+            deviceId,
             deviceBuildInfo,
             dataDir,
             rootDetection,

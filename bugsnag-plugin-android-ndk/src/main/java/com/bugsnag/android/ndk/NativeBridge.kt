@@ -73,6 +73,7 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
     }
 
     private external fun addBreadcrumb(name: String, type: Int, timestamp: String, metadata: Any)
+    private external fun synchronizeState()
     external fun reportOutOfMemory(oom: OutOfMemoryError)
     external fun addMetadataString(tab: String, key: String, value: String)
     external fun addMetadataDouble(tab: String, key: String, value: Double)
@@ -170,6 +171,8 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
 
             is StateEvent.ClearFeatureFlag -> clearFeatureFlag(event.name)
             is StateEvent.ClearFeatureFlags -> clearFeatureFlags()
+
+            is StateEvent.SynchronizeState -> synchronizeState()
 
             else -> {
                 // ignore
