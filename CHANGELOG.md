@@ -14,7 +14,7 @@
 ### Bug Fixes
 
 * Reduced the heartbeat overheads of `BugsnagAppHangPlugin` reducing both the CPU cost of a heartbeat and the frequency. 
-  []()
+  [#2394](https://github.com/bugsnag/bugsnag-android/pull/2394)
 
 ## 6.24.0 (2026-02-11)
 
