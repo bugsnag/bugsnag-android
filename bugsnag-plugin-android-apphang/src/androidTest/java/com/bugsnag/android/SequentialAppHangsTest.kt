@@ -60,11 +60,11 @@ class SequentialAppHangsTest {
         val countDownLatch = CountDownLatch(10)
         val task = object : Runnable {
             override fun run() {
-                JThread.sleep(APP_HANG_THRESHOLD / 2)
+                JThread.sleep((APP_HANG_THRESHOLD / 2) - 10)
                 countDownLatch.countDown()
 
                 if (countDownLatch.count > 0) {
-                    handler.postDelayed(this, 1L)
+                    handler.postDelayed(this, 10L)
                 }
             }
         }
