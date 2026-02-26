@@ -28,11 +28,24 @@ internal class LooperMonitorThread(
     private var lastHeartbeatTimestamp = 0L
 
     @Volatile
+    private var lastHeartbeatPostedTimestamp = 0L
+
+    @Volatile
     private var lastReportedHangTimestamp = 0L
 
     private val isRunning = AtomicBoolean(false)
 
     private var isAppHangDetected = false
+
+    // the interval between heartbeats is half of the sampling interval, this is *not* how
+    // frequently the heartbeats actually run since we don't heartbeat unless there seems to be a
+    // problem
+    private val heartbeatInterval =
+        if (samplingThresholdMillis > 0) {
+            samplingThresholdMillis / 2
+        } else {
+            appHangThresholdMillis / 2
+        }
 
     private val heartbeat: Runnable = Heartbeat()
 
@@ -45,13 +58,15 @@ internal class LooperMonitorThread(
     fun stopMonitoring() {
         if (isRunning.compareAndSet(true, false)) {
             handler.removeCallbacks(heartbeat)
+            lastHeartbeatPostedTimestamp = 0L
             lastReportedHangTimestamp = 0L
             LockSupport.unpark(this)
         }
     }
 
-    internal fun resetHeartbeatTimer() {
-        LockSupport.unpark(this)
+    private fun effectiveHeartbeatTimestamp(): Long {
+        val postedTimestamp = lastHeartbeatPostedTimestamp
+        return if (postedTimestamp > 0L) postedTimestamp else lastHeartbeatTimestamp
     }
 
     private fun reportAppHang(currentTime: Long, timeSinceLastHeartbeat: Long): Boolean {
@@ -73,38 +88,46 @@ internal class LooperMonitorThread(
     }
 
     override fun run() {
-        handler.post(heartbeat)
+        // Startup is treated as an implicit heartbeat since startMonitoring is called from main thread
+        lastHeartbeatTimestamp = SystemClock.uptimeMillis()
 
         while (isRunning.get()) {
             val now = SystemClock.uptimeMillis()
-            val timeSinceHeartbeat = now - lastHeartbeatTimestamp
+            val effectiveTimestamp = effectiveHeartbeatTimestamp()
+            val timeSinceEffectiveHeartbeat = now - effectiveTimestamp
 
-            // Wait until next sample time or hang detection time, whichever comes first
-            val waitMillis = calculateNextWaitTime(now, timeSinceHeartbeat)
+            // Post heartbeat at fixed intervals (if one isn't already pending)
+            if (lastHeartbeatPostedTimestamp == 0L) {
+                val timeSinceHeartbeat = now - lastHeartbeatTimestamp
+                if (timeSinceHeartbeat >= heartbeatInterval) {
+                    if (handler.post(heartbeat)) {
+                        lastHeartbeatPostedTimestamp = now
+                    } else {
+                        isRunning.set(false)
+                        break
+                    }
+                }
+            }
+
+            val waitMillis = calculateNextWaitTime(now, timeSinceEffectiveHeartbeat)
             parkWithTimeoutMs(waitMillis)
 
             if (!isRunning.get()) break
 
             val currentTime = SystemClock.uptimeMillis()
-            val currentTimeSinceHeartbeat = currentTime - lastHeartbeatTimestamp
+            val currentTimeSinceEffectiveHeartbeat = currentTime - effectiveHeartbeatTimestamp()
 
-            if (shouldTakeSample(currentTime, currentTimeSinceHeartbeat)) {
+            if (shouldTakeSample(currentTime, currentTimeSinceEffectiveHeartbeat)) {
                 threadSampler?.captureSample()
                 lastStackSampleTimestamp = currentTime
             }
 
-            if (currentTimeSinceHeartbeat >= appHangThresholdMillis) {
-                val hangReported = reportAppHang(currentTime, currentTimeSinceHeartbeat)
+            if (currentTimeSinceEffectiveHeartbeat >= appHangThresholdMillis) {
+                val hangReported = reportAppHang(currentTime, currentTimeSinceEffectiveHeartbeat)
 
-                // If we reported a hang and cooldown is configured, sleep for the cooldown period
-                // to give the app breathing room to recover
                 if (hangReported && appHangCooldownMillis > 0L) {
                     parkWithTimeoutMs(appHangCooldownMillis)
                 }
-            }
-
-            if (isRunning.get() && !handler.post(heartbeat)) {
-                isRunning.set(false)
             }
         }
     }
@@ -113,28 +136,35 @@ internal class LooperMonitorThread(
         LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(timeout))
     }
 
-    private fun calculateNextWaitTime(now: Long, timeSinceHeartbeat: Long): Long {
-        if (lastHeartbeatTimestamp <= 0L) return appHangThresholdMillis
-        if (timeSinceHeartbeat >= appHangThresholdMillis) return Long.MAX_VALUE
+    private fun calculateNextWaitTime(now: Long, timeSinceEffectiveHeartbeat: Long): Long {
+        if (lastHeartbeatTimestamp <= 0L) return heartbeatInterval
+        if (timeSinceEffectiveHeartbeat >= appHangThresholdMillis) return Long.MAX_VALUE
 
-        val timeToHang = appHangThresholdMillis - timeSinceHeartbeat
-        if (threadSampler == null) return timeToHang
+        val timeToHang = appHangThresholdMillis - timeSinceEffectiveHeartbeat
 
-        return calculateTimeToNextStackSample(now, timeToHang, timeSinceHeartbeat)
+        // If no heartbeat is pending, also consider time until next heartbeat should be posted
+        val timeToNextHeartbeat = if (lastHeartbeatPostedTimestamp == 0L) {
+            val timeSinceHeartbeat = now - lastHeartbeatTimestamp
+            maxOf(0L, heartbeatInterval - timeSinceHeartbeat)
+        } else {
+            Long.MAX_VALUE
+        }
+
+        if (threadSampler == null) return minOf(timeToHang, timeToNextHeartbeat)
+
+        val timeToNextSample = calculateTimeToNextStackSample(now, timeSinceEffectiveHeartbeat)
+        return minOf(timeToNextSample, timeToHang, timeToNextHeartbeat)
     }
 
     private fun calculateTimeToNextStackSample(
         now: Long,
-        timeToHang: Long,
-        timeSinceHeartbeat: Long
+        timeSinceEffectiveHeartbeat: Long
     ): Long {
         return if (lastStackSampleTimestamp > 0L) {
-            // Already sampling - wait for next sample
             val timeToNextSample = samplingRateMillis - (now - lastStackSampleTimestamp)
-            minOf(timeToNextSample, timeToHang)
+            maxOf(0L, timeToNextSample)
         } else {
-            val timeToSamplingStart = samplingThresholdMillis - timeSinceHeartbeat
-            minOf(timeToSamplingStart, timeToHang)
+            maxOf(0L, samplingThresholdMillis - timeSinceEffectiveHeartbeat)
         }
     }
 
@@ -151,20 +181,17 @@ internal class LooperMonitorThread(
         return timeSinceLastSample >= samplingRateMillis
     }
 
+    internal fun onHeartbeat() {
+        lastHeartbeatTimestamp = SystemClock.uptimeMillis()
+        lastHeartbeatPostedTimestamp = 0L
+        isAppHangDetected = false
+
+        threadSampler?.resetSampling()
+        lastStackSampleTimestamp = 0L
+    }
+
     private inner class Heartbeat : Runnable {
-        override fun run() {
-            lastHeartbeatTimestamp = SystemClock.uptimeMillis()
-            isAppHangDetected = false
-
-            // Reset sampler when thread recovers
-            threadSampler?.resetSampling()
-            lastStackSampleTimestamp = 0L
-
-            resetHeartbeatTimer()
-        }
-
-        override fun toString(): String {
-            return "Bugsnag AppHang Heartbeat"
-        }
+        override fun run() = onHeartbeat()
+        override fun toString(): String = "Bugsnag AppHang Heartbeat"
     }
 }
