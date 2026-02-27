@@ -11,6 +11,11 @@
 * Moved root/jailbreak detection onto a background thread so that it no longer blocks startup (this should improve startup performance in most common cases)
   [#2391](https://github.com/bugsnag/bugsnag-android/pull/2391)
 
+### Bug Fixes
+
+* Reduced the heartbeat overheads of `BugsnagAppHangPlugin` reducing both the CPU cost of a heartbeat and the frequency. 
+  [#2395](https://github.com/bugsnag/bugsnag-android/pull/2395)
+
 ## 6.24.0 (2026-02-11)
 
 ### Enhancements
