@@ -34,11 +34,15 @@ internal class StorageModule(
         )
     }
 
+    val deviceId = deviceIdStore.map {
+        it.load()
+    }
+
     val userStore = provider {
         UserStore(
             immutableConfig.persistUser,
             bugsnagDir,
-            deviceIdStore.map { it.load() },
+            deviceId,
             sharedPrefMigrator = sharedPrefMigrator,
             logger = immutableConfig.logger
         )

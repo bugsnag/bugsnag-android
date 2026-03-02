@@ -1,5 +1,21 @@
 # Changelog
 
+## 6.25.0 (2026-03-02)
+
+### Enhancements
+
+* Added `NativeOutOfMemoryPlugin` as a new way to report `OutOfMemoryError`s that uses pre-allocated memory in the NDK module instead of allocating an `Event` object. When used `OutOfMemoryError`s will be more reliably reported, but will not be passed to `OnErrorCallback`s (`OnSendCallback` works as expected).
+  [#2384](https://github.com/bugsnag/bugsnag-android/pull/2384)
+* Added `appHangCooldownMillis` to the AppHangPlugin to control the number of AppHang errors produced when the app is performance constrained
+  [#2389](https://github.com/bugsnag/bugsnag-android/pull/2389)
+* Moved root/jailbreak detection onto a background thread so that it no longer blocks startup (this should improve startup performance in most common cases)
+  [#2391](https://github.com/bugsnag/bugsnag-android/pull/2391)
+
+### Bug Fixes
+
+* Reduced the heartbeat overheads of `BugsnagAppHangPlugin` reducing both the CPU cost of a heartbeat and the frequency. 
+  [#2395](https://github.com/bugsnag/bugsnag-android/pull/2395)
+
 ## 6.24.0 (2026-02-11)
 
 ### Enhancements

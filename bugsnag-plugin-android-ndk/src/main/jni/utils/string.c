@@ -6,8 +6,6 @@
 // Anything more than this and we shouldn't even be sending or using it.
 const size_t STRING_MAX_LENGTH = 1024 * 1024 * 10;
 
-void bsg_strcpy(char *dst, const char *src) { bsg_strncpy(dst, src, INT_MAX); }
-
 size_t bsg_strlen(const char *str) {
   if (str == NULL) {
     return 0;

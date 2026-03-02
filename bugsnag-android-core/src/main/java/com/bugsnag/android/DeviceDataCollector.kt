@@ -122,9 +122,10 @@ internal class DeviceDataCollector(
     }
 
     private fun checkIsRooted(): Boolean {
+        val rooted = rootedFuture ?: return false
         return try {
-            rootedFuture != null && rootedFuture.get()
-        } catch (exc: Exception) {
+            rooted.isComplete && rooted.get()
+        } catch (_: Exception) {
             false
         }
     }

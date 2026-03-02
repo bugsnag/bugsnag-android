@@ -31,4 +31,8 @@ internal class ClientObservable : BaseObservable() {
     fun postNdkDeliverPending() {
         updateState { StateEvent.DeliverPending }
     }
+
+    fun postSynchronizeState() {
+        updateState { StateEvent.SynchronizeState }
+    }
 }

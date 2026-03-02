@@ -294,6 +294,8 @@ void bsg_handle_signal(int signum, siginfo_t *info,
       }
       bsg_strncpy(bsg_global_env->next_event.error.errorMessage, error_message,
                   sizeof(bsg_global_env->next_event.error.errorMessage));
+      bsg_strncpy(bsg_global_env->next_event.error.type, "c",
+                  sizeof(bsg_global_env->next_event.error.type));
       break;
     }
   }

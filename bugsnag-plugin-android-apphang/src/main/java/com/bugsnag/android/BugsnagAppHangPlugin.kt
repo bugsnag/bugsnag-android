@@ -13,6 +13,7 @@ class BugsnagAppHangPlugin @JvmOverloads constructor(
     private val appHangThresholdMillis = configuration.appHangThresholdMillis
     private val samplingThresholdMillis = configuration.stackSamplingThresholdMillis ?: 0
     private val samplingRateMillis = configuration.stackSamplingIntervalMillis
+    private val appHangCooldownMillis = configuration.appHangCooldownMillis
     private val watchedLooper = configuration.watchedLooper
 
     private var client: Client? = null
@@ -69,6 +70,7 @@ class BugsnagAppHangPlugin @JvmOverloads constructor(
         monitorThread = LooperMonitorThread(
             watchedLooper,
             appHangThresholdMillis,
+            appHangCooldownMillis,
             if (samplingThresholdMillis in 1..appHangThresholdMillis) samplingThresholdMillis else 0,
             if (samplingRateMillis in 1..appHangThresholdMillis) samplingRateMillis else 0,
             this::reportAppHang

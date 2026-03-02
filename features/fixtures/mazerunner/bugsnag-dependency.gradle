@@ -17,6 +17,7 @@ dependencies {
         // compile with the NDK scenarios by default
         project.logger.lifecycle("Compiling full mazerunner fixture with ANR/NDK scenarios")
         implementation "com.bugsnag:bugsnag-android:9.9.9"
+        implementation "com.bugsnag:bugsnag-plugin-android-ndk:9.9.9"
         implementation "com.bugsnag:bugsnag-plugin-android-apphang:9.9.9"
         implementation "com.bugsnag:bugsnag-plugin-android-okhttp:9.9.9"
         implementation "com.bugsnag:bugsnag-plugin-android-exitinfo:9.9.9"

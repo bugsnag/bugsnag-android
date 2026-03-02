@@ -174,7 +174,7 @@ static void populate_app_data(JNIEnv *env, bugsnag_event *event) {
 
   copy_map_value_string(env, data, "id", event->app.id, sizeof(event->app.id));
   event->app.in_foreground = get_map_value_bool(env, data, "inForeground");
-  event->app.is_launching = true;
+  event->app.is_launching = get_map_value_bool(env, data, "isLaunching");
 
   char name[64];
   copy_map_value_string(env, data, "name", name, sizeof(name));

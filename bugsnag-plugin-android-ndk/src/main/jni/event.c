@@ -339,7 +339,7 @@ char *bugsnag_event_get_context(void *event_ptr) {
 void bugsnag_event_set_context(void *event_ptr, const char *value) {
   bugsnag_event *event = (bugsnag_event *)event_ptr;
   bsg_notify_api_called(event, BSG_API_EVENT_SET_CONTEXT);
-  bsg_strncpy(event->context, value, sizeof(event->context));
+  bsg_strncpy(event->context, value, sizeof(event->context) - 1);
 }
 
 char *bugsnag_event_get_grouping_discriminator(void *event_ptr) {

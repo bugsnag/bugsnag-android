@@ -128,7 +128,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
      * @param configuration  a configuration for the Client
      */
     public Client(@NonNull Context androidContext, @NonNull final Configuration configuration) {
-        ContextModule contextModule = new ContextModule(androidContext, bgTaskService);
+        ContextModule contextModule = new ContextModule(androidContext);
         appContext = contextModule.getCtx();
 
         notifier = configuration.getNotifier();
@@ -186,7 +186,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
         // lookup system services
         final SystemServiceModule systemServiceModule =
-                new SystemServiceModule(contextModule, bgTaskService);
+                new SystemServiceModule(contextModule);
 
         // setup further state trackers and data collection
         TrackerModule trackerModule = new TrackerModule(configModule,
@@ -194,8 +194,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
         DataCollectionModule dataCollectionModule = new DataCollectionModule(contextModule,
                 configModule, systemServiceModule, trackerModule,
-                bgTaskService, connectivity, storageModule.getDeviceIdStore(),
-                memoryTrimState);
+                bgTaskService, connectivity, storageModule.getDeviceId(),
+                memoryTrimState, clientObservable);
 
         // load the device + user information
         userState = storageModule.loadUser(configuration.getUser());
@@ -936,6 +936,31 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         if (options != null && options.isFatal()) {
             setAutoNotify(false);
         }
+    }
+
+    /**
+     * Override or intercept the default error handling for {@link OutOfMemoryError}s.
+     *
+     * @param handler the new handler to use (or null to revert to normal error handling for OOMs)
+     * @see #getOutOfMemoryHandler()
+     */
+    public void setOutOfMemoryHandler(@Nullable OutOfMemoryHandler handler) {
+        if (exceptionHandler != null) {
+            exceptionHandler.setOutOfMemoryHandler(handler);
+        }
+    }
+
+    /**
+     * Return the currently defined {@link OutOfMemoryHandler} if one is being used.
+     *
+     * @return the current {@code OutOfMemoryHandler} or null if none is set
+     */
+    @Nullable
+    public OutOfMemoryHandler getOutOfMemoryHandler() {
+        if (exceptionHandler == null) {
+            return null;
+        }
+        return exceptionHandler.getOutOfMemoryHandler();
     }
 
     /**
