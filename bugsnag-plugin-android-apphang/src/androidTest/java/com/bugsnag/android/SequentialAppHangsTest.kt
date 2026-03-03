@@ -10,7 +10,7 @@ import org.junit.Test
 import java.util.concurrent.CountDownLatch
 import java.lang.Thread as JThread
 
-private const val APP_HANG_THRESHOLD = 200L
+private const val APP_HANG_THRESHOLD = 500L
 
 /**
  * Tests for LooperMonitorThread without cooldown period configured.
@@ -60,7 +60,7 @@ class SequentialAppHangsTest {
         val countDownLatch = CountDownLatch(10)
         val task = object : Runnable {
             override fun run() {
-                JThread.sleep((APP_HANG_THRESHOLD / 2) - 10)
+                JThread.sleep(APP_HANG_THRESHOLD * 3 / 4)
                 countDownLatch.countDown()
 
                 if (countDownLatch.count > 0) {
