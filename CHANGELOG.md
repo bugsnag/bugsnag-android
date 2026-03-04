@@ -1,5 +1,12 @@
 # Changelog
 
+## TBD
+
+### Enhancements
+
+* Build UUIDs derived from dex file signatures no longer block NDK startup, reducing the overall startup time.
+  [#2401](https://github.com/bugsnag/bugsnag-android/pull/2401)
+
 ## 6.25.0 (2026-03-02)
 
 ### Enhancements
