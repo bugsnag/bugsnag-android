@@ -427,6 +427,25 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         clientObservable.postNdkInstall(immutableConfig, lastRunInfoPath, crashes);
         syncInitialState();
         clientObservable.postNdkDeliverPending();
+
+        // If the buildUuid is still being computed (DexBuildIdGenerator running on IO thread),
+        // schedule a deferred SynchronizeState so the NDK layer picks up the value once ready.
+        Provider<String> buildUuid = immutableConfig.getBuildUuid();
+        if (buildUuid != null && !buildUuid.isComplete()) {
+            try {
+                bgTaskService.submitTask(TaskType.IO, new Runnable() {
+                    @Override
+                    public void run() {
+                        // This blocks on the IO thread until dex generation finishes,
+                        // then syncs the result to the NDK layer.
+                        immutableConfig.getBuildUuid().getOrNull();
+                        clientObservable.postSynchronizeState();
+                    }
+                });
+            } catch (RejectedExecutionException exc) {
+                logger.w("Failed to schedule deferred NDK build UUID sync", exc);
+            }
+        }
     }
 
     private boolean setupNdkDirectory() {
