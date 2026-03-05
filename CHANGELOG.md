@@ -6,6 +6,8 @@
 
 * Build UUIDs derived from dex file signatures no longer block NDK startup, reducing the overall startup time.
   [#2401](https://github.com/bugsnag/bugsnag-android/pull/2401)
+* The `AppHangPlugin` can now be configured to log breadcrumbs for "near hang" situations where the app pauses for long enough to be noticeable but not long enough to warrant a full AppHang report
+  []()
 
 ## 6.25.0 (2026-03-02)
 

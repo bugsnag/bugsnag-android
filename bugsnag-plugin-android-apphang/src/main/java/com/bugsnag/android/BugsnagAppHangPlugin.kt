@@ -11,9 +11,13 @@ class BugsnagAppHangPlugin @JvmOverloads constructor(
     configuration: AppHangConfiguration = AppHangConfiguration()
 ) : Plugin {
     private val appHangThresholdMillis = configuration.appHangThresholdMillis
+    private val appHangCooldownMillis = configuration.appHangCooldownMillis
+
+    private val nearHangThresholdMillis = configuration.nearHangThresholdMillis
+
     private val samplingThresholdMillis = configuration.stackSamplingThresholdMillis ?: 0
     private val samplingRateMillis = configuration.stackSamplingIntervalMillis
-    private val appHangCooldownMillis = configuration.appHangCooldownMillis
+
     private val watchedLooper = configuration.watchedLooper
 
     private var client: Client? = null
@@ -61,19 +65,43 @@ class BugsnagAppHangPlugin @JvmOverloads constructor(
         }
     }
 
+    private fun reportNearHang(pauseTime: Long) {
+        if (nearHangThresholdMillis <= 0) {
+            return
+        }
+
+        client?.leaveAutoBreadcrumb(
+            "Near Hang Detected",
+            BreadcrumbType.STATE,
+            mapOf("pauseTimeMs" to "${pauseTime}ms")
+        )
+    }
+
     @VisibleForTesting
     internal fun startMonitoring() {
         if (monitorThread != null) {
             return
         }
 
+        val safeSamplingThresholdMillis =
+            if (samplingThresholdMillis in 1..appHangThresholdMillis) samplingThresholdMillis
+            else 0
+
+        val safeSamplingRateMillis =
+            if (samplingRateMillis in 1..appHangThresholdMillis) samplingRateMillis
+            else 0
+
         monitorThread = LooperMonitorThread(
-            watchedLooper,
-            appHangThresholdMillis,
-            appHangCooldownMillis,
-            if (samplingThresholdMillis in 1..appHangThresholdMillis) samplingThresholdMillis else 0,
-            if (samplingRateMillis in 1..appHangThresholdMillis) samplingRateMillis else 0,
-            this::reportAppHang
+            watchedLooper = watchedLooper,
+            appHangThresholdMillis = appHangThresholdMillis,
+            appHangCooldownMillis = appHangCooldownMillis,
+            samplingThresholdMillis = safeSamplingThresholdMillis,
+            samplingRateMillis = safeSamplingRateMillis,
+            nearHangThresholdMillis = nearHangThresholdMillis,
+            onAppHangDetected = this::reportAppHang,
+            onNearHangDetected = { timeSinceLastHeartbeat, _ ->
+                reportNearHang(timeSinceLastHeartbeat)
+            }
         )
 
         monitorThread?.startMonitoring()
