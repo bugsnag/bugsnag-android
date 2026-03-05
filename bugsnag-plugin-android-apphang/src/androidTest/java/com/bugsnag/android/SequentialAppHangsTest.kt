@@ -37,7 +37,9 @@ class SequentialAppHangsTest {
             appHangCooldownMillis = 0L, // No cooldown
             samplingThresholdMillis = 0,
             samplingRateMillis = 0,
-            onAppHangDetected = { _, _ -> appHangCount++ }
+            nearHangThresholdMillis = 0L, // No near hangs
+            onAppHangDetected = { _, _ -> appHangCount++ },
+            onNearHangDetected = { _, _ -> }
         )
 
         monitorThread.startMonitoring()
