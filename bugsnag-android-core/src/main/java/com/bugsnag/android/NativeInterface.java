@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import com.bugsnag.android.internal.ImmutableConfig;
 import com.bugsnag.android.internal.JsonHelper;
+import com.bugsnag.android.internal.dag.Provider;
 
 import android.annotation.SuppressLint;
 
@@ -114,14 +115,20 @@ public class NativeInterface {
     @NonNull
     @SuppressWarnings("unused")
     public static Map<String, Object> getApp() {
-        HashMap<String, Object> data = new HashMap<>();
         AppDataCollector source = getClient().getAppDataCollector();
         AppWithState app = source.generateAppWithState();
+
+        Provider<String> buildUuidProvider = app.getBuildUuidProvider$internal();
+        String buildUuid = buildUuidProvider != null && buildUuidProvider.isComplete()
+                ? buildUuidProvider.getOrNull()
+                : null;
+
+        HashMap<String, Object> data = new HashMap<>();
         data.put("version", app.getVersion());
         data.put("releaseStage", app.getReleaseStage());
         data.put("id", app.getId());
         data.put("type", app.getType());
-        data.put("buildUUID", app.getBuildUuid());
+        data.put("buildUUID", buildUuid);
         data.put("duration", app.getDuration());
         data.put("durationInForeground", app.getDurationInForeground());
         data.put("versionCode", app.getVersionCode());

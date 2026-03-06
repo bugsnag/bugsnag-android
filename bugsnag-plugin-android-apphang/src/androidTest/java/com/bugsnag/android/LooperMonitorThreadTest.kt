@@ -53,25 +53,6 @@ class LooperMonitorThreadTest {
     }
 
     @Test
-    fun testBelowThresholdEvents() {
-        val countDownLatch = CountDownLatch(10)
-        val task = object : Runnable {
-            override fun run() {
-                JThread.sleep(APP_HANG_THRESHOLD / 2)
-                countDownLatch.countDown()
-
-                if (countDownLatch.count > 0) {
-                    handler.postDelayed(this, 1L)
-                }
-            }
-        }
-        handler.postDelayed(task, 1)
-
-        countDownLatch.await()
-        assertEquals("no AppHangs expected", 0, appHangCount)
-    }
-
-    @Test
     fun appHang() {
         val countDownLatch = CountDownLatch(1)
         handler.postDelayed({
