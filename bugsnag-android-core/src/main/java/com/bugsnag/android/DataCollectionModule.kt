@@ -22,8 +22,9 @@ internal class DataCollectionModule(
     connectivity: Connectivity,
     deviceId: Provider<DeviceIdStore.DeviceIds?>,
     memoryTrimState: MemoryTrimState,
-    clientObservable: ClientObservable
-) : BackgroundDependencyModule(bgTaskService) {
+    clientObservable: ClientObservable,
+    performanceInstrumentation: PerformanceInstrumentation<Any>
+) : BackgroundDependencyModule(bgTaskService, performanceInstrumentation) {
 
     private val ctx = contextModule.ctx
     private val cfg = configModule.config
@@ -31,7 +32,7 @@ internal class DataCollectionModule(
     private val deviceBuildInfo: DeviceBuildInfo = DeviceBuildInfo.defaultInfo()
     private val dataDir = Environment.getDataDirectory()
 
-    val appDataCollector = provider {
+    val appDataCollector = provider("AppDataCollector") {
         AppDataCollector(
             ctx,
             ctx.packageManager,
@@ -43,10 +44,10 @@ internal class DataCollectionModule(
         )
     }
 
-    private val rootDetection = RootDetectionProvider(deviceBuildInfo, clientObservable, logger)
+    private val rootDetection = RootDetectionProvider(deviceBuildInfo, clientObservable, logger, performanceInstrumentation)
         .apply { start() }
 
-    val deviceDataCollector = provider {
+    val deviceDataCollector = provider("DeviceDataCollector") {
         DeviceDataCollector(
             connectivity,
             ctx,

@@ -13,14 +13,15 @@ internal class TrackerModule(
     storageModule: StorageModule,
     client: Client,
     bgTaskService: BackgroundTaskService,
-    callbackState: CallbackState
-) : BackgroundDependencyModule(bgTaskService) {
+    callbackState: CallbackState,
+    performanceInstrumentation: PerformanceInstrumentation<Any>
+) : BackgroundDependencyModule(bgTaskService, performanceInstrumentation) {
 
     private val config = configModule.config
 
     val launchCrashTracker = LaunchCrashTracker(config)
 
-    val sessionTracker = provider {
+    val sessionTracker = provider("SessionTracker") {
         client.config
         SessionTracker(
             config,

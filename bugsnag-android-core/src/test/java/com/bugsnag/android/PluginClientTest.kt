@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.internal.NoPerformanceInstrumentation
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -23,7 +24,7 @@ class PluginClientTest {
     @Test
     fun loadCustomPlugin() {
         val pluginClient = PluginClient(setOf(plugin), config, NoopLogger)
-        pluginClient.loadPlugins(client)
+        pluginClient.loadPlugins(client, NoPerformanceInstrumentation)
         Mockito.verify(plugin, times(1)).load(client)
     }
 

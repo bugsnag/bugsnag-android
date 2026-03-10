@@ -1,5 +1,6 @@
 package com.bugsnag.android.internal.dag
 
+import com.bugsnag.android.PerformanceInstrumentation
 import com.bugsnag.android.internal.BackgroundTaskService
 import com.bugsnag.android.internal.TaskType
 
@@ -9,6 +10,8 @@ internal abstract class BackgroundDependencyModule(
     @JvmField
     val bgTaskService: BackgroundTaskService,
     @JvmField
+    val performanceInstrumentation: PerformanceInstrumentation<Any>,
+    @JvmField
     val taskType: TaskType = TaskType.DEFAULT
 ) : DependencyModule {
     /**
@@ -16,8 +19,19 @@ internal abstract class BackgroundDependencyModule(
      * [bgTaskService]. The returned `RunnableProvider` will be implemented using the `provider`
      * lambda as its `invoke` implementation.
      */
-    inline fun <R> provider(crossinline provider: () -> R): RunnableProvider<R> {
-        return bgTaskService.provider(taskType, provider)
+    inline fun <R> provider(name: String, crossinline provider: () -> R): RunnableProvider<R> {
+        val wrapperToken = performanceInstrumentation.onStart(name)
+        val queueToken = performanceInstrumentation.onStart("queue($name)", wrapperToken)
+        return bgTaskService.provider(taskType) service@{
+            val providerToken = performanceInstrumentation.onStart("$name()", wrapperToken)
+            performanceInstrumentation.onEnd(queueToken)
+            try {
+                return@service provider()
+            } finally {
+                performanceInstrumentation.onEnd(providerToken)
+                performanceInstrumentation.onEnd(wrapperToken)
+            }
+        }
     }
 
     /**
