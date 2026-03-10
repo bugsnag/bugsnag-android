@@ -14,18 +14,19 @@ import com.bugsnag.android.internal.dag.Provider
 internal class StorageModule(
     appContext: Context,
     private val immutableConfig: ImmutableConfig,
-    bgTaskService: BackgroundTaskService
-) : BackgroundDependencyModule(bgTaskService, TaskType.IO) {
+    bgTaskService: BackgroundTaskService,
+    performanceInstrumentation: PerformanceInstrumentation<Any>
+) : BackgroundDependencyModule(bgTaskService, performanceInstrumentation, TaskType.IO) {
 
-    val bugsnagDir = provider {
+    val bugsnagDir = provider("migrateLegacyFiles") {
         migrateLegacyFiles(immutableConfig.persistenceDirectory)
     }
 
-    val sharedPrefMigrator = provider {
+    val sharedPrefMigrator = provider("SharedPrefMigrator") {
         SharedPrefMigrator(appContext)
     }
 
-    val deviceIdStore = provider {
+    val deviceIdStore = provider("DeviceIdStore") {
         DeviceIdStore(
             appContext,
             sharedPrefMigrator = sharedPrefMigrator,
@@ -38,7 +39,7 @@ internal class StorageModule(
         it.load()
     }
 
-    val userStore = provider {
+    val userStore = provider("UserStore") {
         UserStore(
             immutableConfig.persistUser,
             bugsnagDir,
@@ -48,11 +49,11 @@ internal class StorageModule(
         )
     }
 
-    val lastRunInfoStore = provider {
+    val lastRunInfoStore = provider("LastRunInfoStore") {
         LastRunInfoStore(immutableConfig)
     }
 
-    val sessionStore = provider {
+    val sessionStore = provider("SessionStore") {
         SessionStore(
             bugsnagDir.get(),
             immutableConfig.maxPersistedSessions,
@@ -69,7 +70,7 @@ internal class StorageModule(
         return@map info
     }
 
-    fun loadUser(initialUser: User): Provider<UserState> = provider {
+    fun loadUser(initialUser: User): Provider<UserState> = provider("loadUser") {
         val userState = userStore.get().load(initialUser)
         sharedPrefMigrator.getOrNull()?.deleteLegacyPrefs()
         return@provider userState

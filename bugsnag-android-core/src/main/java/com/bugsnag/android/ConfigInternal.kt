@@ -75,6 +75,8 @@ internal class ConfigInternal(
 
     val notifier: Notifier = Notifier()
 
+    var performanceInstrumentation: PerformanceInstrumentation<*>? = null
+
     protected val plugins = HashSet<Plugin>()
 
     override fun addOnError(onError: OnErrorCallback) = callbackState.addOnError(onError)

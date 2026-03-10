@@ -4,11 +4,13 @@ import static com.bugsnag.android.SeverityReason.REASON_HANDLED_EXCEPTION;
 import static com.bugsnag.android.SeverityReason.REASON_UNHANDLED_EXCEPTION;
 
 import com.bugsnag.android.internal.BackgroundTaskService;
+import com.bugsnag.android.internal.ContextualPerformanceInstrumentation;
 import com.bugsnag.android.internal.ForegroundDetector;
 import com.bugsnag.android.internal.ImmutableConfig;
 import com.bugsnag.android.internal.InternalMetrics;
 import com.bugsnag.android.internal.InternalMetricsImpl;
 import com.bugsnag.android.internal.InternalMetricsNoop;
+import com.bugsnag.android.internal.NoPerformanceInstrumentation;
 import com.bugsnag.android.internal.StateObserver;
 import com.bugsnag.android.internal.TaskType;
 import com.bugsnag.android.internal.dag.ConfigModule;
@@ -128,6 +130,22 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
      * @param configuration  a configuration for the Client
      */
     public Client(@NonNull Context androidContext, @NonNull final Configuration configuration) {
+        @SuppressWarnings("unchecked")
+        PerformanceInstrumentation<Object> performance =
+                (PerformanceInstrumentation<Object>) configuration.getPerformanceInstrumentation();
+        if (performance == null) {
+            performance = NoPerformanceInstrumentation.INSTANCE;
+        }
+
+        final ContextualPerformanceInstrumentation<Object> startup =
+                new ContextualPerformanceInstrumentation<>(
+                        performance.onStart("Client Startup Wrapper", null),
+                        performance
+                );
+
+        @SuppressWarnings("checkstyle:VariableDeclarationUsageDistance")
+        Object constructorToken = startup.onStart("<init>");
+
         ContextModule contextModule = new ContextModule(androidContext);
         appContext = contextModule.getCtx();
 
@@ -148,6 +166,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
             }
         });
 
+        @SuppressWarnings("checkstyle:VariableDeclarationUsageDistance")
+        Object configurationToken = startup.onStart("sanitiseConfiguration", constructorToken);
         // set sensible defaults for delivery/project packages etc if not set
         ConfigModule configModule = new ConfigModule(
                 contextModule,
@@ -170,9 +190,11 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
                     + "https://docs.bugsnag.com/platforms/android/#basic-configuration");
         }
 
+        startup.onEnd(configurationToken);
+
         // setup storage as soon as possible
         final StorageModule storageModule = new StorageModule(appContext,
-                immutableConfig, bgTaskService);
+                immutableConfig, bgTaskService, startup);
 
         // setup state trackers for bugsnag
         BugsnagStateModule bugsnagStateModule =
@@ -190,19 +212,19 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
         // setup further state trackers and data collection
         TrackerModule trackerModule = new TrackerModule(configModule,
-                storageModule, this, bgTaskService, callbackState);
+                storageModule, this, bgTaskService, callbackState, startup);
 
         DataCollectionModule dataCollectionModule = new DataCollectionModule(contextModule,
                 configModule, systemServiceModule, trackerModule,
                 bgTaskService, connectivity, storageModule.getDeviceId(),
-                memoryTrimState, clientObservable);
+                memoryTrimState, clientObservable, startup);
 
         // load the device + user information
         userState = storageModule.loadUser(configuration.getUser());
 
         EventStorageModule eventStorageModule = new EventStorageModule(contextModule, configModule,
                 dataCollectionModule, bgTaskService, trackerModule, systemServiceModule, notifier,
-                callbackState);
+                callbackState, startup);
 
         eventStore = eventStorageModule.getEventStore();
 
@@ -232,7 +254,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         configDifferences = configuration.impl.getConfigDifferences();
         systemBroadcastReceiver = new SystemBroadcastReceiver(this, logger);
 
-        start();
+        start(startup);
+        startup.onEnd(constructorToken);
     }
 
     @VisibleForTesting
@@ -285,21 +308,21 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         configDifferences = new HashMap<>();
     }
 
-    private void start() {
+    private void start(ContextualPerformanceInstrumentation<Object> startup) {
         if (immutableConfig.getEnabledErrorTypes().getUnhandledExceptions()) {
             exceptionHandler.install();
         }
 
         // Initialise plugins before attempting anything else
         NativeInterface.setClient(Client.this);
-        pluginClient.loadPlugins(Client.this);
+        pluginClient.loadPlugins(Client.this, startup);
         NdkPluginCaller.INSTANCE.setNdkPlugin(pluginClient.getNdkPlugin());
         if (immutableConfig.getTelemetry().contains(Telemetry.USAGE)) {
             NdkPluginCaller.INSTANCE.setInternalMetricsEnabled(true);
         }
 
         // Flush any on-disk errors and sessions
-        eventStore.get().flushOnLaunch(lastRunInfo);
+        eventStore.get().flushOnLaunch(lastRunInfo, startup);
         eventStore.get().flushAsync();
         sessionTracker.flushAsync();
 
@@ -568,7 +591,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
     /**
      * Bugsnag uses the concept of "contexts" to help display and group your errors. Contexts
      * represent what was happening in your application at the time an error occurs.
-     *
+     * <p>
      * In an android app the "context" is automatically set as the foreground Activity.
      * If you would like to set this value manually, you should alter this property.
      */
@@ -580,7 +603,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
     /**
      * Bugsnag uses the concept of "contexts" to help display and group your errors. Contexts
      * represent what was happening in your application at the time an error occurs.
-     *
+     * <p>
      * In an android app the "context" is automatically set as the foreground Activity.
      * If you would like to set this value manually, you should alter this property.
      */
@@ -635,15 +658,15 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
     /**
      * Add a "on error" callback, to execute code at the point where an error report is
      * captured in Bugsnag.
-     *
+     * <p>
      * You can use this to add or modify information attached to an Event
      * before it is sent to your dashboard. You can also return
      * <code>false</code> from any callback to prevent delivery. "on error"
      * callbacks do not run before reports generated in the event
      * of immediate app termination from crashes in C/C++ code.
-     *
+     * <p>
      * For example:
-     *
+     * <p>
      * Bugsnag.addOnError(new OnErrorCallback() {
      * public boolean run(Event event) {
      * event.setSeverity(Severity.INFO);
@@ -680,12 +703,12 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
     /**
      * Add an "on breadcrumb" callback, to execute code before every
      * breadcrumb captured by Bugsnag.
-     *
+     * <p>
      * You can use this to modify breadcrumbs before they are stored by Bugsnag.
      * You can also return <code>false</code> from any callback to ignore a breadcrumb.
-     *
+     * <p>
      * For example:
-     *
+     * <p>
      * Bugsnag.onBreadcrumb(new OnBreadcrumbCallback() {
      * public boolean run(Breadcrumb breadcrumb) {
      * return false; // ignore the breadcrumb
@@ -721,12 +744,12 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
     /**
      * Add an "on session" callback, to execute code before every
      * session captured by Bugsnag.
-     *
+     * <p>
      * You can use this to modify sessions before they are stored by Bugsnag.
      * You can also return <code>false</code> from any callback to ignore a session.
-     *
+     * <p>
      * For example:
-     *
+     * <p>
      * Bugsnag.onSession(new OnSessionCallback() {
      * public boolean run(Session session) {
      * return false; // ignore the session
@@ -838,7 +861,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
     /**
      * Caches an error then attempts to notify.
-     *
+     * <p>
      * Should only ever be called from the {@link ExceptionHandler}.
      */
     void notifyUnhandledException(@NonNull Throwable exc, Metadata metadata,
@@ -923,8 +946,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
     }
 
     void notifyInternalWithErrorOptions(@NonNull Event event,
-                        @Nullable OnErrorCallback onError,
-                        @Nullable ErrorOptions options
+                                        @Nullable OnErrorCallback onError,
+                                        @Nullable ErrorOptions options
     ) {
         // set the redacted keys on the event as this
         // will not have been set for RN/Unity events
@@ -986,7 +1009,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
      * Returns the current buffer of breadcrumbs that will be sent with captured events. This
      * ordered list represents the most recent breadcrumbs to be captured up to the limit
      * set in {@link Configuration#getMaxBreadcrumbs()}.
-     *
+     * <p>
      * The returned collection is readonly and mutating the list will cause no effect on the
      * Client's state. If you wish to alter the breadcrumbs collected by the Client then you should
      * use {@link Configuration#setEnabledBreadcrumbTypes(Set)} and
@@ -1219,7 +1242,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
     /**
      * Retrieves information about the last launch of the application, if it has been run before.
-     *
+     * <p>
      * For example, this allows checking whether the app crashed on its last launch, which could
      * be used to perform conditional behaviour to recover from crashes, such as clearing the
      * app data cache.
@@ -1233,7 +1256,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
      * Informs Bugsnag that the application has finished launching. Once this has been called
      * {@link AppWithState#isLaunching()} will always be false in any new error reports,
      * and synchronous delivery will not be attempted on the next launch for any fatal crashes.
-     *
+     * <p>
      * By default this method will be called after Bugsnag is initialized when
      * {@link Configuration#getLaunchDurationMillis()} has elapsed. Invoking this method manually
      * has precedence over the value supplied via the launchDurationMillis configuration option.

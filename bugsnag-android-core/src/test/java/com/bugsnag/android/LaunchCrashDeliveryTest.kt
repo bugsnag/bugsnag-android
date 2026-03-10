@@ -4,6 +4,7 @@ import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import com.bugsnag.android.BugsnagTestUtils.generateEvent
 import com.bugsnag.android.FileStore.Delegate
 import com.bugsnag.android.internal.BackgroundTaskService
+import com.bugsnag.android.internal.NoPerformanceInstrumentation
 import com.bugsnag.android.internal.dag.ValueProvider
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -53,7 +54,8 @@ class LaunchCrashDeliveryTest {
                 1,
                 crashed = true,
                 crashedDuringLaunch = true
-            )
+            ),
+            NoPerformanceInstrumentation
         )
         val now = System.currentTimeMillis()
         assertTrue(now - baseline > 1500)
@@ -81,7 +83,8 @@ class LaunchCrashDeliveryTest {
                 0,
                 crashed = true,
                 crashedDuringLaunch = false
-            )
+            ),
+            NoPerformanceInstrumentation
         )
         val now = System.currentTimeMillis()
         assertTrue(now - baseline < 500)
@@ -105,7 +108,8 @@ class LaunchCrashDeliveryTest {
                 1,
                 crashed = true,
                 crashedDuringLaunch = true
-            )
+            ),
+            NoPerformanceInstrumentation
         )
         assertEquals(1, delivery.count.get())
         assertEquals("Bugsnag Error thread", delivery.threadName)
@@ -118,7 +122,8 @@ class LaunchCrashDeliveryTest {
                 1,
                 crashed = true,
                 crashedDuringLaunch = true
-            )
+            ),
+            NoPerformanceInstrumentation
         )
         assertEquals(1, delivery.count.get())
 
@@ -152,7 +157,8 @@ class LaunchCrashDeliveryTest {
                 1,
                 crashed = true,
                 crashedDuringLaunch = true
-            )
+            ),
+            NoPerformanceInstrumentation
         )
         assertEquals(1, delivery.count.get())
         val payload = requireNotNull(delivery.payload)
