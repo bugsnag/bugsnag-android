@@ -61,6 +61,14 @@ class AppHangConfiguration(
      * Set to 0 (default) to disable the cooldown period and report all detected AppHangs.
      */
     var appHangCooldownMillis: Long = 0L,
+    /**
+     * The minimum pause duration in milliseconds that will leave a "near hang" breadcrumb.
+     * When the monitored thread is unresponsive for at least this long (but less than
+     * [appHangThresholdMillis]), a breadcrumb will be recorded.
+     *
+     * Set to 0 (default) to disable near-hang breadcrumbs.
+     */
+    var nearHangThresholdMillis: Long = 0L
 ) {
     constructor() : this(DEFAULT_APP_HANG_THRESHOLD)
 

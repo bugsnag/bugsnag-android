@@ -11,7 +11,9 @@ internal class LooperMonitorThread(
     private val appHangCooldownMillis: Long,
     private val samplingThresholdMillis: Long,
     private val samplingRateMillis: Long,
-    private val onAppHangDetected: (timeSinceLastHeartbeat: Long, ThreadSampler?) -> Unit
+    private val nearHangThresholdMillis: Long,
+    private val onAppHangDetected: (timeSinceLastHeartbeat: Long, ThreadSampler?) -> Unit,
+    private val onNearHangDetected: (pauseTime: Long, ThreadSampler?) -> Unit
 ) : Thread("Bugsnag AppHang Monitor: ${watchedLooper.thread.name}") {
     private val handler: Handler = Handler(watchedLooper)
 
@@ -19,9 +21,12 @@ internal class LooperMonitorThread(
         if (isSamplingEnabled) ThreadSampler(watchedLooper.thread)
         else null
 
-    private val heartbeatInterval =
-        if (isSamplingEnabled) samplingThresholdMillis / 2
-        else appHangThresholdMillis / 2
+    private val heartbeatInterval: Long = run {
+        var min = appHangThresholdMillis
+        if (samplingThresholdMillis in 1 until min) min = samplingThresholdMillis
+        if (nearHangThresholdMillis in 1 until min) min = nearHangThresholdMillis
+        min / 2
+    }
 
     @Volatile
     private var lastStackSampleTimestamp = 0L
@@ -34,6 +39,9 @@ internal class LooperMonitorThread(
 
     @Volatile
     private var isAppHangDetected = false
+
+    @Volatile
+    private var lastPauseDuration = 0L
 
     private var lastHeartbeatPostTimestamp = 0L
 
@@ -78,7 +86,6 @@ internal class LooperMonitorThread(
         }
 
         isAppHangDetected = true
-        lastReportedHangTimestamp = currentTime
         onAppHangDetected(timeSinceLastHeartbeat, threadSampler)
         return true
     }
@@ -135,6 +142,19 @@ internal class LooperMonitorThread(
                     reportAppHang(now, timeSinceHeartbeat)
                 }
             } else {
+                // range is not always strictly 1>lastPauseDuration so we use <=
+                @Suppress("ConvertTwoComparisonsToRangeCheck")
+                // recovered — use the pause duration captured by the heartbeat callback
+                if (nearHangThresholdMillis > 1 &&
+                    nearHangThresholdMillis <= lastPauseDuration &&
+                    lastPauseDuration < appHangThresholdMillis
+                ) {
+                    onNearHangDetected(lastPauseDuration, threadSampler)
+                }
+
+                if (isAppHangDetected) {
+                    lastReportedHangTimestamp = currentTime()
+                }
                 isAppHangDetected = false
                 threadSampler?.resetSampling()
                 lastStackSampleTimestamp = 0L
@@ -203,7 +223,15 @@ internal class LooperMonitorThread(
 
     private inner class Heartbeat : Runnable {
         override fun run() {
-            lastHeartbeatTimestamp = currentTime()
+            val now = currentTime()
+            val previousHeartbeatTimestamp = lastHeartbeatTimestamp
+            lastHeartbeatTimestamp = now
+            lastPauseDuration =
+                if (previousHeartbeatTimestamp > 0L) {
+                    now - previousHeartbeatTimestamp
+                } else {
+                    0L
+                }
         }
 
         override fun toString(): String {

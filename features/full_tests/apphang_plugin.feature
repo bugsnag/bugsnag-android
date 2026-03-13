@@ -8,6 +8,7 @@ Feature: AppHang Plugin
     Then I wait to receive an error
     And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
     And the exception "errorClass" equals "AppHang"
+    And the event has a "state" breadcrumb named "Near Hang Detected"
 
   Scenario: StackSampling reports cause of AppHang
     When I run "SampledAppHangScenario"
