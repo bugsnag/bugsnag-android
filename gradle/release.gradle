@@ -55,6 +55,8 @@ project.afterEvaluate {
     }
 
     signing {
+        // JitPack builds don't have signing keys – skip signing in that environment
+        required { !System.getenv("JITPACK").toBoolean() }
         sign publishing.publications
     }
 }
