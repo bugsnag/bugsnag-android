@@ -102,7 +102,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
 
     /**
      * If you would like to distinguish between errors that happen in different stages of the
-     * application release process (development, production, etc) you can set the releaseStage
+     * application release process (development, production, etc.) you can set the releaseStage
      * that is reported to Bugsnag.
      * <p>
      * If you are running a debug build, we'll automatically set this to "development",
@@ -116,7 +116,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
 
     /**
      * If you would like to distinguish between errors that happen in different stages of the
-     * application release process (development, production, etc) you can set the releaseStage
+     * application release process (development, production, etc.) you can set the releaseStage
      * that is reported to Bugsnag.
      * <p>
      * If you are running a debug build, we'll automatically set this to "development",
@@ -168,7 +168,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
     }
 
     /**
-     * Set whether or not Bugsnag should persist user information between application sessions.
+     * Set whether Bugsnag should persist user information between application sessions.
      * <p>
      * If enabled then any user information set will be re-used until the user information is
      * removed manually by calling {@link Bugsnag#setUser(String, String, String)}
@@ -179,7 +179,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
     }
 
     /**
-     * Set whether or not Bugsnag should generate an anonymous ID and persist it in local storage
+     * Set whether Bugsnag should generate an anonymous ID and persist it in local storage
      * <p>
      * If disabled, any device ID that has been persisted will not be retrieved, and no new
      * device ID will be generated or stored
@@ -189,7 +189,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
     }
 
     /**
-     * Set whether or not Bugsnag should generate an anonymous ID and persist it in local storage
+     * Set whether Bugsnag should generate an anonymous ID and persist it in local storage
      * <p>
      * If disabled, any device ID that has been persisted will not be retrieved, and no new
      * device ID will be generated or stored
@@ -226,7 +226,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
      * The persistenceDirectory also stores user information if {@link #getPersistUser()} has been
      * set to true.
      * <p/>
-     * By default, bugsnag sets the persistenceDirectory to {@link Context#getCacheDir()}.
+     * By default, Bugsnag sets the persistenceDirectory to {@link Context#getCacheDir()}.
      * <p/>
      * If the persistenceDirectory is changed between application launches, no attempt will be made
      * to deliver events or sessions cached in the previous location.
@@ -236,7 +236,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
     }
 
     /**
-     * Sets whether or not Bugsnag should send crashes synchronously that occurred during
+     * Sets whether Bugsnag should send crashes synchronously that occurred during
      * the application's launch period. By default this behavior is enabled.
      * <p>
      * See {@link #setLaunchDurationMillis(long)}
@@ -246,10 +246,10 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
     }
 
     /**
-     * Sets whether or not Bugsnag should send crashes synchronously that occurred during
+     * Sets whether Bugsnag should send crashes synchronously that occurred during
      * the application's launch period. By default this behavior is enabled.
      * <p>
-     * See {@link #setLaunchDurationMillis(long)}
+     * @see #setLaunchDurationMillis(long)
      */
     public void setSendLaunchCrashesSynchronously(boolean sendLaunchCrashesSynchronously) {
         impl.setSendLaunchCrashesSynchronously(sendLaunchCrashesSynchronously);
@@ -261,7 +261,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
      * event synchronously.
      * <p>
      * By default, this value is set at 5,000ms. Setting the value to 0 will count all crashes
-     * as launch crashes until markLaunchCompleted() is called.
+     * as launch crashes until {@link Bugsnag#markLaunchCompleted()} is called.
      */
     public long getLaunchDurationMillis() {
         return impl.getLaunchDurationMillis();
@@ -286,7 +286,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
     }
 
     /**
-     * Sets whether or not Bugsnag should automatically capture and report User sessions whenever
+     * Sets whether Bugsnag should automatically capture and report User sessions whenever
      * the app enters the foreground.
      * <p>
      * By default this behavior is enabled.
@@ -296,7 +296,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
     }
 
     /**
-     * Sets whether or not Bugsnag should automatically capture and report User sessions whenever
+     * Sets whether Bugsnag should automatically capture and report User sessions whenever
      * the app enters the foreground.
      * <p>
      * By default this behavior is enabled.
@@ -416,10 +416,10 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
      * You can use the return type from the deliver functions to control the strategy for
      * retrying the transmission at a later date.
      * <p>
-     * If DeliveryStatus.UNDELIVERED is returned, the notifier will automatically cache
-     * the payload and trigger delivery later on. Otherwise, if either DeliveryStatus.DELIVERED
-     * or DeliveryStatus.FAILURE is returned the notifier will removed any cached payload
-     * and no further delivery will be attempted.
+     * If {@link DeliveryStatus#UNDELIVERED} is returned, the notifier will automatically cache
+     * the payload and trigger delivery later on. Otherwise, if either
+     * {@link DeliveryStatus#DELIVERED} or {@link DeliveryStatus#FAILURE} is returned the notifier
+     * will remove any cached payload and no further delivery will be attempted.
      */
     @NonNull
     public Delivery getDelivery() {
@@ -734,14 +734,15 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
      * empty set.
      * <p>
      * The following breadcrumb types can be enabled:
-     * <p>
-     * - Captured errors: left when an error event is sent to the Bugsnag API.
-     * - Manual breadcrumbs: left via the Bugsnag.leaveBreadcrumb function.
-     * - Navigation changes: left for Activity Lifecycle events to track the user's journey in
-     * the app.
-     * - State changes: state breadcrumbs are left for system broadcast events. For example:
-     * battery warnings, airplane mode, etc.
-     * - User interaction: left when the user performs certain system operations.
+     * <ul>
+     * <li>Captured errors: left when an error event is sent to the Bugsnag API.</li>
+     * <li>Manual breadcrumbs: left via the Bugsnag.leaveBreadcrumb function.</li>
+     * <li>Navigation changes: left for Activity Lifecycle events to track the user's journey in
+     * the app.</li>
+     * <li>State changes: state breadcrumbs are left for system broadcast events. For example:
+     * battery warnings, airplane mode, etc.</li>
+     * <li>User interaction: left when the user performs certain system operations.</li>
+     * </ul>
      */
     @Nullable
     public Set<BreadcrumbType> getEnabledBreadcrumbTypes() {
@@ -755,14 +756,15 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
      * empty set.
      * <p>
      * The following breadcrumb types can be enabled:
-     * <p>
-     * - Captured errors: left when an error event is sent to the Bugsnag API.
-     * - Manual breadcrumbs: left via the Bugsnag.leaveBreadcrumb function.
-     * - Navigation changes: left for Activity Lifecycle events to track the user's journey in
-     * the app.
-     * - State changes: state breadcrumbs are left for system broadcast events. For example:
-     * battery warnings, airplane mode, etc.
-     * - User interaction: left when the user performs certain system operations.
+     * <ul>
+     * <li>Captured errors: left when an error event is sent to the Bugsnag API.</li>
+     * <li>Manual breadcrumbs: left via the Bugsnag.leaveBreadcrumb function.</li>
+     * <li>Navigation changes: left for Activity Lifecycle events to track the user's journey in
+     * the app.</li>
+     * <li>State changes: state breadcrumbs are left for system broadcast events. For example:
+     * battery warnings, airplane mode, etc.</li>
+     * <li>User interaction: left when the user performs certain system operations.</li>
+     * </ul>
      */
     public void setEnabledBreadcrumbTypes(@Nullable Set<BreadcrumbType> enabledBreadcrumbTypes) {
         impl.setEnabledBreadcrumbTypes(enabledBreadcrumbTypes);
@@ -778,7 +780,10 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
      * <p>
      * The following telemetry can be enabled:
      * <p>
-     * - internal errors: Errors in the Bugsnag SDK itself.
+     * <ul>
+     * <li>internal errors: Errors in the Bugsnag SDK itself</li>
+     * <li>usage: Differences from the default configuration</li>
+     * </ul>
      */
     public void setTelemetry(@NonNull Set<Telemetry> telemetry) {
         if (telemetry != null) {
@@ -794,7 +799,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
      * originate from any of these packages and this allows us to improve
      * the visual display of the stacktrace on the dashboard.
      * <p>
-     * By default, projectPackages is set to be the package you called Bugsnag.start from.
+     * By default, projectPackages is set to be the package you called {@link Bugsnag#start} from.
      */
     @NonNull
     public Set<String> getProjectPackages() {
@@ -807,7 +812,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
      * originate from any of these packages and this allows us to improve
      * the visual display of the stacktrace on the dashboard.
      * <p>
-     * By default, projectPackages is set to be the package you called Bugsnag.start from.
+     * By default, projectPackages is set to be the package you called {@link Bugsnag#start} from.
      */
     public void setProjectPackages(@NonNull Set<String> projectPackages) {
         if (CollectionUtils.containsNullElements(projectPackages)) {
@@ -818,7 +823,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
     }
 
     /**
-     * Add a "on error" callback, to execute code at the point where an error report is
+     * Add an "on error" callback, to execute code at the point where an error report is
      * captured in Bugsnag.
      * <p>
      * You can use this to add or modify information attached to an Event
@@ -829,11 +834,9 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
      * <p>
      * For example:
      * <pre>{@code
-     * Bugsnag.addOnError(new OnErrorCallback() {
-     *     public boolean onError(Event event) {
-     *         event.setSeverity(Severity.INFO);
-     *         return true;
-     *     }
+     * Bugsnag.addOnError((event) -> {
+     *     event.setSeverity(Severity.INFO);
+     *     return true;
      * });
      * }</pre>
      *
@@ -872,10 +875,8 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
      * <p>
      * For example:
      * <pre>{@code
-     * Bugsnag.onBreadcrumb(new OnBreadcrumbCallback() {
-     *     public boolean run(Breadcrumb breadcrumb) {
-     *         return false; // ignore the breadcrumb
-     *     }
+     * Bugsnag.addOnBreadcrumb((breadcrumb) -> {
+     *     return false; // ignore the breadcrumb
      * });
      * }</pre>
      *
