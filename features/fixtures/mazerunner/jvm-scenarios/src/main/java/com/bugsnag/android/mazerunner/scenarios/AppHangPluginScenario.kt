@@ -8,6 +8,8 @@ import com.bugsnag.android.BugsnagAppHangPlugin
 import com.bugsnag.android.Configuration
 import kotlin.system.exitProcess
 
+private const val HEADROOM = 10L
+private const val NEAR_HANG_THRESHOLD = 800L
 private const val APP_HANG_THRESHOLD = 1000L
 private const val APP_HANG_THRESHOLD3 = APP_HANG_THRESHOLD * 3L
 
@@ -20,7 +22,10 @@ class AppHangPluginScenario(
         config.enabledErrorTypes.anrs = false
         config.addPlugin(
             BugsnagAppHangPlugin(
-                AppHangConfiguration(appHangThresholdMillis = APP_HANG_THRESHOLD)
+                AppHangConfiguration(
+                    appHangThresholdMillis = APP_HANG_THRESHOLD,
+                    nearHangThresholdMillis = NEAR_HANG_THRESHOLD
+                )
             )
         )
     }
@@ -28,12 +33,20 @@ class AppHangPluginScenario(
     override fun startScenario() {
         super.startScenario()
 
-        Handler(Looper.getMainLooper()).postDelayed(
+        val handler = Handler(Looper.getMainLooper())
+        handler.postDelayed(
             Runnable {
-                Thread.sleep(APP_HANG_THRESHOLD3)
-                exitProcess(0)
+                Thread.sleep(NEAR_HANG_THRESHOLD + HEADROOM)
+
+                handler.postDelayed(
+                    Runnable {
+                        Thread.sleep(APP_HANG_THRESHOLD3)
+                        exitProcess(0)
+                    },
+                    HEADROOM
+                )
             },
-            1
+            HEADROOM
         )
     }
 }

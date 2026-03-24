@@ -2,6 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
+    <ID>LongParameterList:LooperMonitorThread.kt$LooperMonitorThread$( watchedLooper: Looper, private val appHangThresholdMillis: Long, private val appHangCooldownMillis: Long, private val samplingThresholdMillis: Long, private val samplingRateMillis: Long, private val nearHangThresholdMillis: Long, private val onAppHangDetected: (timeSinceLastHeartbeat: Long, ThreadSampler?) -> Unit, private val onNearHangDetected: (pauseTime: Long, ThreadSampler?) -> Unit )</ID>
     <ID>LoopWithTooManyJumpStatements:LooperMonitorThread.kt$LooperMonitorThread$while</ID>
   </CurrentIssues>
 </SmellBaseline>
