@@ -22,6 +22,7 @@ import com.bugsnag.android.StateEvent.UpdateUser
 import com.bugsnag.android.internal.BackgroundTaskService
 import com.bugsnag.android.internal.StateObserver
 import com.bugsnag.android.internal.TaskType
+import dalvik.annotation.optimization.FastNative
 import java.io.File
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
@@ -79,23 +80,29 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
     external fun addMetadataDouble(tab: String, key: String, value: Double)
     external fun addMetadataBoolean(tab: String, key: String, value: Boolean)
     external fun addMetadataOpaque(tab: String, key: String, value: String)
+    @FastNative
     external fun addHandledEvent()
+    @FastNative
     external fun addUnhandledEvent()
     external fun clearMetadataTab(tab: String)
     external fun removeMetadata(tab: String, key: String)
+    @FastNative
     external fun pausedSession()
     external fun updateContext(context: String)
     external fun updateGroupingDiscriminator(groupingDiscriminator: String?)
     external fun updateInForeground(inForeground: Boolean, activityName: String)
+    @FastNative
     external fun updateIsLaunching(isLaunching: Boolean)
     external fun updateOrientation(orientation: String)
     external fun updateUserId(newValue: String)
     external fun updateUserEmail(newValue: String)
     external fun updateUserName(newValue: String)
     external fun updateLowMemory(newValue: Boolean, memoryTrimLevelDescription: String)
+    @FastNative
     external fun getSignalUnwindStackFunction(): Long
     external fun addFeatureFlag(name: String, variant: String?)
     external fun clearFeatureFlag(name: String)
+    @FastNative
     external fun clearFeatureFlags()
     external fun refreshSymbolTable()
     external fun initCallbackCounts(counts: Map<String, Int>)
@@ -104,6 +111,7 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
     external fun getCurrentCallbackSetCounts(): Map<String, Int>?
     external fun getCurrentNativeApiCallUsage(): Map<String, Boolean>?
     external fun setStaticJsonData(data: String)
+    @FastNative
     external fun setInternalMetricsEnabled(enabled: Boolean)
 
     override fun onStateChange(event: StateEvent) {
