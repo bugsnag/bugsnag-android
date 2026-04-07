@@ -10,8 +10,9 @@ import org.junit.Test
 import java.util.concurrent.CountDownLatch
 import java.lang.Thread as JThread
 
-private const val APP_HANG_THRESHOLD = 200L
-private const val COOLDOWN_TIME = 800L
+private const val NEAR_HANG_THRESHOLD = 250L
+private const val APP_HANG_THRESHOLD = NEAR_HANG_THRESHOLD * 2
+private const val COOLDOWN_TIME = 1000L
 
 class LooperMonitorThreadTest {
     private lateinit var handlerThread: HandlerThread
@@ -19,6 +20,7 @@ class LooperMonitorThreadTest {
     private lateinit var handler: Handler
 
     private var appHangCount = 0
+    private var nearHangCount = 0
 
     @Before
     fun setup() {
@@ -34,7 +36,9 @@ class LooperMonitorThreadTest {
             appHangCooldownMillis = COOLDOWN_TIME,
             samplingThresholdMillis = 0,
             samplingRateMillis = 0,
-            onAppHangDetected = { _, _ -> appHangCount++ }
+            nearHangThresholdMillis = NEAR_HANG_THRESHOLD,
+            onAppHangDetected = { _, _ -> appHangCount++ },
+            onNearHangDetected = { _, _ -> nearHangCount++ }
         )
 
         monitorThread.startMonitoring()
@@ -54,10 +58,11 @@ class LooperMonitorThreadTest {
 
     @Test
     fun testBelowThresholdEvents() {
-        val countDownLatch = CountDownLatch(10)
+        val nearHangTotal = 10
+        val countDownLatch = CountDownLatch(nearHangTotal)
         val task = object : Runnable {
             override fun run() {
-                JThread.sleep(APP_HANG_THRESHOLD / 2)
+                JThread.sleep(NEAR_HANG_THRESHOLD)
                 countDownLatch.countDown()
 
                 if (countDownLatch.count > 0) {
@@ -65,10 +70,14 @@ class LooperMonitorThreadTest {
                 }
             }
         }
+
         handler.postDelayed(task, 1)
 
         countDownLatch.await()
+        // Allow the monitor thread to wake up and detect the final near-hang
+        JThread.sleep(APP_HANG_THRESHOLD)
         assertEquals("no AppHangs expected", 0, appHangCount)
+        assertEquals("$nearHangTotal NearHangs expected", nearHangTotal, nearHangCount)
     }
 
     @Test
