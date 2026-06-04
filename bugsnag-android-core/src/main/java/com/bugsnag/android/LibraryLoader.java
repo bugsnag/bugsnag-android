@@ -2,6 +2,7 @@ package com.bugsnag.android;
 
 import com.bugsnag.android.internal.TaskType;
 
+import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 class LibraryLoader {
@@ -49,6 +50,19 @@ class LibraryLoader {
                 }
             }
         }
+    }
+
+    public String resolveLibraryPath(String name, Client client) {
+        String mappedName = System.mapLibraryName(name);
+        try {
+            String nativeLibraryDir = client.appContext.getApplicationInfo().nativeLibraryDir;
+            if (nativeLibraryDir != null) {
+                return new File(nativeLibraryDir, mappedName).getAbsolutePath();
+            }
+        } catch (Throwable ignored) {
+            // Best-effort diagnostics only; load behavior remains unchanged.
+        }
+        return mappedName;
     }
 
     boolean isLoaded() {
