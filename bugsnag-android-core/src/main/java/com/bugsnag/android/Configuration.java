@@ -908,7 +908,7 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
      * You can also return {@code false} from any callback to ignore a session.
      * <p>
      * For example:
-     *
+     * <pre>{@code
      * Bugsnag.onSession(new OnSessionCallback() {
      *     public boolean onSession(Session session) {
      *         return false; // ignore the session
