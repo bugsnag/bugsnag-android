@@ -306,7 +306,7 @@ internal class NdkPlugin : Plugin {
     }
 }
 
-private data class NdkPhaseRecord(
+internal data class NdkPhaseRecord(
     val phase: String,
     val phaseStartNs: Long,
     val phaseEndNs: Long,
@@ -315,7 +315,7 @@ private data class NdkPhaseRecord(
     val extraFields: Map<String, Any?> = emptyMap()
 )
 
-private fun emitPhaseRecord(client: Client, record: NdkPhaseRecord) {
+internal fun emitPhaseRecord(client: Client, record: NdkPhaseRecord) {
     val thread = java.lang.Thread.currentThread()
     val mainThread = try {
         Looper.getMainLooper()?.thread === thread
@@ -357,11 +357,11 @@ private fun emitPhaseRecord(client: Client, record: NdkPhaseRecord) {
     client.logger.i("NDK load phase diagnostic: $payload")
 }
 
-private fun String.escapeJson(): String {
+internal fun String.escapeJson(): String {
     return replace("\\", "\\\\").replace("\"", "\\\"")
 }
 
-private fun StringBuilder.appendJsonValue(value: Any?) {
+internal fun StringBuilder.appendJsonValue(value: Any?) {
     when (value) {
         null -> append("null")
         is Number, is Boolean -> append(value)

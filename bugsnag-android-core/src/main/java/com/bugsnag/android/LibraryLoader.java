@@ -95,7 +95,11 @@ class LibraryLoader {
         return loadLibraryWithDiagnostics(name, client, callback).loaded;
     }
 
-    LoadLibraryReport loadLibraryWithDiagnostics(final String name, final Client client, final OnErrorCallback callback) {
+    LoadLibraryReport loadLibraryWithDiagnostics(
+        final String name,
+        final Client client,
+        final OnErrorCallback callback
+    ) {
         final long callerStartNs = System.nanoTime();
         final long submitNs = System.nanoTime();
         final LoadLibraryReport[] reportHolder = new LoadLibraryReport[1];
@@ -104,7 +108,11 @@ class LibraryLoader {
                 @Override
                 public void run() {
                     long runStartNs = System.nanoTime();
-                    LoadLibraryReport loadReport = loadLibInternalWithDiagnostics(name, client, callback);
+                    LoadLibraryReport loadReport = loadLibInternalWithDiagnostics(
+                        name,
+                        client,
+                        callback
+                    );
                     long runEndNs = System.nanoTime();
 
                     reportHolder[0] = new LoadLibraryReport(
@@ -144,7 +152,11 @@ class LibraryLoader {
         loadLibInternalWithDiagnostics(name, client, callback);
     }
 
-    LoadLibraryReport loadLibInternalWithDiagnostics(String name, Client client, OnErrorCallback callback) {
+    LoadLibraryReport loadLibInternalWithDiagnostics(
+        String name,
+        Client client,
+        OnErrorCallback callback
+    ) {
         long loadStartNs = System.nanoTime();
         boolean retried = false;
         boolean retrySucceeded = false;
