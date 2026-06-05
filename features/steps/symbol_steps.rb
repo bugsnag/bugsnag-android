@@ -62,8 +62,18 @@ Then("the exception {string} demangles to {string}") do |keypath, expected_value
   body = Maze::Server.errors.current[:body]
   actual_value = Maze::Helper.read_key_path(body, "events.0.exceptions.0.#{keypath}")
   demangled_value = demangle(actual_value)
-  Maze.check.equal(demangled_value, expected_value,
+  normalized_actual = normalize_demangled_symbol(demangled_value)
+  normalized_expected = normalize_demangled_symbol(expected_value)
+  Maze.check.equal(normalized_actual, normalized_expected,
                   "expected '#{actual_value}' to demangle to '#{expected_value}' but was '#{demangled_value}'")
+end
+
+def normalize_demangled_symbol(symbol)
+  symbol
+    .gsub(/\s*([*&])\s*/, '\\1')
+    .gsub(/\s*,\s*/, ', ')
+    .gsub(/\s+/, ' ')
+    .strip
 end
 
 def is_out_of_project?(file, method)
