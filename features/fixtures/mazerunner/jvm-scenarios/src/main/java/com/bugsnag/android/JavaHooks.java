@@ -75,6 +75,9 @@ public class JavaHooks {
         client.getEventStore().flushAsync();
     }
 
+    /**
+     * Flushes the error store on launch using the last run info.
+     */
     @NonNull
     public static void flushErrorStoreOnLaunch(Client client) {
         client.getEventStore().flushOnLaunch(
