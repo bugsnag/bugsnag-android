@@ -50,7 +50,7 @@ set(EXTRA_LINK_FLAGS "-Wl,-z,max-page-size=16384,--version-script=${CMAKE_CURREN
 set_target_properties(
         bugsnag-ndk
         PROPERTIES
-        COMPILE_OPTIONS -Werror -Wall -pedantic
+        COMPILE_OPTIONS -Werror -Wall -pedantic -D_FORTIFY_SOURCE=2 -fstack-protector-all
         LINK_FLAGS "${EXTRA_LINK_FLAGS}"
         CXX_STANDARD 17
         CXX_STANDARD_REQUIRED YES
