@@ -5,6 +5,7 @@
 ### Enhancements
 
 * **Security Hardening**: Enabled `_FORTIFY_SOURCE=2` and stack protector (`-fstack-protector-all`) for all native libraries (`libbugsnag-ndk.so`, `libbugsnag-plugin-android-anr.so`, `libbugsnag-root-detection.so`) to improve runtime buffer overflow detection.
+[#2429](https://github.com/bugsnag/bugsnag-android/pull/2429)
 
 ## 6.26.0 (2026-04-07)
 
