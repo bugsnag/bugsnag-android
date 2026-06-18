@@ -22,6 +22,6 @@ target_link_libraries( # Specifies the target library.
 set_target_properties(
         bugsnag-plugin-android-anr
         PROPERTIES
-        COMPILE_OPTIONS -Werror -Wall -pedantic
+        COMPILE_OPTIONS -Werror -Wall -pedantic -D_FORTIFY_SOURCE=2 -fstack-protector-all
         LINK_FLAGS "${EXTRA_LINK_FLAGS}"
 )
