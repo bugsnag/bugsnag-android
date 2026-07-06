@@ -17,12 +17,13 @@ internal class EventStorageModule(
     trackerModule: TrackerModule,
     systemServiceModule: SystemServiceModule,
     notifier: Notifier,
-    callbackState: CallbackState
-) : BackgroundDependencyModule(bgTaskService) {
+    callbackState: CallbackState,
+    performanceInstrumentation: PerformanceInstrumentation<Any>
+) : BackgroundDependencyModule(bgTaskService, performanceInstrumentation) {
 
     private val cfg = configModule.config
 
-    private val delegate = provider {
+    private val delegate = provider("InternalReportDelegate") {
         if (cfg.telemetry.contains(Telemetry.INTERNAL_ERRORS))
             InternalReportDelegate(
                 contextModule.ctx,
@@ -37,7 +38,7 @@ internal class EventStorageModule(
             ) else null
     }
 
-    val eventStore = provider {
+    val eventStore = provider("EventStore") {
         EventStore(
             cfg,
             cfg.logger,

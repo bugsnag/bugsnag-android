@@ -3,6 +3,7 @@ package com.bugsnag.android.internal
 import com.bugsnag.android.ClientObservable
 import com.bugsnag.android.DeviceBuildInfo
 import com.bugsnag.android.Logger
+import com.bugsnag.android.PerformanceInstrumentation
 import com.bugsnag.android.RootDetector
 import com.bugsnag.android.internal.dag.RunnableProvider
 
@@ -10,9 +11,12 @@ internal class RootDetectionProvider(
     private val deviceBuildInfo: DeviceBuildInfo,
     private val clientObservable: ClientObservable,
     private val logger: Logger,
+    private val performanceInstrumentation: PerformanceInstrumentation<Any>
 ) : RunnableProvider<Boolean>() {
     var isRooted: Boolean = false
         private set
+
+    private val instrumentationToken = performanceInstrumentation.onStart("RootDetection")
 
     fun start() {
         // root detection can take 100+ms so we always have a dedicated background thread for it
@@ -27,6 +31,7 @@ internal class RootDetectionProvider(
         val rootDetector = RootDetector(logger = logger, deviceBuildInfo = deviceBuildInfo)
         isRooted = rootDetector.isRooted()
         clientObservable.postSynchronizeState()
+        performanceInstrumentation.onEnd(instrumentationToken)
         return isRooted
     }
 }

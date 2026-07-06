@@ -15,9 +15,11 @@ internal class PluginClient(
     }
 
     private val plugins: Set<Plugin>
-    private val ndkPlugin = instantiatePlugin(NDK_PLUGIN, immutableConfig.enabledErrorTypes.ndkCrashes)
+    private val ndkPlugin =
+        instantiatePlugin(NDK_PLUGIN, immutableConfig.enabledErrorTypes.ndkCrashes)
     private val anrPlugin = instantiatePlugin(ANR_PLUGIN, immutableConfig.enabledErrorTypes.anrs)
-    private val rnPlugin = instantiatePlugin(RN_PLUGIN, immutableConfig.enabledErrorTypes.unhandledRejections)
+    private val rnPlugin =
+        instantiatePlugin(RN_PLUGIN, immutableConfig.enabledErrorTypes.unhandledRejections)
 
     init {
         val set = mutableSetOf<Plugin>()
@@ -48,14 +50,19 @@ internal class PluginClient(
 
     fun getNdkPlugin(): Plugin? = ndkPlugin
 
-    fun loadPlugins(client: Client) {
+    fun loadPlugins(client: Client, startup: PerformanceInstrumentation<Any>) {
+        val pluginsToken = startup.onStart("loadPlugins(${plugins.size})")
         plugins.forEach { plugin ->
+            val pluginToken = startup.onStart(plugin.toString(), pluginsToken)
             try {
                 loadPluginInternal(plugin, client)
             } catch (exc: Throwable) {
                 logger.e("Failed to load plugin $plugin, continuing with initialisation.", exc)
+            } finally {
+                startup.onEnd(pluginToken)
             }
         }
+        startup.onEnd(pluginsToken)
     }
 
     fun setAutoNotify(client: Client, autoNotify: Boolean) {

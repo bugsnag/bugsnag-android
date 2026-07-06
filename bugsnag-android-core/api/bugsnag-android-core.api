@@ -207,6 +207,7 @@ public class com/bugsnag/android/Configuration : com/bugsnag/android/CallbackAwa
 	public fun getMaxStringValueLength ()I
 	public fun getMetadata (Ljava/lang/String;)Ljava/util/Map;
 	public fun getMetadata (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
+	public fun getPerformanceInstrumentation ()Lcom/bugsnag/android/PerformanceInstrumentation;
 	public fun getPersistUser ()Z
 	public fun getPersistenceDirectory ()Ljava/io/File;
 	public fun getProjectPackages ()Ljava/util/Set;
@@ -245,6 +246,7 @@ public class com/bugsnag/android/Configuration : com/bugsnag/android/CallbackAwa
 	public fun setMaxPersistedSessions (I)V
 	public fun setMaxReportedThreads (I)V
 	public fun setMaxStringValueLength (I)V
+	public fun setPerformanceInstrumentation (Lcom/bugsnag/android/PerformanceInstrumentation;)V
 	public fun setPersistUser (Z)V
 	public fun setPersistenceDirectory (Ljava/io/File;)V
 	public fun setProjectPackages (Ljava/util/Set;)V
@@ -708,6 +710,15 @@ public abstract interface class com/bugsnag/android/OutOfMemoryHandler {
 	public abstract fun onOutOfMemory (Ljava/lang/OutOfMemoryError;)Z
 }
 
+public abstract interface class com/bugsnag/android/PerformanceInstrumentation {
+	public abstract fun onEnd (Ljava/lang/Object;)V
+	public abstract fun onStart (Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class com/bugsnag/android/PerformanceInstrumentation$DefaultImpls {
+	public static synthetic fun onStart$default (Lcom/bugsnag/android/PerformanceInstrumentation;Ljava/lang/String;Ljava/lang/Object;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
 public abstract interface class com/bugsnag/android/Plugin {
 	public abstract fun load (Lcom/bugsnag/android/Client;)V
 	public abstract fun unload ()V
@@ -1037,6 +1048,14 @@ public final class com/bugsnag/android/internal/BugsnagMapper {
 	public final fun convertToMap (Lcom/bugsnag/android/Event;)Ljava/util/Map;
 }
 
+public final class com/bugsnag/android/internal/ContextualPerformanceInstrumentation : com/bugsnag/android/PerformanceInstrumentation {
+	public fun <init> (Ljava/lang/Object;Lcom/bugsnag/android/PerformanceInstrumentation;)V
+	public final fun getParentToken ()Ljava/lang/Object;
+	public fun onEnd (Ljava/lang/Object;)V
+	public final fun onStart (Ljava/lang/String;)Ljava/lang/Object;
+	public fun onStart (Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;
+}
+
 public final class com/bugsnag/android/internal/DateUtils {
 	public static final field INSTANCE Lcom/bugsnag/android/internal/DateUtils;
 	public static final fun fromIso8601 (Ljava/lang/String;)Ljava/util/Date;
@@ -1163,6 +1182,12 @@ public final class com/bugsnag/android/internal/InternalMetricsNoop : com/bugsna
 	public fun setConfigDifferences (Ljava/util/Map;)V
 	public fun setMetadataTrimMetrics (II)V
 	public fun toJsonableMap ()Ljava/util/Map;
+}
+
+public final class com/bugsnag/android/internal/NoPerformanceInstrumentation : com/bugsnag/android/PerformanceInstrumentation {
+	public static final field INSTANCE Lcom/bugsnag/android/internal/NoPerformanceInstrumentation;
+	public fun onEnd (Ljava/lang/Object;)V
+	public fun onStart (Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;
 }
 
 public abstract interface class com/bugsnag/android/internal/StateObserver {

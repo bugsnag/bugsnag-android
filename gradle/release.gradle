@@ -5,7 +5,9 @@ String pomName = project.getProperties().get("pomName")
 archivesBaseName = project.getProperties().get("artefactId")
 version = "${project.VERSION_NAME}"
 group = "${project.GROUP}"
-
+def canSign = project.hasProperty("signing.keyId") &&
+        project.hasProperty("signing.password") &&
+        project.hasProperty("signing.secretKeyRingFile")
 // https://developer.android.com/studio/build/maven-publish-plugin
 project.afterEvaluate {
     publishing {
@@ -54,7 +56,11 @@ project.afterEvaluate {
         }
     }
 
-    signing {
-        sign publishing.publications
+
+
+    if (canSign) {
+        signing {
+            sign publishing.publications
+        }
     }
 }

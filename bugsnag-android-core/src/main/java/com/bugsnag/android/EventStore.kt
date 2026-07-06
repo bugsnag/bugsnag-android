@@ -49,16 +49,30 @@ internal class EventStore(
      * Flush startup crashes synchronously on the main thread. Startup crashes block the main thread
      * when being sent (subject to [Configuration.setSendLaunchCrashesSynchronously])
      */
-    fun flushOnLaunch(lastRunInfo: LastRunInfo?) {
+    fun flushOnLaunch(
+        lastRunInfo: LastRunInfo?,
+        startup: PerformanceInstrumentation<Any>
+    ) {
         if (!config.sendLaunchCrashesSynchronously) {
             return
         }
+        val flushOnLaunchWrapper = startup.onStart("EventStore.flushOnLaunch()")
         val future = try {
             bgTaskService.submitTask(
                 TaskType.ERROR_REQUEST,
                 Runnable {
-                    flushLaunchCrashReport()
-                    notifyEventQueueEmpty()
+                    val flushLaunchCrashReportToken = startup.onStart(
+                        "EventStore.flushLaunchCrashReport()",
+                        flushOnLaunchWrapper
+                    )
+
+                    try {
+                        flushLaunchCrashReport()
+                        notifyEventQueueEmpty()
+                    } finally {
+                        startup.onEnd(flushLaunchCrashReportToken)
+                        startup.onEnd(flushOnLaunchWrapper)
+                    }
                 }
             )
         } catch (exc: RejectedExecutionException) {
@@ -91,6 +105,8 @@ internal class EventStore(
             logger.d("Failed to send launch crash reports within timeout, continuing.", exc)
         } catch (exc: TimeoutException) {
             logger.d("Failed to send launch crash reports within timeout, continuing.", exc)
+        } finally {
+            startup.onEnd(flushOnLaunchWrapper)
         }
     }
 

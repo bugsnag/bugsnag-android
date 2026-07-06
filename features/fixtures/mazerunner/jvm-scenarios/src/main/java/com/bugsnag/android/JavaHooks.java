@@ -4,6 +4,7 @@ import com.bugsnag.android.Client;
 import com.bugsnag.android.Event;
 import com.bugsnag.android.EventStore;
 import com.bugsnag.android.internal.ImmutableConfig;
+import com.bugsnag.android.internal.NoPerformanceInstrumentation;
 
 import androidx.annotation.NonNull;
 
@@ -62,7 +63,6 @@ public class JavaHooks {
     /**
      * Trigger an internal bugsnag error
      */
-
     @NonNull
     public static void triggerInternalBugsnagForError(Client client) {
         client.getEventStore().write((stream) -> {
@@ -75,9 +75,15 @@ public class JavaHooks {
         client.getEventStore().flushAsync();
     }
 
+    /**
+     * Flushes the error store on launch using the last run info.
+     */
     @NonNull
     public static void flushErrorStoreOnLaunch(Client client) {
-        client.getEventStore().flushOnLaunch(client.getLastRunInfo());
+        client.getEventStore().flushOnLaunch(
+                client.getLastRunInfo(),
+                NoPerformanceInstrumentation.INSTANCE
+        );
     }
 
     @NonNull
