@@ -16,6 +16,7 @@ import org.mockito.Mock
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.verifyNoInteractions
+import org.mockito.Mockito.verifyNoMoreInteractions
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import java.util.Date
@@ -146,15 +147,32 @@ class RemoteConfigStateTest {
 
         val disabledState = RemoteConfigState(mockStore, mockConfig, mockNotifier, mockBackgroundTaskService)
 
+        verify(mockStore).clear()
+
         // When - getRemoteConfig is called
         val result = disabledState.getRemoteConfig(100L, TimeUnit.MILLISECONDS)
 
         // Then - should return null immediately
         assertNull(result)
 
-        // Verify no interactions with store or background service
-        verifyNoInteractions(mockStore)
+        // Verify no additional interactions with store or background service
+        verifyNoMoreInteractions(mockStore)
         verifyNoInteractions(mockBackgroundTaskService)
+    }
+
+    @Test
+    fun scheduleDownloadIfRequiredRefreshesNearExpiryConfig() {
+        val nearExpiryConfig = createValidRemoteConfig(
+            "near-expiry",
+            futureDate(RemoteConfigState.REFRESH_BUFFER_MS - 1000)
+        )
+        `when`(mockStore.currentOrExpired()).thenReturn(nearExpiryConfig)
+        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.IO), any(Runnable::class.java)))
+            .thenReturn(mockFuture)
+
+        remoteConfigState.scheduleDownloadIfRequired()
+
+        verify(mockBackgroundTaskService).submitTask(eq(TaskType.IO), any(Runnable::class.java))
     }
 
     private fun createValidRemoteConfig(tag: String, expiry: Date): RemoteConfig {

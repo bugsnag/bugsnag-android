@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Test
 
 class EndpointConfigValidationTest {
@@ -36,5 +37,24 @@ class EndpointConfigValidationTest {
         )
         assertEquals("https://notify.example.com", config.endpoints.notify)
         assertEquals("https://sessions.example.com", config.endpoints.sessions)
+        assertEquals("https://config.bugsnag.com/", config.endpoints.configuration)
+    }
+
+    /** The configuration endpoint should participate in equality checks. */
+    @Test
+    fun configurationEndpointAffectsEquality() {
+        val withConfig = EndpointConfiguration(
+            "https://notify.example.com",
+            "https://sessions.example.com",
+            "https://config.example.com"
+        )
+        val withoutConfig = EndpointConfiguration(
+            "https://notify.example.com",
+            "https://sessions.example.com",
+            null
+        )
+
+        assertNotEquals(withConfig, withoutConfig)
+        assertNotEquals(withConfig.hashCode(), withoutConfig.hashCode())
     }
 }

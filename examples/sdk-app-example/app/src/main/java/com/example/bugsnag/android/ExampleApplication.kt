@@ -3,11 +3,55 @@ package com.example.bugsnag.android
 import android.app.Application
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
+import com.bugsnag.android.Delivery
+import com.bugsnag.android.DeliveryParams
+import com.bugsnag.android.DeliveryStatus
+import com.bugsnag.android.EventPayload
+import com.bugsnag.android.Session
 import com.bugsnag.android.okhttp.BugsnagOkHttpPlugin
 import okhttp3.OkHttpClient
-import java.io.File
+import java.io.IOException
+import java.net.HttpURLConnection
+import java.net.URL
 
 class ExampleApplication : Application() {
+
+    private class ExampleDelivery : Delivery {
+        override fun deliver(payload: Session, deliveryParams: DeliveryParams): DeliveryStatus {
+            return deliverBytes(payload.toByteArray(), deliveryParams)
+        }
+
+        override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
+            return deliverBytes(payload.toByteArray(), deliveryParams)
+        }
+
+        private fun deliverBytes(bytes: ByteArray, deliveryParams: DeliveryParams): DeliveryStatus {
+            var connection: HttpURLConnection? = null
+            return try {
+                connection = URL(deliveryParams.endpoint).openConnection() as HttpURLConnection
+                connection.requestMethod = "POST"
+                connection.doOutput = true
+                connection.setFixedLengthStreamingMode(bytes.size)
+                connection.connectTimeout = 15_000
+                connection.readTimeout = 15_000
+
+                deliveryParams.headers.forEach { (key, value) ->
+                    if (value != null) {
+                        connection.addRequestProperty(key, value)
+                    }
+                }
+
+                connection.outputStream.use { it.write(bytes) }
+
+                val responseCode = connection.responseCode
+                DeliveryStatus.forHttpResponseCode(responseCode)
+            } catch (exc: IOException) {
+                DeliveryStatus.UNDELIVERED
+            } finally {
+                connection?.disconnect()
+            }
+        }
+    }
 
     private val bugsnagOkHttpPlugin = BugsnagOkHttpPlugin()
     val httpClient = OkHttpClient.Builder()
@@ -16,13 +60,6 @@ class ExampleApplication : Application() {
 
     companion object {
         init {
-//            if you support API <= 17 you should uncomment this to load the bugsnag library
-//            before any libraries that link to it
-//            https://docs.bugsnag.com/platforms/android/#initialize-the-bugsnag-client
-//
-//            System.loadLibrary("bugsnag-ndk")
-//            System.loadLibrary("bugsnag-plugin-android-anr")
-
             System.loadLibrary("entrypoint")
         }
     }
@@ -33,6 +70,7 @@ class ExampleApplication : Application() {
         super.onCreate()
 
         val config = Configuration.load(this)
+        config.setDelivery(ExampleDelivery())
         config.setUser("123456", "joebloggs@example.com", "Joe Bloggs")
         config.addMetadata("user", "age", 31)
         config.addPlugin(bugsnagOkHttpPlugin)
@@ -49,5 +87,6 @@ class ExampleApplication : Application() {
         // Initialise native callbacks
         performNativeBugsnagSetup()
     }
+
 
 }

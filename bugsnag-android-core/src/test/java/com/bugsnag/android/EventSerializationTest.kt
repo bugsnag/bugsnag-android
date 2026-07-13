@@ -98,18 +98,27 @@ internal class EventSerializationTest {
 
                 createEvent {
                     createMetadataStressTest(it)
-                }
+                },
+
+                // remote config disabled at config level
+                createEvent(remoteConfigEnabled = false)
             )
         }
 
-        private fun createEvent(cb: (event: Event) -> Unit = {}): Event {
+        private fun createEvent(
+            remoteConfigEnabled: Boolean = true,
+            cb: (event: Event) -> Unit = {}
+        ): Event {
+            val config = generateConfiguration().apply {
+                projectPackages = setOf("com.example.foo")
+                if (!remoteConfigEnabled) {
+                    setEndpoints(EndpointConfiguration(endpoints.notify, endpoints.sessions))
+                }
+            }
+
             val event = Event(
                 null,
-                generateImmutableConfig(
-                    generateConfiguration().apply {
-                        projectPackages = setOf("com.example.foo")
-                    }
-                ),
+                generateImmutableConfig(config),
                 SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION),
                 NoopLogger
             )

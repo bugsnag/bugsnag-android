@@ -136,3 +136,94 @@ Feature: Remote config discard rules are applied
       | exceptions.0.errorClass    | exceptions.0.message |
       | java.lang.RuntimeException | Handled exception    |
     And the event "usage.remoteConfig" is true
+
+  Scenario: Remote config can be disabled
+    When I configure the app to run in the "disable-remote-config" state
+    And I prepare an error config with:
+      | type     | name          | value                                           |
+      | property | body          | @features/support/config/rules_all_handled.json  |
+      | property | status        | 200                                             |
+      | header   | Cache-Control | max-age=604800                                  |
+    And I run "RemoteConfigBasicScenario"
+    And I relaunch the app after a crash
+    And I configure Bugsnag for "RemoteConfigBasicScenario"
+    And I wait to receive 2 errors
+    And the received errors match:
+      | exceptions.0.errorClass    | exceptions.0.message |
+      | java.lang.RuntimeException | Handled exception    |
+      | java.io.IOException        | Unhandled exception  |
+    Then the report contains the required fields
+    And the event "severity" equals "warning"
+    And the event "unhandled" is false
+    And the event "usage.remoteConfig" is false
+
+  Scenario: Remote config expiry causes the next load to fetch a fresh config
+    When I prepare an error config with:
+      | type     | name          | value                                           |
+      | property | body          | @features/support/config/rules_all_handled.json  |
+      | property | status        | 200                                             |
+      | header   | Cache-Control | max-age=0                                       |
+    And I run "RemoteConfigBasicScenario"
+    And I relaunch the app after a crash
+    And I prepare an error config with:
+      | type     | name          | value                                  |
+      | property | body          | @features/support/config/no_rules.json  |
+      | property | status        | 200                                    |
+      | header   | Cache-Control | max-age=604800                         |
+    And I configure Bugsnag for "RemoteConfigBasicScenario"
+    And I wait to receive 2 errors
+    And the received errors match:
+      | exceptions.0.errorClass    | exceptions.0.message |
+      | java.lang.RuntimeException | Handled exception    |
+      | java.io.IOException        | Unhandled exception  |
+    Then the report contains the required fields
+    And the event "severity" equals "warning"
+    And the event "unhandled" is false
+    And the event "usage.remoteConfig" is true
+
+  Scenario: Remote config reloads cached rules after a 304 response
+    When I prepare an error config with:
+      | type     | name          | value                                           |
+      | property | body          | @features/support/config/rules_all_handled.json  |
+      | property | status        | 200                                             |
+      | header   | Cache-Control | max-age=604800                                  |
+    And I run "RemoteConfigBasicScenario"
+    And I relaunch the app after a crash
+    And I prepare an error config with:
+      | type     | name          | value                                     |
+      | property | body          | @features/support/config/invalid.json     |
+      | property | status        | 304                                      |
+      | header   | Cache-Control | max-age=604800                           |
+    And I configure Bugsnag for "RemoteConfigBasicScenario"
+    And I wait to receive an error
+    And the received errors match:
+      | exceptions.0.errorClass | exceptions.0.message |
+      | java.io.IOException     | Unhandled exception  |
+    Then the report contains the required fields
+    And the event "severity" equals "error"
+    And the event "unhandled" is true
+    And the event "usage.remoteConfig" is true
+
+  Scenario: Remote config keeps cached rules when the server errors
+    When I prepare an error config with:
+      | type     | name          | value                                           |
+      | property | body          | @features/support/config/rules_all_handled.json  |
+      | property | status        | 200                                             |
+      | header   | Cache-Control | max-age=604800                                  |
+    And I run "RemoteConfigBasicScenario"
+    And I relaunch the app after a crash
+    And I prepare an error config with:
+      | type     | name          | value                                     |
+      | property | body          | @features/support/config/invalid.json     |
+      | property | status        | 500                                      |
+      | header   | Cache-Control | max-age=604800                           |
+    And I configure Bugsnag for "RemoteConfigBasicScenario"
+    And I wait to receive an error
+    And the received errors match:
+      | exceptions.0.errorClass | exceptions.0.message |
+      | java.io.IOException     | Unhandled exception  |
+    Then the report contains the required fields
+    And the event "severity" equals "error"
+    And the event "unhandled" is true
+    And the event "usage.remoteConfig" is true
+

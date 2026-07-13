@@ -30,7 +30,7 @@ class EndpointConfiguration(
     constructor(
         notify: String = NOTIFY_ENDPOINT,
         sessions: String = SESSIONS_ENDPOINT
-    ) : this(notify, sessions, null)
+    ) : this(notify, sessions, CONFIGURATION_ENDPOINT)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -40,6 +40,7 @@ class EndpointConfiguration(
 
         if (notify != other.notify) return false
         if (sessions != other.sessions) return false
+        if (configuration != other.configuration) return false
 
         return true
     }
@@ -47,6 +48,7 @@ class EndpointConfiguration(
     override fun hashCode(): Int {
         var result = notify.hashCode()
         result = 31 * result + sessions.hashCode()
+        result = 31 * result + (configuration?.hashCode() ?: 0)
         return result
     }
 }

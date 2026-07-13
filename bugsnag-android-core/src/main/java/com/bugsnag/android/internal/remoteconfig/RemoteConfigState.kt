@@ -18,6 +18,12 @@ internal class RemoteConfigState(
 ) {
     private val enabled: Boolean = config.endpoints.configuration != null
 
+    init {
+        if (!enabled) {
+            store.clear()
+        }
+    }
+
     private val isRequestInFlight = AtomicBoolean(false)
 
     fun scheduleDownloadIfRequired() {
@@ -112,7 +118,7 @@ internal class RemoteConfigState(
     }
 
     internal companion object {
-        const val REFRESH_BUFFER_MS = 0L
+        val REFRESH_BUFFER_MS = TimeUnit.HOURS.toMillis(2)
 
         val nullFuture = object : Future<RemoteConfig?> {
             override fun cancel(mayInterruptIfRunning: Boolean): Boolean = false

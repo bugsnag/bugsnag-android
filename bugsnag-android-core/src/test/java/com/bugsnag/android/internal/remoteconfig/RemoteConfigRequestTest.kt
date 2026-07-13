@@ -395,6 +395,23 @@ class RemoteConfigRequestTest {
         assertExpiryWithinTolerance(result!!.configurationExpiry.time, maxAge * 1000)
     }
 
+    @Test
+    fun requestConfigReturnsNullWhenConfigurationEndpointIsMissing() {
+        val request = RemoteConfigRequest(
+            null,
+            apiKey,
+            notifier,
+            appVersion,
+            versionCode,
+            releaseStage,
+            packageName,
+            null,
+            logger
+        )
+
+        assertNull(request.requestConfig())
+    }
+
     private fun createRequest(existingConfig: com.bugsnag.android.RemoteConfig? = null): RemoteConfigRequest {
         return RemoteConfigRequest(
             baseUrl,

@@ -34,7 +34,7 @@
   },
   "breadcrumbs": [],
   "usage": {
-    "remoteConfig": false
+    "remoteConfig": true
   },
   "threads": [],
   "featureFlags": [],
