@@ -73,6 +73,10 @@ internal fun validateJson(resourceName: String, json: String) {
     val rawJson = JsonParser().read(resourceName)
     val expectedJson = removeUnquotedWhitespace(rawJson)
     val generatedJson = removeUnquotedWhitespace(json)
+    if (expectedJson != generatedJson) {
+        println("Expected: $expectedJson")
+        println("Actual: $generatedJson")
+    }
     Assert.assertEquals(expectedJson, generatedJson)
 }
 

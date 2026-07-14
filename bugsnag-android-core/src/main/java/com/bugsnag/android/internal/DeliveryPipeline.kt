@@ -50,8 +50,12 @@ internal class DeliveryPipeline(
     }
 
     private fun getRemoteConfig(isLaunchCrash: Boolean): RemoteConfig? {
-        val timeout = if (isLaunchCrash) LAUNCH_CRASH_LOAD_TIMEOUT_MS else Long.MAX_VALUE
-        return remoteConfigState.getRemoteConfig(timeout, TimeUnit.MILLISECONDS)
+        if (isLaunchCrash) {
+            return remoteConfigState.getRemoteConfig(LAUNCH_CRASH_LOAD_TIMEOUT_MS, TimeUnit.MILLISECONDS)
+        }
+        // For non-launch crashes, we don't want to block indefinitely.
+        // If it's already in memory, we use it; otherwise, we'll get it next time.
+        return remoteConfigState.getRemoteConfig(0, TimeUnit.MILLISECONDS)
     }
 
     internal companion object {

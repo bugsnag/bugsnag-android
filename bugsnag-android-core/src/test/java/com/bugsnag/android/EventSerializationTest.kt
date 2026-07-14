@@ -4,6 +4,7 @@ import com.bugsnag.android.BugsnagTestUtils.generateAppWithState
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import com.bugsnag.android.BugsnagTestUtils.generateDeviceWithState
 import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
+import com.bugsnag.android.internal.InternalMetricsImpl
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -126,6 +127,11 @@ internal class EventSerializationTest {
             event.app = generateAppWithState()
             event.device = generateDeviceWithState()
             event.device.cpuAbi = emptyArray()
+            event.setInternalMetrics(
+                InternalMetricsImpl().apply {
+                    this.remoteConfigEnabled = remoteConfigEnabled
+                }
+            )
             cb(event)
             return event
         }

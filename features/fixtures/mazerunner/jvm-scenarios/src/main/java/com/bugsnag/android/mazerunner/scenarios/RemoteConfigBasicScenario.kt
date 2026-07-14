@@ -4,8 +4,8 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import com.bugsnag.android.Bugsnag
-import com.bugsnag.android.EndpointConfiguration
 import com.bugsnag.android.Configuration
+import com.bugsnag.android.EndpointConfiguration
 import java.io.IOException
 
 class RemoteConfigBasicScenario(

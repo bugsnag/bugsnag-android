@@ -22,13 +22,18 @@ internal class EventStoreConfinementTest {
 
     @Before
     fun setUp() {
+        val context = ApplicationProvider.getApplicationContext<android.content.Context>()
+        val persistenceDir = File(context.cacheDir, "event-store-confinement")
+        persistenceDir.deleteRecursively()
+        persistenceDir.mkdirs()
+
         // setup delivery for interception
         retainingDelivery = RetainingDelivery(EVENT_CONFINEMENT_ATTEMPTS)
-        val cfg = BugsnagTestUtils.generateConfiguration().apply {
+        val cfg = BugsnagTestUtils.generateConfiguration(persistenceDir).apply {
             autoTrackSessions = false
             delivery = retainingDelivery
         }
-        client = Client(ApplicationProvider.getApplicationContext(), cfg)
+        client = Client(context, cfg)
     }
 
     /**
