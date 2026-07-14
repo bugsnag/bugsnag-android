@@ -9,7 +9,7 @@ internal class BugsnagMapperTest {
 
     @Test
     fun mapsEventsBidirectionally() {
-        repeat(8) { index ->
+        repeat(11) { index ->
             val contentMap = JsonHelper.deserialize(
                 this.javaClass.getResourceAsStream("/event_serialization_$index.json")!!
             )
