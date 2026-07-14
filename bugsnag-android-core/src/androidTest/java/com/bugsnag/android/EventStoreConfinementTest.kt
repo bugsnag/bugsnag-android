@@ -8,6 +8,7 @@ import org.junit.Test
 import java.io.File
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicInteger
 
 private const val EVENT_CONFINEMENT_ATTEMPTS = 20
 
@@ -37,24 +38,45 @@ internal class EventStoreConfinementTest {
     }
 
     /**
-     * Calling notify() is confined to a single thread
+     * Calling delivery of handled events is confined to a single thread
      */
     @Test
     fun notifyIsThreadConfined() {
         // send 20 errors
         repeat(EVENT_CONFINEMENT_ATTEMPTS) { count ->
-            client.notify(RuntimeException("$count"))
+            val event = Event(
+                RuntimeException("$count"),
+                client.immutableConfig,
+                SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION),
+                NoopLogger
+            ).apply {
+                app = BugsnagTestUtils.generateAppWithState()
+                device = BugsnagTestUtils.generateDeviceWithState()
+            }
+            client.deliveryDelegate.deliver(event)
         }
         retainingDelivery.latch.await(10, TimeUnit.SECONDS)
 
         // confirm that no dupe requests are sent and that the request order is deterministic
-        val payloads = retainingDelivery.payloads
-        assertEquals(EVENT_CONFINEMENT_ATTEMPTS, payloads.size)
-        assertEquals(EVENT_CONFINEMENT_ATTEMPTS, payloads.toSet().size)
+        val payloads = retainingDelivery.payloadJsons
+        val deliveryInvocations = retainingDelivery.deliveryInvocations.get()
+        val eventStoreEmpty = client.getEventStore().isEmpty()
+        assertEquals(
+            "deliveryInvocations=$deliveryInvocations; eventStoreEmpty=$eventStoreEmpty; payloads=$payloads",
+            EVENT_CONFINEMENT_ATTEMPTS,
+            payloads.size
+        )
+        assertEquals(
+            "deliveryInvocations=$deliveryInvocations; eventStoreEmpty=$eventStoreEmpty; payloads=$payloads",
+            EVENT_CONFINEMENT_ATTEMPTS,
+            payloads.toSet().size
+        )
 
-        payloads.forEachIndexed { index, event ->
-            val exc = requireNotNull(event.originalError)
-            assertEquals("$index", exc.message)
+        payloads.forEachIndexed { index, json ->
+            assertTrue(
+                "expected payload $index to contain message '$index' but was: $json",
+                json.contains("\"message\":\"$index\"")
+            )
         }
     }
 
@@ -95,7 +117,8 @@ internal class EventStoreConfinementTest {
      */
     private class RetainingDelivery(attempts: Int) : Delivery {
         val files = mutableListOf<File>()
-        val payloads = mutableListOf<Event>()
+        val payloadJsons = mutableListOf<String>()
+        val deliveryInvocations = AtomicInteger(0)
         val latch = CountDownLatch(attempts)
 
         override fun deliver(payload: Session, deliveryParams: DeliveryParams) =
@@ -105,9 +128,15 @@ internal class EventStoreConfinementTest {
             payload: EventPayload,
             deliveryParams: DeliveryParams
         ): DeliveryStatus {
-            payload.event?.let(payloads::add)
-            payload.eventFile?.let(files::add)
-            latch.countDown()
+            deliveryInvocations.incrementAndGet()
+            try {
+                payloadJsons.add(String(payload.toByteArray(), Charsets.UTF_8))
+                payload.eventFile?.let(files::add)
+            } catch (exc: Exception) {
+                payloadJsons.add("EXCEPTION:${exc::class.java.name}:${exc.message}")
+            } finally {
+                latch.countDown()
+            }
             return DeliveryStatus.DELIVERED
         }
     }
