@@ -28,9 +28,11 @@ class RemoteConfigBasicScenario(
         super.startScenario()
         Bugsnag.notify(RuntimeException("Handled exception"))
 
-        Thread {
-            Thread.sleep(3000)
-            throw IOException("Unhandled exception")
-        }.start()
+        handler.postDelayed(
+            {
+                throw IOException("Unhandled exception")
+            },
+            3000
+        )
     }
 }
