@@ -5,7 +5,10 @@ import android.os.Handler
 import android.os.Looper
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
+import com.bugsnag.android.DeliveryStatus
 import com.bugsnag.android.EndpointConfiguration
+import com.bugsnag.android.createDefaultDelivery
+import com.bugsnag.android.mazerunner.InterceptingDelivery
 import java.io.IOException
 
 class RemoteConfigBasicScenario(
@@ -13,9 +16,25 @@ class RemoteConfigBasicScenario(
     context: Context,
     eventMetadata: String
 ) : Scenario(config, context, eventMetadata) {
-    val handler = Handler(Looper.getMainLooper())
+    companion object {
+        private const val UNHANDLED_DELAY_MS = 3000L
+    }
+
+    private val handler = Handler(Looper.getMainLooper())
+    private var deliveredHandledError = false
 
     init {
+        config.delivery = InterceptingDelivery(createDefaultDelivery()) { status ->
+            check(status == DeliveryStatus.DELIVERED) {
+                "Request failed, aborting scenario. status=$status"
+            }
+
+            if (!deliveredHandledError) {
+                deliveredHandledError = true
+                handler.postDelayed({ throw IOException("Unhandled exception") }, UNHANDLED_DELAY_MS)
+            }
+        }
+
         if (eventMetadata == "disable-remote-config") {
             config.endpoints = EndpointConfiguration(
                 config.endpoints.notify,
@@ -27,12 +46,5 @@ class RemoteConfigBasicScenario(
     override fun startScenario() {
         super.startScenario()
         Bugsnag.notify(RuntimeException("Handled exception"))
-
-        handler.postDelayed(
-            {
-                throw IOException("Unhandled exception")
-            },
-            3000
-        )
     }
 }
