@@ -5,10 +5,13 @@ import android.os.Handler
 import android.os.Looper
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
+import com.bugsnag.android.Delivery
+import com.bugsnag.android.DeliveryParams
 import com.bugsnag.android.DeliveryStatus
 import com.bugsnag.android.EndpointConfiguration
+import com.bugsnag.android.EventPayload
+import com.bugsnag.android.Session
 import com.bugsnag.android.createDefaultDelivery
-import com.bugsnag.android.mazerunner.InterceptingDelivery
 import java.io.IOException
 
 class RemoteConfigBasicScenario(
@@ -24,14 +27,24 @@ class RemoteConfigBasicScenario(
     private var deliveredHandledError = false
 
     init {
-        config.delivery = InterceptingDelivery(createDefaultDelivery()) { status ->
-            check(status == DeliveryStatus.DELIVERED) {
-                "Request failed, aborting scenario. status=$status"
+        val baseDelivery = createDefaultDelivery()
+        config.delivery = object : Delivery {
+            override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
+                val status = baseDelivery.deliver(payload, deliveryParams)
+                check(status == DeliveryStatus.DELIVERED) {
+                    "Request failed, aborting scenario. status=$status"
+                }
+
+                if (!deliveredHandledError && payload.event?.isUnhandled == false) {
+                    deliveredHandledError = true
+                    handler.postDelayed({ throw IOException("Unhandled exception") }, UNHANDLED_DELAY_MS)
+                }
+
+                return status
             }
 
-            if (!deliveredHandledError) {
-                deliveredHandledError = true
-                handler.postDelayed({ throw IOException("Unhandled exception") }, UNHANDLED_DELAY_MS)
+            override fun deliver(payload: Session, deliveryParams: DeliveryParams): DeliveryStatus {
+                return baseDelivery.deliver(payload, deliveryParams)
             }
         }
 
