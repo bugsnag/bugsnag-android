@@ -20,7 +20,7 @@ class RemoteConfigBasicScenario(
     eventMetadata: String
 ) : Scenario(config, context, eventMetadata) {
     companion object {
-        private const val UNHANDLED_DELAY_MS = 3000L
+        private const val UNHANDLED_DELAY_MS = 1000L
     }
 
     private val handler = Handler(Looper.getMainLooper())
@@ -31,12 +31,14 @@ class RemoteConfigBasicScenario(
         config.delivery = object : Delivery {
             override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
                 val status = baseDelivery.deliver(payload, deliveryParams)
+                Log.i("RemoteConfigBasicScenario", "Delivered payload: ${payload.event?.errors?.get(0)?.errorClass}, status=$status")
                 check(status == DeliveryStatus.DELIVERED) {
                     "Request failed, aborting scenario. status=$status"
                 }
 
                 if (!deliveredHandledError && payload.event?.isUnhandled == false) {
                     deliveredHandledError = true
+                    Log.i("RemoteConfigBasicScenario", "Scheduling unhandled exception in ${UNHANDLED_DELAY_MS}ms")
                     handler.postDelayed({ throw IOException("Unhandled exception") }, UNHANDLED_DELAY_MS)
                 }
 

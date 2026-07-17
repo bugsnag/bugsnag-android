@@ -132,14 +132,14 @@ internal sealed class DiscardRule : JsonStream.Streamable {
                 val jsonParser = JsonCollectionParser(payload.toByteArray().inputStream())
 
                 @Suppress("UNCHECKED_CAST")
-                val json = jsonParser.parse() as? Map<String, Any>
+                val json = jsonParser.parse() as? Map<String, Any?>
                     ?: return false
 
                 val eventsJson = json[KEY_EVENTS] as? List<*>
                     ?: return false
 
                 @Suppress("UNCHECKED_CAST")
-                val eventJson = eventsJson.singleOrNull() as? Map<String, Any>
+                val eventJson = eventsJson.singleOrNull() as? Map<String, Any?>
                     ?: return false
 
                 return shouldDiscardJson(eventJson)
@@ -148,7 +148,7 @@ internal sealed class DiscardRule : JsonStream.Streamable {
             }
         }
 
-        internal fun shouldDiscardJson(json: Map<String, Any>): Boolean {
+        internal fun shouldDiscardJson(json: Map<String, Any?>): Boolean {
             val lPaths = paths ?: return false
             val hashString = calculatePayloadHash(lPaths, json)
             return matches.contains(hashString)
@@ -177,7 +177,7 @@ internal sealed class DiscardRule : JsonStream.Streamable {
 
             internal fun calculatePayloadHash(
                 paths: List<JsonDataExtractor>,
-                json: Map<String, Any>
+                json: Map<String, Any?>
             ): String {
                 val output = PathOutputHasher()
                 paths.forEach { path -> path.extract(json, output) }
@@ -226,7 +226,7 @@ internal class PathOutputHasher : (String) -> Unit {
             digest.update(separator)
         }
 
-        digest.update(item.toByteArray())
+        digest.update(item.toByteArray(Charsets.UTF_8))
         firstItem = false
     }
 
