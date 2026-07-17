@@ -20,7 +20,7 @@ class RemoteConfigBasicScenario(
     eventMetadata: String
 ) : Scenario(config, context, eventMetadata) {
     companion object {
-        private const val UNHANDLED_DELAY_MS = 1000L
+        private const val UNHANDLED_DELAY_MS = 3000L
     }
 
     private val handler = Handler(Looper.getMainLooper())

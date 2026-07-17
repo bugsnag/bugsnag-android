@@ -397,7 +397,11 @@ public class Configuration implements CallbackAware, MetadataAware, UserAware, F
      * Logger interface.
      */
     public void setLogger(@Nullable Logger logger) {
-        impl.setLogger(logger);
+        if (logger != null) {
+            impl.setLogger(logger);
+        } else {
+            logNull("logger");
+        }
     }
 
     /**

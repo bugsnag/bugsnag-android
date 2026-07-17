@@ -95,7 +95,7 @@ internal class EventStoreConfinementTest {
             eventStore.write(event)
             eventStore.flushAsync()
         }
-        retainingDelivery.latch.await(5, TimeUnit.SECONDS)
+        assertTrue(retainingDelivery.latch.await(10, TimeUnit.SECONDS))
 
         // confirm that no dupe requests are sent
         val filenames = retainingDelivery.files

@@ -143,6 +143,14 @@ public class ConfigurationFacadeTest {
     }
 
     @Test
+    public void loggerInvalid() {
+        Logger currentLogger = config.impl.getLogger();
+        config.setLogger(null);
+        assertEquals(currentLogger, config.impl.getLogger());
+        assertNotNull(logger.getMsg());
+    }
+
+    @Test
     public void deliveryValid() {
         Delivery delivery = BugsnagTestUtils.generateDelivery();
         config.setDelivery(delivery);
