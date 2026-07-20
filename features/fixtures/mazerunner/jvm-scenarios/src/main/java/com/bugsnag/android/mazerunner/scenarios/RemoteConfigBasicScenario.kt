@@ -20,7 +20,9 @@ class RemoteConfigBasicScenario(
     eventMetadata: String
 ) : Scenario(config, context, eventMetadata) {
     companion object {
-        private const val UNHANDLED_DELAY_MS = 3000L
+        // Give the handled error enough time to flush before the crash occurs,
+        // otherwise both errors can be coalesced into the same delivery on fast configs.
+        private const val UNHANDLED_DELAY_MS = 5000L
     }
 
     private val handler = Handler(Looper.getMainLooper())
