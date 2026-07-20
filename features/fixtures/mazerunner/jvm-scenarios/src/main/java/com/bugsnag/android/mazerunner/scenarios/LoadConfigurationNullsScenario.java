@@ -31,12 +31,12 @@ public class LoadConfigurationNullsScenario extends Scenario {
     public void startBugsnag(boolean startBugsnagOnly) {
         setStartBugsnagOnly(startBugsnagOnly);
         Configuration testConfig = new Configuration("12312312312312312312312312312312");
+
         // Setup
         testConfig.setAutoDetectErrors(true);
         testConfig.setAutoTrackSessions(false);
-        testConfig.setEndpoints(new EndpointConfiguration(notifyEndpoint, sessionEndpoint));
 
-        // Nullable options
+        // Nullable options (test that null values are handled gracefully)
         testConfig.setAppType(null);
         testConfig.setAppVersion(null);
         testConfig.setContext(null);
@@ -44,7 +44,7 @@ public class LoadConfigurationNullsScenario extends Scenario {
         testConfig.setDiscardClasses(null);
         testConfig.setEnabledBreadcrumbTypes(null);
         testConfig.setEnabledReleaseStages(null);
-        testConfig.setEndpoints(null);
+        testConfig.setEndpoints(null);       // ← test null first
         testConfig.setLogger(null);
         testConfig.setProjectPackages(null);
         testConfig.setRedactedKeys(null);
@@ -52,6 +52,9 @@ public class LoadConfigurationNullsScenario extends Scenario {
         testConfig.setSendThreads(null);
         testConfig.setUser(null, null, null);
         testConfig.setVersionCode(null);
+
+        // ✅ Set endpoints LAST so Maze Runner address is not overwritten
+        testConfig.setEndpoints(new EndpointConfiguration(notifyEndpoint, sessionEndpoint));
 
         testConfig.addOnError(new OnErrorCallback() {
             @Override

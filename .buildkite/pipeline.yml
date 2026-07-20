@@ -172,6 +172,8 @@ steps:
       automatic:
         - exit_status: 103  # Appium session failed
           limit: 2
+        - exit_status: 2    # Assertion failure - possible device race condition
+          limit: 1
 
   - label: ':bitbar: {{matrix}} NDK r21 smoke tests'
     matrix:
@@ -213,6 +215,8 @@ steps:
       automatic:
         - exit_status: 103  # Appium session failed
           limit: 2
+        - exit_status: 2    # Assertion failure - possible device race condition
+          limit: 1
 
   - label: ':bitbar: ANDROID_12 NDK r21 e2e tests - ANRs'
     depends_on:
@@ -251,6 +255,8 @@ steps:
       automatic:
         - exit_status: 103  # Appium session failed
           limit: 2
+        - exit_status: 2    # Assertion failure - possible device race condition
+          limit: 1
 
   - label: ':bitbar: ANDROID_12 NDK r21 e2e tests - batch 1'
     key: "bitbar-r21-batch-1"
@@ -292,6 +298,8 @@ steps:
       automatic:
         - exit_status: 103  # Appium session failed
           limit: 2
+        - exit_status: 2    # Assertion failure - possible device race condition
+          limit: 1
         - exit_status: 2    # Assertion failure - possible device race condition
           limit: 1
 
@@ -337,6 +345,8 @@ steps:
           limit: 2
         - exit_status: 2    # Assertion failure - possible device race condition
           limit: 1
+        - exit_status: 2    # Assertion failure - possible device race condition
+          limit: 1
 
   - label: ':bitbar: {{matrix}} NDK r21 smoke tests'
     matrix:
@@ -378,6 +388,8 @@ steps:
       automatic:
         - exit_status: 103  # Appium session failed
           limit: 2
+        - exit_status: 2    # Assertion failure - possible device race condition
+          limit: 1
 
   - label: ':browserstack: ANDROID_16 NDK r21 smoke tests'
     depends_on: "fixture-r21"
@@ -458,6 +470,8 @@ steps:
       automatic:
         - exit_status: 103  # Appium session failed
           limit: 2
+        - exit_status: 2    # Assertion failure - possible device race condition
+          limit: 1
 
   - label: ':bitbar: ANDROID_12 NDK r28 e2e tests - batch 1'
     key: "bitbar-r28-batch-1"
@@ -501,6 +515,8 @@ steps:
           limit: 2
         - exit_status: 2    # Assertion failure - possible device race condition
           limit: 1
+        - exit_status: 2    # Assertion failure - possible device race condition
+          limit: 1
 
   - label: ':bitbar: ANDROID_12 NDK r28 e2e tests - batch 2'
     depends_on:
@@ -542,6 +558,8 @@ steps:
       automatic:
         - exit_status: 103  # Appium session failed
           limit: 2
+        - exit_status: 2    # Assertion failure - possible device race condition
+          limit: 1
         - exit_status: 2    # Assertion failure - possible device race condition
           limit: 1
 

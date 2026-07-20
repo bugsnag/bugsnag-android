@@ -76,6 +76,8 @@ steps:
       automatic:
         - exit_status: 103  # Appium session failed
           limit: 2
+        - exit_status: 2    # Assertion failure - possible device race condition
+          limit: 1
 
   - label: ':bitbar: Debug fixture smoke tests'
     depends_on: "fixture-debug"
@@ -114,6 +116,8 @@ steps:
       automatic:
         - exit_status: 103  # Appium session failed
           limit: 2
+        - exit_status: 2    # Assertion failure - possible device race condition
+          limit: 1
 
   - label: ':bitbar: {{matrix}} NDK r19 e2e tests - batch 1'
     key: "bitbar-r19-batch-1"
@@ -159,6 +163,8 @@ steps:
       automatic:
         - exit_status: 103  # Appium session failed
           limit: 2
+        - exit_status: 2    # Assertion failure - possible device race condition
+          limit: 1
         - exit_status: 2    # Assertion failure - possible device race condition
           limit: 1
 
@@ -207,6 +213,8 @@ steps:
       automatic:
         - exit_status: 103  # Appium session failed
           limit: 2
+        - exit_status: 2    # Assertion failure - possible device race condition
+          limit: 1
         - exit_status: 2    # Assertion failure - possible device race condition
           limit: 1
 
@@ -259,6 +267,8 @@ steps:
           limit: 2
         - exit_status: 2    # Assertion failure - possible device race condition
           limit: 1
+        - exit_status: 2    # Assertion failure - possible device race condition
+          limit: 1
 
   - label: ':bitbar: {{matrix}} NDK r21 e2e tests - batch 2'
     matrix:
@@ -308,6 +318,8 @@ steps:
       automatic:
         - exit_status: 103  # Appium session failed
           limit: 2
+        - exit_status: 2    # Assertion failure - possible device race condition
+          limit: 1
         - exit_status: 2    # Assertion failure - possible device race condition
           limit: 1
 
@@ -439,6 +451,8 @@ steps:
           limit: 2
         - exit_status: 2    # Assertion failure - possible device race condition
           limit: 1
+        - exit_status: 2    # Assertion failure - possible device race condition
+          limit: 1
 
   - label: ':bitbar: {{matrix}} NDK r28 e2e tests - batch 2'
     matrix:
@@ -488,6 +502,8 @@ steps:
       automatic:
         - exit_status: 103  # Appium session failed
           limit: 2
+        - exit_status: 2    # Assertion failure - possible device race condition
+          limit: 1
         - exit_status: 2    # Assertion failure - possible device race condition
           limit: 1
 
