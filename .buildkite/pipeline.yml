@@ -300,8 +300,6 @@ steps:
           limit: 2
         - exit_status: 2    # Assertion failure - possible device race condition
           limit: 1
-        - exit_status: 2    # Assertion failure - possible device race condition
-          limit: 1
 
   - label: ':bitbar: ANDROID_12 NDK r21 e2e tests - batch 2'
     depends_on:
@@ -343,8 +341,6 @@ steps:
       automatic:
         - exit_status: 103  # Appium session failed
           limit: 2
-        - exit_status: 2    # Assertion failure - possible device race condition
-          limit: 1
         - exit_status: 2    # Assertion failure - possible device race condition
           limit: 1
 
@@ -515,8 +511,6 @@ steps:
           limit: 2
         - exit_status: 2    # Assertion failure - possible device race condition
           limit: 1
-        - exit_status: 2    # Assertion failure - possible device race condition
-          limit: 1
 
   - label: ':bitbar: ANDROID_12 NDK r28 e2e tests - batch 2'
     depends_on:
@@ -558,8 +552,6 @@ steps:
       automatic:
         - exit_status: 103  # Appium session failed
           limit: 2
-        - exit_status: 2    # Assertion failure - possible device race condition
-          limit: 1
         - exit_status: 2    # Assertion failure - possible device race condition
           limit: 1
 
