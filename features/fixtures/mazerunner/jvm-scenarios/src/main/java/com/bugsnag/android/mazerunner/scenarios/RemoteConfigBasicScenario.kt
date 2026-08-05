@@ -23,6 +23,7 @@ class RemoteConfigBasicScenario(
 ) : Scenario(config, context, eventMetadata) {
     companion object {
         private const val UNHANDLED_DELAY_MS = 5000L
+        private const val TIMEOUT_SECONDS = 10L
     }
 
     private val handledErrorDelivered = AtomicBoolean(false)
@@ -68,7 +69,7 @@ class RemoteConfigBasicScenario(
         super.startScenario()
         Thread {
             try {
-                handledDeliveryCompleted.await(10, TimeUnit.SECONDS)
+                handledDeliveryCompleted.await(TIMEOUT_SECONDS, TimeUnit.SECONDS)
                 Thread.sleep(UNHANDLED_DELAY_MS)
                 throw IOException("Unhandled exception")
             } catch (ex: InterruptedException) {
