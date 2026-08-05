@@ -12,9 +12,9 @@ import com.bugsnag.android.Session
 import com.bugsnag.android.createDefaultDelivery
 import com.bugsnag.android.mazerunner.LogLevel
 import java.io.IOException
-import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
 
 class RemoteConfigBasicScenario(
     config: Configuration,

@@ -2,7 +2,6 @@ package com.bugsnag.android.mazerunner.scenarios;
 
 import com.bugsnag.android.Bugsnag;
 import com.bugsnag.android.Configuration;
-import com.bugsnag.android.EndpointConfiguration;
 import com.bugsnag.android.Event;
 import com.bugsnag.android.OnErrorCallback;
 
@@ -13,9 +12,6 @@ import androidx.annotation.Nullable;
 
 public class LoadConfigurationNullsScenario extends Scenario {
 
-    private final String notifyEndpoint;
-    private final String sessionEndpoint;
-
     /**
      *
      */
@@ -23,8 +19,6 @@ public class LoadConfigurationNullsScenario extends Scenario {
                                           @NonNull Context context,
                                           @Nullable String eventMetadata) {
         super(config, context, eventMetadata);
-        this.notifyEndpoint = config.getEndpoints().getNotify();
-        this.sessionEndpoint = config.getEndpoints().getSessions();
     }
 
     @Override
@@ -53,8 +47,8 @@ public class LoadConfigurationNullsScenario extends Scenario {
         testConfig.setUser(null, null, null);
         testConfig.setVersionCode(null);
 
-        // ✅ Set endpoints LAST so Maze Runner address is not overwritten
-        testConfig.setEndpoints(new EndpointConfiguration(notifyEndpoint, sessionEndpoint));
+        // Restore the full Maze Runner endpoint configuration after exercising null values.
+        testConfig.setEndpoints(getConfig().getEndpoints());
 
         testConfig.addOnError(new OnErrorCallback() {
             @Override
