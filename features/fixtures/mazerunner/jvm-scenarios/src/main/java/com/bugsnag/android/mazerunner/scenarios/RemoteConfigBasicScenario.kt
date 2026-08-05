@@ -58,7 +58,8 @@ class RemoteConfigBasicScenario(
         if (eventMetadata == "disable-remote-config") {
             config.endpoints = EndpointConfiguration(
                 config.endpoints.notify,
-                config.endpoints.sessions
+                config.endpoints.sessions,
+                null
             )
         }
     }

@@ -240,7 +240,6 @@ Feature: Remote config discard rules are applied
     And I relaunch the app after a crash
     And I prepare an error config with:
       | type     | name          | value                                  |
-      | property | body          | @features/support/config/no_rules.json  |
       | property | status        | 304                                    |
       | header   | Cache-Control | max-age=604800                         |
     And I configure Bugsnag for "RemoteConfigBasicScenario"
