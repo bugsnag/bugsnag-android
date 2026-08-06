@@ -12,6 +12,8 @@ import com.bugsnag.android.Session
 import com.bugsnag.android.createDefaultDelivery
 import com.bugsnag.android.mazerunner.LogLevel
 import java.io.IOException
+import java.io.File
+import org.json.JSONObject
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
@@ -67,6 +69,7 @@ class RemoteConfigBasicScenario(
 
     override fun startScenario() {
         super.startScenario()
+        waitForFreshRemoteConfig()
         Thread {
             try {
                 handledDeliveryCompleted.await(TIMEOUT_SECONDS, TimeUnit.SECONDS)
@@ -77,5 +80,41 @@ class RemoteConfigBasicScenario(
             }
         }.start()
         Bugsnag.notify(RuntimeException("Handled exception"))
+    }
+
+    private fun waitForFreshRemoteConfig(timeoutMs: Long = TimeUnit.SECONDS.toMillis(TIMEOUT_SECONDS)) {
+        val configFile = remoteConfigFile() ?: return
+        val deadline = System.currentTimeMillis() + timeoutMs
+
+        while (System.currentTimeMillis() < deadline) {
+            val expiry = readRemoteConfigExpiry(configFile) ?: return
+            if (expiry > System.currentTimeMillis()) {
+                return
+            }
+
+            Thread.sleep(100)
+        }
+    }
+
+    private fun remoteConfigFile(): File? {
+        val versionCode = config.versionCode ?: return null
+        return File(File(context.cacheDir, "bugsnag/config"), "core-$versionCode.json")
+    }
+
+    private fun readRemoteConfigExpiry(configFile: File): Long? {
+        if (!configFile.exists()) {
+            return null
+        }
+
+        return try {
+            val expiry = JSONObject(configFile.readText()).optString("configurationExpiry")
+            if (expiry.isBlank()) {
+                null
+            } else {
+                java.time.Instant.parse(expiry).toEpochMilli()
+            }
+        } catch (_: Exception) {
+            null
+        }
     }
 }

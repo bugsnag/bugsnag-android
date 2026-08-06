@@ -319,8 +319,9 @@ class MainActivity : Activity() {
         // send HTTP requests for intercepted log messages and metrics from Bugsnag.
         // reuse notify endpoint as we don't care about logs when running mazerunner in manual mode
         val mazerunnerHttpClient = MazerunnerHttpClient.fromEndpoint(notifyUrl)
+        val effectiveRemoteConfigUrl = if (mode == "disable-remote-config") null else remoteConfigUrl
 
-        val config = prepareConfig(apiKey, notifyUrl, sessionsUrl, remoteConfigUrl, mazerunnerHttpClient) {
+        val config = prepareConfig(apiKey, notifyUrl, sessionsUrl, effectiveRemoteConfigUrl, mazerunnerHttpClient) {
             val logMessage = it
             val interceptedLogMessages = scenario?.getInterceptedLogMessages()
             interceptedLogMessages?.any {
