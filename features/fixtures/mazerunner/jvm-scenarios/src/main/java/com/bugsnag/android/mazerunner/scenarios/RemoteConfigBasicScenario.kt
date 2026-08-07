@@ -26,6 +26,7 @@ class RemoteConfigBasicScenario(
     companion object {
         private const val UNHANDLED_DELAY_MS = 5000L
         private const val TIMEOUT_SECONDS = 10L
+        private const val REMOTE_CONFIG_POLL_INTERVAL_MS = 100L
     }
 
     private val handledErrorDelivered = AtomicBoolean(false)
@@ -87,12 +88,17 @@ class RemoteConfigBasicScenario(
         val deadline = System.currentTimeMillis() + timeoutMs
 
         while (System.currentTimeMillis() < deadline) {
-            val expiry = readRemoteConfigExpiry(configFile) ?: return
+            val expiry = readRemoteConfigExpiry(configFile)
+            if (expiry == null) {
+                Thread.sleep(REMOTE_CONFIG_POLL_INTERVAL_MS)
+                continue
+            }
+
             if (expiry > System.currentTimeMillis()) {
                 return
             }
 
-            Thread.sleep(100)
+            Thread.sleep(REMOTE_CONFIG_POLL_INTERVAL_MS)
         }
     }
 
