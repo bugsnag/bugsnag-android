@@ -11,12 +11,12 @@ import com.bugsnag.android.EventPayload
 import com.bugsnag.android.Session
 import com.bugsnag.android.createDefaultDelivery
 import com.bugsnag.android.mazerunner.LogLevel
-import java.io.IOException
 import java.io.File
-import org.json.JSONObject
+import java.io.IOException
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
+import org.json.JSONObject
 
 class RemoteConfigBasicScenario(
     config: Configuration,
@@ -68,9 +68,15 @@ class RemoteConfigBasicScenario(
         }
     }
 
+    override fun startBugsnag(startBugsnagOnly: Boolean) {
+        super.startBugsnag(startBugsnagOnly)
+        if (config.endpoints.configuration != null) {
+            waitForFreshRemoteConfig()
+        }
+    }
+
     override fun startScenario() {
         super.startScenario()
-        waitForFreshRemoteConfig()
         Thread {
             try {
                 handledDeliveryCompleted.await(TIMEOUT_SECONDS, TimeUnit.SECONDS)
