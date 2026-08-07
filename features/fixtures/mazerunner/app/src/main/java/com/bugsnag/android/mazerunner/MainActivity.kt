@@ -156,10 +156,6 @@ class MainActivity : Activity() {
                     log("command.notifyUrl: $notifyUrl")
                     log("command.remoteConfigUrl: $remoteConfigUrl")
 
-                    // Stop polling once we have a scenario action
-                    if ("start_bugsnag".equals(action) || "run_scenario".equals(action)) {
-                        polling = false
-                    }
 
                     mainHandler.post {
                         // Display some feedback of the action being run on he UI

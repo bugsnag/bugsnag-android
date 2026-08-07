@@ -59,6 +59,8 @@ internal class DeliveryPipeline(
     }
 
     internal companion object {
-        const val LAUNCH_CRASH_LOAD_TIMEOUT_MS = 100L
+        // Launch crashes are already delivered synchronously during startup, so allow a little
+        // longer for Remote Config to be loaded before deciding whether to discard them.
+        const val LAUNCH_CRASH_LOAD_TIMEOUT_MS = 1000L
     }
 }
