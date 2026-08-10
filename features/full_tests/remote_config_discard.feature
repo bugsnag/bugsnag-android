@@ -126,6 +126,7 @@ Feature: Remote config discard rules are applied
     And the event "unhandled" is true
     And the event "usage.remoteConfig" is true
 
+
   Scenario: Remote config with HASH rule discards matching events and delivers non-matching
     When I prepare an error config with:
       | type     | name          | value                                                |
@@ -192,13 +193,13 @@ Feature: Remote config discard rules are applied
       | property | body          | @features/support/config/no_rules.json |
       | property | status        | 200                                    |
       | header   | Cache-Control | max-age=0                              |
-    And I run "RemoteConfigBasicScenario"
-    And I relaunch the app after a crash
     And I prepare an error config with:
       | type     | name          | value                                  |
       | property | body          | @features/support/config/rules_all.json |
       | property | status        | 200                                    |
       | header   | Cache-Control | max-age=604800                         |
+    And I run "RemoteConfigBasicScenario"
+    And I relaunch the app after a crash
     And I configure Bugsnag for "RemoteConfigBasicScenario"
     Then I should receive no errors
 
@@ -275,4 +276,3 @@ Feature: Remote config discard rules are applied
     And the event "severity" equals "error"
     And the event "unhandled" is true
     And the event "usage.remoteConfig" is true
-

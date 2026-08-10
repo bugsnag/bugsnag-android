@@ -156,7 +156,6 @@ class MainActivity : Activity() {
                     log("command.notifyUrl: $notifyUrl")
                     log("command.remoteConfigUrl: $remoteConfigUrl")
 
-
                     mainHandler.post {
                         // Display some feedback of the action being run on he UI
                         val actionField = findViewById<EditText>(R.id.command_action)
