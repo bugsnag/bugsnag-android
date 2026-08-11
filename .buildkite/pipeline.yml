@@ -284,7 +284,6 @@ steps:
           - "--aws-public-ip"
           - "--farm=bb"
           - "--device=ANDROID_15"
-          - "--fail-fast"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -301,7 +300,7 @@ steps:
         - exit_status: 2    # Assertion failure - possible device race condition
           limit: 1
 
-  - label: ':bitbar: ANDROID_12 NDK r21 e2e tests - batch 2'
+  - label: ':bitbar: ANDROID_15 NDK r21 e2e tests - batch 2'
     depends_on:
       - "fixture-r21"
       - "bitbar-r21-batch-1"
@@ -326,8 +325,7 @@ steps:
           - "--no-tunnel"
           - "--aws-public-ip"
           - "--farm=bb"
-          - "--device=ANDROID_12"
-          - "--fail-fast"
+          - "--device=ANDROID_15"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -495,7 +493,6 @@ steps:
           - "--aws-public-ip"
           - "--farm=bb"
           - "--device=ANDROID_12"
-          - "--fail-fast"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -538,7 +535,6 @@ steps:
           - "--aws-public-ip"
           - "--farm=bb"
           - "--device=ANDROID_12"
-          - "--fail-fast"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"

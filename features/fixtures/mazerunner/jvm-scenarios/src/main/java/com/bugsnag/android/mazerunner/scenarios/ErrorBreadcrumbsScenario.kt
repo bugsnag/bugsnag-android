@@ -23,13 +23,17 @@ class ErrorBreadcrumbsScenario(
     eventMetadata
 ) {
 
+    private companion object {
+        const val HANDLED_ERROR_DELAY_MS = 5_000L
+    }
+
     init {
         val baseDelivery = createDefaultDelivery()
         config.delivery = object : Delivery {
             override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
                 if (payload.event?.isUnhandled == false) {
                     // Keep the first handled error in-flight long enough for the crash to persist it.
-                    Thread.sleep(5_000)
+                    Thread.sleep(HANDLED_ERROR_DELAY_MS)
                 }
 
                 return baseDelivery.deliver(payload, deliveryParams)

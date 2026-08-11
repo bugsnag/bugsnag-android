@@ -51,7 +51,10 @@ internal class DeliveryPipeline(
 
     private fun getRemoteConfig(isLaunchCrash: Boolean): RemoteConfig? {
         if (isLaunchCrash) {
-            return remoteConfigState.getRemoteConfig(LAUNCH_CRASH_LOAD_TIMEOUT_MS, TimeUnit.MILLISECONDS)
+            return remoteConfigState.getRemoteConfig(
+                LAUNCH_CRASH_LOAD_TIMEOUT_MS,
+                TimeUnit.MILLISECONDS
+            )
         }
         // For non-launch crashes, we don't want to block indefinitely.
         // If it's already in memory, we use it; otherwise, we'll get it next time.
@@ -60,7 +63,8 @@ internal class DeliveryPipeline(
 
     internal companion object {
         // Launch crashes are already delivered synchronously during startup, so allow a little
-        // longer for Remote Config to be loaded before deciding whether to discard them.
-        const val LAUNCH_CRASH_LOAD_TIMEOUT_MS = 1000L
+        // longer for Remote Config to be loaded before deciding whether to discard them,
+        // especially when a cached config has just expired and needs to be refreshed.
+        const val LAUNCH_CRASH_LOAD_TIMEOUT_MS = 2000L
     }
 }
