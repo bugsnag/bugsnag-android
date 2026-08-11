@@ -10,6 +10,9 @@ import com.bugsnag.android.DeliveryStatus
 import com.bugsnag.android.EventPayload
 import com.bugsnag.android.Session
 import com.bugsnag.android.createDefaultDelivery
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
 
 class ErrorBreadcrumbsScenario(
     config: Configuration,
@@ -24,19 +27,23 @@ class ErrorBreadcrumbsScenario(
 ) {
 
     private companion object {
-        const val HANDLED_ERROR_DELAY_MS = 5_000L
+        const val HANDLED_ERROR_TIMEOUT_SECONDS = 10L
     }
+
+    private val handledErrorDelivered = AtomicBoolean(false)
+    private val handledDeliveryCompleted = CountDownLatch(1)
 
     init {
         val baseDelivery = createDefaultDelivery()
         config.delivery = object : Delivery {
             override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
-                if (payload.event?.isUnhandled == false) {
-                    // Keep the first handled error in-flight long enough for the crash to persist it.
-                    Thread.sleep(HANDLED_ERROR_DELAY_MS)
+                val status = baseDelivery.deliver(payload, deliveryParams)
+
+                if (payload.event?.isUnhandled == false && handledErrorDelivered.compareAndSet(false, true)) {
+                    handledDeliveryCompleted.countDown()
                 }
 
-                return baseDelivery.deliver(payload, deliveryParams)
+                return status
             }
 
             override fun deliver(payload: Session, deliveryParams: DeliveryParams): DeliveryStatus {
@@ -47,8 +54,7 @@ class ErrorBreadcrumbsScenario(
 
     override fun startScenario() {
         Bugsnag.notify(RuntimeException("first error"))
-        // Make sure the handled error file exists before the crash happens.
-        waitForEventFile()
+        handledDeliveryCompleted.await(HANDLED_ERROR_TIMEOUT_SECONDS, TimeUnit.SECONDS)
         throw NullPointerException("something broke")
     }
 }
