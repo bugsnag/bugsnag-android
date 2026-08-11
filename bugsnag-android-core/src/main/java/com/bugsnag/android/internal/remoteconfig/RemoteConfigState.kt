@@ -26,7 +26,6 @@ internal class RemoteConfigState(
         }
     }
 
-
     fun scheduleDownloadIfRequired() {
         if (!enabled) {
             return
