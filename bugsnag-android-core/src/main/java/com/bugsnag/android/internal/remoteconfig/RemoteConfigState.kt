@@ -8,7 +8,6 @@ import com.bugsnag.android.internal.TaskType
 import java.util.concurrent.Callable
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.atomic.AtomicBoolean
 
 internal class RemoteConfigState(
     private val store: RemoteConfigStore,
@@ -17,6 +16,9 @@ internal class RemoteConfigState(
     private val backgroundTaskService: BackgroundTaskService,
 ) {
     private val enabled: Boolean = config.endpoints.configuration != null
+    private val requestLock = Any()
+    @Volatile
+    private var inFlightRequest: Future<RemoteConfig?>? = null
 
     init {
         if (!enabled) {
@@ -24,7 +26,6 @@ internal class RemoteConfigState(
         }
     }
 
-    private val isRequestInFlight = AtomicBoolean(false)
 
     fun scheduleDownloadIfRequired() {
         if (!enabled) {
@@ -38,30 +39,15 @@ internal class RemoteConfigState(
         }
 
         // Don't schedule if a request is already in-flight
-        if (!isRequestInFlight.compareAndSet(false, true)) {
+        if (currentInFlightRequest() != null) {
             return
         }
 
         // Schedule the download in background
         try {
-            backgroundTaskService.submitTask(TaskType.IO) {
-                try {
-                    val newRemoteConfig = RemoteConfigRequest(
-                        config,
-                        notifier,
-                        store.currentOrExpired()
-                    ).requestConfig()
-
-                    // Store the new config if downloaded successfully
-                    if (newRemoteConfig != null) {
-                        store.store(newRemoteConfig)
-                    }
-                } finally {
-                    isRequestInFlight.set(false)
-                }
-            }
+            requestRemoteConfig()
         } catch (_: Exception) {
-            isRequestInFlight.set(false)
+            clearInFlightRequest()
         }
     }
 
@@ -85,7 +71,7 @@ internal class RemoteConfigState(
         }
 
         return try {
-            getRemoteConfig().get(timeout, timeUnit)
+            requestRemoteConfig().get(timeout, timeUnit)
         } catch (_: Exception) {
             null
         }
@@ -97,24 +83,50 @@ internal class RemoteConfigState(
         }
 
         try {
-            return backgroundTaskService.submitTask(
-                TaskType.IO,
-                Callable<RemoteConfig?> {
-                    val remoteConfig = store.load()
-                    if (remoteConfig != null) {
-                        return@Callable remoteConfig
-                    }
-
-                    return@Callable RemoteConfigRequest(
-                        config,
-                        notifier,
-                        store.currentOrExpired()
-                    ).requestConfig()
-                }
-            )
+            return requestRemoteConfig()
         } catch (_: Exception) {
             return nullFuture
         }
+    }
+
+    private fun requestRemoteConfig(): Future<RemoteConfig?> {
+        currentInFlightRequest()?.let { return it }
+
+        return synchronized(requestLock) {
+            currentInFlightRequest() ?: backgroundTaskService.submitTask(
+                TaskType.IO,
+                Callable<RemoteConfig?> {
+                    try {
+                        val remoteConfig = store.load()
+                        if (remoteConfig != null) {
+                            return@Callable remoteConfig
+                        }
+
+                        return@Callable RemoteConfigRequest(
+                            config,
+                            notifier,
+                            store.currentOrExpired()
+                        ).requestConfig()?.also { store.store(it) }
+                    } finally {
+                        clearInFlightRequest()
+                    }
+                }
+            ).also { inFlightRequest = it }
+        }
+    }
+
+    private fun currentInFlightRequest(): Future<RemoteConfig?>? = synchronized(requestLock) {
+        val request = inFlightRequest
+        if (request?.isDone == true) {
+            inFlightRequest = null
+            return null
+        }
+
+        request
+    }
+
+    private fun clearInFlightRequest() = synchronized(requestLock) {
+        inFlightRequest = null
     }
 
     internal companion object {

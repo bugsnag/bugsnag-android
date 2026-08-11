@@ -118,6 +118,12 @@ end
 
 When("I relaunch the app after a crash") do
   manager = Maze::Api::Appium::AppManager.new
+  begin
+    manager.terminate
+  rescue Selenium::WebDriver::Error::ServerError
+    # Swallow any error, as Android may already have terminated the app
+  end
+
   state = wait_for_app_state :not_running, 80
   if state != :not_running
     manager.terminate

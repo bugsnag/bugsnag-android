@@ -139,6 +139,24 @@ class RemoteConfigStateTest {
     }
 
     @Test
+    fun getRemoteConfigReusesInFlightRequest() {
+        // Given - the first remote-config request is still running
+        `when`(mockStore.current()).thenReturn(null)
+        `when`(mockStore.load()).thenReturn(null)
+        `when`(mockStore.currentOrExpired()).thenReturn(null)
+        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.IO), any(Callable::class.java)))
+            .thenReturn(mockFuture)
+
+        // When - we ask for remote config twice before the first request finishes
+        val firstRequest = remoteConfigState.getRemoteConfig()
+        val secondRequest = remoteConfigState.getRemoteConfig()
+
+        // Then - both calls should return the same in-flight request
+        assertEquals(firstRequest, secondRequest)
+        verify(mockBackgroundTaskService).submitTask(eq(TaskType.IO), any(Callable::class.java))
+    }
+
+    @Test
     fun getRemoteConfigReturnsNullWhenDisabled() {
         // Given - remote config is disabled (no configuration endpoint)
         val mockEndpoints = mock(com.bugsnag.android.EndpointConfiguration::class.java)
@@ -167,12 +185,12 @@ class RemoteConfigStateTest {
             futureDate(RemoteConfigState.REFRESH_BUFFER_MS - 1000)
         )
         `when`(mockStore.currentOrExpired()).thenReturn(nearExpiryConfig)
-        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.IO), any(Runnable::class.java)))
+        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.IO), any(Callable::class.java)))
             .thenReturn(mockFuture)
 
         remoteConfigState.scheduleDownloadIfRequired()
 
-        verify(mockBackgroundTaskService).submitTask(eq(TaskType.IO), any(Runnable::class.java))
+        verify(mockBackgroundTaskService).submitTask(eq(TaskType.IO), any(Callable::class.java))
     }
 
     private fun createValidRemoteConfig(tag: String, expiry: Date): RemoteConfig {
