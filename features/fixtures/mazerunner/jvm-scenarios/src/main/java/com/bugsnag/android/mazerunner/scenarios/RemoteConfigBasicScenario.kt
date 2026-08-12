@@ -70,6 +70,7 @@ class RemoteConfigBasicScenario(
 
     override fun startBugsnag(startBugsnagOnly: Boolean) {
         super.startBugsnag(startBugsnagOnly)
+
         if (config.endpoints.configuration != null) {
             waitForFreshRemoteConfig()
         }
