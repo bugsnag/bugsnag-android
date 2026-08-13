@@ -14,6 +14,9 @@ import com.bugsnag.android.mazerunner.LogLevel
 import org.json.JSONObject
 import java.io.File
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.TimeZone
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
@@ -27,6 +30,7 @@ class RemoteConfigBasicScenario(
         private const val UNHANDLED_DELAY_MS = 5000L
         private const val TIMEOUT_SECONDS = 10L
         private const val REMOTE_CONFIG_POLL_INTERVAL_MS = 100L
+        private val REMOTE_CONFIG_MIN_FRESHNESS_MS = TimeUnit.SECONDS.toMillis(1)
     }
 
     private val handledErrorDelivered = AtomicBoolean(false)
@@ -101,7 +105,7 @@ class RemoteConfigBasicScenario(
                 continue
             }
 
-            if (expiry > System.currentTimeMillis()) {
+            if (expiry - System.currentTimeMillis() > REMOTE_CONFIG_MIN_FRESHNESS_MS) {
                 return
             }
 
@@ -124,10 +128,16 @@ class RemoteConfigBasicScenario(
             if (expiry.isBlank()) {
                 null
             } else {
-                java.time.Instant.parse(expiry).toEpochMilli()
+                remoteConfigExpiryFormat().parse(expiry)?.time
             }
         } catch (_: Exception) {
             null
+        }
+    }
+
+    private fun remoteConfigExpiryFormat(): SimpleDateFormat {
+        return SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
         }
     }
 }

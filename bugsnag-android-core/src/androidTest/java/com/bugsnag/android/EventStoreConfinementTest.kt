@@ -32,9 +32,11 @@ internal class EventStoreConfinementTest {
         retainingDelivery = RetainingDelivery(EVENT_CONFINEMENT_ATTEMPTS)
         val cfg = BugsnagTestUtils.generateConfiguration(persistenceDir).apply {
             autoTrackSessions = false
+            endpoints = EndpointConfiguration(endpoints.notify, endpoints.sessions, null)
             delivery = retainingDelivery
         }
         client = Client(context, cfg)
+        waitForErrorTasksToDrain()
     }
 
     /**
@@ -55,7 +57,7 @@ internal class EventStoreConfinementTest {
             }
             client.deliveryDelegate.deliver(event)
         }
-        retainingDelivery.latch.await(10, TimeUnit.SECONDS)
+        waitForErrorTasksToDrain()
 
         // confirm that no dupe requests are sent and that the request order is deterministic
         val payloads = retainingDelivery.payloadJsons
@@ -96,6 +98,7 @@ internal class EventStoreConfinementTest {
             eventStore.flushAsync()
         }
         assertTrue(retainingDelivery.latch.await(10, TimeUnit.SECONDS))
+        waitForErrorTasksToDrain()
 
         // confirm that no dupe requests are sent
         val filenames = retainingDelivery.files
@@ -139,5 +142,16 @@ internal class EventStoreConfinementTest {
             }
             return DeliveryStatus.DELIVERED
         }
+    }
+
+    private fun waitForErrorTasksToDrain() {
+        client.deliveryDelegate.backgroundTaskService
+            .submitTask(
+                com.bugsnag.android.internal.TaskType.ERROR_REQUEST,
+                object : Runnable {
+                    override fun run() = Unit
+                }
+            )
+            .get(10, TimeUnit.SECONDS)
     }
 }
