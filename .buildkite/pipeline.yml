@@ -508,6 +508,14 @@ steps:
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
     concurrency: 15
+    concurrency_group: 'bitbar-e2e'
+    concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: 103  # Appium session failed
+          limit: 2
+        - exit_status: 2    # Assertion failure - possible device race condition
+          limit: 1
 
   - label: ':bitbar: ANDROID_16 NDK r21 smoke tests'
     depends_on: "fixture-r21"
