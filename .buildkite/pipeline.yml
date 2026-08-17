@@ -202,6 +202,8 @@ steps:
           - "--aws-public-ip"
           - "--farm=bb"
           - "--device={{matrix}}"
+          - "--repeater-api-key="
+          - "--hub-repeater-api-key="
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -242,6 +244,8 @@ steps:
           - "--aws-public-ip"
           - "--farm=bb"
           - "--device=ANDROID_12"
+          - "--repeater-api-key="
+          - "--hub-repeater-api-key="
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -284,6 +288,8 @@ steps:
           - "--aws-public-ip"
           - "--farm=bb"
           - "--device=ANDROID_15"
+          - "--repeater-api-key="
+          - "--hub-repeater-api-key="
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
@@ -326,6 +332,8 @@ steps:
           - "--aws-public-ip"
           - "--farm=bb"
           - "--device=ANDROID_15"
+          - "--repeater-api-key="
+          - "--hub-repeater-api-key="
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
