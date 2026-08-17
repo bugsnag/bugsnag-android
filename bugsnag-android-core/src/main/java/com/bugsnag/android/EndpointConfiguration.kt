@@ -52,4 +52,3 @@ class EndpointConfiguration(
         return result
     }
 }
-
