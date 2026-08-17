@@ -508,7 +508,40 @@ steps:
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
     concurrency: 15
-    concurrency_group: 'bitbar-e2e'
+
+  - label: ':bitbar: ANDROID_16 NDK r21 smoke tests'
+    depends_on: "fixture-r21"
+    timeout_in_minutes: 30
+    plugins:
+      artifacts#v1.9.0:
+        download:
+          - "build/fixture-r21-url.txt"
+          - "build/fixture-r21/*"
+        upload:
+          - "maze_output/failed/**/*"
+          - "maze_output/metrics.csv"
+      docker-compose#v4.7.0:
+        pull: maze-runner
+        run: maze-runner
+        service-ports: true
+        command:
+          - "features/smoke_tests"
+          - "--app=@build/fixture-r21-url.txt"
+          - "--appium-version=1.22"
+          - "--no-tunnel"
+          - "--aws-public-ip"
+          - "--farm=bb"
+          - "--device=ANDROID_16"
+          - "--repeater-api-key="
+          - "--hub-repeater-api-key="
+      test-collector#v1.10.2:
+        files: "reports/TEST-*.xml"
+        format: "junit"
+        branch: "^main|next$$"
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
+    concurrency: 10
+    concurrency_group: 'bitbar-smoke'
     concurrency_method: eager
     retry:
       automatic:
