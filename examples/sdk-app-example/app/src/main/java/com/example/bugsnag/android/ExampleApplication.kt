@@ -6,6 +6,7 @@ import com.bugsnag.android.Configuration
 import com.bugsnag.android.Delivery
 import com.bugsnag.android.DeliveryParams
 import com.bugsnag.android.DeliveryStatus
+import com.bugsnag.android.EndpointConfiguration
 import com.bugsnag.android.EventPayload
 import com.bugsnag.android.Session
 import com.bugsnag.android.okhttp.BugsnagOkHttpPlugin
@@ -81,6 +82,13 @@ class ExampleApplication : Application() {
 //        if (processName.endsWith("secondaryprocess")) {
 //            config.persistenceDirectory = File(filesDir, processName)
 //        }
+
+//
+        config.endpoints = EndpointConfiguration(
+            notify = "https://notify.example.com/",
+            sessions = "https://sessions.example.com",
+            configuration = "https://config.example.com/"
+        )
 
         Bugsnag.start(this, config)
 

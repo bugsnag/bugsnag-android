@@ -30,7 +30,7 @@ class EndpointConfiguration(
     constructor(
         notify: String = NOTIFY_ENDPOINT,
         sessions: String = SESSIONS_ENDPOINT
-    ) : this(notify, sessions, CONFIGURATION_ENDPOINT)
+    ) : this(notify, sessions, null)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -52,3 +52,4 @@ class EndpointConfiguration(
         return result
     }
 }
+

@@ -38,7 +38,7 @@ class EndpointConfigValidationTest {
         )
         assertEquals("https://notify.example.com", config.endpoints.notify)
         assertEquals("https://sessions.example.com", config.endpoints.sessions)
-        assertEquals("https://config.bugsnag.com/", config.endpoints.configuration)
+        assertNull(config.endpoints.configuration)
     }
 
     @Test
