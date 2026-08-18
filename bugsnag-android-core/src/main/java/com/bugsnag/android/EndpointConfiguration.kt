@@ -40,6 +40,7 @@ class EndpointConfiguration(
 
         if (notify != other.notify) return false
         if (sessions != other.sessions) return false
+        if (configuration != other.configuration) return false
 
         return true
     }
@@ -47,6 +48,7 @@ class EndpointConfiguration(
     override fun hashCode(): Int {
         var result = notify.hashCode()
         result = 31 * result + sessions.hashCode()
+        result = 31 * result + (configuration?.hashCode() ?: 0)
         return result
     }
 }

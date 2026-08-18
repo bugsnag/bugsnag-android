@@ -9,14 +9,16 @@ import com.bugsnag.android.internal.HEADER_BUGSNAG_API_KEY
 import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.JsonCollectionParser
 import com.bugsnag.android.internal.JsonCollectionParser.JsonParseException
+import com.bugsnag.android.internal.JsonHelper
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.Date
 
+@Suppress("LongParameterList")
 internal class RemoteConfigRequest(
-    private val baseUrl: String,
+    private val baseUrl: String?,
     private val apiKey: String,
     private val notifier: Notifier,
     private val appVersion: String?,
@@ -31,7 +33,7 @@ internal class RemoteConfigRequest(
         notifier: Notifier,
         currentRemoteConfig: RemoteConfig?
     ) : this(
-        config.endpoints.configuration!!,
+        config.endpoints.configuration,
         config.apiKey,
         notifier,
         config.appVersion ?: config.packageInfo?.versionName,
@@ -43,6 +45,10 @@ internal class RemoteConfigRequest(
     )
 
     fun requestConfig(): RemoteConfig? {
+        if (baseUrl == null) {
+            return null
+        }
+
         return try {
             requestNewConfig()
         } catch (_: Exception) {
@@ -57,7 +63,7 @@ internal class RemoteConfigRequest(
     }
 
     private fun requestNewConfig(): RemoteConfig? {
-        val urlWithParams = buildUrlWithQueryParameters()
+        val urlWithParams = buildUrlWithQueryParameters() ?: return null
 
         val url = URL(urlWithParams)
         val connection = url.openConnection() as HttpURLConnection
@@ -82,36 +88,38 @@ internal class RemoteConfigRequest(
         }
     }
 
-    private fun buildUrlWithQueryParameters(): String = buildString {
-        append(baseUrl)
-        if (last() != '/') {
-            append('/')
-        }
-        append("error-config")
+    private fun buildUrlWithQueryParameters(): String? = baseUrl?.let { urlBase ->
+        buildString {
+            append(urlBase)
+            if (last() != '/') {
+                append('/')
+            }
+            append("error-config")
 
-        // Add osVersion (required)
-        append("?osVersion=")
-        append(Build.VERSION.SDK_INT)
+            // Add osVersion (required)
+            append("?osVersion=")
+            append(Build.VERSION.SDK_INT)
 
-        // Add optional parameters
-        appVersion?.let { version ->
-            append("&version=")
-            append(urlEncoded(version))
-        }
+            // Add optional parameters
+            appVersion?.let { version ->
+                append("&version=")
+                append(urlEncoded(version))
+            }
 
-        versionCode?.let { versionCode ->
-            append("&versionCode=")
-            append(versionCode)
-        }
+            versionCode?.let { versionCode ->
+                append("&versionCode=")
+                append(versionCode)
+            }
 
-        releaseStage?.let { releaseStage ->
-            append("&releaseStage=")
-            append(urlEncoded(releaseStage))
-        }
+            releaseStage?.let { releaseStage ->
+                append("&releaseStage=")
+                append(urlEncoded(releaseStage))
+            }
 
-        packageName?.let { appId ->
-            append("&appId=")
-            append(urlEncoded(appId))
+            packageName?.let { appId ->
+                append("&appId=")
+                append(urlEncoded(appId))
+            }
         }
     }
 
@@ -139,7 +147,9 @@ internal class RemoteConfigRequest(
             as? LinkedHashMap<String, Any?>
             ?: return null
 
-        return RemoteConfig.fromJsonMap(tag, expiryDate, json)
+        val remoteConfig = RemoteConfig.fromJsonMap(tag, expiryDate, json)
+        logger.d("Fetched RemoteConfig JSON: ${String(JsonHelper.serialize(remoteConfig), Charsets.UTF_8)}")
+        return remoteConfig
     }
 
     private fun configExpiryDate(connection: HttpURLConnection): Date {

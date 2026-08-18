@@ -38,6 +38,22 @@ class RemoteConfigStoreTest {
     }
 
     @Test
+    fun clearRemovesInMemoryAndDiskState() {
+        val config = createValidRemoteConfig("tag1", futureDate(1000))
+
+        store.store(config)
+        store.clear()
+
+        assertNull(store.current())
+        assertNull(store.load())
+
+        val configFile = File(tempDir.root, "core-$versionCode.json")
+        val tempFile = File(tempDir.root, "core-$versionCode.json.new")
+        assertFalse(configFile.exists())
+        assertFalse(tempFile.exists())
+    }
+
+    @Test
     fun loadReturnsNullWhenNoConfigStored() {
         assertNull(store.load())
     }

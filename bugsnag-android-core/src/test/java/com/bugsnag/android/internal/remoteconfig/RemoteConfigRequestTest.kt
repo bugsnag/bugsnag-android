@@ -10,10 +10,12 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
+import org.mockito.Mockito.mockConstruction
 import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
 import java.io.ByteArrayInputStream
 import java.net.HttpURLConnection
+import java.net.URL
 import java.util.Date
 
 @RunWith(MockitoJUnitRunner::class)
@@ -62,6 +64,84 @@ class RemoteConfigRequestTest {
         assertNotNull(result)
         assertEquals(etag, result?.configurationTag)
         assertEquals(1, result?.discardRules?.size)
+        assertNotNull(result?.configurationExpiry)
+    }
+
+    @Test
+    fun testRequestConfig_ReplacesNoRulesWithAllRules() {
+        // Given: an existing config with no discard rules that expires soon
+        val existingConfig = createRemoteConfig("existing-no-rules", 1000, emptyList())
+        val jsonResponse = """
+            {
+                "discardRules": [
+                    {
+                        "matchType": "ALL"
+                    }
+                ]
+            }
+        """.trimIndent()
+
+        // When: requesting a fresh remote config
+        val result = requestConfigWithMockedUrl(
+            existingConfig = existingConfig,
+            responseCode = HttpURLConnection.HTTP_OK,
+            jsonResponse = jsonResponse,
+            etag = "new-all-rules",
+            cacheControl = "max-age=3600"
+        )
+
+        // Then: the new ALL rule is parsed and applied
+        assertNotNull(result)
+        assertEquals("new-all-rules", result?.configurationTag)
+        assertEquals(1, result?.discardRules?.size)
+        assertEquals(
+            com.bugsnag.android.DiscardRule.All,
+            result?.discardRules?.first()
+        )
+    }
+
+    @Test
+    fun testRequestConfig_ReplacesAllRulesWithNoRules() {
+        // Given: an existing config with ALL discard rules
+        val existingConfig = createRemoteConfig(
+            "existing-all-rules",
+            1000,
+            listOf(com.bugsnag.android.DiscardRule.All)
+        )
+        val jsonResponse = """{"discardRules": []}"""
+
+        // When: requesting a fresh remote config
+        val result = requestConfigWithMockedUrl(
+            existingConfig = existingConfig,
+            responseCode = HttpURLConnection.HTTP_OK,
+            jsonResponse = jsonResponse,
+            etag = "new-empty-rules",
+            cacheControl = "max-age=1800"
+        )
+
+        // Then: the new config contains no discard rules
+        assertNotNull(result)
+        assertEquals("new-empty-rules", result?.configurationTag)
+        assertEquals(0, result?.discardRules?.size)
+    }
+
+    @Test
+    fun testRequestConfig_PreservesCachedConfigOnHttp304() {
+        // Given: an expired cached config with no discard rules
+        val existingConfig = createRemoteConfig("cached-no-rules", -1000, emptyList())
+
+        // When: the server responds 304 Not Modified
+        val result = requestConfigWithMockedUrl(
+            existingConfig = existingConfig,
+            responseCode = HttpURLConnection.HTTP_NOT_MODIFIED,
+            etag = "ignored-etag",
+            cacheControl = "max-age=5400"
+        )
+
+        // Then: the cached config is retained with refreshed expiry metadata
+        assertNotNull(result)
+        assertEquals(existingConfig.configurationTag, result?.configurationTag)
+        assertEquals(0, result?.discardRules?.size)
         assertNotNull(result?.configurationExpiry)
     }
 
@@ -395,6 +475,23 @@ class RemoteConfigRequestTest {
         assertExpiryWithinTolerance(result!!.configurationExpiry.time, maxAge * 1000)
     }
 
+    @Test
+    fun requestConfigReturnsNullWhenConfigurationEndpointIsMissing() {
+        val request = RemoteConfigRequest(
+            null,
+            apiKey,
+            notifier,
+            appVersion,
+            versionCode,
+            releaseStage,
+            packageName,
+            null,
+            logger
+        )
+
+        assertNull(request.requestConfig())
+    }
+
     private fun createRequest(existingConfig: com.bugsnag.android.RemoteConfig? = null): RemoteConfigRequest {
         return RemoteConfigRequest(
             baseUrl,
@@ -407,6 +504,32 @@ class RemoteConfigRequestTest {
             existingConfig,
             logger
         )
+    }
+
+    private fun requestConfigWithMockedUrl(
+        existingConfig: com.bugsnag.android.RemoteConfig? = null,
+        responseCode: Int,
+        jsonResponse: String? = null,
+        etag: String? = null,
+        cacheControl: String? = null
+    ): com.bugsnag.android.RemoteConfig? {
+        return mockConstruction(URL::class.java) { mockUrl, _ ->
+            `when`(mockUrl.openConnection()).thenReturn(mockConnection)
+            `when`(mockConnection.responseCode).thenReturn(responseCode)
+            `when`(mockConnection.getHeaderField("Cache-Control")).thenReturn(cacheControl)
+            if (responseCode != HttpURLConnection.HTTP_NOT_MODIFIED) {
+                `when`(mockConnection.getHeaderField("ETag")).thenReturn(etag)
+                if (jsonResponse != null) {
+                    val inputStream = ByteArrayInputStream(jsonResponse.toByteArray())
+                    `when`(mockConnection.inputStream).thenReturn(inputStream)
+                    `when`(mockConnection.contentLength).thenReturn(jsonResponse.length)
+                } else {
+                    `when`(mockConnection.contentLength).thenReturn(0)
+                }
+            }
+        }.use {
+            createRequest(existingConfig).requestConfig()
+        }
     }
 
     private fun createRequestWithExistingConfig(existingConfig: com.bugsnag.android.RemoteConfig): RemoteConfigRequest {

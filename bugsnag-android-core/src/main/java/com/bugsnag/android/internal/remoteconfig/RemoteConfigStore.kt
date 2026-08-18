@@ -99,7 +99,7 @@ internal class RemoteConfigStore(
                 // Clear expired config
                 if (isExpired(diskConfig)) {
                     current = null
-                    deleteConfigFile()
+                    deleteConfigFiles()
                 }
             }
         }
@@ -139,6 +139,13 @@ internal class RemoteConfigStore(
         }
     }
 
+    fun clear() {
+        lock.withLock {
+            current = null
+            deleteConfigFiles()
+        }
+    }
+
     private fun loadFromDisk(): RemoteConfig? {
         val configFile = File(configDir, configFileName())
         if (!configFile.exists() || !configFile.canRead()) {
@@ -161,11 +168,9 @@ internal class RemoteConfigStore(
         return remoteConfig.configurationExpiry.before(Date())
     }
 
-    private fun deleteConfigFile() {
-        val configFile = File(configDir, configFileName())
-        if (configFile.exists()) {
-            configFile.delete()
-        }
+    private fun deleteConfigFiles() {
+        File(configDir, configFileName()).delete()
+        File(configDir, "${configFileName()}.new").delete()
     }
 
     private fun configFileName(): String = "core-$appVersionCode.json"

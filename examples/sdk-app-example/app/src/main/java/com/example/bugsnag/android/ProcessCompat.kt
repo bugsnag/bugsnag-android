@@ -4,12 +4,11 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
-import com.bugsnag.android.Configuration
 import java.lang.reflect.Method
 
 /**
  * Retrieves the name of the current process. This is used to set the persistenceDirectory on the
- * [Configuration] class to a unique value for each process.
+ * [com.bugsnag.android.Configuration] class to a unique value for each process.
  */
 fun findCurrentProcessName(): String {
     return runCatching {

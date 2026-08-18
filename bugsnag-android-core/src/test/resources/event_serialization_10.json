@@ -1,5 +1,4 @@
 {
-  "groupingDiscriminator": "123456789",
   "metaData": {},
   "severity": "warning",
   "severityReason": {
@@ -34,12 +33,8 @@
   },
   "breadcrumbs": [],
   "usage": {
-    "remoteConfig": true
+    "remoteConfig": false
   },
   "threads": [],
-  "featureFlags": [],
-  "correlation": {
-    "traceId": "24b8b82900d34da39a6bcb48b5a46124",
-    "spanId": "3dbe7c7ae84945b9"
-  }
+  "featureFlags": []
 }

@@ -69,13 +69,15 @@ steps:
         files: "reports/TEST-*.xml"
         format: "junit"
         branch: "^main|next$$"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 10
+    concurrency_group: 'bitbar-smoke'
     concurrency_method: eager
     retry:
       automatic:
         - exit_status: 103  # Appium session failed
           limit: 2
+        - exit_status: 2    # Assertion failure - possible device race condition
+          limit: 1
 
   - label: ':bitbar: Debug fixture smoke tests'
     depends_on: "fixture-debug"
@@ -107,15 +109,18 @@ steps:
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-debug"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 10
+    concurrency_group: 'bitbar-smoke'
     concurrency_method: eager
     retry:
       automatic:
         - exit_status: 103  # Appium session failed
           limit: 2
+        - exit_status: 2    # Assertion failure - possible device race condition
+          limit: 1
 
   - label: ':bitbar: {{matrix}} NDK r19 e2e tests - batch 1'
+    key: "bitbar-r19-batch-1"
     matrix:
       - "ANDROID_7"
       - "ANDROID_8"
@@ -144,25 +149,30 @@ steps:
           - "--exclude=features/full_tests/[^a-m].*.feature"
           - "--repeater-api-key="
           - "--hub-repeater-api-key="
+          - "--fail-fast"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 15
+    concurrency_group: 'bitbar-e2e'
     concurrency_method: eager
     retry:
       automatic:
         - exit_status: 103  # Appium session failed
           limit: 2
+        - exit_status: 2    # Assertion failure - possible device race condition
+          limit: 1
 
   - label: ':bitbar: {{matrix}} NDK r19 e2e tests - batch 2'
     matrix:
       - "ANDROID_7"
       - "ANDROID_8"
-    depends_on: "fixture-r19"
+    depends_on:
+      - "fixture-r19"
+      - "bitbar-r19-batch-1"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.9.0:
@@ -187,21 +197,25 @@ steps:
           - "--device={{matrix}}"
           - "--repeater-api-key="
           - "--hub-repeater-api-key="
+          - "--fail-fast"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 15
+    concurrency_group: 'bitbar-e2e'
     concurrency_method: eager
     retry:
       automatic:
         - exit_status: 103  # Appium session failed
           limit: 2
+        - exit_status: 2    # Assertion failure - possible device race condition
+          limit: 1
 
   - label: ':bitbar: {{matrix}} NDK r21 e2e tests - batch 1'
+    key: "bitbar-r21-batch-1-full"
     matrix:
       - "ANDROID_9"
       - "ANDROID_10"
@@ -233,19 +247,22 @@ steps:
           - "--farm=bb"
           - "--device={{matrix}}"
           - "--exclude=features/full_tests/[^a-m].*.feature"
+          - "--fail-fast"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 15
+    concurrency_group: 'bitbar-e2e'
     concurrency_method: eager
     retry:
       automatic:
         - exit_status: 103  # Appium session failed
           limit: 2
+        - exit_status: 2    # Assertion failure - possible device race condition
+          limit: 1
 
   - label: ':bitbar: {{matrix}} NDK r21 e2e tests - batch 2'
     matrix:
@@ -256,7 +273,9 @@ steps:
       - "ANDROID_13"
       - "ANDROID_14"
       - "ANDROID_15"
-    depends_on: "fixture-r21"
+    depends_on:
+      - "fixture-r21"
+      - "bitbar-r21-batch-1-full"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.9.0:
@@ -279,21 +298,25 @@ steps:
           - "--aws-public-ip"
           - "--farm=bb"
           - "--device={{matrix}}"
+          - "--fail-fast"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 15
+    concurrency_group: 'bitbar-e2e'
     concurrency_method: eager
     retry:
       automatic:
         - exit_status: 103  # Appium session failed
           limit: 2
+        - exit_status: 2    # Assertion failure - possible device race condition
+          limit: 1
 
   - label: ':browserstack: ANDROID_16 NDK r21 e2e tests - batch 1'
+    key: "bs-r21-batch-1"
     depends_on: "fixture-r21"
     timeout_in_minutes: 60
     plugins:
@@ -328,9 +351,13 @@ steps:
       automatic:
         - exit_status: 103  # Appium client failure
           limit: 2
+        - exit_status: 2    # Assertion failure - possible device race condition
+          limit: 1
 
   - label: ':browserstack: ANDROID_16 NDK r21 e2e tests - batch 2'
-    depends_on: "fixture-r21"
+    depends_on:
+      - "fixture-r21"
+      - "bs-r21-batch-1"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.9.0:
@@ -364,8 +391,11 @@ steps:
       automatic:
         - exit_status: 103  # Appium client failure
           limit: 2
+        - exit_status: 2    # Assertion failure - possible device race condition
+          limit: 1
 
   - label: ':bitbar: {{matrix}} NDK r28 e2e tests - batch 1'
+    key: "bitbar-r28-batch-1-full"
     matrix:
       - "ANDROID_9"
       - "ANDROID_10"
@@ -397,19 +427,22 @@ steps:
           - "--farm=bb"
           - "--device={{matrix}}"
           - "--exclude=features/full_tests/[^a-m].*.feature"
+          - "--fail-fast"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 15
+    concurrency_group: 'bitbar-e2e'
     concurrency_method: eager
     retry:
       automatic:
         - exit_status: 103  # Appium session failed
           limit: 2
+        - exit_status: 2    # Assertion failure - possible device race condition
+          limit: 1
 
   - label: ':bitbar: {{matrix}} NDK r28 e2e tests - batch 2'
     matrix:
@@ -420,7 +453,9 @@ steps:
       - "ANDROID_13"
       - "ANDROID_14"
       - "ANDROID_15"
-    depends_on: "fixture-r28"
+    depends_on:
+      - "fixture-r28"
+      - "bitbar-r28-batch-1-full"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.9.0:
@@ -443,21 +478,25 @@ steps:
           - "--aws-public-ip"
           - "--farm=bb"
           - "--device={{matrix}}"
+          - "--fail-fast"
       test-collector#v1.10.2:
         files: "reports/TEST-*.xml"
         format: "junit"
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 15
+    concurrency_group: 'bitbar-e2e'
     concurrency_method: eager
     retry:
       automatic:
         - exit_status: 103  # Appium session failed
           limit: 2
+        - exit_status: 2    # Assertion failure - possible device race condition
+          limit: 1
 
   - label: ':browserstack: ANDROID_16 NDK r28 e2e tests - batch 1'
+    key: "bs-r28-batch-1"
     depends_on: "fixture-r28"
     timeout_in_minutes: 60
     plugins:
@@ -492,9 +531,13 @@ steps:
       automatic:
         - exit_status: 103  # Appium client failure
           limit: 2
+        - exit_status: 2    # Assertion failure - possible device race condition
+          limit: 1
 
   - label: ':browserstack: ANDROID_16 NDK r28 e2e tests - batch 2'
-    depends_on: "fixture-r28"
+    depends_on:
+      - "fixture-r28"
+      - "bs-r28-batch-1"
     timeout_in_minutes: 60
     plugins:
       artifacts#v1.9.0:
@@ -528,6 +571,8 @@ steps:
       automatic:
         - exit_status: 103  # Appium client failure
           limit: 2
+        - exit_status: 2    # Assertion failure - possible device race condition
+          limit: 1
 
   # If there is a tag present activate a manual publishing step
 

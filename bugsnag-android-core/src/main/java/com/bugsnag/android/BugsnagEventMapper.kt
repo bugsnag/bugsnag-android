@@ -223,15 +223,15 @@ internal class BugsnagEventMapper(
             else -> unhandled
         }
 
-        val attrMap: Map<String, String>? = severityReason.readEntry("attributes")
+        val attrMap = severityReason["attributes"] as? Map<*, *>
         val entry = attrMap?.entries?.singleOrNull()
         return SeverityReason(
             type,
             severity,
             unhandled,
             originalUnhandled,
-            entry?.value,
-            entry?.key
+            entry?.value as? String,
+            entry?.key as? String
         )
     }
 

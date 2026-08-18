@@ -50,11 +50,29 @@ internal class DeliveryPipeline(
     }
 
     private fun getRemoteConfig(isLaunchCrash: Boolean): RemoteConfig? {
-        val timeout = if (isLaunchCrash) LAUNCH_CRASH_LOAD_TIMEOUT_MS else Long.MAX_VALUE
-        return remoteConfigState.getRemoteConfig(timeout, TimeUnit.MILLISECONDS)
+        if (isLaunchCrash) {
+            return remoteConfigState.getRemoteConfig(
+                LAUNCH_CRASH_LOAD_TIMEOUT_MS,
+                TimeUnit.MILLISECONDS
+            )
+        }
+        // For non-launch crashes, we don't want to block indefinitely.
+        // If a refresh is already in flight during startup, give it a moment to complete so
+        // persisted errors are evaluated against the latest discard rules.
+        return remoteConfigState.getRemoteConfig(
+            NON_LAUNCH_CRASH_LOAD_TIMEOUT_MS,
+            TimeUnit.MILLISECONDS
+        )
     }
 
     internal companion object {
-        const val LAUNCH_CRASH_LOAD_TIMEOUT_MS = 100L
+        // Launch crashes are already delivered synchronously during startup, so allow a little
+        // longer for Remote Config to be loaded before deciding whether to discard them,
+        // especially when a cached config has just expired and needs to be refreshed.
+        const val LAUNCH_CRASH_LOAD_TIMEOUT_MS = 2000L
+
+        // Non-launch errors should still proceed quickly, but a short wait helps startup flushes
+        // reuse an in-flight remote-config request instead of racing stale discard rules.
+        const val NON_LAUNCH_CRASH_LOAD_TIMEOUT_MS = 1000L
     }
 }

@@ -3,7 +3,7 @@ package com.bugsnag.android.mazerunner.scenarios
 import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
-import com.bugsnag.android.EndpointConfiguration
+import com.bugsnag.android.mazerunner.disableSessionDelivery
 
 internal class DiscardOldSessionScenarioPart2(
     config: Configuration,
@@ -13,8 +13,7 @@ internal class DiscardOldSessionScenarioPart2(
 
     init {
         config.launchDurationMillis = 0
-        // We set an endpoint so that attempts to send the session will fail.
-        config.endpoints = EndpointConfiguration(config.endpoints.notify, "https://nonexistent.bugsnag.com")
+        disableSessionDelivery(config)
     }
 
     override fun startScenario() {

@@ -156,11 +156,6 @@ class MainActivity : Activity() {
                     log("command.notifyUrl: $notifyUrl")
                     log("command.remoteConfigUrl: $remoteConfigUrl")
 
-                    // Stop polling once we have a scenario action
-                    if ("start_bugsnag".equals(action) || "run_scenario".equals(action)) {
-                        polling = false
-                    }
-
                     mainHandler.post {
                         // Display some feedback of the action being run on he UI
                         val actionField = findViewById<EditText>(R.id.command_action)
@@ -319,8 +314,9 @@ class MainActivity : Activity() {
         // send HTTP requests for intercepted log messages and metrics from Bugsnag.
         // reuse notify endpoint as we don't care about logs when running mazerunner in manual mode
         val mazerunnerHttpClient = MazerunnerHttpClient.fromEndpoint(notifyUrl)
+        val effectiveRemoteConfigUrl = if (mode == "disable-remote-config") null else remoteConfigUrl
 
-        val config = prepareConfig(apiKey, notifyUrl, sessionsUrl, remoteConfigUrl, mazerunnerHttpClient) {
+        val config = prepareConfig(apiKey, notifyUrl, sessionsUrl, effectiveRemoteConfigUrl, mazerunnerHttpClient) {
             val logMessage = it
             val interceptedLogMessages = scenario?.getInterceptedLogMessages()
             interceptedLogMessages?.any {

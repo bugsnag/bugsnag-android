@@ -41,6 +41,14 @@ final class BugsnagTestUtils {
         return configuration;
     }
 
+    static Configuration generateConfiguration(File dir) {
+        Configuration configuration = new Configuration("5d1ec5bd39a74caa1267142706a7fb21");
+        configuration.setDelivery(generateDelivery());
+        configuration.setLogger(NoopLogger.INSTANCE);
+        configuration.setPersistenceDirectory(dir);
+        return configuration;
+    }
+
     static ImmutableConfig generateImmutableConfig() {
         return convert(generateConfiguration());
     }

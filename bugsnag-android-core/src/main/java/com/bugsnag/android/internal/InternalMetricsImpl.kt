@@ -17,11 +17,11 @@ class InternalMetricsImpl internal constructor(
     init {
         @Suppress("UNCHECKED_CAST")
         if (source != null) {
-            configDifferences = (source["config"] as? MutableMap<String, Any>) ?: hashMapOf()
-            callbackCounts = (source["callbacks"] as? MutableMap<String, Int>) ?: hashMapOf()
+            configDifferences = (source["config"] as? Map<String, Any>)?.toMutableMap() ?: hashMapOf()
+            callbackCounts = (source["callbacks"] as? Map<String, Int>)?.toMutableMap() ?: hashMapOf()
             remoteConfigEnabled = (source["remoteConfig"] as? Boolean) == true
 
-            val system = source["system"] as? MutableMap<String, Any>
+            val system = source["system"] as? Map<String, Any>
             if (system != null) {
                 metadataStringsTrimmedCount = system.getInt("stringsTruncated")
                 metadataCharsTruncatedCount = system.getInt("stringCharsTruncated")
