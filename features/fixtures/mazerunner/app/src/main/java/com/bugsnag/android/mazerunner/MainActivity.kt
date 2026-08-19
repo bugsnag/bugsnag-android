@@ -36,18 +36,17 @@ class MainActivity : Activity() {
 
     private val mainHandler = Handler(Looper.getMainLooper())
     private val commandHandler = MazeRunnerCommandHandler()
+    private var commandRunnerThread: Thread? = null
 
     private val apiKeyKey = "BUGSNAG_API_KEY"
     private val commandUUIDKey = "MAZE_COMMAND_UUID"
     lateinit var prefs: SharedPreferences
 
     var scenario: Scenario? = null
-    var isActivityRecreate = false
     var mazeAddress: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        this.isActivityRecreate = savedInstanceState != null
         log("MainActivity.onCreate called")
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_main)
@@ -83,11 +82,7 @@ class MainActivity : Activity() {
         super.onResume()
         log("MainActivity.onResume called")
 
-        // Don't start the command runner again if the activity is being recreated,
-        // as it results in two threads executing commands concurrently and causing flakes.
-        if (!this.isActivityRecreate) {
-            startCommandRunner()
-        }
+        startCommandRunner()
         log("MainActivity.onResume complete")
     }
 
@@ -153,59 +148,76 @@ class MainActivity : Activity() {
     }
 
     // Starts a thread to poll for Maze Runner actions to perform
+    @Synchronized
     private fun startCommandRunner() {
-        thread(start = true) {
-            if (mazeAddress == null) setMazeRunnerAddress()
-            checkNetwork()
+        if (commandRunnerThread?.isAlive == true) {
+            CiLog.info("Maze Runner command runner already active")
+            return
+        }
 
-            var polling = true
-            while (polling) {
-                Thread.sleep(1000)
-                try {
-                    // Get the next command from Maze Runner
-                    val commandStr = readCommand()
-                    if (commandStr == "null") {
-                        CiLog.info("No Maze Runner commands queued")
-                        continue
+        val runner = thread(start = false) {
+            try {
+                if (mazeAddress == null) setMazeRunnerAddress()
+                checkNetwork()
+
+                var polling = true
+                while (polling) {
+                    Thread.sleep(1000)
+                    try {
+                        // Get the next command from Maze Runner
+                        val commandStr = readCommand()
+                        if (commandStr == "null") {
+                            CiLog.info("No Maze Runner commands queued")
+                            continue
+                        }
+
+                        // Log the received command
+                        CiLog.info("Received command: $commandStr")
+                        val command = JSONObject(commandStr)
+                        val mazeRunnerCommand = MazeRunnerCommand(
+                            action = getStringSafely(command, "action"),
+                            scenarioName = getStringSafely(command, "scenario_name"),
+                            scenarioMode = getStringSafely(command, "scenario_mode"),
+                            sessionsUrl = getStringSafely(command, "sessions_endpoint"),
+                            notifyUrl = getStringSafely(command, "notify_endpoint"),
+                            remoteConfigUrl = getStringSafely(command, "error_config_endpoint"),
+                            commandUUID = getStringSafely(command, "uuid")
+                        )
+                        log("command.action: ${mazeRunnerCommand.action}")
+                        log("command.scenarioName: ${mazeRunnerCommand.scenarioName}")
+                        log("command.scenarioMode: ${mazeRunnerCommand.scenarioMode}")
+                        log("command.sessionsUrl: ${mazeRunnerCommand.sessionsUrl}")
+                        log("command.notifyUrl: ${mazeRunnerCommand.notifyUrl}")
+                        log("command.remoteConfigUrl: ${mazeRunnerCommand.remoteConfigUrl}")
+
+                        // Stop polling once we have a scenario action
+                        if ("start_bugsnag" == mazeRunnerCommand.action || "run_scenario" == mazeRunnerCommand.action) {
+                            polling = false
+                        }
+
+                        mainHandler.post {
+                            // Display some feedback of the action being run on he UI
+                            val actionField = findViewById<EditText>(R.id.command_action)
+                            val scenarioField = findViewById<EditText>(R.id.command_scenario)
+                            actionField.setText(mazeRunnerCommand.action)
+                            scenarioField.setText(mazeRunnerCommand.scenarioName)
+                            commandHandler.handle(mazeRunnerCommand)
+                        }
+                    } catch (e: Exception) {
+                        CiLog.error("Failed to fetch command from Maze Runner", e)
                     }
-
-                    // Log the received command
-                    CiLog.info("Received command: $commandStr")
-                    val command = JSONObject(commandStr)
-                    val mazeRunnerCommand = MazeRunnerCommand(
-                        action = getStringSafely(command, "action"),
-                        scenarioName = getStringSafely(command, "scenario_name"),
-                        scenarioMode = getStringSafely(command, "scenario_mode"),
-                        sessionsUrl = getStringSafely(command, "sessions_endpoint"),
-                        notifyUrl = getStringSafely(command, "notify_endpoint"),
-                        remoteConfigUrl = getStringSafely(command, "error_config_endpoint"),
-                        commandUUID = getStringSafely(command, "uuid")
-                    )
-                    log("command.action: ${mazeRunnerCommand.action}")
-                    log("command.scenarioName: ${mazeRunnerCommand.scenarioName}")
-                    log("command.scenarioMode: ${mazeRunnerCommand.scenarioMode}")
-                    log("command.sessionsUrl: ${mazeRunnerCommand.sessionsUrl}")
-                    log("command.notifyUrl: ${mazeRunnerCommand.notifyUrl}")
-                    log("command.remoteConfigUrl: ${mazeRunnerCommand.remoteConfigUrl}")
-
-                    // Stop polling once we have a scenario action
-                    if ("start_bugsnag" == mazeRunnerCommand.action || "run_scenario" == mazeRunnerCommand.action) {
-                        polling = false
+                }
+            } finally {
+                synchronized(this@MainActivity) {
+                    if (commandRunnerThread === Thread.currentThread()) {
+                        commandRunnerThread = null
                     }
-
-                    mainHandler.post {
-                        // Display some feedback of the action being run on he UI
-                        val actionField = findViewById<EditText>(R.id.command_action)
-                        val scenarioField = findViewById<EditText>(R.id.command_scenario)
-                        actionField.setText(mazeRunnerCommand.action)
-                        scenarioField.setText(mazeRunnerCommand.scenarioName)
-                        commandHandler.handle(mazeRunnerCommand)
-                    }
-                } catch (e: Exception) {
-                    CiLog.error("Failed to fetch command from Maze Runner", e)
                 }
             }
         }
+
+        commandRunnerThread = runner
+        runner.start()
     }
 
     private fun readCommand(): String {
