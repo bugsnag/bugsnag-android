@@ -7,6 +7,7 @@ import com.bugsnag.android.internal.TaskType;
 import com.bugsnag.android.internal.dag.Provider;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import java.util.concurrent.Future;
@@ -28,12 +29,12 @@ public class DeliveryDelegate extends BaseObservable {
     /**
      * Creates a delegate which delivers events and updates persisted state.
      */
-    public DeliveryDelegate(Logger logger,
-                            Provider<EventStore> eventStore,
-                            ImmutableConfig immutableConfig,
-                            DeliveryPipeline deliveryPipeline,
-                            Notifier notifier,
-                            BackgroundTaskService backgroundTaskService) {
+    public DeliveryDelegate(@NonNull Logger logger,
+                            @NonNull Provider<EventStore> eventStore,
+                            @NonNull ImmutableConfig immutableConfig,
+                            @NonNull DeliveryPipeline deliveryPipeline,
+                            @NonNull Notifier notifier,
+                            @NonNull BackgroundTaskService backgroundTaskService) {
         this.logger = logger;
         this.eventStore = eventStore;
         this.immutableConfig = immutableConfig;
@@ -96,6 +97,7 @@ public class DeliveryDelegate extends BaseObservable {
      * Attempts to deliver a payload via the configured delivery pipeline.
      */
     @VisibleForTesting
+    @Nullable
     public DeliveryStatus deliverPayloadInternal(@NonNull EventPayload payload) {
         logger.d("DeliveryDelegate#deliverPayloadInternal() - attempting event delivery");
         Event event = payload.getEvent();
