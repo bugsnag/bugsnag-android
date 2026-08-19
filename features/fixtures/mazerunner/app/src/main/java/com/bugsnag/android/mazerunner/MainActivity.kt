@@ -35,6 +35,7 @@ private data class MazeRunnerCommand(
 class MainActivity : Activity() {
 
     private val mainHandler = Handler(Looper.getMainLooper())
+    private val commandHandler = MazeRunnerCommandHandler()
 
     private val apiKeyKey = "BUGSNAG_API_KEY"
     private val commandUUIDKey = "MAZE_COMMAND_UUID"
@@ -198,7 +199,7 @@ class MainActivity : Activity() {
                         val scenarioField = findViewById<EditText>(R.id.command_scenario)
                         actionField.setText(mazeRunnerCommand.action)
                         scenarioField.setText(mazeRunnerCommand.scenarioName)
-                        handleCommandAction(mazeRunnerCommand)
+                        commandHandler.handle(mazeRunnerCommand)
                     }
                 } catch (e: Exception) {
                     CiLog.error("Failed to fetch command from Maze Runner", e)
@@ -348,7 +349,6 @@ class MainActivity : Activity() {
         return Scenario.load(this, config, eventType, mode, mazerunnerHttpClient)
     }
 
-
     private fun setStoredApiKey(apiKey: String) {
         with(prefs.edit()) {
             putString(apiKeyKey, apiKey)
@@ -368,43 +368,44 @@ class MainActivity : Activity() {
     private val String.width
         get() =
             lineSequence().fold(0) { maxWidth, line -> max(maxWidth, line.length) }
-}
 
-private fun MainActivity.handleCommandAction(command: MazeRunnerCommand) {
-    when (command.action) {
-        "noop" -> {
-            CiLog.info("No Maze Runner command queuing, continuing to poll")
+    private inner class MazeRunnerCommandHandler {
+        fun handle(command: MazeRunnerCommand) {
+            when (command.action) {
+                "noop" -> {
+                    CiLog.info("No Maze Runner command queuing, continuing to poll")
+                }
+
+                "start_bugsnag" -> {
+                    setStoredCommandUUID(command.commandUUID)
+                    startBugsnag(
+                        command.scenarioName,
+                        command.scenarioMode,
+                        command.sessionsUrl,
+                        command.notifyUrl,
+                        command.remoteConfigUrl
+                    )
+                }
+
+                "run_scenario" -> {
+                    setStoredCommandUUID(command.commandUUID)
+                    runScenario(
+                        command.scenarioName,
+                        command.scenarioMode,
+                        command.sessionsUrl,
+                        command.notifyUrl,
+                        command.remoteConfigUrl
+                    )
+                }
+
+                "clear_persistent_data" -> {
+                    setStoredCommandUUID(command.commandUUID)
+                    clearPersistentData()
+                }
+
+                "reset_uuid" -> clearStoredCommandUUID()
+                else -> throw IllegalArgumentException("Unknown action: ${command.action}")
+            }
         }
-
-        "start_bugsnag" -> {
-            setStoredCommandUUID(command.commandUUID)
-            startBugsnag(
-                command.scenarioName,
-                command.scenarioMode,
-                command.sessionsUrl,
-                command.notifyUrl,
-                command.remoteConfigUrl
-            )
-        }
-
-        "run_scenario" -> {
-            setStoredCommandUUID(command.commandUUID)
-            runScenario(
-                command.scenarioName,
-                command.scenarioMode,
-                command.sessionsUrl,
-                command.notifyUrl,
-                command.remoteConfigUrl
-            )
-        }
-
-        "clear_persistent_data" -> {
-            setStoredCommandUUID(command.commandUUID)
-            clearPersistentData()
-        }
-
-        "reset_uuid" -> clearStoredCommandUUID()
-        else -> throw IllegalArgumentException("Unknown action: ${command.action}")
     }
 }
-
