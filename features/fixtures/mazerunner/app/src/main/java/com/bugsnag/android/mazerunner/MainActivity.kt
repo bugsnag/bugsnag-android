@@ -21,6 +21,7 @@ import kotlin.concurrent.thread
 import kotlin.math.max
 
 const val CONFIG_FILE_TIMEOUT = 15000
+private const val MAZE_RUNNER_COMMAND_TIMEOUT_MS = 5000
 private const val LEGACY_MAZE_ADDRESS = "bs-local.com:9339"
 
 private data class MazeRunnerCommand(
@@ -72,6 +73,10 @@ class MainActivity : Activity() {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_main)
         prefs = getPreferences(Context.MODE_PRIVATE)
+
+        if (savedInstanceState == null) {
+            clearStoredCommandUUID()
+        }
 
         // Attempt to dismiss any system dialogs (such as "MazeRunner crashed")
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
@@ -241,8 +246,8 @@ class MainActivity : Activity() {
         val commandUrl = "http://$mazeAddress/command?after=${prefs.getString(commandUUIDKey, "").orEmpty()}"
         CiLog.info("Requesting Maze Runner command from: $commandUrl")
         val urlConnection = URL(commandUrl).openConnection() as HttpURLConnection
-        urlConnection.connectTimeout = 5000
-        urlConnection.readTimeout = 5000
+        urlConnection.connectTimeout = MAZE_RUNNER_COMMAND_TIMEOUT_MS
+        urlConnection.readTimeout = MAZE_RUNNER_COMMAND_TIMEOUT_MS
         try {
             return urlConnection.inputStream.use { it.reader().readText() }
         } catch (ioe: IOException) {
