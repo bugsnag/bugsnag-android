@@ -1,3 +1,29 @@
+public final class com/bugsnag/android/okhttp/BugsnagOkHttp : com/bugsnag/android/http/HttpInstrumentationBuilder {
+	public fun <init> ()V
+	public synthetic fun addHttpErrorCode (I)Lcom/bugsnag/android/http/HttpInstrumentationBuilder;
+	public fun addHttpErrorCode (I)Lcom/bugsnag/android/okhttp/BugsnagOkHttp;
+	public synthetic fun addHttpErrorCodes (II)Lcom/bugsnag/android/http/HttpInstrumentationBuilder;
+	public fun addHttpErrorCodes (II)Lcom/bugsnag/android/okhttp/BugsnagOkHttp;
+	public synthetic fun addRequestCallback (Lcom/bugsnag/android/http/HttpRequestCallback;)Lcom/bugsnag/android/http/HttpInstrumentationBuilder;
+	public fun addRequestCallback (Lcom/bugsnag/android/http/HttpRequestCallback;)Lcom/bugsnag/android/okhttp/BugsnagOkHttp;
+	public synthetic fun addResponseCallback (Lcom/bugsnag/android/http/HttpResponseCallback;)Lcom/bugsnag/android/http/HttpInstrumentationBuilder;
+	public fun addResponseCallback (Lcom/bugsnag/android/http/HttpResponseCallback;)Lcom/bugsnag/android/okhttp/BugsnagOkHttp;
+	public final fun createInterceptor ()Lokhttp3/Interceptor;
+	public final fun createInterceptor (Lcom/bugsnag/android/Client;)Lokhttp3/Interceptor;
+	public synthetic fun logBreadcrumbs ()Lcom/bugsnag/android/http/HttpInstrumentationBuilder;
+	public fun logBreadcrumbs ()Lcom/bugsnag/android/okhttp/BugsnagOkHttp;
+	public synthetic fun logBreadcrumbs (Z)Lcom/bugsnag/android/http/HttpInstrumentationBuilder;
+	public fun logBreadcrumbs (Z)Lcom/bugsnag/android/okhttp/BugsnagOkHttp;
+	public synthetic fun maxRequestBodyCapture (J)Lcom/bugsnag/android/http/HttpInstrumentationBuilder;
+	public fun maxRequestBodyCapture (J)Lcom/bugsnag/android/okhttp/BugsnagOkHttp;
+	public synthetic fun maxResponseBodyCapture (J)Lcom/bugsnag/android/http/HttpInstrumentationBuilder;
+	public fun maxResponseBodyCapture (J)Lcom/bugsnag/android/okhttp/BugsnagOkHttp;
+	public synthetic fun removeHttpErrorCode (I)Lcom/bugsnag/android/http/HttpInstrumentationBuilder;
+	public fun removeHttpErrorCode (I)Lcom/bugsnag/android/okhttp/BugsnagOkHttp;
+	public synthetic fun removeHttpErrorCodes (II)Lcom/bugsnag/android/http/HttpInstrumentationBuilder;
+	public fun removeHttpErrorCodes (II)Lcom/bugsnag/android/okhttp/BugsnagOkHttp;
+}
+
 public final class com/bugsnag/android/okhttp/BugsnagOkHttpPlugin : com/bugsnag/android/okhttp/util/DelegateEventListener, com/bugsnag/android/Plugin {
 	public fun <init> ()V
 	public fun <init> (Lokhttp3/EventListener;)V

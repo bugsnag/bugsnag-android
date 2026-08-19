@@ -1,5 +1,93 @@
 # Changelog
 
+## 6.26.1 (2026-07-18)
+
+### Enhancements
+
+* **Security Hardening**: Enabled `_FORTIFY_SOURCE=2` and stack protector (`-fstack-protector-all`) for all native libraries (`libbugsnag-ndk.so`, `libbugsnag-plugin-android-anr.so`, `libbugsnag-root-detection.so`) to improve runtime buffer overflow detection.
+[#2429](https://github.com/bugsnag/bugsnag-android/pull/2429)
+
+## 6.26.0 (2026-04-07)
+
+### Enhancements
+
+* Build UUIDs derived from dex file signatures no longer block NDK startup, reducing the overall startup time.
+  [#2401](https://github.com/bugsnag/bugsnag-android/pull/2401)
+* The `AppHangPlugin` can now be configured to log breadcrumbs for "near hang" situations where the app pauses for long enough to be noticeable but not long enough to warrant a full AppHang report
+  [#2402](https://github.com/bugsnag/bugsnag-android/pull/2402)
+
+## 6.25.0 (2026-03-02)
+
+### Enhancements
+
+* Added `NativeOutOfMemoryPlugin` as a new way to report `OutOfMemoryError`s that uses pre-allocated memory in the NDK module instead of allocating an `Event` object. When used `OutOfMemoryError`s will be more reliably reported, but will not be passed to `OnErrorCallback`s (`OnSendCallback` works as expected).
+  [#2384](https://github.com/bugsnag/bugsnag-android/pull/2384)
+* Added `appHangCooldownMillis` to the AppHangPlugin to control the number of AppHang errors produced when the app is performance constrained
+  [#2389](https://github.com/bugsnag/bugsnag-android/pull/2389)
+* Moved root/jailbreak detection onto a background thread so that it no longer blocks startup (this should improve startup performance in most common cases)
+  [#2391](https://github.com/bugsnag/bugsnag-android/pull/2391)
+
+### Bug Fixes
+
+* Reduced the heartbeat overheads of `BugsnagAppHangPlugin` reducing both the CPU cost of a heartbeat and the frequency. 
+  [#2395](https://github.com/bugsnag/bugsnag-android/pull/2395)
+
+## 6.24.0 (2026-02-11)
+
+### Enhancements
+
+* When configured, the AppHangPlugin can now start taking stack snapshots over time when the monitored thread becomes unresponsive.
+  [#2372](https://github.com/bugsnag/bugsnag-android/pull/2372)
+
+## 6.23.0 (2026-02-02)
+
+### Enhancements
+
+* Introduced new OkHttp Interceptor based instrumentation for HTTP errors and breadcrumbs
+  [#2371](https://github.com/bugsnag/bugsnag-android/pull/2371)
+
+## 6.22.0 (2026-01-19)
+
+### Enhancements
+
+* Added support for Turbo Module native stacktraces in ``bugsnag-plugin-react-native`
+  [#2367](https://github.com/bugsnag/bugsnag-android/pull/2367)
+
+### Bug fixes
+
+* Replaced the heartbeat lock with park/unpark in the [bugsnag-plugin-android-apphang](bugsnag-plugin-android-apphang) so that the main/monitor threads are not interdependant
+  [#2363](https://github.com/bugsnag/bugsnag-android/pull/2363)
+
+## 6.21.0 (2026-01-05)
+
+### Enhancements
+
+* Added the OS security patch version to the reported device metadata
+  [#2345](https://github.com/bugsnag/bugsnag-android/pull/2345)
+* Added `ErrorCaptureOptions.CAPTURE_ALL` field to more easily change only the captured metadata when specifying `ErrorOptions`
+  [#2358](https://github.com/bugsnag/bugsnag-android/pull/2358)
+
+### Bug fixes
+
+* Synthesized ANRs from the exitinfo plugin will now include the user details (captured when they are synthesized)
+  [#2352](https://github.com/bugsnag/bugsnag-android/pull/2352)
+
+## 6.20.0 (2025-12-03)
+
+### Enhancements
+
+* Introduced [bugsnag-plugin-android-apphang](bugsnag-plugin-android-apphang) as a configurable alternative to ANR reporting based on heartbeat monitoring
+  [#2332](https://github.com/bugsnag/bugsnag-android/pull/2332)
+* `Configuration.sendLaunchCrashesSynchronously` should result in fewer ANRs as it now calculates its timeout based on `Process.getStartElapsedRealtime` when available
+  [#2340](https://github.com/bugsnag/bugsnag-android/pull/2340)
+* Added `ErrorOptions` and `ErrorCaptureOptions` to allow customisation of the the fields captured by `notify`
+  [#2328](https://github.com/bugsnag/bugsnag-android/pull/2328)
+
+### Bug fixes
+
+* Fixed the consumer proguard rules for `ErrorType` (affects Kotlin Multiplatform apps), and added a `dontwarn` for apps with compileSdk < 36
+  [#2326](https://github.com/bugsnag/bugsnag-android/pull/2326)
+
 ## 6.19.0 (2025-09-30)
 
 ### Enhancements

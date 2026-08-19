@@ -69,10 +69,12 @@ class MainActivity : Activity() {
     lateinit var prefs: SharedPreferences
 
     var scenario: Scenario? = null
+    var isActivityRecreate = false
     var mazeAddress: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.isActivityRecreate = savedInstanceState != null
         log("MainActivity.onCreate called")
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_main)
@@ -113,7 +115,11 @@ class MainActivity : Activity() {
         super.onResume()
         log("MainActivity.onResume called")
 
-        startCommandRunner()
+        // Don't start the command runner again if the activity is being recreated,
+        // as it results in two threads executing commands concurrently and causing flakes.
+        if (!this.isActivityRecreate) {
+            startCommandRunner()
+        }
         log("MainActivity.onResume complete")
     }
 
@@ -183,6 +189,26 @@ class MainActivity : Activity() {
         CiLog.info("lastCommandUUID set to empty")
     }
 
+    private fun setStoredCommandUUID(commandUUID: String) {
+        with(prefs.edit()) {
+            putString(commandUUIDKey, commandUUID)
+            commit()
+        }
+        CiLog.info("lastCommandUUID set to: $commandUUID")
+    }
+
+    private fun clearStoredCommandUUID() {
+        with(prefs.edit()) {
+            remove(commandUUIDKey)
+            commit()
+        }
+        CiLog.info("lastCommandUUID set to empty")
+    }
+
+    private fun getStoredCommandUUID(): String? {
+        return prefs.getString(commandUUIDKey, "").orEmpty()
+    }
+
     // Starts a thread to poll for Maze Runner actions to perform
     @Synchronized
     private fun startCommandRunner() {
@@ -229,6 +255,66 @@ class MainActivity : Activity() {
                             actionField.setText(mazeRunnerCommand.action)
                             scenarioField.setText(mazeRunnerCommand.scenarioName)
                             commandHandler.handle(mazeRunnerCommand)
+        thread(start = true) {
+            if (mazeAddress == null) setMazeRunnerAddress()
+            checkNetwork()
+
+            var polling = true
+            while (polling) {
+                Thread.sleep(1000)
+                try {
+                    // Get the next command from Maze Runner
+                    val commandStr = readCommand()
+                    if (commandStr == "null") {
+                        CiLog.info("No Maze Runner commands queued")
+                        continue
+                    }
+
+                    // Log the received command
+                    CiLog.info("Received command: $commandStr")
+                    val command = JSONObject(commandStr)
+                    val action = getStringSafely(command, "action")
+                    val scenarioName = getStringSafely(command, "scenario_name")
+                    val scenarioMode = getStringSafely(command, "scenario_mode")
+                    val sessionsUrl = getStringSafely(command, "sessions_endpoint")
+                    val notifyUrl = getStringSafely(command, "notify_endpoint")
+                    val commandUUID = getStringSafely(command, "uuid")
+
+                    // Stop polling once we have a scenario action
+                    if ("start_bugsnag" == action || "run_scenario" == action) {
+                        polling = false
+                    }
+
+                    mainHandler.post {
+                        // Display some feedback of the action being run on he UI
+                        val actionField = findViewById<EditText>(R.id.command_action)
+                        val scenarioField = findViewById<EditText>(R.id.command_scenario)
+                        actionField.setText(action)
+                        scenarioField.setText(scenarioName)
+
+                        // Perform the given action on the UI thread
+                        when (action) {
+                            "noop" -> {
+                                CiLog.info("No Maze Runner command queuing, continuing to poll")
+                            }
+
+                            "start_bugsnag" -> {
+                                setStoredCommandUUID(commandUUID)
+                                startBugsnag(scenarioName, scenarioMode, sessionsUrl, notifyUrl)
+                            }
+
+                            "run_scenario" -> {
+                                setStoredCommandUUID(commandUUID)
+                                runScenario(scenarioName, scenarioMode, sessionsUrl, notifyUrl)
+                            }
+
+                            "clear_persistent_data" -> {
+                                setStoredCommandUUID(commandUUID)
+                                PersistentData(applicationContext).clear()
+                            }
+
+                            "reset_uuid" -> clearStoredCommandUUID()
+                            else -> throw IllegalArgumentException("Unknown action: $action")
                         }
                     } catch (e: Exception) {
                         CiLog.error("Failed to fetch command from Maze Runner", e)

@@ -82,6 +82,7 @@ Feature: Unhandled smoke tests
     And the event "metaData.device.screenResolution" is not null
     And the event "metaData.device.brand" is not null
     And the event "metaData.device.batteryLevel" is not null
+    And the event "metaData.device.securityPatch" is not null
 
     # User
     And the event "user.id" is not null
@@ -170,6 +171,7 @@ Feature: Unhandled smoke tests
     And the event "metaData.device.dpi" is not null
     And the event "metaData.device.screenResolution" is not null
     And the event "metaData.device.brand" is not null
+    And the event "metaData.device.securityPatch" is not null
 
     # User
     And the event "user.id" equals "ABC"
@@ -286,6 +288,7 @@ Feature: Unhandled smoke tests
     And the error payload field "events.0.device.totalMemory" is greater than 0
     And the event "device.orientation" matches "(portrait|landscape)"
     And the event "device.time" is a timestamp
+    And the event "metaData.device.securityPatch" is not null
 
     # Metadata
     And the event "metaData.device.locationStatus" is not null
@@ -295,6 +298,7 @@ Feature: Unhandled smoke tests
     And the event "metaData.device.dpi" is not null
     And the event "metaData.device.screenResolution" is not null
     And the event "metaData.device.brand" is not null
+    And the event "metaData.device.securityPatch" is not null
 
     # Context
     And the event "context" equals "Everest"

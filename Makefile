@@ -85,6 +85,6 @@ endif
 
 .PHONY: check
 check:
-	@./gradlew lint detekt ktlintCheck checkstyle
+	@./gradlew lint detekt ktlintCheck checkstyle apiCheck
 	@./scripts/run-cpp-check.sh
 	@./scripts/run-clang-format-ci-check.sh

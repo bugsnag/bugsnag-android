@@ -17,6 +17,7 @@ add_library( # Specifies the name of the library.
         jni/handlers/signal_handler.c
         jni/handlers/cpp_handler.cpp
         jni/utils/crash_info.c
+        jni/utils/java_stacktrace.c
         jni/utils/serializer/buffered_writer.c
         jni/utils/serializer/event_writer.c
         jni/utils/serializer/BSG_KSJSONCodec.c
@@ -49,7 +50,7 @@ set(EXTRA_LINK_FLAGS "-Wl,-z,max-page-size=16384,--version-script=${CMAKE_CURREN
 set_target_properties(
         bugsnag-ndk
         PROPERTIES
-        COMPILE_OPTIONS -Werror -Wall -pedantic
+        COMPILE_OPTIONS -Werror -Wall -pedantic -D_FORTIFY_SOURCE=2 -fstack-protector-all
         LINK_FLAGS "${EXTRA_LINK_FLAGS}"
         CXX_STANDARD 17
         CXX_STANDARD_REQUIRED YES

@@ -137,8 +137,8 @@ class DeviceIdFilePersistence(
  */
 private class DeviceId(val id: String?) : JsonStream.Streamable {
 
-    override fun toStream(stream: JsonStream) {
-        with(stream) {
+    override fun toStream(writer: JsonStream) {
+        with(writer) {
             beginObject()
             name(KEY_ID)
             value(id)

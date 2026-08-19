@@ -187,13 +187,12 @@ internal class ExitInfoPluginStore(
             }
         }
 
-        override fun toStream(stream: JsonStream) {
-            stream.beginObject()
+        override fun toStream(writer: JsonStream) {
+            writer.beginObject()
                 .name("pid").value(pid)
                 .name("timestamp").value(timestamp.toString())
-                .name("exitInfoKeys")
-            stream.value(processedExitInfoKeys)
-            stream.endObject()
+                .name("exitInfoKeys").value(processedExitInfoKeys)
+            writer.endObject()
         }
     }
 }

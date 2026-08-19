@@ -21,7 +21,6 @@ import okhttp3.internal.notify
 import java.io.IOException
 import java.util.Date
 
-
 open class BaseCrashyActivity : AppCompatActivity() {
 
     companion object {

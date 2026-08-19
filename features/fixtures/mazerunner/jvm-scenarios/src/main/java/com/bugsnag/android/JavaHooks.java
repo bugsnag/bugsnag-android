@@ -77,7 +77,7 @@ public class JavaHooks {
 
     @NonNull
     public static void flushErrorStoreOnLaunch(Client client) {
-        client.getEventStore().flushOnLaunch();
+        client.getEventStore().flushOnLaunch(client.getLastRunInfo());
     }
 
     @NonNull

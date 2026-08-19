@@ -115,13 +115,17 @@ internal class DeviceDataCollector(
         map["dpi"] = dpi
         map["emulator"] = emulator
         map["screenResolution"] = screenResolution
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            map["securityPatch"] = Build.VERSION.SECURITY_PATCH
+        }
         return map
     }
 
     private fun checkIsRooted(): Boolean {
+        val rooted = rootedFuture ?: return false
         return try {
-            rootedFuture != null && rootedFuture.get()
-        } catch (exc: Exception) {
+            rooted.isComplete && rooted.get()
+        } catch (_: Exception) {
             false
         }
     }

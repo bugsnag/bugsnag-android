@@ -43,5 +43,3 @@ Feature: Switching automatic error detection on/off for Unity
     And the event "severity" equals "error"
     And the event "severityReason.type" equals "signal"
     And the event "severityReason.unhandledOverridden" is false
-
-

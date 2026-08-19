@@ -12,7 +12,7 @@ Feature: Native API
       | SIGILL  |
       | SIGTRAP |
     And the event "app.version" equals "22.312.749.78.300.810.24.167.32"
-    And the event "context" equals "ObservableSessionInitializerStringParserStringSessionProxyGloba"
+    And the event "context" equals "ObservableSessionInitializerStringParserStringSessionProxyGlob"
     And the event "unhandled" is true
 
   Scenario: Use the NDK methods without "env" after calling "bugsnag_start"

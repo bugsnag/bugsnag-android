@@ -82,4 +82,6 @@ sealed class StateEvent { // JvmField allows direct field access optimizations
     ) : StateEvent()
 
     object ClearFeatureFlags : StateEvent()
+
+    object SynchronizeState : StateEvent()
 }

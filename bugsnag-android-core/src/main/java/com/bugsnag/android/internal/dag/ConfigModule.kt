@@ -14,6 +14,6 @@ internal class ConfigModule(
     configuration: Configuration,
     connectivity: Connectivity,
     bgTaskExecutor: BackgroundTaskService
-) : BackgroundDependencyModule(bgTaskExecutor) {
+) : DependencyModule {
     val config = sanitiseConfiguration(contextModule.ctx, configuration, connectivity, bgTaskExecutor)
 }

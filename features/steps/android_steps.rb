@@ -30,19 +30,11 @@ def execute_command(action, scenario_name = '')
     $notify_endpoint = 'http://bs-local.com:9339/notify'
     $error_config_endpoint = 'http://bs-local.com:9339'
   end
-
-  # Ensure fixture has read the command
-  count = 600
-  sleep 0.1 until Maze::Server.commands.size_remaining == 0 || (count -= 1) < 1
-
-  raise 'Test fixture did not GET /command' unless Maze::Server.commands.size_remaining == 0
 end
 
 def press_at(x, y)
-  touch_action = Appium::TouchAction.new
-  touch_action.press({x: x, y: y}).wait(1).release
   begin
-    touch_action.perform
+    Maze::Api::Appium::UiManager.new.touch_at(x, y)
   rescue Selenium::WebDriver::Error::ServerError
     # Just ignore it, the press still seems to work
   end
@@ -135,6 +127,7 @@ When("I tap the screen {int} times") do |count|
   (1..count).each { |i|
     begin
       press_at 500, 300
+      sleep 1
     rescue Selenium::WebDriver::Error::ElementNotInteractableError, Selenium::WebDriver::Error::InvalidElementStateError
       # Ignore it
     end

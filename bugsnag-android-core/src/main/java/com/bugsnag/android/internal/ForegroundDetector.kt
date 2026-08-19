@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
+import android.os.Process
 import android.os.SystemClock
 import androidx.annotation.VisibleForTesting
 import java.lang.ref.WeakReference
@@ -59,7 +60,12 @@ internal object ForegroundDetector : ActivityLifecycleCallbacks, Handler.Callbac
      * Marks the timestamp (relative to [SystemClock.elapsedRealtime]) that we initialised for the
      * first time.
      */
-    internal val startupTime = SystemClock.elapsedRealtime()
+    internal val startupTime =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Process.getStartElapsedRealtime()
+        } else {
+            SystemClock.elapsedRealtime()
+        }
 
     @VisibleForTesting
     internal var backgroundSent = true

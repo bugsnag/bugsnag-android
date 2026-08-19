@@ -79,6 +79,8 @@ internal class DeliveryDelegateTest {
         assertEquals(0, event.session!!.handledCount)
 
         assertEquals("BUGSNAG_API_KEY", event.session!!.apiKey)
+
+        assertEquals(DeliveryStrategy.STORE_ONLY, event.deliveryStrategy)
     }
 
     @Test
@@ -104,6 +106,8 @@ internal class DeliveryDelegateTest {
         // check session count incremented
         assertEquals(0, event.session!!.unhandledCount)
         assertEquals(1, event.session!!.handledCount)
+
+        assertEquals(DeliveryStrategy.SEND_IMMEDIATELY, event.deliveryStrategy)
     }
 
     @Test
@@ -124,6 +128,8 @@ internal class DeliveryDelegateTest {
 
         // verify no payload was sent for an Event with no errors
         assertNull(msg)
+
+        assertEquals(DeliveryStrategy.SEND_IMMEDIATELY, event.deliveryStrategy)
     }
 
     @Test

@@ -18,7 +18,8 @@ internal class ClientObservable : BaseObservable() {
                 conf.apiKey,
                 conf.enabledErrorTypes.ndkCrashes,
                 conf.appVersion,
-                conf.buildUuid?.getOrNull(),
+                if (conf.buildUuid?.isComplete == true) conf.buildUuid.getOrNull()
+                else null,
                 conf.releaseStage,
                 lastRunInfoPath,
                 consecutiveLaunchCrashes,
@@ -30,5 +31,9 @@ internal class ClientObservable : BaseObservable() {
 
     fun postNdkDeliverPending() {
         updateState { StateEvent.DeliverPending }
+    }
+
+    fun postSynchronizeState() {
+        updateState { StateEvent.SynchronizeState }
     }
 }

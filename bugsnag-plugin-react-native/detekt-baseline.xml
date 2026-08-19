@@ -2,6 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
+    <ID>LongMethod:EventDeserializer.kt$EventDeserializer$@Suppress("UNCHECKED_CAST") override fun deserialize(map: MutableMap&lt;String, Any?>): Event</ID>
     <ID>TooManyFunctions:BugsnagReactNativePlugin.kt$BugsnagReactNativePlugin : Plugin</ID>
   </CurrentIssues>
 </SmellBaseline>

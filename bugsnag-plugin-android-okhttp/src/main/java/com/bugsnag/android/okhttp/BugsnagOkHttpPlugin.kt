@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap
  * OkHttp connection and prevent breadcrumbs from being collected. For further information, see:
  * https://square.github.io/okhttp/4.x/okhttp/okhttp3/-response-body/#the-response-body-must-be-closed
  */
+@Deprecated("Replaced by BugsnagOkHttp")
 class BugsnagOkHttpPlugin @JvmOverloads constructor(
     delegateEventListener: EventListener? = null,
     internal val timeProvider: () -> Long = { System.currentTimeMillis() }

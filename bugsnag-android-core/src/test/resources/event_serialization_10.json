@@ -3,11 +3,36 @@
   "severity": "warning",
   "severityReason": {
     "type": "handledException",
+    "type": "httpError",
     "unhandledOverridden": false
   },
   "unhandled": false,
   "exceptions": [],
   "projectPackages": [
+  "request": {
+    "httpMethod": "POST",
+    "httpVersion": "1.1",
+    "url": "http://example.com/",
+    "body": "some body",
+    "bodyLength": 9,
+    "headers": {
+      "content-type": "text/plain",
+      "content-length": "9"
+    },
+    "params": {
+      "message": "hello world"
+    }
+  },
+  "response": {
+    "statusCode": 200,
+    "body": "some body",
+    "bodyLength": 9,
+    "headers": {
+      "content-type": "text/plain",
+      "content-length": "9"
+    }
+  },
+  "projectPackages":[
     "com.example.foo"
   ],
   "user": {},

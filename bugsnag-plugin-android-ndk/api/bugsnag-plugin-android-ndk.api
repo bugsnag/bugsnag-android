@@ -1,3 +1,10 @@
+public final class com/bugsnag/android/NativeOutOfMemoryPlugin : com/bugsnag/android/OutOfMemoryHandler, com/bugsnag/android/Plugin {
+	public fun <init> ()V
+	public fun load (Lcom/bugsnag/android/Client;)V
+	public fun onOutOfMemory (Ljava/lang/OutOfMemoryError;)Z
+	public fun unload ()V
+}
+
 public final class com/bugsnag/android/ndk/BugsnagNDK {
 	public static final field INSTANCE Lcom/bugsnag/android/ndk/BugsnagNDK;
 	public static final fun refreshSymbolTable ()V
@@ -27,6 +34,7 @@ public final class com/bugsnag/android/ndk/NativeBridge : com/bugsnag/android/in
 	public final fun pausedSession ()V
 	public final fun refreshSymbolTable ()V
 	public final fun removeMetadata (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun reportOutOfMemory (Ljava/lang/OutOfMemoryError;)V
 	public final fun setInternalMetricsEnabled (Z)V
 	public final fun setStaticJsonData (Ljava/lang/String;)V
 	public final fun startedSession (Ljava/lang/String;Ljava/lang/String;II)V

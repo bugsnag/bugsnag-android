@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import static com.bugsnag.android.SeverityReason.REASON_HANDLED_EXCEPTION;
+import static com.bugsnag.android.SeverityReason.REASON_UNHANDLED_EXCEPTION;
 
 import com.bugsnag.android.internal.BackgroundTaskService;
 import com.bugsnag.android.internal.DeliveryPipeline;
@@ -128,7 +129,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
      * @param configuration  a configuration for the Client
      */
     public Client(@NonNull Context androidContext, @NonNull final Configuration configuration) {
-        ContextModule contextModule = new ContextModule(androidContext, bgTaskService);
+        ContextModule contextModule = new ContextModule(androidContext);
         appContext = contextModule.getCtx();
 
         notifier = configuration.getNotifier();
@@ -186,7 +187,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
         // lookup system services
         final SystemServiceModule systemServiceModule =
-                new SystemServiceModule(contextModule, bgTaskService);
+                new SystemServiceModule(contextModule);
 
         // setup further state trackers and data collection
         TrackerModule trackerModule = new TrackerModule(configModule,
@@ -194,8 +195,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
         DataCollectionModule dataCollectionModule = new DataCollectionModule(contextModule,
                 configModule, systemServiceModule, trackerModule,
-                bgTaskService, connectivity, storageModule.getDeviceIdStore(),
-                memoryTrimState);
+                bgTaskService, connectivity, storageModule.getDeviceId(),
+                memoryTrimState, clientObservable);
 
         // load the device + user information
         userState = storageModule.loadUser(configuration.getUser());
@@ -309,7 +310,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         }
 
         // Flush any on-disk errors and sessions
-        eventStore.get().flushOnLaunch();
+        eventStore.get().flushOnLaunch(lastRunInfo);
         eventStore.get().flushAsync();
         sessionTracker.flushAsync();
 
@@ -437,6 +438,25 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         clientObservable.postNdkInstall(immutableConfig, lastRunInfoPath, crashes);
         syncInitialState();
         clientObservable.postNdkDeliverPending();
+
+        // If the buildUuid is still being computed (DexBuildIdGenerator running on IO thread),
+        // schedule a deferred SynchronizeState so the NDK layer picks up the value once ready.
+        Provider<String> buildUuid = immutableConfig.getBuildUuid();
+        if (buildUuid != null && !buildUuid.isComplete()) {
+            try {
+                bgTaskService.submitTask(TaskType.IO, new Runnable() {
+                    @Override
+                    public void run() {
+                        // This blocks on the IO thread until dex generation finishes,
+                        // then syncs the result to the NDK layer.
+                        immutableConfig.getBuildUuid().getOrNull();
+                        clientObservable.postSynchronizeState();
+                    }
+                });
+            } catch (RejectedExecutionException exc) {
+                logger.w("Failed to schedule deferred NDK build UUID sync", exc);
+            }
+        }
     }
 
     private boolean setupNdkDirectory() {
@@ -756,7 +776,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
      * @param exception the exception to send to Bugsnag
      */
     public void notify(@NonNull Throwable exception) {
-        notify(exception, null);
+        notify(exception, null, null);
     }
 
     /**
@@ -767,20 +787,64 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
      *                additional modification
      */
     public void notify(@NonNull Throwable exc, @Nullable OnErrorCallback onError) {
+        notify(exc, null, onError);
+    }
+
+    /**
+     * Notify Bugsnag of a handled exception
+     *
+     * @param exc     the exception to send to Bugsnag
+     * @param options the error options
+     * @param onError callback invoked on the generated error report for
+     *                additional modification
+     */
+    public void notify(
+            @NonNull Throwable exc,
+            @Nullable ErrorOptions options,
+            @Nullable OnErrorCallback onError
+    ) {
         if (exc != null) {
             if (immutableConfig.shouldDiscardError(exc)) {
                 return;
             }
-            SeverityReason severityReason = SeverityReason.newInstance(REASON_HANDLED_EXCEPTION);
-            Metadata metadata = metadataState.getMetadata();
-            FeatureFlags featureFlags = featureFlagState.getFeatureFlags();
-            Event event = new Event(exc, immutableConfig, severityReason, metadata, featureFlags,
-                    logger);
+            SeverityReason severityReason =
+                    options == null || !options.isFatal()
+                            ? SeverityReason.newInstance(REASON_HANDLED_EXCEPTION)
+                            : SeverityReason.newInstance(REASON_UNHANDLED_EXCEPTION);
+
+            Event event = createEventWithOptions(exc, severityReason, options);
             event.setGroupingDiscriminator(getGroupingDiscriminator());
-            populateAndNotifyAndroidEvent(event, onError);
+            populateAndNotifyAndroidEvent(event, options, onError);
         } else {
             logNull("notify");
         }
+    }
+
+    private Event createEventWithOptions(
+            @NonNull Throwable exc,
+            @NonNull SeverityReason severityReason,
+            @Nullable ErrorOptions options
+    ) {
+        final ErrorCaptureOptions capture = options != null ? options.getCapture() : null;
+        final Metadata metadata = capture == null || capture.getMetadata() == null
+                ? metadataState.getMetadata()
+                : metadataState.selectMetadata(capture.getMetadata());
+        final FeatureFlags featureFlags = capture == null || capture.getFeatureFlags()
+                ? featureFlagState.getFeatureFlags()
+                : new FeatureFlags();
+        final boolean captureStacktrace = capture == null || capture.getStacktrace();
+        final boolean captureThreads = capture == null || capture.getThreads();
+
+        return new Event(
+                exc,
+                immutableConfig,
+                severityReason,
+                metadata,
+                featureFlags,
+                captureStacktrace,
+                captureThreads,
+                logger
+        );
     }
 
     /**
@@ -797,7 +861,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         Event event = new Event(exc, immutableConfig, handledState,
                 data, featureFlagState.getFeatureFlags(), logger);
         event.setGroupingDiscriminator(getGroupingDiscriminator());
-        populateAndNotifyAndroidEvent(event, null);
+        populateAndNotifyAndroidEvent(event, null, null);
 
         // persist LastRunInfo so that on relaunch users can check the app crashed
         int consecutiveLaunchCrashes = lastRunInfo == null ? 0
@@ -816,6 +880,26 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
     void populateAndNotifyAndroidEvent(@NonNull Event event,
                                        @Nullable OnErrorCallback onError) {
+        populateAndNotifyAndroidEvent(event, null, onError);
+    }
+
+    void populateAndNotifyAndroidEvent(@NonNull Event event,
+                                       @Nullable ErrorOptions options,
+                                       @Nullable OnErrorCallback onError
+    ) {
+        populateDeviceAndAppData(event);
+        populateEventData(event, options);
+
+        // Attach context to the event
+        event.setContext(contextState.getContext());
+
+        event.setInternalMetrics(internalMetrics);
+        event.setGroupingDiscriminator(getGroupingDiscriminator());
+
+        notifyInternalWithErrorOptions(event, onError, options);
+    }
+
+    private void populateDeviceAndAppData(@NonNull Event event) {
         // Capture the state of the app and device and attach diagnostics to the event
         event.setDevice(deviceDataCollector.generateDeviceWithState(new Date().getTime()));
         event.addMetadata("device", deviceDataCollector.getDeviceMetadata());
@@ -824,25 +908,35 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         // generate new object each time, as this can be mutated by end-users
         event.setApp(appDataCollector.generateAppWithState());
         event.addMetadata("app", appDataCollector.getAppDataMetadata());
+    }
 
-        // Attach breadcrumbState to the event
-        event.setBreadcrumbs(breadcrumbState.copy());
+    private void populateEventData(@NonNull Event event, @Nullable ErrorOptions options) {
+        final ErrorCaptureOptions capture = options != null && options.getCapture() != null
+                ? options.getCapture()
+                : null;
 
-        // Attach user info to the event
-        User user = userState.get().getUser();
-        event.setUser(user.getId(), user.getEmail(), user.getName());
+        if (capture == null || capture.getBreadcrumbs()) {
+            // Attach breadcrumbState to the event
+            event.setBreadcrumbs(breadcrumbState.copy());
+        }
 
-        // Attach context to the event
-        event.setContext(contextState.getContext());
-
-        event.setInternalMetrics(internalMetrics);
-        event.setGroupingDiscriminator(getGroupingDiscriminator());
-
-        notifyInternal(event, onError);
+        if (capture == null || capture.getUser()) {
+            // Attach user info to the event
+            User user = userState.get().getUser();
+            event.setUser(user.getId(), user.getEmail(), user.getName());
+        }
     }
 
     void notifyInternal(@NonNull Event event,
-                        @Nullable OnErrorCallback onError) {
+                        @Nullable OnErrorCallback onError
+    ) {
+        notifyInternalWithErrorOptions(event, onError, null);
+    }
+
+    void notifyInternalWithErrorOptions(@NonNull Event event,
+                        @Nullable OnErrorCallback onError,
+                        @Nullable ErrorOptions options
+    ) {
         // set the redacted keys on the event as this
         // will not have been set for RN/Unity events
         Collection<Pattern> redactedKeys = metadataState.getMetadata().getRedactedKeys();
@@ -869,6 +963,34 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         setGroupingDiscriminator(getGroupingDiscriminator());
 
         deliveryDelegate.deliver(event);
+        if (options != null && options.isFatal()) {
+            setAutoNotify(false);
+        }
+    }
+
+    /**
+     * Override or intercept the default error handling for {@link OutOfMemoryError}s.
+     *
+     * @param handler the new handler to use (or null to revert to normal error handling for OOMs)
+     * @see #getOutOfMemoryHandler()
+     */
+    public void setOutOfMemoryHandler(@Nullable OutOfMemoryHandler handler) {
+        if (exceptionHandler != null) {
+            exceptionHandler.setOutOfMemoryHandler(handler);
+        }
+    }
+
+    /**
+     * Return the currently defined {@link OutOfMemoryHandler} if one is being used.
+     *
+     * @return the current {@code OutOfMemoryHandler} or null if none is set
+     */
+    @Nullable
+    public OutOfMemoryHandler getOutOfMemoryHandler() {
+        if (exceptionHandler == null) {
+            return null;
+        }
+        return exceptionHandler.getOutOfMemoryHandler();
     }
 
     /**

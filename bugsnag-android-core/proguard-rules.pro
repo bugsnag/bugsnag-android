@@ -9,5 +9,6 @@
     public static com.bugsnag.android.Telemetry[] values();
  }
 -keepclassmembers enum com.bugsnag.android.ErrorType {
-    public static com.bugsnag.android.Telemetry[] values();
+    public static com.bugsnag.android.ErrorType[] values();
  }
+-dontwarn com.bugsnag.android.ThreadState
