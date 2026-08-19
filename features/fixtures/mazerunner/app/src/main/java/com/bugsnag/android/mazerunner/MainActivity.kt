@@ -21,6 +21,7 @@ import kotlin.concurrent.thread
 import kotlin.math.max
 
 const val CONFIG_FILE_TIMEOUT = 15000
+private const val LEGACY_MAZE_ADDRESS = "bs-local.com:9339"
 
 private data class MazeRunnerCommand(
     val action: String,
@@ -30,6 +31,16 @@ private data class MazeRunnerCommand(
     val notifyUrl: String,
     val remoteConfigUrl: String,
     val commandUUID: String
+)
+
+private fun parseMazeRunnerCommand(commandStr: String) = MazeRunnerCommand(
+    action = JSONObject(commandStr).optString("action"),
+    scenarioName = JSONObject(commandStr).optString("scenario_name"),
+    scenarioMode = JSONObject(commandStr).optString("scenario_mode"),
+    sessionsUrl = JSONObject(commandStr).optString("sessions_endpoint"),
+    notifyUrl = JSONObject(commandStr).optString("notify_endpoint"),
+    remoteConfigUrl = JSONObject(commandStr).optString("error_config_endpoint"),
+    commandUUID = JSONObject(commandStr).optString("uuid")
 )
 
 class MainActivity : Activity() {
@@ -87,32 +98,63 @@ class MainActivity : Activity() {
     }
 
     private fun setMazeRunnerAddress() {
-        val context = applicationContext
-        val externalFilesDir = context.getExternalFilesDir(null)
-        val configFile = File(externalFilesDir, "fixture_config.json")
-        CiLog.info("Attempting to read Maze Runner address from ${configFile.path}")
-
-        // Poll for the fixture config file
-        val pollEnd = System.currentTimeMillis() + CONFIG_FILE_TIMEOUT
-        while (System.currentTimeMillis() < pollEnd) {
-            if (configFile.exists()) {
-                val fileContents = configFile.readText()
-                val fixtureConfig = runCatching { JSONObject(fileContents) }.getOrNull()
-                mazeAddress = getStringSafely(fixtureConfig, "maze_address")
-                if (!mazeAddress.isNullOrBlank()) {
-                    CiLog.info("Maze Runner address set from config file: $mazeAddress")
-                    break
-                }
-            }
-
-            Thread.sleep(250)
+        mazeAddress = readMazeRunnerAddressFromConfig(timeout = true)
+        if (!mazeAddress.isNullOrBlank()) {
+            CiLog.info("Maze Runner address set from config file: $mazeAddress")
+            return
         }
 
         // Assume we are running in legacy mode on BrowserStack
         if (mazeAddress.isNullOrBlank()) {
             CiLog.warn("Failed to read Maze Runner address from config file, defaulting to legacy BrowserStack address")
-            mazeAddress = "bs-local.com:9339"
+            mazeAddress = LEGACY_MAZE_ADDRESS
         }
+    }
+
+    private fun maybeRefreshMazeRunnerAddress() {
+        if (mazeAddress != LEGACY_MAZE_ADDRESS) {
+            return
+        }
+
+        val refreshedMazeAddress = readMazeRunnerAddressFromConfig(timeout = false)
+        if (!refreshedMazeAddress.isNullOrBlank()) {
+            mazeAddress = refreshedMazeAddress
+            CiLog.info("Maze Runner address refreshed from config file: $mazeAddress")
+        }
+    }
+
+    private fun readMazeRunnerAddressFromConfig(timeout: Boolean): String? {
+        val context = applicationContext
+        val externalFilesDir = context.getExternalFilesDir(null) ?: return null
+        val configFile = File(externalFilesDir, "fixture_config.json")
+        CiLog.info("Attempting to read Maze Runner address from ${configFile.path}")
+
+        if (!timeout) {
+            return readMazeRunnerAddressFromConfig(configFile)
+        }
+
+        // Poll for the fixture config file
+        val pollEnd = System.currentTimeMillis() + CONFIG_FILE_TIMEOUT
+        while (System.currentTimeMillis() < pollEnd) {
+            val address = readMazeRunnerAddressFromConfig(configFile)
+            if (!address.isNullOrBlank()) {
+                return address
+            }
+
+            Thread.sleep(250)
+        }
+
+        return null
+    }
+
+    private fun readMazeRunnerAddressFromConfig(configFile: File): String? {
+        if (!configFile.exists()) {
+            return null
+        }
+
+        val fileContents = configFile.readText()
+        val fixtureConfig = runCatching { JSONObject(fileContents) }.getOrNull()
+        return getStringSafely(fixtureConfig, "maze_address").takeIf { it.isNotBlank() }
     }
 
     // Checks general internet and secure tunnel connectivity
@@ -164,6 +206,8 @@ class MainActivity : Activity() {
                 while (polling) {
                     Thread.sleep(1000)
                     try {
+                            maybeRefreshMazeRunnerAddress()
+
                         // Get the next command from Maze Runner
                         val commandStr = readCommand()
                         if (commandStr == "null") {
@@ -173,16 +217,7 @@ class MainActivity : Activity() {
 
                         // Log the received command
                         CiLog.info("Received command: $commandStr")
-                        val command = JSONObject(commandStr)
-                        val mazeRunnerCommand = MazeRunnerCommand(
-                            action = getStringSafely(command, "action"),
-                            scenarioName = getStringSafely(command, "scenario_name"),
-                            scenarioMode = getStringSafely(command, "scenario_mode"),
-                            sessionsUrl = getStringSafely(command, "sessions_endpoint"),
-                            notifyUrl = getStringSafely(command, "notify_endpoint"),
-                            remoteConfigUrl = getStringSafely(command, "error_config_endpoint"),
-                            commandUUID = getStringSafely(command, "uuid")
-                        )
+                        val mazeRunnerCommand = parseMazeRunnerCommand(commandStr)
                         log("command.action: ${mazeRunnerCommand.action}")
                         log("command.scenarioName: ${mazeRunnerCommand.scenarioName}")
                         log("command.scenarioMode: ${mazeRunnerCommand.scenarioMode}")
