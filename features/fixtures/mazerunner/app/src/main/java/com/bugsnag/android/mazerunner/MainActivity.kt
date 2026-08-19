@@ -43,6 +43,16 @@ private fun parseMazeRunnerCommand(commandStr: String) = MazeRunnerCommand(
     commandUUID = JSONObject(commandStr).optString("uuid")
 )
 
+private fun readMazeRunnerAddressFromConfig(configFile: File): String? {
+    if (!configFile.exists()) {
+        return null
+    }
+
+    val fileContents = configFile.readText()
+    val fixtureConfig = runCatching { JSONObject(fileContents) }.getOrNull()
+    return fixtureConfig?.optString("maze_address").orEmpty().takeIf { it.isNotBlank() }
+}
+
 class MainActivity : Activity() {
 
     private val mainHandler = Handler(Looper.getMainLooper())
@@ -147,31 +157,6 @@ class MainActivity : Activity() {
         return null
     }
 
-    private fun readMazeRunnerAddressFromConfig(configFile: File): String? {
-        if (!configFile.exists()) {
-            return null
-        }
-
-        val fileContents = configFile.readText()
-        val fixtureConfig = runCatching { JSONObject(fileContents) }.getOrNull()
-        return getStringSafely(fixtureConfig, "maze_address").takeIf { it.isNotBlank() }
-    }
-
-    // Checks general internet and secure tunnel connectivity
-    private fun checkNetwork() {
-        CiLog.info("Network connectivity: $networkStatus")
-        try {
-            URL("http://$mazeAddress").readText()
-            CiLog.info("Connection to Maze Runner seems ok")
-        } catch (e: Exception) {
-            CiLog.error("Connection to Maze Runner FAILED", e)
-        }
-    }
-
-    // As per JSONObject.getString but returns and empty string rather than throwing if not present
-    private fun getStringSafely(jsonObject: JSONObject?, key: String): String {
-        return jsonObject?.optString(key) ?: ""
-    }
 
     private fun setStoredCommandUUID(commandUUID: String) {
         with(prefs.edit()) {
@@ -200,7 +185,13 @@ class MainActivity : Activity() {
         val runner = thread(start = false) {
             try {
                 if (mazeAddress == null) setMazeRunnerAddress()
-                checkNetwork()
+                CiLog.info("Network connectivity: $networkStatus")
+                try {
+                    URL("http://$mazeAddress").readText()
+                    CiLog.info("Connection to Maze Runner seems ok")
+                } catch (e: Exception) {
+                    CiLog.error("Connection to Maze Runner FAILED", e)
+                }
 
                 var polling = true
                 while (polling) {
