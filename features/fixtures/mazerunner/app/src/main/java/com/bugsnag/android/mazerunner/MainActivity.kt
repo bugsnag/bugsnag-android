@@ -157,7 +157,6 @@ class MainActivity : Activity() {
         return null
     }
 
-
     private fun setStoredCommandUUID(commandUUID: String) {
         with(prefs.edit()) {
             putString(commandUUIDKey, commandUUID)
@@ -197,8 +196,7 @@ class MainActivity : Activity() {
                 while (polling) {
                     Thread.sleep(1000)
                     try {
-                            maybeRefreshMazeRunnerAddress()
-
+                        maybeRefreshMazeRunnerAddress()
                         // Get the next command from Maze Runner
                         val commandStr = readCommand()
                         if (commandStr == "null") {
