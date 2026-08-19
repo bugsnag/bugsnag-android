@@ -108,7 +108,7 @@ class MainActivity : Activity() {
     }
 
     private fun setMazeRunnerAddress() {
-        mazeAddress = readMazeRunnerAddressFromConfig(timeout = true)
+        mazeAddress = readMazeRunnerAddressFromConfig(timeout = false)
         if (!mazeAddress.isNullOrBlank()) {
             CiLog.info("Maze Runner address set from config file: $mazeAddress")
             return
@@ -184,13 +184,6 @@ class MainActivity : Activity() {
         val runner = thread(start = false) {
             try {
                 if (mazeAddress == null) setMazeRunnerAddress()
-                CiLog.info("Network connectivity: $networkStatus")
-                try {
-                    URL("http://$mazeAddress").readText()
-                    CiLog.info("Connection to Maze Runner seems ok")
-                } catch (e: Exception) {
-                    CiLog.error("Connection to Maze Runner FAILED", e)
-                }
 
                 var polling = true
                 while (polling) {
@@ -248,6 +241,8 @@ class MainActivity : Activity() {
         val commandUrl = "http://$mazeAddress/command?after=${prefs.getString(commandUUIDKey, "").orEmpty()}"
         CiLog.info("Requesting Maze Runner command from: $commandUrl")
         val urlConnection = URL(commandUrl).openConnection() as HttpURLConnection
+        urlConnection.connectTimeout = 5000
+        urlConnection.readTimeout = 5000
         try {
             return urlConnection.inputStream.use { it.reader().readText() }
         } catch (ioe: IOException) {
