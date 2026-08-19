@@ -56,6 +56,10 @@ private fun readMazeRunnerAddressFromConfig(configFile: File): String? {
 
 class MainActivity : Activity() {
 
+    private companion object {
+        var hasClearedCommandUUIDForProcess = false
+    }
+
     private val mainHandler = Handler(Looper.getMainLooper())
     private val commandHandler = MazeRunnerCommandHandler()
     private var commandRunnerThread: Thread? = null
@@ -74,8 +78,9 @@ class MainActivity : Activity() {
         setContentView(R.layout.activity_main)
         prefs = getPreferences(Context.MODE_PRIVATE)
 
-        if (savedInstanceState == null) {
+        if (!hasClearedCommandUUIDForProcess) {
             clearStoredCommandUUID()
+            hasClearedCommandUUIDForProcess = true
         }
 
         // Attempt to dismiss any system dialogs (such as "MazeRunner crashed")
