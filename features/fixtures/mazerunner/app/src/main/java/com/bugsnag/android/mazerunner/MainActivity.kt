@@ -313,4 +313,5 @@ class MainActivity : Activity(), CommandExecutor {
         }
         return Scenario.load(this, config, eventType, mode, mazerunnerHttpClient)
     }
+}
 
