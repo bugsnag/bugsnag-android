@@ -6,7 +6,6 @@ import com.bugsnag.android.EventPayload
 import com.bugsnag.android.Logger
 import com.bugsnag.android.RemoteConfig
 import com.bugsnag.android.internal.remoteconfig.RemoteConfigState
-import java.util.concurrent.TimeUnit
 
 internal class DeliveryPipeline(
     val onSendCallbackState: CallbackState,
@@ -30,7 +29,7 @@ internal class DeliveryPipeline(
         }
 
         try {
-            val remoteConfig = getRemoteConfig(payload.isLaunchCrash)
+            val remoteConfig = getRemoteConfig()
             if (remoteConfig != null) {
                 val discardRules = remoteConfig.discardRules
                 val applicableDiscardRule = discardRules.firstOrNull { it.shouldDiscard(payload) }
@@ -49,30 +48,13 @@ internal class DeliveryPipeline(
         return delivery.deliver(payload, deliveryParams)
     }
 
-    private fun getRemoteConfig(isLaunchCrash: Boolean): RemoteConfig? {
-        if (isLaunchCrash) {
-            return remoteConfigState.getRemoteConfig(
-                LAUNCH_CRASH_LOAD_TIMEOUT_MS,
-                TimeUnit.MILLISECONDS
-            )
-        }
-        // For non-launch crashes, we don't want to block indefinitely.
-        // If a refresh is already in flight during startup, give it a moment to complete so
-        // persisted errors are evaluated against the latest discard rules.
-        return remoteConfigState.getRemoteConfig(
-            NON_LAUNCH_CRASH_LOAD_TIMEOUT_MS,
-            TimeUnit.MILLISECONDS
-        )
+    private fun getRemoteConfig(): RemoteConfig? {
+        // Delivery should not block on remote-config downloads, as these reports can be
+        // time-sensitive (for example, app hangs and ANRs). Use the latest cached snapshot and
+        // let the background scheduler refresh it independently.
+        return remoteConfigState.peekRemoteConfig()
     }
 
     internal companion object {
-        // Launch crashes are already delivered synchronously during startup, so allow a little
-        // longer for Remote Config to be loaded before deciding whether to discard them,
-        // especially when a cached config has just expired and needs to be refreshed.
-        const val LAUNCH_CRASH_LOAD_TIMEOUT_MS = 2000L
-
-        // Non-launch errors should still proceed quickly, but a short wait helps startup flushes
-        // reuse an in-flight remote-config request instead of racing stale discard rules.
-        const val NON_LAUNCH_CRASH_LOAD_TIMEOUT_MS = 1000L
     }
 }

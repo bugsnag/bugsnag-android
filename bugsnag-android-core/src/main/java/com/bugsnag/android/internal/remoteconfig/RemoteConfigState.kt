@@ -88,6 +88,14 @@ internal class RemoteConfigState(
         }
     }
 
+    fun peekRemoteConfig(): RemoteConfig? {
+        if (!enabled) {
+            return null
+        }
+
+        return store.currentOrExpired()
+    }
+
     private fun requestRemoteConfig(): Future<RemoteConfig?> {
         currentInFlightRequest()?.let { return it }
 

@@ -12,13 +12,10 @@ import android.view.Window
 import android.widget.Button
 import android.widget.EditText
 import com.bugsnag.android.mazerunner.scenarios.Scenario
-import org.json.JSONObject
-import java.io.File
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 import kotlin.concurrent.thread
-import kotlin.math.max
 
 private const val MAZE_RUNNER_COMMAND_TIMEOUT_MS = 5000
 private const val LEGACY_MAZE_ADDRESS = "bs-local.com:9339"
