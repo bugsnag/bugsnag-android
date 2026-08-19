@@ -54,6 +54,28 @@ private fun readMazeRunnerAddressFromConfig(configFile: File): String? {
     return fixtureConfig?.optString("maze_address").orEmpty().takeIf { it.isNotBlank() }
 }
 
+private fun SharedPreferences.setStoredApiKey(apiKeyKey: String, apiKey: String) {
+    with(edit()) {
+        putString(apiKeyKey, apiKey)
+        commit()
+    }
+}
+
+private fun SharedPreferences.clearStoredApiKey(apiKeyKey: String) {
+    with(edit()) {
+        remove(apiKeyKey)
+        commit()
+    }
+}
+
+private fun SharedPreferences.getStoredApiKey(apiKeyKey: String): String? {
+    return getString(apiKeyKey, "")
+}
+
+private val String.width
+    get() =
+        lineSequence().fold(0) { maxWidth, line -> max(maxWidth, line.length) }
+
 class MainActivity : Activity() {
 
     private companion object {
@@ -95,7 +117,7 @@ class MainActivity : Activity() {
         log("Set up clearUserData click handler")
         val clearUserData = findViewById<Button>(R.id.clearUserData)
         clearUserData.setOnClickListener {
-            clearStoredApiKey()
+            prefs.clearStoredApiKey(apiKeyKey)
             val apiKeyField = findViewById<EditText>(R.id.manualApiKey)
             apiKeyField.text.clear()
             log("Cleared user data")
@@ -103,7 +125,7 @@ class MainActivity : Activity() {
 
         if (prefs.contains(apiKeyKey)) {
             log("Using stored API key")
-            val apiKey = getStoredApiKey()
+            val apiKey = prefs.getStoredApiKey(apiKeyKey)
             val apiKeyField = findViewById<EditText>(R.id.manualApiKey)
             apiKeyField.text.clear()
             apiKeyField.text.append(apiKey)
@@ -189,22 +211,6 @@ class MainActivity : Activity() {
         CiLog.info("lastCommandUUID set to empty")
     }
 
-    private fun setStoredCommandUUID(commandUUID: String) {
-        with(prefs.edit()) {
-            putString(commandUUIDKey, commandUUID)
-            commit()
-        }
-        CiLog.info("lastCommandUUID set to: $commandUUID")
-    }
-
-    private fun clearStoredCommandUUID() {
-        with(prefs.edit()) {
-            remove(commandUUIDKey)
-            commit()
-        }
-        CiLog.info("lastCommandUUID set to empty")
-    }
-
     private fun getStoredCommandUUID(): String? {
         return prefs.getString(commandUUIDKey, "").orEmpty()
     }
@@ -220,106 +226,7 @@ class MainActivity : Activity() {
         val runner = thread(start = false) {
             try {
                 if (mazeAddress == null) setMazeRunnerAddress()
-
-                var polling = true
-                while (polling) {
-                    Thread.sleep(1000)
-                    try {
-                        maybeRefreshMazeRunnerAddress()
-                        // Get the next command from Maze Runner
-                        val commandStr = readCommand()
-                        if (commandStr == "null") {
-                            CiLog.info("No Maze Runner commands queued")
-                            continue
-                        }
-
-                        // Log the received command
-                        CiLog.info("Received command: $commandStr")
-                        val mazeRunnerCommand = parseMazeRunnerCommand(commandStr)
-                        log("command.action: ${mazeRunnerCommand.action}")
-                        log("command.scenarioName: ${mazeRunnerCommand.scenarioName}")
-                        log("command.scenarioMode: ${mazeRunnerCommand.scenarioMode}")
-                        log("command.sessionsUrl: ${mazeRunnerCommand.sessionsUrl}")
-                        log("command.notifyUrl: ${mazeRunnerCommand.notifyUrl}")
-                        log("command.remoteConfigUrl: ${mazeRunnerCommand.remoteConfigUrl}")
-
-                        // Stop polling once we have a scenario action
-                        if ("start_bugsnag" == mazeRunnerCommand.action || "run_scenario" == mazeRunnerCommand.action) {
-                            polling = false
-                        }
-
-                        mainHandler.post {
-                            // Display some feedback of the action being run on he UI
-                            val actionField = findViewById<EditText>(R.id.command_action)
-                            val scenarioField = findViewById<EditText>(R.id.command_scenario)
-                            actionField.setText(mazeRunnerCommand.action)
-                            scenarioField.setText(mazeRunnerCommand.scenarioName)
-                            commandHandler.handle(mazeRunnerCommand)
-        thread(start = true) {
-            if (mazeAddress == null) setMazeRunnerAddress()
-            checkNetwork()
-
-            var polling = true
-            while (polling) {
-                Thread.sleep(1000)
-                try {
-                    // Get the next command from Maze Runner
-                    val commandStr = readCommand()
-                    if (commandStr == "null") {
-                        CiLog.info("No Maze Runner commands queued")
-                        continue
-                    }
-
-                    // Log the received command
-                    CiLog.info("Received command: $commandStr")
-                    val command = JSONObject(commandStr)
-                    val action = getStringSafely(command, "action")
-                    val scenarioName = getStringSafely(command, "scenario_name")
-                    val scenarioMode = getStringSafely(command, "scenario_mode")
-                    val sessionsUrl = getStringSafely(command, "sessions_endpoint")
-                    val notifyUrl = getStringSafely(command, "notify_endpoint")
-                    val commandUUID = getStringSafely(command, "uuid")
-
-                    // Stop polling once we have a scenario action
-                    if ("start_bugsnag" == action || "run_scenario" == action) {
-                        polling = false
-                    }
-
-                    mainHandler.post {
-                        // Display some feedback of the action being run on he UI
-                        val actionField = findViewById<EditText>(R.id.command_action)
-                        val scenarioField = findViewById<EditText>(R.id.command_scenario)
-                        actionField.setText(action)
-                        scenarioField.setText(scenarioName)
-
-                        // Perform the given action on the UI thread
-                        when (action) {
-                            "noop" -> {
-                                CiLog.info("No Maze Runner command queuing, continuing to poll")
-                            }
-
-                            "start_bugsnag" -> {
-                                setStoredCommandUUID(commandUUID)
-                                startBugsnag(scenarioName, scenarioMode, sessionsUrl, notifyUrl)
-                            }
-
-                            "run_scenario" -> {
-                                setStoredCommandUUID(commandUUID)
-                                runScenario(scenarioName, scenarioMode, sessionsUrl, notifyUrl)
-                            }
-
-                            "clear_persistent_data" -> {
-                                setStoredCommandUUID(commandUUID)
-                                PersistentData(applicationContext).clear()
-                            }
-
-                            "reset_uuid" -> clearStoredCommandUUID()
-                            else -> throw IllegalArgumentException("Unknown action: $action")
-                        }
-                    } catch (e: Exception) {
-                        CiLog.error("Failed to fetch command from Maze Runner", e)
-                    }
-                }
+                runCommandRunnerLoop()
             } finally {
                 synchronized(this@MainActivity) {
                     if (commandRunnerThread === Thread.currentThread()) {
@@ -333,8 +240,56 @@ class MainActivity : Activity() {
         runner.start()
     }
 
+    private fun runCommandRunnerLoop() {
+        var polling = true
+        while (polling) {
+            Thread.sleep(1000)
+            polling = fetchAndHandleNextCommand()
+        }
+    }
+
+    private fun fetchAndHandleNextCommand(): Boolean {
+        return try {
+            maybeRefreshMazeRunnerAddress()
+
+            val commandStr = readCommand()
+            if (commandStr == "null") {
+                CiLog.info("No Maze Runner commands queued")
+                return true
+            }
+
+            CiLog.info("Received command: $commandStr")
+            val mazeRunnerCommand = parseMazeRunnerCommand(commandStr)
+            log("command.action: ${mazeRunnerCommand.action}")
+            log("command.scenarioName: ${mazeRunnerCommand.scenarioName}")
+            log("command.scenarioMode: ${mazeRunnerCommand.scenarioMode}")
+            log("command.sessionsUrl: ${mazeRunnerCommand.sessionsUrl}")
+            log("command.notifyUrl: ${mazeRunnerCommand.notifyUrl}")
+            log("command.remoteConfigUrl: ${mazeRunnerCommand.remoteConfigUrl}")
+
+            mainHandler.post { handleCommandOnUiThread(mazeRunnerCommand) }
+            mazeRunnerCommand.action != "start_bugsnag" && mazeRunnerCommand.action != "run_scenario"
+        } catch (e: Exception) {
+            CiLog.error("Failed to fetch command from Maze Runner", e)
+            true
+        }
+    }
+
+    private fun handleCommandOnUiThread(command: MazeRunnerCommand) {
+        try {
+            // Display some feedback of the action being run on the UI
+            val actionField = findViewById<EditText>(R.id.command_action)
+            val scenarioField = findViewById<EditText>(R.id.command_scenario)
+            actionField.setText(command.action)
+            scenarioField.setText(command.scenarioName)
+            commandHandler.handle(command)
+        } catch (e: Exception) {
+            CiLog.error("Failed to handle Maze Runner command", e)
+        }
+    }
+
     private fun readCommand(): String {
-        val commandUrl = "http://$mazeAddress/command?after=${prefs.getString(commandUUIDKey, "").orEmpty()}"
+        val commandUrl = "http://$mazeAddress/command?after=${getStoredCommandUUID().orEmpty()}"
         CiLog.info("Requesting Maze Runner command from: $commandUrl")
         val urlConnection = URL(commandUrl).openConnection() as HttpURLConnection
         urlConnection.connectTimeout = MAZE_RUNNER_COMMAND_TIMEOUT_MS
@@ -461,7 +416,7 @@ class MainActivity : Activity() {
 
         if (manualMode) {
             log("Running in manual mode with API key: $apiKey")
-            setStoredApiKey(apiKey)
+            prefs.setStoredApiKey(apiKeyKey, apiKey)
         }
 
         // send HTTP requests for intercepted log messages and metrics from Bugsnag.
@@ -478,26 +433,6 @@ class MainActivity : Activity() {
         }
         return Scenario.load(this, config, eventType, mode, mazerunnerHttpClient)
     }
-
-    private fun setStoredApiKey(apiKey: String) {
-        with(prefs.edit()) {
-            putString(apiKeyKey, apiKey)
-            commit()
-        }
-    }
-
-    private fun clearStoredApiKey() {
-        with(prefs.edit()) {
-            remove(apiKeyKey)
-            commit()
-        }
-    }
-
-    private fun getStoredApiKey() = prefs.getString(apiKeyKey, "")
-
-    private val String.width
-        get() =
-            lineSequence().fold(0) { maxWidth, line -> max(maxWidth, line.length) }
 
     private inner class MazeRunnerCommandHandler {
         fun handle(command: MazeRunnerCommand) {

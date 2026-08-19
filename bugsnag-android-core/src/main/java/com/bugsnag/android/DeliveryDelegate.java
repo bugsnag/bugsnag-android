@@ -13,7 +13,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
-class DeliveryDelegate extends BaseObservable {
+public class DeliveryDelegate extends BaseObservable {
 
     @VisibleForTesting
     static long DELIVERY_TIMEOUT = 3000L;
@@ -25,12 +25,12 @@ class DeliveryDelegate extends BaseObservable {
     private final DeliveryPipeline deliveryPipeline;
     final BackgroundTaskService backgroundTaskService;
 
-    DeliveryDelegate(Logger logger,
-                     Provider<EventStore> eventStore,
-                     ImmutableConfig immutableConfig,
-                     DeliveryPipeline deliveryPipeline,
-                     Notifier notifier,
-                     BackgroundTaskService backgroundTaskService) {
+    public DeliveryDelegate(Logger logger,
+                       Provider<EventStore> eventStore,
+                       ImmutableConfig immutableConfig,
+                       DeliveryPipeline deliveryPipeline,
+                       Notifier notifier,
+                       BackgroundTaskService backgroundTaskService) {
         this.logger = logger;
         this.eventStore = eventStore;
         this.immutableConfig = immutableConfig;
@@ -39,7 +39,7 @@ class DeliveryDelegate extends BaseObservable {
         this.backgroundTaskService = backgroundTaskService;
     }
 
-    void deliver(@NonNull Event event) {
+    public void deliver(@NonNull Event event) {
         logger.d("DeliveryDelegate#deliver() - event being stored/delivered by Client");
         Session session = event.getSession();
 
@@ -59,20 +59,9 @@ class DeliveryDelegate extends BaseObservable {
                 break;
             case STORE_ONLY:
                 cacheEvent(event, false);
-            }
-        } else {
-            // Build the eventPayload
-            String apiKey = event.getApiKey();
-            EventPayload eventPayload = new EventPayload(apiKey, event, notifier, immutableConfig);
-            deliverPayloadAsync(eventPayload);
                 break;
             case SEND_IMMEDIATELY:
-                if (callbackState.runOnSendTasks(event, logger)) {
-                    String apiKey = event.getApiKey();
-                    EventPayload eventPayload = new EventPayload(
-                            apiKey, event, notifier, immutableConfig);
-                    deliverPayloadAsync(event, eventPayload);
-                }
+                deliverPayloadAsync(createEventPayload(event));
                 break;
             case STORE_AND_FLUSH:
             default:
@@ -84,21 +73,24 @@ class DeliveryDelegate extends BaseObservable {
     private void deliverPayloadAsync(final EventPayload eventPayload) {
         // Attempt to send the eventPayload in the background
         try {
-            backgroundTaskService.submitTask(TaskType.ERROR_REQUEST, new Runnable() {
-                @Override
-                public void run() {
-                    deliverPayloadInternal(eventPayload);
-                }
-            });
+            backgroundTaskService.submitTask(TaskType.ERROR_REQUEST,
+                    () -> deliverPayloadInternal(eventPayload));
         } catch (RejectedExecutionException exception) {
-            cacheEvent(eventPayload.getEvent(), false);
+            Event event = eventPayload.getEvent();
+            if (event != null) {
+                cacheEvent(event, false);
+            }
             logger.w("Exceeded max queue count, saving to disk to send later");
         }
     }
 
     @VisibleForTesting
-    DeliveryStatus deliverPayloadInternal(@NonNull EventPayload payload) {
+    public DeliveryStatus deliverPayloadInternal(@NonNull EventPayload payload) {
         logger.d("DeliveryDelegate#deliverPayloadInternal() - attempting event delivery");
+        Event event = payload.getEvent();
+        if (event == null) {
+            return null;
+        }
         DeliveryStatus deliveryStatus = deliveryPipeline.deliverEventPayload(payload);
         if (deliveryStatus == null) {
             return null;
@@ -111,7 +103,7 @@ class DeliveryDelegate extends BaseObservable {
             case UNDELIVERED:
                 logger.w("Could not send event(s) to Bugsnag,"
                         + " saving to disk to send later");
-                cacheEvent(payload.getEvent(), false);
+                cacheEvent(event, false);
                 break;
             case FAILURE:
                 logger.w("Problem sending event to Bugsnag");
@@ -145,6 +137,10 @@ class DeliveryDelegate extends BaseObservable {
         if (attemptSend) {
             eventStore().flushAsync();
         }
+    }
+
+    private EventPayload createEventPayload(@NonNull Event event) {
+        return new EventPayload(event.getApiKey(), event, notifier, immutableConfig);
     }
 
     private EventStore eventStore() {

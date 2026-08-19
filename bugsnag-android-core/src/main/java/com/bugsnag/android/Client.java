@@ -207,9 +207,15 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
                 immutableConfig
         );
 
-        EventStorageModule eventStorageModule = new EventStorageModule(contextModule, configModule,
-                dataCollectionModule, bgTaskService, trackerModule, systemServiceModule, notifier,
-                deliveryPipeline);
+        EventStorageModule eventStorageModule = new EventStorageModule(
+                contextModule,
+                configModule,
+                dataCollectionModule,
+                bgTaskService,
+                trackerModule,
+                systemServiceModule,
+                new EventStorageDependencies(notifier, deliveryPipeline)
+        );
 
         eventStore = eventStorageModule.getEventStore();
 
