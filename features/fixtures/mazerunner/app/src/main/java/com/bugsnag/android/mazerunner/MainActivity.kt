@@ -312,6 +312,9 @@ class MainActivity : Activity() {
     // Clear persistent data (used to stop scenarios bleeding into each other)
     private fun clearPersistentData() {
         CiLog.info("Clearing persistent data")
+        // Reset the command cursor so the next test starts fresh
+        clearStoredCommandUUID()
+
         clearCacheFolder("bugsnag")
         clearCacheFolder("StrictModeDiscScenarioFile")
         clearFilesFolder("background-service-dir")
