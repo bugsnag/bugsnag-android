@@ -5,6 +5,7 @@ import org.json.JSONObject
 import java.io.File
 
 const val CONFIG_FILE_TIMEOUT = 15000
+const val POLL_INTERVAL_MS = 250L
 
 object MazeRunnerAddressReader {
     fun readFromConfig(context: Context, timeout: Boolean): String? {
@@ -24,7 +25,7 @@ object MazeRunnerAddressReader {
                 return address
             }
 
-            Thread.sleep(250)
+            Thread.sleep(POLL_INTERVAL_MS)
         }
 
         return null
