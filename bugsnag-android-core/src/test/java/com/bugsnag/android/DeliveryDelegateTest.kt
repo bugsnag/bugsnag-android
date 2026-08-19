@@ -2,10 +2,8 @@ package com.bugsnag.android
 
 import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
 import com.bugsnag.android.internal.BackgroundTaskService
-import com.bugsnag.android.internal.DeliveryPipeline
 import com.bugsnag.android.internal.StateObserver
 import com.bugsnag.android.internal.dag.ValueProvider
-import com.bugsnag.android.internal.remoteconfig.RemoteConfigState
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -23,9 +21,6 @@ internal class DeliveryDelegateTest {
 
     @Mock
     lateinit var eventStore: EventStore
-
-    @Mock
-    lateinit var remoteConfigState: RemoteConfigState
 
     @get:Rule
     val tempDir = TemporaryFolder()
@@ -49,11 +44,7 @@ internal class DeliveryDelegateTest {
                 logger,
                 ValueProvider(eventStore),
                 config,
-                DeliveryPipeline(
-                    callbackState,
-                    remoteConfigState,
-                    config
-                ),
+                callbackState,
                 notifier,
                 backgroundTaskService
             )
@@ -135,7 +126,7 @@ internal class DeliveryDelegateTest {
     @Test
     fun deliverReport() {
         val eventPayload = EventPayload("api-key", event, null, notifier, config)
-        val status = deliveryDelegate.deliverPayloadInternal(eventPayload)
+        val status = deliveryDelegate.deliverPayloadInternal(eventPayload, event)
         assertEquals(DeliveryStatus.DELIVERED, status)
         assertEquals("Sent 1 new event to Bugsnag", logger.msg)
     }
