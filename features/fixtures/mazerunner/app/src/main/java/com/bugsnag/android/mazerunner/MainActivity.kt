@@ -20,70 +20,17 @@ import java.net.URL
 import kotlin.concurrent.thread
 import kotlin.math.max
 
-const val CONFIG_FILE_TIMEOUT = 15000
 private const val MAZE_RUNNER_COMMAND_TIMEOUT_MS = 5000
 private const val LEGACY_MAZE_ADDRESS = "bs-local.com:9339"
 
-private data class MazeRunnerCommand(
-    val action: String,
-    val scenarioName: String,
-    val scenarioMode: String,
-    val sessionsUrl: String,
-    val notifyUrl: String,
-    val remoteConfigUrl: String,
-    val commandUUID: String
-)
-
-private fun parseMazeRunnerCommand(commandStr: String) = MazeRunnerCommand(
-    action = JSONObject(commandStr).optString("action"),
-    scenarioName = JSONObject(commandStr).optString("scenario_name"),
-    scenarioMode = JSONObject(commandStr).optString("scenario_mode"),
-    sessionsUrl = JSONObject(commandStr).optString("sessions_endpoint"),
-    notifyUrl = JSONObject(commandStr).optString("notify_endpoint"),
-    remoteConfigUrl = JSONObject(commandStr).optString("error_config_endpoint"),
-    commandUUID = JSONObject(commandStr).optString("uuid")
-)
-
-private fun readMazeRunnerAddressFromConfig(configFile: File): String? {
-    if (!configFile.exists()) {
-        return null
-    }
-
-    val fileContents = configFile.readText()
-    val fixtureConfig = runCatching { JSONObject(fileContents) }.getOrNull()
-    return fixtureConfig?.optString("maze_address").orEmpty().takeIf { it.isNotBlank() }
-}
-
-private fun SharedPreferences.setStoredApiKey(apiKeyKey: String, apiKey: String) {
-    with(edit()) {
-        putString(apiKeyKey, apiKey)
-        commit()
-    }
-}
-
-private fun SharedPreferences.clearStoredApiKey(apiKeyKey: String) {
-    with(edit()) {
-        remove(apiKeyKey)
-        commit()
-    }
-}
-
-private fun SharedPreferences.getStoredApiKey(apiKeyKey: String): String? {
-    return getString(apiKeyKey, "")
-}
-
-private val String.width
-    get() =
-        lineSequence().fold(0) { maxWidth, line -> max(maxWidth, line.length) }
-
-class MainActivity : Activity() {
+class MainActivity : Activity(), CommandExecutor {
 
     private companion object {
         var hasClearedCommandUUIDForProcess = false
     }
 
     private val mainHandler = Handler(Looper.getMainLooper())
-    private val commandHandler = MazeRunnerCommandHandler()
+    private val commandHandler = MazeRunnerCommandHandler(this)
     private var commandRunnerThread: Thread? = null
 
     private val apiKeyKey = "BUGSNAG_API_KEY"
@@ -146,7 +93,7 @@ class MainActivity : Activity() {
     }
 
     private fun setMazeRunnerAddress() {
-        mazeAddress = readMazeRunnerAddressFromConfig(timeout = false)
+        mazeAddress = MazeRunnerAddressReader.readFromConfig(applicationContext, timeout = false)
         if (!mazeAddress.isNullOrBlank()) {
             CiLog.info("Maze Runner address set from config file: $mazeAddress")
             return
@@ -164,38 +111,14 @@ class MainActivity : Activity() {
             return
         }
 
-        val refreshedMazeAddress = readMazeRunnerAddressFromConfig(timeout = false)
+        val refreshedMazeAddress = MazeRunnerAddressReader.readFromConfig(applicationContext, timeout = false)
         if (!refreshedMazeAddress.isNullOrBlank()) {
             mazeAddress = refreshedMazeAddress
             CiLog.info("Maze Runner address refreshed from config file: $mazeAddress")
         }
     }
 
-    private fun readMazeRunnerAddressFromConfig(timeout: Boolean): String? {
-        val context = applicationContext
-        val externalFilesDir = context.getExternalFilesDir(null) ?: return null
-        val configFile = File(externalFilesDir, "fixture_config.json")
-        CiLog.info("Attempting to read Maze Runner address from ${configFile.path}")
-
-        if (!timeout) {
-            return readMazeRunnerAddressFromConfig(configFile)
-        }
-
-        // Poll for the fixture config file
-        val pollEnd = System.currentTimeMillis() + CONFIG_FILE_TIMEOUT
-        while (System.currentTimeMillis() < pollEnd) {
-            val address = readMazeRunnerAddressFromConfig(configFile)
-            if (!address.isNullOrBlank()) {
-                return address
-            }
-
-            Thread.sleep(250)
-        }
-
-        return null
-    }
-
-    private fun setStoredCommandUUID(commandUUID: String) {
+    override fun setStoredCommandUUID(commandUUID: String) {
         with(prefs.edit()) {
             putString(commandUUIDKey, commandUUID)
             commit()
@@ -203,7 +126,7 @@ class MainActivity : Activity() {
         CiLog.info("lastCommandUUID set to: $commandUUID")
     }
 
-    private fun clearStoredCommandUUID() {
+    override fun clearStoredCommandUUID() {
         with(prefs.edit()) {
             remove(commandUUIDKey)
             commit()
@@ -316,7 +239,7 @@ class MainActivity : Activity() {
     }
 
     // load the scenario first, which initialises bugsnag without running any crashy code
-    private fun startBugsnag(
+    override fun startBugsnag(
         eventType: String,
         mode: String,
         sessionsUrl: String,
@@ -328,7 +251,7 @@ class MainActivity : Activity() {
     }
 
     // execute the pre-loaded scenario, or load it then execute it if needed
-    private fun runScenario(
+    override fun runScenario(
         eventType: String,
         mode: String,
         sessionsUrl: String,
@@ -351,7 +274,7 @@ class MainActivity : Activity() {
     }
 
     // Clear persistent data (used to stop scenarios bleeding into each other)
-    private fun clearPersistentData() {
+    override fun clearPersistentData() {
         clearStoredCommandUUID()
         PersistentData(applicationContext).clear()
     }
@@ -391,43 +314,3 @@ class MainActivity : Activity() {
         return Scenario.load(this, config, eventType, mode, mazerunnerHttpClient)
     }
 
-    private inner class MazeRunnerCommandHandler {
-        fun handle(command: MazeRunnerCommand) {
-            when (command.action) {
-                "noop" -> {
-                    CiLog.info("No Maze Runner command queuing, continuing to poll")
-                }
-
-                "start_bugsnag" -> {
-                    setStoredCommandUUID(command.commandUUID)
-                    startBugsnag(
-                        command.scenarioName,
-                        command.scenarioMode,
-                        command.sessionsUrl,
-                        command.notifyUrl,
-                        command.remoteConfigUrl
-                    )
-                }
-
-                "run_scenario" -> {
-                    setStoredCommandUUID(command.commandUUID)
-                    runScenario(
-                        command.scenarioName,
-                        command.scenarioMode,
-                        command.sessionsUrl,
-                        command.notifyUrl,
-                        command.remoteConfigUrl
-                    )
-                }
-
-                "clear_persistent_data" -> {
-                    setStoredCommandUUID(command.commandUUID)
-                    clearPersistentData()
-                }
-
-                "reset_uuid" -> clearStoredCommandUUID()
-                else -> throw IllegalArgumentException("Unknown action: ${command.action}")
-            }
-        }
-    }
-}

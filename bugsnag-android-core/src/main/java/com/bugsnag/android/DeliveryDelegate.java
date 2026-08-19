@@ -1,20 +1,18 @@
 package com.bugsnag.android;
 
 import com.bugsnag.android.internal.BackgroundTaskService;
-import com.bugsnag.android.internal.DeliveryPipeline;
 import com.bugsnag.android.internal.ImmutableConfig;
 import com.bugsnag.android.internal.TaskType;
 import com.bugsnag.android.internal.dag.Provider;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
-public class DeliveryDelegate extends BaseObservable {
+class DeliveryDelegate extends BaseObservable {
 
     @VisibleForTesting
     static long DELIVERY_TIMEOUT = 3000L;
@@ -23,30 +21,24 @@ public class DeliveryDelegate extends BaseObservable {
     private final Provider<EventStore> eventStore;
     private final ImmutableConfig immutableConfig;
     private final Notifier notifier;
-    private final DeliveryPipeline deliveryPipeline;
+    private final CallbackState callbackState;
     final BackgroundTaskService backgroundTaskService;
 
-    /**
-     * Creates a delegate which delivers events and updates persisted state.
-     */
-    public DeliveryDelegate(@NonNull Logger logger,
-                            @NonNull Provider<EventStore> eventStore,
-                            @NonNull ImmutableConfig immutableConfig,
-                            @NonNull DeliveryPipeline deliveryPipeline,
-                            @NonNull Notifier notifier,
-                            @NonNull BackgroundTaskService backgroundTaskService) {
+    DeliveryDelegate(Logger logger,
+                     Provider<EventStore> eventStore,
+                     ImmutableConfig immutableConfig,
+                     CallbackState callbackState,
+                     Notifier notifier,
+                     BackgroundTaskService backgroundTaskService) {
         this.logger = logger;
         this.eventStore = eventStore;
         this.immutableConfig = immutableConfig;
-        this.deliveryPipeline = deliveryPipeline;
+        this.callbackState = callbackState;
         this.notifier = notifier;
         this.backgroundTaskService = backgroundTaskService;
     }
 
-    /**
-     * Delivers the given event using the appropriate delivery strategy.
-     */
-    public void deliver(@NonNull Event event) {
+    void deliver(@NonNull Event event) {
         logger.d("DeliveryDelegate#deliver() - event being stored/delivered by Client");
         Session session = event.getSession();
 
@@ -68,9 +60,12 @@ public class DeliveryDelegate extends BaseObservable {
                 cacheEvent(event, false);
                 break;
             case SEND_IMMEDIATELY:
-                deliverPayloadAsync(
-                    createEventPayload(event)
-                );
+                if (callbackState.runOnSendTasks(event, logger)) {
+                    String apiKey = event.getApiKey();
+                    EventPayload eventPayload = new EventPayload(
+                            apiKey, event, notifier, immutableConfig);
+                    deliverPayloadAsync(event, eventPayload);
+                }
                 break;
             case STORE_AND_FLUSH:
             default:
@@ -79,35 +74,30 @@ public class DeliveryDelegate extends BaseObservable {
         }
     }
 
-    private void deliverPayloadAsync(final EventPayload eventPayload) {
+    private void deliverPayloadAsync(@NonNull Event event, EventPayload eventPayload) {
+        final EventPayload finalEventPayload = eventPayload;
+        final Event finalEvent = event;
+
         // Attempt to send the eventPayload in the background
         try {
-            backgroundTaskService.submitTask(TaskType.ERROR_REQUEST,
-                () -> deliverPayloadInternal(eventPayload));
+            backgroundTaskService.submitTask(TaskType.ERROR_REQUEST, new Runnable() {
+                @Override
+                public void run() {
+                    deliverPayloadInternal(finalEventPayload, finalEvent);
+                }
+            });
         } catch (RejectedExecutionException exception) {
-            Event event = eventPayload.getEvent();
-            if (event != null) {
-                cacheEvent(event, false);
-            }
+            cacheEvent(event, false);
             logger.w("Exceeded max queue count, saving to disk to send later");
         }
     }
 
-    /**
-     * Attempts to deliver a payload via the configured delivery pipeline.
-     */
     @VisibleForTesting
-    @Nullable
-    public DeliveryStatus deliverPayloadInternal(@NonNull EventPayload payload) {
+    DeliveryStatus deliverPayloadInternal(@NonNull EventPayload payload, @NonNull Event event) {
         logger.d("DeliveryDelegate#deliverPayloadInternal() - attempting event delivery");
-        Event event = payload.getEvent();
-        if (event == null) {
-            return null;
-        }
-        DeliveryStatus deliveryStatus = deliveryPipeline.deliverEventPayload(payload);
-        if (deliveryStatus == null) {
-            return null;
-        }
+        DeliveryParams deliveryParams = immutableConfig.getErrorApiDeliveryParams(payload);
+        Delivery delivery = immutableConfig.getDelivery();
+        DeliveryStatus deliveryStatus = delivery.deliver(payload, deliveryParams);
 
         switch (deliveryStatus) {
             case DELIVERED:
@@ -150,10 +140,6 @@ public class DeliveryDelegate extends BaseObservable {
         if (attemptSend) {
             eventStore().flushAsync();
         }
-    }
-
-    private EventPayload createEventPayload(@NonNull Event event) {
-        return new EventPayload(event.getApiKey(), event, notifier, immutableConfig);
     }
 
     private EventStore eventStore() {
