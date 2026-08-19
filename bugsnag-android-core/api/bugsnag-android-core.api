@@ -272,6 +272,12 @@ public abstract interface class com/bugsnag/android/Delivery {
 	public abstract fun deliver (Lcom/bugsnag/android/Session;Lcom/bugsnag/android/DeliveryParams;)Lcom/bugsnag/android/DeliveryStatus;
 }
 
+public class com/bugsnag/android/DeliveryDelegate {
+	public fun <init> (Lcom/bugsnag/android/Logger;Lcom/bugsnag/android/internal/dag/Provider;Lcom/bugsnag/android/internal/ImmutableConfig;Lcom/bugsnag/android/internal/DeliveryPipeline;Lcom/bugsnag/android/Notifier;Lcom/bugsnag/android/internal/BackgroundTaskService;)V
+	public fun deliver (Lcom/bugsnag/android/Event;)V
+	public fun deliverPayloadInternal (Lcom/bugsnag/android/EventPayload;)Lcom/bugsnag/android/DeliveryStatus;
+}
+
 public final class com/bugsnag/android/DeliveryParams {
 	public fun <init> (Ljava/lang/String;Ljava/util/Map;)V
 	public final fun getEndpoint ()Ljava/lang/String;
@@ -1149,6 +1155,8 @@ public abstract interface class com/bugsnag/android/internal/InternalMetrics {
 
 public final class com/bugsnag/android/internal/InternalMetricsImpl : com/bugsnag/android/internal/InternalMetrics {
 	public fun <init> ()V
+	public fun <init> (Ljava/util/Map;)V
+	public synthetic fun <init> (Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun getRemoteConfigEnabled ()Z
 	public fun notifyAddCallback (Ljava/lang/String;)V
 	public fun notifyRemoveCallback (Ljava/lang/String;)V

@@ -25,12 +25,15 @@ public class DeliveryDelegate extends BaseObservable {
     private final DeliveryPipeline deliveryPipeline;
     final BackgroundTaskService backgroundTaskService;
 
+    /**
+     * Creates a delegate which delivers events and updates persisted state.
+     */
     public DeliveryDelegate(Logger logger,
-                       Provider<EventStore> eventStore,
-                       ImmutableConfig immutableConfig,
-                       DeliveryPipeline deliveryPipeline,
-                       Notifier notifier,
-                       BackgroundTaskService backgroundTaskService) {
+                            Provider<EventStore> eventStore,
+                            ImmutableConfig immutableConfig,
+                            DeliveryPipeline deliveryPipeline,
+                            Notifier notifier,
+                            BackgroundTaskService backgroundTaskService) {
         this.logger = logger;
         this.eventStore = eventStore;
         this.immutableConfig = immutableConfig;
@@ -39,6 +42,9 @@ public class DeliveryDelegate extends BaseObservable {
         this.backgroundTaskService = backgroundTaskService;
     }
 
+    /**
+     * Delivers the given event using the appropriate delivery strategy.
+     */
     public void deliver(@NonNull Event event) {
         logger.d("DeliveryDelegate#deliver() - event being stored/delivered by Client");
         Session session = event.getSession();
@@ -61,7 +67,9 @@ public class DeliveryDelegate extends BaseObservable {
                 cacheEvent(event, false);
                 break;
             case SEND_IMMEDIATELY:
-                deliverPayloadAsync(createEventPayload(event));
+                deliverPayloadAsync(
+                    createEventPayload(event)
+                );
                 break;
             case STORE_AND_FLUSH:
             default:
@@ -74,7 +82,7 @@ public class DeliveryDelegate extends BaseObservable {
         // Attempt to send the eventPayload in the background
         try {
             backgroundTaskService.submitTask(TaskType.ERROR_REQUEST,
-                    () -> deliverPayloadInternal(eventPayload));
+                () -> deliverPayloadInternal(eventPayload));
         } catch (RejectedExecutionException exception) {
             Event event = eventPayload.getEvent();
             if (event != null) {
@@ -84,6 +92,9 @@ public class DeliveryDelegate extends BaseObservable {
         }
     }
 
+    /**
+     * Attempts to deliver a payload via the configured delivery pipeline.
+     */
     @VisibleForTesting
     public DeliveryStatus deliverPayloadInternal(@NonNull EventPayload payload) {
         logger.d("DeliveryDelegate#deliverPayloadInternal() - attempting event delivery");

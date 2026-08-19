@@ -102,7 +102,7 @@ internal class EventSerializationTest {
                 },
 
                 // remote config disabled at config level
-                createEvent(remoteConfigEnabled = false)
+                createEvent(remoteConfigEnabled = false),
                 createEvent {
                     it.updateSeverityReason(SeverityReason.REASON_HTTP_ERROR)
 

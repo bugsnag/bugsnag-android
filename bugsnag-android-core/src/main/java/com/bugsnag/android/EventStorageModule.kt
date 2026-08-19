@@ -14,11 +14,10 @@ internal class EventStorageModule(
     contextModule: ContextModule,
     configModule: ConfigModule,
     dataCollectionModule: DataCollectionModule,
-    bgTaskService: BackgroundTaskService,
     trackerModule: TrackerModule,
     systemServiceModule: SystemServiceModule,
     dependencies: EventStorageDependencies
-) : BackgroundDependencyModule(bgTaskService) {
+) : BackgroundDependencyModule(dependencies.bgTaskService) {
 
     private val cfg = configModule.config
 
@@ -33,7 +32,7 @@ internal class EventStorageModule(
                 dataCollectionModule.deviceDataCollector,
                 trackerModule.sessionTracker,
                 dependencies.notifier,
-                bgTaskService
+                dependencies.bgTaskService
             ) else null
     }
 
@@ -42,7 +41,7 @@ internal class EventStorageModule(
             cfg,
             cfg.logger,
             dependencies.notifier,
-            bgTaskService,
+            dependencies.bgTaskService,
             delegate,
             dependencies.deliveryPipeline
         )
@@ -51,6 +50,6 @@ internal class EventStorageModule(
 
 internal data class EventStorageDependencies(
     val notifier: Notifier,
-    val deliveryPipeline: DeliveryPipeline
+    val deliveryPipeline: DeliveryPipeline,
+    val bgTaskService: BackgroundTaskService
 )
-

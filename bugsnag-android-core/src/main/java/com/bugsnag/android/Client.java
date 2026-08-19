@@ -211,10 +211,9 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
                 contextModule,
                 configModule,
                 dataCollectionModule,
-                bgTaskService,
                 trackerModule,
                 systemServiceModule,
-                new EventStorageDependencies(notifier, deliveryPipeline)
+                new EventStorageDependencies(notifier, deliveryPipeline, bgTaskService)
         );
 
         eventStore = eventStorageModule.getEventStore();
