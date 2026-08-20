@@ -43,10 +43,11 @@ internal class DeliveryPipeline(
 
     private fun getDiscardStatus(payload: EventPayload): DeliveryStatus? {
         return try {
-            val remoteConfig = getRemoteConfig() ?: return null
             if (isTimeSensitive(payload)) {
                 return null
             }
+
+            val remoteConfig = getRemoteConfig() ?: return null
 
             val applicableDiscardRule = remoteConfig.discardRules.firstOrNull {
                 it.shouldDiscard(payload)
