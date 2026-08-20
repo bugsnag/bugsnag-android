@@ -49,20 +49,29 @@ internal class DeliveryPipeline(
                 return null
             }
 
-            val remoteConfig = getRemoteConfig() ?: return null
+            val remoteConfig = getRemoteConfig()
+            if (remoteConfig == null) {
+                return null
+            }
 
             val applicableDiscardRule = remoteConfig.discardRules.firstOrNull {
                 it.shouldDiscard(payload)
-            } ?: return null
+            }
 
-            logger.d("Discarding event due to remote discardRule: $applicableDiscardRule")
-            // discarded events are treated as being delivered, as the server would have discarded them
-            DeliveryStatus.DELIVERED
-        } catch (_: Exception) {
+            if (applicableDiscardRule != null) {
+                logger.d("Discarding event due to remote discardRule: $applicableDiscardRule")
+                // discarded events are treated as being delivered, as the server would have discarded them
+                DeliveryStatus.DELIVERED
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            logger.d("Error checking discard status: " + e)
             // swallow any RemoteConfig related errors, and favour delivering the payload
             null
         }
     }
+
 
     private fun isTimeSensitive(payload: EventPayload): Boolean {
         // Fast paths that avoid full JSON parsing where possible.
