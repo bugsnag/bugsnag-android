@@ -31,10 +31,12 @@ internal class DeliveryPipeline(
 
     private fun retainPayload(payload: EventPayload): Boolean {
         return try {
-            onSendCallbackState.runOnSendTasks(
-                { payload.event!! },
-                config.logger
-            )
+            val event = payload.event
+            if (event == null) {
+                true
+            } else {
+                onSendCallbackState.runOnSendTasks({ event }, config.logger)
+            }
         } catch (_: Exception) {
             // most likely the payload could not be decoded, so we continue
             true
@@ -63,28 +65,9 @@ internal class DeliveryPipeline(
     }
 
     private fun isTimeSensitive(payload: EventPayload): Boolean {
-        // Fast paths that avoid full JSON parsing where possible
-        if (payload.isLaunchCrash || payload.getErrorTypes().contains(ErrorType.C)) {
-            return true
-        }
-
-        return try {
-            val event = payload.event
-            // If parsing fails (event is null), we treat it as time-sensitive to be safe
-            if (event == null) {
-                return true
-            }
-
-            // Unhandled events, ANRs, and AppHangs are time-sensitive as they 
-            // indicate the app is in a critical state or has stopped responding.
-            event.isUnhandled || event.errors.any {
-                val errorClass = it.errorClass
-                "ANR" == errorClass || "AppHang" == errorClass
-            }
-        } catch (_: Throwable) {
-            // Treat as time-sensitive on any parsing error (e.g. OOM, stack overflow)
-            true
-        }
+        // Fast paths that avoid full JSON parsing where possible.
+        // C errors and launch crashes are always time-sensitive.
+        return payload.isLaunchCrash || payload.getErrorTypes().contains(ErrorType.C)
     }
 
     private fun getRemoteConfig(): RemoteConfig? {

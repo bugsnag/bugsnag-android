@@ -223,7 +223,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         remoteConfigState = storageModule.getRemoteConfigState().get();
 
         deliveryDelegate = new DeliveryDelegate(logger, eventStore, immutableConfig,
-                deliveryPipeline.getOnSendCallbackState(), notifier, bgTaskService);
+                deliveryPipeline, notifier, bgTaskService);
 
         exceptionHandler = new ExceptionHandler(this, logger);
 

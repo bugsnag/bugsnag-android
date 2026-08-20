@@ -2,6 +2,7 @@ package com.bugsnag.android
 
 import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
 import com.bugsnag.android.internal.BackgroundTaskService
+import com.bugsnag.android.internal.DeliveryPipeline
 import com.bugsnag.android.internal.StateObserver
 import com.bugsnag.android.internal.dag.ValueProvider
 import org.junit.Assert.assertEquals
@@ -22,13 +23,15 @@ internal class DeliveryDelegateTest {
     @Mock
     lateinit var eventStore: EventStore
 
+    @Mock
+    lateinit var deliveryPipeline: DeliveryPipeline
+
     @get:Rule
     val tempDir = TemporaryFolder()
 
     private val apiKey = "BUGSNAG_API_KEY"
     private val notifier = Notifier()
     val config = generateImmutableConfig()
-    val callbackState = CallbackState()
     private val logger = InterceptingLogger()
     lateinit var deliveryDelegate: DeliveryDelegate
     val handledState = SeverityReason.newInstance(
@@ -44,7 +47,7 @@ internal class DeliveryDelegateTest {
                 logger,
                 ValueProvider(eventStore),
                 config,
-                callbackState,
+                deliveryPipeline,
                 notifier,
                 backgroundTaskService
             )
@@ -126,6 +129,8 @@ internal class DeliveryDelegateTest {
     @Test
     fun deliverReport() {
         val eventPayload = EventPayload("api-key", event, null, notifier, config)
+        org.mockito.Mockito.`when`(deliveryPipeline.deliverEventPayload(eventPayload))
+            .thenReturn(DeliveryStatus.DELIVERED)
         val status = deliveryDelegate.deliverPayloadInternal(eventPayload, event)
         assertEquals(DeliveryStatus.DELIVERED, status)
         assertEquals("Sent 1 new event to Bugsnag", logger.msg)

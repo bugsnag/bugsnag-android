@@ -37,6 +37,19 @@ class RemoteConfigBasicScenario(
     private val handledDeliveryCompleted = CountDownLatch(1)
 
     init {
+        config.addOnSend { event ->
+            if (!event.isUnhandled && handledErrorDelivered.compareAndSet(false, true)) {
+                // Trigger the crash only after the handled event has been processed by the
+                // delivery pipeline (delivered or discarded).
+                mazerunnerHttpClient?.postLog(
+                    LogLevel.INFO,
+                    "RemoteConfigBasicScenario handled delivery completed"
+                )
+                handledDeliveryCompleted.countDown()
+            }
+            true
+        }
+
         val baseDelivery = createDefaultDelivery()
         config.delivery = object : Delivery {
             override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
@@ -44,17 +57,6 @@ class RemoteConfigBasicScenario(
                 check(status == DeliveryStatus.DELIVERED) {
                     "Request failed, aborting scenario. status=$status"
                 }
-
-                if (payload.event?.isUnhandled == false && handledErrorDelivered.compareAndSet(false, true)) {
-                    // Trigger the crash only after the handled delivery has completed, then give
-                    // the event a short window to flush before the app dies.
-                    mazerunnerHttpClient?.postLog(
-                        LogLevel.INFO,
-                        "RemoteConfigBasicScenario handled delivery completed"
-                    )
-                    handledDeliveryCompleted.countDown()
-                }
-
                 return status
             }
 
