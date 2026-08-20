@@ -72,7 +72,6 @@ internal class DeliveryPipeline(
         }
     }
 
-
     private fun isTimeSensitive(payload: EventPayload): Boolean {
         // Fast paths that avoid full JSON parsing where possible.
         // C errors and launch crashes are always time-sensitive.
