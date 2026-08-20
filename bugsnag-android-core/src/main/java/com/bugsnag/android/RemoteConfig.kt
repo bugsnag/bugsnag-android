@@ -93,7 +93,10 @@ internal sealed class DiscardRule : JsonStream.Streamable {
     }
 
     object All : DiscardRule() {
-        override fun shouldDiscard(payload: EventPayload): Boolean = true
+        override fun shouldDiscard(payload: EventPayload): Boolean {
+            android.util.Log.d("Bugsnag", "Discarding event due to ALL rule")
+            return true
+        }
         override fun toStream(writer: JsonStream) {
             writer.beginObject()
             writer.name(KEY_MATCH_TYPE).value(DISCARD_RULE_ALL)
@@ -105,8 +108,12 @@ internal sealed class DiscardRule : JsonStream.Streamable {
 
     object AllHandled : DiscardRule() {
         override fun shouldDiscard(payload: EventPayload): Boolean {
-            return !(payload.event?.isUnhandled ?: true)
+            val unhandled = payload.event?.isUnhandled ?: true
+            val shouldDiscard = !unhandled
+            android.util.Log.d("Bugsnag", "Checking ALL_HANDLED rule. unhandled=$unhandled, shouldDiscard=$shouldDiscard")
+            return shouldDiscard
         }
+
 
         override fun toStream(writer: JsonStream) {
             writer.beginObject()

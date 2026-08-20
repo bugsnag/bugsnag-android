@@ -108,12 +108,17 @@ class RemoteConfigBasicScenario(
             }
 
             if (expiry - System.currentTimeMillis() > REMOTE_CONFIG_MIN_FRESHNESS_MS) {
+                // Give Bugsnag a moment to load the config from disk into memory
+                // and for any background tasks to finish.
+                Thread.sleep(2000)
                 return
             }
+
 
             Thread.sleep(REMOTE_CONFIG_POLL_INTERVAL_MS)
         }
     }
+
 
     private fun remoteConfigFile(): File? {
         val versionCode = config.versionCode ?: return null

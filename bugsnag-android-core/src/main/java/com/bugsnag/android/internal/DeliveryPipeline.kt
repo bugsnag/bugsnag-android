@@ -49,16 +49,26 @@ internal class DeliveryPipeline(
                 return null
             }
 
-            val remoteConfig = getRemoteConfig() ?: return null
+            val remoteConfig = getRemoteConfig()
+            if (remoteConfig == null) {
+                logger.d("No remote config available for discard check")
+                return null
+            }
 
             val applicableDiscardRule = remoteConfig.discardRules.firstOrNull {
                 it.shouldDiscard(payload)
-            } ?: return null
+            }
+
+            if (applicableDiscardRule == null) {
+                logger.d("No matching discard rule found in $remoteConfig")
+                return null
+            }
 
             logger.d("Discarding event due to remote discardRule: $applicableDiscardRule")
             // discarded events are treated as being delivered, as the server would have discarded them
             DeliveryStatus.DELIVERED
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            logger.d("Error during discard check: $e")
             // swallow any RemoteConfig related errors, and favour delivering the payload
             null
         }
@@ -67,8 +77,15 @@ internal class DeliveryPipeline(
     private fun isTimeSensitive(payload: EventPayload): Boolean {
         // Fast paths that avoid full JSON parsing where possible.
         // C errors and launch crashes are always time-sensitive.
-        return payload.isLaunchCrash || payload.getErrorTypes().contains(ErrorType.C)
+        if (payload.isLaunchCrash || payload.getErrorTypes().contains(ErrorType.C)) {
+            return true
+        }
+
+        // If we can't get the event, treat it as time-sensitive to be safe.
+        // This avoids delaying delivery if there's a parsing issue.
+        return payload.event == null
     }
+
 
     private fun getRemoteConfig(): RemoteConfig? {
         // Delivery should not block on remote-config downloads, as these reports can be

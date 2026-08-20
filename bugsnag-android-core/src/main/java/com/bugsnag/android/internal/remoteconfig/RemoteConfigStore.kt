@@ -107,6 +107,7 @@ internal class RemoteConfigStore(
         return current
     }
 
+
     /**
      * Atomically stores the RemoteConfig both in memory and to disk.
      */
@@ -149,24 +150,30 @@ internal class RemoteConfigStore(
     private fun loadFromDisk(): RemoteConfig? {
         val configFile = File(configDir, configFileName())
         if (!configFile.exists() || !configFile.canRead()) {
+            android.util.Log.d("Bugsnag", "Remote config file not found or unreadable: $configFile")
             return null
         }
 
         return try {
             configFile.inputStream().use { inputStream ->
                 val map = JsonHelper.deserialize(inputStream)
-                RemoteConfig.fromJsonMap(map)
+                val config = RemoteConfig.fromJsonMap(map)
+                android.util.Log.d("Bugsnag", "Loaded remote config from disk: $config")
+                config
             }
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            android.util.Log.d("Bugsnag", "Failed to load remote config from disk", e)
             // If parsing fails, delete the corrupted file
             configFile.delete()
             null
         }
     }
 
+
     private fun isExpired(remoteConfig: RemoteConfig): Boolean {
-        return remoteConfig.configurationExpiry.before(Date())
+        return !remoteConfig.configurationExpiry.after(Date())
     }
+
 
     private fun deleteConfigFiles() {
         File(configDir, configFileName()).delete()
