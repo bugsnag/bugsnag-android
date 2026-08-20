@@ -2,6 +2,7 @@ package com.bugsnag.android.internal
 
 import com.bugsnag.android.CallbackState
 import com.bugsnag.android.DeliveryStatus
+import com.bugsnag.android.ErrorType
 import com.bugsnag.android.EventPayload
 import com.bugsnag.android.Logger
 import com.bugsnag.android.RemoteConfig
@@ -61,10 +62,25 @@ internal class DeliveryPipeline(
     }
 
     private fun isTimeSensitive(payload: EventPayload): Boolean {
-        val event = payload.event
-        return payload.isLaunchCrash || payload.isUnhandled || event?.errors?.any {
-            it.errorClass == "ANR" || it.errorClass == "AppHang"
-        } ?: false
+        // Fast paths that avoid full JSON parsing where possible
+        if (payload.isLaunchCrash || payload.getErrorTypes().contains(ErrorType.C)) {
+            return true
+        }
+
+        return try {
+            val event = payload.event
+            // If parsing fails (event is null), we treat it as time-sensitive to be safe
+            if (event == null) {
+                return true
+            }
+
+            event.isUnhandled || event.errors.any {
+                it.errorClass == "ANR" || it.errorClass == "AppHang"
+            }
+        } catch (_: Throwable) {
+            // Treat as time-sensitive on any parsing error (e.g. OOM, stack overflow)
+            true
+        }
     }
 
     private fun getRemoteConfig(): RemoteConfig? {
