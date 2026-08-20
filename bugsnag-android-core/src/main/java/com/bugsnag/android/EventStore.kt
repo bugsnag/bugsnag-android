@@ -221,8 +221,10 @@ internal class EventStore(
         return obj?.let { fromEvent(obj = it, apiKey = null, config = config) }?.encode() ?: ""
     }
 
-    fun getNdkFilename(obj: Any?, apiKey: String?): String {
-        return obj?.let { fromEvent(obj = it, apiKey = apiKey, config = config) }?.encode() ?: ""
+    fun getNdkFilename(obj: Any?, apiKey: String?, isLaunching: Boolean): String {
+        return obj?.let {
+            fromEvent(obj = it, apiKey = apiKey, config = config, isLaunching = isLaunching)
+        }?.encode() ?: ""
     }
 
     private fun isTooBig(file: File): Boolean {

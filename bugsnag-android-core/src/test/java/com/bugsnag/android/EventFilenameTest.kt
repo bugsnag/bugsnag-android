@@ -242,6 +242,31 @@ internal class EventFilenameTest {
     }
 
     @Test
+    fun ndkStartupCrashEventName() {
+        val eventStore = EventStore(
+            BugsnagTestUtils.generateImmutableConfig(),
+            NoopLogger,
+            Notifier(),
+            BackgroundTaskService(),
+            ValueProvider(
+                object : Delegate {
+                    override fun onErrorIOFailure(
+                        exception: Exception?,
+                        errorFile: File?,
+                        context: String?
+                    ) {
+                    }
+                }
+            ),
+            deliveryPipeline
+        )
+
+        val filename = eventStore.getNdkFilename("{}", "0000111122223333aaaabbbbcccc9999", true)
+        assertTrue(filename.contains("_0000111122223333aaaabbbbcccc9999_c_"))
+        assertTrue(filename.endsWith("_startupcrash.json"))
+    }
+
+    @Test
     fun ndkEventNameNoApiKey() {
         val filename = EventFilenameInfo.fromEvent(
             "{}",

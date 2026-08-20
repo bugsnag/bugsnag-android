@@ -75,8 +75,11 @@ internal class DeliveryPipeline(
                 return true
             }
 
+            // Unhandled events, ANRs, and AppHangs are time-sensitive as they 
+            // indicate the app is in a critical state or has stopped responding.
             event.isUnhandled || event.errors.any {
-                it.errorClass == "ANR" || it.errorClass == "AppHang"
+                val errorClass = it.errorClass
+                "ANR" == errorClass || "AppHang" == errorClass
             }
         } catch (_: Throwable) {
             // Treat as time-sensitive on any parsing error (e.g. OOM, stack overflow)
