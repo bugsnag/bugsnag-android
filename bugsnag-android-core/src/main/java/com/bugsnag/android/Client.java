@@ -16,6 +16,7 @@ import com.bugsnag.android.internal.dag.ConfigModule;
 import com.bugsnag.android.internal.dag.ContextModule;
 import com.bugsnag.android.internal.dag.Provider;
 import com.bugsnag.android.internal.dag.SystemServiceModule;
+import com.bugsnag.android.internal.remoteconfig.RemoteConfigState;
 
 import android.app.Application;
 import android.content.Context;
@@ -88,6 +89,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
     final Logger logger;
     final Connectivity connectivity;
     final DeliveryDelegate deliveryDelegate;
+    @Nullable
+    final RemoteConfigState remoteConfigState;
 
     final ClientObservable clientObservable;
     PluginClient pluginClient;
@@ -217,6 +220,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         );
 
         eventStore = eventStorageModule.getEventStore();
+        remoteConfigState = storageModule.getRemoteConfigState().get();
 
         deliveryDelegate = new DeliveryDelegate(logger, eventStore, immutableConfig,
                 deliveryPipeline.getOnSendCallbackState(), notifier, bgTaskService);
@@ -294,6 +298,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         this.deliveryDelegate = deliveryDelegate;
         this.lastRunInfoStore = lastRunInfoStore;
         this.launchCrashTracker = launchCrashTracker;
+        this.remoteConfigState = null;
         this.lastRunInfo = null;
         this.exceptionHandler = exceptionHandler;
         this.notifier = notifier;
@@ -318,6 +323,12 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         eventStore.get().flushOnLaunch(lastRunInfo);
         eventStore.get().flushAsync();
         sessionTracker.flushAsync();
+
+        // Kick off remote-config refresh only after the critical launch-crash / plugin startup
+        // path has completed, so the IO queue cannot delay ANR or launch-crash delivery.
+        if (remoteConfigState != null) {
+            remoteConfigState.scheduleDownloadIfRequired();
+        }
 
         // These call into NdkPluginCaller to sync with the native side, so they must happen later
         internalMetrics.setConfigDifferences(configDifferences);

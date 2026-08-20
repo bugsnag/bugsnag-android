@@ -67,7 +67,7 @@ internal class StorageModule(
     }
 
     val remoteConfigState = provider {
-        val remoteConfig = RemoteConfigState(
+        RemoteConfigState(
             RemoteConfigStore(
                 File(bugsnagDir.get(), "config"),
                 immutableConfig.versionCode ?: 0
@@ -76,9 +76,6 @@ internal class StorageModule(
             notifier,
             bgTaskService
         )
-
-        remoteConfig.scheduleDownloadIfRequired()
-        return@provider remoteConfig
     }
 
     val lastRunInfo = lastRunInfoStore.map { lastRunInfoStore ->
