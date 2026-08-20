@@ -47,7 +47,7 @@ class MainActivity : Activity(), CommandExecutor {
         prefs = getPreferences(Context.MODE_PRIVATE)
 
         if (!hasClearedCommandUUIDForProcess) {
-            //clearStoredCommandUUID()
+            // clearStoredCommandUUID()
             hasClearedCommandUUIDForProcess = true
         }
 
