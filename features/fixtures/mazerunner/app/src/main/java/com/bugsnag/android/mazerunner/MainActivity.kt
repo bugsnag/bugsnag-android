@@ -47,7 +47,7 @@ class MainActivity : Activity(), CommandExecutor {
         prefs = getPreferences(Context.MODE_PRIVATE)
 
         if (!hasClearedCommandUUIDForProcess) {
-            clearStoredCommandUUID()
+            //clearStoredCommandUUID()
             hasClearedCommandUUIDForProcess = true
         }
 
@@ -272,7 +272,7 @@ class MainActivity : Activity(), CommandExecutor {
 
     // Clear persistent data (used to stop scenarios bleeding into each other)
     override fun clearPersistentData() {
-        clearStoredCommandUUID()
+        CiLog.info("Clearing persistent data")
         PersistentData(applicationContext).clear()
     }
 
