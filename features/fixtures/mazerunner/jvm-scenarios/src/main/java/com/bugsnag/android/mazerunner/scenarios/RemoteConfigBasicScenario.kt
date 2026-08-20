@@ -30,6 +30,7 @@ class RemoteConfigBasicScenario(
         private const val UNHANDLED_DELAY_MS = 5000L
         private const val TIMEOUT_SECONDS = 10L
         private const val REMOTE_CONFIG_POLL_INTERVAL_MS = 100L
+        private const val REMOTE_CONFIG_LOAD_DELAY_MS = 2000L
         private val REMOTE_CONFIG_MIN_FRESHNESS_MS = TimeUnit.SECONDS.toMillis(1)
     }
 
@@ -110,16 +111,13 @@ class RemoteConfigBasicScenario(
             if (expiry - System.currentTimeMillis() > REMOTE_CONFIG_MIN_FRESHNESS_MS) {
                 // Give Bugsnag a moment to load the config from disk into memory
                 // and for any background tasks to finish.
-                Thread.sleep(2000)
+                Thread.sleep(REMOTE_CONFIG_LOAD_DELAY_MS)
                 return
             }
-
 
             Thread.sleep(REMOTE_CONFIG_POLL_INTERVAL_MS)
         }
     }
-
-
     private fun remoteConfigFile(): File? {
         val versionCode = config.versionCode ?: return null
         return File(File(context.cacheDir, "bugsnag/config"), "core-$versionCode.json")
