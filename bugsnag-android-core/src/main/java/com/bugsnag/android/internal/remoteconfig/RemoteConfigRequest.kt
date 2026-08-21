@@ -57,8 +57,8 @@ internal class RemoteConfigRequest(
                 requestNewConfig()
             } catch (ex: Exception) {
                 logger.d("Could not retrieve RemoteConfig", ex)
+                null
             }
-            null
         }
     }
 
@@ -201,6 +201,6 @@ internal class RemoteConfigRequest(
         const val SECONDS_MS = 1000L
 
         const val DEFAULT_CONFIG_EXPIRY_TIME = 24 * 60 * 60 * SECONDS_MS
-        val maxAgeRegex = Regex(""".*max-age\s*=\s*(\d+).*""")
+        val maxAgeRegex = Regex(""".*max-age\s*=\s*(\d+).*""", RegexOption.IGNORE_CASE)
     }
 }

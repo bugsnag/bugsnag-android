@@ -7,6 +7,7 @@ import com.bugsnag.android.EventPayload
 import com.bugsnag.android.Logger
 import com.bugsnag.android.RemoteConfig
 import com.bugsnag.android.internal.remoteconfig.RemoteConfigState
+import java.util.concurrent.TimeUnit
 
 internal class DeliveryPipeline(
     val onSendCallbackState: CallbackState,
@@ -45,11 +46,7 @@ internal class DeliveryPipeline(
 
     private fun getDiscardStatus(payload: EventPayload): DeliveryStatus? {
         return try {
-            if (isTimeSensitive(payload)) {
-                return null
-            }
-
-            val remoteConfig = getRemoteConfig()
+            val remoteConfig = getRemoteConfig(payload)
             if (remoteConfig == null) {
                 return null
             }
@@ -75,19 +72,19 @@ internal class DeliveryPipeline(
     private fun isTimeSensitive(payload: EventPayload): Boolean {
         // Fast paths that avoid full JSON parsing where possible.
         // C errors and launch crashes are always time-sensitive.
-        if (payload.isLaunchCrash || payload.getErrorTypes().contains(ErrorType.C)) {
-            return true
-        }
-
-        // If we can't get the event, treat it as time-sensitive to be safe.
-        // This avoids delaying delivery if there's a parsing issue.
-        return payload.event == null
+        return payload.isLaunchCrash || payload.getErrorTypes().contains(ErrorType.C)
     }
 
-    private fun getRemoteConfig(): RemoteConfig? {
+    private fun getRemoteConfig(payload: EventPayload): RemoteConfig? {
         // Delivery should not block on remote-config downloads, as these reports can be
         // time-sensitive (for example, app hangs and ANRs). Use the latest cached snapshot and
         // let the background scheduler refresh it independently.
-        return remoteConfigState.peekRemoteConfig()
+        if (isTimeSensitive(payload)) {
+            return remoteConfigState.peekRemoteConfig()
+        }
+
+        // For non-time-sensitive events, we can wait briefly for a fresh config
+        // if the cached one is expired or missing.
+        return remoteConfigState.getRemoteConfig(2, TimeUnit.SECONDS)
     }
 }
