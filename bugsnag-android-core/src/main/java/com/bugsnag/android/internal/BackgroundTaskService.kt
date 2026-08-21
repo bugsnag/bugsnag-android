@@ -52,7 +52,7 @@ enum class TaskType {
     DEFAULT
 }
 
-private const val SHUTDOWN_WAIT_MS = 1500L
+private const val SHUTDOWN_WAIT_MS = 3000L
 
 // these values have been loosely adapted from android.os.AsyncTask over the years.
 private const val THREAD_POOL_SIZE = 1
@@ -66,7 +66,13 @@ internal val JThread.taskType get() = (this as? TaskTypeThread)?.taskType
 
 internal fun createExecutor(name: String, type: TaskType, keepAlive: Boolean): ExecutorService {
     val queue: BlockingQueue<Runnable> = LinkedBlockingQueue(TASK_QUEUE_SIZE)
-    val threadFactory = ThreadFactory { TaskTypeThread(it, name, type) }
+    val threadFactory = ThreadFactory {
+        val thread = TaskTypeThread(it, name, type)
+        if (type == TaskType.ERROR_REQUEST) {
+            thread.priority = JThread.MAX_PRIORITY
+        }
+        thread
+    }
 
     // certain executors (error/session/io) should always keep their threads alive, but others
     // are less important so are allowed a pool size of 0 that expands on demand.

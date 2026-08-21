@@ -3,7 +3,6 @@ package com.bugsnag.android.mazerunner.scenarios
 import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
-import com.bugsnag.android.EndpointConfiguration
 import com.bugsnag.android.OnErrorCallback
 import com.bugsnag.android.ThreadSendPolicy
 import com.bugsnag.android.mazerunner.filterSystemAnrs
@@ -13,20 +12,18 @@ import java.util.regex.Pattern
 internal class LoadConfigurationKotlinScenario(
     config: Configuration,
     context: Context,
-    eventMetadata: String
+    eventMetadata: String?
 ) : Scenario(config, context, eventMetadata) {
 
     override fun startBugsnag(startBugsnagOnly: Boolean) {
         this.startBugsnagOnly = startBugsnagOnly
-        val testConfig = Configuration("78978978978978978978978978978978")
-        testConfig.apiKey = "45645645645645645645645645645645"
+        val testConfig = Configuration("45645645645645645645645645645645")
         testConfig.appVersion = "0.9.8"
         testConfig.appType = "kotlin"
         testConfig.autoDetectErrors = true
         testConfig.autoTrackSessions = false
         testConfig.enabledReleaseStages = setOf("production", "development", "kotlin")
-        testConfig.endpoints =
-            EndpointConfiguration(this.config.endpoints.notify, this.config.endpoints.sessions)
+        testConfig.endpoints = this.config.endpoints
         testConfig.projectPackages = setOf("com.company.package1", "com.company.package2")
         testConfig.discardClasses = setOf(
             Pattern.compile(".*java.net.UnknownHostException.*"),

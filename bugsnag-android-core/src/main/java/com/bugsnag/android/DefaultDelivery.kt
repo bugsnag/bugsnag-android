@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import android.net.TrafficStats
+import com.bugsnag.android.internal.HEADER_BUGSNAG_INTEGRITY
 import com.bugsnag.android.internal.JsonHelper
 import java.io.IOException
 import java.net.HttpURLConnection

@@ -17,7 +17,7 @@
   },
   "unhandled": false,
   "exceptions": [],
-  "projectPackages":[
+  "projectPackages": [
     "com.example.foo"
   ],
   "user": {},
@@ -51,6 +51,9 @@
       }
     }
   ],
+  "usage": {
+    "remoteConfig": false
+  },
   "threads": [],
   "featureFlags": []
 }

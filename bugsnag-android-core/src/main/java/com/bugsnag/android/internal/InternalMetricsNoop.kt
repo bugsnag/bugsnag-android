@@ -1,7 +1,9 @@
 package com.bugsnag.android.internal
 
 class InternalMetricsNoop : InternalMetrics {
-    override fun toJsonableMap(): Map<String, Any> = emptyMap()
+    override var remoteConfigEnabled: Boolean = false
+
+    override fun toJsonableMap(): Map<String, Any> = mapOf("remoteConfig" to remoteConfigEnabled)
     override fun setConfigDifferences(differences: Map<String, Any>) = Unit
     override fun setCallbackCounts(newCallbackCounts: Map<String, Int>) = Unit
     override fun notifyAddCallback(callback: String) = Unit

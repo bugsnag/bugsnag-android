@@ -1,0 +1,32 @@
+{
+  "discardRules": [
+    {
+      "matchType": "HASH",
+      "hash": {
+        "paths": [
+          {
+            "path": "groupingDiscriminator"
+          },
+          {
+            "path": "exceptions.-1.errorClass"
+          },
+          {
+            "path": "exceptions.-1.stacktrace.*.codeIdentifier"
+          },
+          {
+            "path": "exceptions.-1.stacktrace.*.file",
+            "pathMode": "REGEX",
+            "regex": "([^/\\\\]+)$"
+          },
+          {
+            "path": "exceptions.-1.stacktrace.*",
+            "pathMode": "RELATIVE_ADDRESS"
+          }
+        ],
+        "matches": [
+          "4351b6c1394121e80d782cabf93b85f99487c53b"
+        ]
+      }
+    }
+  ]
+}

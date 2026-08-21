@@ -4,6 +4,7 @@ import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import com.bugsnag.android.BugsnagTestUtils.generateEvent
 import com.bugsnag.android.FileStore.Delegate
 import com.bugsnag.android.internal.BackgroundTaskService
+import com.bugsnag.android.internal.DeliveryPipeline
 import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.convertToImmutableConfig
 import com.bugsnag.android.internal.dag.ValueProvider
@@ -11,6 +12,7 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import org.mockito.Mockito.mock
 import java.io.File
 import java.nio.file.Files
 
@@ -95,7 +97,7 @@ class EventStoreMaxLimitTest {
                     }
                 }
             ),
-            CallbackState()
+            mock(DeliveryPipeline::class.java)
         )
     }
 }

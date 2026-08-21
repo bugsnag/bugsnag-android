@@ -1,6 +1,7 @@
 package com.bugsnag.android;
 
 import com.bugsnag.android.internal.BackgroundTaskService;
+import com.bugsnag.android.internal.DeliveryPipeline;
 import com.bugsnag.android.internal.ImmutableConfig;
 import com.bugsnag.android.internal.TaskType;
 import com.bugsnag.android.internal.dag.Provider;
@@ -21,25 +22,24 @@ class DeliveryDelegate extends BaseObservable {
     private final Provider<EventStore> eventStore;
     private final ImmutableConfig immutableConfig;
     private final Notifier notifier;
-    private final CallbackState callbackState;
+    private final DeliveryPipeline deliveryPipeline;
     final BackgroundTaskService backgroundTaskService;
 
     DeliveryDelegate(Logger logger,
                      Provider<EventStore> eventStore,
                      ImmutableConfig immutableConfig,
-                     CallbackState callbackState,
+                     DeliveryPipeline deliveryPipeline,
                      Notifier notifier,
                      BackgroundTaskService backgroundTaskService) {
         this.logger = logger;
         this.eventStore = eventStore;
         this.immutableConfig = immutableConfig;
-        this.callbackState = callbackState;
+        this.deliveryPipeline = deliveryPipeline;
         this.notifier = notifier;
         this.backgroundTaskService = backgroundTaskService;
     }
 
     void deliver(@NonNull Event event) {
-        logger.d("DeliveryDelegate#deliver() - event being stored/delivered by Client");
         Session session = event.getSession();
 
         if (session != null) {
@@ -60,12 +60,10 @@ class DeliveryDelegate extends BaseObservable {
                 cacheEvent(event, false);
                 break;
             case SEND_IMMEDIATELY:
-                if (callbackState.runOnSendTasks(event, logger)) {
-                    String apiKey = event.getApiKey();
-                    EventPayload eventPayload = new EventPayload(
-                            apiKey, event, notifier, immutableConfig);
-                    deliverPayloadAsync(event, eventPayload);
-                }
+                String apiKey = event.getApiKey();
+                EventPayload eventPayload = new EventPayload(
+                        apiKey, event, notifier, immutableConfig);
+                deliverPayloadAsync(event, eventPayload);
                 break;
             case STORE_AND_FLUSH:
             default:
@@ -94,10 +92,11 @@ class DeliveryDelegate extends BaseObservable {
 
     @VisibleForTesting
     DeliveryStatus deliverPayloadInternal(@NonNull EventPayload payload, @NonNull Event event) {
-        logger.d("DeliveryDelegate#deliverPayloadInternal() - attempting event delivery");
-        DeliveryParams deliveryParams = immutableConfig.getErrorApiDeliveryParams(payload);
-        Delivery delivery = immutableConfig.getDelivery();
-        DeliveryStatus deliveryStatus = delivery.deliver(payload, deliveryParams);
+        DeliveryStatus deliveryStatus = deliveryPipeline.deliverEventPayload(payload);
+
+        if (deliveryStatus == null) {
+            return null;
+        }
 
         switch (deliveryStatus) {
             case DELIVERED:

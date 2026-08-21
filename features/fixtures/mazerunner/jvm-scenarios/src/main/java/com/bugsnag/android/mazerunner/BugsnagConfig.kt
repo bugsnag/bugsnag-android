@@ -17,6 +17,7 @@ fun prepareConfig(
     apiKey: String,
     notify: String,
     sessions: String,
+    remoteConfig: String?,
     mazerunnerHttpClient: MazerunnerHttpClient,
     logFilter: (msg: String) -> Boolean
 ): Configuration {
@@ -27,7 +28,9 @@ fun prepareConfig(
         )
     }
 
-    if (notify.isNotEmpty() && sessions.isNotEmpty()) {
+    if (notify.isNotEmpty() && sessions.isNotEmpty() && remoteConfig?.isNotEmpty() == true) {
+        config.endpoints = EndpointConfiguration(notify, sessions, remoteConfig)
+    } else if (notify.isNotEmpty() && sessions.isNotEmpty()) {
         config.endpoints = EndpointConfiguration(notify, sessions)
     }
 

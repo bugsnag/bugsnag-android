@@ -4,6 +4,7 @@ import com.bugsnag.android.BugsnagTestUtils.generateAppWithState
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import com.bugsnag.android.BugsnagTestUtils.generateDeviceWithState
 import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
+import com.bugsnag.android.internal.InternalMetricsImpl
 import org.junit.Test
 import java.io.StringWriter
 import java.util.Date
@@ -54,6 +55,7 @@ internal class EventRedactionTest {
     private fun testEventRedaction(event: Event, jsonFixture: String) {
         event.app = generateAppWithState()
         event.device = generateDeviceWithState()
+        event.setInternalMetrics(InternalMetricsImpl())
 
         event.addMetadata("app", "password", "foo")
         event.addMetadata("device", "password", "bar")

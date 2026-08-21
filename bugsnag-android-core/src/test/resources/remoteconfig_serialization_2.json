@@ -1,0 +1,20 @@
+{
+  "configurationTag": "tag789",
+  "configurationExpiry": "2024-01-15T10:30:45.123Z",
+  "discardRules": [
+    {
+      "matchType": "HASH",
+      "hash": {
+        "paths": [
+          {
+            "path": "exceptions.-1.errorClass"
+          }
+        ],
+        "matches": [
+          "1234567890abcdef",
+          "abcdef1234567890"
+        ]
+      }
+    }
+  ]
+}
