@@ -24,15 +24,15 @@ class MainActivity : Activity(), CommandExecutor {
 
     private companion object {
         var hasClearedCommandUUIDForProcess = false
+        var activeCommandRunnerThread: Thread? = null
     }
 
+    private val activityInstanceId = Integer.toHexString(System.identityHashCode(this))
     private val mainHandler = Handler(Looper.getMainLooper())
     private val commandHandler = MazeRunnerCommandHandler(this)
-    private var commandRunnerThread: Thread? = null
 
     private val apiKeyKey = "BUGSNAG_API_KEY"
     private val commandUUIDKey = "MAZE_COMMAND_UUID"
-    lateinit var prefs: SharedPreferences
 
     var scenario: Scenario? = null
     var isActivityRecreate = false
@@ -41,13 +41,14 @@ class MainActivity : Activity(), CommandExecutor {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.isActivityRecreate = savedInstanceState != null
-        log("MainActivity.onCreate called")
+        log("MainActivity.onCreate called: activity=$activityInstanceId")
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_main)
-        prefs = getPreferences(Context.MODE_PRIVATE)
+
+        val prefs = getSharedPreferences("mazerunner", Context.MODE_PRIVATE)
 
         if (!hasClearedCommandUUIDForProcess) {
-            // clearStoredCommandUUID()
+            CiLog.info("First onCreate for this process, last command UUID: '${getStoredCommandUUID()}'")
             hasClearedCommandUUIDForProcess = true
         }
 
@@ -81,17 +82,24 @@ class MainActivity : Activity(), CommandExecutor {
         super.onResume()
         log("MainActivity.onResume called")
 
-        // Don't start the command runner again if the activity is being recreated,
-        // as it results in two threads executing commands concurrently and causing flakes.
-        if (!this.isActivityRecreate) {
-            startCommandRunner()
-        }
+        startCommandRunner()
         log("MainActivity.onResume complete")
     }
 
+    override fun onDestroy() {
+        CiLog.info("MainActivity.onDestroy called: activity=$activityInstanceId")
+        stopCommandRunner()
+        super.onDestroy()
+    }
+
     private fun setMazeRunnerAddress() {
-        mazeAddress = MazeRunnerAddressReader.readFromConfig(applicationContext, timeout = false)
-        if (!mazeAddress.isNullOrBlank()) {
+        var address = MazeRunnerAddressReader.readFromConfig(applicationContext, timeout = false)
+        if (address == "local:9339") {
+            address = "bs-local.com:9339"
+        }
+
+        if (!address.isNullOrBlank()) {
+            mazeAddress = address
             CiLog.info("Maze Runner address set from config file: $mazeAddress")
             return
         }
@@ -108,7 +116,11 @@ class MainActivity : Activity(), CommandExecutor {
             return
         }
 
-        val refreshedMazeAddress = MazeRunnerAddressReader.readFromConfig(applicationContext, timeout = false)
+        var refreshedMazeAddress = MazeRunnerAddressReader.readFromConfig(applicationContext, timeout = false)
+        if (refreshedMazeAddress == "local:9339") {
+            refreshedMazeAddress = "bs-local.com:9339"
+        }
+
         if (!refreshedMazeAddress.isNullOrBlank()) {
             mazeAddress = refreshedMazeAddress
             CiLog.info("Maze Runner address refreshed from config file: $mazeAddress")
@@ -116,56 +128,101 @@ class MainActivity : Activity(), CommandExecutor {
     }
 
     override fun setStoredCommandUUID(commandUUID: String) {
-        with(prefs.edit()) {
-            putString(commandUUIDKey, commandUUID)
-            commit()
-        }
-        CiLog.info("lastCommandUUID set to: $commandUUID")
+        getSharedPreferences("mazerunner", Context.MODE_PRIVATE).edit().putString(commandUUIDKey, commandUUID).commit()
+        CiLog.info("lastCommandUUID set to: $commandUUID (activity=$activityInstanceId)")
     }
 
     override fun clearStoredCommandUUID() {
-        with(prefs.edit()) {
-            remove(commandUUIDKey)
-            commit()
-        }
-        CiLog.info("lastCommandUUID set to empty")
+        getSharedPreferences("mazerunner", Context.MODE_PRIVATE).edit().remove(commandUUIDKey).commit()
+        CiLog.info("lastCommandUUID cleared (activity=$activityInstanceId)")
     }
 
-    private fun getStoredCommandUUID(): String? {
-        return prefs.getString(commandUUIDKey, "").orEmpty()
+    private fun getStoredCommandUUID(): String {
+        return getSharedPreferences("mazerunner", Context.MODE_PRIVATE).getString(commandUUIDKey, "").orEmpty()
     }
 
     // Starts a thread to poll for Maze Runner actions to perform
     @Synchronized
     private fun startCommandRunner() {
-        if (commandRunnerThread?.isAlive == true) {
-            CiLog.info("Maze Runner command runner already active")
+        if (activeCommandRunnerThread?.isAlive == true) {
+            CiLog.info("Maze Runner command runner already active (current activity=$activityInstanceId)")
             return
         }
 
-        val runner = thread(start = false) {
+        CiLog.info(
+            "Starting command runner: " +
+                "activity=$activityInstanceId, " +
+                "thread=${Thread.currentThread().name}, " +
+                "uuid='${getStoredCommandUUID()}'"
+        )
+
+        val runner = thread(
+            start = false,
+            name = "maze-command-$activityInstanceId"
+        ) {
             try {
+                CiLog.info(
+                    "Command runner thread started: " +
+                        "activity=$activityInstanceId, " +
+                        "thread=${Thread.currentThread().name}"
+                )
+
                 if (mazeAddress == null) setMazeRunnerAddress()
                 runCommandRunnerLoop()
             } finally {
-                synchronized(this@MainActivity) {
-                    if (commandRunnerThread === Thread.currentThread()) {
-                        commandRunnerThread = null
+                CiLog.info(
+                    "Command runner thread finished: " +
+                        "activity=$activityInstanceId, " +
+                        "thread=${Thread.currentThread().name}"
+                )
+
+                synchronized(MainActivity::class.java) {
+                    if (activeCommandRunnerThread === Thread.currentThread()) {
+                        activeCommandRunnerThread = null
                     }
                 }
             }
         }
 
-        commandRunnerThread = runner
+        activeCommandRunnerThread = runner
         runner.start()
+    }
+
+    private fun stopCommandRunner() {
+        val runner = synchronized(MainActivity::class.java) {
+            val r = activeCommandRunnerThread
+            activeCommandRunnerThread = null
+            r
+        }
+
+        if (runner?.isAlive == true) {
+            CiLog.info(
+                "Stopping command runner: " +
+                    "activity=$activityInstanceId, " +
+                    "thread=${runner.name}"
+            )
+            runner.interrupt()
+        }
     }
 
     private fun runCommandRunnerLoop() {
         var polling = true
-        while (polling) {
-            Thread.sleep(1000)
-            polling = fetchAndHandleNextCommand()
+
+        while (polling && !Thread.currentThread().isInterrupted) {
+            try {
+                Thread.sleep(1000)
+                polling = fetchAndHandleNextCommand()
+            } catch (interrupted: InterruptedException) {
+                CiLog.info(
+                    "Command runner interrupted: " +
+                        "activity=$activityInstanceId"
+                )
+                Thread.currentThread().interrupt()
+                polling = false
+            }
         }
+
+        CiLog.info("Maze Runner command runner stopped")
     }
 
     private fun fetchAndHandleNextCommand(): Boolean {
@@ -209,28 +266,45 @@ class MainActivity : Activity(), CommandExecutor {
     }
 
     private fun readCommand(): String {
-        val commandUrl = "http://$mazeAddress/command?after=${getStoredCommandUUID().orEmpty()}"
-        CiLog.info("Requesting Maze Runner command from: $commandUrl")
+        val storedUUID = getStoredCommandUUID()
+        val commandUrl = "http://$mazeAddress/command?after=$storedUUID"
+
+        CiLog.info(
+            "Requesting Maze Runner command: " +
+                "activity=$activityInstanceId, " +
+                "thread=${Thread.currentThread().name}, " +
+                "uuid='$storedUUID', " +
+                "url=$commandUrl"
+        )
+
         val urlConnection = URL(commandUrl).openConnection() as HttpURLConnection
         urlConnection.connectTimeout = MAZE_RUNNER_COMMAND_TIMEOUT_MS
         urlConnection.readTimeout = MAZE_RUNNER_COMMAND_TIMEOUT_MS
         try {
-            return urlConnection.inputStream.use { it.reader().readText() }
-        } catch (ioe: IOException) {
-            CiLog.error("Read of Maze Runner command failed", ioe)
-            try {
-                val errorMessage = urlConnection.errorStream.use { it.reader().readText() }
-                CiLog.error(
-                    "Failed to GET $commandUrl (HTTP ${urlConnection.responseCode} " +
-                        "${urlConnection.responseMessage}):\n" +
-                        "${"-".repeat(errorMessage.width)}\n" +
-                        "$errorMessage\n" +
-                        "-".repeat(errorMessage.width)
-                )
-            } catch (e: Exception) {
-                log("Failed to retrieve error message from connection", e)
+            val responseCode = urlConnection.responseCode
+            if (responseCode == 200) {
+                return urlConnection.inputStream.use { it.reader().readText() }
             }
 
+            if (responseCode == 400) {
+                val rejectedUuid = getStoredCommandUUID()
+                CiLog.warn("Maze Runner returned 400 Bad Request for command UUID: $rejectedUuid")
+
+                clearStoredCommandUUID()
+                CiLog.info("Command UUID after clearing: '${getStoredCommandUUID()}'")
+            }
+
+            val errorMessage = urlConnection.errorStream?.use { it.reader().readText() }.orEmpty()
+            CiLog.error(
+                "Failed to GET $commandUrl (HTTP $responseCode " +
+                    "${urlConnection.responseMessage}):\n" +
+                    "${"-".repeat(errorMessage.width.coerceAtLeast(1))}\n" +
+                    "$errorMessage\n" +
+                    "-".repeat(errorMessage.width.coerceAtLeast(1))
+            )
+            throw IOException("Failed to GET $commandUrl (HTTP $responseCode)")
+        } catch (ioe: IOException) {
+            CiLog.error("Read of Maze Runner command failed", ioe)
             throw ioe
         }
     }
@@ -273,6 +347,7 @@ class MainActivity : Activity(), CommandExecutor {
     // Clear persistent data (used to stop scenarios bleeding into each other)
     override fun clearPersistentData() {
         CiLog.info("Clearing persistent data")
+        scenario = null
         PersistentData(applicationContext).clear()
     }
 
@@ -291,6 +366,7 @@ class MainActivity : Activity(), CommandExecutor {
             else -> "a35a2a72bd230ac0aa0f52715bbdc6aa"
         }
 
+        val prefs = getSharedPreferences("mazerunner", Context.MODE_PRIVATE)
         if (manualMode) {
             log("Running in manual mode with API key: $apiKey")
             prefs.setStoredApiKey(apiKeyKey, apiKey)
