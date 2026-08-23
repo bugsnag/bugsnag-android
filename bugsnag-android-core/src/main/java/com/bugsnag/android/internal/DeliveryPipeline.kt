@@ -13,6 +13,10 @@ internal class DeliveryPipeline(
     val remoteConfigState: RemoteConfigState,
     val config: ImmutableConfig,
 ) {
+    companion object {
+        private const val REMOTE_CONFIG_FETCH_TIMEOUT_SECONDS = 5L
+    }
+
     fun deliverEventPayload(payload: EventPayload): DeliveryStatus? {
         if (!retainPayload(payload)) {
             return null
@@ -80,6 +84,6 @@ internal class DeliveryPipeline(
 
         // For non-time-sensitive events, we can wait briefly for a fresh config
         // if the cached one is expired or missing.
-        return remoteConfigState.getRemoteConfig(5, TimeUnit.SECONDS)
+        return remoteConfigState.getRemoteConfig(REMOTE_CONFIG_FETCH_TIMEOUT_SECONDS, TimeUnit.SECONDS)
     }
 }

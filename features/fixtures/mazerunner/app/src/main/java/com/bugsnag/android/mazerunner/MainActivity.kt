@@ -3,7 +3,6 @@ package com.bugsnag.android.mazerunner
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -18,6 +17,8 @@ import java.net.URL
 import kotlin.concurrent.thread
 
 private const val MAZE_RUNNER_COMMAND_TIMEOUT_MS = 5000
+private const val POLLING_INTERVAL_MS = 1000L
+private const val MIN_ERROR_MESSAGE_WIDTH = 1
 private const val LEGACY_MAZE_ADDRESS = "bs-local.com:9339"
 
 class MainActivity : Activity(), CommandExecutor {
@@ -210,7 +211,7 @@ class MainActivity : Activity(), CommandExecutor {
 
         while (polling && !Thread.currentThread().isInterrupted) {
             try {
-                Thread.sleep(1000)
+                Thread.sleep(POLLING_INTERVAL_MS)
                 polling = fetchAndHandleNextCommand()
             } catch (interrupted: InterruptedException) {
                 CiLog.info(
@@ -282,11 +283,11 @@ class MainActivity : Activity(), CommandExecutor {
         urlConnection.readTimeout = MAZE_RUNNER_COMMAND_TIMEOUT_MS
         try {
             val responseCode = urlConnection.responseCode
-            if (responseCode == 200) {
+            if (responseCode == HttpURLConnection.HTTP_OK) {
                 return urlConnection.inputStream.use { it.reader().readText() }
             }
 
-            if (responseCode == 400) {
+            if (responseCode == HttpURLConnection.HTTP_BAD_REQUEST) {
                 val rejectedUuid = getStoredCommandUUID()
                 CiLog.warn("Maze Runner returned 400 Bad Request for command UUID: $rejectedUuid")
 
@@ -298,9 +299,9 @@ class MainActivity : Activity(), CommandExecutor {
             CiLog.error(
                 "Failed to GET $commandUrl (HTTP $responseCode " +
                     "${urlConnection.responseMessage}):\n" +
-                    "${"-".repeat(errorMessage.width.coerceAtLeast(1))}\n" +
+                    "${"-".repeat(errorMessage.width.coerceAtLeast(MIN_ERROR_MESSAGE_WIDTH))}\n" +
                     "$errorMessage\n" +
-                    "-".repeat(errorMessage.width.coerceAtLeast(1))
+                    "-".repeat(errorMessage.width.coerceAtLeast(MIN_ERROR_MESSAGE_WIDTH))
             )
             throw IOException("Failed to GET $commandUrl (HTTP $responseCode)")
         } catch (ioe: IOException) {
