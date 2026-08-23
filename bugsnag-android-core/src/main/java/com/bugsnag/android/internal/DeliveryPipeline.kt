@@ -4,7 +4,6 @@ import com.bugsnag.android.CallbackState
 import com.bugsnag.android.DeliveryStatus
 import com.bugsnag.android.ErrorType
 import com.bugsnag.android.EventPayload
-import com.bugsnag.android.Logger
 import com.bugsnag.android.RemoteConfig
 import com.bugsnag.android.internal.remoteconfig.RemoteConfigState
 import java.util.concurrent.TimeUnit
@@ -14,7 +13,9 @@ internal class DeliveryPipeline(
     val remoteConfigState: RemoteConfigState,
     val config: ImmutableConfig,
 ) {
-    private val logger: Logger get() = config.logger
+    companion object {
+        private const val REMOTE_CONFIG_FETCH_TIMEOUT_SECONDS = 5L
+    }
 
     fun deliverEventPayload(payload: EventPayload): DeliveryStatus? {
         if (!retainPayload(payload)) {
@@ -56,14 +57,12 @@ internal class DeliveryPipeline(
             }
 
             if (applicableDiscardRule != null) {
-                logger.d("Discarding event due to remote discardRule: $applicableDiscardRule")
                 // discarded events are treated as being delivered, as the server would have discarded them
                 DeliveryStatus.DELIVERED
             } else {
                 null
             }
-        } catch (e: Exception) {
-            logger.d("Error checking discard status: " + e)
+        } catch (_: Exception) {
             // swallow any RemoteConfig related errors, and favour delivering the payload
             null
         }
@@ -85,6 +84,6 @@ internal class DeliveryPipeline(
 
         // For non-time-sensitive events, we can wait briefly for a fresh config
         // if the cached one is expired or missing.
-        return remoteConfigState.getRemoteConfig(2, TimeUnit.SECONDS)
+        return remoteConfigState.getRemoteConfig(REMOTE_CONFIG_FETCH_TIMEOUT_SECONDS, TimeUnit.SECONDS)
     }
 }

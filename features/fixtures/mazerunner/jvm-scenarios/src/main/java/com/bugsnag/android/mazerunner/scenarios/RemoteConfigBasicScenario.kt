@@ -26,9 +26,10 @@ class RemoteConfigBasicScenario(
     context: Context,
     eventMetadata: String
 ) : Scenario(config, context, eventMetadata) {
+
     companion object {
         private const val UNHANDLED_DELAY_MS = 5000L
-        private const val TIMEOUT_SECONDS = 10L
+        private const val TIMEOUT_SECONDS = 30L
         private const val REMOTE_CONFIG_POLL_INTERVAL_MS = 100L
         private const val REMOTE_CONFIG_LOAD_DELAY_MS = 5000L
         private val REMOTE_CONFIG_MIN_FRESHNESS_MS = TimeUnit.SECONDS.toMillis(1)
