@@ -160,7 +160,7 @@ class RemoteConfigBasicScenario(
             if (
                 expiry != null &&
                 expiry - System.currentTimeMillis() >
-                    REMOTE_CONFIG_MIN_FRESHNESS_MS
+                REMOTE_CONFIG_MIN_FRESHNESS_MS
             ) {
                 CiLog.info("RemoteConfigBasicScenario: Fresh config found")
                 Thread.sleep(REMOTE_CONFIG_LOAD_DELAY_MS)
