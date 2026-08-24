@@ -10,6 +10,7 @@ import com.bugsnag.android.EndpointConfiguration
 import com.bugsnag.android.EventPayload
 import com.bugsnag.android.Session
 import com.bugsnag.android.createDefaultDelivery
+import com.bugsnag.android.mazerunner.CiLog
 import com.bugsnag.android.mazerunner.LogLevel
 import org.json.JSONObject
 import java.io.File
@@ -28,7 +29,7 @@ class RemoteConfigBasicScenario(
 ) : Scenario(config, context, eventMetadata) {
 
     companion object {
-        private const val TIMEOUT_SECONDS = 20L
+        private const val TIMEOUT_SECONDS = 10L
         private const val UNHANDLED_DELAY_MS = 2000L
         private const val REMOTE_CONFIG_POLL_INTERVAL_MS = 100L
         private const val REMOTE_CONFIG_LOAD_DELAY_MS = 1000L
@@ -140,7 +141,15 @@ class RemoteConfigBasicScenario(
         timeoutMs: Long =
             TimeUnit.SECONDS.toMillis(TIMEOUT_SECONDS)
     ): Boolean {
-        val configFile = remoteConfigFile() ?: return false
+        val configFile = remoteConfigFile()
+
+        if (configFile == null) {
+            CiLog.error("RemoteConfigBasicScenario: Unable to determine config file")
+            return false
+        }
+
+        CiLog.info("RemoteConfigBasicScenario: Waiting for config at ${configFile.absolutePath}")
+
         val deadline = System.currentTimeMillis() + timeoutMs
 
         while (System.currentTimeMillis() < deadline) {
@@ -151,17 +160,23 @@ class RemoteConfigBasicScenario(
                 expiry - System.currentTimeMillis() >
                     REMOTE_CONFIG_MIN_FRESHNESS_MS
             ) {
+                CiLog.info("RemoteConfigBasicScenario: Fresh config found")
                 Thread.sleep(REMOTE_CONFIG_LOAD_DELAY_MS)
                 return true
             }
 
             Thread.sleep(REMOTE_CONFIG_POLL_INTERVAL_MS)
         }
+
+        CiLog.warn("RemoteConfigBasicScenario: Timed out waiting for fresh config")
         return false
     }
 
     private fun remoteConfigFile(): File? {
-        val versionCode = config.versionCode ?: return null
+        @Suppress("DEPRECATION")
+        val versionCode = config.versionCode?.takeIf { it != 0 }
+            ?: runCatching { context.packageManager.getPackageInfo(context.packageName, 0).versionCode }.getOrNull()
+            ?: 0
 
         return File(
             File(context.cacheDir, "bugsnag/config"),
@@ -176,19 +191,22 @@ class RemoteConfigBasicScenario(
             return null
         }
 
-        return try {
-            val expiry = JSONObject(
-                configFile.readText()
-            ).optString("configurationExpiry")
+        // Retry read once if it fails, to handle potential partial writes on slow CI disks
+        repeat(2) {
+            try {
+                val text = configFile.readText()
+                if (text.isNotEmpty()) {
+                    val expiry = JSONObject(text).optString("configurationExpiry")
 
-            if (expiry.isBlank()) {
-                null
-            } else {
-                remoteConfigExpiryFormat().parse(expiry)?.time
+                    if (expiry.isNotBlank()) {
+                        return remoteConfigExpiryFormat().parse(expiry)?.time
+                    }
+                }
+            } catch (_: Exception) {
+                Thread.sleep(100)
             }
-        } catch (_: Exception) {
-            null
         }
+        return null
     }
 
     private fun remoteConfigExpiryFormat(): SimpleDateFormat {
