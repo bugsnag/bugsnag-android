@@ -4,6 +4,7 @@ Feature: Reporting Strict Mode Violations
     Given I clear all persistent data
 
   @skip_above_android_8
+  @skip_android_7
   Scenario: StrictMode DiscWrite violation
     When I run "StrictModeDiscScenario" and relaunch the crashed app
     And I configure Bugsnag for "StrictModeDiscScenario"
@@ -14,6 +15,7 @@ Feature: Reporting Strict Mode Violations
     And the event "severityReason.type" equals "strictMode"
 
   @skip_above_android_8
+  @skip_android_7
   Scenario: StrictMode Network on Main Thread violation
     When I run "StrictModeNetworkScenario" and relaunch the crashed app
     And I configure Bugsnag for "StrictModeNetworkScenario"
