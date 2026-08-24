@@ -33,6 +33,8 @@ class RemoteConfigBasicScenario(
         private const val UNHANDLED_DELAY_MS = 2000L
         private const val REMOTE_CONFIG_POLL_INTERVAL_MS = 100L
         private const val REMOTE_CONFIG_LOAD_DELAY_MS = 1000L
+        private const val READ_RETRY_COUNT = 2
+        private const val RETRY_SLEEP_MS = 100L
 
         private val REMOTE_CONFIG_MIN_FRESHNESS_MS =
             TimeUnit.SECONDS.toMillis(1)
@@ -192,7 +194,7 @@ class RemoteConfigBasicScenario(
         }
 
         // Retry read once if it fails, to handle potential partial writes on slow CI disks
-        repeat(2) {
+        repeat(READ_RETRY_COUNT) {
             try {
                 val text = configFile.readText()
                 if (text.isNotEmpty()) {
@@ -203,7 +205,7 @@ class RemoteConfigBasicScenario(
                     }
                 }
             } catch (_: Exception) {
-                Thread.sleep(100)
+                Thread.sleep(RETRY_SLEEP_MS)
             }
         }
         return null
