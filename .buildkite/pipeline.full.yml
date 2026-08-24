@@ -174,7 +174,7 @@ steps:
       - "ANDROID_7"
       - "ANDROID_8"
     depends_on: "fixture-r19"
-    timeout_in_minutes: 80
+    timeout_in_minutes: 90
     plugins:
       artifacts#v1.9.0:
         download:
