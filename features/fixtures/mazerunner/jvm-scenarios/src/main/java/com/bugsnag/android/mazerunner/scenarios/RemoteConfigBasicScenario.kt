@@ -28,42 +28,60 @@ class RemoteConfigBasicScenario(
 ) : Scenario(config, context, eventMetadata) {
 
     companion object {
-        private const val UNHANDLED_DELAY_MS = 5000L
-        private const val TIMEOUT_SECONDS = 30L
+        private const val TIMEOUT_SECONDS = 20L
+        private const val UNHANDLED_DELAY_MS = 2000L
         private const val REMOTE_CONFIG_POLL_INTERVAL_MS = 100L
-        private const val REMOTE_CONFIG_LOAD_DELAY_MS = 5000L
-        private val REMOTE_CONFIG_MIN_FRESHNESS_MS = TimeUnit.SECONDS.toMillis(1)
+        private const val REMOTE_CONFIG_LOAD_DELAY_MS = 1000L
+
+        private val REMOTE_CONFIG_MIN_FRESHNESS_MS =
+            TimeUnit.SECONDS.toMillis(1)
     }
 
-    private val handledErrorDelivered = AtomicBoolean(false)
+    private val handledEventSeen = AtomicBoolean(false)
     private val handledDeliveryCompleted = CountDownLatch(1)
+    private val remoteConfigLoaded = CountDownLatch(1)
 
     init {
         config.addOnSend { event ->
-            if (!event.isUnhandled && handledErrorDelivered.compareAndSet(false, true)) {
-                // Trigger the crash only after the handled event has been processed by the
-                // delivery pipeline (delivered or discarded).
+            if (!event.isUnhandled && handledEventSeen.compareAndSet(false, true)) {
                 mazerunnerHttpClient?.postLog(
                     LogLevel.INFO,
                     "RemoteConfigBasicScenario handled delivery completed"
                 )
+
                 handledDeliveryCompleted.countDown()
             }
+
             true
         }
 
         val baseDelivery = createDefaultDelivery()
+
         config.delivery = object : Delivery {
-            override fun deliver(payload: EventPayload, deliveryParams: DeliveryParams): DeliveryStatus {
-                val status = baseDelivery.deliver(payload, deliveryParams)
+            override fun deliver(
+                payload: EventPayload,
+                deliveryParams: DeliveryParams
+            ): DeliveryStatus {
+                val status = baseDelivery.deliver(
+                    payload,
+                    deliveryParams
+                )
+
                 check(status == DeliveryStatus.DELIVERED) {
                     "Request failed, aborting scenario. status=$status"
                 }
+
                 return status
             }
 
-            override fun deliver(payload: Session, deliveryParams: DeliveryParams): DeliveryStatus {
-                return baseDelivery.deliver(payload, deliveryParams)
+            override fun deliver(
+                payload: Session,
+                deliveryParams: DeliveryParams
+            ): DeliveryStatus {
+                return baseDelivery.deliver(
+                    payload,
+                    deliveryParams
+                )
             }
         }
 
@@ -79,58 +97,90 @@ class RemoteConfigBasicScenario(
     override fun startBugsnag(startBugsnagOnly: Boolean) {
         super.startBugsnag(startBugsnagOnly)
 
-        if (config.endpoints.configuration != null) {
-            waitForFreshRemoteConfig()
+        if (config.endpoints.configuration == null) {
+            remoteConfigLoaded.countDown()
+            return
         }
+
+        Thread(
+            {
+                waitForFreshRemoteConfig()
+                remoteConfigLoaded.countDown()
+            },
+            "remote-config-wait"
+        ).start()
     }
 
     override fun startScenario() {
         super.startScenario()
-        Thread {
-            try {
-                handledDeliveryCompleted.await(TIMEOUT_SECONDS, TimeUnit.SECONDS)
-                Thread.sleep(UNHANDLED_DELAY_MS)
-                throw IOException("Unhandled exception")
-            } catch (ex: InterruptedException) {
-                Thread.currentThread().interrupt()
-            }
-        }.start()
-        Bugsnag.notify(RuntimeException("Handled exception"))
+
+        Thread(
+            {
+                try {
+                    remoteConfigLoaded.await(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+
+                    Bugsnag.notify(
+                        RuntimeException("Handled exception")
+                    )
+
+                    handledDeliveryCompleted.await(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+
+                    Thread.sleep(UNHANDLED_DELAY_MS)
+
+                    throw IOException("Unhandled exception")
+                } catch (interrupted: InterruptedException) {
+                    Thread.currentThread().interrupt()
+                }
+            },
+            "remote-config-scenario"
+        ).start()
     }
 
-    private fun waitForFreshRemoteConfig(timeoutMs: Long = TimeUnit.SECONDS.toMillis(TIMEOUT_SECONDS)) {
-        val configFile = remoteConfigFile() ?: return
+    private fun waitForFreshRemoteConfig(
+        timeoutMs: Long =
+            TimeUnit.SECONDS.toMillis(TIMEOUT_SECONDS)
+    ): Boolean {
+        val configFile = remoteConfigFile() ?: return false
         val deadline = System.currentTimeMillis() + timeoutMs
 
         while (System.currentTimeMillis() < deadline) {
             val expiry = readRemoteConfigExpiry(configFile)
-            if (expiry == null) {
-                Thread.sleep(REMOTE_CONFIG_POLL_INTERVAL_MS)
-                continue
-            }
 
-            if (expiry - System.currentTimeMillis() > REMOTE_CONFIG_MIN_FRESHNESS_MS) {
-                // Give Bugsnag a moment to load the config from disk into memory
-                // and for any background tasks to finish.
+            if (
+                expiry != null &&
+                expiry - System.currentTimeMillis() >
+                    REMOTE_CONFIG_MIN_FRESHNESS_MS
+            ) {
                 Thread.sleep(REMOTE_CONFIG_LOAD_DELAY_MS)
-                return
+                return true
             }
 
             Thread.sleep(REMOTE_CONFIG_POLL_INTERVAL_MS)
         }
-    }
-    private fun remoteConfigFile(): File? {
-        val versionCode = config.versionCode ?: return null
-        return File(File(context.cacheDir, "bugsnag/config"), "core-$versionCode.json")
+        return false
     }
 
-    private fun readRemoteConfigExpiry(configFile: File): Long? {
+    private fun remoteConfigFile(): File? {
+        val versionCode = config.versionCode ?: return null
+
+        return File(
+            File(context.cacheDir, "bugsnag/config"),
+            "core-$versionCode.json"
+        )
+    }
+
+    private fun readRemoteConfigExpiry(
+        configFile: File
+    ): Long? {
         if (!configFile.exists()) {
             return null
         }
 
         return try {
-            val expiry = JSONObject(configFile.readText()).optString("configurationExpiry")
+            val expiry = JSONObject(
+                configFile.readText()
+            ).optString("configurationExpiry")
+
             if (expiry.isBlank()) {
                 null
             } else {
@@ -142,7 +192,10 @@ class RemoteConfigBasicScenario(
     }
 
     private fun remoteConfigExpiryFormat(): SimpleDateFormat {
-        return SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US).apply {
+        return SimpleDateFormat(
+            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+            Locale.US
+        ).apply {
             timeZone = TimeZone.getTimeZone("UTC")
         }
     }
