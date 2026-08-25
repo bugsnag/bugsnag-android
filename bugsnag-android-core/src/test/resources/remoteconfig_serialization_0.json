@@ -1,0 +1,8 @@
+{
+  "configurationTag": "tag123",
+  "configurationExpiry": "2024-01-15T10:30:45.123Z",
+    "discardRules": [
+      { "matchType": "ALL" },
+      { "matchType": "ALL_HANDLED" }
+    ]
+  }

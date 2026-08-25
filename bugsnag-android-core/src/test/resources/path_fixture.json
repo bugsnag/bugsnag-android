@@ -1,0 +1,21 @@
+{
+  "metaData": {
+    "numbers": {
+      "0": "naught",
+      "1": "one",
+      "2": "two",
+      "3": "three"
+    },
+    "arrayOfObjects": [
+      {
+        "name": "one"
+      },
+      {
+        "name": "two"
+      },
+      {
+        "name": "three"
+      }
+    ]
+  }
+}

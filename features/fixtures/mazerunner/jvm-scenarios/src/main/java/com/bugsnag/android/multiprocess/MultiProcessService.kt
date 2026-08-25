@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.HandlerThread
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
+import com.bugsnag.android.EndpointConfiguration
 import com.bugsnag.android.mazerunner.BugsnagIntentParams
 import com.bugsnag.android.mazerunner.MazerunnerHttpClient
 import com.bugsnag.android.mazerunner.log
@@ -76,10 +77,16 @@ class MultiProcessService : Service() {
             params.apiKey,
             params.notify,
             params.sessions,
+            null,
             mazerunnerHttpClient
         ) {
             scenario?.getInterceptedLogMessages()?.contains(it) ?: false
         }
+        config.endpoints = EndpointConfiguration(
+            params.notify,
+            params.sessions,
+            null
+        )
         config.persistenceDirectory = File(filesDir, "background-service-dir")
         return config
     }

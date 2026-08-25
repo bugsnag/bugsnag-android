@@ -8,7 +8,8 @@ def execute_command(action, scenario_name = '')
     scenario_name: scenario_name,
     scenario_mode: $scenario_mode,
     sessions_endpoint: $sessions_endpoint,
-    notify_endpoint: $notify_endpoint
+    notify_endpoint: $notify_endpoint,
+    error_config_endpoint: $error_config_endpoint,
   }
   Maze::Server.commands.add command
 
@@ -18,13 +19,16 @@ def execute_command(action, scenario_name = '')
     if Maze.config.aws_public_ip
       $sessions_endpoint = "http://#{Maze.public_address}/sessions"
       $notify_endpoint = "http://#{Maze.public_address}/notify"
+      $error_config_endpoint = "http://#{Maze.public_address}"
     else
       $sessions_endpoint = "http://local:9339/sessions"
       $notify_endpoint = "http://local:9339/notify"
+      $error_config_endpoint = "http://local:9339"
     end
   else
     $sessions_endpoint = 'http://bs-local.com:9339/sessions'
     $notify_endpoint = 'http://bs-local.com:9339/notify'
+    $error_config_endpoint = 'http://bs-local.com:9339'
   end
 end
 
@@ -87,9 +91,8 @@ end
 # Waits for up to 10 seconds for the app to stop running.  It seems that Appium doesn't always
 # get the state correct (e.g. when backgrounding the app, or on old Android versions), so we
 # don't fail if it still says running after the time allowed.
-def wait_for_app_state(expected_state)
+def wait_for_app_state(expected_state, max_attempts = 20)
   manager = Maze::Api::Appium::AppManager.new
-  max_attempts = 20
   attempts = 0
   state = manager.state
   until (attempts >= max_attempts) || state == expected_state
@@ -107,7 +110,8 @@ end
 
 When("I relaunch the app after a crash") do
   manager = Maze::Api::Appium::AppManager.new
-  state = wait_for_app_state :not_running
+
+  state = wait_for_app_state :not_running, 80
   if state != :not_running
     manager.terminate
   end

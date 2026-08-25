@@ -4,6 +4,7 @@ import com.bugsnag.android.BugsnagTestUtils.generateAppWithState
 import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import com.bugsnag.android.BugsnagTestUtils.generateDeviceWithState
 import com.bugsnag.android.BugsnagTestUtils.generateImmutableConfig
+import com.bugsnag.android.internal.InternalMetricsImpl
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -100,6 +101,8 @@ internal class EventSerializationTest {
                     createMetadataStressTest(it)
                 },
 
+                // remote config disabled at config level
+                createEvent(remoteConfigEnabled = false),
                 createEvent {
                     it.updateSeverityReason(SeverityReason.REASON_HTTP_ERROR)
 
@@ -123,14 +126,20 @@ internal class EventSerializationTest {
             )
         }
 
-        private fun createEvent(cb: (event: Event) -> Unit = {}): Event {
+        private fun createEvent(
+            remoteConfigEnabled: Boolean = true,
+            cb: (event: Event) -> Unit = {}
+        ): Event {
+            val config = generateConfiguration().apply {
+                projectPackages = setOf("com.example.foo")
+                if (!remoteConfigEnabled) {
+                    setEndpoints(EndpointConfiguration(endpoints.notify, endpoints.sessions))
+                }
+            }
+
             val event = Event(
                 null,
-                generateImmutableConfig(
-                    generateConfiguration().apply {
-                        projectPackages = setOf("com.example.foo")
-                    }
-                ),
+                generateImmutableConfig(config),
                 SeverityReason.newInstance(SeverityReason.REASON_HANDLED_EXCEPTION),
                 NoopLogger
             )
@@ -138,6 +147,11 @@ internal class EventSerializationTest {
             event.app = generateAppWithState()
             event.device = generateDeviceWithState()
             event.device.cpuAbi = emptyArray()
+            event.setInternalMetrics(
+                InternalMetricsImpl().apply {
+                    this.remoteConfigEnabled = remoteConfigEnabled
+                }
+            )
             cb(event)
             return event
         }

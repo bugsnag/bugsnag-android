@@ -21,7 +21,7 @@ class EventErrorTypeTest {
         assertEquals(setOf(ANDROID), payload.getErrorTypes())
 
         // alter stacktrace to contain two types
-        val error = requireNotNull(payload.event!!.errors[0])
+        val error = requireNotNull(payload.event?.errors?.first())
         error.stacktrace[0].type = C
         assertEquals(setOf(ANDROID, C), payload.getErrorTypes())
 

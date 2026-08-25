@@ -1,5 +1,6 @@
 package com.bugsnag.android
 
+import com.bugsnag.android.internal.NullOutputStream
 import java.io.IOException
 import java.security.DigestOutputStream
 import java.security.MessageDigest

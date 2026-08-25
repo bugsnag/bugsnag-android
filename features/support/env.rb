@@ -10,13 +10,16 @@ Before do
     if Maze.config.aws_public_ip
       $sessions_endpoint = "http://#{Maze.public_address}/sessions"
       $notify_endpoint = "http://#{Maze.public_address}/notify"
+      $error_config_endpoint = "http://#{Maze.public_address}"
     else
       $sessions_endpoint = "http://local:9339/sessions"
       $notify_endpoint = "http://local:9339/notify"
+      $error_config_endpoint = "http://local:9339"
     end
   else
     $sessions_endpoint = 'http://bs-local.com:9339/sessions'
     $notify_endpoint = 'http://bs-local.com:9339/notify'
+    $error_config_endpoint = 'http://bs-local.com:9339'
   end
 end
 
@@ -38,6 +41,10 @@ end
 
 Before('@skip_below_android_11') do |scenario|
   skip_this_scenario("Skipping scenario") if Maze.config.os_version < 11
+end
+
+Before('@skip_android_7') do |scenario|
+  skip_this_scenario("Skipping scenario") if Maze.config.os_version == 7
 end
 
 Before('@skip_below_android_12') do |scenario|

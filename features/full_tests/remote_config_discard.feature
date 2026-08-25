@@ -1,0 +1,285 @@
+Feature: Remote config discard rules are applied
+
+  Background:
+    Given I clear all persistent data
+
+  Scenario: Empty remote config
+    When I prepare an error config with:
+      | type     | name          | value                                  |
+      | property | body          | @features/support/config/no_rules.json |
+      | property | status        | 200                                    |
+      | header   | Cache-Control | max-age=604800                         |
+    And I run "RemoteConfigBasicScenario"
+    And I wait to receive 1 logs
+    Then the "info" level log message equals "RemoteConfigBasicScenario handled delivery completed"
+    And I relaunch the app after a crash
+    And I configure Bugsnag for "RemoteConfigBasicScenario"
+    And I wait to receive 2 errors
+    And the received errors match:
+      | exceptions.0.errorClass    | exceptions.0.message |
+      | java.lang.RuntimeException | Handled exception    |
+      | java.io.IOException        | Unhandled exception  |
+    Then the report contains the required fields
+    And the event "severity" equals "warning"
+    And the event "unhandled" is false
+    And the event "usage.remoteConfig" is true
+
+    And I discard the oldest error
+    Then the report contains the required fields
+    And the event "severity" equals "error"
+    And the event "unhandled" is true
+    And the event "usage.remoteConfig" is true
+
+  Scenario: Invalid remote config
+    When I prepare an error config with:
+      | type     | name          | value                                 |
+      | property | body          | @features/support/config/invalid.json |
+      | property | status        | 200                                   |
+      | header   | Cache-Control | max-age=604800                        |
+    And I run "RemoteConfigBasicScenario"
+    And I wait to receive 1 logs
+    Then the "info" level log message equals "RemoteConfigBasicScenario handled delivery completed"
+    And I relaunch the app after a crash
+    And I configure Bugsnag for "RemoteConfigBasicScenario"
+    And I wait to receive 2 errors
+    And the received errors match:
+      | exceptions.0.errorClass    | exceptions.0.message |
+      | java.lang.RuntimeException | Handled exception    |
+      | java.io.IOException        | Unhandled exception  |
+    Then the report contains the required fields
+    And the event "severity" equals "warning"
+    And the event "unhandled" is false
+    And the event "usage.remoteConfig" is true
+
+    And I discard the oldest error
+    Then the report contains the required fields
+    And the event "severity" equals "error"
+    And the event "unhandled" is true
+    And the event "usage.remoteConfig" is true
+
+  Scenario: Remote config with ALL_HANDLED rule
+    When I prepare an error config with:
+      | type     | name          | value                                           |
+      | property | body          | @features/support/config/rules_all_handled.json |
+      | property | status        | 200                                             |
+      | header   | Cache-Control | max-age=604800                                  |
+    And I run "RemoteConfigBasicScenario"
+    And I relaunch the app after a crash
+    And I configure Bugsnag for "RemoteConfigBasicScenario"
+    And I wait to receive an error
+    And the received errors match:
+      | exceptions.0.errorClass | exceptions.0.message |
+      | java.io.IOException     | Unhandled exception  |
+    Then the report contains the required fields
+    And the event "severity" equals "error"
+    And the event "unhandled" is true
+    And the event "usage.remoteConfig" is true
+
+  Scenario: Remote config with ALL rule
+    When I prepare an error config with:
+      | type     | name          | value                                   |
+      | property | body          | @features/support/config/rules_all.json |
+      | property | status        | 200                                     |
+      | header   | Cache-Control | max-age=604800                          |
+    And I run "RemoteConfigBasicScenario"
+    And I relaunch the app after a crash
+    And I configure Bugsnag for "RemoteConfigBasicScenario"
+    Then I should receive no errors
+
+  Scenario: Remote config with ALL, ALL_HANDLED rules
+    When I prepare an error config with:
+      | type     | name          | value                                               |
+      | property | body          | @features/support/config/rules_all_all_handled.json |
+      | property | status        | 200                                                 |
+      | header   | Cache-Control | max-age=604800                                      |
+    And I run "RemoteConfigBasicScenario"
+    And I relaunch the app after a crash
+    And I configure Bugsnag for "RemoteConfigBasicScenario"
+    Then I should receive no errors
+
+  Scenario: Remote config with ALL_HANDLED, ALL rules
+    When I prepare an error config with:
+      | type     | name          | value                                               |
+      | property | body          | @features/support/config/rules_all_handled_all.json |
+      | property | status        | 200                                                 |
+      | header   | Cache-Control | max-age=604800                                      |
+    And I run "RemoteConfigBasicScenario"
+    And I relaunch the app after a crash
+    And I configure Bugsnag for "RemoteConfigBasicScenario"
+    Then I should receive no errors
+
+  @skip_android_7
+  Scenario: Remote config with ALL_HANDLED, unknown rules - unknown rule should not change the behaviour
+    When I prepare an error config with:
+      | type     | name          | value                                                   |
+      | property | body          | @features/support/config/rules_all_handled_unknown.json |
+      | property | status        | 200                                                     |
+      | header   | Cache-Control | max-age=604800                                          |
+    And I run "RemoteConfigBasicScenario"
+    And I relaunch the app after a crash
+    And I configure Bugsnag for "RemoteConfigBasicScenario"
+    And I wait to receive an error
+    And the received errors match:
+      | exceptions.0.errorClass | exceptions.0.message |
+      | java.io.IOException     | Unhandled exception  |
+    Then the report contains the required fields
+    And the event "severity" equals "error"
+    And the event "unhandled" is true
+    And the event "usage.remoteConfig" is true
+
+  @skip_android_7
+  Scenario: Remote config with HASH rule discards matching events and delivers non-matching
+    When I prepare an error config with:
+      | type     | name          | value                                                |
+      | property | body          | @features/support/config/rules_hash_ioexception.json |
+      | property | status        | 200                                                  |
+      | header   | Cache-Control | max-age=604800                                       |
+    And I run "RemoteConfigBasicScenario"
+    And I relaunch the app after a crash
+    And I configure Bugsnag for "RemoteConfigBasicScenario"
+    And I wait to receive an error
+    And the received errors match:
+      | exceptions.0.errorClass    | exceptions.0.message |
+      | java.lang.RuntimeException | Handled exception    |
+    And the event "usage.remoteConfig" is true
+
+  @skip_android_7
+  Scenario: Remote config does not expire
+    When I prepare an error config with:
+      | type     | name          | value                                              |
+      | property | body          | @features/support/config/rules_all_handled.json    |
+      | property | status        | 200                                                |
+      | header   | Cache-Control | max-age=604800                                     |
+    And I run "RemoteConfigBasicScenario"
+    And I relaunch the app after a crash
+    And I prepare an error config with:
+      | type     | name          | value                                  |
+      | property | body          | @features/support/config/no_rules.json  |
+      | property | status        | 200                                    |
+      | header   | Cache-Control | max-age=604800                         |
+    And I configure Bugsnag for "RemoteConfigBasicScenario"
+    And I wait to receive an error
+    And the received errors match:
+      | exceptions.0.errorClass | exceptions.0.message |
+      | java.io.IOException     | Unhandled exception  |
+    Then the report contains the required fields
+    And the event "severity" equals "error"
+    And the event "unhandled" is true
+    And the event "usage.remoteConfig" is true
+
+  @skip_android_7
+  Scenario: Remote config can be disabled
+    When I configure the app to run in the "disable-remote-config" state
+    And I prepare an error config with:
+      | type     | name          | value                                           |
+      | property | body          | @features/support/config/rules_all_handled.json  |
+      | property | status        | 200                                             |
+      | header   | Cache-Control | max-age=604800                                  |
+    And I run "RemoteConfigBasicScenario"
+    And I wait to receive 1 logs
+    Then the "info" level log message equals "RemoteConfigBasicScenario handled delivery completed"
+    And I relaunch the app after a crash
+    And I configure Bugsnag for "RemoteConfigBasicScenario"
+    And I wait to receive 2 errors
+    And the received errors match:
+      | exceptions.0.errorClass    | exceptions.0.message |
+      | java.lang.RuntimeException | Handled exception    |
+      | java.io.IOException        | Unhandled exception  |
+    Then the report contains the required fields
+    And the event "severity" equals "warning"
+    And the event "unhandled" is false
+    And the event "usage.remoteConfig" is false
+
+  @skip_android_7
+  Scenario: Remote config expire from no rules to all
+    When I prepare an error config with:
+      | type     | name          | value                                  |
+      | property | body          | @features/support/config/no_rules.json |
+      | property | status        | 200                                    |
+      | header   | Cache-Control | max-age=0                              |
+    And I prepare an error config with:
+      | type     | name          | value                                  |
+      | property | body          | @features/support/config/rules_all.json |
+      | property | status        | 200                                    |
+      | header   | Cache-Control | max-age=604800                         |
+    And I run "RemoteConfigBasicScenario"
+    And I relaunch the app after a crash
+    And I configure Bugsnag for "RemoteConfigBasicScenario"
+    Then I should receive no errors
+
+  @skip_android_7
+  Scenario: Remote config expire from all to no rules
+    When I prepare an error config with:
+      | type     | name          | value                                  |
+      | property | body          | @features/support/config/rules_all.json |
+      | property | status        | 200                                    |
+      | header   | Cache-Control | max-age=0                              |
+    And I run "RemoteConfigBasicScenario"
+    And I wait to receive 1 logs
+    Then the "info" level log message equals "RemoteConfigBasicScenario handled delivery completed"
+    And I relaunch the app after a crash
+    And I prepare an error config with:
+      | type     | name          | value                                  |
+      | property | body          | @features/support/config/no_rules.json  |
+      | property | status        | 200                                    |
+      | header   | Cache-Control | max-age=604800                         |
+    And I configure Bugsnag for "RemoteConfigBasicScenario"
+    And I wait to receive 2 errors
+    And the received errors match:
+      | exceptions.0.errorClass    | exceptions.0.message |
+      | java.lang.RuntimeException | Handled exception    |
+      | java.io.IOException        | Unhandled exception  |
+    Then the report contains the required fields
+    And the event "severity" equals "warning"
+    And the event "unhandled" is false
+    And the event "usage.remoteConfig" is true
+
+  @skip_android_7
+  Scenario: Remote config expire from no rules to not modified
+    When I prepare an error config with:
+      | type     | name          | value                                  |
+      | property | body          | @features/support/config/no_rules.json  |
+      | property | status        | 200                                    |
+      | header   | Cache-Control | max-age=0                              |
+    And I run "RemoteConfigBasicScenario"
+    And I wait to receive 1 logs
+    Then the "info" level log message equals "RemoteConfigBasicScenario handled delivery completed"
+    And I relaunch the app after a crash
+    And I prepare an error config with:
+      | type     | name          | value                                  |
+      | property | status        | 304                                    |
+      | header   | Cache-Control | max-age=604800                         |
+    And I configure Bugsnag for "RemoteConfigBasicScenario"
+    And I wait to receive 2 errors
+    And the received errors match:
+      | exceptions.0.errorClass    | exceptions.0.message |
+      | java.lang.RuntimeException | Handled exception    |
+      | java.io.IOException        | Unhandled exception  |
+    Then the report contains the required fields
+    And the event "severity" equals "warning"
+    And the event "unhandled" is false
+    And the event "usage.remoteConfig" is true
+
+  @skip_android_7
+  Scenario: Remote config keeps cached rules when the server errors
+    When I prepare an error config with:
+      | type     | name          | value                                           |
+      | property | body          | @features/support/config/rules_all_handled.json  |
+      | property | status        | 200                                             |
+      | header   | Cache-Control | max-age=604800                                  |
+    And I run "RemoteConfigBasicScenario"
+    And I relaunch the app after a crash
+    And I prepare an error config with:
+      | type     | name          | value                                     |
+      | property | body          | @features/support/config/invalid.json     |
+      | property | status        | 500                                      |
+      | header   | Cache-Control | max-age=604800                           |
+    And I configure Bugsnag for "RemoteConfigBasicScenario"
+    And I wait to receive an error
+    And the received errors match:
+      | exceptions.0.errorClass | exceptions.0.message |
+      | java.io.IOException     | Unhandled exception  |
+    Then the report contains the required fields
+    And the event "severity" equals "error"
+    And the event "unhandled" is true
+    And the event "usage.remoteConfig" is true

@@ -2,35 +2,12 @@
   "metaData": {},
   "severity": "warning",
   "severityReason": {
-    "type": "httpError",
+    "type": "handledException",
     "unhandledOverridden": false
   },
   "unhandled": false,
   "exceptions": [],
-  "request": {
-    "httpMethod": "POST",
-    "httpVersion": "1.1",
-    "url": "http://example.com/",
-    "body": "some body",
-    "bodyLength": 9,
-    "headers": {
-      "content-type": "text/plain",
-      "content-length": "9"
-    },
-    "params": {
-      "message": "hello world"
-    }
-  },
-  "response": {
-    "statusCode": 200,
-    "body": "some body",
-    "bodyLength": 9,
-    "headers": {
-      "content-type": "text/plain",
-      "content-length": "9"
-    }
-  },
-  "projectPackages":[
+  "projectPackages": [
     "com.example.foo"
   ],
   "user": {},
@@ -55,6 +32,9 @@
     "time": "1970-01-01T00:00:00.000Z"
   },
   "breadcrumbs": [],
+  "usage": {
+    "remoteConfig": false
+  },
   "threads": [],
   "featureFlags": []
 }

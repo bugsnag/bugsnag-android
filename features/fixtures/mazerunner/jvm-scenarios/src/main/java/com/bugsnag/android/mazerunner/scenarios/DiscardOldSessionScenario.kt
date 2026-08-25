@@ -3,9 +3,11 @@ package com.bugsnag.android.mazerunner.scenarios
 import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
-import com.bugsnag.android.EndpointConfiguration
+import com.bugsnag.android.mazerunner.disableSessionDelivery
 import java.io.File
 import java.util.Calendar
+
+private const val SESSION_UUID_LENGTH = 36
 
 internal class DiscardOldSessionScenario(
     config: Configuration,
@@ -15,15 +17,15 @@ internal class DiscardOldSessionScenario(
 
     init {
         config.launchDurationMillis = 0
-        // We set an endpoint so that attempts to send the session will fail.
-        config.endpoints = EndpointConfiguration(config.endpoints.notify, "https://nonexistent.bugsnag.com")
+        disableSessionDelivery(config)
     }
 
     fun setSessionFileTimestamp(file: File, timestamp: Long) {
         val name = file.name
-        val uuid = name.substring(0, 35)
-        val suffix = name.substringAfter("_")
-        val dstFile = File(file.parent, "${uuid}${timestamp}_$suffix")
+        val prefixEnd = name.indexOf('_') + 1 + SESSION_UUID_LENGTH
+        val prefix = name.substring(0, prefixEnd)
+        val suffix = name.substringAfter(prefix)
+        val dstFile = File(file.parent, "${prefix}${timestamp}_${suffix.substringAfter('_')}")
         assert(file.renameTo(dstFile))
     }
 

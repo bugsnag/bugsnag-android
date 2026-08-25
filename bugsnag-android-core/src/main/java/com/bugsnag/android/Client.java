@@ -4,6 +4,7 @@ import static com.bugsnag.android.SeverityReason.REASON_HANDLED_EXCEPTION;
 import static com.bugsnag.android.SeverityReason.REASON_UNHANDLED_EXCEPTION;
 
 import com.bugsnag.android.internal.BackgroundTaskService;
+import com.bugsnag.android.internal.DeliveryPipeline;
 import com.bugsnag.android.internal.ForegroundDetector;
 import com.bugsnag.android.internal.ImmutableConfig;
 import com.bugsnag.android.internal.InternalMetrics;
@@ -15,6 +16,7 @@ import com.bugsnag.android.internal.dag.ConfigModule;
 import com.bugsnag.android.internal.dag.ContextModule;
 import com.bugsnag.android.internal.dag.Provider;
 import com.bugsnag.android.internal.dag.SystemServiceModule;
+import com.bugsnag.android.internal.remoteconfig.RemoteConfigState;
 
 import android.app.Application;
 import android.content.Context;
@@ -87,6 +89,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
     final Logger logger;
     final Connectivity connectivity;
     final DeliveryDelegate deliveryDelegate;
+    @Nullable
+    final RemoteConfigState remoteConfigState;
 
     final ClientObservable clientObservable;
     PluginClient pluginClient;
@@ -172,7 +176,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
         // setup storage as soon as possible
         final StorageModule storageModule = new StorageModule(appContext,
-                immutableConfig, bgTaskService);
+                immutableConfig, notifier, bgTaskService);
 
         // setup state trackers for bugsnag
         BugsnagStateModule bugsnagStateModule =
@@ -200,14 +204,26 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         // load the device + user information
         userState = storageModule.loadUser(configuration.getUser());
 
-        EventStorageModule eventStorageModule = new EventStorageModule(contextModule, configModule,
-                dataCollectionModule, bgTaskService, trackerModule, systemServiceModule, notifier,
-                callbackState);
+        DeliveryPipeline deliveryPipeline = new DeliveryPipeline(
+                callbackState,
+                storageModule.getRemoteConfigState().get(),
+                immutableConfig
+        );
+
+        EventStorageModule eventStorageModule = new EventStorageModule(
+                contextModule,
+                configModule,
+                dataCollectionModule,
+                trackerModule,
+                systemServiceModule,
+                new EventStorageDependencies(notifier, deliveryPipeline, bgTaskService)
+        );
 
         eventStore = eventStorageModule.getEventStore();
+        remoteConfigState = storageModule.getRemoteConfigState().get();
 
-        deliveryDelegate = new DeliveryDelegate(logger, eventStore, immutableConfig, callbackState,
-                notifier, bgTaskService);
+        deliveryDelegate = new DeliveryDelegate(logger, eventStore, immutableConfig,
+                deliveryPipeline, notifier, bgTaskService);
 
         exceptionHandler = new ExceptionHandler(this, logger);
 
@@ -228,6 +244,10 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         } else {
             internalMetrics = new InternalMetricsNoop();
         }
+
+        internalMetrics.setRemoteConfigEnabled(
+                immutableConfig.getEndpoints().getConfiguration() != null
+        );
 
         configDifferences = configuration.impl.getConfigDifferences();
         systemBroadcastReceiver = new SystemBroadcastReceiver(this, logger);
@@ -278,6 +298,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         this.deliveryDelegate = deliveryDelegate;
         this.lastRunInfoStore = lastRunInfoStore;
         this.launchCrashTracker = launchCrashTracker;
+        this.remoteConfigState = null;
         this.lastRunInfo = null;
         this.exceptionHandler = exceptionHandler;
         this.notifier = notifier;
@@ -302,6 +323,12 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         eventStore.get().flushOnLaunch(lastRunInfo);
         eventStore.get().flushAsync();
         sessionTracker.flushAsync();
+
+        // Kick off remote-config refresh only after the critical launch-crash / plugin startup
+        // path has completed, so the IO queue cannot delay ANR or launch-crash delivery.
+        if (remoteConfigState != null) {
+            remoteConfigState.scheduleDownloadIfRequired();
+        }
 
         // These call into NdkPluginCaller to sync with the native side, so they must happen later
         internalMetrics.setConfigDifferences(configDifferences);

@@ -74,8 +74,11 @@ class BugsnagExitInfoPlugin @JvmOverloads constructor(
         internalHooks.setDiscardEventCallback { eventPayload ->
             // we track all of the discarded events as "processed" so that we do not
             // synthesize them again later
-            val exitInfo = eventPayload.event?.let { exitInfoMatcher.matchExitInfo(it) }
-            exitInfo?.let { exitInfoPluginStore.addExitInfoKey(ExitInfoKey(exitInfo)) }
+            val event = eventPayload.event
+            if (event != null) {
+                val exitInfo = exitInfoMatcher.matchExitInfo(event)
+                exitInfo?.let { exitInfoPluginStore.addExitInfoKey(ExitInfoKey(exitInfo)) }
+            }
         }
 
         internalHooks.setEventStoreEmptyCallback {

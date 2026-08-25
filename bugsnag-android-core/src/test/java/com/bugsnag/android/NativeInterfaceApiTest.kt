@@ -246,6 +246,23 @@ internal class NativeInterfaceApiTest {
     }
 
     @Test
+    fun deliverLaunchReport() {
+        `when`(eventStore.getNdkFilename(eq("{}"), eq(""), eq(true))).thenReturn(
+            "123_test-api-key_c_uuid_startupcrash.json"
+        )
+
+        NativeInterface.deliverReport(
+            null, "{}".toByteArray(), null,
+            "", true
+        )
+
+        verify(eventStore, times(1)).enqueueContentForDelivery(
+            eq("{}"),
+            eq("123_test-api-key_c_uuid_startupcrash.json")
+        )
+    }
+
+    @Test
     fun notifyJVMStackTraceCall() {
         NativeInterface.notify(
             "SIGPIPE",

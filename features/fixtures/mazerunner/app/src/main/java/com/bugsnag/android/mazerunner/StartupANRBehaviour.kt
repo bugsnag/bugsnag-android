@@ -30,7 +30,7 @@ fun Application.triggerStartupAnrIfRequired() {
         // we have to startup Bugsnag at this point
         val config = Configuration.load(this)
         if (!notifyEndpoint.isNullOrBlank() && !sessionsEndpoint.isNullOrBlank()) {
-            config.endpoints = EndpointConfiguration(notifyEndpoint, sessionsEndpoint)
+            config.endpoints = EndpointConfiguration(notifyEndpoint, sessionsEndpoint, null)
         }
 
         Bugsnag.start(this, config)

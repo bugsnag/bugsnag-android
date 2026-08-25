@@ -35,7 +35,7 @@ class DeliveryHeadersTest {
         assertEquals(firstSha, secondSha)
 
         // altering the streamable alters the hash
-        payload.event!!.device.id = "50923"
+        payload.event?.device?.id = "50923"
         payload.rebuildPayloadCache()
         val differentSha = requireNotNull(payload.integrityToken)
         assertNotEquals(firstSha, differentSha)
@@ -91,7 +91,7 @@ class DeliveryHeadersTest {
         val payload = generateEventPayload(config)
 
         // alter stacktrace to contain two types
-        val error = requireNotNull(payload.event!!.errors[0])
+        val error = requireNotNull(payload.event?.errors?.first())
         error.stacktrace[0].type = ErrorType.C
         error.stacktrace[1].type = ErrorType.REACTNATIVEJS
 

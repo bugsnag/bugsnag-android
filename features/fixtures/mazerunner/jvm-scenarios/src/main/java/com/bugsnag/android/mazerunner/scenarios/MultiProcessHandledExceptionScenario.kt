@@ -3,6 +3,7 @@ package com.bugsnag.android.mazerunner.scenarios
 import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
+import com.bugsnag.android.EndpointConfiguration
 import com.bugsnag.android.mazerunner.BugsnagIntentParams
 import com.bugsnag.android.mazerunner.log
 
@@ -14,6 +15,14 @@ internal class MultiProcessHandledExceptionScenario(
     context: Context,
     eventMetadata: String
 ) : Scenario(config, context, eventMetadata) {
+
+    init {
+        config.endpoints = EndpointConfiguration(
+            config.endpoints.notify,
+            config.endpoints.sessions,
+            null
+        )
+    }
 
     override fun startScenario() {
         super.startScenario()

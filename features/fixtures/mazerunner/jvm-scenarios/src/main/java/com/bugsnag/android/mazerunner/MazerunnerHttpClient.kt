@@ -23,7 +23,7 @@ class MazerunnerHttpClient(
     private val executor = Executors.newSingleThreadExecutor()
 
     fun postLog(logLevel: LogLevel, msg: String) {
-        executor.submit {
+        executor.executeAwait {
             val level = logLevel.toString().toLowerCase(Locale.US)
             val json = generateJson(level, msg)
 

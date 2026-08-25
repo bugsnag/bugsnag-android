@@ -4,12 +4,14 @@ import com.bugsnag.android.BugsnagTestUtils.generateConfiguration
 import com.bugsnag.android.BugsnagTestUtils.generateEvent
 import com.bugsnag.android.FileStore.Delegate
 import com.bugsnag.android.internal.BackgroundTaskService
+import com.bugsnag.android.internal.DeliveryPipeline
 import com.bugsnag.android.internal.dag.ValueProvider
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.mockito.Mockito.mock
 import java.io.File
 import java.lang.Thread
 import java.nio.file.Files
@@ -207,8 +209,14 @@ class LaunchCrashDeliveryTest {
             persistenceDirectory = storageDir
             this.delivery = testDelivery
         }
+        val immutableConfig = BugsnagTestUtils.convert(config)
+        val deliveryPipeline = DeliveryPipeline(
+            CallbackState(),
+            mock(),
+            immutableConfig
+        )
         return EventStore(
-            BugsnagTestUtils.convert(config),
+            immutableConfig,
             NoopLogger,
             Notifier(),
             backgroundTaskService,
@@ -222,7 +230,7 @@ class LaunchCrashDeliveryTest {
                     }
                 }
             ),
-            CallbackState()
+            deliveryPipeline
         )
     }
 }

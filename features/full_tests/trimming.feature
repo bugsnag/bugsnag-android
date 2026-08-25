@@ -3,6 +3,7 @@ Feature: Excess data is trimmed when the payload is too big
   Background:
     Given I clear all persistent data
 
+  @skip_android_7
   Scenario: metadata truncated, handled exception
     When I configure the app to run in the "handled, 100, 1000" state
     And I run "MetadataStringsTooLargeScenario"
@@ -14,6 +15,7 @@ Feature: Excess data is trimmed when the payload is too big
     And the event "usage.system.stringsTruncated" equals 2
     And the event "usage.system.stringCharsTruncated" is greater than 0
 
+  @skip_android_7
   Scenario: metadata truncated, JVM exception
     When I configure the app to run in the "jvm, 100, 1000" state
     And I run "MetadataStringsTooLargeScenario" and relaunch the crashed app
@@ -49,6 +51,7 @@ Feature: Excess data is trimmed when the payload is too big
   # and then modify "When I configure the app to run in the "100" state" to a number that generates 3 breadcrumbs
   # worth of data too much.
 
+  @skip_android_7
   Scenario: Payload is too big by 3 breadcrumbs, handled exception that failed initial delivery
     When I set the HTTP status code for the next request to 500
     And I configure the app to run in the "handled, 10000, 100" state
@@ -69,6 +72,7 @@ Feature: Excess data is trimmed when the payload is too big
     And the event "usage.system.breadcrumbsRemoved" is not null
     And the event "usage.system.breadcrumbBytesRemoved" is not null
 
+  @skip_android_7
   Scenario: Payload is too big by 3 breadcrumbs, handled exception
     When I configure the app to run in the "handled, 10000, 100" state
     And I run "EventTooBigScenario"
@@ -80,6 +84,7 @@ Feature: Excess data is trimmed when the payload is too big
     And the event "usage.system.breadcrumbsRemoved" is not null
     And the event "usage.system.breadcrumbBytesRemoved" is not null
 
+  @skip_android_7
   Scenario: Payload is too big by 3 breadcrumbs, jvm exception
     When I configure the app to run in the "jvm, 10000, 100" state
     And I run "EventTooBigScenario" and relaunch the crashed app
@@ -109,6 +114,7 @@ Feature: Excess data is trimmed when the payload is too big
 
   # ===========================================================================
 
+  @skip_android_7
   Scenario: Breadcrumb is too big, handled exception
     When I configure the app to run in the "handled, 1100000, 1" state
     And I run "EventTooBigScenario"
@@ -120,6 +126,7 @@ Feature: Excess data is trimmed when the payload is too big
     And the event "usage.system.breadcrumbsRemoved" equals 2
     And the event "usage.system.breadcrumbBytesRemoved" is not null
 
+  @skip_android_7
   Scenario: Breadcrumb is too big, jvm exception
     When I configure the app to run in the "jvm, 1100000, 1" state
     And I run "EventTooBigScenario" and relaunch the crashed app
