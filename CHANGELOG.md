@@ -1,5 +1,11 @@
 # Changelog
 
+## 6.27.0 (2026-09-21)
+
+### Enhancements
+
+* **Remote Config Discard Rules**: Introduced support for dynamic error filtering via Remote Config. You can now define discard rules in the Bugsnag dashboard to filter events without requiring an app update. [#2441](https://github.com/bugsnag/bugsnag-android/pull/2441)
+
 ## 6.26.1 (2026-07-18)
 
 ### Enhancements
