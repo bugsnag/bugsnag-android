@@ -2,8 +2,8 @@ package com.bugsnag.android
 
 import com.bugsnag.android.internal.InternalMetrics
 import com.bugsnag.android.internal.InternalMetricsNoop
-import java.util.concurrent.TimeUnit
 import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.TimeUnit
 
 private const val ON_BREADCRUMB_NAME = "onBreadcrumb"
 private const val ON_ERROR_NAME = "onError"
