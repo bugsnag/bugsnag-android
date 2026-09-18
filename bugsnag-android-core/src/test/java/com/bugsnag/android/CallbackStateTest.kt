@@ -10,6 +10,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+import java.util.concurrent.TimeUnit
 
 @RunWith(MockitoJUnitRunner::class)
 class CallbackStateTest {
@@ -127,6 +128,19 @@ class CallbackStateTest {
     }
 
     @Test
+    fun onBreadcrumbSlowChainLogsWarning() {
+        val state = CallbackState()
+        state.addOnBreadcrumb(OnBreadcrumbCallback { true })
+
+        val logger = InterceptingLogger()
+        withBreadcrumbClock(0L, TimeUnit.MILLISECONDS.toNanos(1500)) {
+            assertTrue(state.runOnBreadcrumbTasks(breadcrumb, logger))
+        }
+
+        assertEquals("OnBreadcrumbCallback chain took 1500ms for 1 callback(s)", logger.msg)
+    }
+
+    @Test
     fun onSendExcThrown() {
         val state = CallbackState()
         state.addOnSend(OnSendCallback { true })
@@ -163,5 +177,16 @@ class CallbackStateTest {
 
         assertEquals(2, state.onSendTasks.size)
         assertEquals(1, expectedOnSendCallBackPosition)
+    }
+
+    private inline fun withBreadcrumbClock(vararg nanoTimes: Long, block: () -> Unit) {
+        val originalClock = CallbackState.nanoTimeProvider
+        val timeIterator = nanoTimes.iterator()
+        CallbackState.nanoTimeProvider = { timeIterator.next() }
+        try {
+            block()
+        } finally {
+            CallbackState.nanoTimeProvider = originalClock
+        }
     }
 }

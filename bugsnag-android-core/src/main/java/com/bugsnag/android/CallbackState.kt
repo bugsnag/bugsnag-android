@@ -2,7 +2,13 @@ package com.bugsnag.android
 
 import com.bugsnag.android.internal.InternalMetrics
 import com.bugsnag.android.internal.InternalMetricsNoop
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.CopyOnWriteArrayList
+
+private const val onBreadcrumbName = "onBreadcrumb"
+private const val onErrorName = "onError"
+private const val onSendName = "onSendError"
+private const val onSessionName = "onSession"
 
 internal data class CallbackState(
     val onErrorTasks: MutableCollection<OnErrorCallback> = CopyOnWriteArrayList(),
@@ -11,14 +17,13 @@ internal data class CallbackState(
     val onSendTasks: MutableList<OnSendCallback> = CopyOnWriteArrayList()
 ) : CallbackAware {
 
-    private var internalMetrics: InternalMetrics = InternalMetricsNoop()
+    internal companion object {
+        private const val BREADCRUMB_CALLBACK_WARNING_THRESHOLD_MS = 1000L
 
-    companion object {
-        private const val onBreadcrumbName = "onBreadcrumb"
-        private const val onErrorName = "onError"
-        private const val onSendName = "onSendError"
-        private const val onSessionName = "onSession"
+        internal var nanoTimeProvider: () -> Long = System::nanoTime
     }
+
+    private var internalMetrics: InternalMetrics = InternalMetricsNoop()
 
     fun setInternalMetrics(metrics: InternalMetrics) {
         internalMetrics = metrics
@@ -100,16 +105,29 @@ internal data class CallbackState(
         if (onBreadcrumbTasks.isEmpty()) {
             return true
         }
-        onBreadcrumbTasks.forEach {
+
+        val startedAt = nanoTimeProvider()
+        var result = true
+
+        for (task in onBreadcrumbTasks) {
             try {
-                if (!it.onBreadcrumb(breadcrumb)) {
-                    return false
+                if (!task.onBreadcrumb(breadcrumb)) {
+                    result = false
+                    break
                 }
             } catch (ex: Throwable) {
                 logger.w("OnBreadcrumbCallback threw an Exception", ex)
             }
         }
-        return true
+
+        val elapsedMs = TimeUnit.NANOSECONDS.toMillis(nanoTimeProvider() - startedAt)
+        if (elapsedMs >= BREADCRUMB_CALLBACK_WARNING_THRESHOLD_MS) {
+            logger.w(
+                "OnBreadcrumbCallback chain took ${elapsedMs}ms for ${onBreadcrumbTasks.size} callback(s)"
+            )
+        }
+
+        return result
     }
 
     fun runOnSessionTasks(session: Session, logger: Logger): Boolean {
