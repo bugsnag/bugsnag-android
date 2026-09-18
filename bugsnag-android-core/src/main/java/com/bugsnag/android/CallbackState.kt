@@ -3,6 +3,12 @@ package com.bugsnag.android
 import com.bugsnag.android.internal.InternalMetrics
 import com.bugsnag.android.internal.InternalMetricsNoop
 import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.TimeUnit
+
+private const val ON_BREADCRUMB_NAME = "onBreadcrumb"
+private const val ON_ERROR_NAME = "onError"
+private const val ON_SEND_NAME = "onSendError"
+private const val ON_SESSION_NAME = "onSession"
 
 internal data class CallbackState(
     val onErrorTasks: MutableCollection<OnErrorCallback> = CopyOnWriteArrayList(),
@@ -11,14 +17,13 @@ internal data class CallbackState(
     val onSendTasks: MutableList<OnSendCallback> = CopyOnWriteArrayList()
 ) : CallbackAware {
 
-    private var internalMetrics: InternalMetrics = InternalMetricsNoop()
+    internal companion object {
+        private const val BREADCRUMB_CALLBACK_WARNING_THRESHOLD_MS = 1000L
 
-    companion object {
-        private const val onBreadcrumbName = "onBreadcrumb"
-        private const val onErrorName = "onError"
-        private const val onSendName = "onSendError"
-        private const val onSessionName = "onSession"
+        internal var nanoTimeProvider: () -> Long = System::nanoTime
     }
+
+    private var internalMetrics: InternalMetrics = InternalMetricsNoop()
 
     fun setInternalMetrics(metrics: InternalMetrics) {
         internalMetrics = metrics
@@ -27,54 +32,54 @@ internal data class CallbackState(
 
     override fun addOnError(onError: OnErrorCallback) {
         if (onErrorTasks.add(onError)) {
-            internalMetrics.notifyAddCallback(onErrorName)
+            internalMetrics.notifyAddCallback(ON_ERROR_NAME)
         }
     }
 
     override fun removeOnError(onError: OnErrorCallback) {
         if (onErrorTasks.remove(onError)) {
-            internalMetrics.notifyRemoveCallback(onErrorName)
+            internalMetrics.notifyRemoveCallback(ON_ERROR_NAME)
         }
     }
 
     override fun addOnBreadcrumb(onBreadcrumb: OnBreadcrumbCallback) {
         if (onBreadcrumbTasks.add(onBreadcrumb)) {
-            internalMetrics.notifyAddCallback(onBreadcrumbName)
+            internalMetrics.notifyAddCallback(ON_BREADCRUMB_NAME)
         }
     }
 
     override fun removeOnBreadcrumb(onBreadcrumb: OnBreadcrumbCallback) {
         if (onBreadcrumbTasks.remove(onBreadcrumb)) {
-            internalMetrics.notifyRemoveCallback(onBreadcrumbName)
+            internalMetrics.notifyRemoveCallback(ON_BREADCRUMB_NAME)
         }
     }
 
     override fun addOnSession(onSession: OnSessionCallback) {
         if (onSessionTasks.add(onSession)) {
-            internalMetrics.notifyAddCallback(onSessionName)
+            internalMetrics.notifyAddCallback(ON_SESSION_NAME)
         }
     }
 
     override fun removeOnSession(onSession: OnSessionCallback) {
         if (onSessionTasks.remove(onSession)) {
-            internalMetrics.notifyRemoveCallback(onSessionName)
+            internalMetrics.notifyRemoveCallback(ON_SESSION_NAME)
         }
     }
 
     fun addOnSend(onSend: OnSendCallback) {
         if (onSendTasks.add(onSend)) {
-            internalMetrics.notifyAddCallback(onSendName)
+            internalMetrics.notifyAddCallback(ON_SEND_NAME)
         }
     }
 
     fun addPreOnSend(onSend: OnSendCallback) {
         onSendTasks.add(0, onSend)
-        internalMetrics.notifyAddCallback(onSendName)
+        internalMetrics.notifyAddCallback(ON_SEND_NAME)
     }
 
     fun removeOnSend(onSend: OnSendCallback) {
         if (onSendTasks.remove(onSend)) {
-            internalMetrics.notifyRemoveCallback(onSendName)
+            internalMetrics.notifyRemoveCallback(ON_SEND_NAME)
         }
     }
 
@@ -100,16 +105,29 @@ internal data class CallbackState(
         if (onBreadcrumbTasks.isEmpty()) {
             return true
         }
-        onBreadcrumbTasks.forEach {
+
+        val startedAt = nanoTimeProvider()
+        var result = true
+
+        for (task in onBreadcrumbTasks) {
             try {
-                if (!it.onBreadcrumb(breadcrumb)) {
-                    return false
+                if (!task.onBreadcrumb(breadcrumb)) {
+                    result = false
+                    break
                 }
             } catch (ex: Throwable) {
                 logger.w("OnBreadcrumbCallback threw an Exception", ex)
             }
         }
-        return true
+
+        val elapsedMs = TimeUnit.NANOSECONDS.toMillis(nanoTimeProvider() - startedAt)
+        if (elapsedMs >= BREADCRUMB_CALLBACK_WARNING_THRESHOLD_MS) {
+            logger.w(
+                "OnBreadcrumbCallback chain took ${elapsedMs}ms for ${onBreadcrumbTasks.size} callback(s)"
+            )
+        }
+
+        return result
     }
 
     fun runOnSessionTasks(session: Session, logger: Logger): Boolean {
@@ -160,10 +178,10 @@ internal data class CallbackState(
 
     private fun getCallbackCounts(): Map<String, Int> {
         return hashMapOf<String, Int>().also { map ->
-            if (onBreadcrumbTasks.count() > 0) map[onBreadcrumbName] = onBreadcrumbTasks.count()
-            if (onErrorTasks.count() > 0) map[onErrorName] = onErrorTasks.count()
-            if (onSendTasks.count() > 0) map[onSendName] = onSendTasks.count()
-            if (onSessionTasks.count() > 0) map[onSessionName] = onSessionTasks.count()
+            if (onBreadcrumbTasks.count() > 0) map[ON_BREADCRUMB_NAME] = onBreadcrumbTasks.count()
+            if (onErrorTasks.count() > 0) map[ON_ERROR_NAME] = onErrorTasks.count()
+            if (onSendTasks.count() > 0) map[ON_SEND_NAME] = onSendTasks.count()
+            if (onSessionTasks.count() > 0) map[ON_SESSION_NAME] = onSessionTasks.count()
         }
     }
 }

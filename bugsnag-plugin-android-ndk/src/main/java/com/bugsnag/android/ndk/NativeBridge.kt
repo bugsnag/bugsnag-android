@@ -2,6 +2,7 @@ package com.bugsnag.android.ndk
 
 import android.os.Build
 import com.bugsnag.android.BreadcrumbType
+import com.bugsnag.android.Logger
 import com.bugsnag.android.NativeInterface
 import com.bugsnag.android.StateEvent
 import com.bugsnag.android.StateEvent.AddBreadcrumb
@@ -22,8 +23,8 @@ import com.bugsnag.android.StateEvent.UpdateUser
 import com.bugsnag.android.internal.BackgroundTaskService
 import com.bugsnag.android.internal.StateObserver
 import com.bugsnag.android.internal.TaskType
-import java.io.File
 import java.util.UUID
+import java.util.concurrent.RejectedExecutionException
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
@@ -31,12 +32,18 @@ import kotlin.concurrent.withLock
 /**
  * Observes changes in the Bugsnag environment, propagating them to the native layer
  */
-class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObserver {
+internal class NativeBridge(
+    private val bgTaskService: BackgroundTaskService,
+    logger: Logger = NativeInterface.getLogger(),
+    reportDeliveryWorkerFactory: (Logger) -> ReportDeliveryWorker = { workerLogger ->
+        BackgroundReportDeliveryWorker(workerLogger)
+    }
+) : StateObserver {
 
     private val lock = ReentrantLock()
     private val installed = AtomicBoolean(false)
-    private val reportDirectory: File = NativeInterface.getNativeReportPath()
-    private val logger = NativeInterface.getLogger()
+    private val logger = logger
+    private val reportDeliveryWorker = reportDeliveryWorkerFactory(logger)
 
     private val is32bit: Boolean
         get() {
@@ -65,7 +72,7 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
     )
 
     fun addBreadcrumb(name: String, type: String, timestamp: String, metadata: Any) {
-        val breadcrumbType = BreadcrumbType.values()
+        val breadcrumbType = BreadcrumbType.entries
             .find { it.toString() == type }
             ?: BreadcrumbType.MANUAL
 
@@ -106,12 +113,16 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
     external fun setStaticJsonData(data: String)
     external fun setInternalMetricsEnabled(enabled: Boolean)
 
+    fun shutdown() {
+        reportDeliveryWorker.shutdown()
+    }
+
     override fun onStateChange(event: StateEvent) {
         if (isInvalidMessage(event)) return
 
         when (event) {
             is Install -> handleInstallMessage(event)
-            is DeliverPending -> deliverPendingReports()
+            is DeliverPending -> reportDeliveryWorker.enqueue()
             is AddMetadata -> handleAddMetadata(event)
             is ClearMetadataSection -> clearMetadataTab(event.section)
             is ClearMetadataValue -> removeMetadata(
@@ -119,12 +130,7 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
                 event.key ?: ""
             )
 
-            is AddBreadcrumb -> addBreadcrumb(
-                event.message,
-                event.type.toNativeValue(),
-                event.timestamp,
-                event.metadata
-            )
+            is AddBreadcrumb -> scheduleAddBreadcrumb(event)
 
             NotifyHandled -> addHandledEvent()
             NotifyUnhandled -> addUnhandledEvent()
@@ -180,17 +186,6 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
         }
     }
 
-    private fun deliverPendingReports() {
-        val discardScanner = ReportDiscardScanner(logger)
-        reportDirectory.listFiles()?.forEach { reportFile ->
-            if (discardScanner.shouldDiscard(reportFile)) {
-                reportFile.delete()
-            } else {
-                NativeInterface.deliverReport(reportFile)
-            }
-        }
-    }
-
     private fun isInvalidMessage(msg: Any?): Boolean {
         if (msg == null || msg !is StateEvent) {
             return true
@@ -209,7 +204,7 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
             } else {
                 install(
                     arg.apiKey,
-                    reportDirectory.absolutePath,
+                    NativeInterface.getNativeReportPath().absolutePath,
                     arg.lastRunInfoPath,
                     UUID.randomUUID().toString(),
                     arg.consecutiveLaunchCrashes,
@@ -233,6 +228,21 @@ class NativeBridge(private val bgTaskService: BackgroundTaskService) : StateObse
                 is OpaqueValue -> addMetadataOpaque(arg.section, arg.key!!, newValue.json)
                 else -> Unit
             }
+        }
+    }
+
+    private fun scheduleAddBreadcrumb(event: AddBreadcrumb) {
+        try {
+            bgTaskService.submitTask(TaskType.DEFAULT) {
+                addBreadcrumb(
+                    event.message,
+                    event.type.toNativeValue(),
+                    event.timestamp,
+                    event.metadata
+                )
+            }
+        } catch (exc: RejectedExecutionException) {
+            logger.w("Failed to process breadcrumb event, retaining it only in the Java layer.", exc)
         }
     }
 

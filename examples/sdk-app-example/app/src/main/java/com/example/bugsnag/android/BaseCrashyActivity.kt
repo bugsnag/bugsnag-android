@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bugsnag.android.BreadcrumbType
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
+import com.bugsnag.android.OnBreadcrumbCallback
 import com.bugsnag.android.Severity
 import com.example.foo.CrashyClass
 import com.google.android.material.snackbar.Snackbar
@@ -170,6 +171,26 @@ open class BaseCrashyActivity : AppCompatActivity() {
         Bugsnag.notify(e) {
             showSnackbar()
             true
+        }
+    }
+
+    /**
+     * Registers a slow breadcrumb callback to help validate breadcrumb callback timing on-device.
+     * The callback is removed after the breadcrumb is emitted so the demo stays isolated.
+     */
+    @Suppress("UNUSED_PARAMETER")
+    fun simulateSlowBreadcrumbCallback(view: View) {
+        val slowBreadcrumbCallback = OnBreadcrumbCallback {
+            Thread.sleep(1_500)
+            true
+        }
+
+        Bugsnag.addOnBreadcrumb(slowBreadcrumbCallback)
+        try {
+            Bugsnag.leaveBreadcrumb("SlowBreadcrumbCallbackDemo")
+            showSnackbar()
+        } finally {
+            Bugsnag.removeOnBreadcrumb(slowBreadcrumbCallback)
         }
     }
 
