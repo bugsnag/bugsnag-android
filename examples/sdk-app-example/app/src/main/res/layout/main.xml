@@ -135,6 +135,13 @@
             style="@style/ButtonTheme"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="simulateSlowBreadcrumbCallback"
+            android:text="@string/simulate_slow_breadcrumb_callback" />
+
+        <Button
+            style="@style/ButtonTheme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:onClick="crashWithCallback"
             android:text="@string/crash_custom_report" />
 

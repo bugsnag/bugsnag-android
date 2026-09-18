@@ -174,6 +174,26 @@ open class BaseCrashyActivity : AppCompatActivity() {
     }
 
     /**
+     * Registers a slow breadcrumb callback to help validate breadcrumb callback timing on-device.
+     * The callback is removed after the breadcrumb is emitted so the demo stays isolated.
+     */
+    @Suppress("UNUSED_PARAMETER")
+    fun simulateSlowBreadcrumbCallback(view: View) {
+        val slowBreadcrumbCallback = OnBreadcrumbCallback {
+            Thread.sleep(1_500)
+            true
+        }
+
+        Bugsnag.addOnBreadcrumb(slowBreadcrumbCallback)
+        try {
+            Bugsnag.leaveBreadcrumb("SlowBreadcrumbCallbackDemo")
+            showSnackbar()
+        } finally {
+            Bugsnag.removeOnBreadcrumb(slowBreadcrumbCallback)
+        }
+    }
+
+    /**
      * When sending a handled error, a callback can be registered, which allows the Error Report
      * to be modified before it is sent.
      */

@@ -407,6 +407,7 @@ static void JNI_NativeBridge_updateBuildUUID(JNIEnv *env, jobject _this,
     goto end;
   }
   bugsnag_app_set_build_uuid(&bsg_env->next_event, value);
+  release_env_write_lock();
 end:
   bsg_safe_release_string_utf_chars(env, new_value, value);
 }
@@ -422,8 +423,8 @@ static void JNI_NativeBridge_updateContext(JNIEnv *env, jobject _this,
     goto end;
   }
   bugsnag_event_set_context(&bsg_env->next_event, value);
-end:
   release_env_write_lock();
+end:
   if (new_value != NULL) {
     bsg_safe_release_string_utf_chars(env, new_value, value);
   }
@@ -438,15 +439,16 @@ static void JNI_NativeBridge_updateGroupingDiscriminator(JNIEnv *env,
   }
   if (new_value == NULL) {
     bugsnag_event_set_grouping_discriminator(&bsg_env->next_event, NULL);
-    goto end;
+    release_env_write_lock();
+    return;
   }
 
   const char *value = bsg_safe_get_string_utf_chars(env, new_value);
   if (value == NULL) {
-    goto end;
+    release_env_write_lock();
+    return;
   }
   bugsnag_event_set_grouping_discriminator(&bsg_env->next_event, value);
-end:
   release_env_write_lock();
   if (new_value != NULL) {
     bsg_safe_release_string_utf_chars(env, new_value, value);
@@ -651,8 +653,8 @@ static void JNI_NativeBridge_addMetadataDouble(JNIEnv *env, jobject _this,
     }
     bugsnag_event_add_metadata_double(&bsg_env->next_event, tab, key,
                                       (double)value_);
+    release_env_write_lock();
   }
-  release_env_write_lock();
 end:
   bsg_safe_release_string_utf_chars(env, tab_, tab);
   bsg_safe_release_string_utf_chars(env, key_, key);
@@ -962,12 +964,10 @@ static void JNI_NativeBridge_synchronizeState(JNIEnv *env, jobject thiz) {
   bsg_environment *bsg_env = request_env_write_lock();
 
   if (bsg_env == NULL) {
-    goto end;
+    return;
   }
 
   bsg_populate_event(env, &bsg_env->next_event);
-
-end:
   release_env_write_lock();
 }
 
@@ -975,6 +975,9 @@ static void JNI_NativeBridge_reportOutOfMemory(JNIEnv *env, jobject thiz,
                                                jobject oom) {
 
   bsg_environment *bsg_env = request_env_write_lock();
+  if (bsg_env == NULL) {
+    return;
+  }
 
   // we treat an OOM as a native "crash" to prevent the signal/cpp errors from
   // conflicting with the OOM use of the bsg_global_env->next_event (giving us
