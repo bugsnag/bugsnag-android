@@ -1,6 +1,12 @@
 # Changelog
 
-## 6.27.0 (2026-09-21)
+## 6.27.1 (2026-09-18)
+
+### Enhancements
+
+* Improve native bridge performance and stability by processing pending report delivery asynchronously, deferring breadcrumb handling to a background task, and tightening JNI lock release paths to avoid holding locks across slow work.[#2447](https://github.com/bugsnag/bugsnag-android/pull/2447)
+
+## 6.27.0 (2026-08-21)
 
 ### Enhancements
 
