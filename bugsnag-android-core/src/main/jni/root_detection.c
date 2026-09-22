@@ -13,9 +13,18 @@ static const char *su_paths[] = {
         // Common binaries
         "/system/xbin/su",
         "/system/bin/su",
+        "/sbin/su",
         // < Android 5.0
         "/system/app/Superuser.apk",
         "/system/app/SuperSU.apk",
+        "/data/local/xbin/su",
+        "/data/local/bin/su",
+        "/data/local/su",
+        "/su/bin/su",
+        "/system/sd/xbin/su",
+        "/system/bin/failsafe/su",
+        "/vendor/bin/su",
+        "/odm/bin/su",
         // >= Android 5.0
         "/system/app/Superuser",
         "/system/app/SuperSU",
@@ -41,7 +50,7 @@ static inline int get_mode(const char* path) {
   if (lstat(path, &st) < 0) {
     return -1;
   }
-  return st.st_mode;
+  return (int) st.st_mode;
 }
 
 static inline bool does_path_exist(const char* path) {
