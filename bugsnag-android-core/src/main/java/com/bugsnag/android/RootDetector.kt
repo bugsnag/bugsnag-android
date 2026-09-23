@@ -122,5 +122,4 @@ internal class RootDetector @JvmOverloads constructor(
         libraryLoaded -> performNativeRootChecks()
         else -> false
     }
-
 }

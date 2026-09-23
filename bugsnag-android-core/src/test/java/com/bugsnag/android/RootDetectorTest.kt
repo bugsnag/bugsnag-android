@@ -11,7 +11,6 @@ import java.nio.file.Files
 @RunWith(MockitoJUnitRunner::class)
 class RootDetectorTest {
 
-
     /**
      * Verifies that 'test-keys' triggers root detection.
      */

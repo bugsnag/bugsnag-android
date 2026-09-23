@@ -152,4 +152,3 @@ internal class RootDetectionMatrixTest {
         }
     }
 }
-
