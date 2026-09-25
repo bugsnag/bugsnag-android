@@ -16,8 +16,6 @@ internal class RootDetector @JvmOverloads constructor(
     private val buildProps: File = BUILD_PROP_FILE,
     private val logger: Logger
 ) {
-    private val rootBinaryFiles = rootBinaryLocations.map(::File)
-
     companion object {
         private val BUILD_PROP_FILE = File("/system/build.prop")
 
@@ -66,7 +64,10 @@ internal class RootDetector @JvmOverloads constructor(
      */
     fun isRooted(): Boolean {
         return try {
-            checkBuildTags() || checkBuildProps() || checkRootBinaries() || nativeCheckRoot()
+            checkBuildTags() || when {
+                libraryLoaded -> nativeCheckRootIndicators()
+                else -> checkBuildProps() || checkRootBinaries()
+            }
         } catch (exc: Throwable) {
             logger.w("Root detection failed", exc)
             false
@@ -84,14 +85,13 @@ internal class RootDetector @JvmOverloads constructor(
      * the device is rooted.
      */
     internal fun checkRootBinaries(): Boolean {
-        runCatching {
-            for (candidate in rootBinaryFiles) {
-                if (candidate.exists()) {
-                    return true
-                }
+        return runCatching {
+            when {
+                libraryLoaded -> nativeCheckRootBinaries(rootBinaryLocations)
+                else -> rootBinaryLocations.any { candidate -> File(candidate).exists() }
             }
         }
-        return false
+            .getOrDefault(false)
     }
 
     /**
@@ -100,26 +100,25 @@ internal class RootDetector @JvmOverloads constructor(
      * ROM and is therefore rooted.
      */
     internal fun checkBuildProps(): Boolean {
-        runCatching {
-            return buildProps.bufferedReader().useLines { lines ->
-                lines
-                    .map { line ->
-                        line.filterNot(Char::isWhitespace)
-                    }.filter { line ->
-                        line.startsWith("ro.debuggable=[1]") || line.startsWith("ro.secure=[0]")
-                    }.any()
+        return runCatching {
+            when {
+                libraryLoaded -> nativeCheckBuildProps(buildProps.path)
+                else -> buildProps.bufferedReader().useLines { lines ->
+                    lines
+                        .map { line ->
+                            line.filterNot(Char::isWhitespace)
+                        }.filter { line ->
+                            line.startsWith("ro.debuggable=[1]") || line.startsWith("ro.secure=[0]")
+                        }.any()
+                }
             }
         }
-        return false
+            .getOrDefault(false)
     }
 
-    private external fun performNativeRootChecks(): Boolean
+    private external fun nativeCheckRootIndicators(): Boolean
 
-    /**
-     * Performs root checks which require native code.
-     */
-    private fun nativeCheckRoot(): Boolean = when {
-        libraryLoaded -> performNativeRootChecks()
-        else -> false
-    }
+    private external fun nativeCheckRootBinaries(rootBinaryLocations: List<String>): Boolean
+
+    private external fun nativeCheckBuildProps(buildPropPath: String): Boolean
 }
