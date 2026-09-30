@@ -1,19 +1,6 @@
 Upgrading Guide
 ===============
 
-Upgrade from 6.x to 7.x
------------------------
-
-### Deferred root detection
-
-Root detection no longer runs during Bugsnag startup. It is calculated on demand when an error is
-captured and is also precomputed in the background after startup completes. This removes root
-detection work from the startup critical path.
-
-For an error captured while the background calculation is in progress, `Event.device.jailbroken`
-may be `null`, which represents an unknown result. Once the calculation completes, subsequent
-events contain the cached `true` or `false` value. No public API changes are required.
-
 Upgrade from 5.x to 6.x
 -----------------------
 
