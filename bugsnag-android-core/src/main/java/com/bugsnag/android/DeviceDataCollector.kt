@@ -12,6 +12,7 @@ import android.os.BatteryManager
 import android.os.Build
 import android.provider.Settings
 import com.bugsnag.android.internal.BackgroundTaskService
+import com.bugsnag.android.internal.RootDetectionProvider
 import com.bugsnag.android.internal.TaskType
 import com.bugsnag.android.internal.dag.Provider
 import java.io.File
@@ -121,12 +122,15 @@ internal class DeviceDataCollector(
         return map
     }
 
-    private fun checkIsRooted(): Boolean {
-        val rooted = rootedFuture ?: return false
+    private fun checkIsRooted(): Boolean? {
+        val rooted = rootedFuture ?: return null
+        if (rooted is RootDetectionProvider) {
+            return rooted.getRootDetectionResult()
+        }
         return try {
-            rooted.isComplete && rooted.get()
+            if (rooted.isComplete) rooted.get() else null
         } catch (_: Exception) {
-            false
+            null
         }
     }
 

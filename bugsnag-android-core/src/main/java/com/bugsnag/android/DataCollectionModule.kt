@@ -44,7 +44,10 @@ internal class DataCollectionModule(
     }
 
     private val rootDetection = RootDetectionProvider(deviceBuildInfo, clientObservable, logger)
-        .apply { start() }
+
+    fun startRootDetectionInBackground() {
+        rootDetection.startInBackground()
+    }
 
     val deviceDataCollector = provider {
         DeviceDataCollector(

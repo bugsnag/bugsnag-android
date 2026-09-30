@@ -3,14 +3,19 @@ package com.bugsnag.android
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.test.core.app.ApplicationProvider
+import com.bugsnag.android.internal.BackgroundTaskService
 import com.bugsnag.android.internal.dag.ValueProvider
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import java.io.File
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 internal class UserStoreTest {
 
@@ -212,7 +217,7 @@ internal class UserStoreTest {
             NoopLogger
         )
         val user = User("jf123", "test@example.com", "Jane Fonda")
-        store.save(user)
+        store.save(user)?.get()
         val expected = "{\"id\":\"jf123\",\"email\":\"test@example.com\",\"name\":\"Jane Fonda\"}"
         assertEquals(expected, file.readText())
     }
@@ -231,18 +236,50 @@ internal class UserStoreTest {
             NoopLogger
         )
         val user = User("jf123", "test@example.com", "Jane Fonda")
-        store.save(user)
+        store.save(user)?.get()
 
         // overwrite the previous save to test that IO doesn't happen without a change
         file.writeText("")
 
         // no change == no IO
-        store.save(user)
+        store.save(user)?.get()
         assertEquals("", file.readText())
 
         // change == IO
-        store.save(User("abc", "joe@test.com", "Joe"))
+        store.save(User("abc", "joe@test.com", "Joe"))?.get()
         val expected = "{\"id\":\"abc\",\"email\":\"joe@test.com\",\"name\":\"Joe\"}"
         assertEquals(expected, file.readText())
+    }
+
+    @Test
+    fun saveDoesNotBlockAndUnchangedUserIsNotRescheduled() {
+        val ioExecutor = Executors.newSingleThreadExecutor()
+        val bgTaskService = BackgroundTaskService(ioExecutor = ioExecutor)
+        val ioStarted = CountDownLatch(1)
+        val allowIo = CountDownLatch(1)
+        ioExecutor.execute {
+            ioStarted.countDown()
+            allowIo.await()
+        }
+        assertTrue(ioStarted.await(1, TimeUnit.SECONDS))
+
+        val store = UserStore(
+            true,
+            ValueProvider(storageDir),
+            ValueProvider(DeviceIdStore.DeviceIds("0asdf", null)),
+            file,
+            ValueProvider(prefMigrator),
+            NoopLogger,
+            bgTaskService
+        )
+        val user = User("jf123", "test@example.com", "Jane Fonda")
+
+        val persistence = store.save(user)!!
+        assertFalse(persistence.isDone)
+        assertNull(store.save(user))
+
+        allowIo.countDown()
+        persistence.get()
+        bgTaskService.shutdown()
     }
 }
