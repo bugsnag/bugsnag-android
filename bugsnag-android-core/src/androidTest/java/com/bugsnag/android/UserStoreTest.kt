@@ -56,7 +56,7 @@ internal class UserStoreTest {
             ValueProvider(DeviceIdStore.DeviceIds("0asdf", null)),
             file,
             ValueProvider(prefMigrator),
-            NoopLogger
+            UserStoreServices(NoopLogger)
         )
         val user = store.load(User()).user
         assertEquals("jf123", user.id)
@@ -77,7 +77,7 @@ internal class UserStoreTest {
             ValueProvider(DeviceIdStore.DeviceIds("device-id", null)),
             file,
             ValueProvider(prefMigrator),
-            NoopLogger
+            UserStoreServices(NoopLogger)
         )
         val user = store.load(User()).user
         assertEquals("device-id", user.id)
@@ -96,7 +96,7 @@ internal class UserStoreTest {
             ValueProvider(DeviceIdStore.DeviceIds("device-id", null)),
             file,
             ValueProvider(prefMigrator),
-            NoopLogger
+            UserStoreServices(NoopLogger)
         )
         val user = store.load(User()).user
         assertEquals("device-id", user.id)
@@ -116,7 +116,7 @@ internal class UserStoreTest {
             ValueProvider(DeviceIdStore.DeviceIds("device-id", null)),
             file,
             ValueProvider(prefMigrator),
-            NoopLogger
+            UserStoreServices(NoopLogger)
         )
         val user = store.load(User()).user
         assertEquals("device-id", user.id)
@@ -140,7 +140,7 @@ internal class UserStoreTest {
             ValueProvider(DeviceIdStore.DeviceIds("device-id", null)),
             nonReadableFile,
             ValueProvider(prefMigrator),
-            NoopLogger
+            UserStoreServices(NoopLogger)
         )
         val user = store.load(User()).user
         assertEquals("device-id", user.id)
@@ -161,7 +161,7 @@ internal class UserStoreTest {
             ValueProvider(DeviceIdStore.DeviceIds("0asdf", null)),
             file,
             ValueProvider(prefMigrator),
-            NoopLogger
+            UserStoreServices(NoopLogger)
         )
         val user = store.load(User()).user
         assertEquals("jf123", user.id)
@@ -180,7 +180,7 @@ internal class UserStoreTest {
             ValueProvider(DeviceIdStore.DeviceIds("device-id-123", null)),
             file,
             ValueProvider(prefMigrator),
-            NoopLogger
+            UserStoreServices(NoopLogger)
         )
         store.load(User()).user
         assertFalse(file.exists())
@@ -197,7 +197,7 @@ internal class UserStoreTest {
             ValueProvider(DeviceIdStore.DeviceIds("", null)),
             file,
             ValueProvider(prefMigrator),
-            NoopLogger
+            UserStoreServices(NoopLogger)
         )
         store.save(User("123", "joe@yahoo.com", "Joe Bloggs"))
         assertFalse(file.exists())
@@ -214,7 +214,7 @@ internal class UserStoreTest {
             ValueProvider(DeviceIdStore.DeviceIds("0asdf", null)),
             file,
             ValueProvider(prefMigrator),
-            NoopLogger
+            UserStoreServices(NoopLogger)
         )
         val user = User("jf123", "test@example.com", "Jane Fonda")
         store.save(user)?.get()
@@ -233,7 +233,7 @@ internal class UserStoreTest {
             ValueProvider(DeviceIdStore.DeviceIds("0asdf", null)),
             file,
             ValueProvider(prefMigrator),
-            NoopLogger
+            UserStoreServices(NoopLogger)
         )
         val user = User("jf123", "test@example.com", "Jane Fonda")
         store.save(user)?.get()
@@ -269,8 +269,10 @@ internal class UserStoreTest {
             ValueProvider(DeviceIdStore.DeviceIds("0asdf", null)),
             file,
             ValueProvider(prefMigrator),
-            NoopLogger,
-            bgTaskService
+            UserStoreServices(
+                logger = NoopLogger,
+                bgTaskService = bgTaskService
+            )
         )
         val user = User("jf123", "test@example.com", "Jane Fonda")
 

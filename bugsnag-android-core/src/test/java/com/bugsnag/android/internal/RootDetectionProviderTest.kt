@@ -43,4 +43,3 @@ internal class RootDetectionProviderTest {
         assertTrue(provider.getRootDetectionResult()!!)
     }
 }
-

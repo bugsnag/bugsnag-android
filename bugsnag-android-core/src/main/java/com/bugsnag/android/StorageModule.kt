@@ -48,8 +48,10 @@ internal class StorageModule(
             bugsnagDir,
             deviceId,
             sharedPrefMigrator = sharedPrefMigrator,
-            logger = immutableConfig.logger,
-            bgTaskService = bgTaskService
+            services = UserStoreServices(
+                logger = immutableConfig.logger,
+                bgTaskService = bgTaskService
+            )
         )
     }
 
