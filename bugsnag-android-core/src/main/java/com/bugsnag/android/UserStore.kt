@@ -1,20 +1,28 @@
 package com.bugsnag.android
 
-import com.bugsnag.android.internal.StateObserver
+import com.bugsnag.android.internal.BackgroundTaskService
+import com.bugsnag.android.internal.TaskType
 import com.bugsnag.android.internal.dag.Provider
 import java.io.File
+import java.util.concurrent.Future
+import java.util.concurrent.RejectedExecutionException
 import java.util.concurrent.atomic.AtomicReference
 
 /**
  * This class is responsible for persisting and retrieving user information.
  */
+internal data class UserStoreServices(
+    val logger: Logger,
+    val bgTaskService: BackgroundTaskService = BackgroundTaskService()
+)
+
 internal class UserStore(
     private val persist: Boolean,
     private val persistentDir: Provider<File>,
     private val deviceIdStore: Provider<DeviceIdStore.DeviceIds?>,
     file: File = File(persistentDir.get(), "user-info"),
     private val sharedPrefMigrator: Provider<SharedPrefMigrator>,
-    private val logger: Logger
+    private val services: UserStoreServices
 ) {
 
     private val synchronizedStreamableStore: SynchronizedStreamableStore<User>
@@ -53,27 +61,37 @@ internal class UserStore(
             else -> UserState(User(deviceIdStore.get()?.deviceId, null, null))
         }
 
-        userState.addObserver(
-            StateObserver { event ->
-                if (event is StateEvent.UpdateUser) {
-                    save(event.user)
-                }
+        userState.addObserver { event ->
+            if (event is StateEvent.UpdateUser) {
+                save(event.user)
             }
-        )
+        }
         return userState
     }
 
     /**
-     * Persists the user if [Configuration.getPersistUser] is true and the object is different
-     * from the previously persisted value.
+     * Schedules persistence if [Configuration.getPersistUser] is true and the object is different
+     * from the previously persisted value. This deliberately does not wait for disk I/O so callers
+     * such as `setUser` are never blocked.
      */
-    fun save(user: User) {
+    fun save(user: User): Future<*>? {
         if (persist && user != previousUser.getAndSet(user)) {
             try {
-                synchronizedStreamableStore.persist(user)
-            } catch (exc: Exception) {
-                logger.w("Failed to persist user info", exc)
+                return services.bgTaskService.submitTask(TaskType.IO) {
+                    persistUser(user)
+                }
+            } catch (exc: RejectedExecutionException) {
+                services.logger.w("Failed to schedule user persistence", exc)
             }
+        }
+        return null
+    }
+
+    private fun persistUser(user: User) {
+        try {
+            synchronizedStreamableStore.persist(user)
+        } catch (exc: Exception) {
+            services.logger.w("Failed to persist user info", exc)
         }
     }
 
@@ -83,7 +101,10 @@ internal class UserStore(
     private fun loadPersistedUser(): User? {
         return if (sharedPrefMigrator.get().hasPrefs()) {
             val legacyUser = sharedPrefMigrator.get().loadUser(deviceIdStore.get()?.deviceId)
-            save(legacyUser)
+            // Persist the migrated user before legacy preferences are asynchronously removed.
+            if (persist) {
+                persistUser(legacyUser)
+            }
             legacyUser
         } else if (
             synchronizedStreamableStore.file.canRead() &&
@@ -93,7 +114,7 @@ internal class UserStore(
             try {
                 synchronizedStreamableStore.load(User.Companion::fromReader)
             } catch (exc: Exception) {
-                logger.w("Failed to load user info", exc)
+                services.logger.w("Failed to load user info", exc)
                 null
             }
         } else {
