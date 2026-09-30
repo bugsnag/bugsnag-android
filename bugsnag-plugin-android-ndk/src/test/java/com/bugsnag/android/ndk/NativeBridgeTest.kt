@@ -60,6 +60,26 @@ internal class NativeBridgeTest {
         assertEquals(1, defaultExecutor.pendingTaskCount)
     }
 
+    @Test
+    fun lifecycleStateUpdatesDelegateToNativeStateWorker() {
+        val stateWorker = RecordingNativeStateWorker()
+        val bridge = NativeBridge(
+            bgTaskService = BackgroundTaskService(),
+            logger = object : Logger {},
+            reportDeliveryWorkerFactory = { RecordingReportDeliveryWorker() },
+            nativeStateWorkerFactory = { stateWorker }
+        )
+
+        forceInstalled(bridge)
+
+        bridge.onStateChange(StateEvent.StartSession("id", "started-at", 1, 2))
+        bridge.onStateChange(StateEvent.UpdateMemoryTrimEvent(true, 80, "Complete"))
+        bridge.shutdown()
+
+        assertEquals(2, stateWorker.enqueueCalls.get())
+        assertEquals(1, stateWorker.shutdownCalls.get())
+    }
+
     private fun forceInstalled(bridge: NativeBridge) {
         val field = NativeBridge::class.java.getDeclaredField("installed")
         field.isAccessible = true
@@ -104,6 +124,19 @@ internal class NativeBridgeTest {
         val shutdownCalls = AtomicInteger(0)
 
         override fun enqueue() {
+            enqueueCalls.incrementAndGet()
+        }
+
+        override fun shutdown() {
+            shutdownCalls.incrementAndGet()
+        }
+    }
+
+    private class RecordingNativeStateWorker : NativeStateWorker {
+        val enqueueCalls = AtomicInteger(0)
+        val shutdownCalls = AtomicInteger(0)
+
+        override fun enqueue(task: () -> Unit) {
             enqueueCalls.incrementAndGet()
         }
 
