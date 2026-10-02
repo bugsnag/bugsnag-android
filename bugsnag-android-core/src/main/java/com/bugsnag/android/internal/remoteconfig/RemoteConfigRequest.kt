@@ -195,7 +195,15 @@ internal class RemoteConfigRequest(
         val maxAgeSeconds = maxAgeMatcher.groupValues.getOrNull(1)?.toLongOrNull()
             ?: return defaultConfigExpiry("invalid max-age value in Cache-Control header '$cacheControl'")
 
-        val expiry = Date(System.currentTimeMillis() + (maxAgeSeconds * SECONDS_MS))
+        val now = System.currentTimeMillis()
+        val maxDuration = Long.MAX_VALUE - now
+        val duration = if (maxAgeSeconds > maxDuration / SECONDS_MS) {
+            logger.w("Remote config max-age is too large; clamping expiry to the maximum supported timestamp")
+            maxDuration
+        } else {
+            maxAgeSeconds * SECONDS_MS
+        }
+        val expiry = Date(now + duration)
         logger.d("Remote config expiry parsed from Cache-Control='$cacheControl' -> ${expiry.time}")
         return expiry
     }

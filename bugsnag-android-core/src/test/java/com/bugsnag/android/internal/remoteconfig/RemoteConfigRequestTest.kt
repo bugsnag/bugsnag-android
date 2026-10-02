@@ -6,6 +6,7 @@ import com.bugsnag.android.Notifier
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -237,6 +238,18 @@ class RemoteConfigRequestTest {
         // Then: Expiry is calculated from max-age
         assertNotNull(result)
         assertExpiryWithinTolerance(result!!.configurationExpiry.time, maxAge * 1000)
+    }
+
+    @Test
+    fun testParseRemoteConfig_WithOversizedMaxAgeDoesNotOverflowToExpiredConfig() {
+        val jsonResponse = """{"discardRules": []}"""
+        mockConnectionWithJsonResponse(jsonResponse, "test-tag", "max-age=${Long.MAX_VALUE}")
+
+        val beforeRequest = System.currentTimeMillis()
+        val result = createRequest().parseRemoteConfig(mockConnection)
+
+        assertNotNull(result)
+        assertTrue(result!!.configurationExpiry.time >= beforeRequest)
     }
 
     @Test

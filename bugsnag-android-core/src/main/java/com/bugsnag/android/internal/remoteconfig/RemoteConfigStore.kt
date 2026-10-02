@@ -21,6 +21,9 @@ internal class RemoteConfigStore(
     @Volatile
     private var current: RemoteConfig? = null
 
+    @Volatile
+    private var cachedCooldownUntil: Long = 0L
+
     fun sweep() {
         lock.withLock {
             val currentFilename = configFileName()
@@ -166,12 +169,17 @@ internal class RemoteConfigStore(
     }
 
     fun cooldownUntil(): Long = lock.withLock {
+        if (cachedCooldownUntil > System.currentTimeMillis()) {
+            return@withLock cachedCooldownUntil
+        }
+
         val cooldownFile = cooldownFile()
         if (!cooldownFile.exists()) {
             return@withLock 0L
         }
 
         cooldownFile.readText().trim().toLongOrNull()?.also {
+            cachedCooldownUntil = it
             logger.d("Loaded remote config cooldown marker until=$it file=${cooldownFile.absolutePath}")
         } ?: run {
             logger.w("Invalid remote config cooldown marker at ${cooldownFile.absolutePath}; deleting it")
@@ -181,6 +189,7 @@ internal class RemoteConfigStore(
     }
 
     fun setCooldownUntil(timestamp: Long) = lock.withLock {
+        cachedCooldownUntil = timestamp
         try {
             if (!configDir.exists() && !configDir.mkdirs() && !configDir.exists()) {
                 logger.w("Failed to create remote config directory at ${configDir.absolutePath} for cooldown marker")
@@ -194,6 +203,7 @@ internal class RemoteConfigStore(
     }
 
     fun clearCooldown() = lock.withLock {
+        cachedCooldownUntil = 0L
         val cooldownFile = cooldownFile()
         if (cooldownFile.exists()) {
             cooldownFile.delete()

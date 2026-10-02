@@ -68,6 +68,17 @@ class RemoteConfigStoreTest {
     }
 
     @Test
+    fun cooldownRemainsActiveInMemoryWhenMarkerCannotBeWritten() {
+        val invalidConfigDir = File(tempDir.root, "not-a-directory").apply { createNewFile() }
+        val storeWithUnwritableMarker = RemoteConfigStore(invalidConfigDir, versionCode)
+        val cooldownUntil = System.currentTimeMillis() + 60_000
+
+        storeWithUnwritableMarker.setCooldownUntil(cooldownUntil)
+
+        assertEquals(cooldownUntil, storeWithUnwritableMarker.cooldownUntil())
+    }
+
+    @Test
     fun loadReturnsNullWhenNoConfigStored() {
         assertNull(store.load())
     }
