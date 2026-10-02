@@ -53,13 +53,7 @@ internal class RemoteConfigRequest(
         return try {
             requestNewConfig()
         } catch (ex: Exception) {
-            // if we fail to retrieve the RemoteConfig, we retry exactly once
-            logger.d("Remote config request failed; retrying once", ex)
-            try {
-                requestNewConfig()
-            } catch (ex: Exception) {
-                logger.w("Could not retrieve RemoteConfig after retry", ex)
-            }
+            logger.w("Remote config request failed; returning null to start cooldown", ex)
             null
         }
     }
@@ -104,9 +98,8 @@ internal class RemoteConfigRequest(
             }
 
             HttpURLConnection.HTTP_BAD_REQUEST -> {
-                val expiryDate = configExpiryDate(connection)
-                logger.w("Remote config request returned HTTP 400; using empty config with expiry ${expiryDate.time}")
-                createEmptyConfig(expiryDate)
+                logger.w("Remote config request returned HTTP 400; returning null to start cooldown")
+                null
             }
 
             else -> {
@@ -193,6 +186,7 @@ internal class RemoteConfigRequest(
     }
 
     private fun configExpiryDate(connection: HttpURLConnection): Date {
+
         val cacheControl = connection.getHeaderField(HEADER_CACHE_CONTROL)
             ?: return defaultConfigExpiry("missing Cache-Control header")
 
@@ -229,11 +223,6 @@ internal class RemoteConfigRequest(
             configExpiryDate,
             remoteConfig.discardRules
         )
-    }
-
-    private fun createEmptyConfig(configExpiryDate: Date): RemoteConfig {
-        logger.d("Creating empty remote config with expiry=${configExpiryDate.time}")
-        return RemoteConfig(null, configExpiryDate, emptyList())
     }
 
     private fun defaultConfigExpiry(reason: String): Date {

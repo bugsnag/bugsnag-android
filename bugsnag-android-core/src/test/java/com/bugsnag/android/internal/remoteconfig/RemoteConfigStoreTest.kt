@@ -54,6 +54,20 @@ class RemoteConfigStoreTest {
     }
 
     @Test
+    fun cooldownMarkerPersistsAndIsCleared() {
+        val cooldownUntil = System.currentTimeMillis() + 60_000
+        store.setCooldownUntil(cooldownUntil)
+
+        assertEquals(cooldownUntil, store.cooldownUntil())
+
+        val reloadedStore = RemoteConfigStore(tempDir.root, versionCode)
+        assertEquals(cooldownUntil, reloadedStore.cooldownUntil())
+
+        reloadedStore.clearCooldown()
+        assertEquals(0L, reloadedStore.cooldownUntil())
+    }
+
+    @Test
     fun loadReturnsNullWhenNoConfigStored() {
         assertNull(store.load())
     }
@@ -190,17 +204,20 @@ class RemoteConfigStoreTest {
         val oldFile1 = File(tempDir.root, "core-100.json")
         val oldFile2 = File(tempDir.root, "core-200.json")
         val currentFile = File(tempDir.root, "core-$versionCode.json")
+        val currentCooldownFile = File(tempDir.root, "core-$versionCode.json.cooldown")
 
         tempDir.root.mkdirs()
         oldFile1.createNewFile()
         oldFile2.createNewFile()
         currentFile.createNewFile()
+        currentCooldownFile.createNewFile()
 
         store.sweep()
 
         assertFalse(oldFile1.exists())
         assertFalse(oldFile2.exists())
         assertTrue(currentFile.exists())
+        assertTrue(currentCooldownFile.exists())
     }
 
     @Test

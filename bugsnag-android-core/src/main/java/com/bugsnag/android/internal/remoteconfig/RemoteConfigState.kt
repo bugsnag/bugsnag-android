@@ -188,12 +188,12 @@ internal class RemoteConfigState(
                             store.clearCooldown()
                             logState("remote config stored", it)
                         } ?: run {
-                            val cooldown = computeCooldown(config.remoteConfigRetryCooldownMillis)
+                            val cooldown = computeCooldown(RETRY_COOLDOWN_MS)
                             val cooldownUntil = cooldown.cooldownUntilMs
                             store.setCooldownUntil(cooldownUntil)
                             logger.w(
                                 "Remote config request did not return a config; starting cooldown " +
-                                    "baseMs=${config.remoteConfigRetryCooldownMillis} jitterMs=${cooldown.jitterMs} " +
+                                    "baseMs=$RETRY_COOLDOWN_MS jitterMs=${cooldown.jitterMs} " +
                                     "durationMs=${cooldown.durationMs} until=$cooldownUntil"
                             )
                             logState("remote config request failed", cachedConfig)
@@ -242,6 +242,7 @@ internal class RemoteConfigState(
 
     internal companion object {
         val REFRESH_BUFFER_MS = TimeUnit.HOURS.toMillis(2)
+        val RETRY_COOLDOWN_MS = TimeUnit.HOURS.toMillis(24)
         val COOLDOWN_JITTER_MS = TimeUnit.HOURS.toMillis(2)
 
         internal fun computeCooldown(

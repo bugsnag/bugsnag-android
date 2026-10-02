@@ -24,10 +24,11 @@ internal class RemoteConfigStore(
     fun sweep() {
         lock.withLock {
             val currentFilename = configFileName()
+            val currentCooldownFilename = cooldownFile().name
             val files = configDir.listFiles()
             if (files != null) {
                 for (file in files) {
-                    if (file.name != currentFilename) {
+                    if (file.name != currentFilename && file.name != currentCooldownFilename) {
                         file.delete()
                     }
                 }
@@ -164,11 +165,55 @@ internal class RemoteConfigStore(
         }
     }
 
+    fun cooldownUntil(): Long = lock.withLock {
+        val cooldownFile = cooldownFile()
+        if (!cooldownFile.exists()) {
+            return@withLock 0L
+        }
+
+        cooldownFile.readText().trim().toLongOrNull()?.also {
+            logger.d("Loaded remote config cooldown marker until=$it file=${cooldownFile.absolutePath}")
+        } ?: run {
+            logger.w("Invalid remote config cooldown marker at ${cooldownFile.absolutePath}; deleting it")
+            cooldownFile.delete()
+            0L
+        }
+    }
+
+    fun setCooldownUntil(timestamp: Long) = lock.withLock {
+        try {
+            if (!configDir.exists() && !configDir.mkdirs() && !configDir.exists()) {
+                logger.w("Failed to create remote config directory at ${configDir.absolutePath} for cooldown marker")
+                return@withLock
+            }
+            cooldownFile().writeText(timestamp.toString())
+            logger.i("Stored remote config cooldown marker until=$timestamp file=${cooldownFile().absolutePath}")
+        } catch (ex: IOException) {
+            logger.w("Failed to persist remote config cooldown marker", ex)
+        }
+    }
+
+    fun clearCooldown() = lock.withLock {
+        val cooldownFile = cooldownFile()
+        if (cooldownFile.exists()) {
+            cooldownFile.delete()
+            logger.d("Cleared remote config cooldown marker file=${cooldownFile.absolutePath}")
+        }
+    }
+
+    fun diagnostics(): String = lock.withLock {
+        val configFile = File(configDir, configFileName())
+        "memory=${current?.let(::describeRemoteConfig) ?: "<none>"}, " +
+            "diskExists=${configFile.exists()}, diskReadable=${configFile.canRead()}, " +
+            "cooldownUntil=${cooldownUntil()}"
+    }
+
     fun clear() {
         lock.withLock {
             logger.d("Clearing remote config from memory and disk")
             current = null
             deleteConfigFiles()
+            clearCooldown()
         }
     }
 
@@ -216,6 +261,8 @@ internal class RemoteConfigStore(
             "Deleted remote config files configExists=${configFile.exists()} tempExists=${tempFile.exists()}"
         )
     }
+
+    private fun cooldownFile(): File = File(configDir, "${configFileName()}.cooldown")
 
     private fun configFileName(): String = "core-$appVersionCode.json"
 
