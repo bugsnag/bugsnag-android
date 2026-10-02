@@ -58,8 +58,8 @@ class RemoteConfigStateTest {
 
     @Test
     fun getRemoteConfigReturnsInMemoryConfig() {
-        // Given - a valid config already in memory
-        val validConfig = createValidRemoteConfig("in-memory", futureDate(5000))
+        // Given - a valid config already in memory that does not need refresh
+        val validConfig = createValidRemoteConfig("in-memory", futureDate(RemoteConfigState.REFRESH_BUFFER_MS + 100000L))
         `when`(mockStore.current()).thenReturn(validConfig)
 
         // When - getRemoteConfig is called with timeout
@@ -71,6 +71,25 @@ class RemoteConfigStateTest {
         // Verify store.current() was called but no background task was needed
         verify(mockStore).current()
         verifyNoInteractions(mockBackgroundTaskService)
+    }
+
+    @Test
+    fun getRemoteConfigReturnsInMemoryConfigAndSchedulesRefreshWhenNearExpiry() {
+        // Given - a valid config in memory that is near expiry
+        val nearExpiryConfig = createValidRemoteConfig("near-expiry", futureDate(1000))
+        `when`(mockStore.current()).thenReturn(nearExpiryConfig)
+        `when`(mockStore.currentOrExpired()).thenReturn(nearExpiryConfig)
+        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.IO), any(Callable::class.java)))
+            .thenReturn(mockFuture)
+
+        // When - getRemoteConfig is called
+        val result = remoteConfigState.getRemoteConfig(100L, TimeUnit.MILLISECONDS)
+
+        // Then - should return the in-memory config immediately
+        assertEquals("near-expiry", result?.configurationTag)
+
+        // Verify that a background refresh task was scheduled
+        verify(mockBackgroundTaskService).submitTask(eq(TaskType.IO), any(Callable::class.java))
     }
 
     @Test
@@ -118,9 +137,10 @@ class RemoteConfigStateTest {
     }
 
     @Test
-    fun getRemoteConfigReturnsNullWhenIOTakesTooLong() {
-        // Given - no config in memory and store operation takes too long
+    fun getRemoteConfigReturnsNullWhenIOTakesTooLongAndNoCachedConfig() {
+        // Given - no config in memory and store operation takes too long, no fallback available
         `when`(mockStore.current()).thenReturn(null)
+        `when`(mockStore.currentOrExpired()).thenReturn(null)
 
         // Mock background task service to return future that times out
         `when`(mockBackgroundTaskService.submitTask(eq(TaskType.IO), any(Callable::class.java)))
@@ -131,11 +151,30 @@ class RemoteConfigStateTest {
         // When - getRemoteConfig is called with 100ms timeout
         val result = remoteConfigState.getRemoteConfig(100L, TimeUnit.MILLISECONDS)
 
-        // Then - should return null due to timeout
+        // Then - should return null due to timeout and no cached fallback
         assertNull(result)
 
         // Verify that the timeout was respected
         verify(mockFuture).get(100L, TimeUnit.MILLISECONDS)
+    }
+
+    @Test
+    fun getRemoteConfigReturnsCachedFallbackWhenIOTakesTooLong() {
+        // Given - store operation takes too long, but a cached fallback exists
+        val cachedConfig = createValidRemoteConfig("cached-fallback", futureDate(-1000))
+        `when`(mockStore.current()).thenReturn(null)
+        `when`(mockStore.currentOrExpired()).thenReturn(cachedConfig)
+
+        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.IO), any(Callable::class.java)))
+            .thenReturn(mockFuture)
+        `when`(mockFuture.get(anyLong(), any()))
+            .thenThrow(TimeoutException("Operation timed out"))
+
+        // When - getRemoteConfig is called with 100ms timeout
+        val result = remoteConfigState.getRemoteConfig(100L, TimeUnit.MILLISECONDS)
+
+        // Then - should return cached fallback
+        assertEquals("cached-fallback", result?.configurationTag)
     }
 
     @Test

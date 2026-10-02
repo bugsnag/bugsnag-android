@@ -67,16 +67,17 @@ class RemoteConfigStoreTest {
     }
 
     @Test
-    fun loadRemovesExpiredConfigFromDisk() {
+    fun loadPreservesExpiredConfigOnDisk() {
         val expiredConfig = createValidRemoteConfig("expired", pastDate(1000))
         store.store(expiredConfig)
 
-        // First load should return null and clean up
+        // Load should return null for expired config
         assertNull(store.load())
 
-        // Config file should be deleted
+        // Config file should be preserved on disk for revalidation / fallback
         val configFile = File(tempDir.root, "core-$versionCode.json")
-        assertFalse(configFile.exists())
+        assertTrue(configFile.exists())
+        assertEquals("expired", store.currentOrExpired()?.configurationTag)
     }
 
     @Test
@@ -331,9 +332,10 @@ class RemoteConfigStoreTest {
         // load should return null for expired config
         assertNull(newStore.load())
 
-        // And should clean up the file
+        // But file should remain on disk so currentOrExpired can revalidate
         val configFile = File(tempDir.root, "core-$versionCode.json")
-        assertFalse(configFile.exists())
+        assertTrue(configFile.exists())
+        assertEquals("expired", newStore.currentOrExpired()?.configurationTag)
     }
 
     @Test

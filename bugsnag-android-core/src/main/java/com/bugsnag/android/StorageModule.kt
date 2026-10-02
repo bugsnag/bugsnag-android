@@ -66,7 +66,8 @@ internal class StorageModule(
         val remoteConfig = RemoteConfigState(
             RemoteConfigStore(
                 File(bugsnagDir.get(), "config"),
-                immutableConfig.versionCode ?: 0
+                immutableConfig.versionCode ?: 0,
+                immutableConfig.logger
             ),
             immutableConfig,
             notifier,

@@ -46,17 +46,19 @@ internal class RemoteConfigRequest(
 
     fun requestConfig(): RemoteConfig? {
         if (baseUrl == null) {
+            logger.d("Skipping remote config request because the configuration endpoint is not configured")
             return null
         }
 
         return try {
             requestNewConfig()
-        } catch (_: Exception) {
+        } catch (ex: Exception) {
             // if we fail to retrieve the RemoteConfig, we retry exactly once
+            logger.d("Remote config request failed; retrying once", ex)
             try {
                 requestNewConfig()
             } catch (ex: Exception) {
-                logger.d("Could not retrieve RemoteConfig", ex)
+                logger.w("Could not retrieve RemoteConfig after retry", ex)
             }
             null
         }
@@ -64,6 +66,11 @@ internal class RemoteConfigRequest(
 
     private fun requestNewConfig(): RemoteConfig? {
         val urlWithParams = buildUrlWithQueryParameters() ?: return null
+
+        logger.i(
+            "Requesting remote config from $urlWithParams " +
+                "cachedTag=${remoteConfig?.configurationTag ?: "<none>"}"
+        )
 
         val url = URL(urlWithParams)
         val connection = url.openConnection() as HttpURLConnection
@@ -77,14 +84,35 @@ internal class RemoteConfigRequest(
 
         if (remoteConfig?.configurationTag != null) {
             connection.setRequestProperty(HEADER_IF_NONE_MATCH, remoteConfig.configurationTag)
+            logger.d("Sending remote config request with If-None-Match=${remoteConfig.configurationTag}")
+        } else {
+            logger.d("Sending remote config request without If-None-Match header")
         }
 
         val responseCode = connection.responseCode
+        logger.i(
+            "Remote config response received code=$responseCode message=${connection.responseMessage} " +
+                "etag=${connection.getHeaderField(HEADER_ETAG)} cacheControl=${connection.getHeaderField(HEADER_CACHE_CONTROL)} " +
+                "contentLength=${connection.contentLength}"
+        )
         return when (responseCode) {
             HttpURLConnection.HTTP_OK -> parseRemoteConfig(connection)
-            HttpURLConnection.HTTP_NOT_MODIFIED -> renewExistingConfig(configExpiryDate(connection))
-            HttpURLConnection.HTTP_BAD_REQUEST -> createEmptyConfig(configExpiryDate(connection))
-            else -> null
+            HttpURLConnection.HTTP_NOT_MODIFIED -> {
+                val expiryDate = configExpiryDate(connection)
+                logger.i("Remote config not modified; refreshing cached config expiry to ${expiryDate.time}")
+                renewExistingConfig(expiryDate)
+            }
+
+            HttpURLConnection.HTTP_BAD_REQUEST -> {
+                val expiryDate = configExpiryDate(connection)
+                logger.w("Remote config request returned HTTP 400; using empty config with expiry ${expiryDate.time}")
+                createEmptyConfig(expiryDate)
+            }
+
+            else -> {
+                logger.w("Remote config request returned unexpected response code $responseCode")
+                null
+            }
         }
     }
 
@@ -130,6 +158,10 @@ internal class RemoteConfigRequest(
 
         // we may receive an empty response as a valid "no specific config" value
         if (connection.contentLength == 0) {
+            logger.i(
+                "Remote config response body was empty; returning empty config " +
+                    "tag=${tag ?: "<null>"} expiry=${expiryDate.time}"
+            )
             return RemoteConfig(tag, expiryDate, emptyList())
         }
 
@@ -139,6 +171,10 @@ internal class RemoteConfigRequest(
             JsonCollectionParser(inputStream)
         } catch (_: JsonParseException) {
             // these can happen when the response is empty, but the Content-Length was not set
+            logger.i(
+                "Remote config response body was empty or malformed; returning empty config " +
+                    "tag=${tag ?: "<null>"} expiry=${expiryDate.time}"
+            )
             return RemoteConfig(tag, expiryDate, emptyList())
         }
 
@@ -149,19 +185,25 @@ internal class RemoteConfigRequest(
 
         val remoteConfig = RemoteConfig.fromJsonMap(tag, expiryDate, json)
         logger.d("Fetched RemoteConfig JSON: ${String(JsonHelper.serialize(remoteConfig), Charsets.UTF_8)}")
+        logger.i(
+            "Parsed remote config response tag=${tag ?: "<null>"} " +
+                "discardRules=${remoteConfig.discardRules.size} expiry=${expiryDate.time}"
+        )
         return remoteConfig
     }
 
     private fun configExpiryDate(connection: HttpURLConnection): Date {
         val cacheControl = connection.getHeaderField(HEADER_CACHE_CONTROL)
-            ?: return defaultConfigExpiry()
+            ?: return defaultConfigExpiry("missing Cache-Control header")
 
         val maxAgeMatcher = maxAgeRegex.matchEntire(cacheControl)
-            ?: return defaultConfigExpiry()
+            ?: return defaultConfigExpiry("unrecognized Cache-Control header '$cacheControl'")
         val maxAgeSeconds = maxAgeMatcher.groupValues.getOrNull(1)?.toLongOrNull()
-            ?: return defaultConfigExpiry()
+            ?: return defaultConfigExpiry("invalid max-age value in Cache-Control header '$cacheControl'")
 
-        return Date(System.currentTimeMillis() + (maxAgeSeconds * SECONDS_MS))
+        val expiry = Date(System.currentTimeMillis() + (maxAgeSeconds * SECONDS_MS))
+        logger.d("Remote config expiry parsed from Cache-Control='$cacheControl' -> ${expiry.time}")
+        return expiry
     }
 
     private fun urlEncoded(value: String): String {
@@ -174,9 +216,14 @@ internal class RemoteConfigRequest(
 
     private fun renewExistingConfig(configExpiryDate: Date): RemoteConfig? {
         if (remoteConfig == null) {
+            logger.w("Received HTTP 304 but there is no cached remote config to renew")
             return null
         }
 
+        logger.d(
+            "Renewing cached remote config tag=${remoteConfig.configurationTag ?: "<null>"} " +
+                "with new expiry=${configExpiryDate.time}"
+        )
         return RemoteConfig(
             remoteConfig.configurationTag,
             configExpiryDate,
@@ -185,11 +232,15 @@ internal class RemoteConfigRequest(
     }
 
     private fun createEmptyConfig(configExpiryDate: Date): RemoteConfig {
+        logger.d("Creating empty remote config with expiry=${configExpiryDate.time}")
         return RemoteConfig(null, configExpiryDate, emptyList())
     }
 
-    private fun defaultConfigExpiry(): Date =
-        Date(System.currentTimeMillis() + DEFAULT_CONFIG_EXPIRY_TIME)
+    private fun defaultConfigExpiry(reason: String): Date {
+        val expiry = Date(System.currentTimeMillis() + DEFAULT_CONFIG_EXPIRY_TIME)
+        logger.d("Using default remote config expiry because $reason -> ${expiry.time}")
+        return expiry
+    }
 
     internal companion object {
         const val HEADER_ETAG = "ETag"
