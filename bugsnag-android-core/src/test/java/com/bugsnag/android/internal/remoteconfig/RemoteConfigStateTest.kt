@@ -232,6 +232,42 @@ class RemoteConfigStateTest {
         verify(mockBackgroundTaskService).submitTask(eq(TaskType.IO), any(Callable::class.java))
     }
 
+    @Test
+    fun scheduleDownloadIfRequiredSkipsRequestDuringCooldown() {
+        val nearExpiryConfig = createValidRemoteConfig("near-expiry", futureDate(1000))
+        `when`(mockStore.currentOrExpired()).thenReturn(nearExpiryConfig)
+        `when`(mockStore.cooldownUntil()).thenReturn(System.currentTimeMillis() + 60_000)
+
+        remoteConfigState.scheduleDownloadIfRequired()
+
+        verifyNoInteractions(mockBackgroundTaskService)
+    }
+
+    @Test
+    fun computeCooldownAppliesPlusMinusTwoHourJitter() {
+        val baseCooldownMs = TimeUnit.HOURS.toMillis(24)
+        val nowMs = 1234L
+        val maxJitterMs = RemoteConfigState.COOLDOWN_JITTER_MS
+
+        val positive = RemoteConfigState.computeCooldown(
+            baseCooldownMs = baseCooldownMs,
+            jitterOffsetMs = maxJitterMs,
+            nowMs = nowMs
+        )
+
+        assertEquals(baseCooldownMs + maxJitterMs, positive.durationMs)
+        assertEquals(nowMs + baseCooldownMs + maxJitterMs, positive.cooldownUntilMs)
+
+        val negative = RemoteConfigState.computeCooldown(
+            baseCooldownMs = baseCooldownMs,
+            jitterOffsetMs = -maxJitterMs,
+            nowMs = nowMs
+        )
+
+        assertEquals(baseCooldownMs - maxJitterMs, negative.durationMs)
+        assertEquals(nowMs + baseCooldownMs - maxJitterMs, negative.cooldownUntilMs)
+    }
+
     private fun createValidRemoteConfig(tag: String, expiry: Date): RemoteConfig {
         return RemoteConfig(
             configurationTag = tag,
