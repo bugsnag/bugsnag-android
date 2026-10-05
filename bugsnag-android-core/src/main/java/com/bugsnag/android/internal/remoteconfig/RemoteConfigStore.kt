@@ -6,10 +6,13 @@ import com.bugsnag.android.RemoteConfig
 import com.bugsnag.android.internal.JsonHelper
 import java.io.File
 import java.io.IOException
+import java.io.RandomAccessFile
+import java.nio.channels.OverlappingFileLockException
 import java.util.Date
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
+@Suppress("TooManyFunctions")
 internal class RemoteConfigStore(
     val configDir: File,
     val appVersionCode: Int,
@@ -28,10 +31,15 @@ internal class RemoteConfigStore(
         lock.withLock {
             val currentFilename = configFileName()
             val currentCooldownFilename = cooldownFile().name
+            val currentLockFilename = lockFile().name
             val files = configDir.listFiles()
             if (files != null) {
                 for (file in files) {
-                    if (file.name != currentFilename && file.name != currentCooldownFilename) {
+                    if (
+                        file.name != currentFilename &&
+                        file.name != currentCooldownFilename &&
+                        file.name != currentLockFilename
+                    ) {
                         file.delete()
                     }
                 }
@@ -58,7 +66,10 @@ internal class RemoteConfigStore(
     fun currentOrExpired(): RemoteConfig? {
         val memoryConfig = current
         if (memoryConfig != null) {
-            logger.d("Remote config already loaded in memory; returning cached config ${describeRemoteConfig(memoryConfig)}")
+            logger.d(
+                "Remote config already loaded in memory; returning cached config " +
+                    describeRemoteConfig(memoryConfig)
+            )
             return memoryConfig
         }
 
@@ -67,7 +78,10 @@ internal class RemoteConfigStore(
             // Double-check after acquiring lock
             val recheck = current
             if (recheck != null) {
-                logger.d("Remote config became available in memory while waiting for the lock; returning ${describeRemoteConfig(recheck)}")
+                logger.d(
+                    "Remote config became available in memory while waiting for the lock; " +
+                        "returning ${describeRemoteConfig(recheck)}"
+                )
                 return recheck
             }
 
@@ -82,6 +96,21 @@ internal class RemoteConfigStore(
         }
 
         return null
+    }
+
+    /**
+     * Reloads the disk cache even when this process has an in-memory value. This is used after
+     * acquiring the cross-process request lock, when another process may have refreshed it.
+     */
+    fun reloadCurrentOrExpired(): RemoteConfig? = lock.withLock {
+        val diskConfig = loadFromDisk()
+        if (diskConfig != null) {
+            current = diskConfig
+            logger.d("Reloaded remote config from disk after cross-process lock ${describeRemoteConfig(diskConfig)}")
+            diskConfig
+        } else {
+            current
+        }
     }
 
     /**
@@ -173,12 +202,67 @@ internal class RemoteConfigStore(
             return@withLock cachedCooldownUntil
         }
 
+        readCooldownUntil()
+    }
+
+    /** Reloads the marker from disk after acquiring the cross-process request lock. */
+    fun reloadCooldownUntil(): Long = lock.withLock {
+        cachedCooldownUntil = 0L
+        readCooldownUntil()
+    }
+
+    /**
+     * Runs [block] while holding the per-version lock shared by all app processes. The lock wait
+     * is bounded so an abandoned or slow peer cannot block event delivery indefinitely.
+     */
+    @Suppress("NestedBlockDepth", "ReturnCount")
+    fun <T> withCrossProcessLock(block: () -> T): T? {
+        try {
+            if (!configDir.exists() && !configDir.mkdirs() && !configDir.exists()) {
+                logger.w("Failed to create remote config directory at ${configDir.absolutePath} for cross-process lock")
+                return null
+            }
+
+            RandomAccessFile(lockFile(), "rw").channel.use { channel ->
+                val deadline = System.currentTimeMillis() + CROSS_PROCESS_LOCK_WAIT_MS
+                var fileLock = tryAcquireLock(channel)
+                while (fileLock == null && System.currentTimeMillis() < deadline) {
+                    try {
+                        Thread.sleep(CROSS_PROCESS_LOCK_RETRY_MS)
+                    } catch (ex: InterruptedException) {
+                        Thread.currentThread().interrupt()
+                        logger.w("Interrupted while waiting for remote config cross-process lock", ex)
+                        return null
+                    }
+                    fileLock = tryAcquireLock(channel)
+                }
+
+                if (fileLock == null) {
+                    logger.w("Timed out waiting for remote config cross-process lock")
+                    return null
+                }
+
+                try {
+                    logger.d("Acquired remote config cross-process lock")
+                    return block()
+                } finally {
+                    fileLock.release()
+                    logger.d("Released remote config cross-process lock")
+                }
+            }
+        } catch (ex: IOException) {
+            logger.w("Failed to acquire remote config cross-process lock", ex)
+            return null
+        }
+    }
+
+    private fun readCooldownUntil(): Long {
         val cooldownFile = cooldownFile()
         if (!cooldownFile.exists()) {
-            return@withLock 0L
+            return 0L
         }
 
-        cooldownFile.readText().trim().toLongOrNull()?.also {
+        return cooldownFile.readText().trim().toLongOrNull()?.also {
             cachedCooldownUntil = it
             logger.d("Loaded remote config cooldown marker until=$it file=${cooldownFile.absolutePath}")
         } ?: run {
@@ -244,7 +328,10 @@ internal class RemoteConfigStore(
                 val map = JsonHelper.deserialize(inputStream)
                 val remoteConfig = RemoteConfig.fromJsonMap(map)
                 if (remoteConfig != null) {
-                    logger.d("Parsed remote config from disk at ${configFile.absolutePath} ${describeRemoteConfig(remoteConfig)}")
+                    logger.d(
+                        "Parsed remote config from disk at ${configFile.absolutePath} " +
+                            describeRemoteConfig(remoteConfig)
+                    )
                 } else {
                     logger.w("Remote config file at ${configFile.absolutePath} did not contain a valid config")
                 }
@@ -274,9 +361,24 @@ internal class RemoteConfigStore(
 
     private fun cooldownFile(): File = File(configDir, "${configFileName()}.cooldown")
 
+    private fun lockFile(): File = File(configDir, "${configFileName()}.lock")
+
+    private fun tryAcquireLock(channel: java.nio.channels.FileChannel) = try {
+        channel.tryLock()
+    } catch (_: OverlappingFileLockException) {
+        null
+    }
+
     private fun configFileName(): String = "core-$appVersionCode.json"
 
     private fun describeRemoteConfig(remoteConfig: RemoteConfig): String {
-        return "tag=${remoteConfig.configurationTag ?: "<null>"}, expiry=${remoteConfig.configurationExpiry.time}, discardRules=${remoteConfig.discardRules.size}"
+        return "tag=${remoteConfig.configurationTag ?: "<null>"}, " +
+            "expiry=${remoteConfig.configurationExpiry.time}, " +
+            "discardRules=${remoteConfig.discardRules.size}"
+    }
+
+    private companion object {
+        const val CROSS_PROCESS_LOCK_WAIT_MS = 5_000L
+        const val CROSS_PROCESS_LOCK_RETRY_MS = 50L
     }
 }

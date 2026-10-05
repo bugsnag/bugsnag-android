@@ -43,7 +43,6 @@ internal class RemoteConfigState(
             logger.d("Skipping remote config download because cooldown is active ${cooldownDescription()}")
             return
         }
-
         // Check if the config is within around 2 hours of expiring
         if (currentConfig != null && !shouldRefresh(currentConfig)) {
             logger.d(
@@ -114,11 +113,15 @@ internal class RemoteConfigState(
             if (remoteConfig != null) {
                 logger.i(
                     "Remote config request completed successfully " +
-                        "tag=${remoteConfig.configurationTag ?: "<null>"} expiry=${remoteConfig.configurationExpiry.time}"
+                        "tag=${remoteConfig.configurationTag ?: "<null>"} " +
+                        "expiry=${remoteConfig.configurationExpiry.time}"
                 )
                 remoteConfig
             } else {
-                logger.w("Remote config request completed without returning a config; using cached fallback if available")
+                logger.w(
+                    "Remote config request completed without returning a config; " +
+                        "using cached fallback if available"
+                )
                 store.currentOrExpired()
             }
         } catch (ex: Exception) {
@@ -141,6 +144,7 @@ internal class RemoteConfigState(
         }
     }
 
+    @Suppress("LongMethod")
     private fun requestRemoteConfig(): Future<RemoteConfig?> {
         currentInFlightRequest()?.let {
             logger.d("Reusing in-flight remote config request")
@@ -159,46 +163,62 @@ internal class RemoteConfigState(
                 logger.i("Skipping remote config request because cooldown is active ${cooldownDescription()}")
                 return@synchronized immediateFuture(cachedConfig)
             }
-
             logger.d("Submitting remote config request task to the background executor")
             backgroundTaskService.submitTask(
                 TaskType.IO,
                 Callable<RemoteConfig?> {
                     try {
-                        if (cachedConfig != null && !shouldRefresh(cachedConfig)) {
+                        return@Callable store.withCrossProcessLock {
+                            val lockedConfig = store.reloadCurrentOrExpired()
+                            val cooldownUntil = store.reloadCooldownUntil()
+                            if (cooldownUntil > System.currentTimeMillis()) {
+                                logger.i(
+                                    "Skipping remote config request after acquiring cross-process " +
+                                        "lock because cooldown is active ${cooldownDescription()}"
+                                )
+                                return@withCrossProcessLock lockedConfig
+                            }
+
+                            if (lockedConfig != null && !shouldRefresh(lockedConfig)) {
+                                logger.d(
+                                    "Reloaded remote config from storage after acquiring cross-process " +
+                                        "lock and it does not need refresh; " +
+                                        "skipping network request tag=${lockedConfig.configurationTag ?: "<null>"} " +
+                                        "expiry=${lockedConfig.configurationExpiry.time}"
+                                )
+                                return@withCrossProcessLock lockedConfig
+                            }
+
                             logger.d(
-                                "Loaded remote config from storage and it does not need refresh; skipping network request " +
-                                    "tag=${cachedConfig.configurationTag ?: "<null>"} expiry=${cachedConfig.configurationExpiry.time}"
+                                "Config needs refresh or is not present; requesting remote config " +
+                                    "from the endpoint"
                             )
-                            return@Callable cachedConfig
-                        }
 
-                        logger.d("Config needs refresh or is not present; requesting remote config from the endpoint")
-
-                        return@Callable RemoteConfigRequest(
-                            config,
-                            notifier,
-                            cachedConfig
-                        ).requestConfig()?.also {
-                            logger.i(
-                                "Received remote config from the endpoint; persisting response " +
-                                    "tag=${it.configurationTag ?: "<null>"} expiry=${it.configurationExpiry.time}"
-                            )
-                            store.store(it)
-                            store.clearCooldown()
-                            logState("remote config stored", it)
-                        } ?: run {
-                            val cooldown = computeCooldown(RETRY_COOLDOWN_MS)
-                            val cooldownUntil = cooldown.cooldownUntilMs
-                            store.setCooldownUntil(cooldownUntil)
-                            logger.w(
-                                "Remote config request did not return a config; starting cooldown " +
-                                    "baseMs=$RETRY_COOLDOWN_MS jitterMs=${cooldown.jitterMs} " +
-                                    "durationMs=${cooldown.durationMs} until=$cooldownUntil"
-                            )
-                            logState("remote config request failed", cachedConfig)
-                            cachedConfig
-                        }
+                            RemoteConfigRequest(
+                                config,
+                                notifier,
+                                lockedConfig
+                            ).requestConfig()?.also {
+                                logger.i(
+                                    "Received remote config from the endpoint; persisting response " +
+                                        "tag=${it.configurationTag ?: "<null>"} expiry=${it.configurationExpiry.time}"
+                                )
+                                store.store(it)
+                                store.clearCooldown()
+                                logState("remote config stored", it)
+                            } ?: run {
+                                val cooldown = computeCooldown(RETRY_COOLDOWN_MS)
+                                val failedCooldownUntil = cooldown.cooldownUntilMs
+                                store.setCooldownUntil(failedCooldownUntil)
+                                logger.w(
+                                    "Remote config request did not return a config; starting cooldown " +
+                                        "baseMs=$RETRY_COOLDOWN_MS jitterMs=${cooldown.jitterMs} " +
+                                        "durationMs=${cooldown.durationMs} until=$failedCooldownUntil"
+                                )
+                                logState("remote config request failed", lockedConfig)
+                                lockedConfig
+                            }
+                        } ?: cachedConfig
                     } finally {
                         clearInFlightRequest()
                     }
@@ -234,10 +254,15 @@ internal class RemoteConfigState(
     private fun logState(marker: String, remoteConfig: RemoteConfig? = store.currentOrExpired()) {
         logger.d(
             "Remote config state marker=$marker inFlight=${currentInFlightRequest() != null} " +
-                "config=${remoteConfig?.let { "tag=${it.configurationTag ?: "<null>"}, " +
-                    "expiry=${it.configurationExpiry.time}, discardRules=${it.discardRules.size}" } ?: "<none>"} " +
+                "config=${remoteConfig?.let(::describeRemoteConfig) ?: "<none>"} " +
                 "${cooldownDescription()} store={${store.diagnostics()}}"
         )
+    }
+
+    private fun describeRemoteConfig(remoteConfig: RemoteConfig): String {
+        return "tag=${remoteConfig.configurationTag ?: "<null>"}, " +
+            "expiry=${remoteConfig.configurationExpiry.time}, " +
+            "discardRules=${remoteConfig.discardRules.size}"
     }
 
     internal companion object {

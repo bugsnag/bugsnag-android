@@ -59,7 +59,10 @@ class RemoteConfigStateTest {
     @Test
     fun getRemoteConfigReturnsInMemoryConfig() {
         // Given - a valid config already in memory that does not need refresh
-        val validConfig = createValidRemoteConfig("in-memory", futureDate(RemoteConfigState.REFRESH_BUFFER_MS + 100000L))
+        val validConfig = createValidRemoteConfig(
+            "in-memory",
+            futureDate(RemoteConfigState.REFRESH_BUFFER_MS + 100000L)
+        )
         `when`(mockStore.current()).thenReturn(validConfig)
 
         // When - getRemoteConfig is called with timeout

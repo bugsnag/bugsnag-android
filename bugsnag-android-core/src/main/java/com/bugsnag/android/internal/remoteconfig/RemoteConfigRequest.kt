@@ -86,7 +86,8 @@ internal class RemoteConfigRequest(
         val responseCode = connection.responseCode
         logger.i(
             "Remote config response received code=$responseCode message=${connection.responseMessage} " +
-                "etag=${connection.getHeaderField(HEADER_ETAG)} cacheControl=${connection.getHeaderField(HEADER_CACHE_CONTROL)} " +
+                "etag=${connection.getHeaderField(HEADER_ETAG)} " +
+                "cacheControl=${connection.getHeaderField(HEADER_CACHE_CONTROL)} " +
                 "contentLength=${connection.contentLength}"
         )
         return when (responseCode) {
@@ -94,7 +95,7 @@ internal class RemoteConfigRequest(
             HttpURLConnection.HTTP_NOT_MODIFIED -> {
                 val expiryDate = configExpiryDate(connection)
                 logger.i("Remote config not modified; refreshing cached config expiry to ${expiryDate.time}")
-                renewExistingConfig(expiryDate)
+                renewExistingConfig(expiryDate, connection.getHeaderField(HEADER_ETAG))
             }
 
             HttpURLConnection.HTTP_BAD_REQUEST -> {
@@ -185,6 +186,7 @@ internal class RemoteConfigRequest(
         return remoteConfig
     }
 
+    @Suppress("ReturnCount")
     private fun configExpiryDate(connection: HttpURLConnection): Date {
 
         val cacheControl = connection.getHeaderField(HEADER_CACHE_CONTROL)
@@ -194,6 +196,10 @@ internal class RemoteConfigRequest(
             ?: return defaultConfigExpiry("unrecognized Cache-Control header '$cacheControl'")
         val maxAgeSeconds = maxAgeMatcher.groupValues.getOrNull(1)?.toLongOrNull()
             ?: return defaultConfigExpiry("invalid max-age value in Cache-Control header '$cacheControl'")
+
+        if (maxAgeSeconds <= 0L) {
+            return defaultConfigExpiry("non-positive max-age value in Cache-Control header '$cacheControl'")
+        }
 
         val now = System.currentTimeMillis()
         val maxDuration = Long.MAX_VALUE - now
@@ -216,9 +222,17 @@ internal class RemoteConfigRequest(
         }
     }
 
-    private fun renewExistingConfig(configExpiryDate: Date): RemoteConfig? {
+    private fun renewExistingConfig(configExpiryDate: Date, responseTag: String?): RemoteConfig? {
         if (remoteConfig == null) {
             logger.w("Received HTTP 304 but there is no cached remote config to renew")
+            return null
+        }
+
+        if (responseTag != null && responseTag != remoteConfig.configurationTag) {
+            logger.w(
+                "Received HTTP 304 with a different ETag; refusing to renew cached remote config " +
+                    "cachedTag=${remoteConfig.configurationTag ?: "<null>"} responseTag=$responseTag"
+            )
             return null
         }
 
@@ -248,7 +262,10 @@ internal class RemoteConfigRequest(
 
         const val SECONDS_MS = 1000L
 
-        const val DEFAULT_CONFIG_EXPIRY_TIME = 24 * 60 * 60 * SECONDS_MS
+        const val DEFAULT_CONFIG_UPDATE_INTERVAL = 24 * 60 * 60 * SECONDS_MS
+        const val DEFAULT_CONFIG_UPDATE_TOLERANCE = 2 * 60 * 60 * SECONDS_MS
+        const val DEFAULT_CONFIG_EXPIRY_TIME =
+            DEFAULT_CONFIG_UPDATE_INTERVAL + DEFAULT_CONFIG_UPDATE_TOLERANCE
         val maxAgeRegex = Regex(""".*max-age\s*=\s*(\d+).*""")
     }
 }

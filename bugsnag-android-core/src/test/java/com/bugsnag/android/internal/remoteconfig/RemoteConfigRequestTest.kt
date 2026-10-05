@@ -135,7 +135,7 @@ class RemoteConfigRequestTest {
         val result = requestConfigWithMockedUrl(
             existingConfig = existingConfig,
             responseCode = HttpURLConnection.HTTP_NOT_MODIFIED,
-            etag = "ignored-etag",
+            etag = existingConfig.configurationTag,
             cacheControl = "max-age=5400"
         )
 
@@ -238,6 +238,20 @@ class RemoteConfigRequestTest {
         // Then: Expiry is calculated from max-age
         assertNotNull(result)
         assertExpiryWithinTolerance(result!!.configurationExpiry.time, maxAge * 1000)
+    }
+
+    @Test
+    fun testParseRemoteConfig_WithZeroMaxAgeUsesDefaultExpiry() {
+        val jsonResponse = """{"discardRules": []}"""
+        mockConnectionWithJsonResponse(jsonResponse, "test-tag", "max-age=0")
+
+        val result = createRequest().parseRemoteConfig(mockConnection)
+
+        assertNotNull(result)
+        assertExpiryWithinTolerance(
+            result!!.configurationExpiry.time,
+            RemoteConfigRequest.DEFAULT_CONFIG_EXPIRY_TIME
+        )
     }
 
     @Test
@@ -430,6 +444,20 @@ class RemoteConfigRequestTest {
         }
     }
 
+    @Test
+    fun requestConfigReturnsNullWhenHttp304EtagDiffersFromCachedConfig() {
+        val existingConfig = createRemoteConfig("cached-etag", -1000, emptyList())
+
+        val result = requestConfigWithMockedUrl(
+            existingConfig = existingConfig,
+            responseCode = HttpURLConnection.HTTP_NOT_MODIFIED,
+            etag = "changed-etag",
+            cacheControl = "max-age=0"
+        )
+
+        assertNull(result)
+    }
+
     // ===== Tests for HTTP 400 scenario (invalid request) =====
 
     @Test
@@ -530,8 +558,8 @@ class RemoteConfigRequestTest {
             `when`(mockUrl.openConnection()).thenReturn(mockConnection)
             `when`(mockConnection.responseCode).thenReturn(responseCode)
             `when`(mockConnection.getHeaderField("Cache-Control")).thenReturn(cacheControl)
+            `when`(mockConnection.getHeaderField("ETag")).thenReturn(etag)
             if (responseCode != HttpURLConnection.HTTP_NOT_MODIFIED) {
-                `when`(mockConnection.getHeaderField("ETag")).thenReturn(etag)
                 if (jsonResponse != null) {
                     val inputStream = ByteArrayInputStream(jsonResponse.toByteArray())
                     `when`(mockConnection.inputStream).thenReturn(inputStream)
