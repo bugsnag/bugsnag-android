@@ -85,9 +85,9 @@ class ExampleApplication : Application() {
 
 //
         config.endpoints = EndpointConfiguration(
-            notify = "https://notify.example.com/",
-            sessions = "https://sessions.example.com",
-            configuration = "https://config.example.com/"
+            notify = "https://notify.bugsnag.com/",
+            sessions = "https://sessions.bugsnag.com",
+            configuration = "https://config.bugsnag.com/"
         )
 
         Bugsnag.start(this, config)

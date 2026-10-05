@@ -68,9 +68,8 @@ static inline bool is_path_writable(const char *path) {
 }
 
 static inline bool can_create_file(const char *path) {
-  unlink(path);
-
-  const int fd = open(path, O_CREAT | O_RDWR | O_TRUNC, 0600);
+  // Never overwrite or delete an existing file while checking for root access.
+  const int fd = open(path, O_CREAT | O_EXCL | O_RDWR, 0600);
   if (fd < 0) {
     return false;
   }
@@ -182,37 +181,6 @@ static bool does_root_binary_list_exist_default(void) {
   return false;
 }
 
-static bool does_su_exist_on_path(void) {
-  const char *path = getenv("PATH");
-  if (path == NULL) {
-    return false;
-  }
-
-  const char *entry = path;
-  while (true) {
-    const char *separator = strchr(entry, ':');
-    const size_t entry_length = separator == NULL ? strlen(entry) : (size_t) (separator - entry);
-    char candidate[4096];
-
-    // An empty PATH entry represents the current working directory.
-    const int written = entry_length == 0
-        ? snprintf(candidate, sizeof(candidate), "su")
-        : snprintf(candidate, sizeof(candidate), "%.*s/su", (int) entry_length, entry);
-    if (written >= 0 && (size_t) written < sizeof(candidate)) {
-      struct stat st;
-      if (lstat(candidate, &st) == 0) {
-        return true;
-      }
-    }
-
-    if (separator == NULL) {
-      return false;
-    }
-    entry = separator + 1;
-  }
-}
-
-
 static bool has_writable_system_or_creatable_file(void) {
   for (int i = 0; i < should_not_be_writable_count; i++) {
     if (is_path_writable(should_not_be_writable[i])) {
@@ -233,14 +201,20 @@ JNIEXPORT jboolean JNICALL
 Java_com_bugsnag_android_RootDetector_nativeCheckRootIndicators(JNIEnv *env, jobject thiz) {
   jclass detectorClass = (*env)->GetObjectClass(env, thiz);
   if (detectorClass == NULL) {
-    return does_root_binary_list_exist_default() || does_su_exist_on_path() || does_build_prop_indicate_root("/system/build.prop") || has_writable_system_or_creatable_file();
+    if ((*env)->ExceptionCheck(env)) {
+      (*env)->ExceptionClear(env);
+    }
+    return does_root_binary_list_exist_default() || does_build_prop_indicate_root("/system/build.prop") || has_writable_system_or_creatable_file();
   }
 
   jfieldID rootBinaryLocationsField = (*env)->GetFieldID(env, detectorClass, "rootBinaryLocations", "Ljava/util/List;");
   jfieldID buildPropsField = (*env)->GetFieldID(env, detectorClass, "buildProps", "Ljava/io/File;");
   if (rootBinaryLocationsField == NULL || buildPropsField == NULL) {
+    if ((*env)->ExceptionCheck(env)) {
+      (*env)->ExceptionClear(env);
+    }
     (*env)->DeleteLocalRef(env, detectorClass);
-    return does_root_binary_list_exist_default() || does_su_exist_on_path() || does_build_prop_indicate_root("/system/build.prop") || has_writable_system_or_creatable_file();
+    return does_root_binary_list_exist_default() || does_build_prop_indicate_root("/system/build.prop") || has_writable_system_or_creatable_file();
   }
 
   jobject rootBinaryLocations = (*env)->GetObjectField(env, thiz, rootBinaryLocationsField);
@@ -253,30 +227,28 @@ Java_com_bugsnag_android_RootDetector_nativeCheckRootIndicators(JNIEnv *env, job
   }
 
   if (!rooted) {
-    rooted = does_su_exist_on_path();
-  }
-
-  if (!rooted && buildProps != NULL) {
-    jclass fileClass = (*env)->GetObjectClass(env, buildProps);
-    if (fileClass != NULL) {
-      jmethodID getPathMethod = (*env)->GetMethodID(env, fileClass, "getPath", "()Ljava/lang/String;");
-      if (getPathMethod != NULL) {
-        jstring buildPropsPath = (jstring) (*env)->CallObjectMethod(env, buildProps, getPathMethod);
-        if (!(*env)->ExceptionCheck(env) && buildPropsPath != NULL) {
-          const char *path = (*env)->GetStringUTFChars(env, buildPropsPath, NULL);
-          if (path != NULL) {
-            rooted = does_build_prop_indicate_root(path);
-            (*env)->ReleaseStringUTFChars(env, buildPropsPath, path);
+    if (buildProps != NULL) {
+      jclass fileClass = (*env)->GetObjectClass(env, buildProps);
+      if (fileClass != NULL) {
+        jmethodID getPathMethod = (*env)->GetMethodID(env, fileClass, "getPath", "()Ljava/lang/String;");
+        if (getPathMethod != NULL) {
+          jstring buildPropsPath = (jstring) (*env)->CallObjectMethod(env, buildProps, getPathMethod);
+          if (!(*env)->ExceptionCheck(env) && buildPropsPath != NULL) {
+            const char *path = (*env)->GetStringUTFChars(env, buildPropsPath, NULL);
+            if (path != NULL) {
+              rooted = does_build_prop_indicate_root(path);
+              (*env)->ReleaseStringUTFChars(env, buildPropsPath, path);
+            }
+            (*env)->DeleteLocalRef(env, buildPropsPath);
+          } else if ((*env)->ExceptionCheck(env)) {
+            (*env)->ExceptionClear(env);
           }
-          (*env)->DeleteLocalRef(env, buildPropsPath);
-        } else if ((*env)->ExceptionCheck(env)) {
-          (*env)->ExceptionClear(env);
         }
+        (*env)->DeleteLocalRef(env, fileClass);
       }
-      (*env)->DeleteLocalRef(env, fileClass);
+      (*env)->DeleteLocalRef(env, buildProps);
+      buildProps = NULL;
     }
-    (*env)->DeleteLocalRef(env, buildProps);
-    buildProps = NULL;
   }
 
   if (buildProps != NULL) {
