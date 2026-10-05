@@ -14,6 +14,7 @@ import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mock
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.verifyNoInteractions
 import org.mockito.Mockito.verifyNoMoreInteractions
@@ -166,7 +167,7 @@ class RemoteConfigStateTest {
         // Given - store operation takes too long, but a cached fallback exists
         val cachedConfig = createValidRemoteConfig("cached-fallback", futureDate(-1000))
         `when`(mockStore.current()).thenReturn(null)
-        `when`(mockStore.currentOrExpired()).thenReturn(cachedConfig)
+        `when`(mockStore.cachedCurrentOrExpired()).thenReturn(cachedConfig)
 
         `when`(mockBackgroundTaskService.submitTask(eq(TaskType.IO), any(Callable::class.java)))
             .thenReturn(mockFuture)
@@ -226,7 +227,7 @@ class RemoteConfigStateTest {
             "near-expiry",
             futureDate(RemoteConfigState.REFRESH_BUFFER_MS - 1000)
         )
-        `when`(mockStore.currentOrExpired()).thenReturn(nearExpiryConfig)
+        `when`(mockStore.current()).thenReturn(nearExpiryConfig)
         `when`(mockBackgroundTaskService.submitTask(eq(TaskType.IO), any(Callable::class.java)))
             .thenReturn(mockFuture)
 
@@ -238,8 +239,8 @@ class RemoteConfigStateTest {
     @Test
     fun scheduleDownloadIfRequiredSkipsRequestDuringCooldown() {
         val nearExpiryConfig = createValidRemoteConfig("near-expiry", futureDate(1000))
-        `when`(mockStore.currentOrExpired()).thenReturn(nearExpiryConfig)
-        `when`(mockStore.cooldownUntil()).thenReturn(System.currentTimeMillis() + 60_000)
+        `when`(mockStore.current()).thenReturn(nearExpiryConfig)
+        `when`(mockStore.cachedCooldownUntil()).thenReturn(System.currentTimeMillis() + 60_000)
 
         remoteConfigState.scheduleDownloadIfRequired()
 
@@ -249,14 +250,29 @@ class RemoteConfigStateTest {
     @Test
     fun scheduleDownloadIfRequiredRefreshesWhenCooldownMarkerHasExpired() {
         val nearExpiryConfig = createValidRemoteConfig("near-expiry", futureDate(1000))
-        `when`(mockStore.currentOrExpired()).thenReturn(nearExpiryConfig)
-        `when`(mockStore.cooldownUntil()).thenReturn(System.currentTimeMillis() - 1)
+        `when`(mockStore.current()).thenReturn(nearExpiryConfig)
+        `when`(mockStore.cachedCooldownUntil()).thenReturn(System.currentTimeMillis() - 1)
         `when`(mockBackgroundTaskService.submitTask(eq(TaskType.IO), any(Callable::class.java)))
             .thenReturn(mockFuture)
 
         remoteConfigState.scheduleDownloadIfRequired()
 
         verify(mockBackgroundTaskService).submitTask(eq(TaskType.IO), any(Callable::class.java))
+    }
+
+    @Test
+    fun scheduleDownloadIfRequiredDoesNotReadDiskOnCallingThread() {
+        `when`(mockStore.current()).thenReturn(null)
+        `when`(mockStore.cachedCooldownUntil()).thenReturn(0L)
+        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.IO), any(Callable::class.java)))
+            .thenReturn(mockFuture)
+
+        remoteConfigState.scheduleDownloadIfRequired()
+
+        verify(mockBackgroundTaskService).submitTask(eq(TaskType.IO), any(Callable::class.java))
+        verify(mockStore, never()).currentOrExpired()
+        verify(mockStore, never()).cooldownUntil()
+        verify(mockStore, never()).diagnostics()
     }
 
     @Test

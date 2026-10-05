@@ -84,6 +84,13 @@ class RemoteConfigStoreTest {
     }
 
     @Test
+    fun unreadableCooldownMarkerIsIgnored() {
+        File(tempDir.root, "core-$versionCode.json.cooldown").mkdirs()
+
+        assertEquals(0L, store.cooldownUntil())
+    }
+
+    @Test
     fun crossProcessLockReloadsConfigAndCooldownPersistedByAnotherStore() {
         val config = createValidRemoteConfig("tag1", futureDate(60_000))
         val cooldownUntil = System.currentTimeMillis() + 60_000

@@ -37,9 +37,9 @@ internal class RemoteConfigState(
             return
         }
 
-        val currentConfig = store.currentOrExpired()
+        val currentConfig = store.current()
         logState("scheduleDownloadIfRequired", currentConfig)
-        if (isCooldownActive()) {
+        if (isCachedCooldownActive()) {
             logger.d("Skipping remote config download because cooldown is active ${cooldownDescription()}")
             return
         }
@@ -122,11 +122,11 @@ internal class RemoteConfigState(
                     "Remote config request completed without returning a config; " +
                         "using cached fallback if available"
                 )
-                store.currentOrExpired()
+                store.cachedCurrentOrExpired()
             }
         } catch (ex: Exception) {
             logger.w("Failed to load remote config within the requested timeout", ex)
-            store.currentOrExpired()
+            store.cachedCurrentOrExpired()
         }
     }
 
@@ -157,17 +157,26 @@ internal class RemoteConfigState(
                 return@synchronized it
             }
 
-            val cachedConfig = store.currentOrExpired()
-            logState("requestRemoteConfig", cachedConfig)
-            if (isCooldownActive()) {
-                logger.i("Skipping remote config request because cooldown is active ${cooldownDescription()}")
-                return@synchronized immediateFuture(cachedConfig)
+            val currentConfig = store.current()
+            if (currentConfig != null && !shouldRefresh(currentConfig)) {
+                logger.d("Returning fresh in-memory remote config without scheduling a request")
+                return@synchronized immediateFuture(currentConfig)
             }
             logger.d("Submitting remote config request task to the background executor")
             backgroundTaskService.submitTask(
                 TaskType.IO,
                 Callable<RemoteConfig?> {
                     try {
+                        val cachedConfig = store.currentOrExpired()
+                        logState("requestRemoteConfig", cachedConfig)
+                        if (isCooldownActive()) {
+                            logger.i(
+                                "Skipping remote config request because cooldown is active " +
+                                    cooldownDescription()
+                            )
+                            return@Callable cachedConfig
+                        }
+
                         return@Callable store.withCrossProcessLock {
                             val lockedConfig = store.reloadCurrentOrExpired()
                             val cooldownUntil = store.reloadCooldownUntil()
@@ -246,16 +255,19 @@ internal class RemoteConfigState(
 
     private fun isCooldownActive(): Boolean = store.cooldownUntil() > System.currentTimeMillis()
 
-    private fun cooldownDescription(): String {
-        val until = store.cooldownUntil()
+    private fun isCachedCooldownActive(): Boolean {
+        return store.cachedCooldownUntil() > System.currentTimeMillis()
+    }
+
+    private fun cooldownDescription(until: Long = store.cachedCooldownUntil()): String {
         return "cooldownUntil=$until remainingMs=${(until - System.currentTimeMillis()).coerceAtLeast(0)}"
     }
 
-    private fun logState(marker: String, remoteConfig: RemoteConfig? = store.currentOrExpired()) {
+    private fun logState(marker: String, remoteConfig: RemoteConfig? = null) {
         logger.d(
             "Remote config state marker=$marker inFlight=${currentInFlightRequest() != null} " +
                 "config=${remoteConfig?.let(::describeRemoteConfig) ?: "<none>"} " +
-                "${cooldownDescription()} store={${store.diagnostics()}}"
+                cooldownDescription()
         )
     }
 

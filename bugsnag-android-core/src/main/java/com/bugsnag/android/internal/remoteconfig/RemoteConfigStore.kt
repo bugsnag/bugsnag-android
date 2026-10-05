@@ -59,6 +59,9 @@ internal class RemoteConfigStore(
         return null
     }
 
+    /** Returns the in-memory config, including an expired value, without reading from disk. */
+    fun cachedCurrentOrExpired(): RemoteConfig? = current
+
     /**
      * Returns the current RemoteConfig if is has been loaded, but return the last known "good"
      * config if there isn't a valid "current".
@@ -205,6 +208,9 @@ internal class RemoteConfigStore(
         readCooldownUntil()
     }
 
+    /** Returns the in-memory cooldown value without reading from disk. */
+    fun cachedCooldownUntil(): Long = cachedCooldownUntil
+
     /** Reloads the marker from disk after acquiring the cross-process request lock. */
     fun reloadCooldownUntil(): Long = lock.withLock {
         cachedCooldownUntil = 0L
@@ -258,16 +264,26 @@ internal class RemoteConfigStore(
 
     private fun readCooldownUntil(): Long {
         val cooldownFile = cooldownFile()
-        if (!cooldownFile.exists()) {
-            return 0L
-        }
+        return try {
+            if (!cooldownFile.exists()) {
+                return 0L
+            }
 
-        return cooldownFile.readText().trim().toLongOrNull()?.also {
-            cachedCooldownUntil = it
-            logger.d("Loaded remote config cooldown marker until=$it file=${cooldownFile.absolutePath}")
-        } ?: run {
-            logger.w("Invalid remote config cooldown marker at ${cooldownFile.absolutePath}; deleting it")
-            cooldownFile.delete()
+            cooldownFile.readText().trim().toLongOrNull()?.also {
+                cachedCooldownUntil = it
+                logger.d("Loaded remote config cooldown marker until=$it file=${cooldownFile.absolutePath}")
+            } ?: run {
+                logger.w("Invalid remote config cooldown marker at ${cooldownFile.absolutePath}; deleting it")
+                cooldownFile.delete()
+                0L
+            }
+        } catch (ex: IOException) {
+            cachedCooldownUntil = 0L
+            logger.w("Failed to read remote config cooldown marker at ${cooldownFile.absolutePath}", ex)
+            0L
+        } catch (ex: SecurityException) {
+            cachedCooldownUntil = 0L
+            logger.w("Cannot access remote config cooldown marker at ${cooldownFile.absolutePath}", ex)
             0L
         }
     }
@@ -299,7 +315,7 @@ internal class RemoteConfigStore(
         val configFile = File(configDir, configFileName())
         "memory=${current?.let(::describeRemoteConfig) ?: "<none>"}, " +
             "diskExists=${configFile.exists()}, diskReadable=${configFile.canRead()}, " +
-            "cooldownUntil=${cooldownUntil()}"
+            "cachedCooldownUntil=$cachedCooldownUntil"
     }
 
     fun clear() {
