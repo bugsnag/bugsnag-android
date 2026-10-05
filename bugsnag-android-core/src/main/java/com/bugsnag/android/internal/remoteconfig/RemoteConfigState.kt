@@ -265,6 +265,14 @@ internal class RemoteConfigState(
             "discardRules=${remoteConfig.discardRules.size}"
     }
 
+    private fun immediateFuture(remoteConfig: RemoteConfig?) = object : Future<RemoteConfig?> {
+        override fun cancel(mayInterruptIfRunning: Boolean): Boolean = false
+        override fun get(): RemoteConfig? = remoteConfig
+        override fun get(timeout: Long, unit: TimeUnit?): RemoteConfig? = remoteConfig
+        override fun isCancelled(): Boolean = false
+        override fun isDone(): Boolean = true
+    }
+
     internal companion object {
         val REFRESH_BUFFER_MS = TimeUnit.HOURS.toMillis(2)
         val RETRY_COOLDOWN_MS = TimeUnit.HOURS.toMillis(24)
@@ -291,14 +299,6 @@ internal class RemoteConfigState(
             val durationMs: Long,
             val cooldownUntilMs: Long
         )
-
-        private fun immediateFuture(remoteConfig: RemoteConfig?) = object : Future<RemoteConfig?> {
-            override fun cancel(mayInterruptIfRunning: Boolean): Boolean = false
-            override fun get(): RemoteConfig? = remoteConfig
-            override fun get(timeout: Long, unit: TimeUnit?): RemoteConfig? = remoteConfig
-            override fun isCancelled(): Boolean = false
-            override fun isDone(): Boolean = true
-        }
 
         val nullFuture = object : Future<RemoteConfig?> {
             override fun cancel(mayInterruptIfRunning: Boolean): Boolean = false
