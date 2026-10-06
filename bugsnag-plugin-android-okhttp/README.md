@@ -1,10 +1,14 @@
 # bugsnag-plugin-android-okhttp
 
-This module captures a breadcrumb for each network request made by OkHttp.
+This module instruments OkHttp network requests, capturing them as breadcrumbs and/or errors
+in Bugsnag.
 
 ## High-level Overview
 
-The module has a `compileOnly` dependency on OkHttp 4 and implements the `Plugin` and `EventListener`
-interfaces. The user should install the plugin while initializing Bugsnag and creating an
-`OkHttpClient`, and OkHttp's callbacks will then be used to automatically capture breadcrumbs
-for each request.
+`BugsnagOkHttp` is the main entry point. It provides a builder-style API to configure which HTTP
+status codes should be reported as errors, request/response body capture limits, breadcrumb logging,
+and request/response callbacks. Call `createInterceptor()` to produce an OkHttp `Interceptor` and
+add it to your `OkHttpClient` via `addInterceptor`.
+
+`OkHttpDelivery` is an OkHttp-backed `Delivery` implementation that can be used to deliver Bugsnag
+event and session payloads using your own `OkHttpClient`.

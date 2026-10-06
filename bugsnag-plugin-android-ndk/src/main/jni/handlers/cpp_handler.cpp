@@ -71,6 +71,9 @@ void bsg_handle_cpp_terminate() {
                 sizeof(bsg_global_env->next_event.error.errorClass));
   }
 
+  bsg_strncpy(bsg_global_env->next_event.error.type, "c",
+              sizeof(bsg_global_env->next_event.error.type));
+
   if (bsg_run_on_error()) {
     bsg_increment_unhandled_count(&bsg_global_env->next_event);
     bsg_serialize_event_to_file(bsg_global_env);

@@ -81,6 +81,16 @@ typedef struct {
 
   jobject ErrorType_C;
 
+  jclass Throwable;
+  jmethodID Throwable_getMessage;
+  jmethodID Throwable_getStackTrace;
+
+  jclass StackTraceElement;
+  jmethodID StackTraceElement_getFileName;
+  jmethodID StackTraceElement_getClassName;
+  jmethodID StackTraceElement_getMethodName;
+  jmethodID StackTraceElement_getLineNumber;
+
   jclass NativeBridge;
   jclass NdkPlugin;
 } bsg_jni_cache_t;

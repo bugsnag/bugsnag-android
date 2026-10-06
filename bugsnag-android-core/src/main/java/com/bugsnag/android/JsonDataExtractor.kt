@@ -102,10 +102,10 @@ internal class LiteralPathExtractor(
         }
     }
 
-    override fun toStream(stream: JsonStream) {
-        stream.beginObject()
-        stream.name(KEY_PATH).value(path)
-        stream.endObject()
+    override fun toStream(writer: JsonStream) {
+        writer.beginObject()
+        writer.name(KEY_PATH).value(path)
+        writer.endObject()
     }
 
     override fun toString(): String = path
@@ -162,12 +162,12 @@ internal class RegexExtractor(
         return source
     }
 
-    override fun toStream(stream: JsonStream) {
-        stream.beginObject()
-        stream.name(KEY_PATH).value(path)
-        stream.name(KEY_PATH_MODE).value(PATH_MODE_REGEX)
-        stream.name(KEY_REGEX).value(regex.toString())
-        stream.endObject()
+    override fun toStream(writer: JsonStream) {
+        writer.beginObject()
+        writer.name(KEY_PATH).value(path)
+        writer.name(KEY_PATH_MODE).value(PATH_MODE_REGEX)
+        writer.name(KEY_REGEX).value(regex.toString())
+        writer.endObject()
     }
 
     companion object {
@@ -205,17 +205,17 @@ internal class FilterExtractor(
             }
     }
 
-    override fun toStream(stream: JsonStream) {
-        stream.beginObject()
-        stream.name(KEY_PATH).value(path)
-        stream.name(KEY_PATH_MODE).value(PATH_MODE_FILTER)
+    override fun toStream(writer: JsonStream) {
+        writer.beginObject()
+        writer.name(KEY_PATH).value(path)
+        writer.name(KEY_PATH_MODE).value(PATH_MODE_FILTER)
 
-        stream.name(KEY_FILTER).beginObject()
-        stream.name(KEY_CONDITIONS).value(conditions)
-        stream.name(KEY_SUB_PATHS).value(subExtractors)
-        stream.endObject()
+        writer.name(KEY_FILTER).beginObject()
+        writer.name(KEY_CONDITIONS).value(conditions)
+        writer.name(KEY_SUB_PATHS).value(subExtractors)
+        writer.endObject()
 
-        stream.endObject()
+        writer.endObject()
     }
 
     companion object {
@@ -258,12 +258,12 @@ internal class FilterExtractor(
             return matchType(extractedValue, expectedValue)
         }
 
-        override fun toStream(stream: JsonStream) {
-            stream.beginObject()
-            stream.name(KEY_FILTER_PATH).value(filterPath)
-            stream.name(KEY_MATCH_TYPE).value(matchType.name)
-            stream.name(KEY_VALUE).value(expectedValue)
-            stream.endObject()
+        override fun toStream(writer: JsonStream) {
+            writer.beginObject()
+            writer.name(KEY_FILTER_PATH).value(filterPath)
+            writer.name(KEY_MATCH_TYPE).value(matchType.name)
+            writer.name(KEY_VALUE).value(expectedValue)
+            writer.endObject()
         }
 
         companion object {
@@ -363,11 +363,11 @@ internal class RelativeAddressExtractor(
         return toULongOrNull() ?: toULongOrNull(HEX_RADIX)
     }
 
-    override fun toStream(stream: JsonStream) {
-        stream.beginObject()
-        stream.name(KEY_PATH).value(path)
-        stream.name(KEY_PATH_MODE).value(PATH_MODE_RELATIVE_ADDRESS)
-        stream.endObject()
+    override fun toStream(writer: JsonStream) {
+        writer.beginObject()
+        writer.name(KEY_PATH).value(path)
+        writer.name(KEY_PATH_MODE).value(PATH_MODE_RELATIVE_ADDRESS)
+        writer.endObject()
     }
 
     companion object {

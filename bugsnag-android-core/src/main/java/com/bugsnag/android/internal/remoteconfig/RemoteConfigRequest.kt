@@ -9,7 +9,6 @@ import com.bugsnag.android.internal.HEADER_BUGSNAG_API_KEY
 import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.JsonCollectionParser
 import com.bugsnag.android.internal.JsonCollectionParser.JsonParseException
-import com.bugsnag.android.internal.JsonHelper
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder

@@ -14,8 +14,10 @@ import java.util.Set;
  * Static access to a Bugsnag Client, the easiest way to use Bugsnag in your Android app.
  * For example:
  * <p>
+ * <pre>{@code
  * Bugsnag.start(this, "your-api-key");
  * Bugsnag.notify(new RuntimeException("something broke!"));
+ * }</pre>
  *
  * @see Client
  */
@@ -72,7 +74,7 @@ public final class Bugsnag {
     /**
      * Returns true if one of the <code>start</code> methods have been has been called and
      * so Bugsnag is initialized; false if <code>start</code> has not been called and the
-     * other methods will throw IllegalStateException.
+     * other methods will throw {@code IllegalStateException}.
      */
     public static boolean isStarted() {
         return client != null;
@@ -149,12 +151,12 @@ public final class Bugsnag {
      * <p>
      * For example:
      * <p>
-     * Bugsnag.addOnError(new OnErrorCallback() {
-     * public boolean run(Event event) {
-     * event.setSeverity(Severity.INFO);
-     * return true;
-     * }
-     * })
+     * <pre>{@code
+     * Bugsnag.addOnError((Event event) -> {
+     *     event.setSeverity(Severity.INFO);
+     *     return true;
+     * });
+     * }</pre>
      *
      * @param onError a callback to run before sending errors to Bugsnag
      * @see OnErrorCallback
@@ -181,11 +183,11 @@ public final class Bugsnag {
      * <p>
      * For example:
      * <p>
-     * Bugsnag.onBreadcrumb(new OnBreadcrumbCallback() {
-     * public boolean run(Breadcrumb breadcrumb) {
-     * return false; // ignore the breadcrumb
-     * }
-     * })
+     * <pre>{@code
+     * Bugsnag.onBreadcrumb((Breadcrumb breadcrumb) -> {
+     *     return false; // ignore the breadcrumb
+     * });
+     * }</pre>
      *
      * @param onBreadcrumb a callback to run before a breadcrumb is captured
      * @see OnBreadcrumbCallback
@@ -212,11 +214,11 @@ public final class Bugsnag {
      * <p>
      * For example:
      * <p>
-     * Bugsnag.onSession(new OnSessionCallback() {
-     * public boolean run(Session session) {
-     * return false; // ignore the session
-     * }
-     * })
+     * <pre>{@code
+     * Bugsnag.onSession((Session session) -> {
+     *     return false; // ignore the session
+     * });
+     * }</pre>
      *
      * @param onSession a callback to run before a session is captured
      * @see OnSessionCallback
@@ -253,6 +255,20 @@ public final class Bugsnag {
     public static void notify(@NonNull final Throwable exception,
                               @Nullable final OnErrorCallback onError) {
         getClient().notify(exception, onError);
+    }
+
+    /**
+     * Notify Bugsnag of a handled exception
+     *
+     * @param exception the exception to send to Bugsnag
+     * @param options   additional options to adjust the reporting of the exception
+     * @param onError   callback invoked on the generated error report for
+     *                  additional modification
+     */
+    public static void notify(@NonNull final Throwable exception,
+                              @Nullable final ErrorOptions options,
+                              @Nullable final OnErrorCallback onError) {
+        getClient().notify(exception, options, onError);
     }
 
     /**
@@ -482,6 +498,26 @@ public final class Bugsnag {
      */
     public static void clearFeatureFlags() {
         getClient().clearFeatureFlags();
+    }
+
+    /**
+     * Override or intercept the default error handling for {@link OutOfMemoryError}s.
+     *
+     * @param handler the new handler to use (or null to revert to normal error handling for OOMs)
+     * @see #getOutOfMemoryHandler()
+     */
+    public static void setOutOfMemoryHandler(@Nullable OutOfMemoryHandler handler) {
+        getClient().setOutOfMemoryHandler(handler);
+    }
+
+    /**
+     * Return the currently defined {@link OutOfMemoryHandler} if one is being used.
+     *
+     * @return the current {@code OutOfMemoryHandler} or null if none is set
+     */
+    @Nullable
+    public static OutOfMemoryHandler getOutOfMemoryHandler() {
+        return getClient().getOutOfMemoryHandler();
     }
 
     /**

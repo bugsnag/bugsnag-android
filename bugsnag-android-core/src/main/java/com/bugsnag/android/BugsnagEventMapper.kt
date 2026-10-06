@@ -27,6 +27,9 @@ internal class BugsnagEventMapper(
         val exceptions = map["exceptions"] as? List<MutableMap<String, Any?>>
         exceptions?.mapTo(event.errors) { Error(convertErrorInternal(it), this.logger) }
 
+        event.request = convertRequest(map["request"] as? Map<String, Any?>)
+        event.response = convertResponse(map["response"] as? Map<String, Any?>)
+
         // populate user
         event.userImpl = convertUser(map.readEntry("user"))
 
@@ -125,6 +128,51 @@ internal class BugsnagEventMapper(
             },
             stacktrace = convertStacktrace(error.readEntry("stacktrace"))
         )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    internal fun convertRequest(request: Map<String, Any?>?): Request? {
+        if (request == null) {
+            return null
+        }
+
+        val out = Request(
+            request["httpVersion"] as? String,
+            request["httpMethod"] as? String,
+            request["url"] as? String,
+        )
+
+        out.body = request["body"] as? String
+        out.bodyLength = (request["bodyLength"] as? Number)?.toLong() ?: 0
+
+        (request["headers"] as? Map<String, String>)?.forEach { (name, value) ->
+            out.addHeader(name, value)
+        }
+
+        (request["params"] as? Map<String, String>)?.forEach { (key, value) ->
+            out.addQueryParameter(key, value)
+        }
+
+        return out
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    internal fun convertResponse(response: Map<String, Any?>?): Response? {
+        if (response == null) {
+            return null
+        }
+
+        val statusCode = (response["statusCode"] as? Number)?.toInt() ?: return null
+        val out = Response(statusCode)
+
+        out.body = response["body"] as? String
+        out.bodyLength = (response["bodyLength"] as? Number)?.toLong() ?: 0
+
+        (response["headers"] as? Map<String, String>)?.forEach { (name, value) ->
+            out.addHeader(name, value)
+        }
+
+        return out
     }
 
     internal fun convertUser(user: Map<String, Any?>): User {

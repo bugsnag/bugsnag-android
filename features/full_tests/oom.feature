@@ -11,3 +11,13 @@ Feature: Reporting OOMs
     And the error payload field "notifier.name" equals "Android Bugsnag Notifier"
     And the error payload field "events" is an array with 1 elements
     And the exception "errorClass" equals "java.lang.OutOfMemoryError"
+
+  Scenario: NativeOutOfMemoryPlugin captures OutOfMemoryError
+    When I run "NativeOOMHandlerScenario" and relaunch the crashed app
+    And I configure Bugsnag for "NativeOOMHandlerScenario"
+    Then I wait to receive an error
+    And the error is valid for the error reporting API version "4.0" for the "Android Bugsnag Notifier" notifier
+    And the error payload field "notifier.name" equals "Android Bugsnag Notifier"
+    And the error payload field "events" is an array with 1 elements
+    And the exception "errorClass" equals "java.lang.OutOfMemoryError"
+    And the event "metaData.OutOfMemory.NativeOOM" is true

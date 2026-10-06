@@ -15,6 +15,7 @@
 #include "jni_cache.h"
 #include "metadata.h"
 #include "safejni.h"
+#include "utils/java_stacktrace.h"
 #include "utils/serializer.h"
 #include "utils/string.h"
 
@@ -406,6 +407,7 @@ static void JNI_NativeBridge_updateBuildUUID(JNIEnv *env, jobject _this,
     goto end;
   }
   bugsnag_app_set_build_uuid(&bsg_env->next_event, value);
+  release_env_write_lock();
 end:
   bsg_safe_release_string_utf_chars(env, new_value, value);
 }
@@ -421,8 +423,8 @@ static void JNI_NativeBridge_updateContext(JNIEnv *env, jobject _this,
     goto end;
   }
   bugsnag_event_set_context(&bsg_env->next_event, value);
-end:
   release_env_write_lock();
+end:
   if (new_value != NULL) {
     bsg_safe_release_string_utf_chars(env, new_value, value);
   }
@@ -437,15 +439,16 @@ static void JNI_NativeBridge_updateGroupingDiscriminator(JNIEnv *env,
   }
   if (new_value == NULL) {
     bugsnag_event_set_grouping_discriminator(&bsg_env->next_event, NULL);
-    goto end;
+    release_env_write_lock();
+    return;
   }
 
   const char *value = bsg_safe_get_string_utf_chars(env, new_value);
   if (value == NULL) {
-    goto end;
+    release_env_write_lock();
+    return;
   }
   bugsnag_event_set_grouping_discriminator(&bsg_env->next_event, value);
-end:
   release_env_write_lock();
   if (new_value != NULL) {
     bsg_safe_release_string_utf_chars(env, new_value, value);
@@ -650,8 +653,8 @@ static void JNI_NativeBridge_addMetadataDouble(JNIEnv *env, jobject _this,
     }
     bugsnag_event_add_metadata_double(&bsg_env->next_event, tab, key,
                                       (double)value_);
+    release_env_write_lock();
   }
-  release_env_write_lock();
 end:
   bsg_safe_release_string_utf_chars(env, tab_, tab);
   bsg_safe_release_string_utf_chars(env, key_, key);
@@ -955,6 +958,84 @@ static void JNI_NativeBridge_setInternalMetricsEnabled(JNIEnv *env,
                                                        jobject thiz,
                                                        jboolean enabled) {
   bsg_set_internal_metrics_enabled(enabled);
+}
+
+static void JNI_NativeBridge_synchronizeState(JNIEnv *env, jobject thiz) {
+  bsg_environment *bsg_env = request_env_write_lock();
+
+  if (bsg_env == NULL) {
+    return;
+  }
+
+  bsg_populate_event(env, &bsg_env->next_event);
+  release_env_write_lock();
+}
+
+static void JNI_NativeBridge_reportOutOfMemory(JNIEnv *env, jobject thiz,
+                                               jobject oom) {
+
+  bsg_environment *bsg_env = request_env_write_lock();
+  if (bsg_env == NULL) {
+    return;
+  }
+
+  // we treat an OOM as a native "crash" to prevent the signal/cpp errors from
+  // conflicting with the OOM use of the bsg_global_env->next_event (giving us
+  // exclusive access)
+  if (!bsg_begin_handling_crash()) {
+    release_env_write_lock();
+    return;
+  }
+
+  bugsnag_event *event = &bsg_env->next_event;
+
+  // Mark as unhandled error (OOM is always unhandled)
+  event->unhandled = true;
+  event->unhandled_events++;
+
+  // Set error class and message
+  bsg_error *error = &event->error;
+  bsg_strncpy(error->errorClass, "java.lang.OutOfMemoryError",
+              sizeof(error->errorClass));
+
+  bsg_strncpy(error->type, "android", sizeof(error->type));
+
+  // Extract message from the exception if available
+  if (bsg_jni_cache != NULL && bsg_jni_cache->initialized) {
+    jstring message = (jstring)bsg_safe_call_object_method(
+        env, oom, bsg_jni_cache->Throwable_getMessage);
+    if (message != NULL) {
+      const char *msg = bsg_safe_get_string_utf_chars(env, message);
+      if (msg != NULL) {
+        bsg_strncpy(error->errorMessage, msg, sizeof(error->errorMessage));
+        bsg_safe_release_string_utf_chars(env, message, msg);
+      }
+      bsg_safe_delete_local_ref(env, message);
+    }
+
+    // Extract Java stack trace
+    jobjectArray stack_trace = (jobjectArray)bsg_safe_call_object_method(
+        env, oom, bsg_jni_cache->Throwable_getStackTrace);
+    bsg_copy_java_stacktrace(env, stack_trace, error);
+  }
+
+  // If we couldn't get Java stack trace, fall back to native unwinding
+  if (error->frame_count == 0) {
+    error->frame_count =
+        bsg_unwind_concurrent_stack(error->stacktrace, NULL, NULL);
+  }
+
+  // Run OnError callbacks
+  if (!bsg_run_on_error()) {
+    goto cleanup;
+  }
+
+  bsg_serialize_event_to_file(bsg_env);
+  bsg_serialize_last_run_info_to_file(bsg_env);
+
+cleanup:
+  bsg_finish_handling_crash();
+  release_env_write_lock();
 }
 
 // These headers are included here to ensure that the JNI methods are

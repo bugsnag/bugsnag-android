@@ -101,18 +101,18 @@ internal class FeatureFlags private constructor(
     }
 
     @Throws(IOException::class)
-    override fun toStream(stream: JsonStream) {
+    override fun toStream(writer: JsonStream) {
         val storeCopy = flags
-        stream.beginArray()
+        writer.beginArray()
         storeCopy.forEach { (name, variant) ->
-            stream.beginObject()
-            stream.name("featureFlag").value(name)
+            writer.beginObject()
+            writer.name("featureFlag").value(name)
             if (variant != null) {
-                stream.name("variant").value(variant)
+                writer.name("variant").value(variant)
             }
-            stream.endObject()
+            writer.endObject()
         }
-        stream.endArray()
+        writer.endArray()
     }
 
     fun toList(): List<FeatureFlag> = flags.map { (name, variant) -> FeatureFlag(name, variant) }

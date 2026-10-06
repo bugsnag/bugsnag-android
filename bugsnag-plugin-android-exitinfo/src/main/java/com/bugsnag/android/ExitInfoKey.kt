@@ -9,8 +9,8 @@ internal data class ExitInfoKey(val pid: Int, val timestamp: Long) : JsonStream.
     constructor(exitInfo: ApplicationExitInfo) :
         this(exitInfo.pid, exitInfo.timestamp)
 
-    override fun toStream(stream: JsonStream) {
-        stream.beginObject()
+    override fun toStream(writer: JsonStream) {
+        writer.beginObject()
             .name("pid").value(pid)
             .name("timestamp").value(timestamp.toString())
             .endObject()

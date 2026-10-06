@@ -5,9 +5,14 @@ import java.util.Map;
 class MapUtils {
 
     @SuppressWarnings("unchecked")
-    static <T> T getOrNull(Map<String, Object> map, String key) {
-        Object id = map.get(key);
-        return id != null ? (T) id : null;
+    static <T> T getOrNull(Map<String, Object> map, String... keys) {
+        for (String key : keys) {
+            Object value = map.get(key);
+            if (value != null) {
+                return (T) value;
+            }
+        }
+        return null;
     }
 
     @SuppressWarnings("unchecked")

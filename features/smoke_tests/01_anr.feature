@@ -69,6 +69,7 @@ Feature: ANR smoke test
     And the event "metaData.device.dpi" is not null
     And the event "metaData.device.screenResolution" is not null
     And the event "metaData.device.brand" is not null
+    And the event "metaData.device.securityPatch" is not null
 
     # User
     And the event "user.id" is not null

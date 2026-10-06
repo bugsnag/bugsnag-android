@@ -2,10 +2,18 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
+    <ID>LongParameterList:BugsnagOkHttpInterceptor.kt$BugsnagOkHttpInterceptor$( private val errorCodes: BitSet, private var maxRequestBodyCapture: Long, private var maxResponseBodyCapture: Long, private var logRequestBreadcrumbs: Boolean, private val requestCallbacks: List&lt;HttpRequestCallback&lt;Request>>, private val responseCallbacks: List&lt;HttpResponseCallback&lt;Request, Response>>, private val clientSource: () -> Client?, private val timeProvider: () -> Long = { SystemClock.elapsedRealtime() } )</ID>
+    <ID>LongParameterList:BugsnagOkHttpInterceptorBreadcrumbsTest.kt$BugsnagOkHttpInterceptorBreadcrumbsTest$( client: Client, request: Request.Builder, response: MockResponse? = null, path: String = "/test", breadcrumbsEnabled: Boolean = true, configureErrorCodes: ((BugsnagOkHttp) -> BugsnagOkHttp)? = null )</ID>
+    <ID>MagicNumber:BugsnagOkHttpInterceptor.kt$BugsnagOkHttpInterceptor$100</ID>
+    <ID>MagicNumber:BugsnagOkHttpInterceptor.kt$BugsnagOkHttpInterceptor$399</ID>
+    <ID>MagicNumber:BugsnagOkHttpInterceptor.kt$BugsnagOkHttpInterceptor$400</ID>
+    <ID>MagicNumber:BugsnagOkHttpInterceptor.kt$BugsnagOkHttpInterceptor$499</ID>
     <ID>MagicNumber:BugsnagOkHttpPlugin.kt$100</ID>
     <ID>MagicNumber:BugsnagOkHttpPlugin.kt$399</ID>
     <ID>MagicNumber:BugsnagOkHttpPlugin.kt$400</ID>
     <ID>MagicNumber:BugsnagOkHttpPlugin.kt$599</ID>
+    <ID>NestedBlockDepth:BugsnagOkHttpInterceptor.kt$OkHttpInstrumentedResponse$private fun extractResponseBody(): String?</ID>
+    <ID>ReturnCount:BugsnagOkHttpInterceptor.kt$OkHttpInstrumentedResponse$private fun extractResponseBody(): String?</ID>
     <ID>TooManyFunctions:DelegateEventListener.kt$DelegateEventListener : EventListener</ID>
   </CurrentIssues>
 </SmellBaseline>

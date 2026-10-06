@@ -21,9 +21,9 @@ import com.bugsnag.android.NoopLogger
 import com.bugsnag.android.Session
 import com.bugsnag.android.Telemetry
 import com.bugsnag.android.ThreadSendPolicy
+import com.bugsnag.android.anyCauseMatches
 import com.bugsnag.android.internal.dag.Provider
 import com.bugsnag.android.internal.dag.ValueProvider
-import com.bugsnag.android.safeUnrollCauses
 import java.io.File
 import java.util.regex.Pattern
 
@@ -118,7 +118,7 @@ data class ImmutableConfig(
     @VisibleForTesting
     internal fun shouldDiscardByErrorClass(errorClass: String?): Boolean {
         return if (!errorClass.isNullOrEmpty()) {
-            discardClasses.any { it.matcher(errorClass.toString()).matches() }
+            discardClasses.any { it.matcher(errorClass).matches() }
         } else {
             false
         }
@@ -130,7 +130,7 @@ data class ImmutableConfig(
      */
     @VisibleForTesting
     internal fun shouldDiscardByErrorClass(exc: Throwable): Boolean {
-        return exc.safeUnrollCauses().any { throwable ->
+        return exc.anyCauseMatches { throwable ->
             val errorClass = throwable.javaClass.name
             shouldDiscardByErrorClass(errorClass)
         }

@@ -19,6 +19,9 @@ class ExceptionHandler implements UncaughtExceptionHandler {
     private final StrictModeHandler strictModeHandler = new StrictModeHandler();
     private final Client client;
     private final Logger logger;
+    private boolean enabled = true;
+
+    private OutOfMemoryHandler outOfMemoryHandler = null;
 
     ExceptionHandler(Client client, Logger logger) {
         this.client = client;
@@ -27,17 +30,32 @@ class ExceptionHandler implements UncaughtExceptionHandler {
     }
 
     void install() {
+        enabled = true;
         Thread.setDefaultUncaughtExceptionHandler(this);
     }
 
     void uninstall() {
+        enabled = false;
         Thread.setDefaultUncaughtExceptionHandler(originalHandler);
+    }
+
+    public void setOutOfMemoryHandler(OutOfMemoryHandler outOfMemoryHandler) {
+        this.outOfMemoryHandler = outOfMemoryHandler;
+    }
+
+    public OutOfMemoryHandler getOutOfMemoryHandler() {
+        return outOfMemoryHandler;
     }
 
     @Override
     public void uncaughtException(@NonNull Thread thread, @NonNull Throwable throwable) {
         try {
-            if (client.getConfig().shouldDiscardError(throwable)) {
+            if (!enabled || client.getConfig().shouldDiscardError(throwable)) {
+                return;
+            }
+
+            if (throwable instanceof OutOfMemoryError
+                    && tryHandleOutOfMemory((OutOfMemoryError) throwable)) {
                 return;
             }
 
@@ -84,5 +102,14 @@ class ExceptionHandler implements UncaughtExceptionHandler {
             System.err.printf("Exception in thread \"%s\" ", thread.getName());
             logger.w("Exception", throwable);
         }
+    }
+
+    private boolean tryHandleOutOfMemory(OutOfMemoryError oom) {
+        OutOfMemoryHandler handler = outOfMemoryHandler;
+        if (handler == null) {
+            return false;
+        }
+
+        return handler.onOutOfMemory(oom);
     }
 }

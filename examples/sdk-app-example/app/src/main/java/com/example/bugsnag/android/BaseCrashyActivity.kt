@@ -21,10 +21,12 @@ import okhttp3.internal.notify
 import java.io.IOException
 import java.util.Date
 
-
 open class BaseCrashyActivity : AppCompatActivity() {
 
     companion object {
+        @Volatile
+        private var javaAnrCounter = 0
+
         init {
             System.loadLibrary("entrypoint")
         }
@@ -51,13 +53,18 @@ open class BaseCrashyActivity : AppCompatActivity() {
         }
 
         findViewById<View>(R.id.btn_anr).setOnClickListener {
-            Thread.sleep(10000)
-            showSnackbar()
+            triggerJavaAnr()
         }
 
         findViewById<View>(R.id.btn_cxx_anr).setOnClickListener {
             anrFromCXX()
             showSnackbar()
+        }
+    }
+
+    private fun triggerJavaAnr(): Nothing {
+        while (true) {
+            javaAnrCounter++
         }
     }
 
@@ -171,6 +178,26 @@ open class BaseCrashyActivity : AppCompatActivity() {
         Bugsnag.notify(e) {
             showSnackbar()
             true
+        }
+    }
+
+    /**
+     * Registers a slow breadcrumb callback to help validate breadcrumb callback timing on-device.
+     * The callback is removed after the breadcrumb is emitted so the demo stays isolated.
+     */
+    @Suppress("UNUSED_PARAMETER")
+    fun simulateSlowBreadcrumbCallback(view: View) {
+        val slowBreadcrumbCallback = OnBreadcrumbCallback {
+            Thread.sleep(1_500)
+            true
+        }
+
+        Bugsnag.addOnBreadcrumb(slowBreadcrumbCallback)
+        try {
+            Bugsnag.leaveBreadcrumb("SlowBreadcrumbCallbackDemo")
+            showSnackbar()
+        } finally {
+            Bugsnag.removeOnBreadcrumb(slowBreadcrumbCallback)
         }
     }
 

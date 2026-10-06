@@ -67,6 +67,8 @@ internal class AnrDetailsCollector {
                     if (anrDetails == null) {
                         if (attempts.getAndIncrement() < MAX_ATTEMPTS) {
                             handler.postDelayed(this, INFO_POLL_THRESHOLD_MS)
+                        } else {
+                            client.populateAndNotifyAndroidEvent(event, null)
                         }
                     } else {
                         addErrorStateInfo(event, anrDetails)

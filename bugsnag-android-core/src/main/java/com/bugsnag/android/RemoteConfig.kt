@@ -17,15 +17,15 @@ internal class RemoteConfig(
     val discardRules: List<DiscardRule>
 ) : JsonStream.Streamable {
 
-    override fun toStream(stream: JsonStream) {
-        stream.beginObject()
+    override fun toStream(writer: JsonStream) {
+        writer.beginObject()
         if (configurationTag != null) {
-            stream.name(KEY_CONFIG_TAG).value(configurationTag)
+            writer.name(KEY_CONFIG_TAG).value(configurationTag)
         }
 
-        stream.name(KEY_CONFIG_EXPIRY).value(DateUtils.toIso8601(configurationExpiry))
-        stream.name(KEY_DISCARD_RULES).value(discardRules)
-        stream.endObject()
+        writer.name(KEY_CONFIG_EXPIRY).value(DateUtils.toIso8601(configurationExpiry))
+        writer.name(KEY_DISCARD_RULES).value(discardRules)
+        writer.endObject()
     }
 
     internal companion object {
@@ -94,10 +94,10 @@ internal sealed class DiscardRule : JsonStream.Streamable {
 
     object All : DiscardRule() {
         override fun shouldDiscard(payload: EventPayload): Boolean = true
-        override fun toStream(stream: JsonStream) {
-            stream.beginObject()
-            stream.name(KEY_MATCH_TYPE).value(DISCARD_RULE_ALL)
-            stream.endObject()
+        override fun toStream(writer: JsonStream) {
+            writer.beginObject()
+            writer.name(KEY_MATCH_TYPE).value(DISCARD_RULE_ALL)
+            writer.endObject()
         }
 
         override fun toString(): String = DISCARD_RULE_ALL
@@ -108,10 +108,10 @@ internal sealed class DiscardRule : JsonStream.Streamable {
             return !(payload.event?.isUnhandled ?: true)
         }
 
-        override fun toStream(stream: JsonStream) {
-            stream.beginObject()
-            stream.name(KEY_MATCH_TYPE).value(DISCARD_RULE_ALL_HANDLED)
-            stream.endObject()
+        override fun toStream(writer: JsonStream) {
+            writer.beginObject()
+            writer.name(KEY_MATCH_TYPE).value(DISCARD_RULE_ALL_HANDLED)
+            writer.endObject()
         }
 
         override fun toString(): String = DISCARD_RULE_ALL_HANDLED
@@ -154,16 +154,16 @@ internal sealed class DiscardRule : JsonStream.Streamable {
             return matches.contains(hashString)
         }
 
-        override fun toStream(stream: JsonStream) {
-            stream.beginObject()
-            stream.name(KEY_MATCH_TYPE).value(DISCARD_RULE_HASH)
+        override fun toStream(writer: JsonStream) {
+            writer.beginObject()
+            writer.name(KEY_MATCH_TYPE).value(DISCARD_RULE_HASH)
 
-            stream.name(KEY_HASH).beginObject()
-            stream.name(KEY_PATHS).value(unparsedPaths)
-            stream.name(KEY_MATCHES).value(matches)
-            stream.endObject() // "hash"
+            writer.name(KEY_HASH).beginObject()
+            writer.name(KEY_PATHS).value(unparsedPaths)
+            writer.name(KEY_MATCHES).value(matches)
+            writer.endObject() // "hash"
 
-            stream.endObject()
+            writer.endObject()
         }
 
         override fun toString(): String {

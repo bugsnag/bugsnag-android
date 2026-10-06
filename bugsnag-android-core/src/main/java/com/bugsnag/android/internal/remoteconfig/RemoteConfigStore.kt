@@ -362,9 +362,8 @@ internal class RemoteConfigStore(
     }
 
     private fun isExpired(remoteConfig: RemoteConfig): Boolean {
-        return remoteConfig.configurationExpiry.before(Date())
+        return !remoteConfig.configurationExpiry.after(Date())
     }
-
     private fun deleteConfigFiles() {
         val configFile = File(configDir, configFileName())
         val tempFile = File(configDir, "${configFileName()}.new")

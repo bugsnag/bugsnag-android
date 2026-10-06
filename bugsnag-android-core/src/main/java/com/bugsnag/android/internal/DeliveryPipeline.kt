@@ -2,8 +2,8 @@ package com.bugsnag.android.internal
 
 import com.bugsnag.android.CallbackState
 import com.bugsnag.android.DeliveryStatus
+import com.bugsnag.android.ErrorType
 import com.bugsnag.android.EventPayload
-import com.bugsnag.android.Logger
 import com.bugsnag.android.RemoteConfig
 import com.bugsnag.android.internal.remoteconfig.RemoteConfigState
 import java.util.concurrent.TimeUnit
@@ -13,35 +13,17 @@ internal class DeliveryPipeline(
     val remoteConfigState: RemoteConfigState,
     val config: ImmutableConfig,
 ) {
-    private val logger: Logger get() = config.logger
+    companion object {
+        private const val REMOTE_CONFIG_FETCH_TIMEOUT_SECONDS = 5L
+    }
 
     fun deliverEventPayload(payload: EventPayload): DeliveryStatus? {
-        try {
-            val retain = onSendCallbackState.runOnSendTasks(
-                { payload.event!! },
-                config.logger
-            )
-
-            if (!retain) {
-                return null
-            }
-        } catch (_: Exception) {
-            // most likely the payload could not be decoded, so we continue
+        if (!retainPayload(payload)) {
+            return null
         }
 
-        try {
-            val remoteConfig = getRemoteConfig(payload.isLaunchCrash)
-            if (remoteConfig != null) {
-                val discardRules = remoteConfig.discardRules
-                val applicableDiscardRule = discardRules.firstOrNull { it.shouldDiscard(payload) }
-                if (applicableDiscardRule != null) {
-                    logger.d("Discarding event due to remote discardRule: $applicableDiscardRule")
-                    // discarded events are treated as being delivered, as the server would have discarded them
-                    return DeliveryStatus.DELIVERED
-                }
-            }
-        } catch (_: Exception) {
-            // swallow any RemoteConfig related errors, and favour delivering the payload
+        getDiscardStatus(payload)?.let {
+            return it
         }
 
         val deliveryParams = config.getErrorApiDeliveryParams(payload)
@@ -49,30 +31,59 @@ internal class DeliveryPipeline(
         return delivery.deliver(payload, deliveryParams)
     }
 
-    private fun getRemoteConfig(isLaunchCrash: Boolean): RemoteConfig? {
-        if (isLaunchCrash) {
-            return remoteConfigState.getRemoteConfig(
-                LAUNCH_CRASH_LOAD_TIMEOUT_MS,
-                TimeUnit.MILLISECONDS
-            )
+    private fun retainPayload(payload: EventPayload): Boolean {
+        return try {
+            val event = payload.event
+            if (event == null) {
+                true
+            } else {
+                onSendCallbackState.runOnSendTasks({ event }, config.logger)
+            }
+        } catch (_: Exception) {
+            // most likely the payload could not be decoded, so we continue
+            true
         }
-        // For non-launch crashes, we don't want to block indefinitely.
-        // If a refresh is already in flight during startup, give it a moment to complete so
-        // persisted errors are evaluated against the latest discard rules.
-        return remoteConfigState.getRemoteConfig(
-            NON_LAUNCH_CRASH_LOAD_TIMEOUT_MS,
-            TimeUnit.MILLISECONDS
-        )
     }
 
-    internal companion object {
-        // Launch crashes are already delivered synchronously during startup, so allow a little
-        // longer for Remote Config to be loaded before deciding whether to discard them,
-        // especially when a cached config has just expired and needs to be refreshed.
-        const val LAUNCH_CRASH_LOAD_TIMEOUT_MS = 2000L
+    private fun getDiscardStatus(payload: EventPayload): DeliveryStatus? {
+        return try {
+            val remoteConfig = getRemoteConfig(payload)
+            if (remoteConfig == null) {
+                return null
+            }
 
-        // Non-launch errors should still proceed quickly, but a short wait helps startup flushes
-        // reuse an in-flight remote-config request instead of racing stale discard rules.
-        const val NON_LAUNCH_CRASH_LOAD_TIMEOUT_MS = 1000L
+            val applicableDiscardRule = remoteConfig.discardRules.firstOrNull {
+                it.shouldDiscard(payload)
+            }
+
+            if (applicableDiscardRule != null) {
+                // discarded events are treated as being delivered, as the server would have discarded them
+                DeliveryStatus.DELIVERED
+            } else {
+                null
+            }
+        } catch (_: Exception) {
+            // swallow any RemoteConfig related errors, and favour delivering the payload
+            null
+        }
+    }
+
+    private fun isTimeSensitive(payload: EventPayload): Boolean {
+        // Fast paths that avoid full JSON parsing where possible.
+        // C errors and launch crashes are always time-sensitive.
+        return payload.isLaunchCrash || payload.getErrorTypes().contains(ErrorType.C)
+    }
+
+    private fun getRemoteConfig(payload: EventPayload): RemoteConfig? {
+        // Delivery should not block on remote-config downloads, as these reports can be
+        // time-sensitive (for example, app hangs and ANRs). Use the latest cached snapshot and
+        // let the background scheduler refresh it independently.
+        if (isTimeSensitive(payload)) {
+            return remoteConfigState.peekRemoteConfig()
+        }
+
+        // For non-time-sensitive events, we can wait briefly for a fresh config
+        // if the cached one is expired or missing.
+        return remoteConfigState.getRemoteConfig(REMOTE_CONFIG_FETCH_TIMEOUT_SECONDS, TimeUnit.SECONDS)
     }
 }

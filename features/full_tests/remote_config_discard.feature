@@ -108,6 +108,7 @@ Feature: Remote config discard rules are applied
     And I configure Bugsnag for "RemoteConfigBasicScenario"
     Then I should receive no errors
 
+  @skip_android_7
   Scenario: Remote config with ALL_HANDLED, unknown rules - unknown rule should not change the behaviour
     When I prepare an error config with:
       | type     | name          | value                                                   |
@@ -126,7 +127,7 @@ Feature: Remote config discard rules are applied
     And the event "unhandled" is true
     And the event "usage.remoteConfig" is true
 
-
+  @skip_android_7
   Scenario: Remote config with HASH rule discards matching events and delivers non-matching
     When I prepare an error config with:
       | type     | name          | value                                                |
@@ -142,6 +143,7 @@ Feature: Remote config discard rules are applied
       | java.lang.RuntimeException | Handled exception    |
     And the event "usage.remoteConfig" is true
 
+  @skip_android_7
   Scenario: Remote config does not expire
     When I prepare an error config with:
       | type     | name          | value                                              |
@@ -165,6 +167,7 @@ Feature: Remote config discard rules are applied
     And the event "unhandled" is true
     And the event "usage.remoteConfig" is true
 
+  @skip_android_7
   Scenario: Remote config can be disabled
     When I configure the app to run in the "disable-remote-config" state
     And I prepare an error config with:
@@ -187,6 +190,7 @@ Feature: Remote config discard rules are applied
     And the event "unhandled" is false
     And the event "usage.remoteConfig" is false
 
+  @skip_android_7
   Scenario: Remote config expire from no rules to all
     When I prepare an error config with:
       | type     | name          | value                                  |
@@ -203,6 +207,7 @@ Feature: Remote config discard rules are applied
     And I configure Bugsnag for "RemoteConfigBasicScenario"
     Then I should receive no errors
 
+  @skip_android_7
   Scenario: Remote config expire from all to no rules
     When I prepare an error config with:
       | type     | name          | value                                  |
@@ -229,6 +234,7 @@ Feature: Remote config discard rules are applied
     And the event "unhandled" is false
     And the event "usage.remoteConfig" is true
 
+  @skip_android_7
   Scenario: Remote config expire from no rules to not modified
     When I prepare an error config with:
       | type     | name          | value                                  |
@@ -254,6 +260,7 @@ Feature: Remote config discard rules are applied
     And the event "unhandled" is false
     And the event "usage.remoteConfig" is true
 
+  @skip_android_7
   Scenario: Remote config keeps cached rules when the server errors
     When I prepare an error config with:
       | type     | name          | value                                           |

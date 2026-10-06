@@ -17,6 +17,7 @@
   <string name="crash_user_details">Add User Details</string>
   <string name="crash_with_metadata">Send additional Metadata</string>
   <string name="crash_with_breadcrumbs">Attach custom Breadcrumbs</string>
+  <string name="simulate_slow_breadcrumb_callback">Simulate slow breadcrumb callback</string>
   <string name="crash_custom_report">Crash with Callback</string>
 
   <string name="documentation">Documentation</string>

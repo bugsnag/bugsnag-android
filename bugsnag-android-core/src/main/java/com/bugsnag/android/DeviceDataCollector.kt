@@ -12,6 +12,7 @@ import android.os.BatteryManager
 import android.os.Build
 import android.provider.Settings
 import com.bugsnag.android.internal.BackgroundTaskService
+import com.bugsnag.android.internal.RootDetectionProvider
 import com.bugsnag.android.internal.TaskType
 import com.bugsnag.android.internal.dag.Provider
 import java.io.File
@@ -115,14 +116,21 @@ internal class DeviceDataCollector(
         map["dpi"] = dpi
         map["emulator"] = emulator
         map["screenResolution"] = screenResolution
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            map["securityPatch"] = Build.VERSION.SECURITY_PATCH
+        }
         return map
     }
 
-    private fun checkIsRooted(): Boolean {
+    private fun checkIsRooted(): Boolean? {
+        val rooted = rootedFuture ?: return null
+        if (rooted is RootDetectionProvider) {
+            return rooted.getRootDetectionResult()
+        }
         return try {
-            rootedFuture != null && rootedFuture.get()
-        } catch (exc: Exception) {
-            false
+            if (rooted.isComplete) rooted.get() else null
+        } catch (_: Exception) {
+            null
         }
     }
 

@@ -1,0 +1,42 @@
+public abstract interface class com/bugsnag/android/http/HttpInstrumentationBuilder {
+	public abstract fun addHttpErrorCode (I)Lcom/bugsnag/android/http/HttpInstrumentationBuilder;
+	public abstract fun addHttpErrorCodes (II)Lcom/bugsnag/android/http/HttpInstrumentationBuilder;
+	public abstract fun addRequestCallback (Lcom/bugsnag/android/http/HttpRequestCallback;)Lcom/bugsnag/android/http/HttpInstrumentationBuilder;
+	public abstract fun addResponseCallback (Lcom/bugsnag/android/http/HttpResponseCallback;)Lcom/bugsnag/android/http/HttpInstrumentationBuilder;
+	public abstract fun logBreadcrumbs ()Lcom/bugsnag/android/http/HttpInstrumentationBuilder;
+	public abstract fun logBreadcrumbs (Z)Lcom/bugsnag/android/http/HttpInstrumentationBuilder;
+	public abstract fun maxRequestBodyCapture (J)Lcom/bugsnag/android/http/HttpInstrumentationBuilder;
+	public abstract fun maxResponseBodyCapture (J)Lcom/bugsnag/android/http/HttpInstrumentationBuilder;
+	public abstract fun removeHttpErrorCode (I)Lcom/bugsnag/android/http/HttpInstrumentationBuilder;
+	public abstract fun removeHttpErrorCodes (II)Lcom/bugsnag/android/http/HttpInstrumentationBuilder;
+}
+
+public abstract interface class com/bugsnag/android/http/HttpInstrumentedRequest {
+	public abstract fun getReportedRequestBody ()Ljava/lang/String;
+	public abstract fun getReportedUrl ()Ljava/lang/String;
+	public abstract fun getRequest ()Ljava/lang/Object;
+	public abstract fun setReportedRequestBody (Ljava/lang/String;)V
+	public abstract fun setReportedUrl (Ljava/lang/String;)V
+}
+
+public abstract interface class com/bugsnag/android/http/HttpInstrumentedResponse {
+	public abstract fun getErrorCallback ()Lcom/bugsnag/android/OnErrorCallback;
+	public abstract fun getReportedResponseBody ()Ljava/lang/String;
+	public abstract fun getRequest ()Ljava/lang/Object;
+	public abstract fun getResponse ()Ljava/lang/Object;
+	public abstract fun isBreadcrumbReported ()Z
+	public abstract fun isErrorReported ()Z
+	public abstract fun setBreadcrumbReported (Z)V
+	public abstract fun setErrorCallback (Lcom/bugsnag/android/OnErrorCallback;)V
+	public abstract fun setErrorReported (Z)V
+	public abstract fun setReportedResponseBody (Ljava/lang/String;)V
+}
+
+public abstract interface class com/bugsnag/android/http/HttpRequestCallback {
+	public abstract fun onHttpRequest (Lcom/bugsnag/android/http/HttpInstrumentedRequest;)V
+}
+
+public abstract interface class com/bugsnag/android/http/HttpResponseCallback {
+	public abstract fun onHttpResponse (Lcom/bugsnag/android/http/HttpInstrumentedResponse;)V
+}
+

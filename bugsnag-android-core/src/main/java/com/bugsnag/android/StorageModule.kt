@@ -38,13 +38,20 @@ internal class StorageModule(
         )
     }
 
+    val deviceId = deviceIdStore.map {
+        it.load()
+    }
+
     val userStore = provider {
         UserStore(
             immutableConfig.persistUser,
             bugsnagDir,
-            deviceIdStore.map { it.load() },
+            deviceId,
             sharedPrefMigrator = sharedPrefMigrator,
-            logger = immutableConfig.logger
+            services = UserStoreServices(
+                logger = immutableConfig.logger,
+                bgTaskService = bgTaskService
+            )
         )
     }
 
@@ -63,7 +70,7 @@ internal class StorageModule(
     }
 
     val remoteConfigState = provider {
-        val remoteConfig = RemoteConfigState(
+        RemoteConfigState(
             RemoteConfigStore(
                 File(bugsnagDir.get(), "config"),
                 immutableConfig.versionCode ?: 0,
@@ -73,9 +80,6 @@ internal class StorageModule(
             notifier,
             bgTaskService
         )
-
-        remoteConfig.scheduleDownloadIfRequired()
-        return@provider remoteConfig
     }
 
     val lastRunInfo = lastRunInfoStore.map { lastRunInfoStore ->

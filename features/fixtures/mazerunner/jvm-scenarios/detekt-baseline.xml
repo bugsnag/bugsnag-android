@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <SmellBaseline>
-  <ManuallySuppressedIssues></ManuallySuppressedIssues>
+  <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>LongParameterList:BugsnagConfig.kt$( apiKey: String, notify: String, sessions: String, remoteConfig: String?, mazerunnerHttpClient: MazerunnerHttpClient, logFilter: (msg: String) -&gt; Boolean )</ID>
     <ID>MagicNumber:AnrHelper.kt$1000</ID>
@@ -18,6 +18,9 @@
     <ID>MagicNumber:LoadConfigurationKotlinScenario.kt$LoadConfigurationKotlinScenario$10000</ID>
     <ID>MagicNumber:LoadConfigurationKotlinScenario.kt$LoadConfigurationKotlinScenario$98</ID>
     <ID>MagicNumber:ManualSessionSmokeScenario.kt$ManualSessionSmokeScenario$3</ID>
+    <ID>MagicNumber:OkHttpInstrumentationScenario.kt$OkHttpInstrumentationScenario$200</ID>
+    <ID>MagicNumber:OkHttpInstrumentationScenario.kt$OkHttpInstrumentationScenario$400</ID>
+    <ID>MagicNumber:OkHttpInstrumentationScenario.kt$OkHttpInstrumentationScenario$599</ID>
     <ID>MagicNumber:RemoteConfigBasicScenario.kt$RemoteConfigBasicScenario$3000</ID>
     <ID>MagicNumber:Scenario.kt$Scenario$100</ID>
     <ID>MagicNumber:Scenario.kt$Scenario$1000</ID>

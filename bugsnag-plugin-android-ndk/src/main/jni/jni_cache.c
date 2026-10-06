@@ -206,6 +206,22 @@ bool bsg_jni_cache_init(JNIEnv *env) {
   CACHE_STATIC_METHOD(OpaqueValue, OpaqueValue_makeSafe, "makeSafe",
                       "(Ljava/lang/Object;)Ljava/lang/Object;");
 
+  CACHE_CLASS(Throwable, "java/lang/Throwable");
+  CACHE_METHOD(Throwable, Throwable_getMessage, "getMessage",
+               "()Ljava/lang/String;");
+  CACHE_METHOD(Throwable, Throwable_getStackTrace, "getStackTrace",
+               "()[Ljava/lang/StackTraceElement;");
+
+  CACHE_CLASS(StackTraceElement, "java/lang/StackTraceElement");
+  CACHE_METHOD(StackTraceElement, StackTraceElement_getFileName, "getFileName",
+               "()Ljava/lang/String;");
+  CACHE_METHOD(StackTraceElement, StackTraceElement_getClassName,
+               "getClassName", "()Ljava/lang/String;");
+  CACHE_METHOD(StackTraceElement, StackTraceElement_getMethodName,
+               "getMethodName", "()Ljava/lang/String;");
+  CACHE_METHOD(StackTraceElement, StackTraceElement_getLineNumber,
+               "getLineNumber", "()I");
+
   CACHE_ENUM_CONSTANT(ErrorType_C, "com/bugsnag/android/ErrorType", "C");
 
   CACHE_CLASS(NativeBridge, "com/bugsnag/android/ndk/NativeBridge");

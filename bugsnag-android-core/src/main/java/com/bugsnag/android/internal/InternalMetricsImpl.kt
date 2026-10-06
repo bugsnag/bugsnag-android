@@ -2,7 +2,7 @@ package com.bugsnag.android.internal
 
 import com.bugsnag.android.NdkPluginCaller
 
-class InternalMetricsImpl internal constructor(
+class InternalMetricsImpl(
     source: Map<String, Any>? = null
 ) : InternalMetrics {
     private val configDifferences: MutableMap<String, Any>

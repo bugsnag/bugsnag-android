@@ -95,7 +95,7 @@ internal class SharedPrefMigratorTest {
         `when`(editor.clear()).thenReturn(editor)
         prefMigrator.deleteLegacyPrefs()
         verify(editor, times(1)).clear()
-        verify(editor, times(1)).commit()
+        verify(editor, times(1)).apply()
     }
 
     @Test

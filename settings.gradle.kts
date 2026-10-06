@@ -20,10 +20,12 @@ gradleEnterprise {
 include(
     ":bugsnag-android",
     ":bugsnag-android-core",
+    ":bugsnag-android-http-api",
     ":bugsnag-plugin-android-anr",
     ":bugsnag-plugin-android-exitinfo",
     ":bugsnag-plugin-android-ndk",
     ":bugsnag-plugin-react-native",
+    ":bugsnag-plugin-android-apphang",
     ":bugsnag-plugin-android-okhttp",
     ":bugsnag-benchmarks"
 )

@@ -107,8 +107,8 @@ internal class ThreadTestStreamable(
     val writeCallback: () -> Unit = {}
 ) : JsonStream.Streamable {
 
-    override fun toStream(stream: JsonStream) {
-        with(stream) {
+    override fun toStream(writer: JsonStream) {
+        with(writer) {
             beginObject()
             name("test")
             writeCallback()
@@ -134,7 +134,7 @@ internal class ThreadTestStreamable(
 }
 
 internal class CrashyStreamable : JsonStream.Streamable {
-    override fun toStream(stream: JsonStream) = throw IllegalStateException()
+    override fun toStream(writer: JsonStream) = throw IllegalStateException()
 
     companion object : JsonReadable<CrashyStreamable> {
         override fun fromReader(reader: JsonReader) = throw IllegalStateException()

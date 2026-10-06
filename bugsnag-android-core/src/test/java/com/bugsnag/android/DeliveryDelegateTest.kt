@@ -5,7 +5,6 @@ import com.bugsnag.android.internal.BackgroundTaskService
 import com.bugsnag.android.internal.DeliveryPipeline
 import com.bugsnag.android.internal.StateObserver
 import com.bugsnag.android.internal.dag.ValueProvider
-import com.bugsnag.android.internal.remoteconfig.RemoteConfigState
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -25,7 +24,7 @@ internal class DeliveryDelegateTest {
     lateinit var eventStore: EventStore
 
     @Mock
-    lateinit var remoteConfigState: RemoteConfigState
+    lateinit var deliveryPipeline: DeliveryPipeline
 
     @get:Rule
     val tempDir = TemporaryFolder()
@@ -33,7 +32,6 @@ internal class DeliveryDelegateTest {
     private val apiKey = "BUGSNAG_API_KEY"
     private val notifier = Notifier()
     val config = generateImmutableConfig()
-    val callbackState = CallbackState()
     private val logger = InterceptingLogger()
     lateinit var deliveryDelegate: DeliveryDelegate
     val handledState = SeverityReason.newInstance(
@@ -49,11 +47,7 @@ internal class DeliveryDelegateTest {
                 logger,
                 ValueProvider(eventStore),
                 config,
-                DeliveryPipeline(
-                    callbackState,
-                    remoteConfigState,
-                    config
-                ),
+                deliveryPipeline,
                 notifier,
                 backgroundTaskService
             )
@@ -79,6 +73,8 @@ internal class DeliveryDelegateTest {
         assertEquals(0, event.session!!.handledCount)
 
         assertEquals("BUGSNAG_API_KEY", event.session!!.apiKey)
+
+        assertEquals(DeliveryStrategy.STORE_ONLY, event.deliveryStrategy)
     }
 
     @Test
@@ -104,6 +100,8 @@ internal class DeliveryDelegateTest {
         // check session count incremented
         assertEquals(0, event.session!!.unhandledCount)
         assertEquals(1, event.session!!.handledCount)
+
+        assertEquals(DeliveryStrategy.SEND_IMMEDIATELY, event.deliveryStrategy)
     }
 
     @Test
@@ -124,12 +122,16 @@ internal class DeliveryDelegateTest {
 
         // verify no payload was sent for an Event with no errors
         assertNull(msg)
+
+        assertEquals(DeliveryStrategy.SEND_IMMEDIATELY, event.deliveryStrategy)
     }
 
     @Test
     fun deliverReport() {
         val eventPayload = EventPayload("api-key", event, null, notifier, config)
-        val status = deliveryDelegate.deliverPayloadInternal(eventPayload)
+        org.mockito.Mockito.`when`(deliveryPipeline.deliverEventPayload(eventPayload))
+            .thenReturn(DeliveryStatus.DELIVERED)
+        val status = deliveryDelegate.deliverPayloadInternal(eventPayload, event)
         assertEquals(DeliveryStatus.DELIVERED, status)
         assertEquals("Sent 1 new event to Bugsnag", logger.msg)
     }

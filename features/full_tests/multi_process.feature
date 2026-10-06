@@ -32,8 +32,6 @@ Feature: Reporting errors in multi process apps
     And the error payload field "events.0.user.name" equals "MultiProcessHandledExceptionScenario"
     And the error payload field "events.0.user.email" equals "foreground@example.com"
 
-  # Skipped pending PLAT-12145
-  @skip
   Scenario: Unhandled JVM error
     And I configure the app to run in the "main-activity" state
     When I run "MultiProcessUnhandledExceptionScenario" and relaunch the crashed app

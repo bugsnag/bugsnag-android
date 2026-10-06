@@ -50,7 +50,8 @@ open class App internal constructor(
     var versionCode: Number?
 ) : JsonStream.Streamable {
 
-    private var buildUuidProvider: Provider<String?>? = buildUuid
+    @get:JvmName("getBuildUuidProvider\$internal")
+    internal var buildUuidProvider: Provider<String?>? = buildUuid
 
     var buildUuid: String? = null
         get() = field ?: buildUuidProvider?.getOrNull()

@@ -1,7 +1,5 @@
 package com.bugsnag.android;
 
-import static com.bugsnag.android.SeverityReason.REASON_PROMISE_REJECTION;
-
 import com.bugsnag.android.internal.BackgroundTaskService;
 import com.bugsnag.android.internal.DeliveryPipeline;
 import com.bugsnag.android.internal.ImmutableConfig;
@@ -42,7 +40,6 @@ class DeliveryDelegate extends BaseObservable {
     }
 
     void deliver(@NonNull Event event) {
-        logger.d("DeliveryDelegate#deliver() - event being stored/delivered by Client");
         Session session = event.getSession();
 
         if (session != null) {
@@ -55,45 +52,48 @@ class DeliveryDelegate extends BaseObservable {
             }
         }
 
-        if (event.getImpl().getOriginalUnhandled()) {
-            // should only send unhandled errors if they don't terminate the process (i.e. ANRs)
-            String severityReasonType = event.getImpl().getSeverityReasonType();
-            boolean promiseRejection = REASON_PROMISE_REJECTION.equals(severityReasonType);
-            boolean anr = event.getImpl().isAnr(event);
-            if (anr || promiseRejection) {
-                cacheEvent(event, true);
-            } else if (immutableConfig.getAttemptDeliveryOnCrash()) {
+        switch (event.getDeliveryStrategy()) {
+            case STORE_AND_SEND:
                 cacheAndSendSynchronously(event);
-            } else {
+                break;
+            case STORE_ONLY:
                 cacheEvent(event, false);
-            }
-        } else {
-            // Build the eventPayload
-            String apiKey = event.getApiKey();
-            EventPayload eventPayload = new EventPayload(apiKey, event, notifier, immutableConfig);
-            deliverPayloadAsync(eventPayload);
+                break;
+            case SEND_IMMEDIATELY:
+                String apiKey = event.getApiKey();
+                EventPayload eventPayload = new EventPayload(
+                        apiKey, event, notifier, immutableConfig);
+                deliverPayloadAsync(event, eventPayload);
+                break;
+            case STORE_AND_FLUSH:
+            default:
+                cacheEvent(event, true);
+                break;
         }
     }
 
-    private void deliverPayloadAsync(final EventPayload eventPayload) {
+    private void deliverPayloadAsync(@NonNull Event event, EventPayload eventPayload) {
+        final EventPayload finalEventPayload = eventPayload;
+        final Event finalEvent = event;
+
         // Attempt to send the eventPayload in the background
         try {
             backgroundTaskService.submitTask(TaskType.ERROR_REQUEST, new Runnable() {
                 @Override
                 public void run() {
-                    deliverPayloadInternal(eventPayload);
+                    deliverPayloadInternal(finalEventPayload, finalEvent);
                 }
             });
         } catch (RejectedExecutionException exception) {
-            cacheEvent(eventPayload.getEvent(), false);
+            cacheEvent(event, false);
             logger.w("Exceeded max queue count, saving to disk to send later");
         }
     }
 
     @VisibleForTesting
-    DeliveryStatus deliverPayloadInternal(@NonNull EventPayload payload) {
-        logger.d("DeliveryDelegate#deliverPayloadInternal() - attempting event delivery");
+    DeliveryStatus deliverPayloadInternal(@NonNull EventPayload payload, @NonNull Event event) {
         DeliveryStatus deliveryStatus = deliveryPipeline.deliverEventPayload(payload);
+
         if (deliveryStatus == null) {
             return null;
         }
@@ -105,7 +105,7 @@ class DeliveryDelegate extends BaseObservable {
             case UNDELIVERED:
                 logger.w("Could not send event(s) to Bugsnag,"
                         + " saving to disk to send later");
-                cacheEvent(payload.getEvent(), false);
+                cacheEvent(event, false);
                 break;
             case FAILURE:
                 logger.w("Problem sending event to Bugsnag");

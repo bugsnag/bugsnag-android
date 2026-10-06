@@ -67,6 +67,7 @@ internal class NdkPlugin : Plugin {
             nativeBridge?.let { bridge ->
                 client?.removeObserver(bridge)
             }
+            nativeBridge?.shutdown()
         }
     }
 

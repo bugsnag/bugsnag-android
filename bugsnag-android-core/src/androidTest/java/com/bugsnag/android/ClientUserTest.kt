@@ -32,7 +32,9 @@ class ClientUserTest {
             .remove("user.email")
             .remove("user.name")
             .commit()
-        client.close()
+        if (this::client.isInitialized) {
+            client.close()
+        }
     }
 
     private fun getSharedPrefs() = context.getSharedPreferences(
@@ -76,6 +78,7 @@ class ClientUserTest {
         config.persistUser = true
         client = Client(context, config)
         client.setUser(USER_ID, USER_EMAIL, USER_NAME)
+        client.close()
 
         // Check that the user was persisted
         val file = File(client.config.persistenceDirectory.value, "bugsnag/user-info")

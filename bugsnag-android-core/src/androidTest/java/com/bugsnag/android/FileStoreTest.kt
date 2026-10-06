@@ -42,7 +42,7 @@ class CustomDelegate : FileStore.Delegate {
 }
 
 class CustomStreamable(private val exc: Throwable) : JsonStream.Streamable {
-    override fun toStream(stream: JsonStream) = throw exc
+    override fun toStream(writer: JsonStream) = throw exc
 }
 
 internal class CustomFileStore(

@@ -64,6 +64,7 @@ android {
 dependencies {
     api(libs.bundles.common.api)
     add("api", project(":bugsnag-android-core"))
+    add("api", project(":bugsnag-android-http-api"))
 
     add("compileOnly", "com.squareup.okhttp3:okhttp:4.9.1") {
         exclude(group = "org.jetbrains.kotlin")
