@@ -242,7 +242,7 @@ class RemoteConfigRequestTest {
     }
 
     @Test
-    fun testParseRemoteConfig_WithZeroMaxAgeUsesDefaultExpiry() {
+    fun testParseRemoteConfig_WithZeroMaxAgeSetsImmediateExpiry() {
         val jsonResponse = """{"discardRules": []}"""
         mockConnectionWithJsonResponse(jsonResponse, "test-tag", "max-age=0")
 
@@ -251,7 +251,7 @@ class RemoteConfigRequestTest {
         assertNotNull(result)
         assertExpiryWithinTolerance(
             result!!.configurationExpiry.time,
-            RemoteConfigRequest.DEFAULT_CONFIG_EXPIRY_TIME
+            0L
         )
     }
 

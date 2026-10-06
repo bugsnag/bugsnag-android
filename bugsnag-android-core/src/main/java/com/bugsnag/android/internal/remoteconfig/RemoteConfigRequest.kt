@@ -205,8 +205,8 @@ internal class RemoteConfigRequest(
         val maxAgeSeconds = maxAgeMatcher.groupValues.getOrNull(1)?.toLongOrNull()
             ?: return defaultConfigExpiry("invalid max-age value in Cache-Control header '$cacheControl'")
 
-        if (maxAgeSeconds <= 0L) {
-            return defaultConfigExpiry("non-positive max-age value in Cache-Control header '$cacheControl'")
+        if (maxAgeSeconds < 0L) {
+            return defaultConfigExpiry("negative max-age value in Cache-Control header '$cacheControl'")
         }
 
         val now = System.currentTimeMillis()
