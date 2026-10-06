@@ -139,7 +139,7 @@ internal class NativeBridge(
 
             NotifyHandled -> addHandledEvent()
             NotifyUnhandled -> addUnhandledEvent()
-            PauseSession -> pausedSession()
+            PauseSession -> nativeStateWorker.enqueue(::pausedSession)
             is StartSession -> nativeStateWorker.enqueue {
                 startedSession(
                     event.id,

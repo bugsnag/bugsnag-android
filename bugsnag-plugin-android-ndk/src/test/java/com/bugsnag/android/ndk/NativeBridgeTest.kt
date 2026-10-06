@@ -73,10 +73,11 @@ internal class NativeBridgeTest {
         forceInstalled(bridge)
 
         bridge.onStateChange(StateEvent.StartSession("id", "started-at", 1, 2))
+        bridge.onStateChange(StateEvent.PauseSession)
         bridge.onStateChange(StateEvent.UpdateMemoryTrimEvent(true, 80, "Complete"))
         bridge.shutdown()
 
-        assertEquals(2, stateWorker.enqueueCalls.get())
+        assertEquals(3, stateWorker.enqueueCalls.get())
         assertEquals(1, stateWorker.shutdownCalls.get())
     }
 
