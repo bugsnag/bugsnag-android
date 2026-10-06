@@ -12,6 +12,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.mockConstruction
+import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
 import java.io.ByteArrayInputStream
@@ -570,6 +571,10 @@ class RemoteConfigRequestTest {
             }
         }.use {
             createRequest(existingConfig).requestConfig()
+        }.also {
+            verify(mockConnection).setConnectTimeout(RemoteConfigRequest.REQUEST_TIMEOUT_MS)
+            verify(mockConnection).setReadTimeout(RemoteConfigRequest.REQUEST_TIMEOUT_MS)
+            verify(mockConnection).disconnect()
         }
     }
 

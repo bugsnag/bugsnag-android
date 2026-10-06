@@ -9,6 +9,7 @@ import com.bugsnag.android.internal.HEADER_BUGSNAG_API_KEY
 import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.JsonCollectionParser
 import com.bugsnag.android.internal.JsonCollectionParser.JsonParseException
+import com.bugsnag.android.internal.JsonHelper
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
@@ -69,43 +70,49 @@ internal class RemoteConfigRequest(
         val connection = url.openConnection() as HttpURLConnection
         connection.doInput = true
         connection.doOutput = false
+        connection.connectTimeout = REQUEST_TIMEOUT_MS
+        connection.readTimeout = REQUEST_TIMEOUT_MS
 
-        // Set required headers
-        connection.setRequestProperty(HEADER_BUGSNAG_API_KEY, apiKey)
-        connection.setRequestProperty(HEADER_BUGSNAG_NOTIFIER_NAME, notifier.name)
-        connection.setRequestProperty(HEADER_BUGSNAG_NOTIFIER_VERSION, notifier.version)
+        try {
+            // Set required headers
+            connection.setRequestProperty(HEADER_BUGSNAG_API_KEY, apiKey)
+            connection.setRequestProperty(HEADER_BUGSNAG_NOTIFIER_NAME, notifier.name)
+            connection.setRequestProperty(HEADER_BUGSNAG_NOTIFIER_VERSION, notifier.version)
 
-        if (remoteConfig?.configurationTag != null) {
-            connection.setRequestProperty(HEADER_IF_NONE_MATCH, remoteConfig.configurationTag)
-            logger.d("Sending remote config request with If-None-Match=${remoteConfig.configurationTag}")
-        } else {
-            logger.d("Sending remote config request without If-None-Match header")
-        }
-
-        val responseCode = connection.responseCode
-        logger.i(
-            "Remote config response received code=$responseCode message=${connection.responseMessage} " +
-                "etag=${connection.getHeaderField(HEADER_ETAG)} " +
-                "cacheControl=${connection.getHeaderField(HEADER_CACHE_CONTROL)} " +
-                "contentLength=${connection.contentLength}"
-        )
-        return when (responseCode) {
-            HttpURLConnection.HTTP_OK -> parseRemoteConfig(connection)
-            HttpURLConnection.HTTP_NOT_MODIFIED -> {
-                val expiryDate = configExpiryDate(connection)
-                logger.i("Remote config not modified; refreshing cached config expiry to ${expiryDate.time}")
-                renewExistingConfig(expiryDate, connection.getHeaderField(HEADER_ETAG))
+            if (remoteConfig?.configurationTag != null) {
+                connection.setRequestProperty(HEADER_IF_NONE_MATCH, remoteConfig.configurationTag)
+                logger.d("Sending remote config request with If-None-Match=${remoteConfig.configurationTag}")
+            } else {
+                logger.d("Sending remote config request without If-None-Match header")
             }
 
-            HttpURLConnection.HTTP_BAD_REQUEST -> {
-                logger.w("Remote config request returned HTTP 400; returning null to start cooldown")
-                null
-            }
+            val responseCode = connection.responseCode
+            logger.i(
+                "Remote config response received code=$responseCode message=${connection.responseMessage} " +
+                    "etag=${connection.getHeaderField(HEADER_ETAG)} " +
+                    "cacheControl=${connection.getHeaderField(HEADER_CACHE_CONTROL)} " +
+                    "contentLength=${connection.contentLength}"
+            )
+            return when (responseCode) {
+                HttpURLConnection.HTTP_OK -> parseRemoteConfig(connection)
+                HttpURLConnection.HTTP_NOT_MODIFIED -> {
+                    val expiryDate = configExpiryDate(connection)
+                    logger.i("Remote config not modified; refreshing cached config expiry to ${expiryDate.time}")
+                    renewExistingConfig(expiryDate, connection.getHeaderField(HEADER_ETAG))
+                }
 
-            else -> {
-                logger.w("Remote config request returned unexpected response code $responseCode")
-                null
+                HttpURLConnection.HTTP_BAD_REQUEST -> {
+                    logger.w("Remote config request returned HTTP 400; returning null to start cooldown")
+                    null
+                }
+
+                else -> {
+                    logger.w("Remote config request returned unexpected response code $responseCode")
+                    null
+                }
             }
+        } finally {
+            connection.disconnect()
         }
     }
 
@@ -158,10 +165,13 @@ internal class RemoteConfigRequest(
             return RemoteConfig(tag, expiryDate, emptyList())
         }
 
-        val inputStream = connection.inputStream
+        val json = try {
+            connection.inputStream.use { inputStream ->
+                val parser = JsonCollectionParser(inputStream)
 
-        val parser = try {
-            JsonCollectionParser(inputStream)
+                @Suppress("UNCHECKED_CAST")
+                parser.parse() as? LinkedHashMap<String, Any?>
+            }
         } catch (_: JsonParseException) {
             // these can happen when the response is empty, but the Content-Length was not set
             logger.i(
@@ -171,10 +181,9 @@ internal class RemoteConfigRequest(
             return RemoteConfig(tag, expiryDate, emptyList())
         }
 
-        @Suppress("UNCHECKED_CAST")
-        val json = parser.parse()
-            as? LinkedHashMap<String, Any?>
-            ?: return null
+        if (json == null) {
+            return null
+        }
 
         val remoteConfig = RemoteConfig.fromJsonMap(tag, expiryDate, json)
         logger.d("Fetched RemoteConfig JSON: ${String(JsonHelper.serialize(remoteConfig), Charsets.UTF_8)}")
@@ -265,6 +274,7 @@ internal class RemoteConfigRequest(
         const val DEFAULT_CONFIG_UPDATE_TOLERANCE = 2 * 60 * 60 * SECONDS_MS
         const val DEFAULT_CONFIG_EXPIRY_TIME =
             DEFAULT_CONFIG_UPDATE_INTERVAL + DEFAULT_CONFIG_UPDATE_TOLERANCE
+        const val REQUEST_TIMEOUT_MS = 5_000
         val maxAgeRegex = Regex(""".*max-age\s*=\s*(\d+).*""")
     }
 }
