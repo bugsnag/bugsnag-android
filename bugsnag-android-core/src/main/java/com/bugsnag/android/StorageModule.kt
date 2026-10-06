@@ -73,7 +73,8 @@ internal class StorageModule(
         RemoteConfigState(
             RemoteConfigStore(
                 File(bugsnagDir.get(), "config"),
-                immutableConfig.versionCode ?: 0
+                immutableConfig.versionCode ?: 0,
+                immutableConfig.logger
             ),
             immutableConfig,
             notifier,

@@ -11,6 +11,9 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import java.io.File
 import java.util.Date
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 class RemoteConfigStoreTest {
 
@@ -42,6 +45,7 @@ class RemoteConfigStoreTest {
         val config = createValidRemoteConfig("tag1", futureDate(1000))
 
         store.store(config)
+        store.setCooldownUntil(System.currentTimeMillis() + 60_000)
         store.clear()
 
         assertNull(store.current())
@@ -51,6 +55,86 @@ class RemoteConfigStoreTest {
         val tempFile = File(tempDir.root, "core-$versionCode.json.new")
         assertFalse(configFile.exists())
         assertFalse(tempFile.exists())
+        assertEquals(0L, store.cooldownUntil())
+    }
+
+    @Test
+    fun cooldownMarkerPersistsAndIsCleared() {
+        val cooldownUntil = System.currentTimeMillis() + 60_000
+        store.setCooldownUntil(cooldownUntil)
+
+        assertEquals(cooldownUntil, store.cooldownUntil())
+
+        val reloadedStore = RemoteConfigStore(tempDir.root, versionCode)
+        assertEquals(cooldownUntil, reloadedStore.cooldownUntil())
+
+        reloadedStore.clearCooldown()
+        assertEquals(0L, reloadedStore.cooldownUntil())
+    }
+
+    @Test
+    fun cooldownRemainsActiveInMemoryWhenMarkerCannotBeWritten() {
+        val invalidConfigDir = File(tempDir.root, "not-a-directory").apply { createNewFile() }
+        val storeWithUnwritableMarker = RemoteConfigStore(invalidConfigDir, versionCode)
+        val cooldownUntil = System.currentTimeMillis() + 60_000
+
+        storeWithUnwritableMarker.setCooldownUntil(cooldownUntil)
+
+        assertEquals(cooldownUntil, storeWithUnwritableMarker.cooldownUntil())
+    }
+
+    @Test
+    fun unreadableCooldownMarkerIsIgnored() {
+        File(tempDir.root, "core-$versionCode.json.cooldown").mkdirs()
+
+        assertEquals(0L, store.cooldownUntil())
+    }
+
+    @Test
+    fun crossProcessLockReloadsConfigAndCooldownPersistedByAnotherStore() {
+        val config = createValidRemoteConfig("tag1", futureDate(60_000))
+        val cooldownUntil = System.currentTimeMillis() + 60_000
+        store.store(config)
+        store.setCooldownUntil(cooldownUntil)
+
+        val secondStore = RemoteConfigStore(tempDir.root, versionCode)
+        val result = secondStore.withCrossProcessLock {
+            Pair(secondStore.reloadCurrentOrExpired(), secondStore.reloadCooldownUntil())
+        }
+
+        assertEquals("tag1", result?.first?.configurationTag)
+        assertEquals(cooldownUntil, result?.second)
+    }
+
+    @Test
+    fun crossProcessLockWaitsForAnotherStoreToReleaseIt() {
+        val secondStore = RemoteConfigStore(tempDir.root, versionCode)
+        val lockAcquired = CountDownLatch(1)
+        val releaseLock = CountDownLatch(1)
+        val executor = Executors.newFixedThreadPool(2)
+
+        try {
+            val firstResult = executor.submit<String?> {
+                store.withCrossProcessLock {
+                    lockAcquired.countDown()
+                    releaseLock.await(5, TimeUnit.SECONDS)
+                    "first"
+                }
+            }
+            assertTrue(lockAcquired.await(5, TimeUnit.SECONDS))
+
+            val secondResult = executor.submit<String?> {
+                secondStore.withCrossProcessLock { "second" }
+            }
+            assertFalse(secondResult.isDone)
+
+            releaseLock.countDown()
+            assertEquals("first", firstResult.get(5, TimeUnit.SECONDS))
+            assertEquals("second", secondResult.get(5, TimeUnit.SECONDS))
+        } finally {
+            releaseLock.countDown()
+            executor.shutdownNow()
+        }
     }
 
     @Test
@@ -67,16 +151,17 @@ class RemoteConfigStoreTest {
     }
 
     @Test
-    fun loadRemovesExpiredConfigFromDisk() {
+    fun loadPreservesExpiredConfigOnDisk() {
         val expiredConfig = createValidRemoteConfig("expired", pastDate(1000))
         store.store(expiredConfig)
 
-        // First load should return null and clean up
+        // Load should return null for expired config
         assertNull(store.load())
 
-        // Config file should be deleted
+        // Config file should be preserved on disk for revalidation / fallback
         val configFile = File(tempDir.root, "core-$versionCode.json")
-        assertFalse(configFile.exists())
+        assertTrue(configFile.exists())
+        assertEquals("expired", store.currentOrExpired()?.configurationTag)
     }
 
     @Test
@@ -189,17 +274,20 @@ class RemoteConfigStoreTest {
         val oldFile1 = File(tempDir.root, "core-100.json")
         val oldFile2 = File(tempDir.root, "core-200.json")
         val currentFile = File(tempDir.root, "core-$versionCode.json")
+        val currentCooldownFile = File(tempDir.root, "core-$versionCode.json.cooldown")
 
         tempDir.root.mkdirs()
         oldFile1.createNewFile()
         oldFile2.createNewFile()
         currentFile.createNewFile()
+        currentCooldownFile.createNewFile()
 
         store.sweep()
 
         assertFalse(oldFile1.exists())
         assertFalse(oldFile2.exists())
         assertTrue(currentFile.exists())
+        assertTrue(currentCooldownFile.exists())
     }
 
     @Test
@@ -331,9 +419,10 @@ class RemoteConfigStoreTest {
         // load should return null for expired config
         assertNull(newStore.load())
 
-        // And should clean up the file
+        // But file should remain on disk so currentOrExpired can revalidate
         val configFile = File(tempDir.root, "core-$versionCode.json")
-        assertFalse(configFile.exists())
+        assertTrue(configFile.exists())
+        assertEquals("expired", newStore.currentOrExpired()?.configurationTag)
     }
 
     @Test

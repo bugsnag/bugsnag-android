@@ -6,11 +6,13 @@ import com.bugsnag.android.Notifier
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.mockConstruction
+import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
 import java.io.ByteArrayInputStream
@@ -134,7 +136,7 @@ class RemoteConfigRequestTest {
         val result = requestConfigWithMockedUrl(
             existingConfig = existingConfig,
             responseCode = HttpURLConnection.HTTP_NOT_MODIFIED,
-            etag = "ignored-etag",
+            etag = existingConfig.configurationTag,
             cacheControl = "max-age=5400"
         )
 
@@ -237,6 +239,32 @@ class RemoteConfigRequestTest {
         // Then: Expiry is calculated from max-age
         assertNotNull(result)
         assertExpiryWithinTolerance(result!!.configurationExpiry.time, maxAge * 1000)
+    }
+
+    @Test
+    fun testParseRemoteConfig_WithZeroMaxAgeSetsImmediateExpiry() {
+        val jsonResponse = """{"discardRules": []}"""
+        mockConnectionWithJsonResponse(jsonResponse, "test-tag", "max-age=0")
+
+        val result = createRequest().parseRemoteConfig(mockConnection)
+
+        assertNotNull(result)
+        assertExpiryWithinTolerance(
+            result!!.configurationExpiry.time,
+            0L
+        )
+    }
+
+    @Test
+    fun testParseRemoteConfig_WithOversizedMaxAgeDoesNotOverflowToExpiredConfig() {
+        val jsonResponse = """{"discardRules": []}"""
+        mockConnectionWithJsonResponse(jsonResponse, "test-tag", "max-age=${Long.MAX_VALUE}")
+
+        val beforeRequest = System.currentTimeMillis()
+        val result = createRequest().parseRemoteConfig(mockConnection)
+
+        assertNotNull(result)
+        assertTrue(result!!.configurationExpiry.time >= beforeRequest)
     }
 
     @Test
@@ -417,6 +445,20 @@ class RemoteConfigRequestTest {
         }
     }
 
+    @Test
+    fun requestConfigReturnsNullWhenHttp304EtagDiffersFromCachedConfig() {
+        val existingConfig = createRemoteConfig("cached-etag", -1000, emptyList())
+
+        val result = requestConfigWithMockedUrl(
+            existingConfig = existingConfig,
+            responseCode = HttpURLConnection.HTTP_NOT_MODIFIED,
+            etag = "changed-etag",
+            cacheControl = "max-age=0"
+        )
+
+        assertNull(result)
+    }
+
     // ===== Tests for HTTP 400 scenario (invalid request) =====
 
     @Test
@@ -517,8 +559,8 @@ class RemoteConfigRequestTest {
             `when`(mockUrl.openConnection()).thenReturn(mockConnection)
             `when`(mockConnection.responseCode).thenReturn(responseCode)
             `when`(mockConnection.getHeaderField("Cache-Control")).thenReturn(cacheControl)
+            `when`(mockConnection.getHeaderField("ETag")).thenReturn(etag)
             if (responseCode != HttpURLConnection.HTTP_NOT_MODIFIED) {
-                `when`(mockConnection.getHeaderField("ETag")).thenReturn(etag)
                 if (jsonResponse != null) {
                     val inputStream = ByteArrayInputStream(jsonResponse.toByteArray())
                     `when`(mockConnection.inputStream).thenReturn(inputStream)
@@ -529,6 +571,10 @@ class RemoteConfigRequestTest {
             }
         }.use {
             createRequest(existingConfig).requestConfig()
+        }.also {
+            verify(mockConnection).setConnectTimeout(RemoteConfigRequest.REQUEST_TIMEOUT_MS)
+            verify(mockConnection).setReadTimeout(RemoteConfigRequest.REQUEST_TIMEOUT_MS)
+            verify(mockConnection).disconnect()
         }
     }
 

@@ -81,6 +81,7 @@ Feature: Remote config discard rules are applied
       | property | body          | @features/support/config/rules_all.json |
       | property | status        | 200                                     |
       | header   | Cache-Control | max-age=604800                          |
+    And I configure the app to run in the "await-all-discard-rule" state
     And I run "RemoteConfigBasicScenario"
     And I relaunch the app after a crash
     And I configure Bugsnag for "RemoteConfigBasicScenario"
@@ -191,20 +192,23 @@ Feature: Remote config discard rules are applied
     And the event "usage.remoteConfig" is false
 
   @skip_android_7
-  Scenario: Remote config expire from no rules to all
+  Scenario: Remote config refreshes from no rules to all after the cache is cleared
     When I prepare an error config with:
       | type     | name          | value                                  |
       | property | body          | @features/support/config/no_rules.json |
       | property | status        | 200                                    |
       | header   | Cache-Control | max-age=0                              |
+    And I configure Bugsnag for "RemoteConfigBasicScenario"
+    And I wait to receive 1 logs
+    Then the "info" level log message equals "RemoteConfigBasicScenario initial remote config loaded"
+    And I close and relaunch the app
     And I prepare an error config with:
       | type     | name          | value                                  |
       | property | body          | @features/support/config/rules_all.json |
       | property | status        | 200                                    |
       | header   | Cache-Control | max-age=604800                         |
+    And I configure the app to run in the "clear-remote-config-cache" state
     And I run "RemoteConfigBasicScenario"
-    And I relaunch the app after a crash
-    And I configure Bugsnag for "RemoteConfigBasicScenario"
     Then I should receive no errors
 
   @skip_android_7
@@ -223,7 +227,7 @@ Feature: Remote config discard rules are applied
       | property | body          | @features/support/config/no_rules.json  |
       | property | status        | 200                                    |
       | header   | Cache-Control | max-age=604800                         |
-    And I configure Bugsnag for "RemoteConfigBasicScenario"
+    And I run "RemoteConfigBasicScenario"
     And I wait to receive 2 errors
     And the received errors match:
       | exceptions.0.errorClass    | exceptions.0.message |
@@ -249,7 +253,7 @@ Feature: Remote config discard rules are applied
       | type     | name          | value                                  |
       | property | status        | 304                                    |
       | header   | Cache-Control | max-age=604800                         |
-    And I configure Bugsnag for "RemoteConfigBasicScenario"
+    And I run "RemoteConfigBasicScenario"
     And I wait to receive 2 errors
     And the received errors match:
       | exceptions.0.errorClass    | exceptions.0.message |
