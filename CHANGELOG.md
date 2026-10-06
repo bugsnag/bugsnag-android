@@ -6,9 +6,9 @@
 
 ### Enhancements
 
-* **Root detection**: Moved root/jailbreak detection off the startup critical path by running it asynchronously in a low-priority background worker, caching the result, and synchronizing device state once detection completes. Root-binary checks now use known root-indicator locations instead of PATH-based `su` lookup, and Java/native checks were aligned with expanded root-detection coverage for stock devices, emulators, Magisk, SuperSU, deny-list behavior, build tags, build properties, and binary paths.
-* **Remote Config**: Improved remote-config reliability with in-flight request reuse, persisted retry cooldowns, preserved expired cached config for stale fallback and ETag revalidation, cross-process locking around refresh, stronger ETag handling, and TTL fallback/overflow protection.
-* **Native state updates**: Queued native session-start and memory-trim updates on a serial background worker so lifecycle callbacks no longer block on the native environment mutex, and fixed the session-start JNI path to avoid leaving the mutex locked if string conversion fails.
+* **Root detection**: Moved root/jailbreak detection off the startup critical path by running it asynchronously in a low-priority background worker, caching the result, and synchronizing device state once detection completes. Root-binary checks now use known root-indicator locations instead of PATH-based `su` lookup, and Java/native checks were aligned with expanded root-detection coverage for stock devices, emulators, Magisk, SuperSU, deny-list behavior, build tags, build properties, and binary paths.[#2456](https://github.com/bugsnag/bugsnag-android/pull/2456)
+* **Remote Config**: Improved remote-config reliability with in-flight request reuse, persisted retry cooldowns, preserved expired cached config for stale fallback and ETag revalidation, cross-process locking around refresh, stronger ETag handling, and TTL fallback/overflow protection.[#2455](https://github.com/bugsnag/bugsnag-android/pull/2455)
+* **Native state updates**: Queued native session-start and memory-trim updates on a serial background worker so lifecycle callbacks no longer block on the native environment mutex, and fixed the session-start JNI path to avoid leaving the mutex locked if string conversion fails.[#2453](https://github.com/bugsnag/bugsnag-android/pull/2453)
 
 ## 6.27.0 (2026-09-21)
 
