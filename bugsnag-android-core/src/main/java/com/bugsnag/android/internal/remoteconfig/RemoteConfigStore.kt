@@ -27,6 +27,11 @@ internal class RemoteConfigStore(
     @Volatile
     private var cachedCooldownUntil: Long = 0L
 
+    init {
+        currentOrExpired()
+        cachedCooldownUntil = cooldownUntil()
+    }
+
     fun sweep() {
         lock.withLock {
             val currentFilename = configFileName()

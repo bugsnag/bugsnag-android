@@ -190,10 +190,6 @@ class RemoteConfigBasicScenario(
         if (expiry == null) {
             return false
         }
-        val isFresh = (expiry - System.currentTimeMillis()) > REMOTE_CONFIG_MIN_FRESHNESS_MS
-        if (!isFresh) {
-            return false
-        }
         return !waitForAllDiscardRule || hasAllDiscardRule(configFile)
     }
 
