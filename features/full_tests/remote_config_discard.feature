@@ -227,7 +227,7 @@ Feature: Remote config discard rules are applied
       | property | body          | @features/support/config/no_rules.json  |
       | property | status        | 200                                    |
       | header   | Cache-Control | max-age=604800                         |
-    And I configure Bugsnag for "RemoteConfigBasicScenario"
+    And I run "RemoteConfigBasicScenario"
     And I wait to receive 2 errors
     And the received errors match:
       | exceptions.0.errorClass    | exceptions.0.message |
@@ -253,7 +253,7 @@ Feature: Remote config discard rules are applied
       | type     | name          | value                                  |
       | property | status        | 304                                    |
       | header   | Cache-Control | max-age=604800                         |
-    And I configure Bugsnag for "RemoteConfigBasicScenario"
+    And I run "RemoteConfigBasicScenario"
     And I wait to receive 2 errors
     And the received errors match:
       | exceptions.0.errorClass    | exceptions.0.message |
