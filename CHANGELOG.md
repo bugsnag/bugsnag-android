@@ -1,7 +1,5 @@
 # Changelog
 
-
-
 ## 6.28.0 (2026-10-06)
 
 ### Enhancements
@@ -10,7 +8,13 @@
 * **Remote Config**: Improved remote-config reliability with in-flight request reuse, persisted retry cooldowns, preserved expired cached config for stale fallback and ETag revalidation, cross-process locking around refresh, stronger ETag handling, and TTL fallback/overflow protection.[#2455](https://github.com/bugsnag/bugsnag-android/pull/2455)
 * **Native state updates**: Queued native session-start and memory-trim updates on a serial background worker so lifecycle callbacks no longer block on the native environment mutex, and fixed the session-start JNI path to avoid leaving the mutex locked if string conversion fails.[#2453](https://github.com/bugsnag/bugsnag-android/pull/2453)
 
-## 6.27.0 (2026-09-21)
+## 6.27.1 (2026-09-18)
+
+### Enhancements
+
+* Improve native bridge performance and stability by processing pending report delivery asynchronously, deferring breadcrumb handling to a background task, and tightening JNI lock release paths to avoid holding locks across slow work.[#2447](https://github.com/bugsnag/bugsnag-android/pull/2447)
+
+## 6.27.0 (2026-08-21)
 
 ### Enhancements
 
