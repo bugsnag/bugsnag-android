@@ -8,7 +8,7 @@
 
 ### Bug Fixes
 
-* **Remote Config**: Improved request reuse, cooldowns, cached-config reuse, locking, ETag handling, and TTL fallback for more reliable discard-rule updates.[#2455](https://github.com/bugsnag/bugsnag-android/pull/2455)
+* **Remote Config**: Enhanced Remote Config refresh operation when local cache persistence failures occur.[#2455](https://github.com/bugsnag/bugsnag-android/pull/2455)
 * **Native state updates**: Queued session-start and memory-trim updates on a background worker, and fixed a JNI lock leak when string conversion fails.[#2453](https://github.com/bugsnag/bugsnag-android/pull/2453)
 
 ## 6.27.1 (2026-09-18)
