@@ -81,6 +81,7 @@ Feature: Remote config discard rules are applied
       | property | body          | @features/support/config/rules_all.json |
       | property | status        | 200                                     |
       | header   | Cache-Control | max-age=604800                          |
+    And I configure the app to run in the "await-all-discard-rule" state
     And I run "RemoteConfigBasicScenario"
     And I relaunch the app after a crash
     And I configure Bugsnag for "RemoteConfigBasicScenario"

@@ -43,6 +43,7 @@ class RemoteConfigBasicScenario(
     private val handledEventSeen = AtomicBoolean(false)
     private val handledDeliveryCompleted = CountDownLatch(1)
     private val remoteConfigLoaded = CountDownLatch(1)
+    private val waitForAllDiscardRule = eventMetadata == "await-all-discard-rule"
 
     init {
         config.addOnSend { event ->
@@ -175,7 +176,8 @@ class RemoteConfigBasicScenario(
             if (
                 expiry != null &&
                 expiry - System.currentTimeMillis() >
-                REMOTE_CONFIG_MIN_FRESHNESS_MS
+                REMOTE_CONFIG_MIN_FRESHNESS_MS &&
+                (!waitForAllDiscardRule || hasAllDiscardRule(configFile))
             ) {
                 CiLog.info("RemoteConfigBasicScenario: Fresh config found")
                 Thread.sleep(REMOTE_CONFIG_LOAD_DELAY_MS)
@@ -224,6 +226,17 @@ class RemoteConfigBasicScenario(
             }
         }
         return null
+    }
+
+    private fun hasAllDiscardRule(configFile: File): Boolean {
+        return try {
+            val discardRules = JSONObject(configFile.readText()).optJSONArray("discardRules") ?: return false
+            (0 until discardRules.length()).any { index ->
+                discardRules.optJSONObject(index)?.optString("matchType") == "ALL"
+            }
+        } catch (_: Exception) {
+            false
+        }
     }
 
     private fun remoteConfigExpiryFormat(): SimpleDateFormat {
