@@ -35,9 +35,6 @@ class RemoteConfigBasicScenario(
         private const val REMOTE_CONFIG_LOAD_DELAY_MS = 1000L
         private const val READ_RETRY_COUNT = 2
         private const val RETRY_SLEEP_MS = 100L
-
-        private val REMOTE_CONFIG_MIN_FRESHNESS_MS =
-            TimeUnit.SECONDS.toMillis(1)
     }
 
     private val handledEventSeen = AtomicBoolean(false)
