@@ -24,6 +24,9 @@ import java.util.Date
 open class BaseCrashyActivity : AppCompatActivity() {
 
     companion object {
+        @Volatile
+        private var javaAnrCounter = 0
+
         init {
             System.loadLibrary("entrypoint")
         }
@@ -50,13 +53,18 @@ open class BaseCrashyActivity : AppCompatActivity() {
         }
 
         findViewById<View>(R.id.btn_anr).setOnClickListener {
-            Thread.sleep(10000)
-            showSnackbar()
+            triggerJavaAnr()
         }
 
         findViewById<View>(R.id.btn_cxx_anr).setOnClickListener {
             anrFromCXX()
             showSnackbar()
+        }
+    }
+
+    private fun triggerJavaAnr(): Nothing {
+        while (true) {
+            javaAnrCounter++
         }
     }
 
