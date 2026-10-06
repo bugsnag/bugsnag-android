@@ -95,6 +95,15 @@ class RemoteConfigBasicScenario(
                 null
             )
         }
+
+        if (eventMetadata == "clear-remote-config-cache") {
+            val remoteConfigDirectory = File(context.cacheDir, "bugsnag/config")
+            remoteConfigDirectory.deleteRecursively()
+            CiLog.info(
+                "RemoteConfigBasicScenario: Cleared remote config cache at " +
+                    remoteConfigDirectory.absolutePath
+            )
+        }
     }
 
     override fun startBugsnag(startBugsnagOnly: Boolean) {
@@ -108,6 +117,12 @@ class RemoteConfigBasicScenario(
         Thread(
             {
                 waitForFreshRemoteConfig()
+                if (startBugsnagOnly) {
+                    mazerunnerHttpClient?.postLog(
+                        LogLevel.INFO,
+                        "RemoteConfigBasicScenario initial remote config loaded"
+                    )
+                }
                 remoteConfigLoaded.countDown()
             },
             "remote-config-wait"

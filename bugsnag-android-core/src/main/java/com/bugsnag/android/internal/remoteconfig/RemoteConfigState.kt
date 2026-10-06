@@ -7,6 +7,7 @@ import com.bugsnag.android.RemoteConfig
 import com.bugsnag.android.internal.BackgroundTaskService
 import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.TaskType
+import java.util.Date
 import java.util.concurrent.Callable
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
@@ -110,7 +111,7 @@ internal class RemoteConfigState(
 
         return try {
             val remoteConfig = requestRemoteConfig().get(timeout, timeUnit)
-            if (remoteConfig != null) {
+            if (remoteConfig != null && !isExpired(remoteConfig)) {
                 logger.i(
                     "Remote config request completed successfully " +
                         "tag=${remoteConfig.configurationTag ?: "<null>"} " +
@@ -119,14 +120,13 @@ internal class RemoteConfigState(
                 remoteConfig
             } else {
                 logger.w(
-                    "Remote config request completed without returning a config; " +
-                        "using cached fallback if available"
+                    "Remote config request completed without returning a valid config"
                 )
-                store.cachedCurrentOrExpired()
+                store.current()
             }
         } catch (ex: Exception) {
             logger.w("Failed to load remote config within the requested timeout", ex)
-            store.cachedCurrentOrExpired()
+            store.current()
         }
     }
 
@@ -149,8 +149,11 @@ internal class RemoteConfigState(
             return null
         }
 
-        return store.currentOrExpired()
+        return store.current()
     }
+
+    private fun isExpired(remoteConfig: RemoteConfig): Boolean =
+        !remoteConfig.configurationExpiry.after(Date())
 
     private fun requestRemoteConfig(): Future<RemoteConfig?> {
         currentInFlightRequest()?.let {

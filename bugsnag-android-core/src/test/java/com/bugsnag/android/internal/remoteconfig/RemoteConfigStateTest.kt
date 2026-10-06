@@ -163,11 +163,9 @@ class RemoteConfigStateTest {
     }
 
     @Test
-    fun getRemoteConfigReturnsCachedFallbackWhenIOTakesTooLong() {
-        // Given - store operation takes too long, but a cached fallback exists
-        val cachedConfig = createValidRemoteConfig("cached-fallback", futureDate(-1000))
+    fun getRemoteConfigDoesNotReturnExpiredFallbackWhenIOTakesTooLong() {
+        // Given - store operation takes too long and only an expired cached config exists
         `when`(mockStore.current()).thenReturn(null)
-        `when`(mockStore.cachedCurrentOrExpired()).thenReturn(cachedConfig)
 
         `when`(mockBackgroundTaskService.submitTask(eq(TaskType.IO), any(Callable::class.java)))
             .thenReturn(mockFuture)
@@ -177,8 +175,33 @@ class RemoteConfigStateTest {
         // When - getRemoteConfig is called with 100ms timeout
         val result = remoteConfigState.getRemoteConfig(100L, TimeUnit.MILLISECONDS)
 
-        // Then - should return cached fallback
-        assertEquals("cached-fallback", result?.configurationTag)
+        // Then - expired rules must not be returned to delivery
+        assertNull(result)
+    }
+
+    @Test
+    fun getRemoteConfigDoesNotReturnExpiredRequestResult() {
+        val expiredConfig = createValidRemoteConfig("expired", futureDate(-1000))
+        `when`(mockStore.current()).thenReturn(null)
+        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.IO), any(Callable::class.java)))
+            .thenReturn(mockFuture)
+        `when`(mockFuture.get(100L, TimeUnit.MILLISECONDS)).thenReturn(expiredConfig)
+
+        val result = remoteConfigState.getRemoteConfig(100L, TimeUnit.MILLISECONDS)
+
+        assertNull(result)
+    }
+
+    @Test
+    fun peekRemoteConfigReturnsOnlyValidConfig() {
+        val validConfig = createValidRemoteConfig("valid", futureDate(1000))
+        `when`(mockStore.current()).thenReturn(validConfig)
+
+        val result = remoteConfigState.peekRemoteConfig()
+
+        assertEquals("valid", result?.configurationTag)
+        verify(mockStore).current()
+        verify(mockStore, never()).currentOrExpired()
     }
 
     @Test
