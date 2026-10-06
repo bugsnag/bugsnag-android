@@ -173,12 +173,7 @@ class RemoteConfigBasicScenario(
         while (System.currentTimeMillis() < deadline) {
             val expiry = readRemoteConfigExpiry(configFile)
 
-            if (
-                expiry != null &&
-                expiry - System.currentTimeMillis() >
-                REMOTE_CONFIG_MIN_FRESHNESS_MS &&
-                (!waitForAllDiscardRule || hasAllDiscardRule(configFile))
-            ) {
+            if (isConfigFreshAndReady(configFile, expiry)) {
                 CiLog.info("RemoteConfigBasicScenario: Fresh config found")
                 Thread.sleep(REMOTE_CONFIG_LOAD_DELAY_MS)
                 return true
@@ -189,6 +184,17 @@ class RemoteConfigBasicScenario(
 
         CiLog.warn("RemoteConfigBasicScenario: Timed out waiting for fresh config")
         return false
+    }
+
+    private fun isConfigFreshAndReady(configFile: File, expiry: Long?): Boolean {
+        if (expiry == null) {
+            return false
+        }
+        val isFresh = (expiry - System.currentTimeMillis()) > REMOTE_CONFIG_MIN_FRESHNESS_MS
+        if (!isFresh) {
+            return false
+        }
+        return !waitForAllDiscardRule || hasAllDiscardRule(configFile)
     }
 
     private fun remoteConfigFile(): File? {
