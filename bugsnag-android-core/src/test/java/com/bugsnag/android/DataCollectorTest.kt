@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
 import com.bugsnag.android.internal.BackgroundTaskService
+import com.bugsnag.android.internal.dag.RunnableProvider
 import com.bugsnag.android.internal.dag.ValueProvider
 import org.junit.Assert
 import org.junit.Before
@@ -69,5 +70,27 @@ internal class DataCollectorTest {
         repeat(count) {
             collector.generateDevice()
         }
+    }
+
+    @Test
+    fun pendingRootDetectionIsReportedAsUnknown() {
+        val res = Mockito.mock(Resources::class.java)
+        `when`(res.configuration).thenReturn(Configuration())
+        val pendingRootDetection = object : RunnableProvider<Boolean>() {
+            override fun invoke() = false
+        }
+        val pendingCollector = DeviceDataCollector(
+            Mockito.mock(Connectivity::class.java),
+            Mockito.mock(Context::class.java),
+            res,
+            ValueProvider(DeviceIdStore.DeviceIds("fakeDevice", "internalFakeDevice")),
+            Mockito.mock(DeviceBuildInfo::class.java),
+            File("/tmp/javatest"),
+            pendingRootDetection,
+            Mockito.mock(BackgroundTaskService::class.java),
+            Mockito.mock(Logger::class.java)
+        )
+
+        Assert.assertNull(pendingCollector.generateDevice().jailbroken)
     }
 }

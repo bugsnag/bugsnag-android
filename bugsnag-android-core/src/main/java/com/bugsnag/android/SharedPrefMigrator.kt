@@ -1,6 +1,5 @@
 package com.bugsnag.android
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 
@@ -30,10 +29,9 @@ internal class SharedPrefMigrator(context: Context) : DeviceIdPersistence {
 
     fun hasPrefs() = prefs?.contains(INSTALL_ID_KEY) == true
 
-    @SuppressLint("ApplySharedPref")
     fun deleteLegacyPrefs() {
         if (hasPrefs()) {
-            prefs?.edit()?.clear()?.commit()
+            prefs?.edit()?.clear()?.apply()
         }
     }
 

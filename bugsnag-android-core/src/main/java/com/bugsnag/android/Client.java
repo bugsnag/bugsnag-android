@@ -253,6 +253,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         systemBroadcastReceiver = new SystemBroadcastReceiver(this, logger);
 
         start();
+        dataCollectionModule.startRootDetectionInBackground();
     }
 
     @VisibleForTesting

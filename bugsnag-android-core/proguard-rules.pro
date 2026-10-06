@@ -5,6 +5,7 @@
 -keep class com.bugsnag.android.BreadcrumbState { *; }
 -keep class com.bugsnag.android.BreadcrumbType { *; }
 -keep class com.bugsnag.android.Severity { *; }
+-keep class com.bugsnag.android.RootDetector { *; }
 -keepclassmembers enum com.bugsnag.android.Telemetry {
     public static com.bugsnag.android.Telemetry[] values();
  }

@@ -37,6 +37,9 @@ internal class NativeBridge(
     logger: Logger = NativeInterface.getLogger(),
     reportDeliveryWorkerFactory: (Logger) -> ReportDeliveryWorker = { workerLogger ->
         BackgroundReportDeliveryWorker(workerLogger)
+    },
+    nativeStateWorkerFactory: (Logger) -> NativeStateWorker = { workerLogger ->
+        BackgroundNativeStateWorker(workerLogger)
     }
 ) : StateObserver {
 
@@ -44,6 +47,7 @@ internal class NativeBridge(
     private val installed = AtomicBoolean(false)
     private val logger = logger
     private val reportDeliveryWorker = reportDeliveryWorkerFactory(logger)
+    private val nativeStateWorker = nativeStateWorkerFactory(logger)
 
     private val is32bit: Boolean
         get() {
@@ -115,6 +119,7 @@ internal class NativeBridge(
 
     fun shutdown() {
         reportDeliveryWorker.shutdown()
+        nativeStateWorker.shutdown()
     }
 
     override fun onStateChange(event: StateEvent) {
@@ -134,13 +139,15 @@ internal class NativeBridge(
 
             NotifyHandled -> addHandledEvent()
             NotifyUnhandled -> addUnhandledEvent()
-            PauseSession -> pausedSession()
-            is StartSession -> startedSession(
-                event.id,
-                event.startedAt,
-                event.handledCount,
-                event.unhandledCount
-            )
+            PauseSession -> nativeStateWorker.enqueue(::pausedSession)
+            is StartSession -> nativeStateWorker.enqueue {
+                startedSession(
+                    event.id,
+                    event.startedAt,
+                    event.handledCount,
+                    event.unhandledCount
+                )
+            }
 
             is UpdateContext -> updateContext(event.context ?: "")
             is UpdateGroupingDiscriminator -> updateGroupingDiscriminator(event.groupingDiscriminator)
@@ -165,10 +172,12 @@ internal class NativeBridge(
                 updateUserEmail(event.user.email ?: "")
             }
 
-            is StateEvent.UpdateMemoryTrimEvent -> updateLowMemory(
-                event.isLowMemory,
-                event.memoryTrimLevelDescription
-            )
+            is StateEvent.UpdateMemoryTrimEvent -> nativeStateWorker.enqueue {
+                updateLowMemory(
+                    event.isLowMemory,
+                    event.memoryTrimLevelDescription
+                )
+            }
 
             is StateEvent.AddFeatureFlag -> addFeatureFlag(
                 event.name,

@@ -5,18 +5,35 @@ import com.bugsnag.android.DeviceBuildInfo
 import com.bugsnag.android.Logger
 import com.bugsnag.android.RootDetector
 import com.bugsnag.android.internal.dag.RunnableProvider
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicReference
 
 internal class RootDetectionProvider(
     private val deviceBuildInfo: DeviceBuildInfo,
     private val clientObservable: ClientObservable,
     private val logger: Logger,
 ) : RunnableProvider<Boolean>() {
-    var isRooted: Boolean = false
-        private set
+    private val rootDetectionResult = AtomicReference<Boolean?>(null)
+    private val unknownResultReturned = AtomicBoolean(false)
 
-    fun start() {
-        // root detection can take 100+ms so we always have a dedicated background thread for it
-        // we fire an event once we're finished to let any downstream notifiers know the result
+    /**
+     * Returns the cached root-detection result, calculating it on the calling thread when no
+     * background calculation has started. Only the first lookup while the background calculation
+     * is running returns null; later lookups wait for the cached result.
+     */
+    fun getRootDetectionResult(): Boolean? {
+        if (rootDetectionResult.get() == null) {
+            run()
+        }
+        return rootDetectionResult.get()
+            ?: if (unknownResultReturned.compareAndSet(false, true)) null else getOrNull()
+    }
+
+    /**
+     * Starts a best-effort calculation after startup. This must not be invoked on the startup
+     * critical path; error capture can calculate the result synchronously when needed.
+     */
+    fun startInBackground() {
         val worker = Thread(this, "Bugsnag Worker")
         worker.priority = Thread.MIN_PRIORITY
         worker.isDaemon = true
@@ -25,7 +42,8 @@ internal class RootDetectionProvider(
 
     override fun invoke(): Boolean {
         val rootDetector = RootDetector(logger = logger, deviceBuildInfo = deviceBuildInfo)
-        isRooted = rootDetector.isRooted()
+        val isRooted = rootDetector.isRooted()
+        rootDetectionResult.set(isRooted)
         clientObservable.postSynchronizeState()
         return isRooted
     }

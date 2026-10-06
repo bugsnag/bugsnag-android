@@ -14,6 +14,7 @@ import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mock
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.verifyNoInteractions
 import org.mockito.Mockito.verifyNoMoreInteractions
@@ -58,8 +59,11 @@ class RemoteConfigStateTest {
 
     @Test
     fun getRemoteConfigReturnsInMemoryConfig() {
-        // Given - a valid config already in memory
-        val validConfig = createValidRemoteConfig("in-memory", futureDate(5000))
+        // Given - a valid config already in memory that does not need refresh
+        val validConfig = createValidRemoteConfig(
+            "in-memory",
+            futureDate(RemoteConfigState.REFRESH_BUFFER_MS + 100000L)
+        )
         `when`(mockStore.current()).thenReturn(validConfig)
 
         // When - getRemoteConfig is called with timeout
@@ -71,6 +75,25 @@ class RemoteConfigStateTest {
         // Verify store.current() was called but no background task was needed
         verify(mockStore).current()
         verifyNoInteractions(mockBackgroundTaskService)
+    }
+
+    @Test
+    fun getRemoteConfigReturnsInMemoryConfigAndSchedulesRefreshWhenNearExpiry() {
+        // Given - a valid config in memory that is near expiry
+        val nearExpiryConfig = createValidRemoteConfig("near-expiry", futureDate(1000))
+        `when`(mockStore.current()).thenReturn(nearExpiryConfig)
+        `when`(mockStore.currentOrExpired()).thenReturn(nearExpiryConfig)
+        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.IO), any(Callable::class.java)))
+            .thenReturn(mockFuture)
+
+        // When - getRemoteConfig is called
+        val result = remoteConfigState.getRemoteConfig(100L, TimeUnit.MILLISECONDS)
+
+        // Then - should return the in-memory config immediately
+        assertEquals("near-expiry", result?.configurationTag)
+
+        // Verify that a background refresh task was scheduled
+        verify(mockBackgroundTaskService).submitTask(eq(TaskType.IO), any(Callable::class.java))
     }
 
     @Test
@@ -118,9 +141,10 @@ class RemoteConfigStateTest {
     }
 
     @Test
-    fun getRemoteConfigReturnsNullWhenIOTakesTooLong() {
-        // Given - no config in memory and store operation takes too long
+    fun getRemoteConfigReturnsNullWhenIOTakesTooLongAndNoCachedConfig() {
+        // Given - no config in memory and store operation takes too long, no fallback available
         `when`(mockStore.current()).thenReturn(null)
+        `when`(mockStore.currentOrExpired()).thenReturn(null)
 
         // Mock background task service to return future that times out
         `when`(mockBackgroundTaskService.submitTask(eq(TaskType.IO), any(Callable::class.java)))
@@ -131,11 +155,53 @@ class RemoteConfigStateTest {
         // When - getRemoteConfig is called with 100ms timeout
         val result = remoteConfigState.getRemoteConfig(100L, TimeUnit.MILLISECONDS)
 
-        // Then - should return null due to timeout
+        // Then - should return null due to timeout and no cached fallback
         assertNull(result)
 
         // Verify that the timeout was respected
         verify(mockFuture).get(100L, TimeUnit.MILLISECONDS)
+    }
+
+    @Test
+    fun getRemoteConfigDoesNotReturnExpiredFallbackWhenIOTakesTooLong() {
+        // Given - store operation takes too long and only an expired cached config exists
+        `when`(mockStore.current()).thenReturn(null)
+
+        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.IO), any(Callable::class.java)))
+            .thenReturn(mockFuture)
+        `when`(mockFuture.get(anyLong(), any()))
+            .thenThrow(TimeoutException("Operation timed out"))
+
+        // When - getRemoteConfig is called with 100ms timeout
+        val result = remoteConfigState.getRemoteConfig(100L, TimeUnit.MILLISECONDS)
+
+        // Then - expired rules must not be returned to delivery
+        assertNull(result)
+    }
+
+    @Test
+    fun getRemoteConfigDoesNotReturnExpiredRequestResult() {
+        val expiredConfig = createValidRemoteConfig("expired", futureDate(-1000))
+        `when`(mockStore.current()).thenReturn(null)
+        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.IO), any(Callable::class.java)))
+            .thenReturn(mockFuture)
+        `when`(mockFuture.get(100L, TimeUnit.MILLISECONDS)).thenReturn(expiredConfig)
+
+        val result = remoteConfigState.getRemoteConfig(100L, TimeUnit.MILLISECONDS)
+
+        assertNull(result)
+    }
+
+    @Test
+    fun peekRemoteConfigReturnsOnlyValidConfig() {
+        val validConfig = createValidRemoteConfig("valid", futureDate(1000))
+        `when`(mockStore.current()).thenReturn(validConfig)
+
+        val result = remoteConfigState.peekRemoteConfig()
+
+        assertEquals("valid", result?.configurationTag)
+        verify(mockStore).current()
+        verify(mockStore, never()).currentOrExpired()
     }
 
     @Test
@@ -184,13 +250,77 @@ class RemoteConfigStateTest {
             "near-expiry",
             futureDate(RemoteConfigState.REFRESH_BUFFER_MS - 1000)
         )
-        `when`(mockStore.currentOrExpired()).thenReturn(nearExpiryConfig)
+        `when`(mockStore.current()).thenReturn(nearExpiryConfig)
         `when`(mockBackgroundTaskService.submitTask(eq(TaskType.IO), any(Callable::class.java)))
             .thenReturn(mockFuture)
 
         remoteConfigState.scheduleDownloadIfRequired()
 
         verify(mockBackgroundTaskService).submitTask(eq(TaskType.IO), any(Callable::class.java))
+    }
+
+    @Test
+    fun scheduleDownloadIfRequiredSkipsRequestDuringCooldown() {
+        val nearExpiryConfig = createValidRemoteConfig("near-expiry", futureDate(1000))
+        `when`(mockStore.current()).thenReturn(nearExpiryConfig)
+        `when`(mockStore.cachedCooldownUntil()).thenReturn(System.currentTimeMillis() + 60_000)
+
+        remoteConfigState.scheduleDownloadIfRequired()
+
+        verifyNoInteractions(mockBackgroundTaskService)
+    }
+
+    @Test
+    fun scheduleDownloadIfRequiredRefreshesWhenCooldownMarkerHasExpired() {
+        val nearExpiryConfig = createValidRemoteConfig("near-expiry", futureDate(1000))
+        `when`(mockStore.current()).thenReturn(nearExpiryConfig)
+        `when`(mockStore.cachedCooldownUntil()).thenReturn(System.currentTimeMillis() - 1)
+        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.IO), any(Callable::class.java)))
+            .thenReturn(mockFuture)
+
+        remoteConfigState.scheduleDownloadIfRequired()
+
+        verify(mockBackgroundTaskService).submitTask(eq(TaskType.IO), any(Callable::class.java))
+    }
+
+    @Test
+    fun scheduleDownloadIfRequiredDoesNotReadDiskOnCallingThread() {
+        `when`(mockStore.current()).thenReturn(null)
+        `when`(mockStore.cachedCooldownUntil()).thenReturn(0L)
+        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.IO), any(Callable::class.java)))
+            .thenReturn(mockFuture)
+
+        remoteConfigState.scheduleDownloadIfRequired()
+
+        verify(mockBackgroundTaskService).submitTask(eq(TaskType.IO), any(Callable::class.java))
+        verify(mockStore, never()).currentOrExpired()
+        verify(mockStore, never()).cooldownUntil()
+        verify(mockStore, never()).diagnostics()
+    }
+
+    @Test
+    fun computeCooldownAppliesPlusMinusTwoHourJitter() {
+        val baseCooldownMs = TimeUnit.HOURS.toMillis(24)
+        val nowMs = 1234L
+        val maxJitterMs = RemoteConfigState.COOLDOWN_JITTER_MS
+
+        val positive = RemoteConfigState.computeCooldown(
+            baseCooldownMs = baseCooldownMs,
+            jitterOffsetMs = maxJitterMs,
+            nowMs = nowMs
+        )
+
+        assertEquals(baseCooldownMs + maxJitterMs, positive.durationMs)
+        assertEquals(nowMs + baseCooldownMs + maxJitterMs, positive.cooldownUntilMs)
+
+        val negative = RemoteConfigState.computeCooldown(
+            baseCooldownMs = baseCooldownMs,
+            jitterOffsetMs = -maxJitterMs,
+            nowMs = nowMs
+        )
+
+        assertEquals(baseCooldownMs - maxJitterMs, negative.durationMs)
+        assertEquals(nowMs + baseCooldownMs - maxJitterMs, negative.cooldownUntilMs)
     }
 
     private fun createValidRemoteConfig(tag: String, expiry: Date): RemoteConfig {

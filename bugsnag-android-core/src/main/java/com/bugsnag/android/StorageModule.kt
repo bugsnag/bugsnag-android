@@ -48,7 +48,10 @@ internal class StorageModule(
             bugsnagDir,
             deviceId,
             sharedPrefMigrator = sharedPrefMigrator,
-            logger = immutableConfig.logger
+            services = UserStoreServices(
+                logger = immutableConfig.logger,
+                bgTaskService = bgTaskService
+            )
         )
     }
 
@@ -70,7 +73,8 @@ internal class StorageModule(
         RemoteConfigState(
             RemoteConfigStore(
                 File(bugsnagDir.get(), "config"),
-                immutableConfig.versionCode ?: 0
+                immutableConfig.versionCode ?: 0,
+                immutableConfig.logger
             ),
             immutableConfig,
             notifier,

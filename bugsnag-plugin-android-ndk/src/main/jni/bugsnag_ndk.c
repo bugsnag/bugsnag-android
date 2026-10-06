@@ -285,17 +285,19 @@ static void JNI_NativeBridge_startedSession(JNIEnv *env, jobject _this,
   if (session_id_ == NULL) {
     return;
   }
-  bsg_environment *bsg_env = request_env_write_lock();
-  if (bsg_env == NULL) {
-    return;
-  }
   char *session_id = (char *)bsg_safe_get_string_utf_chars(env, session_id_);
   char *started_at = (char *)bsg_safe_get_string_utf_chars(env, start_date_);
-  if (session_id != NULL && started_at != NULL) {
+  if (session_id == NULL || started_at == NULL) {
+    goto end;
+  }
+
+  bsg_environment *bsg_env = request_env_write_lock();
+  if (bsg_env != NULL) {
     bsg_event_start_session(&bsg_env->next_event, session_id, started_at,
                             handled_count, unhandled_count);
     release_env_write_lock();
   }
+end:
   bsg_safe_release_string_utf_chars(env, session_id_, session_id);
   bsg_safe_release_string_utf_chars(env, start_date_, started_at);
 }

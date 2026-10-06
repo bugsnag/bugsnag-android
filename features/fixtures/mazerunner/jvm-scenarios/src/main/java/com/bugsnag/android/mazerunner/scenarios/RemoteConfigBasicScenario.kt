@@ -35,14 +35,12 @@ class RemoteConfigBasicScenario(
         private const val REMOTE_CONFIG_LOAD_DELAY_MS = 1000L
         private const val READ_RETRY_COUNT = 2
         private const val RETRY_SLEEP_MS = 100L
-
-        private val REMOTE_CONFIG_MIN_FRESHNESS_MS =
-            TimeUnit.SECONDS.toMillis(1)
     }
 
     private val handledEventSeen = AtomicBoolean(false)
     private val handledDeliveryCompleted = CountDownLatch(1)
     private val remoteConfigLoaded = CountDownLatch(1)
+    private val waitForAllDiscardRule = eventMetadata == "await-all-discard-rule"
 
     init {
         config.addOnSend { event ->
@@ -95,6 +93,15 @@ class RemoteConfigBasicScenario(
                 null
             )
         }
+
+        if (eventMetadata == "clear-remote-config-cache") {
+            val remoteConfigDirectory = File(context.cacheDir, "bugsnag/config")
+            remoteConfigDirectory.deleteRecursively()
+            CiLog.info(
+                "RemoteConfigBasicScenario: Cleared remote config cache at " +
+                    remoteConfigDirectory.absolutePath
+            )
+        }
     }
 
     override fun startBugsnag(startBugsnagOnly: Boolean) {
@@ -108,6 +115,12 @@ class RemoteConfigBasicScenario(
         Thread(
             {
                 waitForFreshRemoteConfig()
+                if (startBugsnagOnly) {
+                    mazerunnerHttpClient?.postLog(
+                        LogLevel.INFO,
+                        "RemoteConfigBasicScenario initial remote config loaded"
+                    )
+                }
                 remoteConfigLoaded.countDown()
             },
             "remote-config-wait"
@@ -157,11 +170,7 @@ class RemoteConfigBasicScenario(
         while (System.currentTimeMillis() < deadline) {
             val expiry = readRemoteConfigExpiry(configFile)
 
-            if (
-                expiry != null &&
-                expiry - System.currentTimeMillis() >
-                REMOTE_CONFIG_MIN_FRESHNESS_MS
-            ) {
+            if (isConfigFreshAndReady(configFile, expiry)) {
                 CiLog.info("RemoteConfigBasicScenario: Fresh config found")
                 Thread.sleep(REMOTE_CONFIG_LOAD_DELAY_MS)
                 return true
@@ -172,6 +181,13 @@ class RemoteConfigBasicScenario(
 
         CiLog.warn("RemoteConfigBasicScenario: Timed out waiting for fresh config")
         return false
+    }
+
+    private fun isConfigFreshAndReady(configFile: File, expiry: Long?): Boolean {
+        if (expiry == null) {
+            return false
+        }
+        return !waitForAllDiscardRule || hasAllDiscardRule(configFile)
     }
 
     private fun remoteConfigFile(): File? {
@@ -209,6 +225,17 @@ class RemoteConfigBasicScenario(
             }
         }
         return null
+    }
+
+    private fun hasAllDiscardRule(configFile: File): Boolean {
+        return try {
+            val discardRules = JSONObject(configFile.readText()).optJSONArray("discardRules") ?: return false
+            (0 until discardRules.length()).any { index ->
+                discardRules.optJSONObject(index)?.optString("matchType") == "ALL"
+            }
+        } catch (_: Exception) {
+            false
+        }
     }
 
     private fun remoteConfigExpiryFormat(): SimpleDateFormat {
