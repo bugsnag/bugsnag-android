@@ -1,6 +1,23 @@
 # Changelog
 
-## 6.27.0 (2026-09-21)
+## 6.28.0 (2026-10-06)
+
+### Enhancements
+
+* **Root detection**: Moved root/jailbreak checks off the startup path and cached the result.[#2456](https://github.com/bugsnag/bugsnag-android/pull/2456)
+
+### Bug Fixes
+
+* **Remote Config**: Enhanced Remote Config refresh operation when local cache persistence failures occur.[#2455](https://github.com/bugsnag/bugsnag-android/pull/2455)
+* **Native state updates**: Queued session-start and memory-trim updates on a background worker, and fixed a JNI lock leak when string conversion fails.[#2453](https://github.com/bugsnag/bugsnag-android/pull/2453)
+
+## 6.27.1 (2026-09-18)
+
+### Enhancements
+
+* Improve native bridge performance and stability by processing pending report delivery asynchronously, deferring breadcrumb handling to a background task, and tightening JNI lock release paths to avoid holding locks across slow work.[#2447](https://github.com/bugsnag/bugsnag-android/pull/2447)
+
+## 6.27.0 (2026-08-21)
 
 ### Enhancements
 
