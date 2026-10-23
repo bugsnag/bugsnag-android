@@ -15,7 +15,7 @@ internal class AnrDetailsCollector {
 
     companion object {
         private const val INFO_POLL_THRESHOLD_MS: Long = 100
-        private const val MAX_ATTEMPTS: Int = 100
+        private const val MAX_ATTEMPTS: Int = 300
     }
 
     private val handlerThread = HandlerThread("bugsnag-anr-collector")
