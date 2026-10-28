@@ -136,7 +136,7 @@ steps:
       - "ANDROID_7"
       - "ANDROID_8"
     depends_on: "fixture-r19"
-    timeout_in_minutes: 30
+    timeout_in_minutes: 45
     plugins:
       artifacts#v1.9.0:
         download:
@@ -166,8 +166,8 @@ steps:
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 2
+    concurrency_group: 'bitbar-r19-legacy'
     concurrency_method: eager
     retry:
       automatic:
@@ -176,13 +176,12 @@ steps:
         - exit_status: 103  # Appium session failed
           limit: 2
 
-  - label: ':bitbar: {{matrix}} NDK r21 smoke tests'
+  - label: ':bitbar: {{matrix}} NDK r21 smoke tests - android 9-10'
     matrix:
       - "ANDROID_9"
       - "ANDROID_10"
-      - "ANDROID_11"
     depends_on: "fixture-r21"
-    timeout_in_minutes: 30
+    timeout_in_minutes: 45
     plugins:
       artifacts#v1.9.0:
         download:
@@ -210,8 +209,48 @@ steps:
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 2
+    concurrency_group: 'bitbar-r21-android9-10'
+    concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: -1  # Agent was lost
+          limit: 2
+        - exit_status: 103  # Appium session failed
+          limit: 2
+
+  - label: ':bitbar: ANDROID_11 NDK r21 smoke tests'
+    depends_on: "fixture-r21"
+    timeout_in_minutes: 30
+    plugins:
+      artifacts#v1.9.0:
+        download:
+          - "build/fixture-r21-url.txt"
+          - "build/fixture-r21/*"
+        upload:
+          - "maze_output/failed/**/*"
+          - "maze_output/maze_output.zip"
+          - "maze_output/metrics.csv"
+      docker-compose#v4.7.0:
+        pull: maze-runner
+        run: maze-runner
+        service-ports: true
+        command:
+          - "features/smoke_tests"
+          - "--app=@build/fixture-r21-url.txt"
+          - "--appium-version=2.19"
+          - "--no-tunnel"
+          - "--aws-public-ip"
+          - "--farm=bb"
+          - "--device=ANDROID_11"
+      test-collector#v1.10.2:
+        files: "reports/TEST-*.xml"
+        format: "junit"
+        branch: "^main|next$$"
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
+    concurrency: 2
+    concurrency_group: 'bitbar-r21-android11-plus'
     concurrency_method: eager
     retry:
       automatic:
@@ -251,20 +290,18 @@ steps:
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 2
+    concurrency_group: 'bitbar-r21-android12'
     concurrency_method: eager
     retry:
       automatic:
         - exit_status: -1  # Agent was lost
           limit: 2
-        - exit_status: 103  # Appium session failed
-          limit: 2
 
   - label: ':bitbar: ANDROID_12 NDK r21 e2e tests - batch 1'
     depends_on:
       - "fixture-r21"
-    timeout_in_minutes: 60
+    timeout_in_minutes: 90
     plugins:
       artifacts#v1.9.0:
         download:
@@ -293,8 +330,8 @@ steps:
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 2
+    concurrency_group: 'bitbar-r21-android12'
     concurrency_method: eager
     retry:
       automatic:
@@ -306,7 +343,7 @@ steps:
   - label: ':bitbar: ANDROID_12 NDK r21 e2e tests - batch 2'
     depends_on:
       - "fixture-r21"
-    timeout_in_minutes: 60
+    timeout_in_minutes: 90
     plugins:
       artifacts#v1.9.0:
         download:
@@ -335,8 +372,8 @@ steps:
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 2
+    concurrency_group: 'bitbar-r21-android12'
     concurrency_method: eager
     retry:
       automatic:
@@ -352,7 +389,7 @@ steps:
       - "ANDROID_15"
       - "ANDROID_16"
     depends_on: "fixture-r21"
-    timeout_in_minutes: 30
+    timeout_in_minutes: 35
     plugins:
       artifacts#v1.9.0:
         download:
@@ -380,8 +417,8 @@ steps:
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 2
+    concurrency_group: 'bitbar-r21-android13-16'
     concurrency_method: eager
     retry:
       automatic:
@@ -390,18 +427,13 @@ steps:
         - exit_status: 103  # Appium session failed
           limit: 2
 
-  - label: ':bitbar: {{matrix}} NDK r28 smoke tests'
+  - label: ':bitbar: {{matrix}} NDK r28 smoke tests - android 9-11'
     matrix:
       - "ANDROID_9"
       - "ANDROID_10"
       - "ANDROID_11"
-      # 12 is covered by the full tests below
-      - "ANDROID_13"
-      - "ANDROID_14"
-      - "ANDROID_15"
-      - "ANDROID_16"
     depends_on: "fixture-r28"
-    timeout_in_minutes: 30
+    timeout_in_minutes: 35
     plugins:
       artifacts#v1.9.0:
         download:
@@ -429,8 +461,54 @@ steps:
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 2
+    concurrency_group: 'bitbar-r28-android9-11'
+    concurrency_method: eager
+    retry:
+      automatic:
+        - exit_status: -1  # Agent was lost
+          limit: 2
+        - exit_status: 103  # Appium session failed
+          limit: 2
+
+  - label: ':bitbar: {{matrix}} NDK r28 smoke tests - android 13-16'
+    matrix:
+      # 12 is covered by the full tests below
+      - "ANDROID_13"
+      - "ANDROID_14"
+      - "ANDROID_15"
+      - "ANDROID_16"
+    depends_on: "fixture-r28"
+    timeout_in_minutes: 35
+    plugins:
+      artifacts#v1.9.0:
+        download:
+          - "build/fixture-r28-url.txt"
+          - "build/fixture-r28/*"
+        upload:
+          - "maze_output/failed/**/*"
+          - "maze_output/maze_output.zip"
+          - "maze_output/metrics.csv"
+      docker-compose#v4.7.0:
+        pull: maze-runner
+        run: maze-runner
+        service-ports: true
+        command:
+          - "features/smoke_tests"
+          - "--app=@build/fixture-r28-url.txt"
+          - "--appium-version=2.19"
+          - "--no-tunnel"
+          - "--aws-public-ip"
+          - "--farm=bb"
+          - "--device={{matrix}}"
+      test-collector#v1.10.2:
+        files: "reports/TEST-*.xml"
+        format: "junit"
+        branch: "^main|next$$"
+    env:
+      TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
+    concurrency: 2
+    concurrency_group: 'bitbar-r28-android13-16'
     concurrency_method: eager
     retry:
       automatic:
@@ -442,7 +520,7 @@ steps:
   - label: ':bitbar: ANDROID_12 NDK r28 e2e tests - batch 1'
     depends_on:
       - "fixture-r28"
-    timeout_in_minutes: 60
+    timeout_in_minutes: 90
     plugins:
       artifacts#v1.9.0:
         download:
@@ -471,8 +549,8 @@ steps:
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 2
+    concurrency_group: 'bitbar-r28-android12'
     concurrency_method: eager
     retry:
       automatic:
@@ -484,7 +562,7 @@ steps:
   - label: ':bitbar: ANDROID_12 NDK r28 e2e tests - batch 2'
     depends_on:
       - "fixture-r28"
-    timeout_in_minutes: 60
+    timeout_in_minutes: 90
     plugins:
       artifacts#v1.9.0:
         download:
@@ -513,8 +591,8 @@ steps:
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
-    concurrency: 25
-    concurrency_group: 'bitbar'
+    concurrency: 2
+    concurrency_group: 'bitbar-r28-android12'
     concurrency_method: eager
     retry:
       automatic:
