@@ -1,5 +1,11 @@
 # Changelog
 
+## 6.28.1 (2026-11-05)
+
+### Bug Fixes
+
+* **ANR Fixes** : Prevent false-positive ANR reports using main thread sentinel probe.Fixed historical exit reasons being ignored (no synthesised ANRs or exit-info enrichment)[#2460](https://github.com/bugsnag/bugsnag-android/pull/2460)[#2466](https://github.com/bugsnag/bugsnag-android/pull/2466)
+
 ## 6.28.0 (2026-10-06)
 
 ### Enhancements

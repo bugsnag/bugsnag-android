@@ -271,13 +271,17 @@ Feature: Remote config discard rules are applied
       | property | body          | @features/support/config/rules_all_handled.json  |
       | property | status        | 200                                             |
       | header   | Cache-Control | max-age=604800                                  |
-    And I run "RemoteConfigBasicScenario"
-    And I relaunch the app after a crash
+    And I configure Bugsnag for "RemoteConfigBasicScenario"
+    And I wait to receive 1 logs
+    Then the "info" level log message equals "RemoteConfigBasicScenario initial remote config loaded"
+    And I close and relaunch the app
     And I prepare an error config with:
       | type     | name          | value                                     |
       | property | body          | @features/support/config/invalid.json     |
       | property | status        | 500                                      |
       | header   | Cache-Control | max-age=604800                           |
+    And I run "RemoteConfigBasicScenario"
+    And I relaunch the app after a crash
     And I configure Bugsnag for "RemoteConfigBasicScenario"
     And I wait to receive an error
     And the received errors match:
