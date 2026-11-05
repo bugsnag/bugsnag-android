@@ -3,6 +3,7 @@ package com.bugsnag.android
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.mock
@@ -39,6 +40,49 @@ class ExitInfoPluginStoreTest {
 
         assertEquals(1234567890, store.previousState?.pid)
         assertEquals(true, store.previousState?.processedExitInfoKeys?.isEmpty())
+        // legacy files have no timestamp, so historical exit reasons must not be filtered out
+        assertEquals(0L, store.previousState?.timestamp)
+    }
+
+    @Test
+    fun testParsesJsonFileWithoutTimestamp() {
+        // format written by v6.16.x and earlier: pid + exitInfoKeys, no timestamp
+        storeFile.writeText(
+            """{"pid":4321,"exitInfoKeys":[{"pid":"1234","timestamp":"1000"}]}"""
+        )
+        val store = ExitInfoPluginStore(storeFile, mock())
+
+        val previousState = store.previousState
+        assertNotNull(previousState)
+        assertEquals(4321, previousState?.pid)
+        assertEquals(0L, previousState?.timestamp)
+        assertEquals(setOf(ExitInfoKey(1234, 1000L)), previousState?.processedExitInfoKeys)
+        assertTrue(store.currentState.timestamp > 0L)
+    }
+
+    @Test
+    fun testParsesJsonFileWithTimestamp() {
+        storeFile.writeText(
+            """{"pid":4321,"timestamp":"5000","exitInfoKeys":[]}"""
+        )
+        val store = ExitInfoPluginStore(storeFile, mock())
+
+        assertEquals(4321, store.previousState?.pid)
+        assertEquals(5000L, store.previousState?.timestamp)
+    }
+
+    @Test
+    fun testLegacyFileIsRewrittenInCurrentFormat() {
+        storeFile.writeText("""{"pid":4321,"exitInfoKeys":[]}""")
+        val store = ExitInfoPluginStore(storeFile, mock())
+        store.addExitInfoKey(ExitInfoKey(4321, 2000L))
+
+        val restoredStore = ExitInfoPluginStore(storeFile, mock())
+        val previousState = restoredStore.previousState
+        assertNotNull(previousState)
+        assertEquals(android.os.Process.myPid(), previousState?.pid)
+        assertTrue((previousState?.timestamp ?: 0L) > 0L)
+        assertEquals(setOf(ExitInfoKey(4321, 2000L)), previousState?.processedExitInfoKeys)
     }
 
     @Test

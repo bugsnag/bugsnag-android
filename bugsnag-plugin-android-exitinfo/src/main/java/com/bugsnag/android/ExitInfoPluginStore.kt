@@ -67,6 +67,18 @@ internal class ExitInfoPluginStore(
         }
     }
 
+    private companion object {
+        /**
+         * Used as the `timestamp` of a [PersistentState] loaded from a store written by an older
+         * SDK version (v6.16.x and earlier), which did not record one. Older versions relied only
+         * on the previous PID and [PersistentState.processedExitInfoKeys] to decide what to
+         * process, so an unset timestamp keeps that behaviour. Defaulting to "now" would filter
+         * out every historical exit reason, and the store would never be rewritten in the
+         * current format.
+         */
+        const val UNSET_TIMESTAMP = 0L
+    }
+
     private fun persist() {
         lock.writeLock().withLock {
             try {
@@ -113,7 +125,7 @@ internal class ExitInfoPluginStore(
             }
             val previousPid = content.toIntOrNull()
             if (previousPid != null) {
-                return PersistentState(previousPid, System.currentTimeMillis(), emptySet())
+                return PersistentState(previousPid, UNSET_TIMESTAMP, emptySet())
             }
         } catch (_: Throwable) {
         }
@@ -133,7 +145,7 @@ internal class ExitInfoPluginStore(
 
     private fun parsePersistentState(json: JSONObject): PersistentState {
         val pid = json.getInt("pid")
-        val timestamp = json.optString("timestamp").toLongOrNull() ?: System.currentTimeMillis()
+        val timestamp = json.optString("timestamp").toLongOrNull() ?: UNSET_TIMESTAMP
         val keysArray = json.getJSONArray("exitInfoKeys")
         val exitInfoKeys = HashSet<ExitInfoKey>(keysArray.length())
         for (i in 0 until keysArray.length()) {
