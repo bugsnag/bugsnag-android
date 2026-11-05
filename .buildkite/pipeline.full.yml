@@ -71,8 +71,8 @@ steps:
         files: "reports/TEST-*.xml"
         format: "junit"
         branch: "^main|next$$"
-    concurrency: 16
-    concurrency_group: 'bitbar-android-11-plus'
+    concurrency: 25
+    concurrency_group: 'bitbar'
     concurrency_method: eager
     retry:
       automatic:
@@ -113,8 +113,8 @@ steps:
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-debug"
-    concurrency: 16
-    concurrency_group: 'bitbar-android-11-plus'
+    concurrency: 25
+    concurrency_group: 'bitbar'
     concurrency_method: eager
     retry:
       automatic:
@@ -159,8 +159,8 @@ steps:
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
-    concurrency: 2
-    concurrency_group: 'bitbar-android-7-8'
+    concurrency: 25
+    concurrency_group: 'bitbar'
     concurrency_method: eager
     retry:
       automatic:
@@ -205,8 +205,8 @@ steps:
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
-    concurrency: 2
-    concurrency_group: 'bitbar-android-7-8'
+    concurrency: 25
+    concurrency_group: 'bitbar'
     concurrency_method: eager
     retry:
       automatic:
@@ -215,7 +215,7 @@ steps:
         - exit_status: 103  # Appium session failed
           limit: 2
 
-  - label: ':bitbar: {{matrix}} NDK r21 e2e tests - android 9-10 - batch 1'
+  - label: ':bitbar: {{matrix}} NDK r21 e2e tests - batch 1'
     matrix:
       - "ANDROID_9"
       - "ANDROID_10"
@@ -249,8 +249,8 @@ steps:
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 4
-    concurrency_group: 'bitbar-android-9-10'
+    concurrency: 25
+    concurrency_group: 'bitbar'
     concurrency_method: eager
     retry:
       automatic:
@@ -259,7 +259,7 @@ steps:
         - exit_status: 103  # Appium session failed
           limit: 2
 
-  - label: ':bitbar: {{matrix}} NDK r21 e2e tests - android 11-16 - batch 1'
+  - label: ':bitbar: {{matrix}} NDK r21 e2e tests - batch 1'
     matrix:
       # Android 12 is in the basic pipeline
       - "ANDROID_11"
@@ -297,8 +297,8 @@ steps:
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 16
-    concurrency_group: 'bitbar-android-11-plus'
+    concurrency: 25
+    concurrency_group: 'bitbar'
     concurrency_method: eager
     retry:
       automatic:
@@ -307,7 +307,7 @@ steps:
         - exit_status: 103  # Appium session failed
           limit: 2
 
-  - label: ':bitbar: {{matrix}} NDK r21 e2e tests - android 9-10 - batch 2'
+  - label: ':bitbar: {{matrix}} NDK r21 e2e tests - batch 2'
     matrix:
       - "ANDROID_9"
       - "ANDROID_10"
@@ -341,8 +341,8 @@ steps:
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 4
-    concurrency_group: 'bitbar-android-9-10'
+    concurrency: 25
+    concurrency_group: 'bitbar'
     concurrency_method: eager
     retry:
       automatic:
@@ -351,7 +351,7 @@ steps:
         - exit_status: 103  # Appium session failed
           limit: 2
 
-  - label: ':bitbar: {{matrix}} NDK r21 e2e tests - android 11-16 - batch 2'
+  - label: ':bitbar: {{matrix}} NDK r21 e2e tests - batch 2'
     matrix:
       # Android 12 is in the basic pipeline
       - "ANDROID_11"
@@ -389,8 +389,8 @@ steps:
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 16
-    concurrency_group: 'bitbar-android-11-plus'
+    concurrency: 25
+    concurrency_group: 'bitbar'
     concurrency_method: eager
     retry:
       automatic:
@@ -399,7 +399,7 @@ steps:
         - exit_status: 103  # Appium session failed
           limit: 2
 
-  - label: ':bitbar: {{matrix}} NDK r28 e2e tests - android 9-10 - batch 1'
+  - label: ':bitbar: {{matrix}} NDK r28 e2e tests - batch 1'
     matrix:
       - "ANDROID_9"
       - "ANDROID_10"
@@ -433,8 +433,8 @@ steps:
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
-    concurrency: 4
-    concurrency_group: 'bitbar-android-9-10'
+    concurrency: 25
+    concurrency_group: 'bitbar'
     concurrency_method: eager
     retry:
       automatic:
@@ -443,7 +443,7 @@ steps:
         - exit_status: 103  # Appium session failed
           limit: 2
 
-  - label: ':bitbar: {{matrix}} NDK r28 e2e tests - android 11-16 - batch 1'
+  - label: ':bitbar: {{matrix}} NDK r28 e2e tests - batch 1'
     matrix:
       # Android 12 is in the basic pipeline
       - "ANDROID_11"
@@ -481,8 +481,8 @@ steps:
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
-    concurrency: 16
-    concurrency_group: 'bitbar-android-11-plus'
+    concurrency: 25
+    concurrency_group: 'bitbar'
     concurrency_method: eager
     retry:
       automatic:
@@ -491,7 +491,7 @@ steps:
         - exit_status: 103  # Appium session failed
           limit: 2
 
-  - label: ':bitbar: {{matrix}} NDK r28 e2e tests - android 9-10 - batch 2'
+  - label: ':bitbar: {{matrix}} NDK r28 e2e tests - batch 2'
     matrix:
       - "ANDROID_9"
       - "ANDROID_10"
@@ -525,8 +525,8 @@ steps:
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
-    concurrency: 4
-    concurrency_group: 'bitbar-android-9-10'
+    concurrency: 25
+    concurrency_group: 'bitbar'
     concurrency_method: eager
     retry:
       automatic:
@@ -535,7 +535,7 @@ steps:
         - exit_status: 103  # Appium session failed
           limit: 2
 
-  - label: ':bitbar: {{matrix}} NDK r28 e2e tests - android 11-16 - batch 2'
+  - label: ':bitbar: {{matrix}} NDK r28 e2e tests - batch 2'
     matrix:
       # Android 12 is in the basic pipeline
       - "ANDROID_11"
@@ -573,8 +573,8 @@ steps:
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
-    concurrency: 16
-    concurrency_group: 'bitbar-android-11-plus'
+    concurrency: 25
+    concurrency_group: 'bitbar'
     concurrency_method: eager
     retry:
       automatic:

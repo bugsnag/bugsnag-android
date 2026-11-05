@@ -166,8 +166,8 @@ steps:
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r19"
-    concurrency: 2
-    concurrency_group: 'bitbar-android-7-8'
+    concurrency: 25
+    concurrency_group: 'bitbar'
     concurrency_method: eager
     retry:
       automatic:
@@ -176,7 +176,7 @@ steps:
         - exit_status: 103  # Appium session failed
           limit: 2
 
-  - label: ':bitbar: {{matrix}} NDK r21 smoke tests - android 9-10'
+  - label: ':bitbar: {{matrix}} NDK r21 smoke tests'
     matrix:
       - "ANDROID_9"
       - "ANDROID_10"
@@ -209,8 +209,8 @@ steps:
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 4
-    concurrency_group: 'bitbar-android-9-10'
+    concurrency: 25
+    concurrency_group: 'bitbar'
     concurrency_method: eager
     retry:
       automatic:
@@ -250,8 +250,8 @@ steps:
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 16
-    concurrency_group: 'bitbar-android-11-plus'
+    concurrency: 25
+    concurrency_group: 'bitbar'
     concurrency_method: eager
     retry:
       automatic:
@@ -292,8 +292,8 @@ steps:
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 16
-    concurrency_group: 'bitbar-android-11-plus'
+    concurrency: 25
+    concurrency_group: 'bitbar'
     concurrency_method: eager
     retry:
       automatic:
@@ -334,8 +334,8 @@ steps:
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 16
-    concurrency_group: 'bitbar-android-11-plus'
+    concurrency: 25
+    concurrency_group: 'bitbar'
     concurrency_method: eager
     retry:
       automatic:
@@ -344,7 +344,7 @@ steps:
         - exit_status: 103  # Appium session failed
           limit: 2
 
-  - label: ':bitbar: {{matrix}} NDK r21 smoke tests - android 11-16'
+  - label: ':bitbar: {{matrix}} NDK r21 smoke tests'
     matrix:
       # 12 is covered by the full tests below
       - "ANDROID_11"
@@ -381,8 +381,8 @@ steps:
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r21"
-    concurrency: 16
-    concurrency_group: 'bitbar-android-11-plus'
+    concurrency: 25
+    concurrency_group: 'bitbar'
     concurrency_method: eager
     retry:
       automatic:
@@ -391,7 +391,7 @@ steps:
         - exit_status: 103  # Appium session failed
           limit: 2
 
-  - label: ':bitbar: {{matrix}} NDK r28 smoke tests - android 9-10'
+  - label: ':bitbar: {{matrix}} NDK r28 smoke tests'
     matrix:
       - "ANDROID_9"
       - "ANDROID_10"
@@ -424,8 +424,8 @@ steps:
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
-    concurrency: 4
-    concurrency_group: 'bitbar-android-9-10'
+    concurrency: 25
+    concurrency_group: 'bitbar'
     concurrency_method: eager
     retry:
       automatic:
@@ -434,7 +434,7 @@ steps:
         - exit_status: 103  # Appium session failed
           limit: 2
 
-  - label: ':bitbar: {{matrix}} NDK r28 smoke tests - android 11-16'
+  - label: ':bitbar: {{matrix}} NDK r28 smoke tests'
     matrix:
       # 12 is covered by the full tests below
       - "ANDROID_11"
@@ -471,8 +471,8 @@ steps:
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
-    concurrency: 16
-    concurrency_group: 'bitbar-android-11-plus'
+    concurrency: 25
+    concurrency_group: 'bitbar'
     concurrency_method: eager
     retry:
       automatic:
@@ -513,8 +513,8 @@ steps:
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
-    concurrency: 16
-    concurrency_group: 'bitbar-android-11-plus'
+    concurrency: 25
+    concurrency_group: 'bitbar'
     concurrency_method: eager
     retry:
       automatic:
@@ -555,8 +555,8 @@ steps:
         branch: "^main|next$$"
     env:
       TEST_FIXTURE_SYMBOL_DIR: "build/fixture-r28"
-    concurrency: 16
-    concurrency_group: 'bitbar-android-11-plus'
+    concurrency: 25
+    concurrency_group: 'bitbar'
     concurrency_method: eager
     retry:
       automatic:
