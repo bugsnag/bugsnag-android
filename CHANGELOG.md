@@ -1,5 +1,11 @@
 # Changelog
 
+## TBD
+
+### Bug Fixes
+
+* **Exit Info**: Fixed historical exit reasons being ignored (no synthesized ANRs or exit-info enrichment) after upgrading from v6.16.x or earlier, caused by the plugin treating the missing timestamp in older persisted state as the current time.
+
 ## 6.28.0 (2026-10-06)
 
 ### Enhancements
