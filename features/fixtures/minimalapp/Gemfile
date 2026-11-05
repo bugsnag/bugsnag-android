@@ -7,4 +7,4 @@ git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
 # gem "rails"
 
 gem "danger", "~> 9"
-gem "git", ">= 1.13.0" # Force update of git gem to avoid CVE-2022-46648
+gem "git", ">= 1.13.0", "< 6" # >= 1.13.0 avoids CVE-2022-46648; < 6 because git 6.0 removed Git::Base, which danger 9.6.1 still references
