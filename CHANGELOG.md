@@ -1,5 +1,11 @@
 # Changelog
 
+## TBD
+
+### Bug Fixes
+
+* Corrected the warning logged when an `OnErrorCallback` throws an exception, which previously named `OnBreadcrumbCallback`. [#2464](https://github.com/bugsnag/bugsnag-android/issues/2464)
+
 ## 6.28.0 (2026-10-06)
 
 ### Enhancements

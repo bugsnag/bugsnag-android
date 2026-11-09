@@ -94,7 +94,7 @@ internal data class CallbackState(
                     return false
                 }
             } catch (ex: Throwable) {
-                logger.w("OnBreadcrumbCallback threw an Exception", ex)
+                logger.w("OnErrorCallback threw an Exception", ex)
             }
         }
         return true
