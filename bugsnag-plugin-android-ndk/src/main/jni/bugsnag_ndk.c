@@ -50,6 +50,24 @@ static void release_env_write_lock(void) {
   pthread_mutex_unlock(&bsg_global_env_write_mutex);
 }
 
+/**
+ * Incremented (while holding bsg_global_env_write_mutex) whenever a field that
+ * JNI_NativeBridge_synchronizeState also writes is changed. synchronizeState
+ * fetches Java state without holding the lock, so it uses this to detect that a
+ * newer value was written in the meantime and avoid overwriting it with stale
+ * data (e.g. restoring a previous user after clearUser()).
+ */
+static uint32_t bsg_java_synced_state_generation = 0;
+
+/** Must be called while holding bsg_global_env_write_mutex */
+static void bump_java_synced_state_generation(void) {
+  bsg_java_synced_state_generation++;
+}
+
+/** Number of fetch/apply attempts made by synchronizeState before giving up
+ * on detecting concurrent updates */
+#define BSG_SYNC_STATE_MAX_ATTEMPTS 3
+
 void bugsnag_add_on_error(bsg_on_error on_error) {
   if (bsg_global_env != NULL) {
     bsg_global_env->on_error = on_error;
@@ -393,6 +411,7 @@ static void JNI_NativeBridge_updateAppVersion(JNIEnv *env, jobject _this,
     goto end;
   }
   bugsnag_app_set_version(&bsg_env->next_event, value);
+  bump_java_synced_state_generation();
   release_env_write_lock();
 end:
   bsg_safe_release_string_utf_chars(env, new_value, value);
@@ -409,6 +428,7 @@ static void JNI_NativeBridge_updateBuildUUID(JNIEnv *env, jobject _this,
     goto end;
   }
   bugsnag_app_set_build_uuid(&bsg_env->next_event, value);
+  bump_java_synced_state_generation();
   release_env_write_lock();
 end:
   bsg_safe_release_string_utf_chars(env, new_value, value);
@@ -425,6 +445,7 @@ static void JNI_NativeBridge_updateContext(JNIEnv *env, jobject _this,
     goto end;
   }
   bugsnag_event_set_context(&bsg_env->next_event, value);
+  bump_java_synced_state_generation();
   release_env_write_lock();
 end:
   if (new_value != NULL) {
@@ -477,6 +498,7 @@ static void JNI_NativeBridge_updateInForeground(JNIEnv *env, jobject _this,
     bsg_env->foreground_start_time = 0;
     bsg_env->next_event.app.duration_in_foreground_ms_offset = 0;
   }
+  bump_java_synced_state_generation();
   release_env_write_lock();
   if (activity_ != NULL) {
     bsg_safe_release_string_utf_chars(env, activity_, activity);
@@ -491,6 +513,7 @@ static void JNI_NativeBridge_updateIsLaunching(JNIEnv *env, jobject _this,
   }
   bugsnag_app_set_is_launching(&bsg_env->next_event, new_value);
   bsg_update_next_run_info(bsg_env);
+  bump_java_synced_state_generation();
   release_env_write_lock();
 }
 
@@ -534,6 +557,7 @@ static void JNI_NativeBridge_updateOrientation(JNIEnv *env, jobject _this,
     goto end;
   }
   bugsnag_device_set_orientation(&bsg_env->next_event, value);
+  bump_java_synced_state_generation();
   release_env_write_lock();
 end:
   if (new_value != NULL) {
@@ -552,6 +576,7 @@ static void JNI_NativeBridge_updateReleaseStage(JNIEnv *env, jobject _this,
     goto end;
   }
   bugsnag_app_set_release_stage(&bsg_env->next_event, value);
+  bump_java_synced_state_generation();
   release_env_write_lock();
 end:
   if (new_value != NULL) {
@@ -573,6 +598,7 @@ static void JNI_NativeBridge_updateUserId(JNIEnv *env, jobject _this,
   bugsnag_event *event = &bsg_env->next_event;
   bugsnag_user user = bugsnag_event_get_user(event);
   bugsnag_event_set_user(event, value, user.email, user.name);
+  bump_java_synced_state_generation();
   release_env_write_lock();
 end:
   if (new_value != NULL) {
@@ -594,6 +620,7 @@ static void JNI_NativeBridge_updateUserName(JNIEnv *env, jobject _this,
   bugsnag_event *event = &bsg_env->next_event;
   bugsnag_user user = bugsnag_event_get_user(event);
   bugsnag_event_set_user(event, user.id, user.email, value);
+  bump_java_synced_state_generation();
   release_env_write_lock();
 end:
   if (new_value != NULL) {
@@ -615,6 +642,7 @@ static void JNI_NativeBridge_updateUserEmail(JNIEnv *env, jobject _this,
   bugsnag_event *event = &bsg_env->next_event;
   bugsnag_user user = bugsnag_event_get_user(event);
   bugsnag_event_set_user(event, user.id, value, user.name);
+  bump_java_synced_state_generation();
   release_env_write_lock();
 end:
   if (new_value != NULL) {
@@ -963,14 +991,53 @@ static void JNI_NativeBridge_setInternalMetricsEnabled(JNIEnv *env,
 }
 
 static void JNI_NativeBridge_synchronizeState(JNIEnv *env, jobject thiz) {
-  bsg_environment *bsg_env = request_env_write_lock();
+  // Collect the Java-side state BEFORE taking the lock: NativeInterface calls
+  // can block on background executors (e.g. getDevice -> calculateFreeDisk on
+  // the IO thread). Holding bsg_global_env_write_mutex across those calls
+  // blocks every other native state update, including breadcrumbs on the main
+  // thread, which causes ANRs.
+  //
+  // Because the fetch is unlocked, a dedicated setter (updateUserId,
+  // updateIsLaunching, ...) may write a newer value before we apply. If the
+  // generation counter changed we discard the fetched (stale) state and retry.
+  for (int attempt = 1; attempt <= BSG_SYNC_STATE_MAX_ATTEMPTS; attempt++) {
+    bsg_environment *bsg_env = request_env_write_lock();
+    if (bsg_env == NULL) {
+      return;
+    }
+    uint32_t generation = bsg_java_synced_state_generation;
+    release_env_write_lock();
 
-  if (bsg_env == NULL) {
-    return;
+    bsg_event_java_state state;
+    bsg_fetch_event_java_state(env, &state);
+
+    bool done = true;
+    bsg_env = request_env_write_lock();
+    if (bsg_env != NULL) {
+      bool unchanged = generation == bsg_java_synced_state_generation;
+      if (unchanged) {
+        bsg_apply_event_java_state(env, &bsg_env->next_event, &state, true);
+        bump_java_synced_state_generation();
+      } else if (attempt == BSG_SYNC_STATE_MAX_ATTEMPTS) {
+        // Final attempt and the state changed again while fetching (requires
+        // continuous concurrent updates). Apply the fetched state rather than
+        // lose the sync entirely (e.g. root detection / build UUID), but never
+        // apply possibly-stale user or context: their setters keep them
+        // current, and restoring an old user would attach the wrong personal
+        // data to native crash reports.
+        bsg_apply_event_java_state(env, &bsg_env->next_event, &state, false);
+        bump_java_synced_state_generation();
+      } else {
+        done = false;
+      }
+      release_env_write_lock();
+    }
+
+    bsg_release_event_java_state(env, &state);
+    if (done) {
+      return;
+    }
   }
-
-  bsg_populate_event(env, &bsg_env->next_event);
-  release_env_write_lock();
 }
 
 static void JNI_NativeBridge_reportOutOfMemory(JNIEnv *env, jobject thiz,

@@ -181,7 +181,7 @@ internal class RemoteConfigState(
 
     private fun submitRemoteConfigRequest(): Future<RemoteConfig?> {
         return backgroundTaskService.submitTask(
-            TaskType.IO,
+            TaskType.REMOTE_CONFIG,
             Callable<RemoteConfig?> {
                 try {
                     loadOrRequestRemoteConfig()

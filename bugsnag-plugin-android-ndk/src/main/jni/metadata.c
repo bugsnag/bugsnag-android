@@ -152,14 +152,7 @@ exit:
   return count;
 }
 
-static void populate_app_data(JNIEnv *env, bugsnag_event *event) {
-  if (!bsg_jni_cache->initialized) {
-    return;
-  }
-
-  jobject data =
-      bsg_safe_call_static_object_method(env, bsg_jni_cache->NativeInterface,
-                                         bsg_jni_cache->NativeInterface_getApp);
+static void apply_app_data(JNIEnv *env, bugsnag_event *event, jobject data) {
   if (data == NULL) {
     return;
   }
@@ -203,8 +196,6 @@ static void populate_app_data(JNIEnv *env, bugsnag_event *event) {
   long total_memory = get_map_value_long(env, data, "memoryLimit");
   bugsnag_event_add_metadata_double(event, "app", "memoryLimit",
                                     (double)total_memory);
-
-  bsg_safe_delete_local_ref(env, data);
 }
 
 static void populate_device_metadata(JNIEnv *env, bugsnag_event *event,
@@ -249,14 +240,7 @@ static void populate_device_metadata(JNIEnv *env, bugsnag_event *event,
   }
 }
 
-static void populate_device_data(JNIEnv *env, bugsnag_event *event) {
-  if (!bsg_jni_cache->initialized) {
-    return;
-  }
-
-  jobject data = bsg_safe_call_static_object_method(
-      env, bsg_jni_cache->NativeInterface,
-      bsg_jni_cache->NativeInterface_getDevice);
+static void apply_device_data(JNIEnv *env, bugsnag_event *event, jobject data) {
   if (data == NULL) {
     return;
   }
@@ -298,18 +282,10 @@ static void populate_device_data(JNIEnv *env, bugsnag_event *event) {
   // add fields to device metadata
   populate_device_metadata(env, event, data);
 
-  bsg_safe_delete_local_ref(env, data);
   bsg_safe_delete_local_ref(env, _runtime_versions);
 }
 
-static void populate_user_data(JNIEnv *env, bugsnag_event *event) {
-  if (!bsg_jni_cache->initialized) {
-    return;
-  }
-
-  jobject data = bsg_safe_call_static_object_method(
-      env, bsg_jni_cache->NativeInterface,
-      bsg_jni_cache->NativeInterface_getUser);
+static void apply_user_data(JNIEnv *env, bugsnag_event *event, jobject data) {
   if (data == NULL) {
     return;
   }
@@ -319,18 +295,10 @@ static void populate_user_data(JNIEnv *env, bugsnag_event *event) {
                         sizeof(event->user.name));
   copy_map_value_string(env, data, "email", event->user.email,
                         sizeof(event->user.email));
-
-  bsg_safe_delete_local_ref(env, data);
 }
 
-static void populate_context(JNIEnv *env, bugsnag_event *event) {
-  if (!bsg_jni_cache->initialized) {
-    return;
-  }
-
-  jstring _context = bsg_safe_call_static_object_method(
-      env, bsg_jni_cache->NativeInterface,
-      bsg_jni_cache->NativeInterface_getContext);
+static void apply_context(JNIEnv *env, bugsnag_event *event, jobject context) {
+  jstring _context = (jstring)context;
   if (_context != NULL) {
     const char *value = bsg_safe_get_string_utf_chars(env, (jstring)_context);
     if (value != NULL) {
@@ -340,8 +308,6 @@ static void populate_context(JNIEnv *env, bugsnag_event *event) {
   } else {
     memset(&event->context, 0, bsg_strlen(event->context));
   }
-
-  bsg_safe_delete_local_ref(env, _context);
 }
 
 static void populate_metadata_value(JNIEnv *env, bugsnag_metadata *dst,
@@ -527,14 +493,68 @@ void bsg_populate_crumb_metadata(JNIEnv *env, bugsnag_breadcrumb *crumb,
   populate_metadata_obj(env, &crumb->metadata, "metaData", metadata);
 }
 
-void bsg_populate_event(JNIEnv *env, bugsnag_event *event) {
+void bsg_fetch_event_java_state(JNIEnv *env, bsg_event_java_state *state) {
+  state->context = NULL;
+  state->app = NULL;
+  state->device = NULL;
+  state->user = NULL;
+  state->fetched = false;
+
   if (!bsg_jni_cache->initialized) {
     return;
   }
-  populate_context(env, event);
-  populate_app_data(env, event);
-  populate_device_data(env, event);
-  populate_user_data(env, event);
+
+  // These calls can block (e.g. NativeInterface.getDevice waits on the IO
+  // executor) so they must never be made while bsg_global_env_write_mutex is
+  // held.
+  state->context = bsg_safe_call_static_object_method(
+      env, bsg_jni_cache->NativeInterface,
+      bsg_jni_cache->NativeInterface_getContext);
+  state->app =
+      bsg_safe_call_static_object_method(env, bsg_jni_cache->NativeInterface,
+                                         bsg_jni_cache->NativeInterface_getApp);
+  state->device = bsg_safe_call_static_object_method(
+      env, bsg_jni_cache->NativeInterface,
+      bsg_jni_cache->NativeInterface_getDevice);
+  state->user = bsg_safe_call_static_object_method(
+      env, bsg_jni_cache->NativeInterface,
+      bsg_jni_cache->NativeInterface_getUser);
+  state->fetched = true;
+}
+
+void bsg_apply_event_java_state(JNIEnv *env, bugsnag_event *event,
+                                const bsg_event_java_state *state,
+                                bool apply_user_context) {
+  if (!state->fetched) {
+    return;
+  }
+  if (apply_user_context) {
+    apply_context(env, event, state->context);
+  }
+  apply_app_data(env, event, state->app);
+  apply_device_data(env, event, state->device);
+  if (apply_user_context) {
+    apply_user_data(env, event, state->user);
+  }
+}
+
+void bsg_release_event_java_state(JNIEnv *env, bsg_event_java_state *state) {
+  bsg_safe_delete_local_ref(env, state->context);
+  bsg_safe_delete_local_ref(env, state->app);
+  bsg_safe_delete_local_ref(env, state->device);
+  bsg_safe_delete_local_ref(env, state->user);
+  state->context = NULL;
+  state->app = NULL;
+  state->device = NULL;
+  state->user = NULL;
+  state->fetched = false;
+}
+
+void bsg_populate_event(JNIEnv *env, bugsnag_event *event) {
+  bsg_event_java_state state;
+  bsg_fetch_event_java_state(env, &state);
+  bsg_apply_event_java_state(env, event, &state, true);
+  bsg_release_event_java_state(env, &state);
 }
 
 const char *bsg_os_name() { return "android"; }

@@ -1020,7 +1020,8 @@ public abstract class com/bugsnag/android/internal/AbstractStartupProvider : and
 public final class com/bugsnag/android/internal/BackgroundTaskService {
 	public fun <init> ()V
 	public fun <init> (Ljava/util/concurrent/ExecutorService;Ljava/util/concurrent/ExecutorService;Ljava/util/concurrent/ExecutorService;Ljava/util/concurrent/ExecutorService;Ljava/util/concurrent/ExecutorService;)V
-	public synthetic fun <init> (Ljava/util/concurrent/ExecutorService;Ljava/util/concurrent/ExecutorService;Ljava/util/concurrent/ExecutorService;Ljava/util/concurrent/ExecutorService;Ljava/util/concurrent/ExecutorService;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/util/concurrent/ExecutorService;Ljava/util/concurrent/ExecutorService;Ljava/util/concurrent/ExecutorService;Ljava/util/concurrent/ExecutorService;Ljava/util/concurrent/ExecutorService;Ljava/util/concurrent/ExecutorService;)V
+	public synthetic fun <init> (Ljava/util/concurrent/ExecutorService;Ljava/util/concurrent/ExecutorService;Ljava/util/concurrent/ExecutorService;Ljava/util/concurrent/ExecutorService;Ljava/util/concurrent/ExecutorService;Ljava/util/concurrent/ExecutorService;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun execute (Lcom/bugsnag/android/internal/TaskType;Ljava/lang/Runnable;)V
 	public final fun provider (Lcom/bugsnag/android/internal/TaskType;Lkotlin/jvm/functions/Function0;)Lcom/bugsnag/android/internal/dag/RunnableProvider;
 	public final fun shutdown ()V
@@ -1184,6 +1185,7 @@ public final class com/bugsnag/android/internal/TaskType : java/lang/Enum {
 	public static final field ERROR_REQUEST Lcom/bugsnag/android/internal/TaskType;
 	public static final field INTERNAL_REPORT Lcom/bugsnag/android/internal/TaskType;
 	public static final field IO Lcom/bugsnag/android/internal/TaskType;
+	public static final field REMOTE_CONFIG Lcom/bugsnag/android/internal/TaskType;
 	public static final field SESSION_REQUEST Lcom/bugsnag/android/internal/TaskType;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lcom/bugsnag/android/internal/TaskType;
