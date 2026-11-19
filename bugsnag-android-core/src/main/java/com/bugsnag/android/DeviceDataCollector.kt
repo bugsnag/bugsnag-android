@@ -21,10 +21,17 @@ import java.util.Locale
 import java.util.concurrent.Callable
 import java.util.concurrent.Future
 import java.util.concurrent.RejectedExecutionException
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.max
 import kotlin.math.min
 import android.os.Process as AndroidProcess
+
+/**
+ * Upper bound on how long [DeviceDataCollector.calculateFreeDisk] waits for the IO executor.
+ */
+internal const val FREE_DISK_TIMEOUT_MS = 1000L
 
 internal class DeviceDataCollector(
     private val connectivity: Connectivity,
@@ -48,6 +55,13 @@ internal class DeviceDataCollector(
     private var runtimeVersions: MutableMap<String, Any>
     private val totalMemoryFuture: Future<Long?>? = retrieveTotalDeviceMemory()
     private var orientation = AtomicInteger(resources.configuration.orientation)
+
+    /**
+     * The most recent successfully calculated free disk value, returned when the IO executor
+     * cannot answer within [FREE_DISK_TIMEOUT_MS].
+     */
+    @Volatile
+    private var lastKnownFreeDisk: Long = 0L
 
     init {
         val map = mutableMapOf<String, Any>()
@@ -234,18 +248,32 @@ internal class DeviceDataCollector(
     fun getCpuAbi(): Array<String> = buildInfo.cpuAbis ?: emptyArray()
 
     /**
-     * Get the usable disk space on internal storage's data directory
+     * Get the usable disk space on internal storage's data directory.
+     *
+     * The lookup runs on the IO executor, which may be busy with slow work (such as a network
+     * request). This method is called from paths that must not block indefinitely (including
+     * NDK state synchronization), so the wait is bounded by [FREE_DISK_TIMEOUT_MS] and the last
+     * known value is returned if the IO executor does not respond in time.
      */
     @SuppressLint("UsableSpace")
     fun calculateFreeDisk(): Long {
         // for this specific case we want the currently usable space, not
         // StorageManager#allocatableBytes() as the UsableSpace lint inspection suggests
-        return runCatching {
+        val task = runCatching {
             bgTaskService.submitTask(
                 TaskType.IO,
                 Callable { dataDirectory.usableSpace }
-            ).get()
-        }.getOrDefault(0L)
+            )
+        }.getOrNull() ?: return lastKnownFreeDisk
+
+        val result = runCatching { task.get(FREE_DISK_TIMEOUT_MS, TimeUnit.MILLISECONDS) }
+        result.onSuccess { freeDisk -> lastKnownFreeDisk = freeDisk }
+        if (result.exceptionOrNull() is TimeoutException) {
+            // don't leave stale lookups queued behind the slow task
+            task.cancel(false)
+            logger.d("Timed out calculating free disk space, using last known value")
+        }
+        return result.getOrDefault(lastKnownFreeDisk)
     }
 
     /**

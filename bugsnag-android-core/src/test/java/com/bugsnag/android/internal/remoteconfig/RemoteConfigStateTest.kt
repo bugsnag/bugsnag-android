@@ -83,7 +83,7 @@ class RemoteConfigStateTest {
         val nearExpiryConfig = createValidRemoteConfig("near-expiry", futureDate(1000))
         `when`(mockStore.current()).thenReturn(nearExpiryConfig)
         `when`(mockStore.currentOrExpired()).thenReturn(nearExpiryConfig)
-        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.IO), any(Callable::class.java)))
+        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.REMOTE_CONFIG), any(Callable::class.java)))
             .thenReturn(mockFuture)
 
         // When - getRemoteConfig is called
@@ -93,7 +93,7 @@ class RemoteConfigStateTest {
         assertEquals("near-expiry", result?.configurationTag)
 
         // Verify that a background refresh task was scheduled
-        verify(mockBackgroundTaskService).submitTask(eq(TaskType.IO), any(Callable::class.java))
+        verify(mockBackgroundTaskService).submitTask(eq(TaskType.REMOTE_CONFIG), any(Callable::class.java))
     }
 
     @Test
@@ -104,7 +104,7 @@ class RemoteConfigStateTest {
         `when`(mockStore.load()).thenReturn(nearExpiryConfig)
 
         // Mock background task service to return our future
-        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.IO), any(Callable::class.java)))
+        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.REMOTE_CONFIG), any(Callable::class.java)))
             .thenReturn(mockFuture)
         `when`(mockFuture.get(anyLong(), any())).thenReturn(nearExpiryConfig)
 
@@ -115,7 +115,7 @@ class RemoteConfigStateTest {
         assertEquals("near-expiry", result?.configurationTag)
 
         // Verify that a background task was submitted
-        verify(mockBackgroundTaskService).submitTask(eq(TaskType.IO), any(Callable::class.java))
+        verify(mockBackgroundTaskService).submitTask(eq(TaskType.REMOTE_CONFIG), any(Callable::class.java))
     }
 
     @Test
@@ -126,7 +126,7 @@ class RemoteConfigStateTest {
         `when`(mockStore.currentOrExpired()).thenReturn(null)
 
         // Mock background task to return null (no config available)
-        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.IO), any(Callable::class.java)))
+        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.REMOTE_CONFIG), any(Callable::class.java)))
             .thenReturn(mockFuture)
         `when`(mockFuture.get(100L, TimeUnit.MILLISECONDS)).thenReturn(null)
 
@@ -137,7 +137,7 @@ class RemoteConfigStateTest {
         assertNull(result)
 
         // Verify that a background task was submitted for loading/downloading
-        verify(mockBackgroundTaskService).submitTask(eq(TaskType.IO), any(Callable::class.java))
+        verify(mockBackgroundTaskService).submitTask(eq(TaskType.REMOTE_CONFIG), any(Callable::class.java))
     }
 
     @Test
@@ -147,7 +147,7 @@ class RemoteConfigStateTest {
         `when`(mockStore.currentOrExpired()).thenReturn(null)
 
         // Mock background task service to return future that times out
-        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.IO), any(Callable::class.java)))
+        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.REMOTE_CONFIG), any(Callable::class.java)))
             .thenReturn(mockFuture)
         `when`(mockFuture.get(anyLong(), any()))
             .thenThrow(TimeoutException("Operation timed out"))
@@ -167,7 +167,7 @@ class RemoteConfigStateTest {
         // Given - store operation takes too long and only an expired cached config exists
         `when`(mockStore.current()).thenReturn(null)
 
-        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.IO), any(Callable::class.java)))
+        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.REMOTE_CONFIG), any(Callable::class.java)))
             .thenReturn(mockFuture)
         `when`(mockFuture.get(anyLong(), any()))
             .thenThrow(TimeoutException("Operation timed out"))
@@ -183,7 +183,7 @@ class RemoteConfigStateTest {
     fun getRemoteConfigDoesNotReturnExpiredRequestResult() {
         val expiredConfig = createValidRemoteConfig("expired", futureDate(-1000))
         `when`(mockStore.current()).thenReturn(null)
-        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.IO), any(Callable::class.java)))
+        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.REMOTE_CONFIG), any(Callable::class.java)))
             .thenReturn(mockFuture)
         `when`(mockFuture.get(100L, TimeUnit.MILLISECONDS)).thenReturn(expiredConfig)
 
@@ -210,7 +210,7 @@ class RemoteConfigStateTest {
         `when`(mockStore.current()).thenReturn(null)
         `when`(mockStore.load()).thenReturn(null)
         `when`(mockStore.currentOrExpired()).thenReturn(null)
-        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.IO), any(Callable::class.java)))
+        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.REMOTE_CONFIG), any(Callable::class.java)))
             .thenReturn(mockFuture)
 
         // When - we ask for remote config twice before the first request finishes
@@ -219,7 +219,7 @@ class RemoteConfigStateTest {
 
         // Then - both calls should return the same in-flight request
         assertEquals(firstRequest, secondRequest)
-        verify(mockBackgroundTaskService).submitTask(eq(TaskType.IO), any(Callable::class.java))
+        verify(mockBackgroundTaskService).submitTask(eq(TaskType.REMOTE_CONFIG), any(Callable::class.java))
     }
 
     @Test
@@ -251,12 +251,12 @@ class RemoteConfigStateTest {
             futureDate(RemoteConfigState.REFRESH_BUFFER_MS - 1000)
         )
         `when`(mockStore.current()).thenReturn(nearExpiryConfig)
-        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.IO), any(Callable::class.java)))
+        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.REMOTE_CONFIG), any(Callable::class.java)))
             .thenReturn(mockFuture)
 
         remoteConfigState.scheduleDownloadIfRequired()
 
-        verify(mockBackgroundTaskService).submitTask(eq(TaskType.IO), any(Callable::class.java))
+        verify(mockBackgroundTaskService).submitTask(eq(TaskType.REMOTE_CONFIG), any(Callable::class.java))
     }
 
     @Test
@@ -275,24 +275,24 @@ class RemoteConfigStateTest {
         val nearExpiryConfig = createValidRemoteConfig("near-expiry", futureDate(1000))
         `when`(mockStore.current()).thenReturn(nearExpiryConfig)
         `when`(mockStore.cachedCooldownUntil()).thenReturn(System.currentTimeMillis() - 1)
-        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.IO), any(Callable::class.java)))
+        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.REMOTE_CONFIG), any(Callable::class.java)))
             .thenReturn(mockFuture)
 
         remoteConfigState.scheduleDownloadIfRequired()
 
-        verify(mockBackgroundTaskService).submitTask(eq(TaskType.IO), any(Callable::class.java))
+        verify(mockBackgroundTaskService).submitTask(eq(TaskType.REMOTE_CONFIG), any(Callable::class.java))
     }
 
     @Test
     fun scheduleDownloadIfRequiredDoesNotReadDiskOnCallingThread() {
         `when`(mockStore.current()).thenReturn(null)
         `when`(mockStore.cachedCooldownUntil()).thenReturn(0L)
-        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.IO), any(Callable::class.java)))
+        `when`(mockBackgroundTaskService.submitTask(eq(TaskType.REMOTE_CONFIG), any(Callable::class.java)))
             .thenReturn(mockFuture)
 
         remoteConfigState.scheduleDownloadIfRequired()
 
-        verify(mockBackgroundTaskService).submitTask(eq(TaskType.IO), any(Callable::class.java))
+        verify(mockBackgroundTaskService).submitTask(eq(TaskType.REMOTE_CONFIG), any(Callable::class.java))
         verify(mockStore, never()).currentOrExpired()
         verify(mockStore, never()).cooldownUntil()
         verify(mockStore, never()).diagnostics()

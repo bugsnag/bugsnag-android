@@ -15,6 +15,9 @@ import java.net.URL
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.Date
+import java.util.concurrent.ScheduledFuture
+import java.util.concurrent.ScheduledThreadPoolExecutor
+import java.util.concurrent.TimeUnit
 
 @Suppress("LongParameterList")
 internal class RemoteConfigRequest(
@@ -73,6 +76,11 @@ internal class RemoteConfigRequest(
         connection.connectTimeout = REQUEST_TIMEOUT_MS
         connection.readTimeout = REQUEST_TIMEOUT_MS
 
+        // connect/read timeouts are not always honoured during the TLS handshake, which has been
+        // observed to stall indefinitely on some devices/networks. Enforce an overall deadline by
+        // forcibly disconnecting, which aborts any blocked socket read.
+        val deadline = scheduleRequestDeadline(connection)
+
         try {
             // Set required headers
             connection.setRequestProperty(HEADER_BUGSNAG_API_KEY, apiKey)
@@ -112,7 +120,24 @@ internal class RemoteConfigRequest(
                 }
             }
         } finally {
+            deadline?.cancel(false)
             connection.disconnect()
+        }
+    }
+
+    private fun scheduleRequestDeadline(connection: HttpURLConnection): ScheduledFuture<*>? {
+        return try {
+            deadlineExecutor.schedule(
+                {
+                    logger.w("Remote config request exceeded ${REQUEST_DEADLINE_MS}ms; aborting")
+                    connection.disconnect()
+                },
+                REQUEST_DEADLINE_MS,
+                TimeUnit.MILLISECONDS
+            )
+        } catch (exc: Exception) {
+            logger.w("Failed to schedule remote config request deadline", exc)
+            null
         }
     }
 
@@ -275,6 +300,22 @@ internal class RemoteConfigRequest(
         const val DEFAULT_CONFIG_EXPIRY_TIME =
             DEFAULT_CONFIG_UPDATE_INTERVAL + DEFAULT_CONFIG_UPDATE_TOLERANCE
         const val REQUEST_TIMEOUT_MS = 5_000
+
+        /**
+         * Hard upper bound on the total time a single remote config request may take, including
+         * the TLS handshake, regardless of whether the socket timeouts are honoured.
+         */
+        const val REQUEST_DEADLINE_MS = 15_000L
+
+        internal val deadlineExecutor: ScheduledThreadPoolExecutor by lazy {
+            ScheduledThreadPoolExecutor(1) { runnable ->
+                Thread(runnable, "Bugsnag Remote Config Deadline").apply { isDaemon = true }
+            }.apply {
+                // removeOnCancelPolicy requires API 21; cancelled deadlines simply expire unrun
+                setKeepAliveTime(REQUEST_DEADLINE_MS, TimeUnit.MILLISECONDS)
+                allowCoreThreadTimeOut(true)
+            }
+        }
         val maxAgeRegex = Regex(""".*max-age\s*=\s*(\d+).*""")
     }
 }

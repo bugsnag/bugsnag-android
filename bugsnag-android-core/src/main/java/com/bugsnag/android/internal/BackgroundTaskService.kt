@@ -45,6 +45,13 @@ enum class TaskType {
     INTERNAL_REPORT,
 
     /**
+     * A task that fetches remote configuration over the network. These are kept off the [IO]
+     * executor so that a slow or stalled network request can never delay short-lived I/O tasks
+     * (such as calculating free disk space) that other components wait on.
+     */
+    REMOTE_CONFIG,
+
+    /**
      * Any other task that needs to run in the background. These will typically be
      * short-lived operations that take <100ms, such as registering a
      * [android.content.BroadcastReceiver].
@@ -134,8 +141,30 @@ class BackgroundTaskService(
         "Bugsnag Default thread",
         TaskType.DEFAULT,
         false
+    ),
+
+    @get:VisibleForTesting
+    internal val remoteConfigExecutor: ExecutorService = createExecutor(
+        "Bugsnag Remote Config thread",
+        TaskType.REMOTE_CONFIG,
+        false
     )
 ) {
+
+    constructor(
+        errorExecutor: ExecutorService,
+        sessionExecutor: ExecutorService,
+        ioExecutor: ExecutorService,
+        internalReportExecutor: ExecutorService,
+        defaultExecutor: ExecutorService
+    ) : this(
+        errorExecutor,
+        sessionExecutor,
+        ioExecutor,
+        internalReportExecutor,
+        defaultExecutor,
+        createExecutor("Bugsnag Remote Config thread", TaskType.REMOTE_CONFIG, false)
+    )
 
     /**
      * Submits a task for execution on a single-threaded executor. It is guaranteed that tasks
@@ -170,6 +199,7 @@ class BackgroundTaskService(
             TaskType.IO -> ioExecutor.execute(task)
             TaskType.INTERNAL_REPORT -> internalReportExecutor.execute(task)
             TaskType.DEFAULT -> defaultExecutor.execute(task)
+            TaskType.REMOTE_CONFIG -> remoteConfigExecutor.execute(task)
         }
     }
 
@@ -183,6 +213,7 @@ class BackgroundTaskService(
         // less essential
         internalReportExecutor.shutdownNow()
         defaultExecutor.shutdownNow()
+        remoteConfigExecutor.shutdownNow()
 
         // Wait a little while for these ones to shut down
         errorExecutor.shutdown()

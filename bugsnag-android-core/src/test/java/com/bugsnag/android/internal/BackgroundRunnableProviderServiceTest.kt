@@ -25,6 +25,7 @@ internal class BackgroundRunnableProviderServiceTest {
         runSubmitRunnableTest(service, TaskType.IO, "Bugsnag IO thread")
         runSubmitRunnableTest(service, TaskType.INTERNAL_REPORT, "Bugsnag Internal Report thread")
         runSubmitRunnableTest(service, TaskType.DEFAULT, "Bugsnag Default thread")
+        runSubmitRunnableTest(service, TaskType.REMOTE_CONFIG, "Bugsnag Remote Config thread")
     }
 
     private fun runSubmitRunnableTest(
@@ -56,6 +57,7 @@ internal class BackgroundRunnableProviderServiceTest {
             "Bugsnag Internal Report thread"
         )
         runSubmitCallableTest(service, TaskType.DEFAULT, 5, "Bugsnag Default thread")
+        runSubmitCallableTest(service, TaskType.REMOTE_CONFIG, 6, "Bugsnag Remote Config thread")
     }
 
     private fun runSubmitCallableTest(
