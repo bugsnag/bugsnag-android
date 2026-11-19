@@ -1,114 +1,82 @@
 package com.bugsnag.android;
 
-import com.bugsnag.android.internal.DateUtils;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
-@SuppressWarnings("ConstantConditions")
-public class Breadcrumb implements JsonStream.Streamable {
+public final class Breadcrumb implements JsonStream.Streamable {
 
-    // non-private to allow direct field access optimizations
-    final BreadcrumbInternal impl;
-    private final Logger logger;
-
-    Breadcrumb(@NonNull BreadcrumbInternal impl, @NonNull Logger logger) {
-        this.impl = impl;
-        this.logger = logger;
-    }
-
-    Breadcrumb(@NonNull String message, @NonNull Logger logger) {
-        this.impl = new BreadcrumbInternal(message);
-        this.logger = logger;
-    }
-
-    Breadcrumb(@NonNull String message,
-               @NonNull BreadcrumbType type,
-               @Nullable Map<String, Object> metadata,
-               @NonNull Date timestamp,
-               @NonNull Logger logger) {
-        this.impl = new BreadcrumbInternal(message, type, metadata, timestamp);
-        this.logger = logger;
-    }
-
-    private void logNull(String property) {
-        logger.e("Invalid null value supplied to breadcrumb." + property + ", ignoring");
-    }
-
-    /**
-     * Sets the description of the breadcrumb
-     */
-    public void setMessage(@NonNull String message) {
-        if (message != null) {
-            impl.message = message;
-        } else {
-            logNull("message");
-        }
-    }
-
-    /**
-     * Gets the description of the breadcrumb
-     */
     @NonNull
-    public String getMessage() {
-        return impl.message;
+    private String name;
+
+    @NonNull
+    private BreadcrumbType type;
+
+    @NonNull
+    private final String timestamp;
+
+    @NonNull
+    private Map<String, Object> metadata;
+
+    // Overloaded Constructor to support custom timestamps
+    Breadcrumb(@NonNull String name, @NonNull BreadcrumbType type, @NonNull Map<String, Object> metadata, @Nullable Date customTimestamp) {
+        this.name = name;
+        this.type = type;
+        this.metadata = new HashMap<>(metadata);
+
+        // Use custom timestamp if provided; otherwise fallback to current system clock
+        Date date = (customTimestamp != null) ? customTimestamp : new Date();
+        this.timestamp = DateUtils.toIso8601(date);
     }
 
-    /**
-     * Sets the type of breadcrumb left - one of those enabled in
-     * {@link Configuration#getEnabledBreadcrumbTypes()}
-     */
+    // Legacy constructor chaining to preserve backward compatibility
+    Breadcrumb(@NonNull String name, @NonNull BreadcrumbType type, @NonNull Map<String, Object> metadata) {
+        this(name, type, metadata, null);
+    }
+
+    @NonNull
+    public String getName() {
+        return name;
+    }
+
+    public void setName(@NonNull String name) {
+        this.name = name;
+    }
+
+    @NonNull
+    public BreadcrumbType getType() {
+        return type;
+    }
+
     public void setType(@NonNull BreadcrumbType type) {
-        if (type != null) {
-            impl.type = type;
-        } else {
-            logNull("type");
-        }
+        this.type = type;
     }
 
-    /**
-     * Gets the type of breadcrumb left - one of those enabled in
-     * {@link Configuration#getEnabledBreadcrumbTypes()}
-     */
     @NonNull
-    public BreadcrumbType getType() {
-        return impl.type;
+    public String getTimestamp() {
+        return timestamp;
     }
 
-    /**
-     * Sets diagnostic data relating to the breadcrumb
-     */
-    public void setMetadata(@Nullable Map<String, Object> metadata) {
-        impl.metadata = metadata;
-    }
-
-    /**
-     * Gets diagnostic data relating to the breadcrumb
-     */
-    @Nullable
+    @NonNull
     public Map<String, Object> getMetadata() {
-        return impl.metadata;
+        return metadata;
     }
 
-    /**
-     * The timestamp that the breadcrumb was left
-     */
-    @NonNull
-    public Date getTimestamp() {
-        return impl.timestamp;
-    }
-
-    @NonNull
-    String getStringTimestamp() {
-        return DateUtils.toIso8601(impl.timestamp);
+    public void setMetadata(@NonNull Map<String, Object> metadata) {
+        this.metadata = new HashMap<>(metadata);
     }
 
     @Override
     public void toStream(@NonNull JsonStream stream) throws IOException {
-        impl.toStream(stream);
+        stream.beginObject();
+        stream.name("name").value(name);
+        stream.name("timestamp").value(timestamp);
+        stream.name("type").value(type.toString());
+        stream.name("metaData").value(metadata);
+        stream.endObject();
     }
 }
