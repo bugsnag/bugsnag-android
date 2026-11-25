@@ -29,12 +29,16 @@ internal class RemoteConfigRequest(
     private val releaseStage: String?,
     private val packageName: String?,
     private val remoteConfig: RemoteConfig?,
-    private val logger: Logger
+    private val logger: Logger,
+    private val clock: RemoteConfigClock = RemoteConfigClock.SYSTEM,
+    private val deviceId: String? = null
 ) {
     constructor(
         config: ImmutableConfig,
         notifier: Notifier,
-        currentRemoteConfig: RemoteConfig?
+        currentRemoteConfig: RemoteConfig?,
+        clock: RemoteConfigClock = RemoteConfigClock.SYSTEM,
+        deviceId: String? = null
     ) : this(
         config.endpoints.configuration,
         config.apiKey,
@@ -44,7 +48,9 @@ internal class RemoteConfigRequest(
         config.releaseStage,
         config.packageInfo?.packageName,
         currentRemoteConfig,
-        config.logger
+        config.logger,
+        clock,
+        deviceId
     )
 
     fun requestConfig(): RemoteConfig? {
@@ -86,6 +92,11 @@ internal class RemoteConfigRequest(
             connection.setRequestProperty(HEADER_BUGSNAG_API_KEY, apiKey)
             connection.setRequestProperty(HEADER_BUGSNAG_NOTIFIER_NAME, notifier.name)
             connection.setRequestProperty(HEADER_BUGSNAG_NOTIFIER_VERSION, notifier.version)
+            // Sent on any scheme (like device.id in event payloads) so that on-premise installs
+            // using http:// config endpoints behave the same as https:// ones.
+            if (!deviceId.isNullOrEmpty()) {
+                connection.setRequestProperty(HEADER_BUGSNAG_DEVICE_ID, deviceId)
+            }
 
             if (remoteConfig?.configurationTag != null) {
                 connection.setRequestProperty(HEADER_IF_NONE_MATCH, remoteConfig.configurationTag)
@@ -234,7 +245,7 @@ internal class RemoteConfigRequest(
             return defaultConfigExpiry("negative max-age value in Cache-Control header '$cacheControl'")
         }
 
-        val now = System.currentTimeMillis()
+        val now = clock.currentTimeMillis()
         val maxDuration = Long.MAX_VALUE - now
         val duration = if (maxAgeSeconds > maxDuration / SECONDS_MS) {
             logger.w("Remote config max-age is too large; clamping expiry to the maximum supported timestamp")
@@ -281,7 +292,7 @@ internal class RemoteConfigRequest(
     }
 
     private fun defaultConfigExpiry(reason: String): Date {
-        val expiry = Date(System.currentTimeMillis() + DEFAULT_CONFIG_EXPIRY_TIME)
+        val expiry = Date(clock.currentTimeMillis() + DEFAULT_CONFIG_EXPIRY_TIME)
         logger.d("Using default remote config expiry because $reason -> ${expiry.time}")
         return expiry
     }
@@ -292,6 +303,7 @@ internal class RemoteConfigRequest(
         const val HEADER_IF_NONE_MATCH = "If-None-Match"
         const val HEADER_BUGSNAG_NOTIFIER_NAME = "Bugsnag-Notifier-Name"
         const val HEADER_BUGSNAG_NOTIFIER_VERSION = "Bugsnag-Notifier-Version"
+        const val HEADER_BUGSNAG_DEVICE_ID = "Bugsnag-Device-Id"
 
         const val SECONDS_MS = 1000L
 

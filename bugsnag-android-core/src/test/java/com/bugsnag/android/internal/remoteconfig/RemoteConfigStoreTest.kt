@@ -73,6 +73,41 @@ class RemoteConfigStoreTest {
     }
 
     @Test
+    fun failureCountPersistsAcrossRestartsAndIsClearedOnSuccess() {
+        val cooldownUntil = System.currentTimeMillis() + 60_000
+        store.setCooldownUntil(cooldownUntil, 3)
+        assertEquals(3, store.failureCount())
+
+        val reloadedStore = RemoteConfigStore(tempDir.root, versionCode)
+        assertEquals(cooldownUntil, reloadedStore.cooldownUntil())
+        assertEquals(3, reloadedStore.failureCount())
+
+        reloadedStore.clearCooldown()
+        assertEquals(0, reloadedStore.failureCount())
+        assertEquals(0, RemoteConfigStore(tempDir.root, versionCode).failureCount())
+    }
+
+    @Test
+    fun failureCountSurvivesExpiredCooldown() {
+        store.setCooldownUntil(System.currentTimeMillis() - 1, 2)
+
+        val reloadedStore = RemoteConfigStore(tempDir.root, versionCode)
+        assertEquals(2, reloadedStore.failureCount())
+        reloadedStore.reloadCooldownUntil()
+        assertEquals(2, reloadedStore.failureCount())
+    }
+
+    @Test
+    fun legacyCooldownMarkerImpliesOneFailure() {
+        val cooldownUntil = System.currentTimeMillis() + 60_000
+        File(tempDir.root, "core-$versionCode.json.cooldown").writeText(cooldownUntil.toString())
+
+        val reloadedStore = RemoteConfigStore(tempDir.root, versionCode)
+        assertEquals(cooldownUntil, reloadedStore.cooldownUntil())
+        assertEquals(1, reloadedStore.failureCount())
+    }
+
+    @Test
     fun cooldownRemainsActiveInMemoryWhenMarkerCannotBeWritten() {
         val invalidConfigDir = File(tempDir.root, "not-a-directory").apply { createNewFile() }
         val storeWithUnwritableMarker = RemoteConfigStore(invalidConfigDir, versionCode)
@@ -81,6 +116,44 @@ class RemoteConfigStoreTest {
         storeWithUnwritableMarker.setCooldownUntil(cooldownUntil)
 
         assertEquals(cooldownUntil, storeWithUnwritableMarker.cooldownUntil())
+    }
+
+    @Test
+    fun cooldownMarkerBeyondMaximumIsDeleted() {
+        val markerFile = File(tempDir.root, "core-$versionCode.json.cooldown")
+        markerFile.writeText("9999999999999\n3")
+
+        val reloadedStore = RemoteConfigStore(tempDir.root, versionCode)
+
+        assertEquals(0L, reloadedStore.cooldownUntil())
+        assertEquals(0, reloadedStore.failureCount())
+        assertFalse(markerFile.exists())
+    }
+
+    @Test
+    fun legacyCooldownMarkerWithMaximumJitterIsKept() {
+        // pre-backoff SDKs wrote cooldowns of up to 24h + 2h jitter
+        val cooldownUntil = System.currentTimeMillis() + TimeUnit.HOURS.toMillis(26) - 1_000
+        File(tempDir.root, "core-$versionCode.json.cooldown").writeText(cooldownUntil.toString())
+
+        val reloadedStore = RemoteConfigStore(tempDir.root, versionCode)
+
+        assertEquals(cooldownUntil, reloadedStore.cooldownUntil())
+    }
+
+    @Test
+    fun cooldownMarkerIsDeletedWhenClockMovesBackwards() {
+        var now = TimeUnit.DAYS.toMillis(1000)
+        val clock = RemoteConfigClock { now }
+        val writer = RemoteConfigStore(tempDir.root, versionCode, clock = clock)
+        writer.setCooldownUntil(now + TimeUnit.HOURS.toMillis(24), 2)
+
+        // the device clock jumps back a week, so the marker now looks ~8 days away
+        now -= TimeUnit.DAYS.toMillis(7)
+        val reloadedStore = RemoteConfigStore(tempDir.root, versionCode, clock = clock)
+
+        assertEquals(0L, reloadedStore.reloadCooldownUntil())
+        assertFalse(File(tempDir.root, "core-$versionCode.json.cooldown").exists())
     }
 
     @Test
@@ -288,6 +361,22 @@ class RemoteConfigStoreTest {
         assertFalse(oldFile2.exists())
         assertTrue(currentFile.exists())
         assertTrue(currentCooldownFile.exists())
+    }
+
+    @Test
+    fun sweepRemovesOldVersionCooldownAndLockButKeepsCurrentTempFile() {
+        tempDir.root.mkdirs()
+        val oldCooldown = File(tempDir.root, "core-100.json.cooldown").apply { writeText("9999999999999\n4") }
+        val oldLock = File(tempDir.root, "core-100.json.lock").apply { createNewFile() }
+        val currentTemp = File(tempDir.root, "core-$versionCode.json.new").apply { createNewFile() }
+        val currentLock = File(tempDir.root, "core-$versionCode.json.lock").apply { createNewFile() }
+
+        store.sweep()
+
+        assertFalse(oldCooldown.exists())
+        assertFalse(oldLock.exists())
+        assertTrue(currentTemp.exists())
+        assertTrue(currentLock.exists())
     }
 
     @Test

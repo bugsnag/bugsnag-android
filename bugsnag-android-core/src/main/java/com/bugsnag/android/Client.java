@@ -325,11 +325,8 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
         eventStore.get().flushAsync();
         sessionTracker.flushAsync();
 
-        // Kick off remote-config refresh only after the critical launch-crash / plugin startup
-        // path has completed, so the IO queue cannot delay ANR or launch-crash delivery.
-        if (remoteConfigState != null) {
-            remoteConfigState.scheduleDownloadIfRequired();
-        }
+        // Remote config is not fetched at startup: DeliveryPipeline triggers a fetch only when an
+        // error is delivered and the cached config is missing or stale.
 
         // These call into NdkPluginCaller to sync with the native side, so they must happen later
         internalMetrics.setConfigDifferences(configDifferences);

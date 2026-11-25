@@ -7,8 +7,10 @@ import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.TaskType
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.ArgumentMatchers.eq
@@ -74,7 +76,7 @@ class RemoteConfigStateTest {
 
         // Verify store.current() was called but no background task was needed
         verify(mockStore).current()
-        verifyNoInteractions(mockBackgroundTaskService)
+        verify(mockBackgroundTaskService, never()).submitTask(eq(TaskType.REMOTE_CONFIG), any(Callable::class.java))
     }
 
     @Test
@@ -229,7 +231,9 @@ class RemoteConfigStateTest {
         `when`(mockEndpoints.configuration).thenReturn(null)
         `when`(mockConfig.endpoints).thenReturn(mockEndpoints)
 
-        val disabledState = RemoteConfigState(mockStore, mockConfig, mockNotifier, mockBackgroundTaskService)
+        // a separate service mock, as the enabled state built in setup() has already scheduled a sweep
+        val disabledTaskService = mock(BackgroundTaskService::class.java)
+        val disabledState = RemoteConfigState(mockStore, mockConfig, mockNotifier, disabledTaskService)
 
         verify(mockStore).clear()
 
@@ -241,7 +245,7 @@ class RemoteConfigStateTest {
 
         // Verify no additional interactions with store or background service
         verifyNoMoreInteractions(mockStore)
-        verifyNoInteractions(mockBackgroundTaskService)
+        verifyNoInteractions(disabledTaskService) // no sweep or fetch when disabled
     }
 
     @Test
@@ -267,7 +271,7 @@ class RemoteConfigStateTest {
 
         remoteConfigState.scheduleDownloadIfRequired()
 
-        verifyNoInteractions(mockBackgroundTaskService)
+        verify(mockBackgroundTaskService, never()).submitTask(eq(TaskType.REMOTE_CONFIG), any(Callable::class.java))
     }
 
     @Test
@@ -299,28 +303,53 @@ class RemoteConfigStateTest {
     }
 
     @Test
-    fun computeCooldownAppliesPlusMinusTwoHourJitter() {
-        val baseCooldownMs = TimeUnit.HOURS.toMillis(24)
+    fun sweepsStaleVersionsInBackgroundAtStartup() {
+        val runnable = ArgumentCaptor.forClass(Runnable::class.java)
+        verify(mockBackgroundTaskService).submitTask(eq(TaskType.REMOTE_CONFIG), runnable.capture())
+        verify(mockStore, never()).sweep()
+
+        runnable.value.run()
+
+        verify(mockStore).sweep()
+    }
+
+    @Test
+    fun backoffCeilingGrowsExponentiallyUpToCap() {
+        val minutes = TimeUnit.MINUTES::toMillis
+        assertEquals(minutes(15), RemoteConfigState.backoffCeiling(0))
+        assertEquals(minutes(60), RemoteConfigState.backoffCeiling(1))
+        assertEquals(minutes(240), RemoteConfigState.backoffCeiling(2))
+        assertEquals(minutes(960), RemoteConfigState.backoffCeiling(3))
+        assertEquals(TimeUnit.HOURS.toMillis(24), RemoteConfigState.backoffCeiling(4))
+        assertEquals(TimeUnit.HOURS.toMillis(24), RemoteConfigState.backoffCeiling(5))
+        assertEquals(TimeUnit.HOURS.toMillis(24), RemoteConfigState.backoffCeiling(Int.MAX_VALUE))
+        assertEquals(minutes(15), RemoteConfigState.backoffCeiling(-1))
+    }
+
+    @Test
+    fun computeCooldownAppliesEqualJitter() {
         val nowMs = 1234L
-        val maxJitterMs = RemoteConfigState.COOLDOWN_JITTER_MS
+        val ceilingMs = TimeUnit.MINUTES.toMillis(60)
 
-        val positive = RemoteConfigState.computeCooldown(
-            baseCooldownMs = baseCooldownMs,
-            jitterOffsetMs = maxJitterMs,
-            nowMs = nowMs
-        )
+        val floor = RemoteConfigState.computeCooldown(failureIndex = 1, jitterMs = 0L, nowMs = nowMs)
+        assertEquals(ceilingMs, floor.ceilingMs)
+        assertEquals(ceilingMs / 2, floor.durationMs)
+        assertEquals(nowMs + ceilingMs / 2, floor.cooldownUntilMs)
 
-        assertEquals(baseCooldownMs + maxJitterMs, positive.durationMs)
-        assertEquals(nowMs + baseCooldownMs + maxJitterMs, positive.cooldownUntilMs)
+        val ceiling = RemoteConfigState.computeCooldown(failureIndex = 1, jitterMs = ceilingMs, nowMs = nowMs)
+        assertEquals(ceilingMs, ceiling.durationMs)
+        assertEquals(nowMs + ceilingMs, ceiling.cooldownUntilMs)
+    }
 
-        val negative = RemoteConfigState.computeCooldown(
-            baseCooldownMs = baseCooldownMs,
-            jitterOffsetMs = -maxJitterMs,
-            nowMs = nowMs
-        )
-
-        assertEquals(baseCooldownMs - maxJitterMs, negative.durationMs)
-        assertEquals(nowMs + baseCooldownMs - maxJitterMs, negative.cooldownUntilMs)
+    @Test
+    fun computeCooldownRandomWaitStaysWithinFleetWindow() {
+        for (k in 0..6) {
+            val ceilingMs = RemoteConfigState.backoffCeiling(k)
+            repeat(200) {
+                val wait = RemoteConfigState.computeCooldown(k, nowMs = 0L).durationMs
+                assertTrue("k=$k wait=$wait", wait >= ceilingMs / 2 && wait <= ceilingMs)
+            }
+        }
     }
 
     private fun createValidRemoteConfig(tag: String, expiry: Date): RemoteConfig {

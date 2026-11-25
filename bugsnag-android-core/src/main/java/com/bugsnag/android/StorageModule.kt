@@ -78,7 +78,8 @@ internal class StorageModule(
             ),
             immutableConfig,
             notifier,
-            bgTaskService
+            bgTaskService,
+            deviceIdProvider = { deviceId.getOrNull()?.deviceId }
         )
     }
 
