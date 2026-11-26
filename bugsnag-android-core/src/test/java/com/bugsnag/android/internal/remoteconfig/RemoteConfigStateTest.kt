@@ -1,5 +1,6 @@
 package com.bugsnag.android.internal.remoteconfig
 
+import com.bugsnag.android.NoopLogger
 import com.bugsnag.android.Notifier
 import com.bugsnag.android.RemoteConfig
 import com.bugsnag.android.internal.BackgroundTaskService
@@ -9,7 +10,9 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.anyLong
@@ -27,8 +30,12 @@ import java.util.concurrent.Callable
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
+import java.util.concurrent.atomic.AtomicInteger
 
 class RemoteConfigStateTest {
+
+    @get:Rule
+    val tempDir = TemporaryFolder()
 
     @Mock
     private lateinit var mockStore: RemoteConfigStore
@@ -300,6 +307,91 @@ class RemoteConfigStateTest {
         verify(mockStore, never()).currentOrExpired()
         verify(mockStore, never()).cooldownUntil()
         verify(mockStore, never()).diagnostics()
+    }
+
+    @Test
+    fun scheduleDownloadIfRequiredSkipsRequestWhenOffline() {
+        `when`(mockStore.current()).thenReturn(null)
+        `when`(mockStore.cachedCooldownUntil()).thenReturn(0L)
+        val offlineState = RemoteConfigState(
+            mockStore,
+            mockConfig,
+            mockNotifier,
+            mockBackgroundTaskService,
+            networkAvailable = { false }
+        )
+
+        offlineState.scheduleDownloadIfRequired()
+
+        verify(mockBackgroundTaskService, never()).submitTask(eq(TaskType.REMOTE_CONFIG), any(Callable::class.java))
+    }
+
+    @Test
+    fun requestIsNotSentAndBackoffNotStartedWhenConnectionDropsBeforeRequest() {
+        val networkChecks = AtomicInteger()
+        // online when scheduled, offline by the time the background task runs
+        val (state, store, taskService) = stateWithRealStore { networkChecks.incrementAndGet() == 1 }
+
+        runScheduledDownload(state, taskService)
+
+        assertEquals(0L, store.cooldownUntil())
+        assertEquals(0, store.failureCount())
+    }
+
+    @Test
+    fun failedRequestDoesNotStartBackoffWhenConnectionWasLost() {
+        val networkChecks = AtomicInteger()
+        // online when scheduled and when the request starts, offline once it has failed
+        val (state, store, taskService) = stateWithRealStore { networkChecks.incrementAndGet() <= 2 }
+
+        runScheduledDownload(state, taskService)
+
+        assertEquals(3, networkChecks.get())
+        assertEquals(0L, store.cooldownUntil())
+        assertEquals(0, store.failureCount())
+    }
+
+    @Test
+    fun failedRequestStartsBackoffWhenOnline() {
+        val (state, store, taskService) = stateWithRealStore { true }
+
+        runScheduledDownload(state, taskService)
+
+        assertTrue(store.cooldownUntil() > System.currentTimeMillis())
+        assertEquals(1, store.failureCount())
+    }
+
+    /**
+     * A state backed by a real store, whose requests go to a closed local port so they fail
+     * straight away without leaving the machine.
+     */
+    private fun stateWithRealStore(
+        networkAvailable: () -> Boolean
+    ): Triple<RemoteConfigState, RemoteConfigStore, BackgroundTaskService> {
+        val endpoints = mock(com.bugsnag.android.EndpointConfiguration::class.java)
+        `when`(endpoints.configuration).thenReturn("http://127.0.0.1:1/")
+        val config = mock(ImmutableConfig::class.java)
+        `when`(config.endpoints).thenReturn(endpoints)
+        `when`(config.apiKey).thenReturn("5d1ec5bd39a74caa1267142706a7fb21")
+        `when`(config.logger).thenReturn(NoopLogger)
+        `when`(mockNotifier.name).thenReturn("Android Bugsnag Notifier")
+        `when`(mockNotifier.version).thenReturn("0.0.0")
+
+        val configDir = tempDir.newFolder("config")
+        val store = RemoteConfigStore(configDir, 1, NoopLogger, cooldownDir = configDir)
+        val taskService = mock(BackgroundTaskService::class.java)
+        `when`(taskService.submitTask(eq(TaskType.REMOTE_CONFIG), any(Callable::class.java)))
+            .thenReturn(mockFuture)
+        val state = RemoteConfigState(store, config, mockNotifier, taskService, networkAvailable = networkAvailable)
+        return Triple(state, store, taskService)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun runScheduledDownload(state: RemoteConfigState, taskService: BackgroundTaskService) {
+        state.scheduleDownloadIfRequired()
+        val task = ArgumentCaptor.forClass(Callable::class.java)
+        verify(taskService).submitTask(eq(TaskType.REMOTE_CONFIG), task.capture())
+        (task.value as Callable<RemoteConfig?>).call()
     }
 
     @Test

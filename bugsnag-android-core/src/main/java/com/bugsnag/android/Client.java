@@ -176,7 +176,7 @@ public class Client implements MetadataAware, CallbackAware, UserAware, FeatureF
 
         // setup storage as soon as possible
         final StorageModule storageModule = new StorageModule(appContext,
-                immutableConfig, notifier, bgTaskService);
+                immutableConfig, notifier, bgTaskService, connectivity);
 
         // setup state trackers for bugsnag
         BugsnagStateModule bugsnagStateModule =

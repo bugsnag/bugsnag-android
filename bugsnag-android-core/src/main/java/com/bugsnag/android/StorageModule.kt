@@ -19,7 +19,8 @@ internal class StorageModule(
     appContext: Context,
     private val immutableConfig: ImmutableConfig,
     private val notifier: Notifier,
-    bgTaskService: BackgroundTaskService
+    bgTaskService: BackgroundTaskService,
+    private val connectivity: Connectivity? = null
 ) : BackgroundDependencyModule(bgTaskService, TaskType.IO) {
 
     val bugsnagDir = provider {
@@ -82,7 +83,8 @@ internal class StorageModule(
             immutableConfig,
             notifier,
             bgTaskService,
-            deviceIdProvider = { deviceId.getOrNull()?.deviceId }
+            deviceIdProvider = { deviceId.getOrNull()?.deviceId },
+            networkAvailable = { connectivity?.hasNetworkConnection() ?: true }
         )
     }
 

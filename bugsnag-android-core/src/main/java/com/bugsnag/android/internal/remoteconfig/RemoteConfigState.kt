@@ -12,6 +12,7 @@ import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
+@Suppress("LongParameterList")
 internal class RemoteConfigState(
     private val store: RemoteConfigStore,
     private val config: ImmutableConfig,
@@ -20,7 +21,16 @@ internal class RemoteConfigState(
     private val clock: RemoteConfigClock = RemoteConfigClock.SYSTEM,
     /** Resolved lazily on the request thread, as loading the device ID may touch disk. */
     private val deviceIdProvider: () -> String? = { null },
+    /**
+     * Whether the device currently has a network connection. A fetch made while offline cannot
+     * reach the config service, so it is skipped rather than counted as a failure: counting it
+     * would push the backoff towards 24h and leave the config stale once the device is back online.
+     */
+    networkAvailable: () -> Boolean = { true },
 ) {
+    /** Unknown connectivity counts as available, matching DefaultDelivery. */
+    private val isNetworkAvailable: () -> Boolean = { runCatching(networkAvailable).getOrDefault(true) }
+
     private val logger: Logger = runCatching { config.logger }.getOrNull() ?: NoopLogger
     private val enabled: Boolean = config.endpoints.configuration != null
     private val requestLock = Any()
@@ -84,9 +94,13 @@ internal class RemoteConfigState(
             logger.i("No remote config available; scheduling initial download")
         }
 
-        // Don't schedule if a request is already in-flight
-        if (currentInFlightRequest() != null) {
-            logger.d("Skipping remote config download because a request is already in flight")
+        val skipReason = when {
+            !isNetworkAvailable() -> "there is no network connection"
+            currentInFlightRequest() != null -> "a request is already in flight"
+            else -> null
+        }
+        if (skipReason != null) {
+            logger.d("Skipping remote config download because $skipReason")
             return
         }
 
@@ -246,6 +260,12 @@ internal class RemoteConfigState(
             return lockedConfig
         }
 
+        // the connection may have dropped since the download was scheduled
+        if (!isNetworkAvailable()) {
+            logger.i("Skipping remote config request because there is no network connection")
+            return lockedConfig
+        }
+
         logger.d("Config needs refresh or is not present; requesting remote config from the endpoint")
         return requestAndStoreRemoteConfig(lockedConfig)
     }
@@ -267,6 +287,13 @@ internal class RemoteConfigState(
             store.clearCooldown()
             logState("remote config stored", refreshedConfig)
             return refreshedConfig
+        }
+
+        if (!isNetworkAvailable()) {
+            // the connection dropped during the request: the service was never reached, so this
+            // is not a failure the backoff should count
+            logger.i("Remote config request failed after the network connection was lost; not starting backoff")
+            return lockedConfig
         }
 
         // failureCount was reloaded from disk by reloadCooldownUntil() under the cross-process lock
