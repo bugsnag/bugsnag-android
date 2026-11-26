@@ -73,6 +73,60 @@ class RemoteConfigStoreTest {
     }
 
     @Test
+    fun cooldownMarkerInSeparateDirSurvivesClearingTheConfigDir() {
+        // Android may clear the cache directory (where the config lives) under storage pressure
+        val configDir = tempDir.newFolder("cache", "config")
+        val cooldownDir = tempDir.newFolder("files", "remote-config")
+        val cooldownUntil = System.currentTimeMillis() + 60_000
+        RemoteConfigStore(configDir, versionCode, cooldownDir = cooldownDir).apply {
+            store(createValidRemoteConfig("tag1", futureDate(60_000)))
+            setCooldownUntil(cooldownUntil, 2)
+        }
+
+        assertTrue(File(cooldownDir, "core-$versionCode.json.cooldown").exists())
+        assertFalse(File(configDir, "core-$versionCode.json.cooldown").exists())
+
+        configDir.deleteRecursively()
+        val reloaded = RemoteConfigStore(configDir, versionCode, cooldownDir = cooldownDir)
+
+        assertNull(reloaded.currentOrExpired())
+        assertEquals(cooldownUntil, reloaded.cooldownUntil())
+        assertEquals(2, reloaded.failureCount())
+    }
+
+    @Test
+    fun legacyMarkerNextToTheConfigIsMovedToTheCooldownDir() {
+        val configDir = tempDir.newFolder("cache", "config")
+        val cooldownDir = File(tempDir.root, "files/remote-config") // created on demand
+        val cooldownUntil = System.currentTimeMillis() + 60_000
+        RemoteConfigStore(configDir, versionCode).setCooldownUntil(cooldownUntil, 3) // older SDK layout
+
+        val upgraded = RemoteConfigStore(configDir, versionCode, cooldownDir = cooldownDir)
+
+        assertEquals(cooldownUntil, upgraded.cooldownUntil())
+        assertEquals(3, upgraded.failureCount())
+        assertTrue(File(cooldownDir, "core-$versionCode.json.cooldown").exists())
+        assertFalse(File(configDir, "core-$versionCode.json.cooldown").exists())
+    }
+
+    @Test
+    fun sweepAndClearCoverTheCooldownDir() {
+        val configDir = tempDir.newFolder("cache", "config")
+        val cooldownDir = tempDir.newFolder("files", "remote-config")
+        val staleMarker = File(cooldownDir, "core-${versionCode - 1}.json.cooldown").apply { writeText("1\n4") }
+        val store = RemoteConfigStore(configDir, versionCode, cooldownDir = cooldownDir)
+        store.setCooldownUntil(System.currentTimeMillis() + 60_000, 1)
+
+        store.sweep()
+        assertFalse("other versions' markers are swept", staleMarker.exists())
+        assertTrue(File(cooldownDir, "core-$versionCode.json.cooldown").exists())
+
+        store.clear()
+        assertFalse(File(cooldownDir, "core-$versionCode.json.cooldown").exists())
+        assertEquals(0L, RemoteConfigStore(configDir, versionCode, cooldownDir = cooldownDir).cooldownUntil())
+    }
+
+    @Test
     fun failureCountPersistsAcrossRestartsAndIsClearedOnSuccess() {
         val cooldownUntil = System.currentTimeMillis() + 60_000
         store.setCooldownUntil(cooldownUntil, 3)

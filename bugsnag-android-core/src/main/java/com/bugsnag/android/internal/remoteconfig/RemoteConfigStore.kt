@@ -18,6 +18,12 @@ internal class RemoteConfigStore(
     val appVersionCode: Int,
     private val logger: Logger = NoopLogger,
     private val clock: RemoteConfigClock = RemoteConfigClock.SYSTEM,
+    /**
+     * Where the cooldown marker lives. It is kept out of the cache directory by default because
+     * Android may clear the cache under storage pressure, which would reset the backoff; the
+     * config itself can always be fetched again, but the backoff protects the config service.
+     */
+    val cooldownDir: File = configDir,
 ) {
 
     private val lock = ReentrantLock()
@@ -48,16 +54,16 @@ internal class RemoteConfigStore(
                 cooldownFile().name,
                 lockFile().name
             )
-            val stale = configDir.listFiles()?.filter { it.name !in keep }.orEmpty()
-            if (stale.isEmpty()) {
-                return
+            listOf(configDir, cooldownDir).distinct().forEach { dir ->
+                val stale = dir.listFiles()?.filter { it.name !in keep }.orEmpty()
+                if (stale.isNotEmpty()) {
+                    val deleted = stale.count { it.delete() }
+                    logger.i(
+                        "Swept $deleted of ${stale.size} stale remote config file(s) from ${dir.absolutePath}: " +
+                            stale.joinToString { it.name }
+                    )
+                }
             }
-
-            val deleted = stale.count { it.delete() }
-            logger.i(
-                "Swept $deleted of ${stale.size} stale remote config file(s) from ${configDir.absolutePath}: " +
-                    stale.joinToString { it.name }
-            )
         }
     }
 
@@ -285,6 +291,7 @@ internal class RemoteConfigStore(
     }
 
     private fun readCooldownUntil(): Long {
+        migrateLegacyCooldown()
         val cooldownFile = cooldownFile()
         return try {
             if (!cooldownFile.exists()) {
@@ -337,8 +344,8 @@ internal class RemoteConfigStore(
         cachedCooldownUntil = timestamp
         cachedFailureCount = failureCount
         try {
-            if (!configDir.exists() && !configDir.mkdirs() && !configDir.exists()) {
-                logger.w("Failed to create remote config directory at ${configDir.absolutePath} for cooldown marker")
+            if (!cooldownDir.exists() && !cooldownDir.mkdirs() && !cooldownDir.exists()) {
+                logger.w("Failed to create remote config directory at ${cooldownDir.absolutePath} for cooldown marker")
                 return@withLock
             }
             cooldownFile().writeText("$timestamp\n$failureCount")
@@ -354,10 +361,9 @@ internal class RemoteConfigStore(
     fun clearCooldown() = lock.withLock {
         cachedCooldownUntil = 0L
         cachedFailureCount = 0
-        val cooldownFile = cooldownFile()
-        if (cooldownFile.exists()) {
-            cooldownFile.delete()
-            logger.d("Cleared remote config cooldown marker file=${cooldownFile.absolutePath}")
+        listOf(cooldownFile(), legacyCooldownFile()).distinct().filter { it.exists() }.forEach { file ->
+            file.delete()
+            logger.d("Cleared remote config cooldown marker file=${file.absolutePath}")
         }
     }
 
@@ -424,7 +430,34 @@ internal class RemoteConfigStore(
         )
     }
 
-    private fun cooldownFile(): File = File(configDir, "${configFileName()}.cooldown")
+    private fun cooldownFile(): File = File(cooldownDir, "${configFileName()}.cooldown")
+
+    /** Where markers were written before [cooldownDir] existed (next to the config). */
+    private fun legacyCooldownFile(): File = File(configDir, "${configFileName()}.cooldown")
+
+    /**
+     * Moves a marker written by an older SDK into [cooldownDir], so an active backoff survives
+     * the upgrade. Kept best-effort: if the move fails the legacy marker is simply ignored.
+     */
+    private fun migrateLegacyCooldown() {
+        val legacy = legacyCooldownFile()
+        val target = cooldownFile()
+        if (legacy == target || !legacy.exists()) {
+            return
+        }
+        try {
+            if (!target.exists()) {
+                cooldownDir.mkdirs()
+                if (!legacy.renameTo(target)) {
+                    target.writeText(legacy.readText())
+                }
+                logger.i("Moved remote config cooldown marker from ${legacy.absolutePath} to ${target.absolutePath}")
+            }
+            legacy.delete()
+        } catch (ex: IOException) {
+            logger.w("Failed to move legacy remote config cooldown marker ${legacy.absolutePath}", ex)
+        }
+    }
 
     private fun lockFile(): File = File(configDir, "${configFileName()}.lock")
 
