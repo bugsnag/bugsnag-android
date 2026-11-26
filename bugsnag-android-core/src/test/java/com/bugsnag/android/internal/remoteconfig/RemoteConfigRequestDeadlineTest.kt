@@ -5,6 +5,7 @@ import com.bugsnag.android.Notifier
 import com.bugsnag.android.RemoteConfig
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -136,6 +137,26 @@ class RemoteConfigRequestDeadlineTest {
     }
 
     @Test
+    fun failureWithoutAnyResponseIsFlagged() {
+        val connection = mock(HttpURLConnection::class.java)
+        `when`(connection.responseCode).thenThrow(UnknownHostException("config.bugsnag.com"))
+        val request = request(deadlineMs = 5_000)
+
+        assertNull(requestConfig(request, connection))
+        assertTrue("a DNS failure never reached the service", request.failedWithoutResponse)
+    }
+
+    @Test
+    fun httpErrorIsNotFlaggedAsFailingWithoutResponse() {
+        val connection = mock(HttpURLConnection::class.java)
+        `when`(connection.responseCode).thenReturn(HttpURLConnection.HTTP_INTERNAL_ERROR)
+        val request = request(deadlineMs = 5_000)
+
+        assertNull(requestConfig(request, connection))
+        assertFalse("an HTTP 500 means the service was reached", request.failedWithoutResponse)
+    }
+
+    @Test
     fun responseWithinTheDeadlineIsReturned() {
         val connection = mock(HttpURLConnection::class.java)
         `when`(connection.responseCode).thenReturn(HttpURLConnection.HTTP_OK)
@@ -171,21 +192,25 @@ class RemoteConfigRequestDeadlineTest {
     }
 
     /** Runs [RemoteConfigRequest.requestConfig] with URL construction mocked to return [connection]. */
-    private fun requestConfig(connection: HttpURLConnection, deadlineMs: Long): RemoteConfig? {
-        val request = RemoteConfigRequest(
-            "https://config.bugsnag.com",
-            "test-api-key-12345678901234567890123456789012",
-            notifier,
-            "1.0.0",
-            100,
-            "production",
-            "com.example.app",
-            null,
-            logger,
-            requestDeadlineMs = deadlineMs
-        )
-        return mockConstruction(URL::class.java) { url, _ ->
+    private fun requestConfig(connection: HttpURLConnection, deadlineMs: Long): RemoteConfig? =
+        requestConfig(request(deadlineMs), connection)
+
+    private fun request(deadlineMs: Long) = RemoteConfigRequest(
+        "https://config.bugsnag.com",
+        "test-api-key-12345678901234567890123456789012",
+        notifier,
+        "1.0.0",
+        100,
+        "production",
+        "com.example.app",
+        null,
+        logger,
+        requestDeadlineMs = deadlineMs
+    )
+
+    /** Runs [request] with URL construction mocked to return [connection]. */
+    private fun requestConfig(request: RemoteConfigRequest, connection: HttpURLConnection): RemoteConfig? =
+        mockConstruction(URL::class.java) { url, _ ->
             `when`(url.openConnection()).thenReturn(connection)
         }.use { request.requestConfig() }
-    }
 }

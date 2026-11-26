@@ -10,6 +10,7 @@ import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.JsonCollectionParser
 import com.bugsnag.android.internal.JsonCollectionParser.JsonParseException
 import com.bugsnag.android.internal.JsonHelper
+import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
@@ -59,7 +60,17 @@ internal class RemoteConfigRequest(
         deviceId
     )
 
+    /**
+     * True when the last [requestConfig] failed before the config service sent any response: the
+     * connection, DNS lookup or socket failed, or the request hit its deadline. Unlike an HTTP
+     * error, such a failure may be caused by the device losing its network mid-request.
+     */
+    @Volatile
+    var failedWithoutResponse: Boolean = false
+        private set
+
     fun requestConfig(): RemoteConfig? {
+        failedWithoutResponse = false
         if (baseUrl == null) {
             logger.d("Skipping remote config request because the configuration endpoint is not configured")
             return null
@@ -69,16 +80,21 @@ internal class RemoteConfigRequest(
         return try {
             requestNewConfig(startedAtNanos)
         } catch (ex: Exception) {
+            failedWithoutResponse = isNoResponseFailure(ex)
             // The cause is spelled out in the message as well: Android logs an empty stack trace
             // for UnknownHostException, so the throwable alone does not show why a request failed.
             logger.w(
                 "Remote config request failed after ${elapsedMs(startedAtNanos)}ms " +
-                    "(${ex.javaClass.name}: ${ex.message}); returning null to start cooldown",
+                    "(${ex.javaClass.name}: ${ex.message}); returning null",
                 ex
             )
             null
         }
     }
+
+    /** Connection, DNS and socket errors, and deadline timeouts, all happen before any response. */
+    private fun isNoResponseFailure(ex: Exception): Boolean =
+        ex is IOException || ex is RemoteConfigTimeoutException
 
     private fun requestNewConfig(startedAtNanos: Long): RemoteConfig? {
         val urlWithParams = buildUrlWithQueryParameters() ?: return null

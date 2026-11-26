@@ -25,6 +25,8 @@ import org.mockito.Mockito.verifyNoInteractions
 import org.mockito.Mockito.verifyNoMoreInteractions
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
+import java.net.InetAddress
+import java.net.ServerSocket
 import java.util.Date
 import java.util.concurrent.Callable
 import java.util.concurrent.Future
@@ -352,6 +354,55 @@ class RemoteConfigStateTest {
     }
 
     @Test
+    fun failedRequestDoesNotStartBackoffWhenNetworkLossIsReportedLate() {
+        // Seen on a Galaxy A12: the socket error arrives before Android reports Wi-Fi as gone, so
+        // the device still looks online straight after the failure and only offline a moment later
+        val networkChecks = AtomicInteger()
+        val (state, store, taskService) = stateWithRealStore { networkChecks.incrementAndGet() <= 3 }
+
+        runScheduledDownload(state, taskService)
+
+        assertEquals("the failure is re-checked once after the grace period", 4, networkChecks.get())
+        assertEquals(0L, store.cooldownUntil())
+        assertEquals(0, store.failureCount())
+    }
+
+    @Test
+    fun httpErrorStartsBackoffEvenIfConnectionIsLostAfterwards() {
+        val server = ServerSocket(0, 1, InetAddress.getByName("127.0.0.1"))
+        val responder = Thread {
+            runCatching {
+                server.accept().use { socket ->
+                    // read the request headers before answering so the client sees the response
+                    val input = socket.getInputStream().bufferedReader()
+                    while (!input.readLine().isNullOrEmpty()) Unit
+                    socket.getOutputStream().write(
+                        "HTTP/1.1 500 Internal Server Error\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+                            .toByteArray()
+                    )
+                    socket.getOutputStream().flush()
+                }
+            }
+        }.apply { start() }
+        try {
+            val networkChecks = AtomicInteger()
+            // online until the response arrives, offline from then on
+            val (state, store, taskService) = stateWithRealStore(
+                endpoint = "http://127.0.0.1:${server.localPort}/"
+            ) { networkChecks.incrementAndGet() <= 2 }
+
+            runScheduledDownload(state, taskService)
+
+            // the service answered, so going offline afterwards does not excuse the failure
+            assertTrue(store.cooldownUntil() > System.currentTimeMillis())
+            assertEquals(1, store.failureCount())
+        } finally {
+            server.close()
+            responder.join(1000)
+        }
+    }
+
+    @Test
     fun failedRequestStartsBackoffWhenOnline() {
         val (state, store, taskService) = stateWithRealStore { true }
 
@@ -362,14 +413,15 @@ class RemoteConfigStateTest {
     }
 
     /**
-     * A state backed by a real store, whose requests go to a closed local port so they fail
-     * straight away without leaving the machine.
+     * A state backed by a real store. By default its requests go to a closed local port so they
+     * fail straight away without leaving the machine.
      */
     private fun stateWithRealStore(
+        endpoint: String = "http://127.0.0.1:1/",
         networkAvailable: () -> Boolean
     ): Triple<RemoteConfigState, RemoteConfigStore, BackgroundTaskService> {
         val endpoints = mock(com.bugsnag.android.EndpointConfiguration::class.java)
-        `when`(endpoints.configuration).thenReturn("http://127.0.0.1:1/")
+        `when`(endpoints.configuration).thenReturn(endpoint)
         val config = mock(ImmutableConfig::class.java)
         `when`(config.endpoints).thenReturn(endpoints)
         `when`(config.apiKey).thenReturn("5d1ec5bd39a74caa1267142706a7fb21")
@@ -382,7 +434,14 @@ class RemoteConfigStateTest {
         val taskService = mock(BackgroundTaskService::class.java)
         `when`(taskService.submitTask(eq(TaskType.REMOTE_CONFIG), any(Callable::class.java)))
             .thenReturn(mockFuture)
-        val state = RemoteConfigState(store, config, mockNotifier, taskService, networkAvailable = networkAvailable)
+        val state = RemoteConfigState(
+            store,
+            config,
+            mockNotifier,
+            taskService,
+            networkAvailable = networkAvailable,
+            networkLossGraceMs = 10
+        )
         return Triple(state, store, taskService)
     }
 

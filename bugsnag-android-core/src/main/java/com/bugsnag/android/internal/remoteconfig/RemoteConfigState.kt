@@ -27,6 +27,8 @@ internal class RemoteConfigState(
      * would push the backoff towards 24h and leave the config stale once the device is back online.
      */
     networkAvailable: () -> Boolean = { true },
+    /** How long [connectionLost] waits before re-checking the network; 0 disables the re-check. */
+    private val networkLossGraceMs: Long = NETWORK_LOSS_GRACE_MS,
 ) {
     /** Unknown connectivity counts as available, matching DefaultDelivery. */
     private val isNetworkAvailable: () -> Boolean = { runCatching(networkAvailable).getOrDefault(true) }
@@ -277,7 +279,8 @@ internal class RemoteConfigState(
             logger.w("Failed to load device ID for remote config request", ex)
             null
         }
-        val refreshedConfig = RemoteConfigRequest(config, notifier, lockedConfig, clock, deviceId).requestConfig()
+        val request = RemoteConfigRequest(config, notifier, lockedConfig, clock, deviceId)
+        val refreshedConfig = request.requestConfig()
         if (refreshedConfig != null) {
             logger.i(
                 "Received remote config from the endpoint; persisting response " +
@@ -289,7 +292,7 @@ internal class RemoteConfigState(
             return refreshedConfig
         }
 
-        if (!isNetworkAvailable()) {
+        if (connectionLost(request.failedWithoutResponse, networkLossGraceMs, isNetworkAvailable)) {
             // the connection dropped during the request: the service was never reached, so this
             // is not a failure the backoff should count
             logger.i("Remote config request failed after the network connection was lost; not starting backoff")
@@ -358,6 +361,9 @@ internal class RemoteConfigState(
     }
 
     internal companion object {
+        /** Long enough for Android to report a dropped network, short for a background thread. */
+        const val NETWORK_LOSS_GRACE_MS = 500L
+
         val REFRESH_BUFFER_MS = TimeUnit.HOURS.toMillis(2)
 
         /** Retry delay ceiling after the first failed fetch (k = 0). */
@@ -415,5 +421,30 @@ internal class RemoteConfigState(
             override fun isCancelled(): Boolean = false
             override fun isDone(): Boolean = true
         }
+    }
+}
+
+/**
+ * Whether a failed request should be put down to a lost connection rather than the config
+ * service. The socket error that ends a request usually arrives a few ms *before* Android reports
+ * the network as gone (20-40 ms on a Galaxy A12 when Wi-Fi dropped), so a request that failed
+ * without any response, while the device still looks online, checks once more after [graceMs].
+ * An HTTP error means the service was reached and is always a failure.
+ */
+private fun connectionLost(
+    failedWithoutResponse: Boolean,
+    graceMs: Long,
+    isNetworkAvailable: () -> Boolean
+): Boolean = when {
+    !failedWithoutResponse -> false
+    !isNetworkAvailable() -> true
+    graceMs <= 0 -> false
+    else -> {
+        try {
+            Thread.sleep(graceMs)
+        } catch (ex: InterruptedException) {
+            Thread.currentThread().interrupt()
+        }
+        !isNetworkAvailable()
     }
 }
