@@ -431,7 +431,8 @@ internal class RemoteConfigState(
  * without any response, while the device still looks online, checks once more after [graceMs].
  * An HTTP error means the service was reached and is always a failure.
  */
-private fun connectionLost(
+// internal rather than private: a private top-level function called from the class needs a synthetic accessor
+internal fun connectionLost(
     failedWithoutResponse: Boolean,
     graceMs: Long,
     isNetworkAvailable: () -> Boolean
