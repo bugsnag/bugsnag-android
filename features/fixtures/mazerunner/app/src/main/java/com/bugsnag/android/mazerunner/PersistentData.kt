@@ -1,6 +1,7 @@
 package com.bugsnag.android.mazerunner
 
 import android.content.Context
+import android.os.Build
 import java.io.File
 
 class PersistentData(private val cxt: Context) {
@@ -11,6 +12,7 @@ class PersistentData(private val cxt: Context) {
         clearCacheFolder("bugsnag")
         clearCacheFolder("StrictModeDiscScenarioFile")
         clearFilesFolder("background-service-dir")
+        clearRemoteConfigCooldown()
 
         removeFile("device-id")
         removeFile("internal-device-id")
@@ -27,6 +29,20 @@ class PersistentData(private val cxt: Context) {
 
     private fun clearFilesFolder(name: String) {
         val folder = File(cxt.filesDir, name)
+        log("Clearing folder: ${folder.path}")
+        folder.deleteRecursively()
+    }
+
+    // The SDK keeps the remote config cooldown marker outside the cache (in no_backup, or files
+    // before API 21) so that it survives Android clearing the cache. Without this, a cooldown
+    // started by one scenario's failed fetch would stop the next scenario from fetching.
+    private fun clearRemoteConfigCooldown() {
+        val baseDir = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            cxt.noBackupFilesDir
+        } else {
+            cxt.filesDir
+        }
+        val folder = File(baseDir, "bugsnag/remote-config")
         log("Clearing folder: ${folder.path}")
         folder.deleteRecursively()
     }
