@@ -35,6 +35,12 @@ class RemoteConfigBasicScenario(
         private const val REMOTE_CONFIG_LOAD_DELAY_MS = 1000L
         private const val READ_RETRY_COUNT = 2
         private const val RETRY_SLEEP_MS = 100L
+
+        /**
+         * Remote config is only fetched when an error is delivered, so the scenario primes the
+         * cache with an error that is dropped by an onSend callback and never reaches the server.
+         */
+        private const val PRIMING_ERROR_MESSAGE = "RemoteConfigBasicScenario remote config priming"
     }
 
     private val handledEventSeen = AtomicBoolean(false)
@@ -44,6 +50,10 @@ class RemoteConfigBasicScenario(
 
     init {
         config.addOnSend { event ->
+            if (event.errors.firstOrNull()?.errorMessage == PRIMING_ERROR_MESSAGE) {
+                return@addOnSend false
+            }
+
             if (!event.isUnhandled && handledEventSeen.compareAndSet(false, true)) {
                 mazerunnerHttpClient?.postLog(
                     LogLevel.INFO,
@@ -111,6 +121,8 @@ class RemoteConfigBasicScenario(
             remoteConfigLoaded.countDown()
             return
         }
+
+        Bugsnag.notify(RuntimeException(PRIMING_ERROR_MESSAGE))
 
         Thread(
             {

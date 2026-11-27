@@ -10,8 +10,11 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.anyString
+import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mock
 import org.mockito.Mockito.mockConstruction
+import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
@@ -534,9 +537,60 @@ class RemoteConfigRequestTest {
         assertNull(request.requestConfig())
     }
 
-    private fun createRequest(existingConfig: com.bugsnag.android.RemoteConfig? = null): RemoteConfigRequest {
+    @Test
+    fun requestConfigSendsDeviceIdHeader() {
+        requestConfigWithMockedUrl(
+            responseCode = HttpURLConnection.HTTP_OK,
+            jsonResponse = """{"discardRules": []}""",
+            cacheControl = "max-age=3600",
+            deviceId = "device-id-123"
+        )
+
+        verify(mockConnection).setRequestProperty(
+            RemoteConfigRequest.HEADER_BUGSNAG_DEVICE_ID,
+            "device-id-123"
+        )
+    }
+
+    @Test
+    fun requestConfigOmitsDeviceIdHeaderWhenUnavailable() {
+        requestConfigWithMockedUrl(
+            responseCode = HttpURLConnection.HTTP_OK,
+            jsonResponse = """{"discardRules": []}""",
+            cacheControl = "max-age=3600",
+            deviceId = null
+        )
+
+        verify(mockConnection, never()).setRequestProperty(
+            eq(RemoteConfigRequest.HEADER_BUGSNAG_DEVICE_ID),
+            anyString()
+        )
+    }
+
+    @Test
+    fun requestConfigSendsDeviceIdHeaderForHttpEndpoint() {
+        // on-premise installs may use plain http:// config endpoints
+        requestConfigWithMockedUrl(
+            responseCode = HttpURLConnection.HTTP_OK,
+            jsonResponse = """{"discardRules": []}""",
+            cacheControl = "max-age=3600",
+            deviceId = "device-id-123",
+            endpoint = "http://localhost:8080/"
+        )
+
+        verify(mockConnection).setRequestProperty(
+            RemoteConfigRequest.HEADER_BUGSNAG_DEVICE_ID,
+            "device-id-123"
+        )
+    }
+
+    private fun createRequest(
+        existingConfig: com.bugsnag.android.RemoteConfig? = null,
+        deviceId: String? = null,
+        endpoint: String = baseUrl
+    ): RemoteConfigRequest {
         return RemoteConfigRequest(
-            baseUrl,
+            endpoint,
             apiKey,
             notifier,
             appVersion,
@@ -544,16 +598,20 @@ class RemoteConfigRequestTest {
             releaseStage,
             packageName,
             existingConfig,
-            logger
+            logger,
+            deviceId = deviceId
         )
     }
 
+    @Suppress("LongParameterList")
     private fun requestConfigWithMockedUrl(
         existingConfig: com.bugsnag.android.RemoteConfig? = null,
         responseCode: Int,
         jsonResponse: String? = null,
         etag: String? = null,
-        cacheControl: String? = null
+        cacheControl: String? = null,
+        deviceId: String? = null,
+        endpoint: String = baseUrl
     ): com.bugsnag.android.RemoteConfig? {
         return mockConstruction(URL::class.java) { mockUrl, _ ->
             `when`(mockUrl.openConnection()).thenReturn(mockConnection)
@@ -570,7 +628,7 @@ class RemoteConfigRequestTest {
                 }
             }
         }.use {
-            createRequest(existingConfig).requestConfig()
+            createRequest(existingConfig, deviceId, endpoint).requestConfig()
         }.also {
             verify(mockConnection).setConnectTimeout(RemoteConfigRequest.REQUEST_TIMEOUT_MS)
             verify(mockConnection).setReadTimeout(RemoteConfigRequest.REQUEST_TIMEOUT_MS)

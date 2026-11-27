@@ -1,5 +1,6 @@
 package com.bugsnag.android.internal.remoteconfig
 
+import com.bugsnag.android.NoopLogger
 import com.bugsnag.android.Notifier
 import com.bugsnag.android.RemoteConfig
 import com.bugsnag.android.internal.BackgroundTaskService
@@ -7,8 +8,12 @@ import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.TaskType
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.ArgumentMatchers.eq
@@ -20,13 +25,19 @@ import org.mockito.Mockito.verifyNoInteractions
 import org.mockito.Mockito.verifyNoMoreInteractions
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
+import java.net.InetAddress
+import java.net.ServerSocket
 import java.util.Date
 import java.util.concurrent.Callable
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
+import java.util.concurrent.atomic.AtomicInteger
 
 class RemoteConfigStateTest {
+
+    @get:Rule
+    val tempDir = TemporaryFolder()
 
     @Mock
     private lateinit var mockStore: RemoteConfigStore
@@ -74,7 +85,7 @@ class RemoteConfigStateTest {
 
         // Verify store.current() was called but no background task was needed
         verify(mockStore).current()
-        verifyNoInteractions(mockBackgroundTaskService)
+        verify(mockBackgroundTaskService, never()).submitTask(eq(TaskType.REMOTE_CONFIG), any(Callable::class.java))
     }
 
     @Test
@@ -229,7 +240,9 @@ class RemoteConfigStateTest {
         `when`(mockEndpoints.configuration).thenReturn(null)
         `when`(mockConfig.endpoints).thenReturn(mockEndpoints)
 
-        val disabledState = RemoteConfigState(mockStore, mockConfig, mockNotifier, mockBackgroundTaskService)
+        // a separate service mock, as the enabled state built in setup() has already scheduled a sweep
+        val disabledTaskService = mock(BackgroundTaskService::class.java)
+        val disabledState = RemoteConfigState(mockStore, mockConfig, mockNotifier, disabledTaskService)
 
         verify(mockStore).clear()
 
@@ -241,7 +254,7 @@ class RemoteConfigStateTest {
 
         // Verify no additional interactions with store or background service
         verifyNoMoreInteractions(mockStore)
-        verifyNoInteractions(mockBackgroundTaskService)
+        verifyNoInteractions(disabledTaskService) // no sweep or fetch when disabled
     }
 
     @Test
@@ -267,7 +280,7 @@ class RemoteConfigStateTest {
 
         remoteConfigState.scheduleDownloadIfRequired()
 
-        verifyNoInteractions(mockBackgroundTaskService)
+        verify(mockBackgroundTaskService, never()).submitTask(eq(TaskType.REMOTE_CONFIG), any(Callable::class.java))
     }
 
     @Test
@@ -299,28 +312,195 @@ class RemoteConfigStateTest {
     }
 
     @Test
-    fun computeCooldownAppliesPlusMinusTwoHourJitter() {
-        val baseCooldownMs = TimeUnit.HOURS.toMillis(24)
+    fun scheduleDownloadIfRequiredSkipsRequestWhenOffline() {
+        `when`(mockStore.current()).thenReturn(null)
+        `when`(mockStore.cachedCooldownUntil()).thenReturn(0L)
+        val offlineState = RemoteConfigState(
+            mockStore,
+            mockConfig,
+            mockNotifier,
+            mockBackgroundTaskService,
+            networkAvailable = { false }
+        )
+
+        offlineState.scheduleDownloadIfRequired()
+
+        verify(mockBackgroundTaskService, never()).submitTask(eq(TaskType.REMOTE_CONFIG), any(Callable::class.java))
+    }
+
+    @Test
+    fun requestIsNotSentAndBackoffNotStartedWhenConnectionDropsBeforeRequest() {
+        val networkChecks = AtomicInteger()
+        // online when scheduled, offline by the time the background task runs
+        val (state, store, taskService) = stateWithRealStore { networkChecks.incrementAndGet() == 1 }
+
+        runScheduledDownload(state, taskService)
+
+        assertEquals(0L, store.cooldownUntil())
+        assertEquals(0, store.failureCount())
+    }
+
+    @Test
+    fun failedRequestDoesNotStartBackoffWhenConnectionWasLost() {
+        val networkChecks = AtomicInteger()
+        // online when scheduled and when the request starts, offline once it has failed
+        val (state, store, taskService) = stateWithRealStore { networkChecks.incrementAndGet() <= 2 }
+
+        runScheduledDownload(state, taskService)
+
+        assertEquals(3, networkChecks.get())
+        assertEquals(0L, store.cooldownUntil())
+        assertEquals(0, store.failureCount())
+    }
+
+    @Test
+    fun failedRequestDoesNotStartBackoffWhenNetworkLossIsReportedLate() {
+        // Seen on a Galaxy A12: the socket error arrives before Android reports Wi-Fi as gone, so
+        // the device still looks online straight after the failure and only offline a moment later
+        val networkChecks = AtomicInteger()
+        val (state, store, taskService) = stateWithRealStore { networkChecks.incrementAndGet() <= 3 }
+
+        runScheduledDownload(state, taskService)
+
+        assertEquals("the failure is re-checked once after the grace period", 4, networkChecks.get())
+        assertEquals(0L, store.cooldownUntil())
+        assertEquals(0, store.failureCount())
+    }
+
+    @Test
+    fun httpErrorStartsBackoffEvenIfConnectionIsLostAfterwards() {
+        val server = ServerSocket(0, 1, InetAddress.getByName("127.0.0.1"))
+        val responder = Thread {
+            runCatching {
+                server.accept().use { socket ->
+                    // read the request headers before answering so the client sees the response
+                    val input = socket.getInputStream().bufferedReader()
+                    while (!input.readLine().isNullOrEmpty()) Unit
+                    socket.getOutputStream().write(
+                        "HTTP/1.1 500 Internal Server Error\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+                            .toByteArray()
+                    )
+                    socket.getOutputStream().flush()
+                }
+            }
+        }.apply { start() }
+        try {
+            val networkChecks = AtomicInteger()
+            // online until the response arrives, offline from then on
+            val (state, store, taskService) = stateWithRealStore(
+                endpoint = "http://127.0.0.1:${server.localPort}/"
+            ) { networkChecks.incrementAndGet() <= 2 }
+
+            runScheduledDownload(state, taskService)
+
+            // the service answered, so going offline afterwards does not excuse the failure
+            assertTrue(store.cooldownUntil() > System.currentTimeMillis())
+            assertEquals(1, store.failureCount())
+        } finally {
+            server.close()
+            responder.join(1000)
+        }
+    }
+
+    @Test
+    fun failedRequestStartsBackoffWhenOnline() {
+        val (state, store, taskService) = stateWithRealStore { true }
+
+        runScheduledDownload(state, taskService)
+
+        assertTrue(store.cooldownUntil() > System.currentTimeMillis())
+        assertEquals(1, store.failureCount())
+    }
+
+    /**
+     * A state backed by a real store. By default its requests go to a closed local port so they
+     * fail straight away without leaving the machine.
+     */
+    private fun stateWithRealStore(
+        endpoint: String = "http://127.0.0.1:1/",
+        networkAvailable: () -> Boolean
+    ): Triple<RemoteConfigState, RemoteConfigStore, BackgroundTaskService> {
+        val endpoints = mock(com.bugsnag.android.EndpointConfiguration::class.java)
+        `when`(endpoints.configuration).thenReturn(endpoint)
+        val config = mock(ImmutableConfig::class.java)
+        `when`(config.endpoints).thenReturn(endpoints)
+        `when`(config.apiKey).thenReturn("5d1ec5bd39a74caa1267142706a7fb21")
+        `when`(config.logger).thenReturn(NoopLogger)
+        `when`(mockNotifier.name).thenReturn("Android Bugsnag Notifier")
+        `when`(mockNotifier.version).thenReturn("0.0.0")
+
+        val configDir = tempDir.newFolder("config")
+        val store = RemoteConfigStore(configDir, 1, NoopLogger, cooldownDir = configDir)
+        val taskService = mock(BackgroundTaskService::class.java)
+        `when`(taskService.submitTask(eq(TaskType.REMOTE_CONFIG), any(Callable::class.java)))
+            .thenReturn(mockFuture)
+        val state = RemoteConfigState(
+            store,
+            config,
+            mockNotifier,
+            taskService,
+            networkAvailable = networkAvailable,
+            networkLossGraceMs = 10
+        )
+        return Triple(state, store, taskService)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun runScheduledDownload(state: RemoteConfigState, taskService: BackgroundTaskService) {
+        state.scheduleDownloadIfRequired()
+        val task = ArgumentCaptor.forClass(Callable::class.java)
+        verify(taskService).submitTask(eq(TaskType.REMOTE_CONFIG), task.capture())
+        (task.value as Callable<RemoteConfig?>).call()
+    }
+
+    @Test
+    fun sweepsStaleVersionsInBackgroundAtStartup() {
+        val runnable = ArgumentCaptor.forClass(Runnable::class.java)
+        verify(mockBackgroundTaskService).submitTask(eq(TaskType.REMOTE_CONFIG), runnable.capture())
+        verify(mockStore, never()).sweep()
+
+        runnable.value.run()
+
+        verify(mockStore).sweep()
+    }
+
+    @Test
+    fun backoffCeilingGrowsExponentiallyUpToCap() {
+        val minutes = TimeUnit.MINUTES::toMillis
+        assertEquals(minutes(15), RemoteConfigState.backoffCeiling(0))
+        assertEquals(minutes(60), RemoteConfigState.backoffCeiling(1))
+        assertEquals(minutes(240), RemoteConfigState.backoffCeiling(2))
+        assertEquals(minutes(960), RemoteConfigState.backoffCeiling(3))
+        assertEquals(TimeUnit.HOURS.toMillis(24), RemoteConfigState.backoffCeiling(4))
+        assertEquals(TimeUnit.HOURS.toMillis(24), RemoteConfigState.backoffCeiling(5))
+        assertEquals(TimeUnit.HOURS.toMillis(24), RemoteConfigState.backoffCeiling(Int.MAX_VALUE))
+        assertEquals(minutes(15), RemoteConfigState.backoffCeiling(-1))
+    }
+
+    @Test
+    fun computeCooldownAppliesEqualJitter() {
         val nowMs = 1234L
-        val maxJitterMs = RemoteConfigState.COOLDOWN_JITTER_MS
+        val ceilingMs = TimeUnit.MINUTES.toMillis(60)
 
-        val positive = RemoteConfigState.computeCooldown(
-            baseCooldownMs = baseCooldownMs,
-            jitterOffsetMs = maxJitterMs,
-            nowMs = nowMs
-        )
+        val floor = RemoteConfigState.computeCooldown(failureIndex = 1, jitterMs = 0L, nowMs = nowMs)
+        assertEquals(ceilingMs, floor.ceilingMs)
+        assertEquals(ceilingMs / 2, floor.durationMs)
+        assertEquals(nowMs + ceilingMs / 2, floor.cooldownUntilMs)
 
-        assertEquals(baseCooldownMs + maxJitterMs, positive.durationMs)
-        assertEquals(nowMs + baseCooldownMs + maxJitterMs, positive.cooldownUntilMs)
+        val ceiling = RemoteConfigState.computeCooldown(failureIndex = 1, jitterMs = ceilingMs, nowMs = nowMs)
+        assertEquals(ceilingMs, ceiling.durationMs)
+        assertEquals(nowMs + ceilingMs, ceiling.cooldownUntilMs)
+    }
 
-        val negative = RemoteConfigState.computeCooldown(
-            baseCooldownMs = baseCooldownMs,
-            jitterOffsetMs = -maxJitterMs,
-            nowMs = nowMs
-        )
-
-        assertEquals(baseCooldownMs - maxJitterMs, negative.durationMs)
-        assertEquals(nowMs + baseCooldownMs - maxJitterMs, negative.cooldownUntilMs)
+    @Test
+    fun computeCooldownRandomWaitStaysWithinFleetWindow() {
+        for (k in 0..6) {
+            val ceilingMs = RemoteConfigState.backoffCeiling(k)
+            repeat(200) {
+                val wait = RemoteConfigState.computeCooldown(k, nowMs = 0L).durationMs
+                assertTrue("k=$k wait=$wait", wait >= ceilingMs / 2 && wait <= ceilingMs)
+            }
+        }
     }
 
     private fun createValidRemoteConfig(tag: String, expiry: Date): RemoteConfig {

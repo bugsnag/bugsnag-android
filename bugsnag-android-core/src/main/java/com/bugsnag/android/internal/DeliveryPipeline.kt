@@ -2,22 +2,19 @@ package com.bugsnag.android.internal
 
 import com.bugsnag.android.CallbackState
 import com.bugsnag.android.DeliveryStatus
-import com.bugsnag.android.ErrorType
 import com.bugsnag.android.EventPayload
-import com.bugsnag.android.RemoteConfig
 import com.bugsnag.android.internal.remoteconfig.RemoteConfigState
-import java.util.concurrent.TimeUnit
 
 internal class DeliveryPipeline(
     val onSendCallbackState: CallbackState,
     val remoteConfigState: RemoteConfigState,
     val config: ImmutableConfig,
 ) {
-    companion object {
-        private const val REMOTE_CONFIG_FETCH_TIMEOUT_SECONDS = 5L
-    }
-
     fun deliverEventPayload(payload: EventPayload): DeliveryStatus? {
+        // Remote config is only fetched in response to an error. This never blocks: it is skipped
+        // when the cached config is fresh, a cooldown is active or a fetch is already in flight.
+        scheduleRemoteConfigRefresh()
+
         if (!retainPayload(payload)) {
             return null
         }
@@ -47,7 +44,9 @@ internal class DeliveryPipeline(
 
     private fun getDiscardStatus(payload: EventPayload): DeliveryStatus? {
         return try {
-            val remoteConfig = getRemoteConfig(payload)
+            // Delivery never waits for a network fetch: apply whatever valid config is cached and
+            // let the background refresh (if any) benefit later events.
+            val remoteConfig = remoteConfigState.peekRemoteConfig()
             if (remoteConfig == null) {
                 return null
             }
@@ -68,22 +67,11 @@ internal class DeliveryPipeline(
         }
     }
 
-    private fun isTimeSensitive(payload: EventPayload): Boolean {
-        // Fast paths that avoid full JSON parsing where possible.
-        // C errors and launch crashes are always time-sensitive.
-        return payload.isLaunchCrash || payload.getErrorTypes().contains(ErrorType.C)
-    }
-
-    private fun getRemoteConfig(payload: EventPayload): RemoteConfig? {
-        // Delivery should not block on remote-config downloads, as these reports can be
-        // time-sensitive (for example, app hangs and ANRs). Use the latest cached snapshot and
-        // let the background scheduler refresh it independently.
-        if (isTimeSensitive(payload)) {
-            return remoteConfigState.peekRemoteConfig()
+    private fun scheduleRemoteConfigRefresh() {
+        try {
+            remoteConfigState.scheduleDownloadIfRequired()
+        } catch (_: Exception) {
+            // remote config must never prevent delivery
         }
-
-        // For non-time-sensitive events, we can wait briefly for a fresh config
-        // if the cached one is expired or missing.
-        return remoteConfigState.getRemoteConfig(REMOTE_CONFIG_FETCH_TIMEOUT_SECONDS, TimeUnit.SECONDS)
     }
 }

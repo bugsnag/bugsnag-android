@@ -8,7 +8,7 @@ import java.io.File
 import java.io.IOException
 import java.io.RandomAccessFile
 import java.nio.channels.OverlappingFileLockException
-import java.util.Date
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
@@ -17,6 +17,13 @@ internal class RemoteConfigStore(
     val configDir: File,
     val appVersionCode: Int,
     private val logger: Logger = NoopLogger,
+    private val clock: RemoteConfigClock = RemoteConfigClock.SYSTEM,
+    /**
+     * Where the cooldown marker lives. It is kept out of the cache directory by default because
+     * Android may clear the cache under storage pressure, which would reset the backoff; the
+     * config itself can always be fetched again, but the backoff protects the config service.
+     */
+    val cooldownDir: File = configDir,
 ) {
 
     private val lock = ReentrantLock()
@@ -27,26 +34,34 @@ internal class RemoteConfigStore(
     @Volatile
     private var cachedCooldownUntil: Long = 0L
 
+    @Volatile
+    private var cachedFailureCount: Int = 0
+
     init {
         currentOrExpired()
         cachedCooldownUntil = cooldownUntil()
     }
 
+    /**
+     * Deletes the cached config, cooldown and lock files left behind by other app versions, so
+     * stale discard rules and backoff state are never carried across an upgrade.
+     */
     fun sweep() {
         lock.withLock {
-            val currentFilename = configFileName()
-            val currentCooldownFilename = cooldownFile().name
-            val currentLockFilename = lockFile().name
-            val files = configDir.listFiles()
-            if (files != null) {
-                for (file in files) {
-                    if (
-                        file.name != currentFilename &&
-                        file.name != currentCooldownFilename &&
-                        file.name != currentLockFilename
-                    ) {
-                        file.delete()
-                    }
+            val keep = setOf(
+                configFileName(),
+                "${configFileName()}.new",
+                cooldownFile().name,
+                lockFile().name
+            )
+            listOf(configDir, cooldownDir).distinct().forEach { dir ->
+                val stale = dir.listFiles()?.filter { it.name !in keep }.orEmpty()
+                if (stale.isNotEmpty()) {
+                    val deleted = stale.count { it.delete() }
+                    logger.i(
+                        "Swept $deleted of ${stale.size} stale remote config file(s) from ${dir.absolutePath}: " +
+                            stale.joinToString { it.name }
+                    )
                 }
             }
         }
@@ -206,7 +221,7 @@ internal class RemoteConfigStore(
     }
 
     fun cooldownUntil(): Long = lock.withLock {
-        if (cachedCooldownUntil > System.currentTimeMillis()) {
+        if (cachedCooldownUntil > clock.currentTimeMillis()) {
             return@withLock cachedCooldownUntil
         }
 
@@ -219,8 +234,16 @@ internal class RemoteConfigStore(
     /** Reloads the marker from disk after acquiring the cross-process request lock. */
     fun reloadCooldownUntil(): Long = lock.withLock {
         cachedCooldownUntil = 0L
+        cachedFailureCount = 0
         readCooldownUntil()
     }
+
+    /**
+     * Returns the number of consecutive failed fetches recorded by the last cooldown marker. This
+     * survives the cooldown expiring and is only reset by [clearCooldown] (a successful fetch).
+     * Callers that coordinate across processes should call [reloadCooldownUntil] first.
+     */
+    fun failureCount(): Int = cachedFailureCount
 
     /**
      * Runs [block] while holding the per-version lock shared by all app processes. The lock wait
@@ -268,15 +291,39 @@ internal class RemoteConfigStore(
     }
 
     private fun readCooldownUntil(): Long {
+        migrateLegacyCooldown()
         val cooldownFile = cooldownFile()
         return try {
             if (!cooldownFile.exists()) {
                 return 0L
             }
 
-            cooldownFile.readText().trim().toLongOrNull()?.also {
+            val lines = cooldownFile.readText().trim().lines()
+            val until = lines.firstOrNull()?.trim()?.toLongOrNull()
+            val maxUntil = clock.currentTimeMillis() + MAX_COOLDOWN_MS
+            if (until != null && until > maxUntil) {
+                // No cooldown we write is this long, so the marker is corrupt or the device clock
+                // moved backwards. Honouring it could suppress remote config indefinitely.
+                logger.w(
+                    "Remote config cooldown marker until=$until is beyond the maximum " +
+                        "until=$maxUntil; deleting ${cooldownFile.absolutePath}"
+                )
+                cooldownFile.delete()
+                cachedCooldownUntil = 0L
+                cachedFailureCount = 0
+                return 0L
+            }
+
+            until?.also {
                 cachedCooldownUntil = it
-                logger.d("Loaded remote config cooldown marker until=$it file=${cooldownFile.absolutePath}")
+                // markers written before backoff was introduced only hold the timestamp, and imply
+                // that at least one fetch has already failed
+                cachedFailureCount = lines.getOrNull(1)?.trim()?.toIntOrNull()?.coerceAtLeast(0)
+                    ?: LEGACY_MARKER_FAILURE_COUNT
+                logger.d(
+                    "Loaded remote config cooldown marker until=$it failureCount=$cachedFailureCount " +
+                        "file=${cooldownFile.absolutePath}"
+                )
             } ?: run {
                 logger.w("Invalid remote config cooldown marker at ${cooldownFile.absolutePath}; deleting it")
                 cooldownFile.delete()
@@ -293,15 +340,19 @@ internal class RemoteConfigStore(
         }
     }
 
-    fun setCooldownUntil(timestamp: Long) = lock.withLock {
+    fun setCooldownUntil(timestamp: Long, failureCount: Int = cachedFailureCount) = lock.withLock {
         cachedCooldownUntil = timestamp
+        cachedFailureCount = failureCount
         try {
-            if (!configDir.exists() && !configDir.mkdirs() && !configDir.exists()) {
-                logger.w("Failed to create remote config directory at ${configDir.absolutePath} for cooldown marker")
+            if (!cooldownDir.exists() && !cooldownDir.mkdirs() && !cooldownDir.exists()) {
+                logger.w("Failed to create remote config directory at ${cooldownDir.absolutePath} for cooldown marker")
                 return@withLock
             }
-            cooldownFile().writeText(timestamp.toString())
-            logger.i("Stored remote config cooldown marker until=$timestamp file=${cooldownFile().absolutePath}")
+            cooldownFile().writeText("$timestamp\n$failureCount")
+            logger.i(
+                "Stored remote config cooldown marker until=$timestamp failureCount=$failureCount " +
+                    "file=${cooldownFile().absolutePath}"
+            )
         } catch (ex: IOException) {
             logger.w("Failed to persist remote config cooldown marker", ex)
         }
@@ -309,10 +360,10 @@ internal class RemoteConfigStore(
 
     fun clearCooldown() = lock.withLock {
         cachedCooldownUntil = 0L
-        val cooldownFile = cooldownFile()
-        if (cooldownFile.exists()) {
-            cooldownFile.delete()
-            logger.d("Cleared remote config cooldown marker file=${cooldownFile.absolutePath}")
+        cachedFailureCount = 0
+        listOf(cooldownFile(), legacyCooldownFile()).distinct().filter { it.exists() }.forEach { file ->
+            file.delete()
+            logger.d("Cleared remote config cooldown marker file=${file.absolutePath}")
         }
     }
 
@@ -320,7 +371,7 @@ internal class RemoteConfigStore(
         val configFile = File(configDir, configFileName())
         "memory=${current?.let(::describeRemoteConfig) ?: "<none>"}, " +
             "diskExists=${configFile.exists()}, diskReadable=${configFile.canRead()}, " +
-            "cachedCooldownUntil=$cachedCooldownUntil"
+            "cachedCooldownUntil=$cachedCooldownUntil, failureCount=$cachedFailureCount"
     }
 
     fun clear() {
@@ -367,7 +418,7 @@ internal class RemoteConfigStore(
     }
 
     private fun isExpired(remoteConfig: RemoteConfig): Boolean {
-        return !remoteConfig.configurationExpiry.after(Date())
+        return remoteConfig.configurationExpiry.time <= clock.currentTimeMillis()
     }
     private fun deleteConfigFiles() {
         val configFile = File(configDir, configFileName())
@@ -379,7 +430,34 @@ internal class RemoteConfigStore(
         )
     }
 
-    private fun cooldownFile(): File = File(configDir, "${configFileName()}.cooldown")
+    private fun cooldownFile(): File = File(cooldownDir, "${configFileName()}.cooldown")
+
+    /** Where markers were written before [cooldownDir] existed (next to the config). */
+    private fun legacyCooldownFile(): File = File(configDir, "${configFileName()}.cooldown")
+
+    /**
+     * Moves a marker written by an older SDK into [cooldownDir], so an active backoff survives
+     * the upgrade. Kept best-effort: if the move fails the legacy marker is simply ignored.
+     */
+    private fun migrateLegacyCooldown() {
+        val legacy = legacyCooldownFile()
+        val target = cooldownFile()
+        if (legacy == target || !legacy.exists()) {
+            return
+        }
+        try {
+            if (!target.exists()) {
+                cooldownDir.mkdirs()
+                if (!legacy.renameTo(target)) {
+                    target.writeText(legacy.readText())
+                }
+                logger.i("Moved remote config cooldown marker from ${legacy.absolutePath} to ${target.absolutePath}")
+            }
+            legacy.delete()
+        } catch (ex: IOException) {
+            logger.w("Failed to move legacy remote config cooldown marker ${legacy.absolutePath}", ex)
+        }
+    }
 
     private fun lockFile(): File = File(configDir, "${configFileName()}.lock")
 
@@ -400,5 +478,12 @@ internal class RemoteConfigStore(
     private companion object {
         const val CROSS_PROCESS_LOCK_WAIT_MS = 5_000L
         const val CROSS_PROCESS_LOCK_RETRY_MS = 50L
+        const val LEGACY_MARKER_FAILURE_COUNT = 1
+
+        /**
+         * Upper bound on a loaded cooldown marker: the backoff cap plus the +2h jitter that
+         * pre-backoff SDK versions (fixed 24h ± 2h cooldown) could have written.
+         */
+        val MAX_COOLDOWN_MS = RemoteConfigState.BACKOFF_CAP_MS + TimeUnit.HOURS.toMillis(2)
     }
 }

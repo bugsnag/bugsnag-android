@@ -1,6 +1,7 @@
 package com.bugsnag.android
 
 import android.content.Context
+import android.os.Build
 import com.bugsnag.android.internal.BackgroundTaskService
 import com.bugsnag.android.internal.BugsnagStoreMigrator.migrateLegacyFiles
 import com.bugsnag.android.internal.ImmutableConfig
@@ -18,7 +19,8 @@ internal class StorageModule(
     appContext: Context,
     private val immutableConfig: ImmutableConfig,
     private val notifier: Notifier,
-    bgTaskService: BackgroundTaskService
+    bgTaskService: BackgroundTaskService,
+    private val connectivity: Connectivity? = null
 ) : BackgroundDependencyModule(bgTaskService, TaskType.IO) {
 
     val bugsnagDir = provider {
@@ -70,15 +72,19 @@ internal class StorageModule(
     }
 
     val remoteConfigState = provider {
+        val configDir = File(bugsnagDir.get(), "config")
         RemoteConfigState(
             RemoteConfigStore(
-                File(bugsnagDir.get(), "config"),
+                configDir,
                 immutableConfig.versionCode ?: 0,
-                immutableConfig.logger
+                immutableConfig.logger,
+                cooldownDir = remoteConfigCooldownDir(appContext, configDir)
             ),
             immutableConfig,
             notifier,
-            bgTaskService
+            bgTaskService,
+            deviceIdProvider = { deviceId.getOrNull()?.deviceId },
+            networkAvailable = { connectivity?.hasNetworkConnection() ?: true }
         )
     }
 
@@ -87,6 +93,25 @@ internal class StorageModule(
         val currentRunInfo = LastRunInfo(0, crashed = false, crashedDuringLaunch = false)
         lastRunInfoStore.persist(currentRunInfo)
         return@map info
+    }
+
+    /**
+     * The cooldown marker is kept out of the cache directory, which Android may clear when storage
+     * is low: losing it resets the backoff that protects the config service. It goes in
+     * noBackupFilesDir so a restore onto another device cannot bring back a stale cooldown. An app
+     * that chose its own persistenceDirectory keeps the marker there, next to the config.
+     */
+    private fun remoteConfigCooldownDir(appContext: Context, configDir: File): File {
+        val persistenceDir = immutableConfig.persistenceDirectory.value
+        if (persistenceDir.absoluteFile != appContext.cacheDir?.absoluteFile) {
+            return configDir
+        }
+        val baseDir = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            appContext.noBackupFilesDir
+        } else {
+            appContext.filesDir
+        }
+        return baseDir?.let { File(it, "bugsnag/remote-config") } ?: configDir
     }
 
     fun loadUser(initialUser: User): Provider<UserState> = provider {

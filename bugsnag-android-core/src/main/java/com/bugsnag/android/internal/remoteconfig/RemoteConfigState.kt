@@ -7,18 +7,32 @@ import com.bugsnag.android.RemoteConfig
 import com.bugsnag.android.internal.BackgroundTaskService
 import com.bugsnag.android.internal.ImmutableConfig
 import com.bugsnag.android.internal.TaskType
-import java.util.Date
 import java.util.concurrent.Callable
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
+@Suppress("LongParameterList")
 internal class RemoteConfigState(
     private val store: RemoteConfigStore,
     private val config: ImmutableConfig,
     private val notifier: Notifier,
     private val backgroundTaskService: BackgroundTaskService,
+    private val clock: RemoteConfigClock = RemoteConfigClock.SYSTEM,
+    /** Resolved lazily on the request thread, as loading the device ID may touch disk. */
+    private val deviceIdProvider: () -> String? = { null },
+    /**
+     * Whether the device currently has a network connection. A fetch made while offline cannot
+     * reach the config service, so it is skipped rather than counted as a failure: counting it
+     * would push the backoff towards 24h and leave the config stale once the device is back online.
+     */
+    networkAvailable: () -> Boolean = { true },
+    /** How long [connectionLost] waits before re-checking the network; 0 disables the re-check. */
+    private val networkLossGraceMs: Long = NETWORK_LOSS_GRACE_MS,
 ) {
+    /** Unknown connectivity counts as available, matching DefaultDelivery. */
+    private val isNetworkAvailable: () -> Boolean = { runCatching(networkAvailable).getOrDefault(true) }
+
     private val logger: Logger = runCatching { config.logger }.getOrNull() ?: NoopLogger
     private val enabled: Boolean = config.endpoints.configuration != null
     private val requestLock = Any()
@@ -29,6 +43,26 @@ internal class RemoteConfigState(
         if (!enabled) {
             logger.d("Remote config is disabled; clearing any cached values")
             store.clear()
+        } else {
+            scheduleSweep()
+        }
+    }
+
+    /** Purges other app versions' cached config off the calling (startup) thread. */
+    private fun scheduleSweep() {
+        try {
+            backgroundTaskService.submitTask(
+                TaskType.REMOTE_CONFIG,
+                Runnable {
+                    try {
+                        store.sweep()
+                    } catch (ex: Exception) {
+                        logger.w("Failed to sweep stale remote config files", ex)
+                    }
+                }
+            )
+        } catch (ex: Exception) {
+            logger.w("Failed to schedule remote config sweep", ex)
         }
     }
 
@@ -62,9 +96,13 @@ internal class RemoteConfigState(
             logger.i("No remote config available; scheduling initial download")
         }
 
-        // Don't schedule if a request is already in-flight
-        if (currentInFlightRequest() != null) {
-            logger.d("Skipping remote config download because a request is already in flight")
+        val skipReason = when {
+            !isNetworkAvailable() -> "there is no network connection"
+            currentInFlightRequest() != null -> "a request is already in flight"
+            else -> null
+        }
+        if (skipReason != null) {
+            logger.d("Skipping remote config download because $skipReason")
             return
         }
 
@@ -79,7 +117,7 @@ internal class RemoteConfigState(
     }
 
     private fun shouldRefresh(remoteConfig: RemoteConfig): Boolean {
-        val now = System.currentTimeMillis()
+        val now = clock.currentTimeMillis()
         val expiryTime = remoteConfig.configurationExpiry.time
         val timeUntilExpiry = expiryTime - now
 
@@ -153,7 +191,7 @@ internal class RemoteConfigState(
     }
 
     private fun isExpired(remoteConfig: RemoteConfig): Boolean =
-        !remoteConfig.configurationExpiry.after(Date())
+        remoteConfig.configurationExpiry.time <= clock.currentTimeMillis()
 
     private fun requestRemoteConfig(): Future<RemoteConfig?> {
         currentInFlightRequest()?.let {
@@ -208,7 +246,7 @@ internal class RemoteConfigState(
     private fun requestRemoteConfigWithLock(): RemoteConfig? {
         val lockedConfig = store.reloadCurrentOrExpired()
         val cooldownUntil = store.reloadCooldownUntil()
-        if (cooldownUntil > System.currentTimeMillis()) {
+        if (cooldownUntil > clock.currentTimeMillis()) {
             logger.i(
                 "Skipping remote config request after acquiring cross-process lock because " +
                     "cooldown is active ${cooldownDescription()}"
@@ -224,12 +262,25 @@ internal class RemoteConfigState(
             return lockedConfig
         }
 
+        // the connection may have dropped since the download was scheduled
+        if (!isNetworkAvailable()) {
+            logger.i("Skipping remote config request because there is no network connection")
+            return lockedConfig
+        }
+
         logger.d("Config needs refresh or is not present; requesting remote config from the endpoint")
         return requestAndStoreRemoteConfig(lockedConfig)
     }
 
     private fun requestAndStoreRemoteConfig(lockedConfig: RemoteConfig?): RemoteConfig? {
-        val refreshedConfig = RemoteConfigRequest(config, notifier, lockedConfig).requestConfig()
+        val deviceId = try {
+            deviceIdProvider()
+        } catch (ex: Exception) {
+            logger.w("Failed to load device ID for remote config request", ex)
+            null
+        }
+        val request = RemoteConfigRequest(config, notifier, lockedConfig, clock, deviceId)
+        val refreshedConfig = request.requestConfig()
         if (refreshedConfig != null) {
             logger.i(
                 "Received remote config from the endpoint; persisting response " +
@@ -241,12 +292,21 @@ internal class RemoteConfigState(
             return refreshedConfig
         }
 
-        val cooldown = computeCooldown(RETRY_COOLDOWN_MS)
+        if (connectionLost(request.failedWithoutResponse, networkLossGraceMs, isNetworkAvailable)) {
+            // the connection dropped during the request: the service was never reached, so this
+            // is not a failure the backoff should count
+            logger.i("Remote config request failed after the network connection was lost; not starting backoff")
+            return lockedConfig
+        }
+
+        // failureCount was reloaded from disk by reloadCooldownUntil() under the cross-process lock
+        val failureIndex = store.failureCount()
+        val cooldown = computeCooldown(failureIndex, nowMs = clock.currentTimeMillis())
         val failedCooldownUntil = cooldown.cooldownUntilMs
-        store.setCooldownUntil(failedCooldownUntil)
+        store.setCooldownUntil(failedCooldownUntil, failureIndex + 1)
         logger.w(
-            "Remote config request did not return a config; starting cooldown " +
-                "baseMs=$RETRY_COOLDOWN_MS jitterMs=${cooldown.jitterMs} " +
+            "Remote config request did not return a config; starting backoff " +
+                "k=$failureIndex ceilingMs=${cooldown.ceilingMs} " +
                 "durationMs=${cooldown.durationMs} until=$failedCooldownUntil"
         )
         logState("remote config request failed", lockedConfig)
@@ -268,14 +328,14 @@ internal class RemoteConfigState(
         inFlightRequest = null
     }
 
-    private fun isCooldownActive(): Boolean = store.cooldownUntil() > System.currentTimeMillis()
+    private fun isCooldownActive(): Boolean = store.cooldownUntil() > clock.currentTimeMillis()
 
     private fun isCachedCooldownActive(): Boolean {
-        return store.cachedCooldownUntil() > System.currentTimeMillis()
+        return store.cachedCooldownUntil() > clock.currentTimeMillis()
     }
 
     private fun cooldownDescription(until: Long = store.cachedCooldownUntil()): String {
-        return "cooldownUntil=$until remainingMs=${(until - System.currentTimeMillis()).coerceAtLeast(0)}"
+        return "cooldownUntil=$until remainingMs=${(until - clock.currentTimeMillis()).coerceAtLeast(0)}"
     }
 
     private fun logState(marker: String, remoteConfig: RemoteConfig? = null) {
@@ -301,28 +361,55 @@ internal class RemoteConfigState(
     }
 
     internal companion object {
-        val REFRESH_BUFFER_MS = TimeUnit.HOURS.toMillis(2)
-        val RETRY_COOLDOWN_MS = TimeUnit.HOURS.toMillis(24)
-        val COOLDOWN_JITTER_MS = TimeUnit.HOURS.toMillis(2)
+        /** Long enough for Android to report a dropped network, short for a background thread. */
+        const val NETWORK_LOSS_GRACE_MS = 500L
 
+        val REFRESH_BUFFER_MS = TimeUnit.HOURS.toMillis(2)
+
+        /** Retry delay ceiling after the first failed fetch (k = 0). */
+        val BACKOFF_BASE_MS = TimeUnit.MINUTES.toMillis(15)
+
+        /** Maximum retry delay ceiling. */
+        val BACKOFF_CAP_MS = TimeUnit.HOURS.toMillis(24)
+
+        const val BACKOFF_MULTIPLIER = 4.0
+
+        /**
+         * Computes the next allowed fetch time using exponential backoff with Equal Jitter:
+         *
+         * ```
+         * ceiling = min(CAP, BASE * MULTIPLIER^k)
+         * wait    = ceiling / 2 + random(0, ceiling / 2)
+         * ```
+         *
+         * @param failureIndex `k`, the number of consecutive failures before this one
+         * @param jitterMs fixed jitter for tests, clamped to `[0, ceiling / 2]`
+         */
         internal fun computeCooldown(
-            baseCooldownMs: Long,
-            jitterOffsetMs: Long? = null,
-            jitterRangeMs: Long = COOLDOWN_JITTER_MS,
+            failureIndex: Int,
+            jitterMs: Long? = null,
             nowMs: Long = System.currentTimeMillis()
         ): CooldownComputation {
-            val maxJitter = jitterRangeMs.coerceAtLeast(0L)
-            val jitterMs = jitterOffsetMs ?: Random.Default.nextLong(-maxJitter, maxJitter + 1)
-            val durationMs = (baseCooldownMs + jitterMs).coerceAtLeast(0L)
+            val ceilingMs = backoffCeiling(failureIndex)
+            val halfMs = ceilingMs / 2
+            val jitter = (jitterMs ?: Random.Default.nextLong(0L, halfMs + 1)).coerceIn(0L, halfMs)
+            val durationMs = halfMs + jitter
             return CooldownComputation(
-                jitterMs = jitterMs,
+                ceilingMs = ceilingMs,
                 durationMs = durationMs,
                 cooldownUntilMs = nowMs + durationMs
             )
         }
 
+        internal fun backoffCeiling(failureIndex: Int): Long {
+            val k = failureIndex.coerceAtLeast(0)
+            // pow() saturates to Infinity for large k, which min() then clamps to the cap
+            val ceiling = BACKOFF_BASE_MS * Math.pow(BACKOFF_MULTIPLIER, k.toDouble())
+            return minOf(BACKOFF_CAP_MS.toDouble(), ceiling).toLong()
+        }
+
         internal data class CooldownComputation(
-            val jitterMs: Long,
+            val ceilingMs: Long,
             val durationMs: Long,
             val cooldownUntilMs: Long
         )
@@ -334,5 +421,31 @@ internal class RemoteConfigState(
             override fun isCancelled(): Boolean = false
             override fun isDone(): Boolean = true
         }
+    }
+}
+
+/**
+ * Whether a failed request should be put down to a lost connection rather than the config
+ * service. The socket error that ends a request usually arrives a few ms *before* Android reports
+ * the network as gone (20-40 ms on a Galaxy A12 when Wi-Fi dropped), so a request that failed
+ * without any response, while the device still looks online, checks once more after [graceMs].
+ * An HTTP error means the service was reached and is always a failure.
+ */
+// internal rather than private: a private top-level function called from the class needs a synthetic accessor
+internal fun connectionLost(
+    failedWithoutResponse: Boolean,
+    graceMs: Long,
+    isNetworkAvailable: () -> Boolean
+): Boolean = when {
+    !failedWithoutResponse -> false
+    !isNetworkAvailable() -> true
+    graceMs <= 0 -> false
+    else -> {
+        try {
+            Thread.sleep(graceMs)
+        } catch (ex: InterruptedException) {
+            Thread.currentThread().interrupt()
+        }
+        !isNetworkAvailable()
     }
 }
